@@ -2,8 +2,21 @@
 Link: https://arxiv.org/pdf/2005.04118.pdf
 TASK: Sentiment analysis, duplicate question detection and machine
 comprehension
-
-IDEA:
+IDEA: The checklist is the tool for comprehensive behavioral testing
+of NLP models. It evaluates user-defined natural language capabilities
+such as robustness, NER and negation etc. For each capability, test
+cases are generated over 3 test types: Minimum functionality test,
+Invariance test and Directional expectation test. In addition, the
+test cases and perturbations can often be generalized into a template
+and be generated from the template (e.g. I {negation} {pos_verb} the
+{thing}). for each placeholder, checklist provides users with an
+abstraction where they mask part of a template and get masked language
+model (RoBERTa) suggestions for fill-ins. the RoBERTa suggestions can
+be combined with WordNet categories (synonyms, antonyms, etc). Also,
+checklist also provide additional common fill-ins for
+general-purpose categories, such as Named Entities (common male and
+female first/last names, cities, countries) and protected group
+adjectives (nationalities, religions, gender and sexuality, etc)
 
 
 2. Testing Machine Translation via Referential Transparency
