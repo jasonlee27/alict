@@ -1,13 +1,15 @@
 1. Checklist (Marco Tulio Ribeiro et al)
 Link: https://arxiv.org/pdf/2005.04118.pdf
-Task: Sentiment analysis
-IDEA: 
+TASK: Sentiment analysis, duplicate question detection and machine
+comprehension
+
+IDEA:
 
 
 2. Testing Machine Translation via Referential Transparency
 (Pinjia He et al)
 Link: https://pinjiahe.github.io/files/pdf/research/ICSE21.pdf
-Task: NMT
+TASK: NMT
 IDEA: The key insight is that a referentially transparent input is a
 piece of text that should have similar translations when used in
 different contexts. (1) identify noun phrases using a constituency
@@ -20,7 +22,7 @@ for RTI similarity in ordeer to detect translation errors.
 
 3. Structure-Invariant Testing for Machine Translation (Pinjia He et al)
 Link: https://pinjiahe.github.io/files/pdf/research/ICSE20.pdf
-Task: NMT
+TASK: NMT
 IDEA: The key insight is that similar source sentences (e.g. sentences
 that differ by a single word) typically have translation results of
 similar sentence structures. (1) SIT generatea a list of its similar
@@ -34,8 +36,7 @@ sentences. (4) compares the structures of the translated sentences.
 4. Machine Translation Testing via Pathological Invariance (Shashij
 Gupta et al)
 Link: https://pinjiahe.github.io/files/pdf/research/ESECFSE20.pdf
-Task: NMT
-
+TASK: NMT
 IDEA: The key insight is that sentences with different meanings should
 not have the same translation. (1) generate structually similar
 sentences that have a different meaning as input for PatInv by
@@ -46,8 +47,21 @@ generated sentences from (2). (4) detect translation errors.
 
 5. Polyjuice (Tognshuang Wu et al)
 Link: https://homes.cs.washington.edu/~marcotcr/acl21_polyjuice.pdf
-Task: Sentiment analysis
+TASK: task agnostic, but evaluated on Sentiment analysis, NLI, SNLI
+and Duplicate question detection
+IDEA: The Polyjoice is a counterfactual generator that allows for
+control over perturbation types and locations trained by finetuning
+GPT-2 on multiple datasets of paired sentences.
 
 6. SEA & SEAR (Marco Tulio Ribeiro et al)
 Link: https://homes.cs.washington.edu/~marcotcr/acl18.pdf
-Task: Machine comprehension, VQA
+TASK: Machine comprehension, VQA
+IEDA: it generates semantically equivalent adversaies (SEAs),
+semantic-presetving perturbations that induce changes in the model's
+predictions. It also generalize these adversaries into semantically
+equivalent adversariaal rules (SEARs). Given input sentence, the
+perturbations are generated using neural machine translation and beam
+search. semantical similarity between input and its perturbations are
+measured by probabilities and predictions. Given the perturbations,
+SEARs generates a set of rules and filters the rules by measuring
+semantic equivalence, high adversary count and non-redundancy.
