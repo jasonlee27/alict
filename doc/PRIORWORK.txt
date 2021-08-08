@@ -1,0 +1,53 @@
+1. Checklist (Marco Tulio Ribeiro et al)
+Link: https://arxiv.org/pdf/2005.04118.pdf
+Task: Sentiment analysis
+IDEA: 
+
+
+2. Testing Machine Translation via Referential Transparency
+(Pinjia He et al)
+Link: https://pinjiahe.github.io/files/pdf/research/ICSE21.pdf
+Task: NMT
+IDEA: The key insight is that a referentially transparent input is a
+piece of text that should have similar translations when used in
+different contexts. (1) identify noun phrases using a constituency
+parser to collect a list of RTIs. (2) generates pairs in source
+language by pairing an RTI with the full text in which it was found
+and with all the containing RTIs from the same sentence. (3) is to
+input RTI pairs to the machine translation software under test and
+collect their translations. (4) translated pairs from (3) are checked
+for RTI similarity in ordeer to detect translation errors.
+
+3. Structure-Invariant Testing for Machine Translation (Pinjia He et al)
+Link: https://pinjiahe.github.io/files/pdf/research/ICSE20.pdf
+Task: NMT
+IDEA: The key insight is that similar source sentences (e.g. sentences
+that differ by a single word) typically have translation results of
+similar sentence structures. (1) SIT generatea a list of its similar
+sentences by modifying a single word in the source sentences via NLP
+techniques (i.e. BERT). (2) feeds all the sentences to the software
+under test to ontain their translations. (3) uses specialized data
+structures (i.e. constituency parse tree and dependency parse tree) to
+represent the syntax structure of each of the translated
+sentences. (4) compares the structures of the translated sentences.
+
+4. Machine Translation Testing via Pathological Invariance (Shashij
+Gupta et al)
+Link: https://pinjiahe.github.io/files/pdf/research/ESECFSE20.pdf
+Task: NMT
+
+IDEA: The key insight is that sentences with different meanings should
+not have the same translation. (1) generate structually similar
+sentences that have a different meaning as input for PatInv by
+replacing a word and removing a word or phrase. (2) filter by
+syntactic (constituency structure) and semantic information (synonyms
+and sentence embeddings) (3) collects target sentences from the
+generated sentences from (2). (4) detect translation errors.
+
+5. Polyjuice (Tognshuang Wu et al)
+Link: https://homes.cs.washington.edu/~marcotcr/acl21_polyjuice.pdf
+Task: Sentiment analysis
+
+6. SEA & SEAR (Marco Tulio Ribeiro et al)
+Link: https://homes.cs.washington.edu/~marcotcr/acl18.pdf
+Task: Machine comprehension, VQA

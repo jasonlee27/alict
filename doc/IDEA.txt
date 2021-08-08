@@ -1,0 +1,4 @@
+Research questions:
+1. how they get label for the generated examples?
+2. how they generate semantically correct examples?
+3. what other NL tasks than NLT, sentiment analysis they can be applied to?
