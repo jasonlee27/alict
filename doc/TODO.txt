@@ -1,0 +1,10 @@
+TASKS
+
+  - [JL] make a diff cfg (diff_cfg) between cfg in
+    _results/checklist/sentanal_mft_template_grammar.txt and treebank
+    global grammar
+
+  - [JL] generate random sentences using generated_grammar and diff_cfg
+
+
+==========
