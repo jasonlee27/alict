@@ -7,7 +7,7 @@ import benepar
 import spacy
 from nltk.corpus import treebank
 
-class CFG:
+class BeneparCFG:
     benepar_parser_model = 'benepar_en3'
     
     @classmethod
@@ -124,21 +124,24 @@ class CFG:
         # end with
 
 
+class TreebankCFG:
+
     @classmethod
-    def main(cls):
-        rulesets = set(rule for tree in treebank.parsed_sents()[:10] for rule in tree.productions())
+    def get_treebank_cfgs(cls):
+        rulesets = set(rule for tree in treebank.parsed_sents() for rule in tree.productions())
+        print(f"Treebank #parsed sents: {len(treebank.parsed_sents())}")
+        print(f"Treebank #parsed ruleset: {len(rulesets)}")
         for r in rulesets:
             print(r)
-            print()
         # end for
 
 def main():
-    parser = CFG.load_parser()
-    sents: List = CFG.read_input_sents('./ex.txt')
-    cfg_dict = CFG.get_cfg_dict(parser,sents,{})
-    cfg_str = CFG.convert_cfg_dict_to_str(cfg_dict)
-    CFG.write_cfg(cfg_str, './ex_cfg.txt')
-    # CFG.main()
+    # parser = BeneparCFG.load_parser()
+    # sents: List = BeneparCFG.read_input_sents('./ex.txt')
+    # cfg_dict = BeneparCFG.get_cfg_dict(parser,sents,{})
+    # cfg_str = BeneparCFG.convert_cfg_dict_to_str(cfg_dict)
+    # BeneparCFG.write_cfg(cfg_str, './ex_cfg.txt')
+    TreebankCFG.get_treebank_cfgs()
 
 if __name__=='__main__':
     main()
