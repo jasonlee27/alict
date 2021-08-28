@@ -1,0 +1,18 @@
+S -> NP VP | TO VP
+NP -> DT | DT JJ NN | NNP | NNS | NP PP | PRP | DT NN
+DT -> 'This' | 'a' | 'this'
+VP -> VBZ NP | VBZ RB NP | VBD ADJP | VB SBAR | VBD S
+VBZ -> 'is' | 'is'
+JJ -> 'good' | 'great'
+NN -> 'movie' | 'airline'
+NNP -> 'Michael' | 'Jennifer'
+RB -> 'not'
+NNS -> 'friends'
+PP -> IN NP
+IN -> 'with'
+PRP -> 'I'
+VBD -> 'used' | 'was'
+TO -> 'to'
+VB -> 'think'
+SBAR -> NP VP
+ADJP -> JJ
