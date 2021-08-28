@@ -2,3 +2,13 @@ Research questions:
 1. how they get label for the generated examples?
 2. how they generate semantically correct examples?
 3. what other NL tasks than NLT, sentiment analysis they can be applied to?
+
+IDEA1:
+    Given the test input sentences, we can generate set of context-free 
+    grammar(cfg) rules(L*). Also, researchers have worked on parsing 
+    natural languages (NLs) and cfg from large NL corpora (L_global). 
+    I think that test inputs can be more diverse when we expand their grammar 
+    and the grammar can be expanded from exploring difference beteen L_global 
+    and L*. Knowing the difference and what cfg component can be used for 
+    the grammar expansion, we can generate more diverse input templates and 
+    more diverse input sentences.
