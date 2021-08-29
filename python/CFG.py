@@ -2,6 +2,7 @@
 # given sentence input set
 
 import re
+import sys
 import nltk
 import benepar
 import spacy
@@ -123,25 +124,74 @@ class BeneparCFG:
             f.write(cfg_str)
         # end with
 
+    @classmethod
+    def get_cfgs(cls, data_file, cfg_file):
+        parser = cls.load_parser()
+        sents: List = cls.read_input_sents(data_file)
+        cfg_dict = cls.get_cfg_dict(parser,sents,{})
+        cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
+        cls.write_cfg(cfg_str, cfg_file)
+
 
 class TreebankCFG:
 
     @classmethod
-    def get_treebank_cfgs(cls):
-        rulesets = set(rule for tree in treebank.parsed_sents() for rule in tree.productions())
-        print(f"Treebank #parsed sents: {len(treebank.parsed_sents())}")
-        print(f"Treebank #parsed ruleset: {len(rulesets)}")
-        for r in rulesets:
-            print(r)
+    def get_treebank_rules(cls):
+        if 'treebank' not in sys.modules:
+            from nltk.corpus import treebank
+        # end if
+        return list(set(rule for tree in treebank.parsed_sents() for rule in tree.productions()))
+
+    @classmethod
+    def convert_ruleset_to_dict(cls, ruleset):
+        cfg_dict = dict()
+        for r in ruleset:
+            if r.lhs() not in cfg_dict.keys():
+                cfg_dict[r.lhs()] = list()
+            else:
+                if r.rhs() not in cfg_dict[r.lhs()]:
+                    cfg_dict[r.lhs()].append(r.rhs())
+                # end if
+            # end if
         # end for
+        return cfg_dict
+
+    @classmethod
+    def convert_cfg_dict_to_str(cls, cfg_dict):
+        cfg_str = ''
+        for left, rights in cfg_dict.items():
+            cfg_elem = f'{left} -> '
+            for r_i, right in enumerate(rights):
+                if type(right) is tuple:
+                    r_str = ' '.join([f'\'{r}\'' if type(r) is str else str(r) for r in right])
+                    cfg_elem += r_str
+                else:
+                    cfg_elem += f'\'{r_str}\''
+                # end if
+                if r_i+1<len(rights):
+                    cfg_elem += ' | '
+                # end if
+            # end for
+            cfg_str += f'{cfg_elem}\n'
+        # end for
+        return cfg_str
+
+    @classmethod
+    def write_cfg(cls, cfg_str, cfg_file):
+        with open(cfg_file, 'w') as f:
+            f.write(cfg_str)
+        # end with
+
+    @classmethod
+    def get_cfgs(cls, cfg_file):
+        rulesets = cls.get_treebank_rules()
+        cfg_dict = cls.convert_ruleset_to_dict(rulesets)
+        cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
+        cls.write_cfg(cfg_str, './treebank_cfg.txt')
 
 def main():
-    # parser = BeneparCFG.load_parser()
-    # sents: List = BeneparCFG.read_input_sents('./ex.txt')
-    # cfg_dict = BeneparCFG.get_cfg_dict(parser,sents,{})
-    # cfg_str = BeneparCFG.convert_cfg_dict_to_str(cfg_dict)
-    # BeneparCFG.write_cfg(cfg_str, './ex_cfg.txt')
-    TreebankCFG.get_treebank_cfgs()
+    # BeneparCFG.get_cfgs('./ex.txt', './ex_cfg.txt')
+    TreebankCFG.get_cfgs('./treebank_cfg.txt')
 
 if __name__=='__main__':
     main()
