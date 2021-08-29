@@ -9,6 +9,8 @@ import benepar
 import spacy
 from nltk.corpus import treebank
 
+from Macros import Macros
+
 class BeneparCFG:
     benepar_parser_model = 'benepar_en3'
     
@@ -240,7 +242,7 @@ class TreebankCFG:
         rulesets = cls.get_treebank_rules()
         cfg_dict = cls.convert_ruleset_to_dict(rulesets)
         # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
-        cls.write_cfg(cfg_dict, './treebank_cfg.json', pretty_format=pretty_format)
+        cls.write_cfg(cfg_dict, cfg_file, pretty_format=pretty_format)
 
 
 class CompareCFG:
@@ -258,8 +260,8 @@ class CompareCFG:
 
 
 def main():
-    BeneparCFG.get_cfgs('./ex.txt', './ex_cfg.json', pretty_format=True)
-    TreebankCFG.get_cfgs('./treebank_cfg.json', pretty_format=True)
+    BeneparCFG.get_cfgs('./ex.txt', Macros.result_dir / 'ex_cfg.json', pretty_format=True)
+    TreebankCFG.get_cfgs(Macros.result_dir / 'treebank_cfg.json', pretty_format=True)
 
 if __name__=='__main__':
     main()
