@@ -1,7 +1,7 @@
 # this script generates nlp grammar rule set 
 # given sentence input set
 
-import re
+import re, os
 import sys
 import json
 import nltk
@@ -245,23 +245,86 @@ class TreebankCFG:
         cls.write_cfg(cfg_dict, cfg_file, pretty_format=pretty_format)
 
 
-class CompareCFG:
+class CFGDiff:
 
-    def __init__(self, cfg_ref_file, cfg_under_test_file):
-        self.cfg_ref = cfg_ref
-        self.cfg_under_test = cfg_under_test
+    def __init__(self, cfg_ref_file, cfg_ut_file, write_diff=True, diff_file=None, pretty_format=True):
+        self.cfg_ref = self.read_cfg(cfg_ref_file)
+        self.cfg_ut = self.read_cfg(cfg_ut_file)
+        self.cfg_diff = self.get_cfg_diff()
+        if write_diff and (diff_file is not None):
+            self.write_cfg_diff(diff_file, pretty_format=pretty_format)
+        # end if
     
     def read_cfg(self, cfg_file):
+        # read cfg json file
         with open(cfg_file, 'r') as f:
-            for ln in f.readlines():
-                re.search(r'(.*+)\s\-\>\s()')
-                lhs, rhs = ln.split(' -> ')
+            return json.load(f)
+        # end with    
+        return None
+
+    def check_list_inclusion(self, a_list, b_list):
+        a_is = [a if a in b_list else None for a_i, a in enumerate(a_list)]
+        if all(a_is):
+            if a_is==sorted(a_is):
+                return True
+            # end if
+        # end if    
+        return False
+            
+
+    def get_cfg_diff(self):
+        cfg_diff = dict()
+        for ut_lhs, ut_rhs in self.cfg_ut.items():
+            cfg_diff[ut_lhs] = list()
+            try:
+                # print(f"{ut_lhs} -> {ut_rhs}")
+                for ur in ut_rhs:
+                    cfg_diff[ut_lhs].append({
+                        "rule_from_data": ur,
+                        "rule_from_ref": [rr for rr in self.cfg_ref[ut_lhs] if self.check_list_inclusion(ur, rr)]
+                    })
+                # end for
+            except KeyError:
+                continue
+            # end try
+        # end for
+        return cfg_diff
+    
+    def write_cfg_diff(self, cfg_diff_file, pretty_format=False):
+        with open(cfg_diff_file, 'w') as f:
+            if pretty_format:
+                json.dump(self.cfg_diff, f, indent=4)
+            else:
+                json.dump(self.cfg_diff, f)
+            # end if
+        # end with
 
 
 
 def main():
-    BeneparCFG.get_cfgs('./ex.txt', Macros.result_dir / 'ex_cfg.json', pretty_format=True)
-    TreebankCFG.get_cfgs(Macros.result_dir / 'treebank_cfg.json', pretty_format=True)
+    cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
+    input_file = Macros.this_dir / 'ex.txt'
+    cfg_ut_file = Macros.result_dir / 'ex_cfg.json'
+    cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'
+
+    # generate grammars
+    if not os.path.exists(cfg_ref_file):
+        TreebankCFG.get_cfgs(cfg_ref_file, pretty_format=True)
+    # end if
+    if not os.path.exists(cfg_ut_file):
+        BeneparCFG.get_cfgs(input_file, cfg_ut_file, pretty_format=True)
+    # end if
+    
+    # compare the loded grammars
+    cfg_diff = CFGDiff(
+        cfg_ref_file=cfg_ref_file,
+        cfg_ut_file=cfg_ut_file,
+        write_diff=True, 
+        diff_file=cfg_diff_file
+    )
+
+
+
 
 if __name__=='__main__':
     main()
