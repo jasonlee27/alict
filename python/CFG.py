@@ -3,6 +3,7 @@
 
 import re
 import sys
+import json
 import nltk
 import benepar
 import spacy
@@ -88,49 +89,90 @@ class BeneparCFG:
     @classmethod
     def get_cfg_dict(cls, parser, sents, rule_dict):
         for s in sents:
-            tree = CFG.get_tree(parser,s.strip())
-            rule_dict = CFG.get_cfg_per_tree(tree, rule_dict)
+            tree = cls.get_tree(parser,s.strip())
+            rule_dict = cls.get_cfg_per_tree(tree, rule_dict)
             # print(rule_dict)
             # print()
         # end for
         return rule_dict
 
+    # @classmethod
+    # def convert_cfg_dict_to_str(cls, cfg_dict):
+    #     cfg_str = ''
+    #     for left, rights in cfg_dict.items():
+    #         cfg_elem = f'{left} -> '
+    #         for r_i, right in enumerate(rights):
+    #             if type(right) is tuple:
+    #                 r_str = ' '.join(right)
+    #                 cfg_elem += f'{r_str}'
+    #             elif right.startswith('terminal::'):
+    #                 r_str = right.split('terminal::')[-1]
+    #                 cfg_elem += f'\'{r_str}\''
+    #             else:
+    #                 cfg_elem += right
+    #             # end if
+    #             if r_i+1<len(rights):
+    #                 cfg_elem += ' | '
+    #             # end if
+    #         # end for
+    #         cfg_str += f'{cfg_elem}\n'
+    #     # end for
+    #     return cfg_str
+    
+    # @classmethod
+    # def write_cfg(cls, cfg_str, cfg_file):
+    #     with open(cfg_file, 'w') as f:
+    #         f.write(cfg_str)
+    #     # end with
+
     @classmethod
-    def convert_cfg_dict_to_str(cls, cfg_dict):
-        cfg_str = ''
-        for left, rights in cfg_dict.items():
-            cfg_elem = f'{left} -> '
-            for r_i, right in enumerate(rights):
-                if type(right) is tuple:
-                    r_str = ' '.join(right)
-                    cfg_elem += f'{r_str}'
-                elif right.startswith('terminal::'):
-                    r_str = right.split('terminal::')[-1]
-                    cfg_elem += f'\'{r_str}\''
+    def trim_cfg_dict(cls, cfg_dict):
+        _cfg_dict = dict()
+        for lhs, rhs in cfg_dict.copy().items():
+            _rhs = list()
+            for r in rhs:
+                _r = list()
+                if type(r) is tuple:
+                    for x in r:
+                        if x.startswith('terminal::'):
+                            _r.append(f"\'{x.split('terminal::')[-1]}\'")
+                        else:
+                            _r.append(x)
+                        # end if
+                    # end for
+                    _rhs.append(tuple(_r))
                 else:
-                    cfg_elem += right
+                    if r.startswith('terminal::'):
+                        _r.append(f"\'{r.split('terminal::')[-1]}\'")
+                    else:
+                        _r.append(r)
+                    # end if
                 # end if
-                if r_i+1<len(rights):
-                    cfg_elem += ' | '
+                if tuple(_r) not in _rhs:
+                    _rhs.append(tuple(_r))
                 # end if
             # end for
-            cfg_str += f'{cfg_elem}\n'
+            _cfg_dict[lhs] = _rhs
         # end for
-        return cfg_str
-    
+        return _cfg_dict
+
     @classmethod
-    def write_cfg(cls, cfg_str, cfg_file):
+    def write_cfg(cls, cfg_dict, cfg_file, pretty_format=False):
         with open(cfg_file, 'w') as f:
-            f.write(cfg_str)
+            if pretty_format:
+                json.dump(cfg_dict, f, indent=4)
+            else:
+                json.dump(cfg_dict, f)
+            # end if
         # end with
 
     @classmethod
-    def get_cfgs(cls, data_file, cfg_file):
+    def get_cfgs(cls, data_file, cfg_file, pretty_format=False):
         parser = cls.load_parser()
         sents: List = cls.read_input_sents(data_file)
         cfg_dict = cls.get_cfg_dict(parser,sents,{})
-        cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
-        cls.write_cfg(cfg_str, cfg_file)
+        # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
+        cls.write_cfg(cls.trim_cfg_dict(cfg_dict), cfg_file, pretty_format=pretty_format)
 
 
 class TreebankCFG:
@@ -146,52 +188,78 @@ class TreebankCFG:
     def convert_ruleset_to_dict(cls, ruleset):
         cfg_dict = dict()
         for r in ruleset:
-            if r.lhs() not in cfg_dict.keys():
-                cfg_dict[r.lhs()] = list()
-            else:
-                if r.rhs() not in cfg_dict[r.lhs()]:
-                    cfg_dict[r.lhs()].append(r.rhs())
-                # end if
+            lhs = str(r.lhs())
+            if lhs not in cfg_dict.keys():
+                cfg_dict[lhs] = list()
+            # end if
+            r_tuple = tuple([f'\'{r}\'' if type(r) is str else str(r) for r in r.rhs()])
+            if r_tuple not in cfg_dict[lhs]:
+                cfg_dict[lhs].append(r_tuple)
             # end if
         # end for
         return cfg_dict
 
-    @classmethod
-    def convert_cfg_dict_to_str(cls, cfg_dict):
-        cfg_str = ''
-        for left, rights in cfg_dict.items():
-            cfg_elem = f'{left} -> '
-            for r_i, right in enumerate(rights):
-                if type(right) is tuple:
-                    r_str = ' '.join([f'\'{r}\'' if type(r) is str else str(r) for r in right])
-                    cfg_elem += r_str
-                else:
-                    cfg_elem += f'\'{r_str}\''
-                # end if
-                if r_i+1<len(rights):
-                    cfg_elem += ' | '
-                # end if
-            # end for
-            cfg_str += f'{cfg_elem}\n'
-        # end for
-        return cfg_str
+    # @classmethod
+    # def convert_cfg_dict_to_str(cls, cfg_dict):
+    #     cfg_str = ''
+    #     for left, rights in cfg_dict.items():
+    #         cfg_elem = f'{left} -> '
+    #         for r_i, right in enumerate(rights):
+    #             if type(right) is tuple:
+    #                 r_str = ' '.join([f'\'{r}\'' if type(r) is str else str(r) for r in right])
+    #                 cfg_elem += r_str
+    #             else:
+    #                 cfg_elem += f'\'{r_str}\''
+    #             # end if
+    #             if r_i+1<len(rights):
+    #                 cfg_elem += ' | '
+    #             # end if
+    #         # end for
+    #         cfg_str += f'{cfg_elem}\n'
+    #     # end for
+    #     return cfg_str
+
+    # @classmethod
+    # def write_cfg(cls, cfg_str, cfg_file):
+    #     with open(cfg_file, 'w') as f:
+    #         f.write(cfg_str)
+    #     # end with
 
     @classmethod
-    def write_cfg(cls, cfg_str, cfg_file):
+    def write_cfg(cls, cfg_dict, cfg_file, pretty_format=False):
         with open(cfg_file, 'w') as f:
-            f.write(cfg_str)
+            if pretty_format:
+                json.dump(cfg_dict, f, indent=4)
+            else:
+                json.dump(cfg_dict, f)
+            # end if
         # end with
 
     @classmethod
-    def get_cfgs(cls, cfg_file):
+    def get_cfgs(cls, cfg_file, pretty_format=False):
         rulesets = cls.get_treebank_rules()
         cfg_dict = cls.convert_ruleset_to_dict(rulesets)
-        cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
-        cls.write_cfg(cfg_str, './treebank_cfg.txt')
+        # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
+        cls.write_cfg(cfg_dict, './treebank_cfg.json', pretty_format=pretty_format)
+
+
+class CompareCFG:
+
+    def __init__(self, cfg_ref_file, cfg_under_test_file):
+        self.cfg_ref = cfg_ref
+        self.cfg_under_test = cfg_under_test
+    
+    def read_cfg(self, cfg_file):
+        with open(cfg_file, 'r') as f:
+            for ln in f.readlines():
+                re.search(r'(.*+)\s\-\>\s()')
+                lhs, rhs = ln.split(' -> ')
+
+
 
 def main():
-    # BeneparCFG.get_cfgs('./ex.txt', './ex_cfg.txt')
-    TreebankCFG.get_cfgs('./treebank_cfg.txt')
+    BeneparCFG.get_cfgs('./ex.txt', './ex_cfg.json', pretty_format=True)
+    TreebankCFG.get_cfgs('./treebank_cfg.json', pretty_format=True)
 
 if __name__=='__main__':
     main()
