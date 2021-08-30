@@ -1,11 +1,15 @@
 TASKS
 
-  - [JL] generate random sentences using generated_grammar and diff_cfg.
+  - [JL] generate cfg difference given input cfg driven from data.
+  
+  - [JL] generate random sentences using diff_cfg.
 
   - [JL] manually generate more fine grained word categories e.g. pos_verb, neg_verb.
 
   
 ==========
+  + [JL] generate random sentences using generated_grammar.
+  
   + [JL] generate residual cfg grammar between global and input-driven cfg grammar.
 
   - [JL] make a diff cfg (diff_cfg) between cfg in
