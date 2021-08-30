@@ -85,12 +85,16 @@ class BeneparCFG:
         return rule_dict
 
     @classmethod
+    def get_cfg_dict_per_sent(cls, parser, sent, rule_dict):
+        tree = cls.get_tree(parser,sent.strip())
+        return cls.get_cfg_per_tree(tree, rule_dict)
+
+    @classmethod
     def get_cfg_dict(cls, parser, sents, rule_dict):
         for s in sents:
-            tree = cls.get_tree(parser,s.strip())
-            rule_dict = cls.get_cfg_per_tree(tree, rule_dict)
-            # print(rule_dict)
-            # print()
+            # tree = cls.get_tree(parser,s.strip())
+            # rule_dict = cls.get_cfg_per_tree(tree, rule_dict)
+            rule_dict = cls.get_cfg_dict_per_sent(parser, s, rule_dict)
         # end for
         return rule_dict
 
@@ -162,6 +166,11 @@ class BeneparCFG:
         # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
         Utils.write_json(cls.trim_cfg_dict(cfg_dict), cfg_file, pretty_format=pretty_format)
 
+    @classmethod
+    def get_seed_cfg(cls, seed_input):
+        parser = cls.load_parser()
+        return cls.get_cfg_dict_per_sent(parser,seed_input,{})
+
 
 class TreebankCFG:
 
@@ -229,56 +238,6 @@ class TreebankCFG:
         cfg_dict = cls.convert_ruleset_to_dict(rulesets)
         # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
         Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
-
-
-class CFGDiff:
-
-    def __init__(self, cfg_ref_file, cfg_ut_file, write_diff=True, diff_file=None, pretty_format=True):
-        self.cfg_ref = Utils.read_json(cfg_ref_file)
-        self.cfg_ut = Utils.read_json(cfg_ut_file)
-        self.cfg_diff = self.get_cfg_diff()
-        if write_diff and (diff_file is not None):
-            self.write_cfg_diff(diff_file, pretty_format=pretty_format)
-        # end if
-
-    def check_list_inclusion(self, a_list, b_list):
-        a_is = [a if a in b_list else None for a_i, a in enumerate(a_list)]
-        if all(a_is):
-            if a_is==sorted(a_is):
-                return True
-            # end if
-        # end if    
-        return False
-            
-
-    def get_cfg_diff(self):
-        cfg_diff = dict()
-        for ut_lhs, ut_rhs in self.cfg_ut.items():
-            cfg_diff[ut_lhs] = list()
-            try:
-                # print(f"{ut_lhs} -> {ut_rhs}")
-                for ur in ut_rhs:
-                    cfg_diff[ut_lhs].append({
-                        "rule_from_data": ur,
-                        "rule_from_ref": [rr for rr in self.cfg_ref[ut_lhs] if self.check_list_inclusion(ur, rr)]
-                    })
-                # end for
-            except KeyError:
-                continue
-            # end try
-        # end for
-        return cfg_diff
-    
-    def write_cfg_diff(self, cfg_diff_file, pretty_format=False):
-        with open(cfg_diff_file, 'w') as f:
-            if pretty_format:
-                json.dump(self.cfg_diff, f, indent=4)
-            else:
-                json.dump(self.cfg_diff, f)
-            # end if
-        # end with
-
-
 
 def main():
     cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'

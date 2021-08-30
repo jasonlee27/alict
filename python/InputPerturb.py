@@ -7,6 +7,8 @@ import re, os
 import sys
 import json
 import nltk
+import random
+
 from pathlib import Path
 from nltk.parse.generate import generate, demo_grammar
 from nltk import CFG
@@ -25,11 +27,14 @@ class InputPerturb:
         self.input_cfg_str: str = self.cfg_dict_to_str(self.input_cfg)
         self.cfg_diff: Dict = Utils.read_json(cfg_diff_file)
         # self.cfg_diff_str: str = self.cfg_dict_to_str(self.cfg_diff)
+        for s_i, sent in enumerate(self.input_sents,1):
+            print("%3d. %s" % (s_i, sent.strip()))
         
     def cfg_dict_to_str(self, input_cfg):
         res_str = "\n  "
         for lhs, rhs in input_cfg.items():
             res_str += f"{lhs} -> "
+            random.shuffle(rhs)
             for r_i, r in enumerate(rhs):
                 res_str += " ".join(r)
                 if r_i+1<len(rhs):
@@ -44,18 +49,23 @@ class InputPerturb:
     def get_cfg_grammar(self, cfg_str):
         return CFG.fromstring(cfg_str)
 
-    def gen_random_sentence(self, cfg_str, num_sents=10):
+    def gen_random_sentence(self, cfg_str, num_sents=23, max_length=10):
+        random.seed(Macros.SEED)
         grammar = self.get_cfg_grammar(cfg_str)
         print("\n***** INPUT CFG GRAMMAR *****")
         print(cfg_str)
         print("*****************************\n")
-        print("GENERATED SENTS:")
-        for sent in generate(grammar, n=num_sents):
-            print(sent)
+        print("\n***** GENERATED SENTS *****")
+        for n, sent in enumerate(generate(grammar, n=num_sents),1):
+            if len(sent)<=max_length:
+                print("%3d. %s" % (n, " ".join(sent)))
+                continue
+            # end if
         # end for
+        print("*****************************\n")
 
     def main(self):
-        self.gen_random_sentence(self.input_cfg_str, num_sents=10)
+        self.gen_random_sentence(self.input_cfg_str, num_sents=100)
         return
 
 

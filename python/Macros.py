@@ -19,4 +19,4 @@ class Macros:
     FMT_PER = "{:.1%}"
     FMT_FLOAT = "{:,.2f}"
     
-    
+    SEED = 27
