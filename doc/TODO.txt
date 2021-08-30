@@ -1,5 +1,10 @@
 TASKS
 
+  - [JL] make a new sentence generator. compared with the naive nltk generator,
+    it needs to keep the seed input word and perturb it by replacing existing 
+    words in the seed input with synonyms and adding new component in reference
+    cfg.
+
   - [JL] generate cfg difference given input cfg driven from data.
   
   - [JL] generate random sentences using diff_cfg.
