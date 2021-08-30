@@ -1,5 +1,5 @@
-# this script generates nlp grammar rule set 
-# given sentence input set
+# This script generates nlp grammar rule set 
+# given sentence input set.
 
 import re, os
 import sys
@@ -7,9 +7,12 @@ import json
 import nltk
 import benepar
 import spacy
+
+from pathlib import Path
 from nltk.corpus import treebank
 
 from Macros import Macros
+from Utils import Utils
 
 class BeneparCFG:
     benepar_parser_model = 'benepar_en3'
@@ -23,13 +26,6 @@ class BeneparCFG:
             nlp.add_pipe('benepar', config={'model': cls.benepar_parser_model})
         #end if
         return nlp
-
-    @classmethod
-    def read_input_sents(cls, data_file):
-        with open(data_file, 'r') as f:
-            lines = f.readlines()
-        #end with
-        return lines
 
     @classmethod
     def get_tree(cls, parser, sent):
@@ -159,22 +155,12 @@ class BeneparCFG:
         return _cfg_dict
 
     @classmethod
-    def write_cfg(cls, cfg_dict, cfg_file, pretty_format=False):
-        with open(cfg_file, 'w') as f:
-            if pretty_format:
-                json.dump(cfg_dict, f, indent=4)
-            else:
-                json.dump(cfg_dict, f)
-            # end if
-        # end with
-
-    @classmethod
     def get_cfgs(cls, data_file, cfg_file, pretty_format=False):
         parser = cls.load_parser()
-        sents: List = cls.read_input_sents(data_file)
+        sents: List = Utils.read_txt(data_file)
         cfg_dict = cls.get_cfg_dict(parser,sents,{})
         # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
-        cls.write_cfg(cls.trim_cfg_dict(cfg_dict), cfg_file, pretty_format=pretty_format)
+        Utils.write_json(cls.trim_cfg_dict(cfg_dict), cfg_file, pretty_format=pretty_format)
 
 
 class TreebankCFG:
@@ -242,25 +228,18 @@ class TreebankCFG:
         rulesets = cls.get_treebank_rules()
         cfg_dict = cls.convert_ruleset_to_dict(rulesets)
         # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
-        cls.write_cfg(cfg_dict, cfg_file, pretty_format=pretty_format)
+        Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
 
 
 class CFGDiff:
 
     def __init__(self, cfg_ref_file, cfg_ut_file, write_diff=True, diff_file=None, pretty_format=True):
-        self.cfg_ref = self.read_cfg(cfg_ref_file)
-        self.cfg_ut = self.read_cfg(cfg_ut_file)
+        self.cfg_ref = Utils.read_json(cfg_ref_file)
+        self.cfg_ut = Utils.read_json(cfg_ut_file)
         self.cfg_diff = self.get_cfg_diff()
         if write_diff and (diff_file is not None):
             self.write_cfg_diff(diff_file, pretty_format=pretty_format)
         # end if
-    
-    def read_cfg(self, cfg_file):
-        # read cfg json file
-        with open(cfg_file, 'r') as f:
-            return json.load(f)
-        # end with    
-        return None
 
     def check_list_inclusion(self, a_list, b_list):
         a_is = [a if a in b_list else None for a_i, a in enumerate(a_list)]
@@ -322,8 +301,6 @@ def main():
         write_diff=True, 
         diff_file=cfg_diff_file
     )
-
-
 
 
 if __name__=='__main__':

@@ -2,6 +2,7 @@
 import re, os
 import sys
 import json
+from pathlib import Path
 from nltk.corpus import treebank
 
 from Macros import Macros
