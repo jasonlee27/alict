@@ -223,7 +223,7 @@ class TreebankCFG:
     #     # end with
 
     @classmethod
-    def write_cfg(cls, cfg_dict, cfg_file, pretty_format=False):
+    def write_cfg(cls, cfg_dict: dict, cfg_file: Path, pretty_format=False):
         with open(cfg_file, 'w') as f:
             if pretty_format:
                 json.dump(cfg_dict, f, indent=4)
@@ -233,11 +233,16 @@ class TreebankCFG:
         # end with
 
     @classmethod
-    def get_cfgs(cls, cfg_file, pretty_format=False):
-        rulesets = cls.get_treebank_rules()
-        cfg_dict = cls.convert_ruleset_to_dict(rulesets)
-        # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
-        Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
+    def get_cfgs(cls, cfg_file: Path, pretty_format=False):
+        if not os.path.exists(cfg_file):
+            rulesets = cls.get_treebank_rules()
+            cfg_dict = cls.convert_ruleset_to_dict(rulesets)
+            # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
+            Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
+        else:
+            cfg_dict = Utils.read_json(cfg_file)
+        # end if
+        return cfg_dict
 
 def main():
     cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'

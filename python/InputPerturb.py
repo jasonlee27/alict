@@ -23,9 +23,9 @@ class InputPerturb:
                  input_cfg_file: Path,
                  cfg_diff_file: Path):
         self.input_sents: List[str] = Utils.read_txt(input_file)
-        self.input_cfg: Dict = Utils.read_json(input_cfg_file)
+        self.input_cfg: dict = Utils.read_json(input_cfg_file)
         self.input_cfg_str: str = self.cfg_dict_to_str(self.input_cfg)
-        self.cfg_diff: Dict = Utils.read_json(cfg_diff_file)
+        self.cfg_diff: dict = Utils.read_json(cfg_diff_file)
         # self.cfg_diff_str: str = self.cfg_dict_to_str(self.cfg_diff)
         for s_i, sent in enumerate(self.input_sents,1):
             print("%3d. %s" % (s_i, sent.strip()))
