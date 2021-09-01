@@ -5,10 +5,35 @@ Research questions:
 
 IDEA1:
     Given the test input sentences, we can generate set of context-free 
-    grammar(cfg) rules(L*). Also, researchers have worked on parsing 
+    grammar(CFG) rules(L*). Also, researchers have worked on parsing 
     natural languages (NLs) and cfg from large NL corpora (L_global). 
     I think that test inputs can be more diverse when we expand their grammar 
     and the grammar can be expanded from exploring difference beteen L_global 
     and L*. Knowing the difference and what cfg component can be used for 
     the grammar expansion, we can generate more diverse input templates and 
     more diverse input sentences.
+
+IDEA2:
+
+    Followed by the IDEA1, we implment probabilistic context-free
+    grammar (PCFG). The problem when we generate sentences using CFG
+    is that it is very unlikely to have semantically meaningful
+    sentences because CFG only takes structural correctness into
+    account. Therefore, naive sentence generator using the CFG
+    generates sentences with too many repetitive words or with no
+    context. When we extract and leverage probabilities over
+    production rules from dataset, the probabilities represents
+    naturalness of input language in real world, and ranking and
+    expanding grammars from the probability distribution will
+    generates more natural languages. Thereby, first, we generates
+    probability distribution from L_global. Second, when we sample
+    a production rule in parse tree of seed input and extract
+    candidate expanded production rules, we rank them by the
+    probability distribution, and select the top-k scored
+    rules. Third, we generates sentences from the seed input as
+    following conditions: 1. The generated sentences should be not
+    same as the seed input. 2. difference between the generated
+    sentences and seed input should be minimized (e.g. BLEU
+    score). 3. The generated sentence should be semantically high
+    confidence from language model(LM) such as BERT.  
+    
