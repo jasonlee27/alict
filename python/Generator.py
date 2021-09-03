@@ -235,7 +235,6 @@ class Generator:
             # end for
             temp_cfg = new_cfg.copy()
         # end while
-        print(new_cfg)
         return new_cfg
 
 
@@ -248,6 +247,11 @@ def main():
     seed_input = "I think this airline was great"
     generator = Generator(seed_input=seed_input, cfg_ref_file=cfg_ref_file)
     new_cfg = generator.generate_cfg()
+    for l,rs in new_cfg.items():
+        print(f"{l} -> ")
+        for r in rs[:20]:
+            print(f"        {r}")
+        print('\n')
 
 if __name__=='__main__':
     main()

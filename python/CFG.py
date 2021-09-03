@@ -175,25 +175,54 @@ class BeneparCFG:
 class TreebankCFG:
 
     @classmethod
-    def get_treebank_rules(cls):
+    def get_treebank_rules(cls, pcfg=False):
         if 'treebank' not in sys.modules:
             from nltk.corpus import treebank
+        # end if
+        if pcfg:
+            return [rule for tree in treebank.parsed_sents() for rule in tree.productions()]
         # end if
         return list(set(rule for tree in treebank.parsed_sents() for rule in tree.productions()))
 
     @classmethod
-    def convert_ruleset_to_dict(cls, ruleset):
+    def convert_ruleset_to_dict(cls, ruleset, prob=False):
         cfg_dict = dict()
         for r in ruleset:
             lhs = str(r.lhs())
+            r_tuple = tuple([f'\'{r}\'' if type(r) is str else str(r) for r in r.rhs()])
             if lhs not in cfg_dict.keys():
                 cfg_dict[lhs] = list()
             # end if
-            r_tuple = tuple([f'\'{r}\'' if type(r) is str else str(r) for r in r.rhs()])
-            if r_tuple not in cfg_dict[lhs]:
-                cfg_dict[lhs].append(r_tuple)
+
+            if prob:
+                tgt_index = None
+                for _r_i, _r in enumerate(cfg_dict[lhs]):
+                    if _r[0]==r_tuple:
+                        tgt_index = _r_i
+                        break
+                    # end if
+                # end for
+                if tgt_index:
+                    cfg_dict[lhs][tgt_index] = (
+                        cfg_dict[lhs][tgt_index][0],
+                        cfg_dict[lhs][tgt_index][1]+1
+                    )
+                else:
+                    cfg_dict[lhs].append((r_tuple,1))
+                # end if
+            else:
+                if r_tuple not in cfg_dict[lhs]:
+                    cfg_dict[lhs].append(r_tuple)
+                # end if
             # end if
         # end for
+        if prob:
+            _cfg_dict = cfg_dict.copy()
+            for lhs, rhss in _cfg_dict.items():
+                tot_freq = sum(map(lambda x: x[1], rhss))
+                cfg_dict[lhs] = [(rhs[0], rhs[1]*1./tot_freq) for rhs in rhss]
+            # end for
+        # end if
         return cfg_dict
 
     # @classmethod
@@ -239,33 +268,46 @@ class TreebankCFG:
             cfg_dict = cls.convert_ruleset_to_dict(rulesets)
             # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
             Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
-        else:
-            cfg_dict = Utils.read_json(cfg_file)
+            return cfg_dict
         # end if
-        return cfg_dict
+        return Utils.read_json(cfg_file)
+
+    @classmethod
+    def get_pcfgs(cls, pcfg_file: Path, pretty_format=False):
+        if not os.path.exists(pcfg_file):
+            rulesets = cls.get_treebank_rules(pcfg=True)
+            pcfg_dict = cls.convert_ruleset_to_dict(rulesets, prob=True)
+            Utils.write_json(pcfg_dict, pcfg_file, pretty_format=pretty_format)
+            return pcfg_dict
+        # end if
+        return Utils.read_json(pcfg_file)
+
 
 def main():
-    cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
-    input_file = Macros.this_dir / 'ex.txt'
-    cfg_ut_file = Macros.result_dir / 'ex_cfg.json'
-    cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'
+    # cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
+    # input_file = Macros.this_dir / 'ex.txt'
+    # cfg_ut_file = Macros.result_dir / 'ex_cfg.json'
+    # cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'
+    pcfg_ref_file = Macros.result_dir / 'treebank_pcfg.json'
 
-    # generate grammars
-    if not os.path.exists(cfg_ref_file):
-        TreebankCFG.get_cfgs(cfg_ref_file, pretty_format=True)
+    # # generate grammars
+    # if not os.path.exists(cfg_ref_file):
+    #     TreebankCFG.get_cfgs(cfg_ref_file, pretty_format=True)
+    # # end if
+    if not os.path.exists(pcfg_ref_file):
+        TreebankCFG.get_pcfgs(pcfg_ref_file, pretty_format=True)
     # end if
-    if not os.path.exists(cfg_ut_file):
-        BeneparCFG.get_cfgs(input_file, cfg_ut_file, pretty_format=True)
-    # end if
+    # if not os.path.exists(cfg_ut_file):
+    #     BeneparCFG.get_cfgs(input_file, cfg_ut_file, pretty_format=True)
+    # # end if
     
-    # compare the loded grammars
-    cfg_diff = CFGDiff(
-        cfg_ref_file=cfg_ref_file,
-        cfg_ut_file=cfg_ut_file,
-        write_diff=True, 
-        diff_file=cfg_diff_file
-    )
-
+    # # compare the loded grammars
+    # cfg_diff = CFGDiff(
+    #     cfg_ref_file=cfg_ref_file,
+    #     cfg_ut_file=cfg_ut_file,
+    #     write_diff=True, 
+    #     diff_file=cfg_diff_file
+    # )
 
 if __name__=='__main__':
     main()
