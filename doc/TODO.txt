@@ -1,10 +1,7 @@
 TASKS
 
-  - [JL] generate probability distribution over production rule in
-    reference CFG.
-
-  - [JL] given selected production rule in seed input, rank candidate
-    production rules using the probability distribution.
+  - [JL] using expanded grammar of seed input grammar, how can we restrict 
+    randomly generated sentences to meaningful natural language sentences?
     
   - [JL] make a new sentence generator. compared with the naive nltk generator,
     it needs to keep the seed input word and perturb it by replacing existing 
@@ -15,6 +12,11 @@ TASKS
 
   
 ==========
+  + [JL] generate probability distribution over production rule in
+    reference CFG.
+
+  + [JL] given selected production rule in seed input, rank candidate
+    production rules using the probability distribution.
 
   + [JL] generate random sentences using diff_cfg.
   
