@@ -6,13 +6,6 @@
                 "VP"
             ],
             "rule_from_ref": []
-        },
-        {
-            "rule_from_data": [
-                "TO",
-                "VP"
-            ],
-            "rule_from_ref": []
         }
     ],
     "NP": [
@@ -11638,15 +11631,8 @@
         },
         {
             "rule_from_data": [
-                "VB",
+                "VBP",
                 "SBAR"
-            ],
-            "rule_from_ref": []
-        },
-        {
-            "rule_from_data": [
-                "VBD",
-                "S"
             ],
             "rule_from_ref": []
         }
@@ -11891,41 +11877,7 @@
             ]
         }
     ],
-    "VBD": [
-        {
-            "rule_from_data": [
-                "'used'"
-            ],
-            "rule_from_ref": [
-                [
-                    "'used'"
-                ]
-            ]
-        },
-        {
-            "rule_from_data": [
-                "'was'"
-            ],
-            "rule_from_ref": [
-                [
-                    "'was'"
-                ]
-            ]
-        }
-    ],
-    "TO": [
-        {
-            "rule_from_data": [
-                "'to'"
-            ],
-            "rule_from_ref": [
-                [
-                    "'to'"
-                ]
-            ]
-        }
-    ],
-    "VB": [
+    "VBP": [
         {
             "rule_from_data": [
                 "'think'"
@@ -11944,6 +11896,18 @@
                 "VP"
             ],
             "rule_from_ref": []
+        }
+    ],
+    "VBD": [
+        {
+            "rule_from_data": [
+                "'was'"
+            ],
+            "rule_from_ref": [
+                [
+                    "'was'"
+                ]
+            ]
         }
     ],
     "ADJP": [

@@ -195,21 +195,7 @@ class TreebankCFG:
             # end if
 
             if prob:
-                tgt_index = None
-                for _r_i, _r in enumerate(cfg_dict[lhs]):
-                    if _r[0]==r_tuple:
-                        tgt_index = _r_i
-                        break
-                    # end if
-                # end for
-                if tgt_index:
-                    cfg_dict[lhs][tgt_index] = (
-                        cfg_dict[lhs][tgt_index][0],
-                        cfg_dict[lhs][tgt_index][1]+1
-                    )
-                else:
-                    cfg_dict[lhs].append((r_tuple,1))
-                # end if
+                cfg_dict[lhs].append(r_tuple)
             else:
                 if r_tuple not in cfg_dict[lhs]:
                     cfg_dict[lhs].append(r_tuple)
@@ -217,11 +203,17 @@ class TreebankCFG:
             # end if
         # end for
         if prob:
-            _cfg_dict = cfg_dict.copy()
-            for lhs, rhss in _cfg_dict.items():
-                tot_freq = sum(map(lambda x: x[1], rhss))
-                cfg_dict[lhs] = [(rhs[0], rhs[1]*1./tot_freq) for rhs in rhss]
+            _cfg_dict = dict()
+            for lhs, rhss in cfg_dict.items():
+                tot = len(rhss)
+                rhs_w_prob = list()
+                for rhs in set(rhss):
+                    num_occ = rhss.count(rhs)
+                    rhs_w_prob.append((rhs, num_occ*1./tot))
+                # end for
+                _cfg_dict[lhs] = rhs_w_prob
             # end for
+            return _cfg_dict
         # end if
         return cfg_dict
 
