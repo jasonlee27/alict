@@ -37,7 +37,8 @@ class BeneparCFG:
     def get_cfg_per_tree(cls, tree, rule_dict):
         left = tree._.labels
         if len(left)==0: # if terminal
-            re_search = re.search('\(([A-Z]+)\s(.+)\)', tree._.parse_string)
+            tree._.parse_string
+            re_search = re.search(r'\(([A-Z]+|[A-Z]+\$)\s(.+)\)', tree._.parse_string)
             rlabel = re_search.group(1)
             rword = re_search.group(2)
             plabel = tree._.parent._.labels[0]
@@ -58,7 +59,7 @@ class BeneparCFG:
                     if len(list(r._.labels))>0:
                         non_terminals.append(r._.labels[0])
                     else:
-                        re_search = re.search('\(([A-Z]+)\s(.+)\)', r._.parse_string)
+                        re_search = re.search(r'\(([A-Z]+|[A-Z]+\$)\s(.+)\)', r._.parse_string)
                         rlabel = re_search.group(1)
                         rword = re_search.group(2)
                         non_terminals.append(rlabel)
@@ -69,7 +70,7 @@ class BeneparCFG:
                     rule_dict[llabel].append(tuple(non_terminals))
                 # end if
             else:
-                re_search = re.search(f'\({llabel}\s\(([A-Z]+)\s(.+)\)\)$', tree._.parse_string)
+                re_search = re.search(f'\({llabel}\s\(([A-Z]+|[A-Z]+\$)\s(.+)\)\)$', tree._.parse_string)
                 rlabel = re_search.group(1)
                 rword = re_search.group(2)
                 if (rlabel) not in rule_dict[llabel]:
@@ -86,7 +87,9 @@ class BeneparCFG:
 
     @classmethod
     def get_cfg_dict_per_sent(cls, parser, sent, rule_dict):
+        print(sent)
         tree = cls.get_tree(parser,sent.strip())
+        print("~~~~~~~~~~~~")
         return cls.get_cfg_per_tree(tree, rule_dict)
 
     @classmethod
@@ -167,10 +170,19 @@ class BeneparCFG:
         Utils.write_json(cls.trim_cfg_dict(cfg_dict), cfg_file, pretty_format=pretty_format)
 
     @classmethod
-    def get_seed_cfg(cls, seed_input):
+    def get_seed_cfg(cls, seed_input, cfg_file=None, pretty_format=False):
+        cfg_dict = None
+        if cfg_file:
+            cfg_dict = Utils.read_json(cfg_file)
+            return cfg_dict
+        # end if
         parser = cls.load_parser()
-        return cls.get_cfg_dict_per_sent(parser,seed_input,{})
-
+        cfg_dict = cls.get_cfg_dict_per_sent(parser,seed_input,{})
+        cfg_dict = cls.trim_cfg_dict(cfg_dict)
+        if cfg_file:
+            Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
+        # end if
+        return cfg_dict
 
 class TreebankCFG:
 
@@ -204,8 +216,9 @@ class TreebankCFG:
         # end for
         if prob:
             _cfg_dict = dict()
+            tot = len(ruleset)
             for lhs, rhss in cfg_dict.items():
-                tot = len(rhss)
+                # tot = len(rhss)
                 rhs_w_prob = list()
                 for rhs in set(rhss):
                     num_occ = rhss.count(rhs)
@@ -286,20 +299,26 @@ def main():
     # if not os.path.exists(cfg_ref_file):
     #     TreebankCFG.get_cfgs(cfg_ref_file, pretty_format=True)
     # # end if
-    if not os.path.exists(pcfg_ref_file):
-        TreebankCFG.get_pcfgs(pcfg_ref_file, pretty_format=True)
+    # if not os.path.exists(pcfg_ref_file):
+    #     TreebankCFG.get_pcfgs(pcfg_ref_file, pretty_format=True)
     # end if
     # if not os.path.exists(cfg_ut_file):
     #     BeneparCFG.get_cfgs(input_file, cfg_ut_file, pretty_format=True)
     # # end if
-    
-    # # compare the loded grammars
-    # cfg_diff = CFGDiff(
-    #     cfg_ref_file=cfg_ref_file,
-    #     cfg_ut_file=cfg_ut_file,
-    #     write_diff=True, 
-    #     diff_file=cfg_diff_file
-    # )
+
+    for t_i, tree in enumerate(treebank.parsed_sents()):
+        for s in tree.subtrees(lambda t: t.label()=='NP'):
+            # if len(s.leaves())<10:
+            #     print(f"-> ",' '.join(s.leaves()))
+            children = [_s.label() for _s in s]
+            if children==['DT', 'NN', 'SBAR']:
+                print(f"-> ",' '.join(s.leaves()))
+                print(s)
+                print()
+            # end if
+        # end for
+    # end for
+   
 
 if __name__=='__main__':
     main()

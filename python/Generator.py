@@ -50,37 +50,23 @@ class CFGDiff:
                 for sr in seed_rhs:
                     sr = sr[0] if len(sr)==1 else tuple(sr)
                     if type(sr)==str:
-                        search = re.search("^terminal\:\:(.+)$", sr)
-                        if search:
-                            # when terminal
-                            sr = f"\'{search.group(1)}\'"
-                            if seed_lhs not in cfg_diff.keys():
-                                cfg_diff[seed_lhs] = {
-                                    "<from>": [sr],
-                                    "<to>": cfg_ref[seed_lhs] if sr in cfg_ref[seed_lhs] else sr
-                                }
-                            else:
-                                cfg_diff[seed_lhs]["from"].append(sr)
-                            # end if
+                        if not is_ref_pcfg:
+                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion([sr], rr) and [sr]!=list(rr)]
                         else:
-                            if not is_ref_pcfg:
-                                rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion([sr], rr) and [sr]!=rr[0]]
-                            else:
-                                rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion([sr], rr[0]) and [sr]!=rr[0]]
-                            # end if
-                            if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
-                                cfg_diff[seed_lhs] = {
-                                    sr: rule_from_ref
-                                }
-                            elif sr not in cfg_diff[seed_lhs].keys() and any(rule_from_ref):
-                                cfg_diff[seed_lhs][sr] = rule_from_ref
-                            # end if
+                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion([sr], rr[0]) and [sr]!=list(rr[0])]
+                        # end if
+                        if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
+                            cfg_diff[seed_lhs] = {
+                                sr: rule_from_ref
+                            }
+                        elif sr not in cfg_diff[seed_lhs].keys() and any(rule_from_ref):
+                            cfg_diff[seed_lhs][sr] = rule_from_ref
                         # end if
                     else:
                         if not is_ref_pcfg:
-                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion([sr], rr) and [sr]!=rr[0]]
+                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion(list(sr), rr) and sr!=rr]
                         else:
-                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion([sr], rr[0]) and [sr]!=rr[0]]
+                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion(list(sr), rr[0]) and sr!=rr[0]]
                         # end if
                         if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
                             cfg_diff[seed_lhs] = {
@@ -111,16 +97,15 @@ class Generator:
 
     def __init__(self, seed_input, cfg_ref_file, is_ref_pcfg=True):
         self.seed_input: str = seed_input
-        # self.cfg_seed: dict = self.get_seed_cfg()
-        self.cfg_seed = Utils.read_json(Macros.result_dir / 'ex_cfg.json')
+        self.cfg_seed: dict = self.get_seed_cfg()
         self.is_ref_pcfg: bool = is_ref_pcfg
         self.cfg_ref: dict = self.get_tb_ref_cfg(cfg_ref_file)
         self.cfg_diff: dict = self.get_cfg_diff()
         # self.cfg_comps: dict = self.get_expanded_cfg_component()
         
     
-    def get_seed_cfg(self):
-        return BeneparCFG.get_seed_cfg(self.seed_input)
+    def get_seed_cfg(self, cfg_file=None, pretty_format=False):
+        return BeneparCFG.get_seed_cfg(self.seed_input, cfg_file=cfg_file, pretty_format=pretty_format)
 
     def get_tb_ref_cfg(self, cfg_ref_file):
         if self.is_ref_pcfg:
@@ -189,8 +174,6 @@ class Generator:
 
         # Generate new cfg over seed input cfg
         temp_dict = copy.deepcopy(self.cfg_seed)
-        print(self.cfg_seed)
-        print()
         lhs_candids = self.sample_expandable_tpos_from_seed()
         candids = list()
         for lhs_seed, rhs_seed in temp_dict.items():
@@ -222,6 +205,7 @@ class Generator:
             if self.is_ref_pcfg:
                 lhs_seed, rhs_from, rhs_to, prob = candid
             else:
+                prob = -1
                 lhs_seed, rhs_from, rhs_to = candid
             # end if
 
@@ -237,7 +221,7 @@ class Generator:
             # If expanded rhs does not exists in seed cfg,
             # then we replace rhs with the new expanded rhs.
             if not already_exists and num_added_candids<num_candid:
-                print(f"*** {lhs_seed} -> FROM: {rhs_from}, TO:{rhs_to} ***")
+                print(f"***\n{lhs_seed} ->\n\tFROM: {rhs_from}\n\tTO:   {tuple(rhs_to)}\n\t(PROB: {prob})")
                 num_added_candids += 1
                 for rhs_i, rhs in enumerate(cfg_expanded[lhs_seed]):
                     rhs_key = tuple(rhs)
@@ -267,9 +251,10 @@ def main():
     cfg_seed_file = Macros.result_dir / 'ex_cfg.json'
     cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'
 
-    seed_input = "I think this airline was great"
+    seed_input = "I broke my arm playing tennis"
+    #seed_input = "I think this airline was great"
     generator = Generator(seed_input=seed_input, cfg_ref_file=cfg_ref_file)
-    cfg_expanded = generator.generate_cfg()
+    cfg_expanded = generator.generate_cfg(num_candid=20)
     # for l,rs in cfg_expanded.items():
     #     print(f"{l} -> ")
     #     for r in rs[:20]:
