@@ -14,7 +14,6 @@ IDEA1:
     more diverse input sentences.
 
 IDEA2:
-
     Followed by the IDEA1, we implment probabilistic context-free
     grammar (PCFG). The problem when we generate sentences using CFG
     is that it is very unlikely to have semantically meaningful
@@ -37,3 +36,34 @@ IDEA2:
     score). 3. The generated sentence should be semantically high
     confidence from language model(LM) such as BERT.  
     
+IDEA3:
+
+    for each NLP task and its model, there are multiple capabilities
+    to be tested. For example, "Short sentences with neutral
+    adjectives and nouns." and "Negated negative should be positive or
+    neutral" are two of capability descriptions in the Checklist and
+    sematic analysis task. For each capability description, it
+    describe the requirements/instructions for how the sentences and
+    its label have to look like. For "Short sentences with neutral
+    adjectives and nouns", it requires sentences to be short and have
+    neutral adjectives and nouns. Then we can list the requirements
+    as following:
+        1. len(sentence)<10
+        2. #{pos/neg} adjectives==0
+        3. #nouns>0 and #adjectives>0
+    Then, in dataset, we can select sentences that meet such
+    requirements, and use them as templates by replacing their
+    adjectives and nouns with others. Therefore, in order to get more
+    comprehensive templates, we can find data instances that meets
+    such requirements set from testing capability, and use them as a
+    new templates. Based on the idea, the steps are as following:
+    Given target NLP task, its dataset (it could be train/val/test
+    dataset) and its testing capabilities,
+        1. For each capability, we construct its requirements.
+        2. for data in {train/val/test} task relevant dataset,
+           we select all data instances that meets the requirements.
+        3. For each selected data from 2., we generate templates by
+           replacing adjectives/verb/nouns.
+        4. For each selected data from 2., we can also expand its
+           grammar and adding BERT suggested words.
+       
