@@ -1,8 +1,14 @@
 TASKS
 
+  - [JL] for each capability for testing NLP task, how do we extract
+    its requirements from the description and use them for finding the
+    most relevant data instances in dtaset.
+
   - [JL] using expanded grammar of seed input grammar, how can we restrict 
     randomly generated sentences to meaningful natural language sentences?
-    
+  
+==========
+
   - [JL] make a new sentence generator. compared with the naive nltk generator,
     it needs to keep the seed input word and perturb it by replacing existing 
     words in the seed input with synonyms and adding new component in reference
@@ -10,8 +16,6 @@ TASKS
   
   - [JL] manually generate more fine grained word categories e.g. pos_verb, neg_verb.
 
-  
-==========
   + [JL] generate probability distribution over production rule in
     reference CFG.
 
