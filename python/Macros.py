@@ -21,3 +21,13 @@ class Macros:
     FMT_FLOAT = "{:,.2f}"
     
     SEED = 27
+
+    ## NLP dataset
+    datasets = {
+        "sentiment_analysis": "stanfordSentimentTreebank"
+    }
+
+    # SST
+    sst_datasent_file = dataset_dir / "stanfordSentimentTreebank" / "datasetSentences.txt"
+    sst_dict_file = dataset_dir / "stanfordSentimentTreebank" / "dictionary.txt"
+    sst_label_file = dataset_dir / "stanfordSentimentTreebank" / "sentiment_labels.txt"
