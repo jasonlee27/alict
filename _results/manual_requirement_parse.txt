@@ -1,0 +1,104 @@
+Vocab_POS
+1.Short sentences with neutral adjectives and nouns
+search criteria: short sentence, sentence with neutral adj and nouns
+transformation: N/A
+output: neutral
+
+
+2.Short sentences with sentiment-laden adjectives
+search criteria: short sentence, sentence with pos/neg adj
+transformation: N/A
+output: same as sentiment of pos/neg
+
+
+3.Replace neutral words with other neutral words
+search criteria: N/A
+transformation: replace(neutral words, other neutral words)
+output: same as original
+
+4.Add positive phrases, fails if sent.goes down by > 0.1
+search criteria: N/A
+transformation: add(positive phrases)
+output: score>original score-0.1
+
+
+5.Add negative phrases, fails if sent. goes up by > 0.1
+search criteria: N/A
+transformation: add(negative phrases)
+output: score<original score+0.1
+
+
+Robustness
+1.Add randomly generated URLs and handles to tweets
+search criteria: N/A
+transformation: add(randomly generated URLs and handles to tweets)
+output: same as original
+
+2.Swap one character with its neighbor
+search criteria: N/A
+transformation: swap one character
+output: same as original
+
+
+NER
+1.Switching locations should not change predictions
+search criteria: sentences with locations
+transformation: replace(locations, other locations)
+output: same as original
+
+
+2.Switching person names should not change predictions
+search criteria: sentences with person names
+transformation: replace(person names, other person names)
+output: same as original
+
+
+Temporal
+1.Sentiment change over time, present should prevail
+search criteria: sentences with seniment verb
+transformation: replace(sentiment verb, past(sentiment verb))+add(negate(sentiment verb))
+output: opposite as original
+
+
+Negation
+1.Negated negative should be positive or neutral
+search criteria: negated sentence with negative label
+transformation: negate(negated sentence)
+output: positive or neutral
+
+
+2.Negated neutral should still be neutral
+search criteria: neutral sentence
+transformation: negate(neutral sentence)
+output: neutral
+
+
+3.Negation of negative at the end, should be positive or neutral
+search criteria: sentence starting with "I think"
+transformation: past(sentence)+add(negated sentence)
+output: positive or neutral
+
+
+4.Negated positive with neutral content in the middle
+search criteria: negated sentence starting with "I think"
+transformation: add(neutral content) in the middle
+output: same as original
+
+
+SRL
+1.Author sentiment is more important than of others
+search criteria: two sentences starting with "{noun} think" with
+different labels
+transformation: select one and replace({noun}, I)+"but"+other one replace({noun}, I)
+output: same as second original one
+
+
+2.parsing sentiment in (question, \"yes\") form
+search criteria: N/A
+transformation: "Do I think that"+sentence+"?"+"yes"
+output: same as original
+
+3.Parsing sentiment in (question, \"no\") form
+search criteria: N/A
+transformation: "Do I think that"+sentence+"?"+"no"
+output: opposite as original

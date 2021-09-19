@@ -1,0 +1,12 @@
+[
+    {
+        "capability": "Vocab_POS",
+        "description": "Short sentences with neutral adjectives and nouns",
+        "length": 10,
+        "contains": [
+            "neutral adjective",
+            "noun"
+        ],
+        "label": "neutral"
+    }
+]
