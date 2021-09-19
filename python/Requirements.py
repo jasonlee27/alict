@@ -61,6 +61,7 @@ class Requirements:
                     if d.lower()=="short sentences with neutral adjectives and nouns":
                         reqs.append({
                             "capability": cap,
+                            "description": d,
                             "length": 10,
                             "contains": ["neutral adjective", "noun"],
                             "label": "neutral"

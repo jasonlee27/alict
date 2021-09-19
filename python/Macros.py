@@ -28,6 +28,9 @@ class Macros:
     }
 
     # SST
-    sst_datasent_file = dataset_dir / "stanfordSentimentTreebank" / "datasetSentences.txt"
-    sst_dict_file = dataset_dir / "stanfordSentimentTreebank" / "dictionary.txt"
-    sst_label_file = dataset_dir / "stanfordSentimentTreebank" / "sentiment_labels.txt"
+    sst_datasent_file: Path = dataset_dir / "stanfordSentimentTreebank" / "datasetSentences.txt"
+    sst_dict_file: Path = dataset_dir / "stanfordSentimentTreebank" / "dictionary.txt"
+    sst_label_file: Path = dataset_dir / "stanfordSentimentTreebank" / "sentiment_labels.txt"
+
+    # SentiWordNet
+    swn_data_file: Path = download_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"
