@@ -98,7 +98,7 @@ class SearchOperator:
             # end for
             if cond_number>0 and len(found_w)==cond_number:
                 selected.append((s_i, s, l))
-            elif cond_number<0:
+            elif cond_number<0 and len(found_w)>0:
                 selected.append((s_i, s, l))
             # end if
         # end for
@@ -123,10 +123,9 @@ class SearchOperator:
                 match = re.search(r"(\d+)?\s?(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
                 num, sentiment, pos, is_plural = match.groups()
                 if pos is None: raise("Tag of POS is not valid!")
+                num = -1
                 if num is None and not is_plural:
                     num = 1
-                elif num is None and is_plural:
-                    num = -1
                 # end if
                 
                 if sentiment is None:
@@ -186,8 +185,8 @@ class Search:
         for req in requirements:
             req_obj = SearchOperator(req)
             selected = req_obj.search(sents)
-            # for s in selected:
-            #     print(s)
+            for s in selected:
+                print(s)
             print(f"{len(selected)} out of {len(sents)}")
         # end for
         return
