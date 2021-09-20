@@ -65,10 +65,24 @@ class Requirements:
                             "search": {
                                 "length": "<10",
                                 "contains": {
-                                    "POS": ["neutral adj", "neutral noun"],
+                                    "POS": ["neutral adjs", "neutral nouns"],
                                     "word": None
                                 },
                                 "label": "neutral"
+                            },
+                            "transform": None
+                        })
+                    elif d.lower()=="short sentences with sentiment-laden adjectives":
+                        reqs.append({
+                            "capability": cap,
+                            "description": d,
+                            "search": {
+                                "length": "<10",
+                                "contains": {
+                                    "POS": ["positive adjs", "negative adjs"],
+                                    "word": None
+                                },
+                                "label": "same as POS"
                             },
                             "transform": None
                         })

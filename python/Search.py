@@ -56,20 +56,57 @@ class SearchOperator:
         _sents = sents.copy()
         for op, param in self.search_reqs.items():
             print(f"{op}: {param}")
-            _sents = self.search_method[op](_sents, param)
+            _sents = self.search_method[op](_sents)
         # end for
         return _sents
 
-    def search_by_len(self, sents, param):
+    def search_by_len(self, sents):
+        param = self.search_reqs["length"]
         match = re.search(r"([<>]=?|==)(\d+)", param)
         op, _len = match.groups()
         _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
         return [(s_i," ".join(s),l) for s_i, s, l in _sents if len(s) < int(_len)]
 
-    def search_by_label(self, sents, param):
-        return [(s_i,s,l) for s_i, s, l in sents if l==param]
-    
-    def search_by_contains(self, sents, param):
+    def search_by_label(self, sents):
+        label = self.search_reqs["label"]
+        if label=="neutral" or label=="positive" or label=="negative":
+            _sents = [(s_i,s,l) for s_i, s, l in sents if l==label]
+        elif label.startswith("same as"):
+            key = "POS"
+            if label.split()[-1]!=key:
+                key = label.split()[-1]
+            # end if
+            poss = self.search_reqs["contains"][key]
+            _sents = list()
+            for pos in poss:
+                pos_sentiment = pos.split()[0]
+                _sents.extend([(s_i,s,l) for s_i, s, l in sents if l==pos_sentiment])
+            # end for
+        # end if
+        return _sents
+
+    def _search_by_contains(self, sents, cond_key, cond_number):
+        # sents: (s_i, tokenizes sentence, label)
+        target_words = SENT_DICT[cond_key]
+        selected = list()
+        for s_i, s, l in sents:
+            found_w = list()
+            for w in s:
+                if w.lower() in target_words:
+                    found_w.append(w)
+                # end if
+            # end for
+            if cond_number>0 and len(found_w)==cond_number:
+                selected.append((s_i, s, l))
+            elif cond_number<0:
+                selected.append((s_i, s, l))
+            # end if
+        # end for
+        return selected
+                    
+        
+    def search_by_contains(self, sents):
+        param = self.search_reqs["contains"]
         _sents = sents.copy()
         _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
         word_contain = param["word"]
@@ -83,19 +120,24 @@ class SearchOperator:
         if tpos_contain is not None:
             temp_sents = list()
             for cond in tpos_contain:
-                cond_key = "_".join(cond.split())
-                target_words = SENT_DICT[cond_key]
-                for s_i, s, l in _sents:
-                    found = False
-                    for w in s:
-                        if w in target_words and not found:
-                            temp_sents.append((s_i, s, l))
-                            found = True
-                        # end if
+                match = re.search(r"(\d+)?\s?(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
+                num, sentiment, pos, is_plural = match.groups()
+                if pos is None: raise("Tag of POS is not valid!")
+                if num is None and not is_plural:
+                    num = 1
+                elif num is None and is_plural:
+                    num = -1
+                # end if
+                
+                if sentiment is None:
+                    for _sentiment in ["neutral","positive","negative"]:
+                        temp_sents.extend(self._search_by_contains(_sents, f"{_sentiment}_{pos}", num))
                     # end for
-                # end for
+                else:
+                    temp_sents = self._search_by_contains(_sents, f"{sentiment}_{pos}", num)
+                # end if
+                _sents = temp_sents
             # end for
-            _sents = temp_sents
         # end if
         return [(s_i," ".join(s),l) for s_i, s, l in _sents]
 
@@ -129,9 +171,9 @@ class Search:
             s = float(s)
             labels[s_i] = "neutral"
             if s<=0.4:
-                labels[s_i] = "neg"
+                labels[s_i] = "negative"
             elif s>0.6:
-                labels[s_i] = "pos"
+                labels[s_i] = "positive"
             # end if
         #end for
         return [(s_i,s,labels[s_i]) for s_i, s in sents]
@@ -144,8 +186,8 @@ class Search:
         for req in requirements:
             req_obj = SearchOperator(req)
             selected = req_obj.search(sents)
-            for s in selected:
-                print(s)
+            # for s in selected:
+            #     print(s)
             print(f"{len(selected)} out of {len(sents)}")
         # end for
         return
@@ -156,3 +198,4 @@ if __name__=="__main__":
         reqs = Requirements.get_requirements(task)
         Search.search_sst(reqs)
     # end for
+    
