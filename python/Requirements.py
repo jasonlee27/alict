@@ -62,9 +62,15 @@ class Requirements:
                         reqs.append({
                             "capability": cap,
                             "description": d,
-                            "length": 10,
-                            "contains": ["neutral adjective", "noun"],
-                            "label": "neutral"
+                            "search": {
+                                "length": "<10",
+                                "contains": {
+                                    "POS": ["neutral adj", "neutral noun"],
+                                    "word": None
+                                },
+                                "label": "neutral"
+                            },
+                            "transform": None
                         })
                     # end if
                 # end for
