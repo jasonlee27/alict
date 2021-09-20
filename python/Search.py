@@ -17,7 +17,22 @@ from Requirements import Requirements
 from Sentiwordnet import Sentiwordnet
 
 
-datasets = Macros.datasets
+DATASETS = Macros.datasets
+
+# get pos/neg/neu words from SentiWordNet
+SENT_WORDS = Sentiwordnet.get_sent_words()
+SENT_DICT = {
+    "positive_adj": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="adj" and SENT_WORDS[w]["label"]=="positive"],
+    "negative_adj": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="adj" and SENT_WORDS[w]["label"]=="negative"],
+    "neutral_adj": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="adj" and SENT_WORDS[w]["label"]=="pure neutral"],
+    "positive_verb": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="verb" and SENT_WORDS[w]["label"]=="positive"],
+    "negative_verb": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="verb" and SENT_WORDS[w]["label"]=="negative"],
+    "neutral_verb": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="verb" and SENT_WORDS[w]["label"]=="pure neutral"],
+    "positive_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="positive"],
+    "negative_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="negative"],
+    "neutral_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="pure neutral"]
+}
+
 
 class SearchOperator: 
     
@@ -55,12 +70,34 @@ class SearchOperator:
         return [(s_i,s,l) for s_i, s, l in sents if l==param]
     
     def search_by_contains(self, sents, param):
+        _sents = sents.copy()
+        _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
         word_contain = param["word"]
         tpos_contain = param["POS"]
-        # for s in sents:
-        #     # TODO
-        # # end for
-        return sents
+        if word_contain is not None:
+            for w in word_contain:
+                _sents = [(s_i, s, l) for s_i, s, l in _sents if w in s]
+            # end for
+        # end if
+        
+        if tpos_contain is not None:
+            temp_sents = list()
+            for cond in tpos_contain:
+                cond_key = "_".join(cond.split())
+                target_words = SENT_DICT[cond_key]
+                for s_i, s, l in _sents:
+                    found = False
+                    for w in s:
+                        if w in target_words and not found:
+                            temp_sents.append((s_i, s, l))
+                            found = True
+                        # end if
+                    # end for
+                # end for
+            # end for
+            _sents = temp_sents
+        # end if
+        return [(s_i," ".join(s),l) for s_i, s, l in _sents]
 
 
 class TransformOperator:
@@ -107,16 +144,15 @@ class Search:
         for req in requirements:
             req_obj = SearchOperator(req)
             selected = req_obj.search(sents)
-            # for s in selected:
-            #     if s[-1]=='neutral':
-            #         print(s)
+            for s in selected:
+                print(s)
             print(f"{len(selected)} out of {len(sents)}")
         # end for
         return
 
 
 if __name__=="__main__":
-    for task in datasets.keys():
+    for task in DATASETS.keys():
         reqs = Requirements.get_requirements(task)
         Search.search_sst(reqs)
     # end for

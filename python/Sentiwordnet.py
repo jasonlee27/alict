@@ -131,10 +131,14 @@ class Sentiwordnet:
 
     @classmethod
     def get_sent_words(cls):
-        rdata = cls.read_raw_data()
-        score_data = cls.get_word_score(rdata)
-        data = cls.get_word_label(score_data)
-        return
+        if os.path.exists(Macros.result_dir / "swn_word_labels.json"):
+            data = Utils.read_json(Macros.result_dir / "swn_word_labels.json")
+        else:
+            rdata = cls.read_raw_data()
+            score_data = cls.get_word_score(rdata)
+            data = cls.get_word_label(score_data)
+        # end if
+        return data
 
 
 if __name__=="__main__":
