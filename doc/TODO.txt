@@ -1,20 +1,31 @@
 TASKS
 
-  - [JL] for each capability for testing NLP task, how do we extract
-    its requirements from the description and use them for finding the
-    most relevant data instances in dtaset.
-
+  - [JL] extract requirements from checklist sentiment analysis
+    evaluation descriptions and search and transform input from
+    database that meets the extracted requirements.
+  
   - [JL] using expanded grammar of seed input grammar, how can we restrict 
     randomly generated sentences to meaningful natural language sentences?
-  
-==========
 
   - [JL] make a new sentence generator. compared with the naive nltk generator,
     it needs to keep the seed input word and perturb it by replacing existing 
     words in the seed input with synonyms and adding new component in reference
     cfg.
   
-  - [JL] manually generate more fine grained word categories e.g. pos_verb, neg_verb.
+==========
+ 
+  + [JL] search and transform input from dataset that meets the
+    requirements extracted from 1st description (Short sentences with
+    neutral adj and nouns)
+    
+  + [JL] generate manual sentiment analysis requirements from
+    description of linguistic capabilities from checklist paper.
+
+  + [JL] for each capability for testing NLP task, how do we extract
+    its requirements from the description and use them for finding the
+    most relevant data instances in dtaset.
+  
+  + [JL] manually generate more fine grained word categories e.g. pos_verb, neg_verb.
 
   + [JL] generate probability distribution over production rule in
     reference CFG.
