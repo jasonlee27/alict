@@ -4,10 +4,19 @@
         "description": "Short sentences with neutral adjectives and nouns",
         "search": {
             "length": "<10",
-            "contains": {
+            "include": {
                 "POS": [
                     "neutral adjs",
                     "neutral nouns"
+                ],
+                "word": null
+            },
+            "exclude": {
+                "POS": [
+                    "positive adjs",
+                    "negative adjs",
+                    "positive nouns",
+                    "negative nouns"
                 ],
                 "word": null
             },
@@ -20,11 +29,15 @@
         "description": "Short sentences with sentiment-laden adjectives",
         "search": {
             "length": "<10",
-            "contains": {
+            "include": {
                 "POS": [
                     "positive adjs",
                     "negative adjs"
                 ],
+                "word": null
+            },
+            "exclude": {
+                "POS": null,
                 "word": null
             },
             "label": "same as POS"
