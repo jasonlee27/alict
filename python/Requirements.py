@@ -62,44 +62,47 @@ class Requirements:
                         reqs.append({
                             "capability": cap,
                             "description": d,
-                            "search": {
+                            "search": [{
                                 "length": "<10",
                                 "include": {
-                                    "POS": [
-                                        "neutral adjs", 
-                                        "neutral nouns",
-                                    ],
+                                    "POS": ["neutral adjs", "neutral nouns"],
                                     "word": None
                                 },
                                 "exclude": {
-                                    "POS": [
-                                        "positive adjs", 
-                                        "negative adjs", 
-                                        "positive nouns", 
-                                        "negative nouns", 
-                                        ],
+                                    "POS": ["positive adjs", "negative adjs", "positive nouns", "negative nouns"],
                                     "word": None
                                 },
                                 "label": "neutral"
-                            },
+                            }],
                             "transform": None
                         })
                     elif d.lower()=="short sentences with sentiment-laden adjectives":
                         reqs.append({
                             "capability": cap,
                             "description": d,
-                            "search": {
+                            "search": [{
                                 "length": "<10",
                                 "include": {
-                                    "POS": ["positive adjs", "negative adjs"],
+                                    "POS": ["positive adjs"],
                                     "word": None
                                 },
                                 "exclude": {
-                                    "POS": None,
+                                    "POS": ["negative adjs", "negative verbs", "negative nouns"],
                                     "word": None
                                 },
-                                "label": "same as POS"
-                            },
+                                "label": "positive"
+                            }, {
+                                "length": "<10",
+                                "include": {
+                                    "POS": ["negative adjs"],
+                                    "word": None
+                                },
+                                "exclude": {
+                                    "POS": ["positive adjs", "positive verbs", "positive nouns"],
+                                    "word": None
+                                },
+                                "label": "negative"
+                            }],
                             "transform": None
                         })
                     # end if

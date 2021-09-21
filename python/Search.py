@@ -39,7 +39,7 @@ class SearchOperator:
     def __init__(self, requirements):
         self.capability = requirements['capability']
         self.description = requirements['description']
-        self.search_reqs = requirements['search']
+        self.search_reqs_list = requirements['search']
         self.transform_reqs = requirements['transform']
         self.search_method = {
             "length": self.search_by_len,
@@ -54,35 +54,43 @@ class SearchOperator:
         print(f"{self.capability}: {self.description}")
 
     def search(self, sents):
-        _sents = sents.copy()
-        for op, param in self.search_reqs.items():
-            print(f"{op}: {param}")
-            _sents = self.search_method[op](_sents)
+        selected = list()
+        for search_reqs in self.search_reqs_list:
+            _sents = sents.copy()
+            for op, param in search_reqs.items():
+                print(f"{op}: {param}")
+                _sents = self.search_method[op](_sents, search_reqs)
+            # end for
+            selected.extend(_sents)
         # end for
-        return _sents
+        return list(set(selected))
 
-    def search_by_len(self, sents):
-        param = self.search_reqs["length"]
+    def search_by_len(self, sents, search_reqs):
+        param = search_reqs["length"]
         match = re.search(r"([<>]=?|==)(\d+)", param)
         op, _len = match.groups()
         _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
         return [(s_i," ".join(s),l) for s_i, s, l in _sents if len(s) < int(_len)]
 
-    def search_by_label(self, sents):
-        label = self.search_reqs["label"]
+    def search_by_label(self, sents, search_reqs):
+        label = search_reqs["label"]
         if label=="neutral" or label=="positive" or label=="negative":
             _sents = [(s_i,s,l) for s_i, s, l in sents if l==label]
-        elif label.startswith("same as"):
-            key = "POS"
-            if label.split()[-1]!=key:
-                key = label.split()[-1]
-            # end if
-            poss = self.search_reqs["include"][key]
-            _sents = list()
-            for pos in poss:
-                pos_sentiment = pos.split()[0]
-                _sents.extend([(s_i,s,l) for s_i, s, l in sents if l==pos_sentiment])
-            # end for
+        # elif label.startswith("same as"):
+        #     print(label)
+        #     match = re.search(r"same as\s?(include|exclude)?\s?(POS|word)?", label)
+        #     in_or_ex_clude, search_key = match.groups()
+        #     if in_or_ex_clude is None:
+        #         in_or_ex_clude = "include"
+        #     # end if
+        #     poss = search_reqs[in_or_ex_clude][search_key]
+        #     _sents = list()
+        #     for pos in poss:
+        #         pos_sentiment = pos.split()[0]
+        #         _sents.extend([(s_i,s,l) for s_i, s, l in sents if l==pos_sentiment])
+        #     # end for
+        else:
+            return sents
         # end if
         return _sents
 
@@ -105,8 +113,8 @@ class SearchOperator:
         # end for
         return selected
         
-    def search_by_include(self, sents):
-        param = self.search_reqs["include"]
+    def search_by_include(self, sents, search_reqs):
+        param = search_reqs["include"]
         _sents = sents.copy()
         _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
         word_include = param["word"]
@@ -157,8 +165,8 @@ class SearchOperator:
         # end for
         return selected
 
-    def search_by_exclude(self, sents):
-        param = self.search_reqs["exclude"]
+    def search_by_exclude(self, sents, search_reqs):
+        param = search_reqs["exclude"]
         _sents = sents.copy()
         _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
         word_exclude = param["word"]
