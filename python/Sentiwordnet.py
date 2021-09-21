@@ -24,20 +24,36 @@ class Sentiwordnet:
         data = dict()
         lns = Utils.read_txt(Macros.swn_data_file)
         for l in lns:
-            l = l.strip()
-            if not l.startswith("#"):
+            if not l.strip().startswith("#"):
                 l_split = l.split("\t")
-                word_key = l_split[4].split("#")[0]+"::"+l_split[0]
-                if word_key not in data.keys():
-                    data[word_key] = list()
+                word_key_list = l_split[4].split()
+                if len(word_key_list)==1:
+                    word_key = word_key_list[0].split("#")[0]+"::"+l_split[0]
+                    if word_key not in data.keys():
+                        data[word_key] = list()
+                    # end if
+                    data[word_key].append({
+                        "id": l_split[1],
+                        "pos_score": l_split[2],
+                        "neg_score": l_split[3],
+                        "synsetterms": l_split[4],
+                        "order": int(l_split[4].split("#")[-1])
+                    })
+                else:
+                    for word_key in word_key_list:
+                        _word_key = word_key.split("#")[0]+"::"+l_split[0]
+                        if _word_key not in data.keys():
+                            data[_word_key] = list()
+                        # end if
+                        data[_word_key].append({
+                            "id": l_split[1],
+                            "pos_score": l_split[2],
+                            "neg_score": l_split[3],
+                            "synsetterms": l_split[4],
+                            "order": int(l_split[4].split("#")[-1])
+                        })
+                    # end for
                 # end if
-                data[word_key].append({
-                    "id": l_split[1],
-                    "pos_score": l_split[2],
-                    "neg_score": l_split[3],
-                    "synsetterms": l_split[4],
-                    "order": int(l_split[4].split("#")[-1])
-                })
             # end if
         # end for
         for w in data.keys():
