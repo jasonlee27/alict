@@ -64,8 +64,20 @@ class Requirements:
                             "description": d,
                             "search": {
                                 "length": "<10",
-                                "contains": {
-                                    "POS": ["neutral adjs", "neutral nouns"],
+                                "include": {
+                                    "POS": [
+                                        "neutral adjs", 
+                                        "neutral nouns",
+                                    ],
+                                    "word": None
+                                },
+                                "exclude": {
+                                    "POS": [
+                                        "positive adjs", 
+                                        "negative adjs", 
+                                        "positive nouns", 
+                                        "negative nouns", 
+                                        ],
                                     "word": None
                                 },
                                 "label": "neutral"
@@ -78,8 +90,12 @@ class Requirements:
                             "description": d,
                             "search": {
                                 "length": "<10",
-                                "contains": {
+                                "include": {
                                     "POS": ["positive adjs", "negative adjs"],
+                                    "word": None
+                                },
+                                "exclude": {
+                                    "POS": None,
                                     "word": None
                                 },
                                 "label": "same as POS"

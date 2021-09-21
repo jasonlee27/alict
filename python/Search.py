@@ -43,7 +43,8 @@ class SearchOperator:
         self.transform_reqs = requirements['transform']
         self.search_method = {
             "length": self.search_by_len,
-            "contains": self.search_by_contains,
+            "include": self.search_by_include,
+            "exclude": self.search_by_exclude,
             "label": self.search_by_label
             # "replace": cls.search_by_replacement,
             # "add": cls.search_by_add,
@@ -76,7 +77,7 @@ class SearchOperator:
             if label.split()[-1]!=key:
                 key = label.split()[-1]
             # end if
-            poss = self.search_reqs["contains"][key]
+            poss = self.search_reqs["include"][key]
             _sents = list()
             for pos in poss:
                 pos_sentiment = pos.split()[0]
@@ -85,7 +86,7 @@ class SearchOperator:
         # end if
         return _sents
 
-    def _search_by_contains(self, sents, cond_key, cond_number):
+    def _search_by_include(self, sents, cond_key, cond_number):
         # sents: (s_i, tokenizes sentence, label)
         target_words = SENT_DICT[cond_key]
         selected = list()
@@ -103,23 +104,22 @@ class SearchOperator:
             # end if
         # end for
         return selected
-                    
         
-    def search_by_contains(self, sents):
-        param = self.search_reqs["contains"]
+    def search_by_include(self, sents):
+        param = self.search_reqs["include"]
         _sents = sents.copy()
         _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
-        word_contain = param["word"]
-        tpos_contain = param["POS"]
-        if word_contain is not None:
-            for w in word_contain:
+        word_include = param["word"]
+        tpos_include = param["POS"]
+        if word_include is not None:
+            for w in word_include:
                 _sents = [(s_i, s, l) for s_i, s, l in _sents if w in s]
             # end for
         # end if
         
-        if tpos_contain is not None:
+        if tpos_include is not None:
             temp_sents = list()
-            for cond in tpos_contain:
+            for cond in tpos_include:
                 match = re.search(r"(\d+)?\s?(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
                 num, sentiment, pos, is_plural = match.groups()
                 if pos is None: raise("Tag of POS is not valid!")
@@ -130,10 +130,58 @@ class SearchOperator:
                 
                 if sentiment is None:
                     for _sentiment in ["neutral","positive","negative"]:
-                        temp_sents.extend(self._search_by_contains(_sents, f"{_sentiment}_{pos}", num))
+                        temp_sents.extend(self._search_by_include(_sents, f"{_sentiment}_{pos}", num))
                     # end for
                 else:
-                    temp_sents = self._search_by_contains(_sents, f"{sentiment}_{pos}", num)
+                    temp_sents = self._search_by_include(_sents, f"{sentiment}_{pos}", num)
+                # end if
+                _sents = temp_sents
+            # end for
+        # end if
+        return [(s_i," ".join(s),l) for s_i, s, l in _sents]
+
+    def _search_by_exclude(self, sents, cond_key):
+        # sents: (s_i, tokenizes sentence, label)
+        target_words = SENT_DICT[cond_key]
+        selected = list()
+        for s_i, s, l in sents:
+            found_w = list()
+            for w in s:
+                if w.lower() in target_words:
+                    found_w.append(w)
+                # end if
+            # end for
+            if len(found_w)==0:
+                selected.append((s_i, s, l))
+            # end if
+        # end for
+        return selected
+
+    def search_by_exclude(self, sents):
+        param = self.search_reqs["exclude"]
+        _sents = sents.copy()
+        _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
+        word_exclude = param["word"]
+        tpos_exclude = param["POS"]
+        if word_exclude is not None:
+            for w in word_exclude:
+                _sents = [(s_i, s, l) for s_i, s, l in _sents if w not in s]
+            # end for
+        # end if
+        
+        if tpos_exclude is not None:
+            temp_sents = list()
+            for cond in tpos_exclude:
+                match = re.search(r"(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
+                sentiment, pos, is_plural = match.groups()
+                if pos is None: raise("Tag of POS is not valid!")
+                
+                if sentiment is None:
+                    for _sentiment in ["neutral","positive","negative"]:
+                        temp_sents.extend(self._search_by_exclude(_sents, f"{_sentiment}_{pos}"))
+                    # end for
+                else:
+                    temp_sents = self._search_by_exclude(_sents, f"{sentiment}_{pos}")
                 # end if
                 _sents = temp_sents
             # end for
