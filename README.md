@@ -1,5 +1,4 @@
-# nlptest
-NLPtest Project Description
+# nlptest: Project Description
 
 ## Goal
 The project is to generate comprehensive sets of test cases for evaluating NLP models on multiple linguistic capabilities of the NLP task.
