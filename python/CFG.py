@@ -38,7 +38,7 @@ class BeneparCFG:
         left = tree._.labels
         if len(left)==0: # if terminal
             tree._.parse_string
-            re_search = re.search(r'\(([A-Z]+|[A-Z]+\$)\s(.+)\)', tree._.parse_string)
+            re_search = re.search(r'\((\:|\,|\'\'|\`\`|\.|[A-Z]+|[A-Z]+\$)\s(.+)\)', tree._.parse_string)
             rlabel = re_search.group(1)
             rword = re_search.group(2)
             plabel = tree._.parent._.labels[0]
@@ -59,7 +59,7 @@ class BeneparCFG:
                     if len(list(r._.labels))>0:
                         non_terminals.append(r._.labels[0])
                     else:
-                        re_search = re.search(r'\(([A-Z]+|[A-Z]+\$)\s(.+)\)', r._.parse_string)
+                        re_search = re.search(r'\((\:|\,|\'\'|\`\`|\.|[A-Z]+|[A-Z]+\$)\s(.+)\)', r._.parse_string)
                         rlabel = re_search.group(1)
                         rword = re_search.group(2)
                         non_terminals.append(rlabel)
@@ -70,7 +70,7 @@ class BeneparCFG:
                     rule_dict[llabel].append(tuple(non_terminals))
                 # end if
             else:
-                re_search = re.search(f'\({llabel}\s\(([A-Z]+|[A-Z]+\$)\s(.+)\)\)$', tree._.parse_string)
+                re_search = re.search(f'\({llabel}\s\((\:|\,|\'\'|\`\`|\.|[A-Z]+|[A-Z]+\$)\s(.+)\)\)$', tree._.parse_string)
                 rlabel = re_search.group(1)
                 rword = re_search.group(2)
                 if (rlabel) not in rule_dict[llabel]:
@@ -87,9 +87,8 @@ class BeneparCFG:
 
     @classmethod
     def get_cfg_dict_per_sent(cls, parser, sent, rule_dict):
-        print(sent)
         tree = cls.get_tree(parser,sent.strip())
-        print("~~~~~~~~~~~~")
+        print(tree._.parse_string)
         return cls.get_cfg_per_tree(tree, rule_dict)
 
     @classmethod

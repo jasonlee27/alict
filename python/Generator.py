@@ -16,7 +16,8 @@ from nltk import CFG
 from Macros import Macros
 from Utils import Utils
 from CFG import BeneparCFG, TreebankCFG
-
+from Search import Search
+from Requirements import Requirements
 random.seed(Macros.SEED)
 
 class CFGDiff:
@@ -42,8 +43,8 @@ class CFGDiff:
             # end if
         # end if
         return False
-            
-    def get_cfg_diff(self, cfg_seed, cfg_ref, is_ref_pcfg=False):
+    
+    def get_cfg_diff(self, cfg_seed, cfg_ref, is_ref_pcfg=False, comp_length=4):
         cfg_diff = dict()
         for seed_lhs, seed_rhs in cfg_seed.items():
             try:
@@ -51,9 +52,9 @@ class CFGDiff:
                     sr = sr[0] if len(sr)==1 else tuple(sr)
                     if type(sr)==str:
                         if not is_ref_pcfg:
-                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion([sr], rr) and [sr]!=list(rr)]
+                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion([sr], rr) and [sr]!=list(rr) and len(rr)<=comp_length]
                         else:
-                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion([sr], rr[0]) and [sr]!=list(rr[0])]
+                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion([sr], rr[0]) and [sr]!=list(rr[0]) and len(rr[0])<=comp_length]
                         # end if
                         if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
                             cfg_diff[seed_lhs] = {
@@ -64,9 +65,9 @@ class CFGDiff:
                         # end if
                     else:
                         if not is_ref_pcfg:
-                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion(list(sr), rr) and sr!=rr]
+                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion(list(sr), rr) and sr!=rr and len(rr)<=comp_length]
                         else:
-                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion(list(sr), rr[0]) and sr!=rr[0]]
+                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion(list(sr), rr[0]) and sr!=rr[0] and len(rr[0])<=comp_length]
                         # end if
                         if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
                             cfg_diff[seed_lhs] = {
@@ -95,14 +96,13 @@ class CFGDiff:
 
 class Generator:
 
-    def __init__(self, seed_input, cfg_ref_file, is_ref_pcfg=True):
+    def __init__(self, seed_input, cfg_ref_file, is_ref_pcfg=False):
         self.seed_input: str = seed_input
         self.cfg_seed: dict = self.get_seed_cfg()
         self.is_ref_pcfg: bool = is_ref_pcfg
         self.cfg_ref: dict = self.get_tb_ref_cfg(cfg_ref_file)
         self.cfg_diff: dict = self.get_cfg_diff()
         # self.cfg_comps: dict = self.get_expanded_cfg_component()
-        
     
     def get_seed_cfg(self, cfg_file=None, pretty_format=False):
         return BeneparCFG.get_seed_cfg(self.seed_input, cfg_file=cfg_file, pretty_format=pretty_format)
@@ -165,101 +165,118 @@ class Generator:
         # end if
         return False
 
-    def generate_cfg(self, num_candid=5):
-        # There are two randomness in generating new cfg:
-        #     1. given a seed input and its tags of pos, which pos you would like to expand?
-        #     2. given selected a tag of pos, which expanded rule will be replaced with?
-        # Solution:
-        #     1.randomly select them
+    # def generate_cfg(self, num_candid=5):
+    #     # There are two randomness in generating new cfg:
+    #     #     1. given a seed input and its tags of pos, which pos you would like to expand?
+    #     #     2. given selected a tag of pos, which expanded rule will be replaced with?
+    #     # Solution:
+    #     #     1.randomly select them
 
-        # Generate new cfg over seed input cfg
-        temp_dict = copy.deepcopy(self.cfg_seed)
-        lhs_candids = self.sample_expandable_tpos_from_seed()
-        candids = list()
-        for lhs_seed, rhs_seed in temp_dict.items():
-            if lhs_seed in lhs_candids:
-                rhs_diffs = self.cfg_diff[lhs_seed]
-                for rhs_from in rhs_seed:
-                    if len(rhs_from)==1:
-                        rhs_from_key = rhs_from[0]
-                    else:
-                        rhs_from_key = tuple(rhs_from)
-                    # end if
-                    sampled_rhs_to = list()
-                    for _rhs_from, _rhs_to in rhs_diffs.items():
-                        if _rhs_from==rhs_from_key:
-                            if self.is_ref_pcfg:
-                                candids.extend([(lhs_seed, rhs_from_key, r[0], r[1]) for r in _rhs_to])
-                            else:
-                                candids.extend([(lhs_seed, rhs_from_key, r) for r in _rhs_to])
-                        # end if
-                    # end for
-                # end for
-            # end if
-        # end for
-        candids = sorted(candids, key=lambda x: x[-1], reverse=True)
-        cfgs_expanded = list()
-        num_added_candids = 0
-        for candid in candids:
-            cfg_expanded = copy.deepcopy(self.cfg_seed)
-            if self.is_ref_pcfg:
-                lhs_seed, rhs_from, rhs_to, prob = candid
-            else:
-                prob = -1
-                lhs_seed, rhs_from, rhs_to = candid
-            # end if
+    #     # Generate new cfg over seed input cfg
+    #     temp_dict = copy.deepcopy(self.cfg_seed)
+    #     lhs_candids = self.sample_expandable_tpos_from_seed()
+    #     candids = list()
+    #     for lhs_seed, rhs_seed in temp_dict.items():
+    #         if lhs_seed in lhs_candids:
+    #             rhs_diffs = self.cfg_diff[lhs_seed]
+    #             for rhs_from in rhs_seed:
+    #                 if len(rhs_from)==1:
+    #                     rhs_from_key = rhs_from[0]
 
-            # Check if expanded rhs already exists in seed cfg
-            # If exists, we ignore the expansion
-            already_exists = False
-            for rhs_i, rhs in enumerate(cfg_expanded[lhs_seed]):
-                if rhs==rhs_to:
-                    already_exists = True
-                # end if
-            # end for
+    #                 else:
+    #                     rhs_from_key = tuple(rhs_from)
+    #                 # end if
+    #                 sampled_rhs_to = list()
+    #                 for _rhs_from, _rhs_to in rhs_diffs.items():
+    #                     if _rhs_from==rhs_from_key:
+    #                         if self.is_ref_pcfg:
+    #                             candids.extend([(lhs_seed, rhs_from_key, r[0], r[1]) for r in _rhs_to])
+    #                         else:
+    #                             candids.extend([(lhs_seed, rhs_from_key, r) for r in _rhs_to])
+    #                     # end if
+    #                 # end for
+    #             # end for
+    #         # end if
+    #     # end for
+    #     candids = sorted(candids, key=lambda x: x[-1], reverse=True)
+    #     cfgs_expanded = list()
+    #     num_added_candids = 0
+    #     for candid in candids:
+    #         cfg_expanded = copy.deepcopy(self.cfg_seed)
+    #         if self.is_ref_pcfg:
+    #             lhs_seed, rhs_from, rhs_to, prob = candid
+    #         else:
+    #             prob = -1
+    #             lhs_seed, rhs_from, rhs_to = candid
+    #         # end if
 
-            # If expanded rhs does not exists in seed cfg,
-            # then we replace rhs with the new expanded rhs.
-            if not already_exists and num_added_candids<num_candid:
-                print(f"***\n{lhs_seed} ->\n\tFROM: {rhs_from}\n\tTO:   {tuple(rhs_to)}\n\t(PROB: {prob})")
-                num_added_candids += 1
-                for rhs_i, rhs in enumerate(cfg_expanded[lhs_seed]):
-                    rhs_key = tuple(rhs)
-                    if len(rhs)==1:
-                        rhs_key = rhs[0]
-                    # end if
-                    if rhs_key==rhs_from:
-                        cfg_expanded[lhs_seed][rhs_i] = rhs_to
-                    # end if
-                # end for
-                if cfg_expanded==self.cfg_seed:
-                    print("CFG is not expanded.")
-                else:
-                    cfgs_expanded.append(self.get_expanded_cfg_component(cfg_expanded))
-                    print()
-                # end if
-            elif num_added_candids==num_candid:
-                return cfgs_expanded
-            # end if
-        # end for
-        return cfgs_expanded
+    #         # Check if expanded rhs already exists in seed cfg
+    #         # If exists, we ignore the expansion
+    #         already_exists = False
+    #         for rhs_i, rhs in enumerate(cfg_expanded[lhs_seed]):
+    #             if rhs==rhs_to:
+    #                 already_exists = True
+    #             # end if
+    #         # end for
 
+    #         # If expanded rhs does not exists in seed cfg,
+    #         # then we replace rhs with the new expanded rhs.
+    #         if not already_exists and num_added_candids<num_candid:
+    #             print(f"***\n{lhs_seed} ->\n\tFROM: {rhs_from}\n\tTO:   {tuple(rhs_to)}\n\t(PROB: {prob})")
+    #             num_added_candids += 1
+    #             for rhs_i, rhs in enumerate(cfg_expanded[lhs_seed]):
+    #                 rhs_key = tuple(rhs)
+    #                 if len(rhs)==1:
+    #                     rhs_key = rhs[0]
+    #                 # end if
+    #                 if rhs_key==rhs_from:
+    #                     cfg_expanded[lhs_seed][rhs_i] = rhs_to
+    #                 # end if
+    #             # end for
+    #             if cfg_expanded==self.cfg_seed:
+    #                 print("CFG is not expanded.")
+    #             else:
+    #                 cfgs_expanded.append(self.get_expanded_cfg_component(cfg_expanded))
+    #                 print()
+    #             # end if
+    #         elif num_added_candids==num_candid:
+    #             return cfgs_expanded
+    #         # end if
+    #     # end for
+    #     return cfgs_expanded
+
+        
+# def main():
+#     cfg_ref_file = Macros.result_dir / 'treebank_pcfg.json'
+#     input_file = Macros.this_dir / 'ex.txt'
+#     cfg_seed_file = Macros.result_dir / 'ex_cfg.json'
+#     cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'
+
+#     seed_input = "I broke my arm playing tennis"
+#     #seed_input = "I think this airline was great"
+#     generator = Generator(seed_input=seed_input, cfg_ref_file=cfg_ref_file)
+#     cfg_expanded = generator.generate_cfg(num_candid=20)
 
 def main():
-    cfg_ref_file = Macros.result_dir / 'treebank_pcfg.json'
-    input_file = Macros.this_dir / 'ex.txt'
-    cfg_seed_file = Macros.result_dir / 'ex_cfg.json'
-    cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'
+    cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
+    # cfg_seed_file = Macros.result_dir / 'ex_cfg.json'
+    # cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'
 
-    seed_input = "I broke my arm playing tennis"
-    #seed_input = "I think this airline was great"
-    generator = Generator(seed_input=seed_input, cfg_ref_file=cfg_ref_file)
-    cfg_expanded = generator.generate_cfg(num_candid=20)
-    # for l,rs in cfg_expanded.items():
-    #     print(f"{l} -> ")
-    #     for r in rs[:20]:
-    #         print(f"        {r}")
-    #     print('\n')
-
+    for task in Macros.datasets.keys():
+        print(task)
+        reqs = Requirements.get_requirements(task)
+        for selected in Search.search_sst(reqs):
+            print(selected["description"])
+            for inp in selected["selected_inputs"]:
+                _id, seed = inp[0], inp[1]
+                print(f"{_id}: {seed}")
+                generator = Generator(seed_input=seed, cfg_ref_file=cfg_ref_file)
+                print(generator.cfg_diff)
+            # end for
+            print()
+        # end for
+    # end for
+    return
+        
 if __name__=='__main__':
     main()

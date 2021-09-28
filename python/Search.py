@@ -51,14 +51,13 @@ class SearchOperator:
             # "remove": cls.search_by_remove
         }
         self.transform_methos = dict() # TODO
-        print(f"{self.capability}: {self.description}")
 
     def search(self, sents):
         selected = list()
         for search_reqs in self.search_reqs_list:
             _sents = sents.copy()
             for op, param in search_reqs.items():
-                print(f"{op}: {param}")
+                # print(f"{op}: {param}")
                 _sents = self.search_method[op](_sents, search_reqs)
             # end for
             selected.extend(_sents)
@@ -208,7 +207,7 @@ class TransformOperator:
             # "add": cls.search_by_add,
             # "remove": cls.search_by_remove
         }
-        print(f"{self.capability}: {self.description}")
+        # print(f"{self.capability}: {self.description}")
         
 
     def transform(self):
@@ -232,18 +231,21 @@ class Search:
             # end if
         #end for
         return [(s_i,s,labels[s_i]) for s_i, s in sents]
-            
+    
     @classmethod
     def search_sst(cls, requirements):
         # sent: (index, sentence)
         # label: (index, label score) 
         sents = cls.get_label_sst(Macros.sst_datasent_file, Macros.sst_label_file)
+        result = list()
         for req in requirements:
             req_obj = SearchOperator(req)
-            selected = req_obj.search(sents)
-            for s in selected:
-                print(s)
-            print(f"{len(selected)} out of {len(sents)}")
+            selected = [(s[0],s[1].strip()[:-1]) if s[1].strip()[-1]=="." else (s[0],s[1].strip()) for s in req_obj.search(sents)]
+            selected_res = {
+                "description": req["description"],
+                "selected_inputs": selected
+            }
+            yield selected_res
         # end for
         return
 
