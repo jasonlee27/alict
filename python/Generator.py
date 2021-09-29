@@ -65,9 +65,9 @@ class CFGDiff:
                         # end if
                     else:
                         if not is_ref_pcfg:
-                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion(list(sr), rr) and sr!=rr and len(rr)<=comp_length]
+                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion(list(sr), rr) and list(sr)!=rr and len(rr)<=comp_length]
                         else:
-                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion(list(sr), rr[0]) and sr!=rr[0] and len(rr[0])<=comp_length]
+                            rule_from_ref = [rr for rr in cfg_ref[seed_lhs] if self.check_list_inclusion(list(sr), rr[0]) and list(sr)!=rr[0] and len(rr[0])<=comp_length]
                         # end if
                         if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
                             cfg_diff[seed_lhs] = {
@@ -271,7 +271,10 @@ def main():
                 _id, seed = inp[0], inp[1]
                 print(f"{_id}: {seed}")
                 generator = Generator(seed_input=seed, cfg_ref_file=cfg_ref_file)
-                print(generator.cfg_diff)
+                for key, value in generator.cfg_diff.items():
+                    for _key, _value in value.items():
+                        print(f"LHS: {key}\n\tFROM: {_key}\n\tTO: {_value[:5]}\n")
+                print("\n\n")
             # end for
             print()
         # end for
