@@ -1,5 +1,5 @@
-# This script is to generate perturbed sentences
-# given a seed input and CFGs.
+# This script is to perturb cfg of sentences
+# given a seed input and reference CFGs.
 
 from typing import *
 
@@ -94,7 +94,7 @@ class CFGDiff:
         # end with
 
 
-class Generator:
+class CFGExpander:
 
     def __init__(self, seed_input, cfg_ref_file, is_ref_pcfg=False):
         self.seed_input: str = seed_input
@@ -254,7 +254,7 @@ class Generator:
 
 #     seed_input = "I broke my arm playing tennis"
 #     #seed_input = "I think this airline was great"
-#     generator = Generator(seed_input=seed_input, cfg_ref_file=cfg_ref_file)
+#     generator = CFGExpander(seed_input=seed_input, cfg_ref_file=cfg_ref_file)
 #     cfg_expanded = generator.generate_cfg(num_candid=20)
 
 def main():
@@ -270,7 +270,7 @@ def main():
             for inp in selected["selected_inputs"]:
                 _id, seed = inp[0], inp[1]
                 print(f"{_id}: {seed}")
-                generator = Generator(seed_input=seed, cfg_ref_file=cfg_ref_file)
+                generator = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                 for key, value in generator.cfg_diff.items():
                     for _key, _value in value.items():
                         print(f"LHS: {key}\n\tFROM: {_key}\n\tTO: {_value[:5]}\n")
