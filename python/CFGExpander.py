@@ -24,12 +24,16 @@ class CFGDiff:
 
     def __init__(self, 
                  cfg_ref: dict, 
-                 cfg_seed: dict, 
-                 is_ref_pcfg = False, write_diff=False, 
-                 diff_file=None, pretty_format=True):
+                 cfg_seed: dict,
+                 comp_length=5,
+                 is_ref_pcfg=False,
+                 write_diff=False, 
+                 diff_file=None,
+                 pretty_format=True):
         self.cfg_diff = self.get_cfg_diff(
             cfg_seed=cfg_seed, cfg_ref=cfg_ref, 
-            is_ref_pcfg=is_ref_pcfg
+            is_ref_pcfg=is_ref_pcfg,
+            comp_length = comp_length
         )
         # if write_diff and (diff_file is not None):
         #     self.write_cfg_diff(diff_file, pretty_format=pretty_format)
@@ -48,7 +52,6 @@ class CFGDiff:
         cfg_diff = dict()
         for seed_lhs, seed_rhs in cfg_seed.items():
             try:
-                print(seed_rhs)
                 for _sr in seed_rhs:
                     sr = _sr["pos"]
                     sr = sr[0] if len(sr)==1 else tuple(sr)
@@ -123,28 +126,28 @@ class CFGExpander:
         # compared with ref grammer
         return CFGDiff(cfg_ref=self.cfg_ref,cfg_seed=self.cfg_seed, is_ref_pcfg=self.is_ref_pcfg).cfg_diff
         
-    def get_expanded_cfg_component(self, cfg_dict):
-        # generate new perturbed cfg expanded from seed cfg 
-        # and cfg difference between the seed and reference cfg
-        keys = ['N/A']
-        while(any(keys)):
-            keys = list()
-            for lhs, rhss in cfg_dict.items():
-                _key = [r for rhs in rhss for r in rhs if r not in cfg_dict.keys() and r in self.cfg_ref.keys()]
-                if any(_key):
-                    keys += _key
-                # end if
-            # end for
-            for k in keys:
-                if k in self.cfg_ref.keys():
-                    if self.is_ref_pcfg:
-                        cfg_dict[k] = [r[0] for r in self.cfg_ref[k]]
-                    else:
-                        cfg_dict[k] = self.cfg_ref[k]
-                # end if
-            # end for
-        # end while
-        return cfg_dict
+    # def get_expanded_cfg_component(self, cfg_dict):
+    #     # generate new perturbed cfg expanded from seed cfg 
+    #     # and cfg difference between the seed and reference cfg
+    #     keys = ['N/A']
+    #     while(any(keys)):
+    #         keys = list()
+    #         for lhs, rhss in cfg_dict.items():
+    #             _key = [r for rhs in rhss for r in rhs if r not in cfg_dict.keys() and r in self.cfg_ref.keys()]
+    #             if any(_key):
+    #                 keys += _key
+    #             # end if
+    #         # end for
+    #         for k in keys:
+    #             if k in self.cfg_ref.keys():
+    #                 if self.is_ref_pcfg:
+    #                     cfg_dict[k] = [r[0] for r in self.cfg_ref[k]]
+    #                 else:
+    #                     cfg_dict[k] = self.cfg_ref[k]
+    #             # end if
+    #         # end for
+    #     # end while
+    #     return cfg_dict
 
     # def generate(cfg_dict, seed_input, items=["S"], num_sents=20):
     #     # generate final perturbed sentences.
@@ -276,15 +279,18 @@ def main():
                 _id, seed = inp[0], inp[1]
                 print(f"{_id}: {seed}")
                 generator = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
+                print(generator.tree_seed)
+                print(generator.cfg_seed)
                 for key, value in generator.cfg_diff.items():
                     for _key, _value in value.items():
-                        print(f"LHS: {key}\n\tFROM: {_key}\n\tTO: {_value[:5]}\n")
+                        print(f"WORD: {_value[1]}\nLHS: {key}\n\tFROM: {_key}\n\tTO: {_value[0][:5]}\n")
                 print("\n\n")
             # end for
             print()
         # end for
     # end for
     return
-        
+
+
 if __name__=='__main__':
     main()

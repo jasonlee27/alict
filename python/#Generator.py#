@@ -37,13 +37,15 @@ class Generator:
         self.editor = Editor()
 
     def get_masked_input(self):
-        self.seed.cfg_seed
+        seed_cfg = self.seed.cfg_seed
+        
         for key, value in self.seed.cfg_diff.items():
             lhs = key
             for _key, _value in value.items():
                 rhs_from = _key
                 rhs_to = _value[0]
                 words = _value[1]
+                
                 
         
         pass

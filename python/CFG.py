@@ -60,22 +60,26 @@ class BeneparCFG:
 
             if len(list(tree._.children))>0:
                 non_terminals = list()
+                non_terminal_words = list()
                 for r in tree._.children:
                     if len(list(r._.labels))>0:
                         non_terminals.append(r._.labels[0])
+                        non_terminal_words.append(str(r))
                     else:
                         re_search = re.search(r'\((\:|\,|\'\'|\`\`|\.|\-?[A-Z]+\-?|[A-Z]+\$)\s(.+)\)', r._.parse_string)
                         rlabel = re_search.group(1)
                         rword = re_search.group(2)
                         non_terminals.append(rlabel)
+                        non_terminal_words.append(str(r))
                     # end if
                     rule_dict = cls.get_cfg_per_tree(r, rule_dict)
                 # end for
-                if len(non_terminals)>0 and (tuple(non_terminals) not in rule_dict[llabel]):
-                    rule_dict[llabel].append({
-                        "pos": tuple(non_terminals),
-                        "word": str(tree)                        
-                    })
+                _rule_dict = {
+                    "pos": tuple(non_terminals),
+                    "word": tuple(non_terminal_words)                       
+                }
+                if len(non_terminals)>0 and (_rule_dict not in rule_dict[llabel]):
+                    rule_dict[llabel].append(_rule_dict)
                 # end if
             else:
                 re_search = re.search(f'\({llabel}\s\((\:|\,|\'\'|\`\`|\.|\-?[A-Z]+\-?|[A-Z]+\$)\s(.+)\)\)$', tree._.parse_string)
