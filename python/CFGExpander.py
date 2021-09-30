@@ -98,11 +98,14 @@ class CFGExpander:
 
     def __init__(self, seed_input, cfg_ref_file, is_ref_pcfg=False):
         self.seed_input: str = seed_input
-        self.cfg_seed: dict = self.get_seed_cfg()
+        tree_dict = self.get_seed_cfg()
+        self.tree_seed = tree_dict["tree"]
+        self.cfg_seed: dict = tree_dict["rule"]
         self.is_ref_pcfg: bool = is_ref_pcfg
         self.cfg_ref: dict = self.get_tb_ref_cfg(cfg_ref_file)
         self.cfg_diff: dict = self.get_cfg_diff()
         # self.cfg_comps: dict = self.get_expanded_cfg_component()
+        del tree_dict
     
     def get_seed_cfg(self, cfg_file=None, pretty_format=False):
         return BeneparCFG.get_seed_cfg(self.seed_input, cfg_file=cfg_file, pretty_format=pretty_format)

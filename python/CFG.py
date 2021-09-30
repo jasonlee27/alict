@@ -88,17 +88,19 @@ class BeneparCFG:
     @classmethod
     def get_cfg_dict_per_sent(cls, parser, sent, rule_dict):
         tree = cls.get_tree(parser,sent.strip())
-        print(tree._.parse_string)
-        return cls.get_cfg_per_tree(tree, rule_dict)
-
-    @classmethod
-    def get_cfg_dict(cls, parser, sents, rule_dict):
-        for s in sents:
-            # tree = cls.get_tree(parser,s.strip())
-            # rule_dict = cls.get_cfg_per_tree(tree, rule_dict)
-            rule_dict = cls.get_cfg_dict_per_sent(parser, s, rule_dict)
-        # end for
-        return rule_dict
+        return {
+            "tree": tree._.parse_string,
+            "rule": cls.get_cfg_per_tree(tree, rule_dict)
+        }
+    
+    # @classmethod
+    # def get_cfg_dict(cls, parser, sents, rule_dict):
+    #     for s in sents:
+    #         # tree = cls.get_tree(parser,s.strip())
+    #         # rule_dict = cls.get_cfg_per_tree(tree, rule_dict)
+    #         rule_dict = cls.get_cfg_dict_per_sent(parser, s, rule_dict)
+    #     # end for
+    #     return rule_dict
 
     # @classmethod
     # def convert_cfg_dict_to_str(cls, cfg_dict):
@@ -132,7 +134,7 @@ class BeneparCFG:
     @classmethod
     def trim_cfg_dict(cls, cfg_dict):
         _cfg_dict = dict()
-        for lhs, rhs in cfg_dict.copy().items():
+        for lhs, rhs in cfg_dict["rule"].copy().items():
             _rhs = list()
             for r in rhs:
                 _r = list()
@@ -158,15 +160,18 @@ class BeneparCFG:
             # end for
             _cfg_dict[lhs] = _rhs
         # end for
-        return _cfg_dict
+        return {
+            "tree": cfg_dict["tree"],
+            "rule": _cfg_dict
+        }
 
-    @classmethod
-    def get_cfgs(cls, data_file, cfg_file, pretty_format=False):
-        parser = cls.load_parser()
-        sents: List = Utils.read_txt(data_file)
-        cfg_dict = cls.get_cfg_dict(parser,sents,{})
-        # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
-        Utils.write_json(cls.trim_cfg_dict(cfg_dict), cfg_file, pretty_format=pretty_format)
+    # @classmethod
+    # def get_cfgs(cls, data_file, cfg_file, pretty_format=False):
+    #     parser = cls.load_parser()
+    #     sents: List = Utils.read_txt(data_file)
+    #     cfg_dict = cls.get_cfg_dict(parser,sents,{})
+    #     # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
+    #     Utils.write_json(cls.trim_cfg_dict(cfg_dict), cfg_file, pretty_format=pretty_format)
 
     @classmethod
     def get_seed_cfg(cls, seed_input, cfg_file=None, pretty_format=False):
@@ -178,9 +183,9 @@ class BeneparCFG:
         parser = cls.load_parser()
         cfg_dict = cls.get_cfg_dict_per_sent(parser,seed_input,{})
         cfg_dict = cls.trim_cfg_dict(cfg_dict)
-        if cfg_file:
-            Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
-        # end if
+        # if cfg_file:
+        #     Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
+        # # end if
         return cfg_dict
 
 class TreebankCFG:
@@ -255,15 +260,15 @@ class TreebankCFG:
     #         f.write(cfg_str)
     #     # end with
 
-    @classmethod
-    def write_cfg(cls, cfg_dict: dict, cfg_file: Path, pretty_format=False):
-        with open(cfg_file, 'w') as f:
-            if pretty_format:
-                json.dump(cfg_dict, f, indent=4)
-            else:
-                json.dump(cfg_dict, f)
-            # end if
-        # end with
+    # @classmethod
+    # def write_cfg(cls, cfg_dict: dict, cfg_file: Path, pretty_format=False):
+    #     with open(cfg_file, 'w') as f:
+    #         if pretty_format:
+    #             json.dump(cfg_dict, f, indent=4)
+    #         else:
+    #             json.dump(cfg_dict, f)
+    #         # end if
+    #     # end with
 
     @classmethod
     def get_cfgs(cls, cfg_file: Path, pretty_format=False):
