@@ -37,15 +37,20 @@ class BeneparCFG:
     def get_cfg_per_tree(cls, tree, rule_dict):
         left = tree._.labels
         if len(left)==0: # if terminal
-            tree._.parse_string
             re_search = re.search(r'\((\:|\,|\'\'|\`\`|\.|\-?[A-Z]+\-?|[A-Z]+\$)\s(.+)\)', tree._.parse_string)
             rlabel = re_search.group(1)
             rword = re_search.group(2)
             plabel = tree._.parent._.labels[0]
             if rlabel not in rule_dict.keys():
-                rule_dict[rlabel] = [f'terminal::{rword}']
+                rule_dict[rlabel] = [{
+                    "pos": f'\'{rword}\'',
+                    "word": str(tree)
+                }]
             elif (rlabel, rword) not in rule_dict[rlabel]:
-                rule_dict[rlabel].append(f'terminal::{rword}')
+                rule_dict[rlabel].append({
+                    "pos": f'\'{rword}\'',
+                    "word": str(tree)
+                })
             # end if
         else:
             llabel = left[0]
@@ -67,26 +72,38 @@ class BeneparCFG:
                     rule_dict = cls.get_cfg_per_tree(r, rule_dict)
                 # end for
                 if len(non_terminals)>0 and (tuple(non_terminals) not in rule_dict[llabel]):
-                    rule_dict[llabel].append(tuple(non_terminals))
+                    rule_dict[llabel].append({
+                        "pos": tuple(non_terminals),
+                        "word": str(tree)                        
+                    })
                 # end if
             else:
                 re_search = re.search(f'\({llabel}\s\((\:|\,|\'\'|\`\`|\.|\-?[A-Z]+\-?|[A-Z]+\$)\s(.+)\)\)$', tree._.parse_string)
                 rlabel = re_search.group(1)
                 rword = re_search.group(2)
                 if (rlabel) not in rule_dict[llabel]:
-                    rule_dict[llabel].append((rlabel))
+                    rule_dict[llabel].append({
+                        "pos": (rlabel),
+                        "word": str(tree)
+                    })
                 # end if
                 if rlabel not in rule_dict.keys():
-                    rule_dict[rlabel] = [f'terminal::{rword}']
+                    rule_dict[rlabel] = [{
+                        "pos": f'\'{rword}\'',
+                        "word": str(tree)
+                    }]
                 elif f'terminal::{rword}' not in rule_dict[rlabel]:
-                    rule_dict[rlabel].append(f'terminal::{rword}')
+                    rule_dict[rlabel].append({
+                        "pos": f'\'{rword}\'',
+                        "word": str(tree)
+                    })
                 # end if
             # end if
         # end if
         return rule_dict
 
     @classmethod
-    def get_cfg_dict_per_sent(cls, parser, sent, rule_dict):
+    def get_cfg_dict_per_sent(cls, parser, sent, rule_dict, rule_word_dict):
         tree = cls.get_tree(parser,sent.strip())
         return {
             "tree": tree._.parse_string,
@@ -131,39 +148,39 @@ class BeneparCFG:
     #         f.write(cfg_str)
     #     # end with
 
-    @classmethod
-    def trim_cfg_dict(cls, cfg_dict):
-        _cfg_dict = dict()
-        for lhs, rhs in cfg_dict["rule"].copy().items():
-            _rhs = list()
-            for r in rhs:
-                _r = list()
-                if type(r) is tuple:
-                    for x in r:
-                        if x.startswith('terminal::'):
-                            _r.append(f"\'{x.split('terminal::')[-1]}\'")
-                        else:
-                            _r.append(x)
-                        # end if
-                    # end for
-                    _rhs.append(tuple(_r))
-                else:
-                    if r.startswith('terminal::'):
-                        _r.append(f"\'{r.split('terminal::')[-1]}\'")
-                    else:
-                        _r.append(r)
-                    # end if
-                # end if
-                if tuple(_r) not in _rhs:
-                    _rhs.append(tuple(_r))
-                # end if
-            # end for
-            _cfg_dict[lhs] = _rhs
-        # end for
-        return {
-            "tree": cfg_dict["tree"],
-            "rule": _cfg_dict
-        }
+    # @classmethod
+    # def trim_cfg_dict(cls, cfg_dict):
+    #     _cfg_dict = dict()
+    #     for lhs, rhs in cfg_dict["rule"].copy().items():
+    #         _rhs = list()
+    #         for r in rhs:
+    #             _r = list()
+    #             if type(r) is tuple:
+    #                 for x in r:
+    #                     if x.startswith('terminal::'):
+    #                         _r.append(f"\'{x.split('terminal::')[-1]}\'")
+    #                     else:
+    #                         _r.append(x)
+    #                     # end if
+    #                 # end for
+    #                 _rhs.append(tuple(_r))
+    #             else:
+    #                 if r.startswith('terminal::'):
+    #                     _r.append(f"\'{r.split('terminal::')[-1]}\'")
+    #                 else:
+    #                     _r.append(r)
+    #                 # end if
+    #             # end if
+    #             if tuple(_r) not in _rhs:
+    #                 _rhs.append(tuple(_r))
+    #             # end if
+    #         # end for
+    #         _cfg_dict[lhs] = _rhs
+    #     # end for
+    #     return {
+    #         "tree": cfg_dict["tree"],
+    #         "rule": _cfg_dict
+    #     }
 
     # @classmethod
     # def get_cfgs(cls, data_file, cfg_file, pretty_format=False):
@@ -181,8 +198,8 @@ class BeneparCFG:
             return cfg_dict
         # end if
         parser = cls.load_parser()
-        cfg_dict = cls.get_cfg_dict_per_sent(parser,seed_input,{})
-        cfg_dict = cls.trim_cfg_dict(cfg_dict)
+        cfg_dict = cls.get_cfg_dict_per_sent(parser,seed_input,{},{})
+        # cfg_dict = cls.trim_cfg_dict(cfg_dict)
         # if cfg_file:
         #     Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
         # # end if

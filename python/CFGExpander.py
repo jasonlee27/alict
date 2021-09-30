@@ -48,7 +48,9 @@ class CFGDiff:
         cfg_diff = dict()
         for seed_lhs, seed_rhs in cfg_seed.items():
             try:
-                for sr in seed_rhs:
+                print(seed_rhs)
+                for _sr in seed_rhs:
+                    sr = _sr["pos"]
                     sr = sr[0] if len(sr)==1 else tuple(sr)
                     if type(sr)==str:
                         if not is_ref_pcfg:
@@ -58,10 +60,10 @@ class CFGDiff:
                         # end if
                         if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
                             cfg_diff[seed_lhs] = {
-                                sr: rule_from_ref
+                                sr: (rule_from_ref, _sr["word"])
                             }
                         elif sr not in cfg_diff[seed_lhs].keys() and any(rule_from_ref):
-                            cfg_diff[seed_lhs][sr] = rule_from_ref
+                            cfg_diff[seed_lhs][sr] = (rule_from_ref, _sr["word"])
                         # end if
                     else:
                         if not is_ref_pcfg:
@@ -71,10 +73,10 @@ class CFGDiff:
                         # end if
                         if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
                             cfg_diff[seed_lhs] = {
-                                sr: rule_from_ref
+                                sr: (rule_from_ref, _sr["word"])
                             }
                         elif sr not in cfg_diff[seed_lhs].keys() and any(rule_from_ref):
-                            cfg_diff[seed_lhs][sr] = rule_from_ref
+                            cfg_diff[seed_lhs][sr] = (rule_from_ref, _sr["word"])
                         # end if
                     # end if
                 # end for
@@ -159,14 +161,14 @@ class CFGExpander:
     #         frags.append(self.generate,chosen_expansion)
     #     return frags
 
-    def sample_expandable_tpos_from_seed(self):
-        return [lhs for lhs in self.cfg_seed.keys() if lhs in self.cfg_diff.keys()]
+    # def sample_expandable_tpos_from_seed(self):
+    #     return [lhs for lhs in self.cfg_seed.keys() if lhs in self.cfg_diff.keys()]
 
-    def is_terminal(self, input_str):
-        if re.search("^\'(.+)\'$", input_str):
-            return True
-        # end if
-        return False
+    # def is_terminal(self, input_str):
+    #     if re.search("^\'(.+)\'$", input_str):
+    #         return True
+    #     # end if
+    #     return False
 
     # def generate_cfg(self, num_candid=5):
     #     # There are two randomness in generating new cfg:

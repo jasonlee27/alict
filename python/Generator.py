@@ -29,13 +29,20 @@ from CFGExpander import CFGExpander
 class Generator:
 
     def __init__(self, expander: CFGExpander):
-        self.seed_input: str = expander.seed_input
-        self.cfg_seed: dict = expander.cfg_seed
-        # self.cfg_ref: dict = expander.cfg_ref
-        self.cfg_diff: dict = expander.cfg_diff
+        self.seed = expander
+        # self.seed_input: str = expander.seed_input
+        # self.cfg_seed: dict = expander.cfg_seed
+        # # self.cfg_ref: dict = expander.cfg_ref
+        # self.cfg_diff: dict = expander.cfg_diff
         self.editor = Editor()
 
     def get_masked_input(self):
+        self.seed.cfg_seed
+        for key, value in self.seed.cfg_diff.items():
+            for _key, _value in value.items():
+
+                
+        
         pass
         
     def find_all_mask_placeholder(self, masked_input, mask_token="{mask}"):
