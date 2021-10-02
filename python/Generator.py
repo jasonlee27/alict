@@ -83,12 +83,16 @@ class Generator:
                     # end for
                     new_phrase = " ".join(new_phrase)                    
                     new_input = seed_input.replace(old_phrase, new_phrase)
-                    print(f"LHS: {lhs}")
-                    print(f"\tCFG_FROM: {rhs_from}")
-                    print(f"\tCFG_TO: {rhs_to}")
-                    print(f"\tOLD_PHRASE: {old_phrase}\n\tNEW_PHRASE: {new_phrase}")
-                    print(f"\tOLD_SENT: {seed_input}\n\tNEW_SENT: {new_input}\n\n")
-                    yield new_input
+                    result = {
+                        "input": seed_input,
+                        "lhs": lhs,
+                        "cfg_from": f"{lhs} -> {rhs_from}",
+                        "cfg_to": f"{lhs} -> {rhs_to}",
+                        "target_phrase": old_phrase,
+                        "masked_phrase": new_phrase,
+                        "masked_input": new_input
+                    }
+                    yield result
                 # end for
             # end for
         # end for
@@ -116,18 +120,22 @@ def main():
     for task in Macros.datasets.keys():
         print(f"TASK: {task}")
         reqs = Requirements.get_requirements(task)
+        results = list()
         for selected in Search.search_sst(reqs):
-            print(selected["description"])
+            exp_inputs = list()
             for inp in selected["selected_inputs"]:
                 _id, seed = inp[0], inp[1]
-                print(f"SENT: {_id}: {seed}")
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                 generator = Generator(expander=expander)
-                for exp_inp in generator.masked_input_generator():
-                    print("~~~~~~~~~~")
+                gen_inputs = [g for g in generator.masked_input_generator()]
+                exp_inputs.extend(list(set(val for dic in gen_inputs for val in dic.values())))
             # end for
-            print()
+            selected["masked_inputs"] = exp_inputs
+            results.append(selected)
         # end for
+        Utils.write_json(results,
+                         Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+                         pretty_format=True)
     # end for
     return
 
