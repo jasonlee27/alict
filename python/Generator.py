@@ -39,34 +39,55 @@ class Generator:
 
     def masked_input_generator(self):
         seed_input = self.seed.seed_input
-        for key, value in self.seed.cfg_diff.items():
-            lhs = key
+        for lhs, value in self.seed.cfg_diff.items():
             for rhs_from, _value in value.items():
                 words = _value[1]
                 old_phrase = " ".join(list(words))
                 for rhs_to in _value[0]:
-                    word_ids = dict()
+                    word_ids, pos_ids = dict(), dict()
                     for pos, word in zip(rhs_from, words):
                         for r_i, r in enumerate(rhs_to):
                             if pos==r:
                                 word_ids[r_i] = word
+                                if pos not in pos_ids.keys():
+                                    pos_ids[pos] = [r_i]
+                                else:
+                                    pos_ids[pos].append(r_i)
                             # end if
                         # end for
                     # end for
-                    new_phrase = list()
-                    for w_i,w in enumerate(rhs_to):
-                        if w_i in word_ids.keys():
-                            new_phrase.append(word_ids[w_i])
-                        elif w_i not in word_ids.keys() and w not in self.seed.cfg_ref.keys():
-                            new_phrase.append(w)
+
+                    # the pos can be duplicated in expanded cfg.
+                    # for example of CFG_FROM: ('DT', 'NN') & CFG_TO: ['DT', 'NN', 'NN', 'S']
+                    # NN in CFG_TO is duplicated and we need to specigy which NN in CFG_TO
+                    # will be corresponded to NN in CFG_FROM.
+                    # for now, I randomly select one NN and consider as corresponding pos.
+                    # so the following for loop is to randomly select one pos.
+                    for key in pos_ids.keys():
+                        if len(pos_ids[key])>1:
+                            pos_ids[key] = random.choice(pos_ids[key])
                         else:
-                            new_phrase.append("{mask:"+w+"}")
+                            pos_ids[key] = pos_ids[key][0]
+                        # end if
+                    # end for
+
+                    new_phrase = list()
+                    for w_i,pos in enumerate(rhs_to):
+                        if w_i in word_ids.keys() and w_i==pos_ids[pos]:
+                            new_phrase.append(word_ids[w_i])
+                        elif w_i not in word_ids.keys() and pos not in self.seed.cfg_ref.keys():
+                            new_phrase.append(pos)
+                        else:
+                            new_phrase.append("{mask:"+pos+"}")
+                        # end if
+                    # end for
                     new_phrase = " ".join(new_phrase)                    
                     new_input = seed_input.replace(old_phrase, new_phrase)
                     print(f"LHS: {lhs}")
                     print(f"\tCFG_FROM: {rhs_from}")
                     print(f"\tCFG_TO: {rhs_to}")
-                    print(f"\tOLD_PHRASE: {old_phrase}\n\tNEW_PHRASE: {new_input}\n\n")
+                    print(f"\tOLD_PHRASE: {old_phrase}\n\tNEW_PHRASE: {new_phrase}")
+                    print(f"\tOLD_SENT: {seed_input}\n\tNEW_SENT: {new_input}\n\n")
                     yield new_input
                 # end for
             # end for

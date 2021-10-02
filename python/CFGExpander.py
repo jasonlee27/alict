@@ -40,11 +40,23 @@ class CFGDiff:
         # # end if
 
     def check_list_inclusion(self, a_list, b_list):
-        a_is = [a if a in b_list else None for a_i, a in enumerate(a_list)]
+        temp = -1
+        a_is = list()
+        for a in a_list:
+            try:
+                a_i = b_list.index(a)
+                if temp<a_i:
+                    temp = a_i
+                    a_is.append(a)
+                else:
+                    a_is.append(None)
+                # end if
+            except ValueError:
+                a_is.append(None)
+            # end try
+        # end for
         if all(a_is):
-            if a_is==sorted(a_is):
-                return True
-            # end if
+            return True
         # end if
         return False
     
