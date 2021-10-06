@@ -1,19 +1,27 @@
 TASKS
 
-  - [JL] extract requirements from checklist sentiment analysis
+  - [JL] evaluate the sugested words based on defined requirements and
+    their tag of pos extracted from CFG difference
+
+  
+==========
+
+  + [JL] extract word suggestion from language model (e.g. BERT)
+
+  + [JL] given searched inputs that meets requirements
+
+  + [JL] extract requirements from checklist sentiment analysis
     evaluation descriptions and search and transform input from
     database that meets the extracted requirements.
   
-  - [JL] using expanded grammar of seed input grammar, how can we restrict 
+  + [JL] using expanded grammar of seed input grammar, how can we restrict 
     randomly generated sentences to meaningful natural language sentences?
 
-  - [JL] make a new sentence generator. compared with the naive nltk generator,
+  + [JL] make a new sentence generator. compared with the naive nltk generator,
     it needs to keep the seed input word and perturb it by replacing existing 
     words in the seed input with synonyms and adding new component in reference
     cfg.
-  
-==========
- 
+
   + [JL] search and transform input from dataset that meets the
     requirements extracted from 1st description (Short sentences with
     neutral adj and nouns)
