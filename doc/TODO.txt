@@ -1,5 +1,8 @@
 TASKS
 
+  - [JL] expand the requirements defined to other testing linguistic
+    capabilities.
+
   - [JL] evaluate the sugested words based on defined requirements and
     their tag of pos extracted from CFG difference
 
