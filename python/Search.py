@@ -243,6 +243,8 @@ class Search:
             selected = [(s[0],s[1].strip()[:-1]) if s[1].strip()[-1]=="." else (s[0],s[1].strip()) for s in req_obj.search(sents)]
             selected_res = {
                 "description": req["description"],
+                "search_requirements": req["search"],
+                "transform_requirements": req["transform"],
                 "selected_inputs": selected
             }
             yield selected_res

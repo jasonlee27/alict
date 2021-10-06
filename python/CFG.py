@@ -209,6 +209,12 @@ class BeneparCFG:
         # # end if
         return cfg_dict
 
+    @classmethod
+    def get_word_pos(cls, word):
+        parser = cls.load_parser()
+        tree = cls.get_tree(parser, word)
+        return tree
+
 class TreebankCFG:
 
     @classmethod

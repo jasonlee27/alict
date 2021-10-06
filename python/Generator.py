@@ -15,15 +15,12 @@ from pathlib import Path
 from nltk.parse.generate import generate, demo_grammar
 from nltk import CFG
 
-import checklist
-from checklist.editor import Editor
-from checklist.perturb import Perturb
-
 from Macros import Macros
 from Utils import Utils
 from Search import Search
 from Requirements import Requirements
 from CFGExpander import CFGExpander
+from Suggest import Suggest
 
 random.seed(Macros.SEED)
 
@@ -31,14 +28,16 @@ class Generator:
 
     def __init__(self, expander: CFGExpander):
         self.seed = expander
+        self.editor = Editor()
         # self.seed_input: str = expander.seed_input
         # self.cfg_seed: dict = expander.cfg_seed
         # # self.cfg_ref: dict = expander.cfg_ref
         # self.cfg_diff: dict = expander.cfg_diff
-        self.editor = Editor()
-
+        
     def masked_input_generator(self):
         seed_input = self.seed.seed_input
+        masked_inputs = list()
+        result = list()
         for lhs, value in self.seed.cfg_diff.items():
             for rhs_from, _value in value.items():
                 words = _value[1]
@@ -83,37 +82,23 @@ class Generator:
                     # end for
                     new_phrase = " ".join(new_phrase)                    
                     new_input = seed_input.replace(old_phrase, new_phrase)
-                    result = {
-                        "input": seed_input,
-                        "lhs": lhs,
-                        "cfg_from": f"{lhs} -> {rhs_from}",
-                        "cfg_to": f"{lhs} -> {rhs_to}",
-                        "target_phrase": old_phrase,
-                        "masked_phrase": new_phrase,
-                        "masked_input": new_input
-                    }
-                    yield result
+                    if new_input not in masked_inputs:
+                        result.append({
+                            "input": seed_input,
+                            "lhs": lhs,
+                            "cfg_from": f"{lhs} -> {rhs_from}",
+                            "cfg_to": f"{lhs} -> {rhs_to}",
+                            "target_phrase": old_phrase,
+                            "masked_phrase": new_phrase,
+                            "masked_input": new_input
+                        })
+                    # end if
                 # end for
             # end for
         # end for
-        
-    def find_all_mask_placeholder(self, masked_input, mask_token="{mask}"):
-        return [(m.start(), m.end()) for m in re.finditer(mask_token, masked_sent)]
+        return result
 
-    def get_word_suggestion(self, masked_input, num_target=10):
-        sug_words = self.editor.suggest(masked_input)
-        masked_tok_is = self.find_all_mask_placeholder(masked_input)
-        rep_sents = list()
-        for sug_words in sug_words[:num_target]:
-            rep_sent = masked_input
-            for (m_start, m_end), w in zip(masked_tok_is, sug_words):
-                rep_sent = f"{temp_sent[:m_start]} {w} {temp_sent[m_end:]}"
-            # end for
-            print(rep_sent)
-            rep_sents.append(rep_sent)
-        # end for
-        return rep_sents
-
+    
 
 def main():
     cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
@@ -127,11 +112,21 @@ def main():
                 _id, seed = inp[0], inp[1]
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                 generator = Generator(expander=expander)
-                gen_inputs = [g for g in generator.masked_input_generator()]
-                exp_inputs.extend(list(set(val for dic in gen_inputs for val in dic.values())))
+                gen_inputs = generator.masked_input_generator()
+                exp_inputs.extend(gen_inputs)
+                for gen_input in gen_inputs:
+                    for new_input in Suggest.get_new_input(generator.editor, gen_input):
+                        print(new_input)
+                    # end for
+                # end for
             # end for
             selected["masked_inputs"] = exp_inputs
-            results.append(selected)
+            results.append({
+                "description": selected["description"],
+                "search_requirements": selected["search_requirements"],
+                "transform_requirements": selected["transform_requirements"],
+                "selected_inputs": exp_inputs
+            })
         # end for
         Utils.write_json(results,
                          Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
