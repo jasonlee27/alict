@@ -20,6 +20,7 @@ from checklist.perturb import Perturb
 
 from Macros import Macros
 from Utils import Utils
+from CFG import BeneparCFG
 from Search import SearchOperator
 # from Requirements import Requirements
 
@@ -33,22 +34,15 @@ class Suggest:
     def get_pos_from_mask(cls, masked_input: str):
         mask_pos = list()
         result = list()
-        for t_i, t in enumerate(tokenize(masked_input)):
-            pos_search = re.search(r"\{mask\:(.*+)\}", t)
-            if pos_search:
-                result.append(cls.MASK)
-                mask_pos.append((t_i,pos_search.group(1)))
-            else:
-                result.append(t)
-            # end if
-        # end for
-        return " ".join(result), mask_pos
+        mask_pos = re.findall(r"\{mask\:([^\}|^\:]+)\}", masked_input)
+        result = re.sub(r"\{mask\:([^\}|^\:]+)\}", cls.MASK, masked_input)
+        return result, mask_pos
     
     @classmethod
     def get_word_suggestion(cls, editor: Editor, masked_input: str, num_target=100):
-        word_suggest = editor.suggest(_masked_input)
+        word_suggest = editor.suggest(masked_input)
         return word_suggest[:num_target]
-
+    
     @classmethod
     def replace_mask_w_suggestion(cls, masked_input, words_suggest):
         masked_tok_is = self.find_all_mask_placeholder(masked_input, cls.MASK)
@@ -59,11 +53,21 @@ class Suggest:
         return _masked_input
 
     @classmethod
+    def get_word_pos(cls, word):
+        tree = BeneparCFG.get_word_pos(word)
+        parse_string = tree._.parse_string
+        pattern = r"\(([^\:|^\(|^\)]+)\s"+word+r"\)"
+        search = re.search(pattern, parse_string)
+        if search:
+            return search.group(1)
+        # end if
+        return
+
+    @classmethod
     def eval_sug_words_by_pos(cls, word_suggest, mask_pos):
         match = list()
         for w, pos in zip(word_suggest, mask_pos):
-            w_pos = BeneparCFG.get_word_pos(w)
-            print(w, pos)
+            w_pos = cls.get_word_pos(w)
             if w_pos==pos:
                 match.append(True)
             else:
@@ -84,11 +88,11 @@ class Suggest:
         return False
 
     @classmethod
-    def get_new_input(cls, editor, masked_input):
+    def get_new_input(cls, editor, masked_input: str):
         _masked_input, mask_pos = cls.get_pos_from_mask(masked_input)
         words_suggest = cls.get_word_suggestion(editor, _masked_input)
         for w_sug in words_suggest:
-            if eval_sug_words_by_pos(w_sug, mask_pos):
+            if cls.eval_sug_words_by_pos(w_sug, mask_pos):
                 input_candid = cls.replace_mask_w_suggestion(_masked_input, w_sug)
                 if cls.eval_sug_words_by_req(input_candid, requirement):
                     yield input_candid

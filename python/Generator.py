@@ -15,6 +15,8 @@ from pathlib import Path
 from nltk.parse.generate import generate, demo_grammar
 from nltk import CFG
 
+from checklist.editor import Editor
+
 from Macros import Macros
 from Utils import Utils
 from Search import Search
@@ -115,7 +117,8 @@ def main():
                 gen_inputs = generator.masked_input_generator()
                 exp_inputs.extend(gen_inputs)
                 for gen_input in gen_inputs:
-                    for new_input in Suggest.get_new_input(generator.editor, gen_input):
+                    masked_input = gen_input["masked_input"]
+                    for new_input in Suggest.get_new_input(generator.editor, masked_input):
                         print(new_input)
                     # end for
                 # end for
@@ -133,6 +136,7 @@ def main():
                          pretty_format=True)
     # end for
     return
+
 
 if __name__=="__main__":
     main()
