@@ -119,7 +119,7 @@ def main():
                 exp_inputs.extend(gen_inputs)
                 for gen_input in gen_inputs:
                     masked_input = gen_input["masked_input"]
-                    for new_input in Suggest.get_new_input(generator.editor, masked_input):
+                    for new_input in Suggest.get_new_input(generator.editor, masked_input, selected["requirement"]):
                         print(new_input)
                         new_sug_inputs.append(new_input)
                     # end for
@@ -127,9 +127,7 @@ def main():
             # end for
             selected["masked_inputs"] = exp_inputs
             results.append({
-                "description": selected["description"],
-                "search_requirements": selected["search_requirements"],
-                "transform_requirements": selected["transform_requirements"],
+                "requirement": selected["requirements"],
                 "selected_inputs": exp_inputs,
                 "new_suggested_inputs": new_sug_inputs
             })
