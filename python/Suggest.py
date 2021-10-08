@@ -42,10 +42,18 @@ class Suggest:
     def get_word_suggestion(cls, editor: Editor, masked_input: str, num_target=100):
         word_suggest = editor.suggest(masked_input)
         return word_suggest[:num_target]
-    
+
+    @classmethod
+    def find_all_mask_placeholder(masked_input, target_pattern):
+        result = list()
+        for match in re.finditer(target_pattern, masked_input):
+            result.append((match.start(), match.end()))
+        # end for
+        return result
+        
     @classmethod
     def replace_mask_w_suggestion(cls, masked_input, words_suggest):
-        masked_tok_is = self.find_all_mask_placeholder(masked_input, cls.MASK)
+        masked_tok_is = cls.find_all_mask_placeholder(masked_input, cls.MASK)
         _masked_input = masked_input.copy()
         for t_is, w in zip(masked_tok_is, words_suggest):
             _masked_input[t_is[0], t_is[1]] = w

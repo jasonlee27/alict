@@ -110,6 +110,7 @@ def main():
         results = list()
         for selected in Search.search_sst(reqs):
             exp_inputs = list()
+            new_sug_inputs = list()
             for inp in selected["selected_inputs"]:
                 _id, seed = inp[0], inp[1]
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
@@ -120,6 +121,7 @@ def main():
                     masked_input = gen_input["masked_input"]
                     for new_input in Suggest.get_new_input(generator.editor, masked_input):
                         print(new_input)
+                        new_sug_inputs.append(new_input)
                     # end for
                 # end for
             # end for
@@ -128,7 +130,8 @@ def main():
                 "description": selected["description"],
                 "search_requirements": selected["search_requirements"],
                 "transform_requirements": selected["transform_requirements"],
-                "selected_inputs": exp_inputs
+                "selected_inputs": exp_inputs,
+                "new_suggested_inputs": new_sug_inputs
             })
         # end for
         Utils.write_json(results,
