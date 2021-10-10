@@ -76,7 +76,7 @@ class BeneparCFG:
                 # end for
                 _rule_dict = {
                     "pos": tuple(non_terminals),
-                    "word": tuple(non_terminal_words)                       
+                    "word": tuple(non_terminal_words)
                 }
                 if len(non_terminals)>0 and (_rule_dict not in rule_dict[llabel]):
                     rule_dict[llabel].append(_rule_dict)
@@ -107,7 +107,7 @@ class BeneparCFG:
         return rule_dict
 
     @classmethod
-    def get_cfg_dict_per_sent(cls, parser, sent, rule_dict, rule_word_dict):
+    def get_cfg_dict_per_sent(cls, parser, sent, rule_dict):
         tree = cls.get_tree(parser,sent.strip())
         return {
             "tree": tree._.parse_string,
@@ -202,7 +202,7 @@ class BeneparCFG:
             return cfg_dict
         # end if
         parser = cls.load_parser()
-        cfg_dict = cls.get_cfg_dict_per_sent(parser,seed_input,{},{})
+        cfg_dict = cls.get_cfg_dict_per_sent(parser,seed_input,{})
         # cfg_dict = cls.trim_cfg_dict(cfg_dict)
         # if cfg_file:
         #     Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
@@ -214,6 +214,7 @@ class BeneparCFG:
         parser = cls.load_parser()
         tree = cls.get_tree(parser, word)
         return tree
+        
 
 class TreebankCFG:
 
@@ -222,38 +223,66 @@ class TreebankCFG:
         if 'treebank' not in sys.modules:
             from nltk.corpus import treebank
         # end if
-        if pcfg:
-            return [rule for tree in treebank.parsed_sents() for rule in tree.productions()]
-        # end if
-        return list(set(rule for tree in treebank.parsed_sents() for rule in tree.productions()))
+        rule_dict = dict()
+        for tree in treebank.parsed_sents()[:2]:
+            rule_dict = cls._get_treebank_rules(tree, rule_dict)
+        # end for
+        return rule_dict
 
     @classmethod
-    def convert_ruleset_to_dict(cls, ruleset, prob=False):
-        cfg_dict = dict()
-        for r in ruleset:
-            lhs = str(r.lhs())
-            r_tuple = tuple([f'\'{r}\'' if type(r) is str else str(r) for r in r.rhs()])
-            if lhs not in cfg_dict.keys():
-                cfg_dict[lhs] = list()
+    def _get_treebank_rules(cls, tree, rule_dict):
+        if type(tree)==str:
+            return rule_dict
+        # end if
+        rule = tree.productions()[0]
+        corr_terminal_pos = [pos[1] for pos in tree.pos()]
+        if str(rule) in rule_dict.keys():
+            if (rule,corr_terminal_pos) in rule_dict[str(rule)]:
+                rule_dict[str(rule)].append((rule,corr_terminal_pos))
             # end if
+        else:
+            rule_dict[str(rule)] = [(rule,corr_terminal_pos)]
+        # end if
+        for ch in tree:
+            rule_dict = cls._get_treebank_rules(ch, rule_dict)
+        # end for
+        return rule_dict
 
-            if prob:
-                cfg_dict[lhs].append(r_tuple)
-            else:
-                if r_tuple not in cfg_dict[lhs]:
-                    cfg_dict[lhs].append(r_tuple)
+    @classmethod
+    def get_treebank_word_tags(cls):
+        if 'treebank' not in sys.modules:
+            from nltk.corpus import treebank
+        # end if
+        return list(set([pos for _,pos in treebank.tagged_words()]))
+
+    @classmethod
+    def convert_ruleset_to_dict(cls, ruleset: dict, prob=False):
+        cfg_dict = dict()
+        for r_key  in ruleset.keys():
+            for r, trmnls in ruleset[r_key]:
+                lhs = str(r.lhs())
+                r_tuple = tuple([f'\'{r}\'' if type(r) is str else str(r) for r in r.rhs()])
+                if lhs not in cfg_dict.keys():
+                    cfg_dict[lhs] = list()
                 # end if
-            # end if
+
+                if prob:
+                    cfg_dict[lhs].append((r_tuple,trmnls))
+                else:
+                    if (r_tuple,trmnls) not in cfg_dict[lhs]:
+                        cfg_dict[lhs].append((r_tuple,trmnls))
+                    # end if
+                # end if
+            # end for
         # end for
         if prob:
             _cfg_dict = dict()
-            tot = len(ruleset)
-            for lhs, rhss in cfg_dict.items():
-                # tot = len(rhss)
+            tot = sum([True for r_key in ruleset.keys() for _ in ruleset[r_key]])
+            for lhs in cfg_dict.keys():
                 rhs_w_prob = list()
-                for rhs in set(rhss):
-                    num_occ = rhss.count(rhs)
-                    rhs_w_prob.append((rhs, num_occ*1./tot))
+                for rhs, trmnls in cfg_dict[lhs]:
+                    num_occ = sum([True for _rhs, _trmnls in cfg_dict[lhs] if rhs==_rhs])
+                    rhs_w_prob.append((rhs, trmnls, num_occ*1./tot))
                 # end for
                 _cfg_dict[lhs] = rhs_w_prob
             # end for
@@ -300,7 +329,7 @@ class TreebankCFG:
     @classmethod
     def get_cfgs(cls, cfg_file: Path, pretty_format=False):
         if not os.path.exists(cfg_file):
-            rulesets = cls.get_treebank_rules()
+            rulesets: dict = cls.get_treebank_rules()
             cfg_dict = cls.convert_ruleset_to_dict(rulesets)
             # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
             Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)

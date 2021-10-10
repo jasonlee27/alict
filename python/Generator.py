@@ -120,14 +120,14 @@ def main():
                 for gen_input in gen_inputs:
                     masked_input = gen_input["masked_input"]
                     for new_input in Suggest.get_new_input(generator.editor, masked_input, selected["requirement"]):
-                        print(new_input)
+                        print(f"SUCCESS: {new_input}")
                         new_sug_inputs.append(new_input)
                     # end for
                 # end for
             # end for
             selected["masked_inputs"] = exp_inputs
             results.append({
-                "requirement": selected["requirements"],
+                "requirement": selected["requirement"],
                 "selected_inputs": exp_inputs,
                 "new_suggested_inputs": new_sug_inputs
             })
