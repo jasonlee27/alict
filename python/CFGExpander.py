@@ -60,7 +60,7 @@ class CFGDiff:
         # end if
         return False
     
-    def get_cfg_diff(self, cfg_seed, cfg_ref, is_ref_pcfg=False, comp_length=4):
+    def get_cfg_diff(self, cfg_seed, cfg_ref, is_ref_pcfg=False, comp_length=3):
         cfg_diff = dict()
         for seed_lhs, seed_rhs in cfg_seed.items():
             try:
@@ -72,13 +72,13 @@ class CFGDiff:
                             rule_from_ref = [
                                 rr[-1] for rr in cfg_ref[seed_lhs] \
                                 if self.check_list_inclusion([sr], rr[-1]) and \
-                                [sr]!=rr[-1] and len(rr[-1])<=comp_length+len([sr])
+                                [sr]!=rr[-1] and len(rr[-1])<comp_length+len([sr])
                             ]
                         else:
                             rule_from_ref = [
                                 (rr[1],rr[-1]) for rr in cfg_ref[seed_lhs] \
                                 if self.check_list_inclusion([sr], rr[1]) and \
-                                [sr]!=list(rr[1]) and len(rr[1])<=comp_length+len([sr])
+                                [sr]!=list(rr[1]) and len(rr[1])<comp_length+len([sr])
                             ]
                         # end if
                         if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
@@ -93,13 +93,13 @@ class CFGDiff:
                             rule_from_ref = [
                                 rr[-1] for rr in cfg_ref[seed_lhs] \
                                 if self.check_list_inclusion(list(sr), rr[-1]) and \
-                                list(sr)!=rr[-1] and len(rr[-1])<=comp_length+len(sr)
+                                list(sr)!=rr[-1] and len(rr[-1])<comp_length+len(sr)
                             ]
                         else:
                             rule_from_ref = [
                                 (rr[1],rr[-1]) for rr in cfg_ref[seed_lhs] \
                                 if self.check_list_inclusion(list(sr), rr[1]) \
-                                and list(sr)!=rr[1] and len(rr[1])<=comp_length++len(sr)
+                                and list(sr)!=rr[1] and len(rr[1])<comp_length++len(sr)
                             ]
                         # end if
                         if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
