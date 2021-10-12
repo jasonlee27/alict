@@ -224,7 +224,7 @@ class TreebankCFG:
             from nltk.corpus import treebank
         # end if
         rule_dict = dict()
-        for tree in treebank.parsed_sents()[:2]:
+        for tree in treebank.parsed_sents():
             rule_dict = cls._get_treebank_rules(tree, rule_dict)
         # end for
         return rule_dict

@@ -112,15 +112,15 @@ def main():
             exp_inputs = list()
             new_sug_inputs = list()
             for inp in selected["selected_inputs"]:
-                _id, seed = inp[0], inp[1]
+                _id, seed, seed_label = inp[0], inp[1], inp[2]
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                 generator = Generator(expander=expander)
                 gen_inputs = generator.masked_input_generator()
                 exp_inputs.extend(gen_inputs)
                 for gen_input in gen_inputs:
                     masked_input = gen_input["masked_input"]
-                    for new_input in Suggest.get_new_input(generator.editor, masked_input, selected["requirement"]):
-                        print(f"SUCCESS: {new_input}")
+                    for new_input in Suggest.get_new_input(generator.editor, masked_input, seed_label, selected["requirement"]):
+                        print(f"\nSUCCESS: {new_input}")
                         new_sug_inputs.append(new_input)
                     # end for
                 # end for

@@ -131,32 +131,30 @@ class Suggest:
         return False
     
     @classmethod
-    def eval_sug_words_by_req(cls, new_input, requirement):
+    def eval_sug_words_by_req(cls, new_input, requirement, label):
         search_obj = SearchOperator(requirement)
-        search_res = search_obj.search([("1", new_input, "N/A")])
+        search_res = search_obj.search([("1", new_input, label)])
         if len(search_res)>0:
             return True
         # end if
         return False
 
     @classmethod
-    def get_new_input(cls, editor, masked_input: str, requirement):
+    def get_new_input(cls, editor, masked_input: str, label: str, requirement):
         _masked_input, mask_pos = cls.get_pos_from_mask(masked_input)
-        print(f">>>>> {_masked_input}, {mask_pos}")
+        print(f"\n>>>>> {_masked_input}, {mask_pos}")
         words_suggest = cls.get_word_suggestion(editor, _masked_input, mask_pos)
         for w_sug in words_suggest:
             words_sug_pos, word_sug_prs_string = cls.get_sug_words_pos(w_sug)
             # print(f"WORD_SUG: {w_sug}, POS_SUG: {words_sug_pos}")
             print('.', end='')
             if cls.eval_sug_words_by_pos(words_sug_pos, mask_pos):
-                input_candid = cls.replace_mask_w_suggestion(_masked_input, w_sug)                
-                print(f"GENERATED INPUT: {input_candid}")
-                yield input_candid
-                # if cls.eval_sug_words_by_req(input_candid, requirement):
-                #     yield input_candid
-                # # end if
+                input_candid = cls.replace_mask_w_suggestion(_masked_input, w_sug)
+                # yield input_candid
+                if cls.eval_sug_words_by_req(input_candid, requirement, label):
+                    yield input_candid
+                # end if
             # end if
-            print()
         # end for
         return
 

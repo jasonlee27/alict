@@ -57,7 +57,6 @@ class SearchOperator:
         for search_reqs in self.search_reqs_list:
             _sents = sents.copy()
             for op, param in search_reqs.items():
-                # print(f"{op}: {param}")
                 _sents = self.search_method[op](_sents, search_reqs)
             # end for
             selected.extend(_sents)
@@ -240,7 +239,7 @@ class Search:
         result = list()
         for req in requirements:
             req_obj = SearchOperator(req)
-            selected = [(s[0],s[1].strip()[:-1]) if s[1].strip()[-1]=="." else (s[0],s[1].strip()) for s in req_obj.search(sents)]
+            selected = [(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)]
             # selected_res = {
             #     "description": req["description"],
             #     "search_requirements": req["search"],
