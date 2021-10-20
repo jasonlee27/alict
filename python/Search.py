@@ -239,7 +239,7 @@ class Search:
         result = list()
         for req in requirements:
             req_obj = SearchOperator(req)
-            selected = [(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)]
+            selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
             # selected_res = {
             #     "description": req["description"],
             #     "search_requirements": req["search"],

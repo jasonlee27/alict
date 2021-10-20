@@ -28,15 +28,7 @@ random.seed(Macros.SEED)
 
 class Suggest:
 
-    MASK = "{mask}"
-    
-    @classmethod
-    def get_pos_from_mask(cls, masked_input: str):
-        mask_pos = list()
-        result = list()
-        mask_pos = re.findall(r"\{mask\:([^\}]+)\}", masked_input)
-        result = re.sub(r"\{mask\:([^\}]+)\}", cls.MASK, masked_input)
-        return result, mask_pos
+    MASK = Macros.MASK
 
     @classmethod
     def is_word_suggestion_not_avail(cls, word_suggest):
@@ -118,6 +110,9 @@ class Suggest:
     @classmethod
     def eval_sug_words_by_pos(cls, words_sug_pos, mask_pos):
         match = list()
+        if words_sug_pos is None:
+            return False
+        # end if
         for w_pos, m_pos in zip(words_sug_pos, mask_pos):
             if w_pos==m_pos:
                 match.append(True)
@@ -141,15 +136,14 @@ class Suggest:
 
     @classmethod
     def get_new_input(cls, editor, masked_input: str, label: str, requirement):
-        _masked_input, mask_pos = cls.get_pos_from_mask(masked_input)
-        print(f"\n>>>>> {_masked_input}, {mask_pos}")
-        words_suggest = cls.get_word_suggestion(editor, _masked_input, mask_pos)
+        # print(f"\n>>>>> {masked_input}, {mask_pos}")
+        words_suggest = cls.get_word_suggestion(editor, masked_input, mask_pos)
         for w_sug in words_suggest:
             words_sug_pos, word_sug_prs_string = cls.get_sug_words_pos(w_sug)
-            # print(f"WORD_SUG: {w_sug}, POS_SUG: {words_sug_pos}")
+            # print(f"WORD_SUG_POS: {words_sug_pos}, TGT_POS: {mask_pos}")
             print('.', end='')
             if cls.eval_sug_words_by_pos(words_sug_pos, mask_pos):
-                input_candid = cls.replace_mask_w_suggestion(_masked_input, w_sug)
+                input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
                 # yield input_candid
                 if cls.eval_sug_words_by_req(input_candid, requirement, label):
                     yield input_candid
@@ -157,6 +151,41 @@ class Suggest:
             # end if
         # end for
         return
+
+    @classmethod
+    def get_new_inputs(cls, editor, gen_inputs):
+        # print(f"\n>>>>> {masked_input}, {mask_pos}")
+        for g_i in range(len(gen_inputs)):
+            gen_input = gen_inputs[g_i]
+            masked_input, mask_pos = gen_input["masked_input"]
+            gen_input["words_suggest"] = cls.get_word_suggestion(editor, masked_input, mask_pos)
+            gen_inputs[g_i] = gen_input
+            # for w_sug in words_suggest:
+            #     words_sug_pos, word_sug_prs_string = cls.get_sug_words_pos(w_sug)
+            #     # print(f"WORD_SUG_POS: {words_sug_pos}, TGT_POS: {mask_pos}")
+            #     print('.', end='')
+            # # end for
+        # end for
+        return gen_inputs
+
+    @classmethod
+    def eval_word_suggest(cls, masked_input: str, word_suggest: List, label: str, requirement):
+        results = list()
+        masked_input, mask_pos = gen_input["masked_input"]
+        for w_sug in gen_input["words_suggest"]:
+            words_sug_pos, word_sug_prs_string = cls.get_sug_words_pos(w_sug)
+            
+            # check pos
+            if cls.eval_sug_words_by_pos(words_sug_pos, mask_pos):
+                input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
+                
+                # check requirements
+                if cls.eval_sug_words_by_req(input_candid, requirement, label):
+                    results.append(input_candid)
+                # end if
+            # end if
+        # end for
+        return results
 
 
 # def main():

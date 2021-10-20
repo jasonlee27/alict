@@ -82,9 +82,10 @@ class Generator:
                             new_phrase.append("{mask:"+pos+"}")
                         # end if
                     # end for
-                    new_phrase = " ".join(new_phrase)                    
+                    new_phrase = " ".join(new_phrase)
                     new_input = seed_input.replace(old_phrase, new_phrase)
                     if new_input not in masked_inputs:
+                        _masked_input, mask_pos = self.get_pos_from_mask(new_input)
                         result.append({
                             "input": seed_input,
                             "lhs": lhs,
@@ -92,13 +93,21 @@ class Generator:
                             "cfg_to": f"{lhs} -> {rhs_to}",
                             "target_phrase": old_phrase,
                             "masked_phrase": new_phrase,
-                            "masked_input": new_input
+                            "masked_input": (_masked_input, mask_pos)
                         })
                     # end if
                 # end for
             # end for
         # end for
+        
         return result
+
+    def get_pos_from_mask(self, masked_input: str):
+        mask_pos = list()
+        result = list()
+        mask_pos = re.findall(r"\{mask\:([^\}]+)\}", masked_input)
+        result = re.sub(r"\{mask\:([^\}]+)\}", Macros.MASK, masked_input)
+        return result, mask_pos
 
     
 
@@ -109,32 +118,48 @@ def main():
         reqs = Requirements.get_requirements(task)
         results = list()
         for selected in Search.search_sst(reqs):
-            exp_inputs = list()
-            new_sug_inputs = list()
-            for inp in selected["selected_inputs"]:
-                _id, seed, seed_label = inp[0], inp[1], inp[2]
+            exp_inputs = dict()
+            for _id, seed, seed_label in selected["selected_inputs"]:
+                print(f"SEED: {_id} {seed}, {seed_label}")
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                 generator = Generator(expander=expander)
                 gen_inputs = generator.masked_input_generator()
-                exp_inputs.extend(gen_inputs)
-                for gen_input in gen_inputs:
-                    masked_input = gen_input["masked_input"]
-                    for new_input in Suggest.get_new_input(generator.editor, masked_input, seed_label, selected["requirement"]):
-                        print(f"\nSUCCESS: {new_input}")
-                        new_sug_inputs.append(new_input)
+                if len(gen_inputs)>0:
+                    gen_inputs = Suggest.get_new_inputs(generator.editor, gen_inputs)
+                    _gen_inputs = list()
+                    for g_i in range(len(gen_inputs)):
+                        eval_results = generator.eval_word_suggest(gen_inputs[g_i], seed_label, selected["requirement"])
+                        if len(eval_results)>0:
+                            del gen_inputs[g_i]["words_suggest"]
+                            gen_inputs[g_i]["new_iputs"] = eval_results
+                            _gen_inputs.append(gen_inputs[g_i])
+                            exp_inputs[seed] = eval_results
+                            print(g_i, gen_inputs[g_i]["new_iputs"])
+                        else:
+                            exp_inputs[seed] = list()
+                        # end if
                     # end for
-                # end for
+                # end if
+                Utils.write_json({
+                    "requirement": selected["requirement"],
+                    "inputs": exp_inputs
+                }, Macros.result_dir/f"cfg_expanded_inputs_{task}.json", pretty_format=True)
             # end for
-            selected["masked_inputs"] = exp_inputs
+
             results.append({
                 "requirement": selected["requirement"],
-                "selected_inputs": exp_inputs,
-                "new_suggested_inputs": new_sug_inputs
+                "inputs": exp_inputs
             })
+            
+            # write raw new inputs
+            Utils.write_json(results,
+                             Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+                             pretty_format=True)
+            
         # end for
-        Utils.write_json(results,
-                         Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
-                         pretty_format=True)
+        # Utils.write_json(results,
+        #                  Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+        #                  pretty_format=True)
     # end for
     return
 

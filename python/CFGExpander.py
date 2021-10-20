@@ -18,14 +18,16 @@ from Utils import Utils
 from CFG import BeneparCFG, TreebankCFG
 from Search import Search
 from Requirements import Requirements
+
 random.seed(Macros.SEED)
+COMP_LENGTH = 3
 
 class CFGDiff:
 
     def __init__(self, 
                  cfg_ref: dict, 
                  cfg_seed: dict,
-                 comp_length=5,
+                 comp_length=COMP_LENGTH,
                  is_ref_pcfg=False,
                  write_diff=False, 
                  diff_file=None,
@@ -60,7 +62,7 @@ class CFGDiff:
         # end if
         return False
     
-    def get_cfg_diff(self, cfg_seed, cfg_ref, is_ref_pcfg=False, comp_length=3):
+    def get_cfg_diff(self, cfg_seed, cfg_ref, is_ref_pcfg=False, comp_length=COMP_LENGTH):
         cfg_diff = dict()
         for seed_lhs, seed_rhs in cfg_seed.items():
             try:

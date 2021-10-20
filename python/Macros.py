@@ -21,7 +21,8 @@ class Macros:
     FMT_FLOAT = "{:,.2f}"
     
     SEED = 27
-
+    MASK = "{mask}"
+    
     ## NLP dataset
     datasets = {
         "sentiment_analysis": "stanfordSentimentTreebank"
