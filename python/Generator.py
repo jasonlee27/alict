@@ -124,42 +124,38 @@ def main():
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                 generator = Generator(expander=expander)
                 gen_inputs = generator.masked_input_generator()
+                new_input_results = list()
                 if len(gen_inputs)>0:
-                    gen_inputs = Suggest.get_new_inputs(generator.editor, gen_inputs)
+                    gen_inputs = Suggest.get_new_inputs(generator.editor, gen_inputs, num_target=10)
                     _gen_inputs = list()
                     for g_i in range(len(gen_inputs)):
-                        eval_results = generator.eval_word_suggest(gen_inputs[g_i], seed_label, selected["requirement"])
+                        eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], seed_label, selected["requirement"])
                         if len(eval_results)>0:
                             del gen_inputs[g_i]["words_suggest"]
                             gen_inputs[g_i]["new_iputs"] = eval_results
                             _gen_inputs.append(gen_inputs[g_i])
-                            exp_inputs[seed] = eval_results
-                            print(g_i, gen_inputs[g_i]["new_iputs"])
-                        else:
-                            exp_inputs[seed] = list()
+                            new_input_results.extend(eval_results)
+                            print(g_i, gen_inputs[g_i])
                         # end if
                     # end for
                 # end if
-                Utils.write_json({
-                    "requirement": selected["requirement"],
-                    "inputs": exp_inputs
-                }, Macros.result_dir/f"cfg_expanded_inputs_{task}.json", pretty_format=True)
+                exp_inputs[seed] = {
+                    "exp_inputs": new_input_results,
+                    "label": seed_label
+                }
             # end for
-
             results.append({
                 "requirement": selected["requirement"],
                 "inputs": exp_inputs
             })
-            
-            # write raw new inputs
             Utils.write_json(results,
                              Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
                              pretty_format=True)
-            
         # end for
-        # Utils.write_json(results,
-        #                  Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
-        #                  pretty_format=True)
+        # write raw new inputs
+        Utils.write_json(results,
+                         Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+                         pretty_format=True)
     # end for
     return
 

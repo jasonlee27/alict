@@ -35,3 +35,14 @@ class Macros:
 
     # SentiWordNet
     swn_data_file: Path = download_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"
+
+    # Test
+    checklist_dir: Path = download_dir / "checklist"
+    checklist_data_dir: Path = checklist_dir / "release_data"
+    google_sa_pred_path: Path = checklist_data_dir / "sentiment" / "predictions" / "google"
+    ms_sa_pred_path: Path = checklist_data_dir / "sentiment" / "predictions" / "microsoft"
+    ama_sa_pred_path: Path = checklist_data_dir / "sentiment" / "predictions" / "amazon"
+    bert_sa_pred_path: Path = checklist_data_dir / "sentiment" / "predictions" / "bert"
+    
+    
+    

@@ -48,7 +48,7 @@ class Suggest:
         return False
     
     @classmethod
-    def get_word_suggestion(cls, editor: Editor, masked_input: str, mask_pos: List, num_target=20):
+    def get_word_suggestion(cls, editor: Editor, masked_input: str, mask_pos: List, num_target=10):
         word_suggest = editor.suggest(masked_input, remove_duplicates=True)
         suggest_res = [ws for ws in word_suggest if cls.is_word_suggestion_not_avail(ws)]
         return suggest_res[:num_target]
@@ -134,26 +134,26 @@ class Suggest:
         # end if
         return False
 
-    @classmethod
-    def get_new_input(cls, editor, masked_input: str, label: str, requirement):
-        # print(f"\n>>>>> {masked_input}, {mask_pos}")
-        words_suggest = cls.get_word_suggestion(editor, masked_input, mask_pos)
-        for w_sug in words_suggest:
-            words_sug_pos, word_sug_prs_string = cls.get_sug_words_pos(w_sug)
-            # print(f"WORD_SUG_POS: {words_sug_pos}, TGT_POS: {mask_pos}")
-            print('.', end='')
-            if cls.eval_sug_words_by_pos(words_sug_pos, mask_pos):
-                input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
-                # yield input_candid
-                if cls.eval_sug_words_by_req(input_candid, requirement, label):
-                    yield input_candid
-                # end if
-            # end if
-        # end for
-        return
+    # @classmethod
+    # def get_new_input(cls, editor, masked_input: str, label: str, requirement, num_target=10):
+    #     # print(f"\n>>>>> {masked_input}, {mask_pos}")
+    #     words_suggest = cls.get_word_suggestion(editor, masked_input, mask_pos, num_target=num_target)
+    #     for w_sug in words_suggest:
+    #         words_sug_pos, word_sug_prs_string = cls.get_sug_words_pos(w_sug)
+    #         # print(f"WORD_SUG_POS: {words_sug_pos}, TGT_POS: {mask_pos}")
+    #         print('.', end='')
+    #         if cls.eval_sug_words_by_pos(words_sug_pos, mask_pos):
+    #             input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
+    #             # yield input_candid
+    #             if cls.eval_sug_words_by_req(input_candid, requirement, label):
+    #                 yield input_candid
+    #             # end if
+    #         # end if
+    #     # end for
+    #     return
 
     @classmethod
-    def get_new_inputs(cls, editor, gen_inputs):
+    def get_new_inputs(cls, editor, gen_inputs, num_target=10):
         # print(f"\n>>>>> {masked_input}, {mask_pos}")
         for g_i in range(len(gen_inputs)):
             gen_input = gen_inputs[g_i]
@@ -169,7 +169,7 @@ class Suggest:
         return gen_inputs
 
     @classmethod
-    def eval_word_suggest(cls, masked_input: str, word_suggest: List, label: str, requirement):
+    def eval_word_suggest(cls, gen_input, label: str, requirement):
         results = list()
         masked_input, mask_pos = gen_input["masked_input"]
         for w_sug in gen_input["words_suggest"]:
