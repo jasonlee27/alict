@@ -1,5 +1,5 @@
 # This script is to generate new templates
-# given new generated inputs
+# for testing given new generated inputs
 
 from typing import *
 
@@ -123,12 +123,12 @@ class Template:
             syns = Synonyms.get_synonyms(t, tpos)
             if len(syns)>0:
                 template.append({
-                    "{"+f"{t}_{tpos}"+"}": syns
+                    "{"+f"{t}_{tpos}"+"}": list(set(syns))
                 })
             else:
                 template.append(t)
             # end if
-        # end for
+       # end for
         return {
             "input": " ".join(tokens),
             "place_holder": template
@@ -136,31 +136,38 @@ class Template:
 
     @classmethod
     def get_templates(cls):
-        for t_i, task in enumerate(Macros.datasets.keys()):
+        for task in Macros.datasets.keys():
             new_input_dicts = cls.get_new_inputs(Macros.result_dir/f"cfg_expanded_inputs_{task}.json")
-            inputs_per_task = new_input_dicts[t_i]
-            inputs = inputs_per_task["inputs"]
-            templates = list()
-            for seed_input in inputs.keys():
-                cfg_seed = inputs[seed_input]["cfg_seed"]
-                label_seed = inputs[seed_input]["label"]
-                exp_inputs = inputs[seed_input]["exp_inputs"]
-                for inp in exp_inputs:
-                    (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
-                    tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
-                    _templates = cls.get_templates_by_synonyms(tokens, tokens_pos)
-                    templates.append(_templates)
+            # for each testing linguistic capabilities,
+            for t_i in range(len(new_input_dicts)):
+                inputs_per_req = new_input_dicts[t_i]
+                inputs = inputs_per_req["inputs"]
+                templates = list()
+                for seed_input in inputs.keys():
+                    print(seed_input)
+                    cfg_seed = inputs[seed_input]["cfg_seed"]
+                    label_seed = inputs[seed_input]["label"]
+                    exp_inputs = inputs[seed_input]["exp_inputs"]
+                    for inp in exp_inputs:
+                        (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
+                        tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
+                        _templates = cls.get_templates_by_synonyms(tokens, tokens_pos)
+                        templates.append(_templates)
+                    # end for
                 # end for
+
+                # Write the template results
+                req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])
+                res_dir = Macros.result_dir/ f"templates_{task}"
+                res_dir.mkdir(parents=True, exist_ok=True)
+                Utils.write_json(templates,
+                                 res_dir / f"templates_{req_cksum}.json",
+                                 pretty_format=True)
             # end for
-            req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
-            res_dir = Macros.result_dir/ f"templates_{task}"
-            res_dir.mkdir(parents=True, exist_ok=True)
-            Utils.write_json(templates,
-                             res_dir / f"templates_{req_cksum}.json",
-                             pretty_format=True)
         # end for
         return
 
-
+    
 if __name__=="__main__":
     Template.get_templates()
+    
