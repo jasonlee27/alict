@@ -10,13 +10,6 @@ import random
 from nltk.corpus import wordnet
 from CFG import BeneparCFG
 
-#Creating a list 
-synonyms = []
-for syn in wordnet.synsets("travel"):
-    for lm in syn.lemmas():
-             synonyms.append(lm.name())#adding into synonyms
-print (set(synonyms))
-
 
 class Synonyms:
 
@@ -50,26 +43,25 @@ class Synonyms:
     @classmethod
     def get_wn_syn_pos(cls, synset):
         return cls.wordnet_tag_map[synset.pos()]
-    
+        
     @classmethod
     def get_synonyms(cls, word: str, wpos:str):
         synonyms = list()
         for syn in cls.get_synsets(word):
-            spos = cls.get_wn_syn_pos(syn)
-            if wpos==spos:
-                for lm in syn.lemmas():
-                    if lm.name()!=word:
-                        synonyms.append(lm.name())
-                    # end if
-                # end for
-            # end if
+            # spos = cls.get_wn_syn_pos(syn)
+            for lm in syn.lemmas():
+                _, spos = cls.get_word_pos(lm.name())
+                if lm.name()!=word and wpos==spos:
+                    synonyms.append(lm.name())
+                # end if
+            # end for
         # end for
-        return synonyms
+        return list(set(synonyms))
 
     
 
-if __name__=="__main__":
-    word = "enjoy"
-    wpos = "VB"
-    syns = Synonyms.get_synonyms(word, wpos)
-    print(f"{word}: {syns}")
+# if __name__=="__main__":
+#     word = "enjoy"
+#     wpos = "VB"
+#     syns = Synonyms.get_synonyms(word, wpos)
+#     print(f"{word}: {syns}")

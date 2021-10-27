@@ -12,7 +12,7 @@ import random
 import numpy
 
 from pathlib import Path
-from nltk.tokenize import word_tokenize as tokenize
+# from nltk.tokenize import word_tokenize as tokenize
 
 import checklist
 from checklist.editor import Editor
@@ -181,7 +181,13 @@ class Suggest:
                 
                 # check requirements
                 if cls.eval_sug_words_by_req(input_candid, requirement, label):
-                    results.append(input_candid)
+                    results.append((masked_input,
+                                    gen_input["cfg_from"],
+                                    gen_input["cfg_to"],
+                                    mask_pos,
+                                    w_sug,
+                                    input_candid,
+                                    label))
                 # end if
             # end if
         # end for

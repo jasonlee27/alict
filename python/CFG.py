@@ -36,28 +36,45 @@ class BeneparCFG:
     @classmethod
     def get_cfg_per_tree(cls, tree, rule_dict):
         left = tree._.labels
+        
         if len(left)==0: # if terminal
             re_search = re.search(r'\((\:|\,|\'\'|\`\`|\.|\-?[A-Z]+\-?|[A-Z]+\$)\s(.+)\)', tree._.parse_string)
             rlabel = re_search.group(1)
             rword = re_search.group(2)
             plabel = tree._.parent._.labels[0]
+
+            comp = {
+                "pos": f'{rword}',
+                "word": str(tree)
+            }
             if rlabel not in rule_dict.keys():
-                rule_dict[rlabel] = [{
-                    "pos": f'\'{rword}\'',
-                    "word": str(tree)
-                }]
-            elif (rlabel, rword) not in rule_dict[rlabel]:
-                rule_dict[rlabel].append({
-                    "pos": f'\'{rword}\'',
-                    "word": str(tree)
-                })
+                rule_dict[rlabel] = [comp]
+            elif comp not in rule_dict[rlabel]:
+                rule_dict[rlabel].append(comp)
             # end if
         else:
             llabel = left[0]
+            if len(left)==2:
+                llabel = left[0]
+                rlabel = left[1]
+                if llabel not in rule_dict.keys():
+                    rule_dict[llabel] = [{
+                        "pos": rlabel,
+                        "word": str(tree)
+                    }]
+                else:
+                    rule_dict[llabel].append({
+                        "pos": rlabel,
+                        "word": str(tree)
+                    })
+                # end if
+                llabel = left[1]
+            # end if
+            
             if llabel not in rule_dict.keys():
                 rule_dict[llabel] = list()
             # end if
-
+                
             if len(list(tree._.children))>0:
                 non_terminals = list()
                 non_terminal_words = list()
@@ -74,6 +91,7 @@ class BeneparCFG:
                     # end if
                     rule_dict = cls.get_cfg_per_tree(r, rule_dict)
                 # end for
+                
                 _rule_dict = {
                     "pos": tuple(non_terminals),
                     "word": tuple(non_terminal_words)
@@ -91,16 +109,15 @@ class BeneparCFG:
                         "word": str(tree)
                     })
                 # end if
+
+                comp = {
+                    "pos": f'{rword}',
+                    "word": str(tree)
+                }
                 if rlabel not in rule_dict.keys():
-                    rule_dict[rlabel] = [{
-                        "pos": f'\'{rword}\'',
-                        "word": str(tree)
-                    }]
-                elif f'terminal::{rword}' not in rule_dict[rlabel]:
-                    rule_dict[rlabel].append({
-                        "pos": f'\'{rword}\'',
-                        "word": str(tree)
-                    })
+                    rule_dict[rlabel] = [comp]
+                elif comp not in rule_dict[rlabel]:
+                    rule_dict[rlabel].append(comp)
                 # end if
             # end if
         # end if

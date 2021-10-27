@@ -2,6 +2,8 @@
 import re, os
 import sys
 import json
+import hashlib
+
 from pathlib import Path
 from nltk.corpus import treebank
 
@@ -36,3 +38,7 @@ class Utils:
             # end if
         # end with
         return
+
+    @classmethod
+    def get_cksum(cls, input_str: str, length=7):
+        return hashlib.md5(input_str.encode('utf-8')).hexdigest()[:length]

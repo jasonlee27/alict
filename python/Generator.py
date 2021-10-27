@@ -99,7 +99,6 @@ class Generator:
                 # end for
             # end for
         # end for
-        
         return result
 
     def get_pos_from_mask(self, masked_input: str):
@@ -120,26 +119,29 @@ def main():
         for selected in Search.search_sst(reqs):
             exp_inputs = dict()
             for _id, seed, seed_label in selected["selected_inputs"]:
-                print(f"SEED: {_id} {seed}, {seed_label}")
+                print(f"SEED: {seed} -> {seed_label}")
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
+                # print(f"SEED: {expander.tree_seed}")
+                # print(f"SEED: {expander.cfg_seed}\n")
                 generator = Generator(expander=expander)
                 gen_inputs = generator.masked_input_generator()
                 new_input_results = list()
                 if len(gen_inputs)>0:
                     gen_inputs = Suggest.get_new_inputs(generator.editor, gen_inputs, num_target=10)
-                    _gen_inputs = list()
+                    # _gen_inputs = list()
                     for g_i in range(len(gen_inputs)):
                         eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], seed_label, selected["requirement"])
                         if len(eval_results)>0:
-                            del gen_inputs[g_i]["words_suggest"]
+                            # del gen_inputs[g_i]["words_suggest"]
                             gen_inputs[g_i]["new_iputs"] = eval_results
-                            _gen_inputs.append(gen_inputs[g_i])
+                            # _gen_inputs.append(gen_inputs[g_i])
                             new_input_results.extend(eval_results)
-                            print(g_i, gen_inputs[g_i])
+                            # print(g_i, gen_inputs[g_i])
                         # end if
                     # end for
                 # end if
                 exp_inputs[seed] = {
+                    "cfg_seed": expander.cfg_seed,
                     "exp_inputs": new_input_results,
                     "label": seed_label
                 }
