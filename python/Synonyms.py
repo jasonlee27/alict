@@ -75,8 +75,8 @@ class Synonyms:
             if wpos.startswith(wn_spos):
                 sposs = cls.get_words_pos(syns)
                 for sword, spos in zip(syns,sposs):
-                    if sword.strip()!=word.strip() and wpos==spos[1]:
-                        synonyms.append(sword)
+                    if sword.lower().strip()!=word.lower().strip() and wpos==spos[1]:
+                        synonyms.append(sword.lower())
                     # end if
                 # end for
                 synonyms.append(word)

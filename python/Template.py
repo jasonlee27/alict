@@ -131,11 +131,13 @@ class Template:
         for t, tpos in zip(tokens, tokens_pos):
             key = "{"+f"{t}_{tpos}"+"}"
             if key in prev_synonyms.keys():
-                template.append({
-                    key: prev_synonyms[key]
-                })
-            elif t in prev_synonyms.keys() and prev_synonyms[t]==None:
-                template.append(t)
+                if prev_synonyms[key] is None:
+                    template.append(t)
+                else:
+                    template.append({
+                        key: prev_synonyms[key]
+                    })
+                # end if
             else:
                 syns = Synonyms.get_synonyms(nlp, t, tpos)
                 if len(syns)>1:
@@ -143,10 +145,14 @@ class Template:
                         key: list(set(syns))
                     }
                     template.append(syns_dict)
-                    prev_synonyms[key] = syns_dict[key]
+                    if key not in prev_synonyms.keys():
+                        prev_synonyms[key] = syns_dict[key]
+                    # end if
                 else:
                     template.append(t)
-                    prev_synonyms[t] = None
+                    if key not in prev_synonyms.keys():
+                        prev_synonyms[key] = None
+                    # end if
                 # end if
             # end if
        # end for
