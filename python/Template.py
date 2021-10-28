@@ -162,7 +162,7 @@ class Template:
         }, prev_synonyms
 
     @classmethod
-    def get_templates(cls):
+    def get_templates(cls, cksum_val=None):
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         for task in Macros.datasets.keys():
@@ -171,6 +171,7 @@ class Template:
             # for each testing linguistic capabilities,
             for t_i in range(len(new_input_dicts)):
                 inputs_per_req = new_input_dicts[t_i]
+                req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])                    
                 inputs = inputs_per_req["inputs"]
                 templates = list()
                 for seed_input in inputs.keys():
@@ -189,7 +190,6 @@ class Template:
                 # end for
 
                 # Write the template results
-                req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])
                 res_dir = Macros.result_dir/ f"templates_{task}"
                 res_dir.mkdir(parents=True, exist_ok=True)
                 Utils.write_json(templates,
