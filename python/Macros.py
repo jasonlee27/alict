@@ -24,8 +24,10 @@ class Macros:
     MASK = "{mask}"
     
     ## NLP dataset
+    sa_task = "sentiment_analysis"
+    sa_label_map = {'negative': 0, 'positive': 2, 'neutral': 1}
     datasets = {
-        "sentiment_analysis": "stanfordSentimentTreebank"
+        sa_task: "stanfordSentimentTreebank"
     }
 
     # SST

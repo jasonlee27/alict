@@ -183,12 +183,13 @@ class Template:
                         (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
                         tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
                         _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
+                        _templates["label"] = exp_input_label
                         templates.append(_templates)
                         print(".", end="")
                     # end for
                     print()
                 # end for
-
+                
                 # Write the template results
                 res_dir = Macros.result_dir/ f"templates_{task}"
                 res_dir.mkdir(parents=True, exist_ok=True)
