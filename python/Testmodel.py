@@ -6,11 +6,17 @@ from typing import *
 
 import re, os
 import copy
-import random
-import numpy
+import spacy
+import numpy as np
 
 from pathlib import Path
+
 from nltk.tokenize import word_tokenize as tokenize
+
+from checklist.test_types import MFT, INV, DIR
+from checklist.expect import Expect
+from checklist.test_suite import TestSuite
+# from checklist.perturb import Perturb
 
 from Macros import Macros
 from Utils import Utils
@@ -42,6 +48,7 @@ class Testmodel:
                             template_list.append(tp["place_holder"][tok_i])
                         elif type(tp["place_holder"][tok_i])==dict:
                             key = list(tp["place_holder"][tok_i].keys())[0]
+                            key = key[1:-1]
                             template_list.append(key)
                             template_values[key] = tp["place_holder"][tok_i][key]
                         # end if
@@ -62,8 +69,28 @@ class Testmodel:
         # end for
         return
 
-
-
+    @classmethod
+    def get_editor_template(cls, template_dicts):
+        suite = TestSuite()
+        for templates_per_req in template_dicts:
+            for temp_i, template in templates_per_req["templates"]:
+                if temp_i==0:
+                    t = editor.template(templates_per_req["sent"],
+                                        templates_per_req["values"],
+                                        labels=templates_per_req["label"],
+                                        save=True)
+                else:
+                    t += editor.template(templates_per_req["sent"],
+                                         templates_per_req["values"],
+                                         labels=templates_per_req["label"],
+                                         save=True)
+                # end if
+            # end for
+            test = MFT(**t)
+            suite.add(test, templates_per_req["requirement"])
+        # end for
+        return
+    
 if __name__=="__main__":
     for temp in Testmodel.get_templates():
         print(f"\n")
