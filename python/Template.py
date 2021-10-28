@@ -8,8 +8,10 @@ import nltk
 import copy
 import random
 import numpy
+import spacy
 
 from pathlib import Path
+from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 from nltk.tokenize import word_tokenize as tokenize
 
 from Macros import Macros
@@ -18,6 +20,13 @@ from Generator import Generator
 from Synonyms import Synonyms
 
 class Template:
+
+    POS_MAP = {
+        "NNP": "NP",
+        "NNPS": "NPS",
+        "PRP": "PP",
+        "PRP$": "PP$"
+    }
 
     @classmethod
     def generate_inputs(cls):
@@ -103,9 +112,9 @@ class Template:
                 
         for t in tokens:
             if t=="{mask}":
-                if type(words_sug)==str and words_sug==t:
+                if type(words_sug)==str:
                     tpos = words_sug
-                elif ((type(words_sug)==list) or (type(words_sug)==tuple)) and t==words_sug[mask_tok_i]:
+                elif ((type(words_sug)==list) or (type(words_sug)==tuple)):
                     tpos = mask_pos[mask_tok_i]
                     mask_tok_i += 1
                 # end if
@@ -113,47 +122,64 @@ class Template:
                 tpos = cls.find_pos_from_cfg_seed(t, cfg_seed)
             # end if
             tokens_pos.append(tpos)
-        # end for
+        # end for        
         return tokenize(exp_input), tokens_pos 
 
     @classmethod
-    def get_templates_by_synonyms(cls, tokens: List[str], tokens_pos: List[str]):
+    def get_templates_by_synonyms(cls, nlp, tokens: List[str], tokens_pos: List[str], prev_synonyms):
         template = list()
         for t, tpos in zip(tokens, tokens_pos):
-            syns = Synonyms.get_synonyms(t, tpos)
-            if len(syns)>0:
+            key = "{"+f"{t}_{tpos}"+"}"
+            if key in prev_synonyms.keys():
                 template.append({
-                    "{"+f"{t}_{tpos}"+"}": list(set(syns))
+                    key: prev_synonyms[key]
                 })
-            else:
+            elif t in prev_synonyms.keys() and prev_synonyms[t]==None:
                 template.append(t)
+            else:
+                syns = Synonyms.get_synonyms(nlp, t, tpos)
+                if len(syns)>1:
+                    syns_dict = {
+                        key: list(set(syns))
+                    }
+                    template.append(syns_dict)
+                    prev_synonyms[key] = syns_dict[key]
+                else:
+                    template.append(t)
+                    prev_synonyms[t] = None
+                # end if
             # end if
        # end for
         return {
             "input": " ".join(tokens),
             "place_holder": template
-        }
+        }, prev_synonyms
 
     @classmethod
     def get_templates(cls):
+        nlp = spacy.load('en_core_web_md')
+        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         for task in Macros.datasets.keys():
             new_input_dicts = cls.get_new_inputs(Macros.result_dir/f"cfg_expanded_inputs_{task}.json")
+            prev_synonyms = dict()
             # for each testing linguistic capabilities,
             for t_i in range(len(new_input_dicts)):
                 inputs_per_req = new_input_dicts[t_i]
                 inputs = inputs_per_req["inputs"]
                 templates = list()
                 for seed_input in inputs.keys():
-                    print(seed_input)
+                    print(f"SEED: {seed_input}")
                     cfg_seed = inputs[seed_input]["cfg_seed"]
                     label_seed = inputs[seed_input]["label"]
                     exp_inputs = inputs[seed_input]["exp_inputs"]
-                    for inp in exp_inputs:
+                    for inp_i, inp in enumerate(exp_inputs):
                         (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
                         tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
-                        _templates = cls.get_templates_by_synonyms(tokens, tokens_pos)
+                        _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
                         templates.append(_templates)
+                        print(".", end="")
                     # end for
+                    print()
                 # end for
 
                 # Write the template results

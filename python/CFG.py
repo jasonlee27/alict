@@ -231,7 +231,15 @@ class BeneparCFG:
         parser = cls.load_parser()
         tree = cls.get_tree(parser, word)
         return tree
-        
+
+    @classmethod
+    def get_words_pos(cls, words):
+        inp = ". ".join(words)+"."
+        parser = cls.load_parser()
+        doc = parser(inp)
+        tree = list(doc.sents)
+        return tree
+
 
 class TreebankCFG:
 
