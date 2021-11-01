@@ -46,9 +46,9 @@ class Model:
         return preds
 
     @classmethod
-    def sentiment_pred_and_conf(cls, data: List[str], batch_size: int = 32):
+    def sentiment_pred_and_conf(cls, model, data: List[str]):
         # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
-        preds = cls.batch_predict(model, data, batch_size=batch_size)
+        preds = cls.batch_predict(model, data)
         pr = np.array([x['score'] if x['label'] == 'POSITIVE' else 1 - x['score'] for x in preds])
         pp = np.zeros((pr.shape[0], 3))
         margin_neutral = 1/3.

@@ -84,6 +84,7 @@ class Testsuite:
     def write_editor_template(cls, editor, template_dicts):
         suite = TestSuite()
         t = None
+        task = template_dicts["task"]
         for templates_per_req in template_dicts:
             for temp_i, temp in enumerate(templates_per_req["templates"]):
                 for key, val in temp["values"].items():
@@ -102,11 +103,20 @@ class Testsuite:
                 # end if
             # end for
             test = MFT(**t)
+            
             suite.add(test, 
-                      name=template_dicts["task"],
+                      name=task,
                       capability=template_dicts["capability"],
                       description=templates_per_req["requirement"]["description"])
-            suite.save(Macros.result_dir / "test_results" / 'sentiment_testsuite.pkl')
+        # end for
+        suite.save(Macros.result_dir / "test_results" / f'{task}_testsuite.pkl')
+        return
+
+    @classmethod
+    def write_testsuites(cls):
+        for temp in cls.get_templates():
+            editor = Editor()
+            Testsuite.write_editor_template(editor, temp):
         # end for
         return
 
