@@ -45,6 +45,6 @@ class Macros:
     # ms_sa_pred_path: Path = checklist_data_dir / "sentiment" / "predictions" / "microsoft"
     # ama_sa_pred_path: Path = checklist_data_dir / "sentiment" / "predictions" / "amazon"
     # bert_sa_pred_path: Path = checklist_data_dir / "sentiment" / "predictions" / "bert"
-    sa_models_file = download_dir / "models" / "eval_sa_models.txt"
+    sa_models_file = download_dir / "models" / "sentiment_models.txt"
     
     

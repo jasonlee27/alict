@@ -68,6 +68,8 @@ class Testsuite:
                     })
                 # end for
                 templates_per_task.append({
+                    "task": task,
+                    "capability": new_input_dicts[t_i]["requirement"]["capability"],
                     "requirement": new_input_dicts[t_i]["requirement"]["description"],
                     "templates": template_res
                 })
@@ -79,7 +81,7 @@ class Testsuite:
         return
 
     @classmethod
-    def get_editor_template(cls, editor, template_dicts):
+    def write_editor_template(cls, editor, template_dicts):
         suite = TestSuite()
         t = None
         for templates_per_req in template_dicts:
@@ -100,15 +102,17 @@ class Testsuite:
                 # end if
             # end for
             test = MFT(**t)
-            suite.add(test, 'neutral words in context', 'Vocabulary', templates_per_req["requirement"])
-            suite.to_raw_file(Macros.result_dir / "test_results" / "test_file.txt", n=500, seed=1)
-            yield suite
+            suite.add(test, 
+                      name=template_dicts["task"],
+                      capability=template_dicts["capability"],
+                      description=templates_per_req["requirement"]["description"])
+            suite.save(Macros.result_dir / "test_results" / 'sentiment_testsuite.pkl')
         # end for
+        return
 
         
 if __name__=="__main__":
     for temp in Testmodel.get_templates():
         editor = Editor()
-        for suite in Testsuite.get_editor_template(editor, temp):
-            print(f"\n")
+        Testsuite.write_editor_template(editor, temp):
         

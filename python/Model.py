@@ -3,7 +3,8 @@
 
 from typing import *
 from pathlib import Path
-from transformers import pipeline
+from transformers import pipeline, AutoTokenizer
+# from nlp import load_dataset
 
 import os
 
@@ -25,7 +26,8 @@ class Model:
     def load_models(task: str):
         _task, model_names = cls.read_model_list(task)
         for m in model_names:
-            yield pipeline(_task, model=m)
+            tokenizer = AutoTokenizer.from_pretrained(m)
+            yield pipeline(_task, model=m, tokenizer=tokenizer, framework="pt", device=0)
         # end for
 
     @classmethod
@@ -38,15 +40,15 @@ class Model:
     @classmethod
     def batch_predict(cls, model, data: List[str], batch_size: int = 32):
         preds = list()
-        for d in get_batch(data, batch_size):
+        for d in cls.get_batch(data, batch_size):
             preds.extend(model(d))
         # end for
         return preds
 
     @classmethod
-    def pred_and_conf(cls, data: List[str], batch_size: int = 32):
+    def sentiment_pred_and_conf(cls, data: List[str], batch_size: int = 32):
         # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
-        preds = batch_predict(model, data, batch_size=batch_size)
+        preds = cls.batch_predict(model, data, batch_size=batch_size)
         pr = np.array([x['score'] if x['label'] == 'POSITIVE' else 1 - x['score'] for x in preds])
         pp = np.zeros((pr.shape[0], 3))
         margin_neutral = 1/3.
