@@ -23,8 +23,7 @@ from Macros import Macros
 from Utils import Utils
 from Template import Template
 
-class Testmodel:
-
+class Testsuite:
 
     @classmethod
     def map_labels(cls, task: str, label):
@@ -102,12 +101,14 @@ class Testmodel:
             # end for
             test = MFT(**t)
             suite.add(test, 'neutral words in context', 'Vocabulary', templates_per_req["requirement"])
+            suite.to_raw_file(Macros.result_dir / "test_results" / "test_file.txt", n=500, seed=1)
+            yield suite
         # end for
-        return
-    
+
+        
 if __name__=="__main__":
     for temp in Testmodel.get_templates():
         editor = Editor()
-        Testmodel.get_editor_template(editor, temp)
-        print(f"\n")
+        for suite in Testmodel.get_editor_template(editor, temp):
+            print(f"\n")
         

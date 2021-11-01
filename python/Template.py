@@ -19,6 +19,7 @@ from Utils import Utils
 from Generator import Generator
 from Synonyms import Synonyms
 
+
 class Template:
 
     POS_MAP = {
