@@ -109,6 +109,6 @@ class Testsuite:
 if __name__=="__main__":
     for temp in Testmodel.get_templates():
         editor = Editor()
-        for suite in Testmodel.get_editor_template(editor, temp):
+        for suite in Testsuite.get_editor_template(editor, temp):
             print(f"\n")
         
