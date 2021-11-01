@@ -35,6 +35,7 @@ class Testsuite:
     @classmethod
     def get_templates(cls):
         for task in Macros.datasets.keys():
+            print(f"TASK: {task}")
             new_input_dicts = Template.get_new_inputs(Macros.result_dir/f"cfg_expanded_inputs_{task}.json")
             templates_per_task = list()
             for t_i in range(len(new_input_dicts)):
@@ -68,23 +69,22 @@ class Testsuite:
                     })
                 # end for
                 templates_per_task.append({
-                    "task": task,
                     "capability": new_input_dicts[t_i]["requirement"]["capability"],
-                    "requirement": new_input_dicts[t_i]["requirement"]["description"],
+                    "description": new_input_dicts[t_i]["requirement"]["description"],
                     "templates": template_res
                 })
+                print("CAP: ", new_input_dicts[t_i]["requirement"]["capability"])
                 print("REQ: ", new_input_dicts[t_i]["requirement"]["description"])
                 print(f"#TEMPLATES: {len(template_res)}")
             # end for
-            yield templates_per_task
+            yield task, templates_per_task
         # end for
         return
 
     @classmethod
-    def write_editor_template(cls, editor, template_dicts):
+    def write_editor_template(cls, editor, task, template_dicts):
         suite = TestSuite()
         t = None
-        task = template_dicts["task"]
         for templates_per_req in template_dicts:
             for temp_i, temp in enumerate(templates_per_req["templates"]):
                 for key, val in temp["values"].items():
@@ -106,23 +106,25 @@ class Testsuite:
             
             suite.add(test, 
                       name=task,
-                      capability=template_dicts["capability"],
-                      description=templates_per_req["requirement"]["description"])
+                      capability=templates_per_req["capability"],
+                      description=templates_per_req["description"])
         # end for
-        suite.save(Macros.result_dir / "test_results" / f'{task}_testsuite.pkl')
+        res_dir = Macros.result_dir / "test_results"
+        res_dir.mkdir(parents=True, exist_ok=True)
+        suite.save(res_dir / f'{task}_testsuite.pkl')
         return
 
     @classmethod
     def write_testsuites(cls):
-        for temp in cls.get_templates():
+        for task, temp in cls.get_templates():
             editor = Editor()
-            Testsuite.write_editor_template(editor, temp):
+            Testsuite.write_editor_template(editor, task, temp)
         # end for
         return
 
         
 if __name__=="__main__":
-    for temp in Testmodel.get_templates():
+    for task, temp in Testsuite.get_templates():
         editor = Editor()
-        Testsuite.write_editor_template(editor, temp):
+        Testsuite.write_editor_template(editor, task, temp)
         
