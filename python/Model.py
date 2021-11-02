@@ -73,5 +73,5 @@ class Model:
     def run(cls, testsuite, model, pred_and_conf_fn):
         cls.model = model
         testsuite.run(pred_and_conf_fn, n=500, overwrite=True)
-        testsuite.summary()
+        testsuite.summary(n=100)
         return
