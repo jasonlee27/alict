@@ -1,0 +1,653 @@
+***** TASK: sentiment_analysis *****
+>>>>> MODEL: textattack/bert-base-uncased-SST-2
+Running sentiment_analysis
+Predicting 500 examples
+Vocab_POS
+
+sentiment_analysis
+Test cases:      219625
+Test cases run:  500
+Fails (rate):    462 (92.4%)
+
+Example fails:
+1.0 0.0 0.0 The dependable next generation ace of rout pic
+----
+1.0 0.0 0.0 The next generation and futurity of ring picture
+----
+1.0 0.0 0.0 The unexampled next propagation whiz of pack film
+----
+0.8 0.0 0.2 The complete adjacent genesis edition of rabble picture
+----
+1.0 0.0 0.0 The true hannukah vacation emotional_state seems fried in porc
+----
+1.0 0.0 0.0 The pure next propagation rendering of pack picture_show
+----
+0.9 0.0 0.1 The thoroughgoing adjacent propagation reading of ring picture_show
+----
+1.0 0.0 0.0 The young next genesis principal of syndicate picture_show
+----
+1.0 0.0 0.0 The unexampled next propagation wizard of pack pic
+----
+0.9 0.0 0.1 The adjacent genesis and future_tense of rabble movie
+----
+1.0 0.0 0.0 The reliable adjacent multiplication principal of ring picture_show
+----
+0.8 0.0 0.2 The newfangled adjacent genesis whiz of mob moving_picture
+----
+0.8 0.0 0.2 The lawful adjacent generation superstar of gang pic
+----
+1.0 0.0 0.0 The perfect adjacent generation variant of pack film
+----
+1.0 0.0 0.0 The replete hannukah vacation disembodied_spirit seems fried in pork_barrel
+----
+0.8 0.0 0.2 The thoroughgoing adjacent multiplication version of syndicate movie
+----
+0.8 0.0 0.2 The reliable next genesis whizz of crime_syndicate motion_picture
+----
+1.0 0.0 0.0 The modern adjacent generation genius of crime_syndicate film
+----
+1.0 0.0 0.0 The unadulterated next multiplication edition of crime_syndicate picture_show
+----
+1.0 0.0 0.0 The consummate next generation adaptation of family film
+----
+1.0 0.0 0.0 The fresh next genesis hotshot of pack picture
+----
+1.0 0.0 0.0 The honest adjacent genesis whiz of pack picture_show
+----
+1.0 0.0 0.0 The reliable Hanukkah holiday liveliness seems fried in pork
+----
+0.8 0.0 0.2 The everlasting adjacent generation adaptation of rabble motion_picture
+----
+1.0 0.0 0.0 The new next genesis genius of pack motion_picture
+----
+1.0 0.0 0.0 The arrant next generation edition of pack motion_picture
+----
+0.9 0.0 0.1 The unadulterated adjacent propagation interpretation of syndicate pic
+----
+0.9 0.0 0.1 The lawful next genesis whiz of gang movie
+----
+1.0 0.0 0.0 The modern next generation star of pack picture_show
+----
+1.0 0.0 0.0 The reliable adjacent genesis whiz of family movie
+----
+1.0 0.0 0.0 The dependable next generation hotshot of mob motion_picture
+----
+1.0 0.0 0.0 The fresh next multiplication sensation of crime_syndicate film
+----
+0.9 0.0 0.1 The raw next generation asterisk of syndicate film
+----
+1.0 0.0 0.0 The truthful adjacent multiplication champion of rout film
+----
+1.0 0.0 0.0 The entire judaic chanukah life seems fried in porc
+----
+1.0 0.0 0.0 The reliable adjacent genesis headliner of pack picture_show
+----
+1.0 0.0 0.0 The honest adjacent genesis star of family pic
+----
+1.0 0.0 0.0 The next next generation principal of syndicate picture
+----
+0.9 0.0 0.1 The pure next genesis interpretation of syndicate picture_show
+----
+0.8 0.0 0.2 The adjacent adjacent generation champion of pack movie
+----
+1.0 0.0 0.0 The good channukah vacation feeling seems fried in porc
+----
+1.0 0.0 0.0 The unadulterated adjacent generation reading of gang picture
+----
+1.0 0.0 0.0 The honest next multiplication star of ring moving_picture
+----
+1.0 0.0 0.0 The newfangled next multiplication ace of family film
+----
+1.0 0.0 0.0 The channukkah holiday intent seems fried in pork_barrel
+----
+0.9 0.0 0.1 The unexampled next generation hotshot of syndicate motion_picture
+----
+0.9 0.0 0.1 The next next genesis stars of rabble motion_picture
+----
+0.8 0.0 0.2 The raw adjacent generation whizz of syndicate motion_picture
+----
+1.0 0.0 0.0 The next fresh generation stars of syndicate movie
+----
+0.9 0.0 0.1 The adjacent unexampled generation stars of gang film
+----
+0.9 0.0 0.1 The raw next multiplication superstar of ring movie
+----
+1.0 0.0 0.0 The adjacent adjacent multiplication lead of gang moving_picture
+----
+1.0 0.0 0.0 The unfeigned adjacent generation genius of crime_syndicate motion_picture
+----
+1.0 0.0 0.0 The reliable next multiplication wizard of mob movie
+----
+1.0 0.0 0.0 The truthful next propagation whiz of mob motion_picture
+----
+0.9 0.0 0.1 The raw next propagation headliner of syndicate movie
+----
+0.7 0.0 0.3 The dependable adjacent generation headliner of rout picture_show
+----
+1.0 0.0 0.0 The replete channukkah vacation spirit seems fried in porc
+----
+1.0 0.0 0.0 The truthful next generation genius of syndicate movie
+----
+1.0 0.0 0.0 The true next propagation sensation of rout picture_show
+----
+1.0 0.0 0.0 The genuine adjacent genesis star_topology of gang movie
+----
+1.0 0.0 0.0 The newfangled next propagation whizz of rout film
+----
+1.0 0.0 0.0 The gross adjacent genesis edition of mob pic
+----
+1.0 0.0 0.0 The truthful adjacent multiplication hotshot of gang film
+----
+1.0 0.0 0.0 The modern next generation ace of gang picture
+----
+0.7 0.0 0.3 The stark adjacent multiplication interpretation of pack movie
+----
+1.0 0.0 0.0 The honest next propagation champion of mob moving_picture
+----
+1.0 0.0 0.0 The truthful next genesis headliner of mob picture
+----
+0.8 0.0 0.2 The true adjacent multiplication sensation of rabble picture_show
+----
+1.0 0.0 0.0 The broad chanukkah vacation flavor seems fried in pork_barrel
+----
+1.0 0.0 0.0 The raw next multiplication whizz of mob movie
+----
+1.0 0.0 0.0 The lawful hannukah holiday intent seems fried in pork
+----
+0.9 0.0 0.1 The dependable next genesis asterisk of ring picture
+----
+0.8 0.0 0.2 The next modern propagation stars of crime_syndicate motion_picture
+----
+1.0 0.0 0.0 The young next generation lead of gang motion_picture
+----
+1.0 0.0 0.0 The reliable adjacent genesis superstar of syndicate picture
+----
+1.0 0.0 0.0 The utter adjacent genesis rendering of crime_syndicate moving_picture
+----
+0.8 0.0 0.2 The unadulterated adjacent generation rendering of family moving_picture
+----
+1.0 0.0 0.0 The young next generation sensation of gang film
+----
+1.0 0.0 0.0 The reliable next genesis ace of family picture_show
+----
+0.9 0.0 0.1 The stark adjacent genesis variant of pack movie
+----
+1.0 0.0 0.0 The stark next propagation translation of pack film
+----
+0.7 0.0 0.3 The genuine adjacent genesis whiz of rabble motion_picture
+----
+1.0 0.0 0.0 The unadulterated adjacent genesis interpretation of rout movie
+----
+1.0 0.0 0.0 The modern next genesis genius of rabble pic
+----
+1.0 0.0 0.0 The intact hannukah holiday life seems fried in pork
+----
+1.0 0.0 0.0 The young next genesis headliner of ring picture
+----
+0.9 0.0 0.1 The truthful adjacent propagation superstar of syndicate picture_show
+----
+1.0 0.0 0.0 The gross next propagation adaptation of mob picture
+----
+1.0 0.0 0.0 The unexampled adjacent propagation lead of pack picture_show
+----
+1.0 0.0 0.0 The pure next propagation version of ring film
+----
+1.0 0.0 0.0 The next genesis and futurity of rabble picture_show
+----
+1.0 0.0 0.0 The lawful channukah holiday sprightliness seems fried in porc
+----
+1.0 0.0 0.0 The raw adjacent multiplication star of rabble motion_picture
+----
+1.0 0.0 0.0 The utter next multiplication variation of mob moving_picture
+----
+1.0 0.0 0.0 The stark next multiplication variation of crime_syndicate picture_show
+----
+1.0 0.0 0.0 The stark next multiplication variant of gang pic
+----
+0.9 0.0 0.1 The newfangled adjacent multiplication champion of pack moving_picture
+----
+1.0 0.0 0.0 The young adjacent multiplication wizard of ring picture
+----
+1.0 0.0 0.0 The unfeigned next propagation principal of rabble moving_picture
+----
+
+
+
+
+<<<<< MODEL: textattack/bert-base-uncased-SST-2
+Some weights of the model checkpoint at textattack/roberta-base-SST-2 were not used when initializing RobertaForSequenceClassification: ['roberta.pooler.dense.bias', 'roberta.pooler.dense.weight']
+- This IS expected if you are initializing RobertaForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing RobertaForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+>>>>> MODEL: textattack/roberta-base-SST-2
+Running sentiment_analysis
+Predicting 500 examples
+Vocab_POS
+
+sentiment_analysis
+Test cases:      219625
+Test cases run:  500
+Fails (rate):    469 (93.8%)
+
+Example fails:
+0.9 0.0 0.1 The stark next multiplication interpretation of mob picture
+----
+1.0 0.0 0.0 The rightful adjacent generation wizard of mob motion_picture
+----
+1.0 0.0 0.0 The reliable next multiplication lead of crime_syndicate moving_picture
+----
+1.0 0.0 0.0 The reliable next genesis wizard of ring moving_picture
+----
+1.0 0.0 0.0 The raw adjacent propagation lead of rabble film
+----
+1.0 0.0 0.0 The dependable next generation genius of mob movie
+----
+1.0 0.0 0.0 The substantial hannukah vacation liveliness seems fried in porc
+----
+0.8 0.0 0.2 The arrant adjacent genesis rendering of rout picture_show
+----
+1.0 0.0 0.0 The adjacent adjacent generation superstar of rabble movie
+----
+1.0 0.0 0.0 The arrant next propagation variation of rabble motion_picture
+----
+1.0 0.0 0.0 The channukkah holiday spirit seems fried in pork_barrel
+----
+1.0 0.0 0.0 The hanukah religious liveliness seems fried in pork_barrel
+----
+1.0 0.0 0.0 The unexampled next generation hotshot of rabble pic
+----
+0.7 0.0 0.3 The arrant adjacent genesis edition of ring film
+----
+1.0 0.0 0.0 The truthful next multiplication wizard of mob moving_picture
+----
+0.9 0.0 0.1 The unfeigned next propagation ace of family pic
+----
+1.0 0.0 0.0 The truthful next generation superstar of family film
+----
+0.8 0.0 0.2 The genuine adjacent propagation asterisk of gang moving_picture
+----
+0.9 0.0 0.1 The new next multiplication whiz of rout movie
+----
+1.0 0.0 0.0 The reliable adjacent multiplication lead of gang moving_picture
+----
+1.0 0.0 0.0 The New York hannukah spirit seems fried in pork
+----
+0.9 0.0 0.1 The adjacent adjacent genesis star of gang film
+----
+1.0 0.0 0.0 The modern adjacent multiplication superstar of crime_syndicate picture
+----
+1.0 0.0 0.0 The Hanukkah holy sprightliness seems fried in pork
+----
+1.0 0.0 0.0 The pure adjacent genesis interpretation of ring film
+----
+1.0 0.0 0.0 The rightful adjacent generation sensation of rout picture
+----
+0.9 0.0 0.1 The truthful adjacent propagation whizz of gang picture
+----
+1.0 0.0 0.0 The entire next generation of crime_syndicate picture
+----
+1.0 0.0 0.0 The raw next generation superstar of crime_syndicate motion_picture
+----
+1.0 0.0 0.0 The gross adjacent genesis adaptation of rout pic
+----
+1.0 0.0 0.0 The truthful adjacent multiplication champion of ring movie
+----
+1.0 0.0 0.0 The integral hannukah vacation flavor seems fried in pork_barrel
+----
+1.0 0.0 0.0 The New house_of_york chanukah disembodied_spirit seems fried in porc
+----
+1.0 0.0 0.0 The raw next generation whizz of syndicate motion_picture
+----
+1.0 0.0 0.0 The next new genesis stars of family movie
+----
+1.0 0.0 0.0 The newfangled York channukkah spirit seems fried in porc
+----
+0.9 0.0 0.1 The modern next propagation headliner of rabble picture
+----
+1.0 0.0 0.0 The entire judaic chanukah heart seems fried in porc
+----
+1.0 0.0 0.0 The gross adjacent propagation adaptation of mob moving_picture
+----
+1.0 0.0 0.0 The substantial chanukah holiday feeling seems fried in pork
+----
+1.0 0.0 0.0 The tangible channukkah vacation life seems fried in porc
+----
+1.0 0.0 0.0 The reliable next generation principal of rabble movie
+----
+0.8 0.0 0.2 The unadulterated next genesis variation of syndicate movie
+----
+1.0 0.0 0.0 The modern adjacent genesis star of pack picture_show
+----
+1.0 0.0 0.0 The good hannukah vacation sprightliness seems fried in pork_barrel
+----
+1.0 0.0 0.0 The thoroughgoing next genesis interpretation of mob picture
+----
+1.0 0.0 0.0 The honest next genesis genius of ring picture
+----
+1.0 0.0 0.0 The entire judaic channukah life seems fried in porc
+----
+1.0 0.0 0.0 The young next genesis superstar of rabble motion_picture
+----
+1.0 0.0 0.0 The honest chanukah holiday liveliness seems fried in pork
+----
+1.0 0.0 0.0 The adjacent adjacent propagation asterisk of gang picture
+----
+1.0 0.0 0.0 The next generation stars of mob pic
+----
+0.7 0.0 0.3 The unadulterated next propagation rendering of rout motion_picture
+----
+0.7 0.0 0.3 The complete adjacent multiplication translation of family picture
+----
+1.0 0.0 0.0 The honest adjacent genesis superstar of mob moving_picture
+----
+0.9 0.0 0.1 The newfangled next multiplication star_topology of ring film
+----
+1.0 0.0 0.0 The rightful next generation principal of ring picture
+----
+1.0 0.0 0.0 The genuine next genesis lead of gang picture
+----
+1.0 0.0 0.0 The consummate next generation adaptation of rout motion_picture
+----
+1.0 0.0 0.0 The modern next propagation lead of ring moving_picture
+----
+1.0 0.0 0.0 The consummate next multiplication interlingual_rendition of family picture
+----
+1.0 0.0 0.0 The genuine Hanukkah vacation flavor seems fried in porc
+----
+1.0 0.0 0.0 The fresh next generation hotshot of ring movie
+----
+0.8 0.0 0.2 The true adjacent multiplication whizz of rabble picture_show
+----
+1.0 0.0 0.0 The honest adjacent genesis sensation of rabble film
+----
+1.0 0.0 0.0 The reliable next propagation star of gang motion_picture
+----
+0.9 0.0 0.1 The unadulterated adjacent multiplication edition of gang motion_picture
+----
+1.0 0.0 0.0 The newfangled next generation whizz of rabble pic
+----
+0.8 0.0 0.2 The next next multiplication headliner of mob moving_picture
+----
+0.7 0.0 0.3 The adjacent new propagation stars of mob picture_show
+----
+1.0 0.0 0.0 The raw next propagation whiz of family motion_picture
+----
+0.7 0.0 0.3 The thoroughgoing adjacent generation translation of mob film
+----
+1.0 0.0 0.0 The next next propagation superstar of ring moving_picture
+----
+0.9 0.0 0.1 The entire next multiplication of family pic
+----
+1.0 0.0 0.0 The fresh adjacent generation lead of crime_syndicate motion_picture
+----
+1.0 0.0 0.0 The modern next genesis champion of family movie
+----
+1.0 0.0 0.0 The truthful adjacent propagation star_topology of ring picture
+----
+0.9 0.0 0.1 The arrant next generation adaptation of family motion_picture
+----
+0.8 0.0 0.2 The next next multiplication sensation of rabble movie
+----
+0.9 0.0 0.1 The newfangled next multiplication sensation of crime_syndicate picture
+----
+1.0 0.0 0.0 The utter next genesis variant of rabble movie
+----
+1.0 0.0 0.0 The New house_of_york hannukah spirit seems fried in porc
+----
+1.0 0.0 0.0 The honest next genesis wizard of ring picture_show
+----
+1.0 0.0 0.0 The utter adjacent multiplication reading of crime_syndicate movie
+----
+0.8 0.0 0.2 The unexampled next genesis wizard of mob picture
+----
+1.0 0.0 0.0 The raw next propagation superstar of pack picture
+----
+1.0 0.0 0.0 The arrant adjacent multiplication reading of gang film
+----
+1.0 0.0 0.0 The truthful adjacent genesis champion of crime_syndicate picture_show
+----
+0.7 0.0 0.3 The honest next genesis asterisk of mob movie
+----
+0.8 0.0 0.2 The newfangled next propagation lead of mob movie
+----
+0.9 0.0 0.1 The honest next genesis asterisk of pack moving_picture
+----
+1.0 0.0 0.0 The unexampled adjacent multiplication lead of ring movie
+----
+1.0 0.0 0.0 The newfangled next propagation champion of ring moving_picture
+----
+1.0 0.0 0.0 The modern adjacent multiplication whiz of rout film
+----
+1.0 0.0 0.0 The newfangled next generation ace of family movie
+----
+0.9 0.0 0.1 The dependable next generation asterisk of rabble motion_picture
+----
+0.9 0.0 0.1 The new adjacent genesis champion of gang picture_show
+----
+1.0 0.0 0.0 The true next propagation star of pack pic
+----
+1.0 0.0 0.0 The everlasting adjacent multiplication version of pack movie
+----
+0.9 0.0 0.1 The adjacent multiplication and future_tense of syndicate moving_picture
+----
+
+
+
+
+<<<<< MODEL: textattack/roberta-base-SST-2
+>>>>> MODEL: distilbert-base-uncased-finetuned-sst-2-english
+Running sentiment_analysis
+Predicting 500 examples
+Vocab_POS
+
+sentiment_analysis
+Test cases:      219625
+Test cases run:  500
+Fails (rate):    488 (97.6%)
+
+Example fails:
+1.0 0.0 0.0 The everlasting adjacent propagation adaptation of syndicate motion_picture
+----
+0.0 0.0 1.0 The true adjacent genesis star of syndicate pic
+----
+0.0 0.0 1.0 The true next multiplication genius of pack motion_picture
+----
+0.1 0.0 0.9 The adjacent new propagation stars of pack picture
+----
+0.0 0.0 1.0 The everlasting next generation adaptation of syndicate motion_picture
+----
+0.0 0.0 1.0 The honest adjacent propagation genius of gang pic
+----
+0.9 0.0 0.1 The stark adjacent genesis interlingual_rendition of pack picture_show
+----
+0.0 0.0 1.0 The entire adjacent genesis of family motion_picture
+----
+1.0 0.0 0.0 The new next propagation whiz of gang picture
+----
+0.0 0.0 1.0 The new next multiplication principal of pack picture
+----
+0.0 0.0 1.0 The perfect adjacent propagation rendering of syndicate moving_picture
+----
+1.0 0.0 0.0 The complete adjacent multiplication translation of crime_syndicate film
+----
+1.0 0.0 0.0 The intact hanukah holiday tone seems fried in porc
+----
+0.0 0.0 1.0 The truthful adjacent genesis whizz of syndicate film
+----
+0.0 0.0 1.0 The true next propagation superstar of mob movie
+----
+1.0 0.0 0.0 The lawful next propagation superstar of rabble moving_picture
+----
+1.0 0.0 0.0 The entire judaic chanukkah emotional_state seems fried in porc
+----
+0.0 0.0 1.0 The true next generation whiz of gang picture
+----
+0.0 0.0 1.0 The rightful next generation hotshot of gang picture_show
+----
+1.0 0.0 0.0 The fresh York hanukah flavour seems fried in porc
+----
+1.0 0.0 0.0 The adjacent adjacent propagation sensation of rout picture
+----
+0.0 0.0 1.0 The honest next genesis hotshot of syndicate motion_picture
+----
+1.0 0.0 0.0 The unexampled adjacent multiplication principal of rabble movie
+----
+0.9 0.0 0.1 The true next genesis lead of rout motion_picture
+----
+0.9 0.0 0.1 The tangible chanukkah vacation flavor seems fried in porc
+----
+0.9 0.0 0.1 The consummate adjacent propagation version of syndicate pic
+----
+1.0 0.0 0.0 The dependable next genesis ace of crime_syndicate motion_picture
+----
+0.0 0.0 1.0 The perfect adjacent multiplication rendering of syndicate movie
+----
+0.0 0.0 1.0 The newfangled adjacent generation star of family picture
+----
+0.0 0.0 1.0 The perfect adjacent multiplication adaptation of family film
+----
+0.1 0.0 0.9 The next newfangled propagation stars of family pic
+----
+0.3 0.0 0.7 The entire next genesis of ring motion_picture
+----
+0.3 0.0 0.7 The next next propagation genius of gang movie
+----
+0.0 0.0 1.0 The consummate next multiplication interpretation of family pic
+----
+0.0 0.0 1.0 The new adjacent genesis star_topology of gang moving_picture
+----
+1.0 0.0 0.0 The substantial channukkah holiday intent seems fried in porc
+----
+1.0 0.0 0.0 The raw adjacent genesis lead of rout picture_show
+----
+0.0 0.0 1.0 The newfangled adjacent generation headliner of pack motion_picture
+----
+0.0 0.0 1.0 The genuine adjacent multiplication headliner of gang motion_picture
+----
+0.9 0.0 0.1 The honest chanukkah holiday disembodied_spirit seems fried in pork
+----
+0.0 0.0 1.0 The stark next generation rendering of pack motion_picture
+----
+0.0 0.0 1.0 The fresh adjacent multiplication genius of ring pic
+----
+0.0 0.0 1.0 The thoroughgoing next propagation adaptation of family picture_show
+----
+0.0 0.0 1.0 The reliable adjacent generation wizard of family picture
+----
+1.0 0.0 0.0 The adjacent multiplication and future of pack moving_picture
+----
+1.0 0.0 0.0 The unexampled adjacent propagation star of rabble motion_picture
+----
+0.0 0.0 1.0 The new adjacent generation whizz of family movie
+----
+0.0 0.0 1.0 The next raw multiplication stars of mob film
+----
+1.0 0.0 0.0 The fresh house_of_york hannukah feeling seems fried in pork
+----
+0.0 0.0 1.0 The genuine next propagation wizard of ring film
+----
+0.0 0.0 1.0 The honest adjacent multiplication ace of rout film
+----
+1.0 0.0 0.0 The judaic Hanukkah vacation flavor seems fried in pork
+----
+0.8 0.0 0.2 The true next propagation sensation of rabble picture
+----
+0.0 0.0 1.0 The rightful next generation whiz of syndicate motion_picture
+----
+0.0 0.0 1.0 The genuine next genesis headliner of crime_syndicate moving_picture
+----
+0.0 0.0 1.0 The modern adjacent multiplication star of crime_syndicate picture_show
+----
+0.0 0.0 1.0 The true next multiplication champion of ring film
+----
+1.0 0.0 0.0 The Hanukkah holy flavor seems fried in pork_barrel
+----
+0.1 0.0 0.9 The rightful adjacent genesis star_topology of pack pic
+----
+0.0 0.0 1.0 The newfangled next propagation superstar of family motion_picture
+----
+0.8 0.0 0.2 The pure adjacent generation variant of mob picture
+----
+0.0 0.0 1.0 The new next genesis headliner of rabble picture_show
+----
+0.3 0.0 0.7 The dependable adjacent generation hotshot of gang moving_picture
+----
+1.0 0.0 0.0 The complete next multiplication reading of crime_syndicate motion_picture
+----
+0.0 0.0 1.0 The honest adjacent multiplication whiz of pack motion_picture
+----
+1.0 0.0 0.0 The unexampled adjacent propagation ace of mob movie
+----
+0.0 0.0 1.0 The true next generation sensation of crime_syndicate picture_show
+----
+0.1 0.0 0.9 The new next generation hotshot of pack pic
+----
+0.0 0.0 1.0 The raw adjacent genesis wizard of gang pic
+----
+0.0 0.0 1.0 The new next multiplication champion of rout film
+----
+0.0 0.0 1.0 The fresh adjacent generation whiz of syndicate picture_show
+----
+0.0 0.0 1.0 The new adjacent generation whizz of syndicate picture_show
+----
+1.0 0.0 0.0 The literal channukkah holiday flavour seems fried in porc
+----
+1.0 0.0 0.0 The wide channukkah vacation tone seems fried in pork_barrel
+----
+0.9 0.0 0.1 The arrant adjacent generation translation of family pic
+----
+1.0 0.0 0.0 The arrant adjacent multiplication rendering of crime_syndicate film
+----
+1.0 0.0 0.0 The unadulterated next genesis interpretation of gang moving_picture
+----
+1.0 0.0 0.0 The arrant adjacent propagation edition of ring moving_picture
+----
+1.0 0.0 0.0 The raw adjacent multiplication sensation of rabble moving_picture
+----
+0.1 0.0 0.9 The pure adjacent generation translation of rabble film
+----
+1.0 0.0 0.0 The complete next propagation translation of gang motion_picture
+----
+0.0 0.0 1.0 The reliable next generation headliner of mob moving_picture
+----
+1.0 0.0 0.0 The intact chanukah vacation heart seems fried in pork
+----
+1.0 0.0 0.0 The complete adjacent generation variant of gang film
+----
+1.0 0.0 0.0 The everlasting adjacent multiplication translation of pack picture_show
+----
+0.0 0.0 1.0 The dependable adjacent generation whiz of family picture_show
+----
+0.0 0.0 1.0 The genuine adjacent propagation sensation of pack picture
+----
+0.0 0.0 1.0 The rightful adjacent multiplication wizard of rout picture
+----
+1.0 0.0 0.0 The utter adjacent generation edition of gang moving_picture
+----
+1.0 0.0 0.0 The adjacent adjacent propagation asterisk of rabble movie
+----
+1.0 0.0 0.0 The gross adjacent genesis version of ring movie
+----
+1.0 0.0 0.0 The raw next genesis lead of rabble pic
+----
+0.0 0.0 1.0 The raw adjacent multiplication champion of family movie
+----
+0.9 0.0 0.1 The lawful adjacent generation hotshot of ring film
+----
+1.0 0.0 0.0 The Hanukkah season sprightliness seems fried in pork_barrel
+----
+1.0 0.0 0.0 The unfeigned next propagation whizz of rout picture
+----
+1.0 0.0 0.0 The adjacent multiplication and future_tense of gang picture_show
+----
+0.9 0.0 0.1 The thoroughgoing adjacent propagation adaptation of crime_syndicate picture_show
+----
+0.0 0.0 1.0 The honest adjacent generation principal of crime_syndicate pic
+----
+0.0 0.0 1.0 Like old myths and old admiration tales spun afresh
+----
+
+
+
+
+<<<<< MODEL: distilbert-base-uncased-finetuned-sst-2-english
+**********
