@@ -7,6 +7,7 @@ from transformers import pipeline, AutoTokenizer
 # from nlp import load_dataset
 
 import os
+import numpy as np
 
 from Utils import Utils
 from Macros import Macros
@@ -18,16 +19,16 @@ class Model:
     }
 
     @classmethod
-    def read_model_list(task: str):
+    def read_model_list(cls, task: str):
         _task, model_file = cls.model_map[task]
         return _task, [l.strip() for l in Utils.read_txt(model_file)]
 
     @classmethod
-    def load_models(task: str):
+    def load_models(cls, task: str):
         _task, model_names = cls.read_model_list(task)
         for m in model_names:
             tokenizer = AutoTokenizer.from_pretrained(m)
-            yield pipeline(_task, model=m, tokenizer=tokenizer, framework="pt", device=0)
+            yield m, pipeline(_task, model=m, tokenizer=tokenizer, framework="pt", device=0)
         # end for
 
     @classmethod
@@ -38,17 +39,17 @@ class Model:
         # end for
 
     @classmethod
-    def batch_predict(cls, model, data: List[str], batch_size: int = 32):
+    def batch_predict(cls, data: List[str], batch_size: int = 32):
         preds = list()
         for d in cls.get_batch(data, batch_size):
-            preds.extend(model(d))
+            preds.extend(cls.model(d))
         # end for
         return preds
-
+    
     @classmethod
-    def sentiment_pred_and_conf(cls, model, data: List[str]):
+    def sentiment_pred_and_conf(cls, data: List[str]):
         # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
-        preds = cls.batch_predict(model, data)
+        preds = cls.batch_predict(data)
         pr = np.array([x['score'] if x['label'] == 'POSITIVE' else 1 - x['score'] for x in preds])
         pp = np.zeros((pr.shape[0], 3))
         margin_neutral = 1/3.
@@ -67,3 +68,10 @@ class Model:
         pp[neutral_neg, 0] = 1 - pp[neutral_neg, 1]
         preds = np.argmax(pp, axis=1)
         return preds, pp
+
+    @classmethod
+    def run(cls, testsuite, model, pred_and_conf_fn):
+        cls.model = model
+        testsuite.run(pred_and_conf_fn, n=500, overwrite=True)
+        testsuite.summary()
+        return
