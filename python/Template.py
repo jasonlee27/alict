@@ -6,7 +6,7 @@ from typing import *
 import re, os
 import nltk
 import copy
-import random
+# import random
 import numpy
 import spacy
 
@@ -16,8 +16,12 @@ from nltk.tokenize import word_tokenize as tokenize
 
 from Macros import Macros
 from Utils import Utils
+from Requirements import Requirements
 from Generator import Generator
 from Synonyms import Synonyms
+from Search import Search
+from CFGExpander import CFGExpander
+from Suggest import Suggest
 
 
 class Template:
@@ -29,18 +33,23 @@ class Template:
         "PRP$": "PP$"
     }
 
+    SEARCH_MAP = {
+        Macros.sa_task: Search.search_sst
+    }
+
     @classmethod
-    def generate_inputs(cls):
+    def generate_inputs(cls, n=None):
         cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
         for task in Macros.datasets.keys():
-            print(f"TASK: {task}")
+            print(f"***** TASK: {task} *****")
             reqs = Requirements.get_requirements(task)
             results = list()
-            for selected in Search.search_sst(reqs):
+            for selected in cls.SEARCH_MAP[task](reqs):
                 exp_inputs = dict()
-                print(f"REQUIREMENT:")
+                print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
+                selected_inputs = selected["selected_inputs"][:n] if n is not None else selected["selected_inputs"]
                 for _id, seed, seed_label in selected["selected_inputs"]:
-                    print(f"SEED: {_id} {seed}, {seed_label}")
+                    print(f"\tSELECTED_SEED: {_id} {seed}, {seed_label}")
                     expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                     generator = Generator(expander=expander)
                     gen_inputs = generator.masked_input_generator()
@@ -67,21 +76,23 @@ class Template:
                     "requirement": selected["requirement"],
                     "inputs": exp_inputs
                 })
+                print(f"<<<<< REQUIREMENT:", selected["requirement"]["description"])
             # end for
             
             # write raw new inputs
             Utils.write_json(results,
                              Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
                              pretty_format=True)
+            print(f"**********")
         # end for
         return results
     
     @classmethod
-    def get_new_inputs(cls, input_file):
+    def get_new_inputs(cls, input_file, n=None):
         if os.path.exists(input_file):
             return Utils.read_json(input_file)
         # end if
-        return cls.generate_inputs()
+        return cls.generate_inputs(n=n)
 
     @classmethod
     def find_pos_from_cfg_seed(cls, token, cfg_seed):
@@ -142,9 +153,13 @@ class Template:
             else:
                 syns = Synonyms.get_synonyms(nlp, t, tpos)
                 if len(syns)>1:
-                    syns_dict = {
-                        key: list(set(syns))
-                    }
+                    _syns = list()
+                    for s in list(set(syns)):
+                        if len(s.split("_"))>1:
+                            _syns.append(" ".join(s.split("_")))
+                        # end if
+                    # end for
+                    syns_dict = {key: _syns}
                     template.append(syns_dict)
                     if key not in prev_synonyms.keys():
                         prev_synonyms[key] = syns_dict[key]
@@ -163,16 +178,16 @@ class Template:
         }, prev_synonyms
 
     @classmethod
-    def get_templates(cls, cksum_val=None):
+    def get_templates(cls, num_seeds=None):
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         for task in Macros.datasets.keys():
-            new_input_dicts = cls.get_new_inputs(Macros.result_dir/f"cfg_expanded_inputs_{task}.json")
+            new_input_dicts = cls.get_new_inputs(Macros.result_dir/f"cfg_expanded_inputs_{task}.json", n=num_seeds)
             prev_synonyms = dict()
             # for each testing linguistic capabilities,
             for t_i in range(len(new_input_dicts)):
                 inputs_per_req = new_input_dicts[t_i]
-                req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])                    
+                req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])
                 inputs = inputs_per_req["inputs"]
                 templates = list()
                 for seed_input in inputs.keys():
@@ -203,5 +218,4 @@ class Template:
 
     
 if __name__=="__main__":
-    Template.get_templates()
-    
+    Template.get_templates(num_seeds=20)

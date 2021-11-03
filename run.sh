@@ -8,20 +8,26 @@ readonly DL_DIR="${_DIR}/_downloads"
 readonly RESULT_DIR="${_DIR}/_results"
 readonly TASK=${1}; shift
 
-function run_generator() {
+function gen_templates() {
         (cd ${PYTHON_DIR}
-         python -m Generator
+         python -m Template
+        )
+}
+
+function gen_testsuite() {
+        (cd ${PYTHON_DIR}
+         python -m Testsuite
+        )
+}
+
+function eval_models(){
+        (cd ${PYTHON_DIR}
+         python -m Testmodel
         )
 }
 
 function main() {
-
-        # local task="${TASK}"
-        local task="gen"
-        
-        if [ "${task}" == "gen" ]; then
-                time run_generator
-        fi
+        gen_templates
 }
 
 # please make sure you actiavte nlptest conda environment

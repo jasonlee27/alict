@@ -32,7 +32,7 @@ SENT_DICT = {
     "negative_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="negative"],
     "neutral_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="pure neutral"]
 }
-
+random.seed(27)
 
 class SearchOperator: 
     
@@ -240,12 +240,7 @@ class Search:
         for req in requirements:
             req_obj = SearchOperator(req)
             selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
-            # selected_res = {
-            #     "description": req["description"],
-            #     "search_requirements": req["search"],
-            #     "transform_requirements": req["transform"],
-            #     "selected_inputs": selected
-            # }
+            random.shuffle(selected)
             selected_res = {
                 "requirement": req,
                 "selected_inputs": selected
@@ -260,4 +255,3 @@ if __name__=="__main__":
         reqs = Requirements.get_requirements(task)
         Search.search_sst(reqs)
     # end for
-    

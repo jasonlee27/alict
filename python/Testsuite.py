@@ -122,9 +122,7 @@ class Testsuite:
         # end for
         return
 
-        
+
 if __name__=="__main__":
-    for task, temp in Testsuite.get_templates():
-        editor = Editor()
-        Testsuite.write_editor_template(editor, task, temp)
+    Testsuite.write_testsuites()
         

@@ -373,37 +373,37 @@ class TreebankCFG:
         return Utils.read_json(pcfg_file)
 
 
-def main():
-    # cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
-    # input_file = Macros.this_dir / 'ex.txt'
-    # cfg_ut_file = Macros.result_dir / 'ex_cfg.json'
-    # cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'
-    pcfg_ref_file = Macros.result_dir / 'treebank_pcfg.json'
+# def main():
+#     # cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
+#     # input_file = Macros.this_dir / 'ex.txt'
+#     # cfg_ut_file = Macros.result_dir / 'ex_cfg.json'
+#     # cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'
+#     pcfg_ref_file = Macros.result_dir / 'treebank_pcfg.json'
 
-    # # generate grammars
-    # if not os.path.exists(cfg_ref_file):
-    #     TreebankCFG.get_cfgs(cfg_ref_file, pretty_format=True)
-    # # end if
-    # if not os.path.exists(pcfg_ref_file):
-    #     TreebankCFG.get_pcfgs(pcfg_ref_file, pretty_format=True)
-    # end if
-    # if not os.path.exists(cfg_ut_file):
-    #     BeneparCFG.get_cfgs(input_file, cfg_ut_file, pretty_format=True)
-    # # end if
+#     # # generate grammars
+#     # if not os.path.exists(cfg_ref_file):
+#     #     TreebankCFG.get_cfgs(cfg_ref_file, pretty_format=True)
+#     # # end if
+#     # if not os.path.exists(pcfg_ref_file):
+#     #     TreebankCFG.get_pcfgs(pcfg_ref_file, pretty_format=True)
+#     # end if
+#     # if not os.path.exists(cfg_ut_file):
+#     #     BeneparCFG.get_cfgs(input_file, cfg_ut_file, pretty_format=True)
+#     # # end if
 
-    for t_i, tree in enumerate(treebank.parsed_sents()):
-        for s in tree.subtrees(lambda t: t.label()=='NP'):
-            # if len(s.leaves())<10:
-            #     print(f"-> ",' '.join(s.leaves()))
-            children = [_s.label() for _s in s]
-            if children==['DT', 'NN', 'SBAR']:
-                print(f"-> ",' '.join(s.leaves()))
-                print(s)
-                print()
-            # end if
-        # end for
-    # end for
+#     for t_i, tree in enumerate(treebank.parsed_sents()):
+#         for s in tree.subtrees(lambda t: t.label()=='NP'):
+#             # if len(s.leaves())<10:
+#             #     print(f"-> ",' '.join(s.leaves()))
+#             children = [_s.label() for _s in s]
+#             if children==['DT', 'NN', 'SBAR']:
+#                 print(f"-> ",' '.join(s.leaves()))
+#                 print(s)
+#                 print()
+#             # end if
+#         # end for
+#     # end for
    
 
-if __name__=='__main__':
-    main()
+# if __name__=='__main__':
+#     main()
