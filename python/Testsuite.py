@@ -83,9 +83,12 @@ class Testsuite:
 
     @classmethod
     def write_editor_template(cls, editor, task, template_dicts):
-        suite = TestSuite()
+        res_dir = Macros.result_dir / "test_results"
+        res_dir.mkdir(parents=True, exist_ok=True)
+
         t = None
         for templates_per_req in template_dicts:
+            suite = TestSuite()
             for temp_i, temp in enumerate(templates_per_req["templates"]):
                 for key, val in temp["values"].items():
                     if key not in editor.lexicons.keys():
@@ -103,15 +106,15 @@ class Testsuite:
                 # end if
             # end for
             test = MFT(**t)
-            
             suite.add(test, 
                       name=task,
                       capability=templates_per_req["capability"],
                       description=templates_per_req["description"])
+            test_cksum = Utils.get_cksum(
+                task+templates_per_req["capability"]+templates_per_req["description"]
+            )
+            suite.save(res_dir / f'{task}_testsuite_{test_cksum}.pkl')
         # end for
-        res_dir = Macros.result_dir / "test_results"
-        res_dir.mkdir(parents=True, exist_ok=True)
-        suite.save(res_dir / f'{task}_testsuite.pkl')
         return
 
     @classmethod

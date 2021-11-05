@@ -11,6 +11,7 @@ from Utils import Utils
 from Testsuite import Testsuite
 from Model import Model
 
+import os
 
 class Testmodel:
 
@@ -24,12 +25,19 @@ class Testmodel:
 
     @classmethod
     def run(cls, task):
-        testsuite_file = Macros.result_dir / "test_results" / f'{task}_testsuite.pkl'
-        testsuite = cls.load_testsuite(testsuite_file)
-        for mname, model in Model.load_models(task):
-            print(f">>>>> MODEL: {mname}")
-            Model.run(testsuite, model, cls.model_func_map[task])
-            print(f"<<<<< MODEL: {mname}")
+        for test_file in os.listdir(Macros.result_dir / "test_results"):
+            if test_file.startswith(f"{task}_testsuite_") and test_file.endswith(".pkl"):
+                testsuite_file = Macros.result_dir / "test_results" / test_file
+                testsuite = cls.load_testsuite(testsuite_file)
+                test_info = testsuite.info[task]["capability"]+"::"+testsuite.info[task]["description"]
+                print(f">>>>> TEST: {test_info}")
+                for mname, model in Model.load_models(task):
+                    print(f">>>>> MODEL: {mname}")
+                    Model.run(testsuite, model, cls.model_func_map[task])
+                    print(f"<<<<< MODEL: {mname}")
+                # end for
+                print(f"<<<<< TEST")
+            # end if
         # end for
         return
 
