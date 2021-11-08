@@ -50,69 +50,88 @@ class Requirements:
         # end if
         reqs = None
         test_type_file = Macros.result_dir / f"test_type_{task}.json"
-        if os.path.exists(test_type_file):
-            # cap_decp:
-            # key: liguistic capability to be evaluated
-            # value: each test type description
-            cap_desc = Utils.read_json(test_type_file)
-            reqs = list()
-            for cap, descs in cap_desc.items():
-                for d in descs:
-                    if d.lower()=="short sentences with neutral adjectives and nouns":
-                        reqs.append({
-                            "capability": cap,
-                            "description": d,
-                            "search": [{
-                                "length": "<10",
-                                "include": {
-                                    "POS": ["neutral adjs", "neutral nouns"],
-                                    "word": None
-                                },
-                                "exclude": {
-                                    "POS": ["positive adjs", "negative adjs", "positive nouns", "negative nouns"],
-                                    "word": None
-                                },
-                                "label": "neutral"
-                            }],
-                            "transform": None
-                        })
-                    elif d.lower()=="short sentences with sentiment-laden adjectives":
-                        reqs.append({
-                            "capability": cap,
-                            "description": d,
-                            "search": [{
-                                "length": "<10",
-                                "include": {
-                                    "POS": ["positive adjs"],
-                                    "word": None
-                                },
-                                "exclude": {
-                                    "POS": ["negative adjs", "negative verbs", "negative nouns"],
-                                    "word": None
-                                },
-                                "label": "positive"
-                            }, {
-                                "length": "<10",
-                                "include": {
-                                    "POS": ["negative adjs"],
-                                    "word": None
-                                },
-                                "exclude": {
-                                    "POS": ["positive adjs", "positive verbs", "positive nouns"],
-                                    "word": None
-                                },
-                                "label": "negative"
-                            }],
-                            "transform": None
-                        })
-                    # end if
-                # end for
+        # if not os.path.exists(test_type_file):
+        #     cap_desc = cls.convert_test_type_txt_to_json()
+        # else:
+        #     cap_desc = Utils.read_json(test_type_file)
+        # # end if
+
+        cap_desc = cls.convert_test_type_txt_to_json()
+        # cap_decp:
+        # key: liguistic capability to be evaluated
+        # value: each test type description
+        reqs = list()
+        for cap, descs in cap_desc.items():
+            for d in descs:
+                if d.lower()=="short sentences with neutral adjectives and nouns":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [{
+                            "length": "<10",
+                            "include": {
+                                "POS": ["neutral adjs", "neutral nouns"],
+                                "word": None
+                            },
+                            "exclude": {
+                                "POS": ["positive adjs", "negative adjs", "positive nouns", "negative nouns"],
+                                "word": None
+                            },
+                            "label": "neutral"
+                        }],
+                        "transform": None
+                    })
+                elif d.lower()=="short sentences with sentiment-laden adjectives":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [{
+                            "length": "<10",
+                            "include": {
+                                "POS": ["positive adjs"],
+                                "word": None
+                            },
+                            "exclude": {
+                                "POS": ["negative adjs", "negative verbs", "negative nouns"],
+                                "word": None
+                            },
+                            "label": "positive"
+                        }, {
+                            "length": "<10",
+                            "include": {
+                                "POS": ["negative adjs"],
+                                "word": None
+                            },
+                            "exclude": {
+                                "POS": ["positive adjs", "positive verbs", "positive nouns"],
+                                "word": None
+                            },
+                            "label": "negative"
+                        }],
+                        "transform": None
+                    })
+                elif d.lower()=="replace neutral words with other neutral words":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": {
+                            "include": {
+                                "POS": ["neutral adj", "neutral noun", "neutral verb"],
+                                "word": None,
+                            },
+                            "exclude": None,
+                            "label": None,
+                        },
+                        "transform": {
+                            "get": "pos::neutral"
+                        }
+                    })
+                # end if
             # end for
-            Utils.write_json(reqs,
-                             req_file,
-                             pretty_format=True)
-            return reqs
-        # end if
+        # end for
+        Utils.write_json(reqs,
+                         req_file,
+                         pretty_format=True)
         return reqs
 
     # @classmethod

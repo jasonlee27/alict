@@ -19,7 +19,7 @@ from checklist.editor import Editor
 
 from Macros import Macros
 from Utils import Utils
-from Search import Search
+# from Search import Search
 from Requirements import Requirements
 from CFGExpander import CFGExpander
 from Suggest import Suggest

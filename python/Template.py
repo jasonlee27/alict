@@ -34,7 +34,7 @@ class Template:
     }
 
     SEARCH_MAP = {
-        Macros.sa_task: Search.search_sst
+        Macros.sa_task: Search.search_sentiment_analysis
     }
 
     @classmethod
@@ -48,7 +48,7 @@ class Template:
                 exp_inputs = dict()
                 print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
                 selected_inputs = selected["selected_inputs"][:n] if n is not None else selected["selected_inputs"]
-                for _id, seed, seed_label in selected["selected_inputs"]:
+                for _id, seed, seed_label in selected_inputs:
                     print(f"\tSELECTED_SEED: {_id} {seed}, {seed_label}")
                     expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                     generator = Generator(expander=expander)
@@ -68,6 +68,7 @@ class Template:
                         # end for
                     # end if
                     exp_inputs[seed] = {
+                        "cfg_seed": expander.cfg_seed,
                         "exp_inputs": new_input_results,
                         "label": seed_label
                     }
@@ -143,7 +144,7 @@ class Template:
         for t, tpos in zip(tokens, tokens_pos):
             key = "{"+f"{t}_{tpos}"+"}"
             if key in prev_synonyms.keys():
-                if prev_synonyms[key] is None:
+                if prev_synonyms[key] is None or len(prev_synonyms[key])==0:
                     template.append(t)
                 else:
                     template.append({
@@ -157,6 +158,8 @@ class Template:
                     for s in list(set(syns)):
                         if len(s.split("_"))>1:
                             _syns.append(" ".join(s.split("_")))
+                        else:
+                            _syns.append(s)
                         # end if
                     # end for
                     syns_dict = {key: _syns}
@@ -195,6 +198,14 @@ class Template:
                     cfg_seed = inputs[seed_input]["cfg_seed"]
                     label_seed = inputs[seed_input]["label"]
                     exp_inputs = inputs[seed_input]["exp_inputs"]
+
+                    # make template for seed input
+                    tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
+                    _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
+                    _templates["label"] = label_seed
+                    templates.append(_templates)
+
+                    # Make template for expanded inputs
                     for inp_i, inp in enumerate(exp_inputs):
                         (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
                         tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
@@ -218,4 +229,4 @@ class Template:
 
     
 if __name__=="__main__":
-    Template.get_templates(num_seeds=20)
+    Template.get_templates(num_seeds=10)

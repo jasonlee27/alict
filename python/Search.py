@@ -92,7 +92,10 @@ class SearchOperator:
         # end if
         return _sents
 
-    def _search_by_include(self, sents, cond_key, cond_number):
+    def _search_by_word_include(self, sents, word_cond):
+        pass
+
+    def _search_by_pos_include(self, sents, cond_key, cond_number):
         # sents: (s_i, tokenizes sentence, label)
         target_words = SENT_DICT[cond_key]
         selected = list()
@@ -136,10 +139,10 @@ class SearchOperator:
                 
                 if sentiment is None:
                     for _sentiment in ["neutral","positive","negative"]:
-                        temp_sents.extend(self._search_by_include(_sents, f"{_sentiment}_{pos}", num))
+                        temp_sents.extend(self._search_by_pos_include(_sents, f"{_sentiment}_{pos}", num))
                     # end for
                 else:
-                    temp_sents = self._search_by_include(_sents, f"{sentiment}_{pos}", num)
+                    temp_sents = self._search_by_pos_include(_sents, f"{sentiment}_{pos}", num)
                 # end if
                 _sents = temp_sents
             # end for
@@ -201,19 +204,30 @@ class TransformOperator:
         self.capability = requirements['capability']
         self.description = requirements['description']
         self.transform_reqs = requirements['transform']
-        self.transform_methos = {
-            # "replace": cls.search_by_replacement,
+        self.transform_methods = {
+            "get": cls.extract,
             # "add": cls.search_by_add,
             # "remove": cls.search_by_remove
         }
         # print(f"{self.capability}: {self.description}")
         
 
-    def transform(self):
+    def transform(self, sents):
+        sents_res = list()
+        for req_key in self.transform_reqs.keys():
+            sents = self.transform_methods[req_key](sents, self.transform_reqs[req_key])
+        # end for
+        return sents
+
+    def extract(self, sents, cond_key):
         pass
-    
-    
-class Search:
+        # _sents = list()
+        # for s in sents:
+            
+        # # end for
+        # return _sents
+
+class SST:
 
     @classmethod
     def get_label_sst(cls, sent_file, label_file):
@@ -232,26 +246,48 @@ class Search:
         return [(s_i,s,labels[s_i]) for s_i, s in sents]
     
     @classmethod
-    def search_sst(cls, requirements):
+    def search_sst(cls, req):
         # sent: (index, sentence)
         # label: (index, label score) 
         sents = cls.get_label_sst(Macros.sst_datasent_file, Macros.sst_label_file)
-        result = list()
+        req_obj = SearchOperator(req)
+        selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
+        random.shuffle(selected)
+        # selected_res = {
+        #     "requirement": req,
+        #     "selected_inputs": selected
+        # }
+        req_obj = TransformOperator(req)
+        selected = req_obj.transform(selected)
+        return selected
+
+
+class Search:
+
+    SEARCH_MAP = {
+        Macros.sa_task : [SST.search_sst]
+    }
+
+    
+    @classmethod
+    def search_sentiment_analysis(cls, requirements):
+        func_list = cls.SEARCH_MAP[Macros.sa_task]
         for req in requirements:
-            req_obj = SearchOperator(req)
-            selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
-            random.shuffle(selected)
-            selected_res = {
+            selected = list()
+            for func in func_list:
+                selected.extend(func(req))
+            # end for
+            yield {
                 "requirement": req,
                 "selected_inputs": selected
             }
-            yield selected_res
         # end for
         return
 
-
-if __name__=="__main__":
-    for task in DATASETS.keys():
-        reqs = Requirements.get_requirements(task)
-        Search.search_sst(reqs)
-    # end for
+# if __name__=="__main__":
+#     for task in DATASETS.keys():
+#         reqs = Requirements.get_requirements(task)
+#         for task_dataset in Search.SEARCH_MAP[task]:
+#             Search.search_sst(reqs)
+#         # end for
+#     # end for
