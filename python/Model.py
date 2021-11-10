@@ -53,7 +53,7 @@ class Model:
         # textattack/bert-base-SST-2: label [LABEL_0, LABEL_1]
         # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
         preds = cls.batch_predict(data)
-        pr = np.array([x['score'] if x['label'] == 'POSITIVE' else 1 - x['score'] for x in preds])
+        pr = np.array([x['score'] if x['label']=='POSITIVE' or x['label']=='LABEL_1' else 1 - x['score'] for x in preds])
         pp = np.zeros((pr.shape[0], 3))
         margin_neutral = 1/3.
         mn = margin_neutral / 2.

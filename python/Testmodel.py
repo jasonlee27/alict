@@ -25,8 +25,20 @@ class Testmodel:
 
     @classmethod
     def run(cls, task):
-        for test_file in os.listdir(Macros.result_dir / "test_results"):
-            if test_file.startswith(f"{task}_testsuite_") and test_file.endswith(".pkl"):
+        print(f"***** TASK: {task} *****")
+        cksum_vals = [
+            os.path.basename(test_file).split("_")[-1]
+            for test_file in os.listdir(Macros.result_dir / "test_results")
+            if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
+        ]
+
+        for cksum_val in cksum_vals:
+            test_files = [
+                "{task}_testsuite_seeds_{test_cksum}.pkl",
+                "{task}_testsuite_seed_templates_{test_cksum}.pkl",
+                "{task}_testsuite_exp_templates_{test_cksum}.pkl"
+            ]
+            for test_file in test_files:
                 testsuite_file = Macros.result_dir / "test_results" / test_file
                 testsuite = cls.load_testsuite(testsuite_file)
                 test_info = testsuite.info[task]["capability"]+"::"+testsuite.info[task]["description"]
@@ -37,14 +49,14 @@ class Testmodel:
                     print(f"<<<<< MODEL: {mname}")
                 # end for
                 print(f"<<<<< TEST")
-            # end if
+            # end for
         # end for
+        print("**********")
         return
 
         
 if __name__=="__main__":
     for task in Macros.datasets.keys():
-        print(f"***** TASK: {task} *****")
         Testmodel.run(task)
-        print("**********")
+    # end for
         

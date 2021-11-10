@@ -163,7 +163,7 @@ class Template:
                         # end if
                     # end for
                     syns_dict = {key: _syns}
-                    template.append(syns_dict)
+                    template.append(syns_dict)x
                     if key not in prev_synonyms.keys():
                         prev_synonyms[key] = syns_dict[key]
                     # end if
@@ -192,18 +192,25 @@ class Template:
                 inputs_per_req = new_input_dicts[t_i]
                 req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])
                 inputs = inputs_per_req["inputs"]
-                templates = list()
+                
+                seed_inputs, seed_templates, exp_templates = list(), list(), list()
                 for seed_input in inputs.keys():
                     print(f"SEED: {seed_input}")
+                    
                     cfg_seed = inputs[seed_input]["cfg_seed"]
                     label_seed = inputs[seed_input]["label"]
                     exp_inputs = inputs[seed_input]["exp_inputs"]
+                    seed_inputs.append({
+                        "input": seed_input,
+                        "place_holder": tokenize(exp_input),
+                        "label": label_seed
+                    })
 
                     # make template for seed input
                     tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
                     _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
                     _templates["label"] = label_seed
-                    templates.append(_templates)
+                    seed_templates.append(_templates)
 
                     # Make template for expanded inputs
                     for inp_i, inp in enumerate(exp_inputs):
@@ -211,7 +218,7 @@ class Template:
                         tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
                         _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
                         _templates["label"] = exp_input_label
-                        templates.append(_templates)
+                        exp_templates.append(_templates)
                         print(".", end="")
                     # end for
                     print()
@@ -220,8 +227,15 @@ class Template:
                 # Write the template results
                 res_dir = Macros.result_dir/ f"templates_{task}"
                 res_dir.mkdir(parents=True, exist_ok=True)
-                Utils.write_json(templates,
-                                 res_dir / f"templates_{req_cksum}.json",
+                
+                Utils.write_json(seed_inputs,
+                                 res_dir / f"seeds_{req_cksum}.json",
+                                 pretty_format=True)
+                Utils.write_json(seed_templates,
+                                 res_dir / f"templates_seed_{req_cksum}.json",
+                                 pretty_format=True)
+                Utils.write_json(exp_templates,
+                                 res_dir / f"templates_exp_{req_cksum}.json",
                                  pretty_format=True)
             # end for
         # end for
