@@ -1,6 +1,9 @@
 TASKS
 
-  - [JL] split the test cases into seed and expanded test cases and
+  - [JL] using the seed dataset and its augmented dataset, re-train
+    the models and see the performance on the other dataset.
+
+  + [JL] split the test cases into seed and expanded test cases and
     sese the model prediction and compare them between the seed and
     expanded cases. if it is different, then the expanded element
     change the label.
