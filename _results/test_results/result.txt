@@ -1,657 +1,4 @@
 ***** TASK: sentiment_analysis *****
->>>>> TEST: Vocab_POS::Short sentences with neutral adjectives and nouns
->>>>> MODEL: textattack/bert-base-uncased-SST-2
-Running sentiment_analysis
-Predicting 500 examples
-Vocab_POS
-
-sentiment_analysis
-Test cases:      597
-Test cases run:  500
-Fails (rate):    427 (85.4%)
-
-Example fails:
-1.0 0.0 0.0 sassy and impassive humourous
-----
-0.7 0.0 0.3 expect to interpret it and then
-----
-0.7 0.0 0.3 look to examine it and then
-----
-1.0 0.0 0.0 It 's also the year 's sweetest picture
-----
-0.8 0.0 0.2 I did n't guess then
-----
-1.0 0.0 0.0 Wait to determine it then
-----
-1.0 0.0 0.0 Wait to consider it so
-----
-1.0 0.0 0.0 But I was there n't
-----
-0.7 0.0 0.3 expect to reckon it and then
-----
-0.7 0.0 0.3 look to check it so
-----
-1.0 0.0 0.0 I did n't believe thus
-----
-1.0 0.0 0.0 finally , it wins you over
-----
-0.9 0.0 0.1 I did n't suppose so
-----
-0.8 0.0 0.2 look to ensure it then
-----
-0.9 0.0 0.1 expect to consider it so
-----
-1.0 0.0 0.0 One of the funnier movies in townsfolk
-----
-1.0 0.0 0.0 It 's also the year 's sweetest picture show
-----
-0.8 0.0 0.2 look to look it and then
-----
-0.8 0.0 0.2 heady and impassive humourous
-----
-1.0 0.0 0.0 Wait to construe it then
-----
-0.7 0.0 0.3 await to assure it and then
-----
-0.8 0.0 0.2 I did n't imagine indeed
-----
-1.0 0.0 0.0 It 's also stupider
-----
-0.8 0.0 0.2 await to check it and then
-----
-1.0 0.0 0.0 I did n't consider indeed
-----
-0.8 0.0 0.2 expect to reckon it so
-----
-1.0 0.0 0.0 look to see it and then
-----
-0.9 0.0 0.1 But it nonetheless jingles in the scoop
-----
-0.9 0.0 0.1 I did n't consider then
-----
-1.0 0.0 0.0 I did n't consider thus
-----
-0.8 0.0 0.2 expect to take care it and then
-----
-1.0 0.0 0.0 I did n't retrieve and then
-----
-1.0 0.0 0.0 fresh and impassive humourous
-----
-1.0 0.0 0.0 One of the funnier movies in township
-----
-1.0 0.0 0.0 I did n't reckon then
-----
-0.8 0.0 0.2 await to understand it then
-----
-1.0 0.0 0.0 Wait to consider it and then
-----
-1.0 0.0 0.0 fresh and deadpan humorous
-----
-1.0 0.0 0.0 overbold and unexpressive humourous
-----
-0.9 0.0 0.1 I did n't cerebrate and then
-----
-1.0 0.0 0.0 impertinent and expressionless humourous
-----
-1.0 0.0 0.0 I did n't imagine thus
-----
-1.0 0.0 0.0 fresh and deadpan humourous
-----
-0.9 0.0 0.1 await to discover it so
-----
-0.9 0.0 0.1 look to reckon it then
-----
-0.9 0.0 0.1 I did n't imagine hence
-----
-0.9 0.0 0.1 It 's besides the class 's sweetest picture
-----
-1.0 0.0 0.0 Wise and impassive humorous
-----
-0.7 0.0 0.3 await to ensure it so
-----
-1.0 0.0 0.0 Wait to learn it and then
-----
-0.9 0.0 0.1 But it nonetheless jingles in the pouch
-----
-0.7 0.0 0.3 await to insure it so
-----
-1.0 0.0 0.0 I did n't retrieve thusly
-----
-0.8 0.0 0.2 look to visualize it then
-----
-1.0 0.0 0.0 I did n't consider therefore
-----
-1.0 0.0 0.0 smart and impassive humorous
-----
-1.0 0.0 0.0 I did n't remember and then
-----
-1.0 0.0 0.0 sassy and expressionless humourous
-----
-1.0 0.0 0.0 I did n't intend hence
-----
-0.8 0.0 0.2 await to take care it then
-----
-1.0 0.0 0.0 It 's also the twelvemonth 's sweetest picture show
-----
-0.9 0.0 0.1 look to learn it and then
-----
-1.0 0.0 0.0 I did n't reckon indeed
-----
-1.0 0.0 0.0 But it yet jingles in the air pocket
-----
-0.9 0.0 0.1 I did n't conceive thence
-----
-0.8 0.0 0.2 await to consider it then
-----
-1.0 0.0 0.0 look to discover it so
-----
-1.0 0.0 0.0 I did n't remember so
-----
-1.0 0.0 0.0 look to meet it and then
-----
-1.0 0.0 0.0 expect to ensure it so
-----
-1.0 0.0 0.0 Wait to watch it so
-----
-0.9 0.0 0.1 look to realize it and then
-----
-0.7 0.0 0.3 expect to hear it then
-----
-0.9 0.0 0.1 expect to attend it and then
-----
-1.0 0.0 0.0 I did n't retrieve indeed
-----
-1.0 0.0 0.0 Wait to meet it and then
-----
-0.9 0.0 0.1 But it notwithstanding jingles in the air pocket
-----
-0.8 0.0 0.2 await to meet it then
-----
-1.0 0.0 0.0 judicious and deadpan humourous
-----
-1.0 0.0 0.0 Wise and deadpan humourous
-----
-1.0 0.0 0.0 Wait to realize it then
-----
-0.9 0.0 0.1 I did n't imagine therefore
-----
-1.0 0.0 0.0 look to understand it so
-----
-1.0 0.0 0.0 I did n't remember hence
-----
-0.7 0.0 0.3 look to determine it then
-----
-1.0 0.0 0.0 I did n't reckon thusly
-----
-1.0 0.0 0.0 I did n't think so
-----
-1.0 0.0 0.0 Wait to determine it so
-----
-0.9 0.0 0.1 But it however jingles in the scoop
-----
-0.9 0.0 0.1 look to learn it then
-----
-1.0 0.0 0.0 It 's besides the twelvemonth 's sweetest movie
-----
-1.0 0.0 0.0 heady and unexpressive humourous
-----
-1.0 0.0 0.0 I did n't believe thusly
-----
-1.0 0.0 0.0 It 's besides the class 's sweetest film
-----
-1.0 0.0 0.0 Wait to find it and then
-----
-0.7 0.0 0.3 expect to examine it so
-----
-0.7 0.0 0.3 look to find it and then
-----
-0.8 0.0 0.2 await to take care it and then
-----
-1.0 0.0 0.0 Wait to reckon it so
-----
-1.0 0.0 0.0 Wait to hear it then
-----
-
-
-
-
-<<<<< MODEL: textattack/bert-base-uncased-SST-2
-Some weights of the model checkpoint at textattack/roberta-base-SST-2 were not used when initializing RobertaForSequenceClassification: ['roberta.pooler.dense.weight', 'roberta.pooler.dense.bias']
-- This IS expected if you are initializing RobertaForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
-- This IS NOT expected if you are initializing RobertaForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
->>>>> MODEL: textattack/roberta-base-SST-2
-Running sentiment_analysis
-Predicting 500 examples
-Vocab_POS
-
-sentiment_analysis
-Test cases:      597
-Test cases run:  500
-Fails (rate):    454 (90.8%)
-
-Example fails:
-1.0 0.0 0.0 I did n't recollect thus
-----
-1.0 0.0 0.0 Eventually , it wins you over
-----
-0.9 0.0 0.1 expect to reckon it then
-----
-1.0 0.0 0.0 I did n't consider thence
-----
-1.0 0.0 0.0 Wise and deadpan humourous
-----
-1.0 0.0 0.0 I did n't cerebrate therefore
-----
-0.8 0.0 0.2 await to interpret it so
-----
-1.0 0.0 0.0 I did n't intend thus
-----
-0.9 0.0 0.1 await to see it then
-----
-1.0 0.0 0.0 But it however jingles in the air hole
-----
-0.9 0.0 0.1 await to envision it and then
-----
-1.0 0.0 0.0 await to check it so
-----
-1.0 0.0 0.0 Wait to check it so
-----
-0.7 0.0 0.3 But it nonetheless jingles in the scoop
-----
-1.0 0.0 0.0 It 's also the twelvemonth 's sweetest movie
-----
-1.0 0.0 0.0 I did n't suppose thence
-----
-1.0 0.0 0.0 impertinent and expressionless humourous
-----
-1.0 0.0 0.0 I did n't remember thence
-----
-1.0 0.0 0.0 Wise and deadpan humorous
-----
-0.8 0.0 0.2 But it yet jingles in the pocket
-----
-0.9 0.0 0.1 But it still jingles in the air hole
-----
-1.0 0.0 0.0 I did n't intend thence
-----
-1.0 0.0 0.0 await to hear it and then
-----
-0.9 0.0 0.1 fresh and expressionless humourous
-----
-0.9 0.0 0.1 Wait to watch it and then
-----
-1.0 0.0 0.0 overbold and expressionless humorous
-----
-1.0 0.0 0.0 expect to ensure it so
-----
-1.0 0.0 0.0 look to examine it so
-----
-1.0 0.0 0.0 I did n't remember thus
-----
-1.0 0.0 0.0 look to hear it then
-----
-1.0 0.0 0.0 Wise and expressionless humourous
-----
-0.9 0.0 0.1 Wait to meet it and then
-----
-0.8 0.0 0.2 But I was there n't
-----
-1.0 0.0 0.0 fresh and expressionless humorous
-----
-1.0 0.0 0.0 I did n't think therefore
-----
-1.0 0.0 0.0 I did n't retrieve and then
-----
-1.0 0.0 0.0 impudent and unexpressive humourous
-----
-1.0 0.0 0.0 It 's also the year 's sweetest picture
-----
-0.8 0.0 0.2 impertinent and impassive humourous
-----
-1.0 0.0 0.0 look to look it and then
-----
-1.0 0.0 0.0 It 's also the class 's sweetest motion picture
-----
-1.0 0.0 0.0 I did n't remember therefore
-----
-0.9 0.0 0.1 await to reckon it and then
-----
-1.0 0.0 0.0 Wait to understand it then
-----
-0.7 0.0 0.3 expect to consider it so
-----
-1.0 0.0 0.0 I did n't retrieve indeed
-----
-1.0 0.0 0.0 Wait to look it then
-----
-1.0 0.0 0.0 I did n't reckon thence
-----
-0.9 0.0 0.1 await to reckon it so
-----
-1.0 0.0 0.0 await to hear it so
-----
-1.0 0.0 0.0 I did n't conceive hence
-----
-1.0 0.0 0.0 look to attend it and then
-----
-1.0 0.0 0.0 Wait to examine it so
-----
-1.0 0.0 0.0 I did n't think thence
-----
-0.9 0.0 0.1 expect to look it and then
-----
-1.0 0.0 0.0 I did n't remember thusly
-----
-1.0 0.0 0.0 Wait to find it and then
-----
-1.0 0.0 0.0 impertinent and deadpan humorous
-----
-1.0 0.0 0.0 I did n't believe hence
-----
-1.0 0.0 0.0 judicious and impassive humorous
-----
-0.7 0.0 0.3 expect to hear it so
-----
-0.8 0.0 0.2 But it nonetheless jingles in the air hole
-----
-1.0 0.0 0.0 Wait to check it then
-----
-0.9 0.0 0.1 It 's also stupider
-----
-0.8 0.0 0.2 Wait to examine it and then
-----
-1.0 0.0 0.0 look to reckon it so
-----
-1.0 0.0 0.0 I did n't remember so
-----
-1.0 0.0 0.0 I did n't cerebrate indeed
-----
-0.9 0.0 0.1 await to construe it then
-----
-1.0 0.0 0.0 await to see it so
-----
-1.0 0.0 0.0 look to ensure it so
-----
-0.8 0.0 0.2 I did n't imagine thence
-----
-1.0 0.0 0.0 It 's also the year 's sweetest motion picture
-----
-1.0 0.0 0.0 look to watch it then
-----
-0.9 0.0 0.1 expect to take care it then
-----
-0.8 0.0 0.2 It 's besides the year 's sweetest picture show
-----
-0.9 0.0 0.1 Wait to see it so
-----
-1.0 0.0 0.0 But it even jingles in the scoop
-----
-1.0 0.0 0.0 I did n't imagine thusly
-----
-1.0 0.0 0.0 expect to attend it then
-----
-1.0 0.0 0.0 I did n't recollect thence
-----
-0.9 0.0 0.1 expect to realise it then
-----
-1.0 0.0 0.0 await to visualize it so
-----
-1.0 0.0 0.0 expect to discover it and then
-----
-0.9 0.0 0.1 Wait to interpret it and then
-----
-0.9 0.0 0.1 look to realize it then
-----
-1.0 0.0 0.0 I did n't suppose so
-----
-0.8 0.0 0.2 Wait to look it and then
-----
-0.9 0.0 0.1 I did n't believe then
-----
-1.0 0.0 0.0 fresh and unexpressive humourous
-----
-1.0 0.0 0.0 expect to see it and then
-----
-0.9 0.0 0.1 look to learn it and then
-----
-1.0 0.0 0.0 look to visualize it and then
-----
-0.8 0.0 0.2 await to realize it and then
-----
-1.0 0.0 0.0 It 's also the class 's sweetest picture
-----
-1.0 0.0 0.0 It 's also the twelvemonth 's sweetest film
-----
-1.0 0.0 0.0 I did n't reckon so
-----
-1.0 0.0 0.0 look to reckon it then
-----
-1.0 0.0 0.0 One of the funnier movies in township
-----
-0.9 0.0 0.1 await to check it then
-----
-
-
-
-
-<<<<< MODEL: textattack/roberta-base-SST-2
->>>>> MODEL: distilbert-base-uncased-finetuned-sst-2-english
-Running sentiment_analysis
-Predicting 500 examples
-Vocab_POS
-
-sentiment_analysis
-Test cases:      597
-Test cases run:  500
-Fails (rate):    486 (97.2%)
-
-Example fails:
-1.0 0.0 0.0 expect to construe it then
-----
-0.0 0.0 1.0 look to look it then
-----
-0.0 0.0 1.0 It 's also the class 's sweetest moving picture
-----
-1.0 0.0 0.0 Wait to realise it then
-----
-0.0 0.0 1.0 look to find it then
-----
-0.9 0.0 0.1 expect to ensure it so
-----
-1.0 0.0 0.0 I did n't consider so
-----
-1.0 0.0 0.0 I did n't remember thus
-----
-0.0 0.0 1.0 I did n't imagine thus
-----
-1.0 0.0 0.0 Wait to consider it then
-----
-1.0 0.0 0.0 Wait to take care it then
-----
-0.0 0.0 1.0 I did n't imagine indeed
-----
-1.0 0.0 0.0 But it nonetheless jingles in the air hole
-----
-1.0 0.0 0.0 Wait to assure it and then
-----
-0.0 0.0 1.0 look to visualize it and then
-----
-0.0 0.0 1.0 I did n't conceive and then
-----
-1.0 0.0 0.0 expect to examine it then
-----
-1.0 0.0 0.0 I did n't remember so
-----
-0.0 0.0 1.0 await to understand it and then
-----
-0.0 0.0 1.0 look to realise it and then
-----
-0.0 0.0 1.0 look to interpret it so
-----
-1.0 0.0 0.0 Wait to understand it so
-----
-0.0 0.0 1.0 It 's also the twelvemonth 's sweetest picture show
-----
-1.0 0.0 0.0 look to construe it and then
-----
-1.0 0.0 0.0 Wait to visualize it so
-----
-1.0 0.0 0.0 expect to understand it then
-----
-0.0 0.0 1.0 await to realise it and then
-----
-1.0 0.0 0.0 Wait to see it then
-----
-0.0 0.0 1.0 look to interpret it and then
-----
-1.0 0.0 0.0 I did n't remember indeed
-----
-0.1 0.0 0.9 await to reckon it so
-----
-0.0 0.0 1.0 look to find it so
-----
-0.0 0.0 1.0 It 's besides the twelvemonth 's sweetest pic
-----
-0.0 0.0 1.0 It 's besides the class 's sweetest film
-----
-1.0 0.0 0.0 overbold and unexpressive humourous
-----
-0.0 0.0 1.0 look to learn it so
-----
-1.0 0.0 0.0 look to construe it then
-----
-1.0 0.0 0.0 I did n't consider then
-----
-1.0 0.0 0.0 I did n't think so
-----
-1.0 0.0 0.0 I did n't intend and then
-----
-0.0 0.0 1.0 look to find it and then
-----
-1.0 0.0 0.0 sassy and expressionless humourous
-----
-1.0 0.0 0.0 I did n't intend then
-----
-0.0 0.0 1.0 await to see it and then
-----
-1.0 0.0 0.0 I did n't believe indeed
-----
-0.0 0.0 1.0 await to assure it so
-----
-0.0 0.0 1.0 impudent and impassive humorous
-----
-1.0 0.0 0.0 expect to insure it and then
-----
-1.0 0.0 0.0 I did n't recollect then
-----
-0.0 0.0 1.0 fresh and expressionless humourous
-----
-1.0 0.0 0.0 Wait to see it so
-----
-0.0 0.0 1.0 fresh and unexpressive humorous
-----
-1.0 0.0 0.0 expect to understand it and then
-----
-0.7 0.0 0.3 I did n't think thusly
-----
-1.0 0.0 0.0 But I was n't there
-----
-1.0 0.0 0.0 I did n't believe hence
-----
-1.0 0.0 0.0 Wait to ensure it and then
-----
-0.9 0.0 0.1 judicious and unexpressive humorous
-----
-1.0 0.0 0.0 But it however jingles in the air hole
-----
-0.0 0.0 1.0 I did n't conceive thence
-----
-0.1 0.0 0.9 await to determine it so
-----
-1.0 0.0 0.0 Wait to attend it so
-----
-0.7 0.0 0.3 impudent and deadpan humourous
-----
-0.0 0.0 1.0 It 's besides the class 's sweetest moving picture
-----
-1.0 0.0 0.0 Wait to construe it and then
-----
-1.0 0.0 0.0 expect to hear it so
-----
-0.0 0.0 1.0 look to watch it so
-----
-1.0 0.0 0.0 judicious and expressionless humorous
-----
-0.0 0.0 1.0 I did n't imagine therefore
-----
-1.0 0.0 0.0 I did n't think then
-----
-0.0 0.0 1.0 look to check it and then
-----
-1.0 0.0 0.0 I did n't cerebrate hence
-----
-0.0 0.0 1.0 Wise and deadpan humorous
-----
-1.0 0.0 0.0 Wait to watch it so
-----
-1.0 0.0 0.0 I did n't retrieve thus
-----
-1.0 0.0 0.0 I did n't remember thence
-----
-1.0 0.0 0.0 impertinent and impassive humourous
-----
-0.0 0.0 1.0 look to meet it so
-----
-0.7 0.0 0.3 I did n't guess therefore
-----
-1.0 0.0 0.0 I did n't intend thusly
-----
-0.9 0.0 0.1 I did n't cerebrate thusly
-----
-0.0 0.0 1.0 But it nonetheless jingles in the scoop
-----
-0.9 0.0 0.1 expect to consider it so
-----
-1.0 0.0 0.0 I did n't guess and then
-----
-0.8 0.0 0.2 expect to ensure it then
-----
-0.0 0.0 1.0 It 's also the year 's sweetest movie
-----
-1.0 0.0 0.0 I did n't think therefore
-----
-1.0 0.0 0.0 Wait to understand it then
-----
-0.0 0.0 1.0 await to learn it then
-----
-0.0 0.0 1.0 It 's besides the year 's sweetest film
-----
-1.0 0.0 0.0 I did n't guess so
-----
-1.0 0.0 0.0 I did n't cerebrate thus
-----
-1.0 0.0 0.0 I did n't retrieve thusly
-----
-1.0 0.0 0.0 expect to look it and then
-----
-1.0 0.0 0.0 Wait to check it then
-----
-0.1 0.0 0.9 await to visualize it so
-----
-1.0 0.0 0.0 I did n't retrieve indeed
-----
-1.0 0.0 0.0 I did n't reckon so
-----
-0.0 0.0 1.0 await to take care it then
-----
-1.0 0.0 0.0 I did n't retrieve therefore
-----
-
-
-
-
-<<<<< MODEL: distilbert-base-uncased-finetuned-sst-2-english
-<<<<< TEST
 >>>>> TEST: Vocab_POS::Short sentences with sentiment-laden adjectives
 >>>>> MODEL: textattack/bert-base-uncased-SST-2
 Running sentiment_analysis
@@ -661,208 +8,184 @@ Vocab_POS
 sentiment_analysis
 Test cases:      16490
 Test cases run:  500
-Fails (rate):    500 (100.0%)
+Fails (rate):    88 (17.6%)
 
 Example fails:
-0.9 0.0 0.1 full picture house deals
+1.0 0.0 0.0 unspoilt former motion picture years
 ----
-0.9 0.0 0.1 serious former pic days
+1.0 0.0 0.0 salutary previous picture days
 ----
-1.0 0.0 0.0 A really estimable movie
+1.0 0.0 0.0 A unspoiled movie listing
 ----
-1.0 0.0 0.0 A Good picture show mark
+0.4 0.6 0.0 A full picture show serial publication
 ----
-1.0 0.0 0.0 unspoilt film field deals
+0.8 0.0 0.2 ripe former motion picture days
 ----
-0.2 0.8 0.0 A salutary movie secret plan
+0.8 0.0 0.2 unspoiled picture taste
 ----
-1.0 0.0 0.0 adept film times
+1.0 0.0 0.0 A unspoilt motion picture compendium
 ----
-1.0 0.0 0.0 A rather wildly entertaining scan of Evans ' vocation
+1.0 0.0 0.0 A Very unspoilt picture show
 ----
-1.0 0.0 0.0 A serious moving picture soundtrack
+0.9 0.0 0.1 ripe moving picture soundtrack
 ----
-1.0 0.0 0.0 ripe Times pic
+0.9 0.0 0.1 undecomposed motion picture theatre deals
 ----
-1.0 0.0 0.0 A wildly visually entertaining scan of Evans ' career
+0.8 0.0 0.2 A dear picture show ingathering
 ----
-1.0 0.0 0.0 Every unspoilt pic
+0.9 0.0 0.1 A undecomposed moving picture
 ----
-1.0 0.0 0.0 A undecomposed motion picture tilt
+0.0 0.6 0.4 ripe previous film times
 ----
-1.0 0.0 0.0 Exciting docudrama firing day of the month
+1.0 0.0 0.0 A unspoilt picture musical score
 ----
-1.0 0.0 0.0 A Good Times pic
+1.0 0.0 0.0 A undecomposed movie tilt
 ----
-0.7 0.0 0.3 A estimable picture ingathering
+1.0 0.0 0.0 undecomposed old picture show times
 ----
-1.0 0.0 0.0 1 honest motion picture
+0.0 0.5 0.5 ripe Friday movie
 ----
-1.0 0.0 0.0 safe moving picture theatre deals
+0.9 0.0 0.1 unspoiled moving picture times
 ----
-1.0 0.0 0.0 A ripe picture appeal
+0.9 0.0 0.1 A ripe pic scotch
 ----
-1.0 0.0 0.0 A skillful motion picture appeal
+1.0 0.0 0.0 A unspoiled movie ingathering
 ----
-1.0 0.0 0.0 A skilful picture grudge
+1.0 0.0 0.0 undecomposed picture show house locations
 ----
-1.0 0.0 0.0 A serious picture show appeal
+0.9 0.0 0.1 undecomposed film dramaturgy locations
 ----
-0.8 0.0 0.2 ripe film dramatic art locations
+1.0 0.0 0.0 A unspoiled picture ingathering
 ----
-0.9 0.0 0.1 unspoiled Friday motion picture
+0.5 0.5 0.0 unspoilt , unanimous storytelling
 ----
-1.0 0.0 0.0 estimable picture dramatic art deals
+1.0 0.0 0.0 unspoilt previous picture show times
 ----
-1.0 0.0 0.0 unspoilt moving picture times
+0.8 0.0 0.2 A unspoiled Times film
 ----
-1.0 0.0 0.0 A honorable film
+0.9 0.0 0.1 A salutary moving picture aggregation
 ----
-1.0 0.0 0.0 skilful movie choices
+1.0 0.0 0.0 The unspoilt Friday film
 ----
-1.0 0.0 0.0 full , hearty storytelling
+1.0 0.0 0.0 unspoiled motion picture theater locations
 ----
-1.0 0.0 0.0 effective motion picture values
+1.0 0.0 0.0 undecomposed motion picture dramaturgy locations
 ----
-1.0 0.0 0.0 ripe times motion picture
+1.0 0.0 0.0 A unspoiled movie mark
 ----
-1.0 0.0 0.0 Exciting documentary highlights
+1.0 0.0 0.0 A unspoilt moving picture account
 ----
-1.0 0.0 0.0 A potentially wildly entertaining cat scan of sir arthur john evans ' calling
+0.9 0.0 0.1 undecomposed picture show theatre locations
 ----
-1.0 0.0 0.0 honest moving picture theatre choices
+1.0 0.0 0.0 salutary film trailers
 ----
-1.0 0.0 0.0 full picture show taste
+1.0 0.0 0.0 undecomposed movie soundtrack
 ----
-1.0 0.0 0.0 A ripe picture show solicitation
+0.9 0.0 0.1 unspoiled picture values
 ----
-1.0 0.0 0.0 serious , whole storytelling
+1.0 0.0 0.0 A unspoilt film ingathering
 ----
-1.0 0.0 0.0 A dependable motion picture soundtrack
+0.9 0.0 0.1 unspoiled picture show dramatic art locations
 ----
-1.0 0.0 0.0 unspoiled moving picture field deals
+1.0 0.0 0.0 A undecomposed film tilt
 ----
-1.0 0.0 0.0 safe times motion picture
+1.0 0.0 0.0 undecomposed fri pic tickets
 ----
-1.0 0.0 0.0 unspoiled film soundtrack
+1.0 0.0 0.0 undecomposed old film years
 ----
-1.0 0.0 0.0 1 secure motion picture
+1.0 0.0 0.0 undecomposed movie theater locations
 ----
-1.0 0.0 0.0 ripe previous picture show times
+1.0 0.0 0.0 undecomposed picture show reviews
 ----
-1.0 0.0 0.0 A sore , moving , brilliantly constructed body of work
+1.0 0.0 0.0 unspoiled pic
 ----
-1.0 0.0 0.0 Exciting infotainment showing schedule
+1.0 0.0 0.0 unspoilt former movie years
 ----
-1.0 0.0 0.0 dependable old picture days
+1.0 0.0 0.0 unspoilt fri picture tickets
 ----
-1.0 0.0 0.0 adept times motion picture
+0.9 0.0 0.1 A undecomposed picture collecting
 ----
-1.0 0.0 0.0 A full film
+0.0 0.8 0.2 Exciting documentary dismission day of the month
 ----
-1.0 0.0 0.0 A adept picture plot
+1.0 0.0 0.0 unspoilt Friday picture
 ----
-0.9 0.0 0.1 undecomposed previous movie days
+1.0 0.0 0.0 unspoilt Friday picture show reviews
 ----
-1.0 0.0 0.0 The estimable fri film
+1.0 0.0 0.0 Every unspoiled movie
 ----
-1.0 0.0 0.0 secure movie house deals
+0.7 0.0 0.3 The Last Good moving picture
 ----
-1.0 0.0 0.0 respectable picture show theater locations
+1.0 0.0 0.0 salutary fri moving picture tickets
 ----
-0.2 0.8 0.0 A estimable pic solicitation
+1.0 0.0 0.0 A undecomposed film plot of land
 ----
-1.0 0.0 0.0 A serious movie
+1.0 0.0 0.0 unspoilt picture show dramatic art locations
 ----
-1.0 0.0 0.0 A adept moving picture
+1.0 0.0 0.0 A unspoilt picture plot of land
 ----
-1.0 0.0 0.0 A adept picture show tilt
+1.0 0.0 0.0 unspoiled old picture days
 ----
-1.0 0.0 0.0 Absorbing character cogitation by AndrÃ© Turpin
+0.9 0.0 0.1 A undecomposed Times picture show
 ----
-1.0 0.0 0.0 honest motion picture field deals
+1.0 0.0 0.0 A unspoilt picture collection
 ----
-1.0 0.0 0.0 dear previous pic years
+0.9 0.0 0.1 The full fri movie
 ----
-1.0 0.0 0.0 A ripe motion picture assembling
+0.8 0.0 0.2 salutary former picture years
 ----
-1.0 0.0 0.0 A estimable Times picture
+1.0 0.0 0.0 A salutary picture show grudge
 ----
-1.0 0.0 0.0 Exciting documentary features
+1.0 0.0 0.0 unspoilt moving picture choices
 ----
-1.0 0.0 0.0 respectable picture house choices
+1.0 0.0 0.0 undecomposed pic house deals
 ----
-0.4 0.6 0.0 ripe picture show house locations
+1.0 0.0 0.0 salutary old movie years
 ----
-1.0 0.0 0.0 beneficial motion picture
+1.0 0.0 0.0 The final unspoilt picture show
 ----
-0.3 0.7 0.0 full previous pic times
+1.0 0.0 0.0 undecomposed movie theatre choices
 ----
-1.0 0.0 0.0 honest times moving picture
+0.0 0.8 0.2 A serious movie grudge
 ----
-1.0 0.0 0.0 honest , substantial storytelling
+0.9 0.0 0.1 undecomposed motion picture picks
 ----
-1.0 0.0 0.0 secure Friday moving picture
+1.0 0.0 0.0 unspoiled motion picture dramaturgy choices
 ----
-1.0 0.0 0.0 unspoilt old picture show times
+1.0 0.0 0.0 A unspoiled film grievance
 ----
-1.0 0.0 0.0 A serious picture show plot
+0.1 0.9 0.0 ripe Friday picture show tickets
 ----
-1.0 0.0 0.0 A honest movie solicitation
+1.0 0.0 0.0 A unspoiled film aggregation
 ----
-1.0 0.0 0.0 A truly wildly entertaining scan of Evans ' vocation
+1.0 0.0 0.0 unspoilt movie
 ----
-1.0 0.0 0.0 A honorable moving picture plot of ground
+1.0 0.0 0.0 salutary fri motion picture reviews
 ----
-1.0 0.0 0.0 A respectable film collection
+1.0 0.0 0.0 A unspoilt movie secret plan
 ----
-1.0 0.0 0.0 A really dear motion picture
+1.0 0.0 0.0 The unspoilt picture
 ----
-1.0 0.0 0.0 A skilful picture accumulation
+1.0 0.0 0.0 The unspoilt fri movie
 ----
-1.0 0.0 0.0 A wildly sexually entertaining scan of herbert mclean evans ' vocation
+1.0 0.0 0.0 The unspoilt Times pic
 ----
-1.0 0.0 0.0 A skilful picture series
+0.9 0.0 0.1 undecomposed former movie years
 ----
-1.0 0.0 0.0 A skilful motion picture collecting
+1.0 0.0 0.0 unspoilt motion picture values
 ----
-1.0 0.0 0.0 A respectable pic aggregation
+1.0 0.0 0.0 A serious pic grievance
 ----
-0.8 0.0 0.2 unspoiled former motion picture days
+1.0 0.0 0.0 A undecomposed picture plot of land
 ----
-1.0 0.0 0.0 A honest picture soundtrack
+0.7 0.0 0.3 The Last safe picture
 ----
-1.0 0.0 0.0 full motion picture theater choices
+1.0 0.0 0.0 A unspoiled picture show plot of land
 ----
-1.0 0.0 0.0 honest picture theatre choices
+0.9 0.0 0.1 undecomposed picture dramaturgy deals
 ----
-1.0 0.0 0.0 The serious motion picture
+1.0 0.0 0.0 A unspoiled moving picture scotch
 ----
-1.0 0.0 0.0 A honest movie plot
-----
-1.0 0.0 0.0 serious fri movie reviews
-----
-1.0 0.0 0.0 A effective picture listing
-----
-0.7 0.0 0.3 A full movie sexual conquest
-----
-1.0 0.0 0.0 honorable Friday picture show
-----
-0.2 0.8 0.0 A secure picture grievance
-----
-1.0 0.0 0.0 dear picture show field choices
-----
-0.9 0.0 0.1 A undecomposed film mark
-----
-1.0 0.0 0.0 skillful film theatre choices
-----
-1.0 0.0 0.0 A full movie ingathering
-----
-1.0 0.0 0.0 A full moving picture collection
-----
-1.0 0.0 0.0 safe film times
-----
-1.0 0.0 0.0 undecomposed old pic times
+1.0 0.0 0.0 A undecomposed moving picture soundtrack
 ----
 
 
@@ -880,208 +203,208 @@ Vocab_POS
 sentiment_analysis
 Test cases:      16490
 Test cases run:  500
-Fails (rate):    500 (100.0%)
+Fails (rate):    119 (23.8%)
 
 Example fails:
-1.0 0.0 0.0 A serious moving picture moving picture
+0.9 0.0 0.1 dear pic field deals
 ----
-1.0 0.0 0.0 A sensitive , moving , brightly constructed oeuvre
+1.0 0.0 0.0 ripe motion picture theater
 ----
-1.0 0.0 0.0 A respectable motion picture plot
+0.8 0.0 0.2 unspoiled film dramaturgy locations
 ----
-1.0 0.0 0.0 A potentially wildly entertaining scan of herbert mclean evans ' vocation
+1.0 0.0 0.0 salutary motion picture dramaturgy choices
 ----
-1.0 0.0 0.0 Good picture theater
+1.0 0.0 0.0 ripe looking picture show
 ----
-0.8 0.0 0.2 A unspoilt pic inclination
+1.0 0.0 0.0 proficient looking film
 ----
-1.0 0.0 0.0 A full motion picture aggregation
+0.9 0.0 0.1 proficient old moving picture times
 ----
-1.0 0.0 0.0 The final respectable moving picture
+0.7 0.0 0.3 unspoilt moving picture house choices
 ----
-1.0 0.0 0.0 A serious pic collecting
+0.9 0.0 0.1 Exciting documentary film expiration date
 ----
-1.0 0.0 0.0 Exciting docudrama freeing particular date
+1.0 0.0 0.0 dear movie reviews
 ----
-1.0 0.0 0.0 Exciting docudrama exit engagement
+1.0 0.0 0.0 undecomposed picture show theatre choices
 ----
-1.0 0.0 0.0 adept old motion picture days
+1.0 0.0 0.0 dear movie values
 ----
-1.0 0.0 0.0 respectable film field deals
+0.9 0.0 0.1 dear picture picks
 ----
-1.0 0.0 0.0 A salutary moving picture serial
+0.9 0.0 0.1 undecomposed Friday motion picture
 ----
-1.0 0.0 0.0 skillful film reviews
+1.0 0.0 0.0 dear movie theater
 ----
-1.0 0.0 0.0 A honest picture show collection
+1.0 0.0 0.0 undecomposed looking motion picture
 ----
-1.0 0.0 0.0 A salutary motion picture
+0.8 0.0 0.2 dear Times movie
 ----
-1.0 0.0 0.0 Every effective picture
+0.0 0.5 0.5 A unspoiled film account
 ----
-1.0 0.0 0.0 Exciting new documentary film features
+1.0 0.0 0.0 undecomposed movie theater
 ----
-1.0 0.0 0.0 A undecomposed picture picture
+0.3 0.7 0.0 unspoilt moving picture field deals
 ----
-1.0 0.0 0.0 A respectable film sexual conquest
+1.0 0.0 0.0 ripe motion picture house deals
 ----
-1.0 0.0 0.0 A wildly wildly entertaining cat scan of Evans ' calling
+1.0 0.0 0.0 ripe previous motion picture days
 ----
-0.9 0.0 0.1 A unspoilt pic plot
+1.0 0.0 0.0 Every unspoiled movie
 ----
-1.0 0.0 0.0 full fri moving picture tickets
+1.0 0.0 0.0 ripe old picture show years
 ----
-1.0 0.0 0.0 honest motion picture house choices
+1.0 0.0 0.0 proficient previous pic years
 ----
-1.0 0.0 0.0 beneficial motion picture field deals
+0.7 0.0 0.3 Exciting docudrama expiration schedule
 ----
-1.0 0.0 0.0 Exciting docudrama films
+1.0 0.0 0.0 Very unspoiled movie
 ----
-0.9 0.0 0.1 safe previous picture show days
+0.9 0.0 0.1 proficient motion picture house choices
 ----
-1.0 0.0 0.0 skilful moving picture soundtrack
+1.0 0.0 0.0 A adept picture grudge
 ----
-1.0 0.0 0.0 The beneficial fri picture show
+0.0 0.6 0.4 A unspoiled film compendium
 ----
-1.0 0.0 0.0 Good motion picture theatre locations
-----
-1.0 0.0 0.0 A raw , moving , brilliantly constructed body of work
-----
-0.9 0.0 0.1 undecomposed former picture years
-----
-1.0 0.0 0.0 skilful film times
-----
-1.0 0.0 0.0 Exciting documentary feature film motion picture
-----
-0.7 0.0 0.3 dependable old movie years
-----
-1.0 0.0 0.0 A undecomposed movie patch
-----
-1.0 0.0 0.0 respectable moving picture dramatic art deals
-----
-0.4 0.6 0.0 dependable fri motion picture reviews
-----
-1.0 0.0 0.0 The proficient picture show
-----
-1.0 0.0 0.0 A ripe Times film
-----
-0.8 0.0 0.2 Absorbing grapheme field of study by AndrÃ© Turpin
+1.0 0.0 0.0 A predictable , manipulative lemon
 ----
 0.9 0.0 0.1 A really unspoiled film
 ----
-0.5 0.5 0.0 Exciting infotainment dismission day of the month
+1.0 0.0 0.0 A undecomposed pic series
 ----
-1.0 0.0 0.0 A ripe pic series
+1.0 0.0 0.0 dear looking picture
 ----
-1.0 0.0 0.0 honorable movie field choices
+1.0 0.0 0.0 undecomposed pic house choices
 ----
-1.0 0.0 0.0 respectable old moving picture days
+0.2 0.8 0.0 A respectable motion picture grudge
 ----
-1.0 0.0 0.0 A Very skilful picture show
+1.0 0.0 0.0 A undecomposed picture show serial
 ----
-0.7 0.0 0.3 unspoilt previous moving picture times
+0.0 0.9 0.1 A respectable pic grudge
 ----
-0.9 0.0 0.1 A serious picture show solicitation
+0.0 0.6 0.4 adept previous picture times
 ----
-1.0 0.0 0.0 A skilful picture assemblage
+1.0 0.0 0.0 A ripe pic grudge
 ----
-1.0 0.0 0.0 skilful picture house locations
+0.3 0.7 0.0 unspoilt former pic days
 ----
-0.9 0.0 0.1 unspoiled old picture times
+1.0 0.0 0.0 dear old picture show years
 ----
-1.0 0.0 0.0 honest Friday moving picture tickets
+0.9 0.0 0.1 Absorbing type survey by AndrÃ© dick turpin
 ----
-1.0 0.0 0.0 effective moving picture theater choices
+1.0 0.0 0.0 dear looking film
 ----
-1.0 0.0 0.0 full pic theater locations
+1.0 0.0 0.0 salutary picture show house choices
 ----
-0.7 0.0 0.3 A unspoiled picture compendium
+0.9 0.0 0.1 unspoilt picture show house choices
 ----
-1.0 0.0 0.0 respectable fri moving picture reviews
+0.9 0.0 0.1 Absorbing graphic symbol cogitation by AndrÃ© Turpin
 ----
-1.0 0.0 0.0 ripe Times moving picture
+0.9 0.0 0.1 undecomposed movie theater deals
 ----
-1.0 0.0 0.0 skilful film taste
+0.5 0.5 0.0 adept picture show dramaturgy choices
 ----
-1.0 0.0 0.0 Good previous picture times
+0.0 0.8 0.2 unspoilt times film
 ----
-1.0 0.0 0.0 A safe moving picture mark
+0.8 0.0 0.2 undecomposed Friday moving picture reviews
 ----
-1.0 0.0 0.0 A effective pic pic
+0.2 0.8 0.0 A full picture show serial publication
 ----
-1.0 0.0 0.0 1 proficient moving picture
+0.1 0.9 0.0 unspoilt Friday picture
 ----
-0.9 0.0 0.1 ripe Friday motion picture
+0.9 0.0 0.1 undecomposed former picture show years
 ----
-1.0 0.0 0.0 The dear Times pic
+1.0 0.0 0.0 undecomposed movie choices
 ----
-1.0 0.0 0.0 Exciting first docudrama
+0.8 0.0 0.2 salutary former picture years
 ----
-1.0 0.0 0.0 A really full film
+0.9 0.0 0.1 proficient former motion picture times
 ----
-1.0 0.0 0.0 safe movie field locations
+0.0 0.9 0.1 Absorbing fiber written report by AndrÃ© Turpin
 ----
-1.0 0.0 0.0 dear film theatre choices
+0.8 0.0 0.2 unspoilt motion picture dramatic art choices
 ----
-0.2 0.8 0.0 unspoilt former motion picture days
+0.4 0.6 0.0 salutary fri picture show reviews
 ----
-1.0 0.0 0.0 A honest picture assemblage
+1.0 0.0 0.0 A undecomposed film plot of ground
 ----
-1.0 0.0 0.0 A ripe picture show collection
+0.4 0.6 0.0 Absorbing fiber subject area by AndrÃ© Turpin
 ----
-1.0 0.0 0.0 The final proficient motion picture
+0.7 0.0 0.3 Absorbing character written report by AndrÃ© Turpin
 ----
-0.1 0.9 0.0 A unspoilt film assemblage
+1.0 0.0 0.0 A unspoilt picture tilt
 ----
-1.0 0.0 0.0 A respectable picture show inclination
+1.0 0.0 0.0 undecomposed picture show dramaturgy locations
 ----
-1.0 0.0 0.0 A beneficial pic tilt
+1.0 0.0 0.0 salutary motion picture house choices
 ----
-1.0 0.0 0.0 Exciting documentary freeing schedule
+0.9 0.0 0.1 ripe picture show theatre deals
 ----
-1.0 0.0 0.0 full film picks
+0.8 0.0 0.2 A serious pic patch
 ----
-0.9 0.0 0.1 serious motion picture field locations
+0.0 0.9 0.1 A salutary movie assemblage
 ----
-0.9 0.0 0.1 full picture show trailers
+1.0 0.0 0.0 proficient former movie times
 ----
-0.8 0.0 0.2 unspoiled movie
+1.0 0.0 0.0 A secure picture show grudge
 ----
-1.0 0.0 0.0 dear picture show theater choices
+1.0 0.0 0.0 A salutary film grudge
 ----
-1.0 0.0 0.0 A sometimes wildly entertaining cat scan of arthur evans ' vocation
+1.0 0.0 0.0 dear picture theater choices
 ----
-1.0 0.0 0.0 A undecomposed moving picture secret plan
+0.9 0.0 0.1 A Very unspoiled pic
 ----
-0.9 0.0 0.1 ripe fri motion picture tickets
+0.9 0.0 0.1 dependable film house deals
 ----
-0.9 0.0 0.1 unspoilt Friday film reviews
+0.0 0.8 0.2 serious picture times
 ----
-1.0 0.0 0.0 A honorable movie movie
+0.2 0.8 0.0 The Last unspoiled picture
 ----
-0.9 0.0 0.1 secure Friday movie
+0.8 0.0 0.2 ripe times movie
 ----
-1.0 0.0 0.0 secure Friday pic
+0.9 0.0 0.1 unspoiled motion picture dramaturgy locations
 ----
-1.0 0.0 0.0 A unspoiled motion picture score
+0.8 0.0 0.2 undecomposed previous motion picture days
 ----
-0.8 0.0 0.2 dependable picture show theatre choices
+1.0 0.0 0.0 undecomposed picture show theater
 ----
-1.0 0.0 0.0 A ripe film ingathering
+1.0 0.0 0.0 ripe film theater deals
 ----
-1.0 0.0 0.0 effective movie
+0.9 0.0 0.1 unspoilt film theater locations
 ----
-1.0 0.0 0.0 A honorable picture show grade
+1.0 0.0 0.0 dear motion picture reviews
 ----
-0.8 0.0 0.2 A unspoilt motion picture secret plan
+0.9 0.0 0.1 Absorbing character reference work by AndrÃ© dick turpin
 ----
-1.0 0.0 0.0 Good Friday movie
+0.0 0.6 0.4 serious Friday picture tickets
 ----
-1.0 0.0 0.0 A full picture show ingathering
+0.9 0.0 0.1 unspoilt movie dramaturgy locations
 ----
-1.0 0.0 0.0 A salutary pic plot of ground
+1.0 0.0 0.0 dear picture show
 ----
-1.0 0.0 0.0 The Last secure motion picture
+1.0 0.0 0.0 unspoilt pic field choices
+----
+0.7 0.0 0.3 ripe old moving picture times
+----
+1.0 0.0 0.0 A undecomposed moving picture solicitation
+----
+0.8 0.0 0.2 serious previous picture show times
+----
+0.5 0.5 0.0 Very salutary movie
+----
+1.0 0.0 0.0 salutary previous movie times
+----
+0.9 0.0 0.1 undecomposed former moving picture days
+----
+1.0 0.0 0.0 ripe film house deals
+----
+0.8 0.0 0.2 unspoiled picture house choices
+----
+0.8 0.0 0.2 salutary fri film reviews
+----
+1.0 0.0 0.0 undecomposed picture show
+----
+0.4 0.6 0.0 proficient moving picture picks
 ----
 
 
@@ -1096,152 +419,801 @@ Vocab_POS
 sentiment_analysis
 Test cases:      16490
 Test cases run:  500
-Fails (rate):    72 (14.4%)
+Fails (rate):    70 (14.0%)
 
 Example fails:
-0.9 0.0 0.1 undecomposed Friday motion picture
+1.0 0.0 0.0 A undecomposed picture show plot
 ----
-1.0 0.0 0.0 A unspoiled picture aggregation
+0.9 0.0 0.1 The unspoiled Friday picture show
 ----
-0.0 0.6 0.4 serious fri pic tickets
+1.0 0.0 0.0 unspoiled motion picture picks
+----
+1.0 0.0 0.0 dependable fri movie tickets
+----
+1.0 0.0 0.0 unspoiled fri film reviews
+----
+1.0 0.0 0.0 A estimable pic scotch
+----
+1.0 0.0 0.0 undecomposed pic field deals
+----
+0.9 0.0 0.1 salutary motion picture trailers
+----
+1.0 0.0 0.0 undecomposed old movie times
+----
+0.2 0.8 0.0 estimable pic choices
+----
+1.0 0.0 0.0 unspoilt film times
+----
+1.0 0.0 0.0 unspoilt former moving picture days
+----
+1.0 0.0 0.0 A unspoilt pic secret plan
+----
+0.9 0.0 0.1 salutary fri film tickets
+----
+1.0 0.0 0.0 unspoiled picture show theater
+----
+0.9 0.0 0.1 A unspoilt picture collecting
+----
+0.8 0.0 0.2 The unspoiled movie
+----
+1.0 0.0 0.0 Every unspoilt motion picture
+----
+1.0 0.0 0.0 Exciting documentary film dismission schedule
+----
+0.0 1.0 0.0 A dependable moving picture patch
+----
+1.0 0.0 0.0 salutary old pic days
+----
+1.0 0.0 0.0 undecomposed motion picture theatre choices
+----
+1.0 0.0 0.0 unspoilt movie soundtrack
+----
+1.0 0.0 0.0 unspoiled Friday picture show
+----
+0.9 0.0 0.1 A salutary film patch
+----
+1.0 0.0 0.0 A undecomposed film patch
+----
+1.0 0.0 0.0 unspoilt pic dramaturgy locations
+----
+1.0 0.0 0.0 A unspoiled motion picture patch
+----
+1.0 0.0 0.0 A unspoiled pic scotch
+----
+0.9 0.0 0.1 The ripe fri picture show
+----
+0.9 0.0 0.1 A Very unspoiled movie
+----
+1.0 0.0 0.0 undecomposed Friday pic tickets
+----
+1.0 0.0 0.0 Exciting infotainment loss day of the month
+----
+1.0 0.0 0.0 A unspoilt motion picture grievance
+----
+1.0 0.0 0.0 A unspoilt pic serial
+----
+1.0 0.0 0.0 A estimable pic grudge
+----
+1.0 0.0 0.0 unspoiled motion picture house locations
+----
+0.8 0.0 0.2 A unspoiled movie series
+----
+1.0 0.0 0.0 A unspoilt film patch
+----
+1.0 0.0 0.0 undecomposed pic times
+----
+1.0 0.0 0.0 unspoiled pic picks
+----
+1.0 0.0 0.0 A salutary picture grudge
+----
+1.0 0.0 0.0 unspoilt motion picture dramatic art locations
+----
+1.0 0.0 0.0 A undecomposed movie assembling
+----
+1.0 0.0 0.0 unspoiled pic dramaturgy choices
+----
+1.0 0.0 0.0 undecomposed old pic days
 ----
 1.0 0.0 0.0 undecomposed movie house choices
 ----
-0.4 0.6 0.0 estimable picture show dramaturgy locations
+1.0 0.0 0.0 A salutary movie grudge
 ----
-1.0 0.0 0.0 undecomposed picture show soundtrack
+1.0 0.0 0.0 unspoiled movie dramaturgy deals
 ----
-0.0 0.5 0.5 dependable previous pic times
+0.7 0.0 0.3 The Last respectable picture
 ----
-0.8 0.0 0.2 unspoiled moving picture choices
+1.0 0.0 0.0 A unspoiled movie grievance
 ----
-1.0 0.0 0.0 unspoilt picture theater deals
+1.0 0.0 0.0 undecomposed pic dramaturgy locations
 ----
-1.0 0.0 0.0 A unspoilt motion picture plot of ground
-----
-1.0 0.0 0.0 A unspoiled film grievance
-----
-1.0 0.0 0.0 undecomposed picture show dramaturgy locations
-----
-1.0 0.0 0.0 A undecomposed picture show listing
-----
-1.0 0.0 0.0 undecomposed Friday picture show
-----
-1.0 0.0 0.0 A undecomposed picture show aggregation
-----
-0.7 0.0 0.3 unspoiled Friday picture
-----
-1.0 0.0 0.0 A unspoilt moving picture moving picture
-----
-1.0 0.0 0.0 A unspoilt motion picture solicitation
-----
-1.0 0.0 0.0 A unspoiled moving picture accumulation
-----
-0.7 0.0 0.3 safe fri motion picture tickets
-----
-1.0 0.0 0.0 A undecomposed picture plot of ground
-----
-0.9 0.0 0.1 The Last undecomposed motion picture
-----
-1.0 0.0 0.0 undecomposed film house locations
-----
-1.0 0.0 0.0 unspoilt moving picture taste
-----
-0.9 0.0 0.1 A unspoiled film plot of land
-----
-1.0 0.0 0.0 A unspoilt motion picture assemblage
-----
-1.0 0.0 0.0 A full pic scotch
-----
-0.9 0.0 0.1 estimable fri motion picture tickets
-----
-1.0 0.0 0.0 1 unspoiled pic
-----
-1.0 0.0 0.0 undecomposed picture picks
-----
-0.0 1.0 0.0 estimable picture show theater deals
-----
-0.9 0.0 0.1 estimable pic trailers
-----
-1.0 0.0 0.0 A unspoilt Times picture show
-----
-1.0 0.0 0.0 unspoilt fri movie tickets
-----
-1.0 0.0 0.0 undecomposed Times picture show
-----
-0.2 0.8 0.0 A unspoilt pic appeal
-----
-1.0 0.0 0.0 unspoiled picture show dramaturgy deals
-----
-1.0 0.0 0.0 A salutary picture show patch
-----
-0.9 0.0 0.1 unspoiled pic taste
-----
-1.0 0.0 0.0 unspoilt film dramatic art choices
-----
-1.0 0.0 0.0 Exciting docudrama exit date
-----
-1.0 0.0 0.0 undecomposed film house choices
-----
-1.0 0.0 0.0 A full pic serial
-----
-0.9 0.0 0.1 A undecomposed picture inclination
-----
-1.0 0.0 0.0 undecomposed motion picture soundtrack
-----
-0.4 0.6 0.0 The unspoiled film
-----
-1.0 0.0 0.0 unspoilt former movie days
-----
-1.0 0.0 0.0 unspoilt moving picture theater choices
-----
-1.0 0.0 0.0 unspoiled pic theater locations
-----
-0.9 0.0 0.1 unspoiled old picture times
-----
-0.0 0.8 0.2 undecomposed Friday motion picture reviews
-----
-1.0 0.0 0.0 The Last respectable picture show
-----
-1.0 0.0 0.0 unspoilt picture show dramatic art deals
-----
-1.0 0.0 0.0 unspoilt movie house deals
-----
-1.0 0.0 0.0 unspoilt Friday motion picture
-----
-0.8 0.0 0.2 salutary picture show times
-----
-1.0 0.0 0.0 A unspoilt moving picture plot of land
-----
-0.9 0.0 0.1 unspoiled film field choices
-----
-0.9 0.0 0.1 The final unspoilt moving picture
-----
-1.0 0.0 0.0 undecomposed movie field locations
-----
-1.0 0.0 0.0 undecomposed picture show theatre locations
-----
-0.0 0.8 0.2 The unspoiled Friday picture
-----
-1.0 0.0 0.0 A unspoilt moving picture tilt
+1.0 0.0 0.0 A undecomposed Times pic
 ----
 1.0 0.0 0.0 unspoilt looking moving picture
 ----
-0.2 0.8 0.0 estimable old picture show years
+1.0 0.0 0.0 A unspoilt pic collecting
 ----
-1.0 0.0 0.0 unspoiled movie dramatic art locations
+1.0 0.0 0.0 A unspoilt pic assembling
 ----
-0.9 0.0 0.1 unspoiled picture dramatic art choices
+1.0 0.0 0.0 The full fri film
 ----
-1.0 0.0 0.0 A unspoilt film assembling
+0.0 0.7 0.3 A salutary pic grade
 ----
-1.0 0.0 0.0 A undecomposed picture show series
+1.0 0.0 0.0 undecomposed moving picture theater
 ----
-1.0 0.0 0.0 unspoilt motion picture taste
+0.8 0.0 0.2 The Last salutary movie
 ----
-1.0 0.0 0.0 A unspoilt picture secret plan
+1.0 0.0 0.0 undecomposed pic house deals
 ----
-0.0 0.7 0.3 salutary film house choices
+1.0 0.0 0.0 A unspoilt picture show solicitation
+----
+1.0 0.0 0.0 unspoilt motion picture times
+----
+1.0 0.0 0.0 unspoiled movie trailers
+----
+1.0 0.0 0.0 undecomposed picture field locations
+----
+1.0 0.0 0.0 undecomposed picture show dramaturgy choices
+----
+1.0 0.0 0.0 Exciting documentary film loss docket
+----
+1.0 0.0 0.0 unspoiled movie dramaturgy locations
+----
+1.0 0.0 0.0 The unspoilt Friday movie
+----
+0.9 0.0 0.1 dependable fri moving picture tickets
+----
+
+
+
+
+<<<<< MODEL: distilbert-base-uncased-finetuned-sst-2-english
+<<<<< TEST
+>>>>> TEST: Vocab_POS::Short sentences with neutral adjectives and nouns
+>>>>> MODEL: textattack/bert-base-uncased-SST-2
+Running sentiment_analysis
+Predicting 500 examples
+Vocab_POS
+
+sentiment_analysis
+Test cases:      597
+Test cases run:  500
+Fails (rate):    429 (85.8%)
+
+Example fails:
+0.9 0.0 0.1 sassy and expressionless humorous
+----
+0.7 0.0 0.3 look to determine it then
+----
+1.0 0.0 0.0 Wait to realize it so
+----
+0.2 0.0 0.8 expect to look it so
+----
+1.0 0.0 0.0 Wait to visualize it and then
+----
+0.8 0.0 0.2 look to check it and then
+----
+1.0 0.0 0.0 I did n't reckon so
+----
+1.0 0.0 0.0 Wait to interpret it then
+----
+0.2 0.0 0.8 expect to take care it then
+----
+1.0 0.0 0.0 impudent and deadpan humourous
+----
+0.0 0.0 1.0 look to envision it then
+----
+0.1 0.0 0.9 look to realise it and then
+----
+1.0 0.0 0.0 But it however jingles in the air hole
+----
+1.0 0.0 0.0 Wait to examine it then
+----
+0.0 0.0 1.0 fresh and deadpan humorous
+----
+0.8 0.0 0.2 I did n't guess then
+----
+0.1 0.0 0.9 await to see it then
+----
+1.0 0.0 0.0 Wait to reckon it so
+----
+0.7 0.0 0.3 expect to interpret it and then
+----
+1.0 0.0 0.0 I did n't cerebrate hence
+----
+0.0 0.0 1.0 look to meet it so
+----
+0.1 0.0 0.9 look to attend it and then
+----
+0.1 0.0 0.9 look to envision it and then
+----
+1.0 0.0 0.0 I did n't remember hence
+----
+0.3 0.0 0.7 expect to discover it and then
+----
+0.0 0.0 1.0 It 's also the year 's sweetest picture show
+----
+1.0 0.0 0.0 Wait to realise it and then
+----
+1.0 0.0 0.0 It drowns in sap
+----
+1.0 0.0 0.0 Wait to insure it then
+----
+1.0 0.0 0.0 heady and expressionless humorous
+----
+1.0 0.0 0.0 I did n't reckon indeed
+----
+1.0 0.0 0.0 Wait to consider it and then
+----
+1.0 0.0 0.0 await to construe it and then
+----
+0.9 0.0 0.1 look to construe it and then
+----
+1.0 0.0 0.0 I did n't intend thence
+----
+1.0 0.0 0.0 Wait to ensure it and then
+----
+0.1 0.0 0.9 await to look it so
+----
+0.0 0.0 1.0 expect to find it so
+----
+0.7 0.0 0.3 look to find it and then
+----
+0.0 0.0 1.0 sassy and impassive humorous
+----
+1.0 0.0 0.0 Wait to see it so
+----
+1.0 0.0 0.0 impertinent and unexpressive humourous
+----
+1.0 0.0 0.0 Wait to realise it so
+----
+0.0 0.0 1.0 smart and unexpressive humourous
+----
+1.0 0.0 0.0 I did n't reckon then
+----
+0.9 0.0 0.1 But it even jingles in the scoop
+----
+0.0 0.0 1.0 One of the funnier movies in town
+----
+1.0 0.0 0.0 impertinent and expressionless humorous
+----
+0.1 0.0 0.9 expect to attend it and then
+----
+0.1 0.0 0.9 look to learn it and then
+----
+0.7 0.0 0.3 await to assure it and then
+----
+1.0 0.0 0.0 judicious and unexpressive humourous
+----
+0.0 0.0 1.0 Wise and impassive humourous
+----
+1.0 0.0 0.0 Wait to construe it then
+----
+1.0 0.0 0.0 I did n't retrieve thusly
+----
+1.0 0.0 0.0 Wait to interpret it and then
+----
+0.0 0.0 1.0 look to realize it so
+----
+1.0 0.0 0.0 impudent and impassive humourous
+----
+0.0 0.0 1.0 expect to discover it so
+----
+1.0 0.0 0.0 Wait to attend it then
+----
+1.0 0.0 0.0 Wait to determine it so
+----
+0.0 0.0 1.0 Eventually , it wins you over
+----
+1.0 0.0 0.0 impertinent and impassive humourous
+----
+0.0 0.0 1.0 look to look it so
+----
+0.0 0.0 1.0 But I was n't alone
+----
+1.0 0.0 0.0 impertinent and unexpressive humorous
+----
+0.9 0.0 0.1 I did n't cerebrate thus
+----
+1.0 0.0 0.0 Wait to check it and then
+----
+0.0 0.0 1.0 look to realize it then
+----
+1.0 0.0 0.0 Wait to ascertain it so
+----
+0.0 0.0 1.0 It 's also the year 's sweetest picture
+----
+1.0 0.0 0.0 I did n't remember so
+----
+1.0 0.0 0.0 But I was there n't
+----
+0.1 0.0 0.9 look to examine it so
+----
+0.0 0.0 1.0 expect to meet it then
+----
+0.0 0.0 1.0 It 's also the twelvemonth 's sweetest picture
+----
+0.0 0.0 1.0 smart and deadpan humourous
+----
+0.0 0.0 1.0 It 's also the twelvemonth 's sweetest picture show
+----
+0.1 0.0 0.9 expect to see it and then
+----
+1.0 0.0 0.0 I did n't remember thusly
+----
+0.2 0.0 0.8 await to assure it so
+----
+1.0 0.0 0.0 Wait to assure it then
+----
+1.0 0.0 0.0 Wait to understand it so
+----
+0.8 0.0 0.2 I did n't imagine thusly
+----
+1.0 0.0 0.0 expect to construe it then
+----
+1.0 0.0 0.0 It drowns in blackjack
+----
+0.9 0.0 0.1 I did n't consider thusly
+----
+1.0 0.0 0.0 I did n't think so
+----
+0.2 0.0 0.8 look to consider it and then
+----
+0.0 0.0 1.0 look to attend it so
+----
+0.2 0.0 0.8 await to attend it so
+----
+0.9 0.0 0.1 I did n't imagine and then
+----
+0.9 0.0 0.1 But it nonetheless jingles in the pouch
+----
+0.0 0.0 1.0 It 's also the year 's sweetest motion picture
+----
+1.0 0.0 0.0 Wait to learn it then
+----
+1.0 0.0 0.0 Wait to visualize it so
+----
+0.0 0.0 1.0 look to watch it and then
+----
+1.0 0.0 0.0 overbold and expressionless humorous
+----
+1.0 0.0 0.0 look to construe it then
+----
+0.8 0.0 0.2 But it notwithstanding jingles in the scoop
+----
+
+
+
+
+<<<<< MODEL: textattack/bert-base-uncased-SST-2
+Some weights of the model checkpoint at textattack/roberta-base-SST-2 were not used when initializing RobertaForSequenceClassification: ['roberta.pooler.dense.weight', 'roberta.pooler.dense.bias']
+- This IS expected if you are initializing RobertaForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing RobertaForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+>>>>> MODEL: textattack/roberta-base-SST-2
+Running sentiment_analysis
+Predicting 500 examples
+Vocab_POS
+
+sentiment_analysis
+Test cases:      597
+Test cases run:  500
+Fails (rate):    448 (89.6%)
+
+Example fails:
+0.0 0.0 1.0 look to look it and then
+----
+0.1 0.0 0.9 I did n't imagine indeed
+----
+0.0 0.0 1.0 look to hear it then
+----
+1.0 0.0 0.0 I did n't retrieve then
+----
+0.0 0.0 1.0 await to envision it so
+----
+1.0 0.0 0.0 Wait to learn it so
+----
+0.3 0.0 0.7 await to ascertain it so
+----
+0.9 0.0 0.1 It 's also stupider
+----
+1.0 0.0 0.0 overbold and unexpressive humourous
+----
+1.0 0.0 0.0 Wait to ascertain it so
+----
+0.0 0.0 1.0 await to find it so
+----
+1.0 0.0 0.0 I did n't think thence
+----
+0.0 0.0 1.0 look to consider it and then
+----
+0.1 0.0 0.9 await to check it then
+----
+0.1 0.0 0.9 await to assure it and then
+----
+1.0 0.0 0.0 I did n't reckon and then
+----
+1.0 0.0 0.0 Wait to hear it then
+----
+1.0 0.0 0.0 I did n't remember thusly
+----
+1.0 0.0 0.0 Wait to meet it then
+----
+1.0 0.0 0.0 Wait to learn it then
+----
+1.0 0.0 0.0 I did n't think and then
+----
+0.0 0.0 1.0 await to take care it and then
+----
+0.8 0.0 0.2 But I was there n't
+----
+0.3 0.0 0.7 It 's besides the twelvemonth 's sweetest pic
+----
+1.0 0.0 0.0 Wait to ensure it so
+----
+1.0 0.0 0.0 I did n't guess hence
+----
+0.0 0.0 1.0 It 's also the class 's sweetest motion picture
+----
+0.1 0.0 0.9 expect to take care it then
+----
+1.0 0.0 0.0 I did n't believe and then
+----
+0.1 0.0 0.9 await to hear it then
+----
+1.0 0.0 0.0 Wait to insure it then
+----
+1.0 0.0 0.0 Wait to watch it then
+----
+0.9 0.0 0.1 expect to reckon it then
+----
+0.0 0.0 1.0 expect to attend it and then
+----
+1.0 0.0 0.0 I did n't believe indeed
+----
+0.0 0.0 1.0 await to find it and then
+----
+0.8 0.0 0.2 expect to construe it and then
+----
+0.0 0.0 1.0 It 's also the twelvemonth 's sweetest pic
+----
+0.0 0.0 1.0 smart and impassive humorous
+----
+1.0 0.0 0.0 I did n't believe thusly
+----
+0.1 0.0 0.9 await to examine it then
+----
+0.3 0.0 0.7 expect to check it then
+----
+1.0 0.0 0.0 Wait to reckon it so
+----
+0.0 0.0 1.0 look to hear it so
+----
+0.0 0.0 1.0 await to examine it and then
+----
+0.0 0.0 1.0 await to attend it so
+----
+1.0 0.0 0.0 It drowns in saphead
+----
+1.0 0.0 0.0 I did n't intend indeed
+----
+1.0 0.0 0.0 I did n't reckon therefore
+----
+1.0 0.0 0.0 Wait to discover it then
+----
+0.0 0.0 1.0 Wise and impassive humourous
+----
+0.9 0.0 0.1 Wait to see it so
+----
+0.1 0.0 0.9 It 's besides the twelvemonth 's sweetest picture
+----
+0.0 0.0 1.0 fresh and expressionless humorous
+----
+1.0 0.0 0.0 I did n't recollect hence
+----
+0.0 0.0 1.0 It 's also the year 's sweetest picture
+----
+0.0 0.0 1.0 look to watch it then
+----
+1.0 0.0 0.0 I did n't suppose so
+----
+0.0 0.0 1.0 look to visualize it and then
+----
+0.0 0.0 1.0 One of the funnier movies in town
+----
+1.0 0.0 0.0 I did n't consider indeed
+----
+0.1 0.0 0.9 expect to examine it then
+----
+0.0 0.0 1.0 look to meet it and then
+----
+0.0 0.0 1.0 expect to learn it so
+----
+1.0 0.0 0.0 I did n't reckon indeed
+----
+0.1 0.0 0.9 look to envision it and then
+----
+1.0 0.0 0.0 I did n't retrieve and then
+----
+1.0 0.0 0.0 I did n't think thus
+----
+0.1 0.0 0.9 expect to interpret it and then
+----
+0.0 0.0 1.0 fresh and impassive humourous
+----
+1.0 0.0 0.0 Wait to find it and then
+----
+0.9 0.0 0.1 Wait to ensure it and then
+----
+0.2 0.0 0.8 expect to determine it so
+----
+0.0 0.0 1.0 smart and impassive humourous
+----
+1.0 0.0 0.0 I did n't remember thus
+----
+1.0 0.0 0.0 Wait to consider it then
+----
+1.0 0.0 0.0 I did n't conceive thusly
+----
+0.1 0.0 0.9 expect to meet it then
+----
+0.7 0.0 0.3 It 's besides the class 's sweetest movie
+----
+0.0 0.0 1.0 impertinent and deadpan humorous
+----
+0.0 0.0 1.0 look to watch it and then
+----
+1.0 0.0 0.0 Wait to interpret it so
+----
+0.9 0.0 0.1 overbold and unexpressive humorous
+----
+0.1 0.0 0.9 await to see it then
+----
+0.0 0.0 1.0 fresh and deadpan humorous
+----
+0.3 0.0 0.7 expect to consider it then
+----
+0.0 0.0 1.0 It 's besides the twelvemonth 's sweetest moving picture
+----
+0.2 0.0 0.8 await to determine it so
+----
+1.0 0.0 0.0 I did n't cerebrate hence
+----
+0.0 0.0 1.0 look to reckon it then
+----
+0.0 0.0 1.0 But I was n't alone
+----
+1.0 0.0 0.0 Wait to insure it so
+----
+0.0 0.0 1.0 look to see it then
+----
+0.8 0.0 0.2 Wait to examine it and then
+----
+0.3 0.0 0.7 await to determine it then
+----
+0.3 0.0 0.7 look to find it so
+----
+1.0 0.0 0.0 I did n't cerebrate thus
+----
+0.0 0.0 1.0 look to hear it and then
+----
+0.0 0.0 1.0 look to learn it so
+----
+0.0 0.0 1.0 smart and deadpan humorous
+----
+
+
+
+
+<<<<< MODEL: textattack/roberta-base-SST-2
+>>>>> MODEL: distilbert-base-uncased-finetuned-sst-2-english
+Running sentiment_analysis
+Predicting 500 examples
+Vocab_POS
+
+sentiment_analysis
+Test cases:      597
+Test cases run:  500
+Fails (rate):    488 (97.6%)
+
+Example fails:
+0.9 0.0 0.1 expect to reckon it and then
+----
+1.0 0.0 0.0 Wait to determine it then
+----
+0.0 0.0 1.0 look to attend it then
+----
+1.0 0.0 0.0 I did n't consider thence
+----
+1.0 0.0 0.0 Wait to learn it so
+----
+1.0 0.0 0.0 Wait to visualize it and then
+----
+0.8 0.0 0.2 But it still jingles in the pocket
+----
+0.0 0.0 1.0 look to determine it so
+----
+1.0 0.0 0.0 I did n't recollect indeed
+----
+0.0 0.0 1.0 look to take care it and then
+----
+1.0 0.0 0.0 I did n't consider hence
+----
+0.0 0.0 1.0 look to ascertain it then
+----
+1.0 0.0 0.0 expect to hear it then
+----
+1.0 0.0 0.0 I did n't intend therefore
+----
+0.0 0.0 1.0 look to envision it then
+----
+0.9 0.0 0.1 await to construe it then
+----
+1.0 0.0 0.0 I did n't remember indeed
+----
+1.0 0.0 0.0 expect to understand it so
+----
+1.0 0.0 0.0 impertinent and impassive humourous
+----
+0.0 0.0 1.0 It 's also the year 's sweetest moving picture
+----
+1.0 0.0 0.0 Wait to assure it so
+----
+0.0 0.0 1.0 It 's also the year 's sweetest movie
+----
+0.0 0.0 1.0 smart and deadpan humourous
+----
+0.0 0.0 1.0 smart and unexpressive humourous
+----
+1.0 0.0 0.0 expect to insure it then
+----
+0.0 0.0 1.0 fresh and unexpressive humorous
+----
+1.0 0.0 0.0 Wait to ensure it then
+----
+0.1 0.0 0.9 I did n't imagine hence
+----
+0.0 0.0 1.0 await to interpret it so
+----
+0.0 0.0 1.0 await to watch it then
+----
+1.0 0.0 0.0 I did n't reckon and then
+----
+0.0 0.0 1.0 expect to check it and then
+----
+1.0 0.0 0.0 heady and unexpressive humourous
+----
+1.0 0.0 0.0 But it however jingles in the air hole
+----
+1.0 0.0 0.0 I did n't recollect so
+----
+0.1 0.0 0.9 await to reckon it and then
+----
+0.9 0.0 0.1 expect to meet it and then
+----
+1.0 0.0 0.0 expect to realise it and then
+----
+1.0 0.0 0.0 Wait to interpret it and then
+----
+0.1 0.0 0.9 I did n't conceive indeed
+----
+0.0 0.0 1.0 expect to check it so
+----
+0.0 0.0 1.0 await to ensure it so
+----
+1.0 0.0 0.0 I did n't consider therefore
+----
+1.0 0.0 0.0 But I was n't alone
+----
+1.0 0.0 0.0 I did n't intend hence
+----
+0.0 0.0 1.0 heady and deadpan humourous
+----
+0.9 0.0 0.1 judicious and unexpressive humorous
+----
+1.0 0.0 0.0 But I was n't there
+----
+0.0 0.0 1.0 look to understand it so
+----
+1.0 0.0 0.0 expect to take care it and then
+----
+1.0 0.0 0.0 But it notwithstanding jingles in the air pocket
+----
+1.0 0.0 0.0 Wait to ascertain it and then
+----
+1.0 0.0 0.0 But I was there n't
+----
+1.0 0.0 0.0 But it even jingles in the air hole
+----
+1.0 0.0 0.0 await to construe it so
+----
+1.0 0.0 0.0 I did n't consider thus
+----
+0.0 0.0 1.0 look to reckon it then
+----
+1.0 0.0 0.0 expect to examine it and then
+----
+1.0 0.0 0.0 I did n't remember thence
+----
+0.0 0.0 1.0 It 's also the year 's sweetest pic
+----
+1.0 0.0 0.0 I did n't consider then
+----
+0.0 0.0 1.0 sassy and impassive humorous
+----
+0.0 0.0 1.0 It 's also the year 's sweetest film
+----
+0.0 0.0 1.0 I did n't imagine thus
+----
+0.9 0.0 0.1 I did n't recollect thusly
+----
+1.0 0.0 0.0 I did n't retrieve therefore
+----
+1.0 0.0 0.0 But it nonetheless jingles in the air hole
+----
+0.0 0.0 1.0 look to check it then
+----
+0.0 0.0 1.0 await to look it and then
+----
+1.0 0.0 0.0 Wait to discover it so
+----
+1.0 0.0 0.0 I did n't believe indeed
+----
+1.0 0.0 0.0 expect to meet it so
+----
+0.0 0.0 1.0 look to insure it and then
+----
+1.0 0.0 0.0 expect to determine it and then
+----
+1.0 0.0 0.0 I did n't cerebrate then
+----
+0.0 0.0 1.0 I did n't conceive thence
+----
+0.0 0.0 1.0 look to see it so
+----
+0.1 0.0 0.9 await to determine it and then
+----
+1.0 0.0 0.0 expect to find it and then
+----
+0.8 0.0 0.2 await to insure it then
+----
+0.0 0.0 1.0 await to check it so
+----
+0.0 0.0 1.0 look to interpret it then
+----
+0.9 0.0 0.1 heady and expressionless humorous
+----
+1.0 0.0 0.0 overbold and impassive humourous
+----
+0.9 0.0 0.1 expect to reckon it then
+----
+1.0 0.0 0.0 I did n't recollect and then
+----
+0.0 0.0 1.0 I did n't conceive therefore
+----
+0.0 0.0 1.0 await to take care it so
+----
+0.0 0.0 1.0 await to attend it so
+----
+1.0 0.0 0.0 Wait to realise it then
+----
+0.9 0.0 0.1 I did n't consider thusly
+----
+1.0 0.0 0.0 Wait to construe it and then
+----
+1.0 0.0 0.0 But it notwithstanding jingles in the pouch
+----
+0.0 0.0 1.0 await to consider it and then
+----
+1.0 0.0 0.0 Wait to find it and then
+----
+1.0 0.0 0.0 Wait to realise it and then
+----
+0.0 0.0 1.0 I did n't imagine so
+----
+1.0 0.0 0.0 sassy and expressionless humourous
+----
+1.0 0.0 0.0 I did n't believe thence
+----
+1.0 0.0 0.0 But it however jingles in the pocket
 ----
 
 

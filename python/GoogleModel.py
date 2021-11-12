@@ -20,65 +20,68 @@ class GoogleModel:
     @classmethod
     def get_batch(cls, l, n):
         """Yield successive n-sized chunks from l."""
-        for i in range(0, len(l), n):
+       for i in range(0, len(l), n):
             yield l[i:i + n]
         # end for
-
 
     @classmethod
     def batch_predict(cls, data: List[str], batch_size: int = 32):
         preds = list()
-        for d in cls.get_batch(data, batch_size):
-            preds.extend(cls.model(d))
+        for batch in cls.get_batch(data, batch_size):
+            for d in batch:
+                document = language_v1.Document(content=s, type_=language_v1.Document.Type.PLAIN_TEXT)
+                annotations = client.analyze_sentiment(request={'document': document})
+                score = annotations.document_sentiment.score
+                magnitude = annotations.document_sentiment.magnitude
+                preds.append({
+                    'score': abs(score),
+                    'label': "POSITIVE" if score>=0.0 else "NEGATIVE"
+                })
+            # end for
         # end for
         return preds
 
-def print_result(annotations, sent_idx, sent):
-    score = annotations.document_sentiment.score
-    magnitude = annotations.document_sentiment.magnitude
-
-    for index, sentence in enumerate(annotations.sentences):
-        sentence_sentiment = sentence.sentiment.score
-        print(
-            "Sentence {} has a sentiment score of {}".format(index, sentence_sentiment)
-        )
-
-    print(
-        "Overall Sentiment: score of {} with magnitude of {}".format(score, magnitude)
-    )
-    return 0
-
-
-
-
-def analyze(movie_review_filename):
-    """Run a sentiment analysis request on text within a passed filename."""
-    client = language_v1.LanguageServiceClient()
-
-    with open(movie_review_filename, "r") as review_file:
-        # Instantiates a plain text document.
-        sents = [l.strip() for l in review_file.readlines()]
-
-    for s_i, s in enumerate(sents):
-        document = language_v1.Document(content=s, type_=language_v1.Document.Type.PLAIN_TEXT)
-        annotations = client.analyze_sentiment(request={'document': document})
+    @classmethod
+    def sentiment_pred_and_conf(cls, data: List[str]):
+        # distilbert-base-uncased-finetuned-sst-2-english: label [NEGATIVE, POSITIVE]
+        # textattack/bert-base-uncased-SST-2: label [LABEL_0, LABEL_1]
+        # textattack/bert-base-SST-2: label [LABEL_0, LABEL_1]
+        # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
+        preds = cls.batch_predict(data)
+        pr = np.array([x['score'] if x['label']=='POSITIVE' or x['label']=='LABEL_1' else 1 - x['score'] for x in preds])
+        pp = np.zeros((pr.shape[0], 3))
+        margin_neutral = 1/3.
+        mn = margin_neutral / 2.
+        neg = pr < 0.5 - mn
+        pp[neg, 0] = 1 - pr[neg]
+        pp[neg, 2] = pr[neg]
+        pos = pr > 0.5 + mn
+        pp[pos, 0] = 1 - pr[pos]
+        pp[pos, 2] = pr[pos]
+        neutral_pos = (pr >= 0.5) * (pr < 0.5 + mn)
+        pp[neutral_pos, 1] = 1 - (1 / margin_neutral) * np.abs(pr[neutral_pos] - 0.5)
+        pp[neutral_pos, 2] = 1 - pp[neutral_pos, 1]
+        neutral_neg = (pr < 0.5) * (pr > 0.5 - mn)
+        pp[neutral_neg, 1] = 1 - (1 / margin_neutral) * np.abs(pr[neutral_neg] - 0.5)
+        pp[neutral_neg, 0] = 1 - pp[neutral_neg, 1]
+        preds = np.argmax(pp, axis=1)
+        return preds, pp
+    
+    @classmethod
+    def run(cls, testsuite, model, pred_and_conf_fn):
+        testsuite.run(pred_and_conf_fn, n=500, overwrite=True)
+        testsuite.summary(n=100)
+        return
         
-        # Print the results
-        print_result(annotations, s_i, s)
-    # end for
+    
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser(
+#         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+#     )
+#     parser.add_argument(
+#         "movie_review_filename",
+#         help="The filename of the movie review you'd like to analyze.",
+#     )
+#     args = parser.parse_args()
 
-
-
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    parser.add_argument(
-        "movie_review_filename",
-        help="The filename of the movie review you'd like to analyze.",
-    )
-    args = parser.parse_args()
-
-    analyze(args.movie_review_filename)
+#     analyze(args.movie_review_filename)

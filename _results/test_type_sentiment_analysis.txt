@@ -4,3 +4,14 @@ NER::Switching locations should not change predictions|Switching person names sh
 Temporal::Sentiment change over time, present should prevail
 Negation::Negated negative should be positive or neutral|Negated neutral should still be neutral|Negation of negative at the end, should be positive or neutral|Negated positive with neutral content in the middle
 SRL::Author sentiment is more important than of others|parsing sentiment in (question, "yes") form|Parsing sentiment in (question, "no") form
+
+
+Replace neutral words with other neutral word
+
+
+it = [The, This, That]
+i = [I, We]
+neutral_adj = [American, international, commercial, British, private,
+Italian, Indian, Australian, Israeli]
+neutral_verb = [see, find, He/She is, You are, I am, We are,
+They are, It is]

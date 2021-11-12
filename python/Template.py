@@ -163,7 +163,7 @@ class Template:
                         # end if
                     # end for
                     syns_dict = {key: _syns}
-                    template.append(syns_dict)x
+                    template.append(syns_dict)
                     if key not in prev_synonyms.keys():
                         prev_synonyms[key] = syns_dict[key]
                     # end if
@@ -202,7 +202,7 @@ class Template:
                     exp_inputs = inputs[seed_input]["exp_inputs"]
                     seed_inputs.append({
                         "input": seed_input,
-                        "place_holder": tokenize(exp_input),
+                        "place_holder": tokenize(seed_input),
                         "label": label_seed
                     })
 

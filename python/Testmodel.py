@@ -27,18 +27,19 @@ class Testmodel:
     def run(cls, task):
         print(f"***** TASK: {task} *****")
         cksum_vals = [
-            os.path.basename(test_file).split("_")[-1]
+            os.path.basename(test_file).split("_")[-1].split(".")[0]
             for test_file in os.listdir(Macros.result_dir / "test_results")
             if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
         ]
 
         for cksum_val in cksum_vals:
             test_files = [
-                "{task}_testsuite_seeds_{test_cksum}.pkl",
-                "{task}_testsuite_seed_templates_{test_cksum}.pkl",
-                "{task}_testsuite_exp_templates_{test_cksum}.pkl"
+                f"{task}_testsuite_seeds_{cksum_val}.pkl",
+                f"{task}_testsuite_seed_templates_{cksum_val}.pkl",
+                f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
             ]
             for test_file in test_files:
+                print(test_file)
                 testsuite_file = Macros.result_dir / "test_results" / test_file
                 testsuite = cls.load_testsuite(testsuite_file)
                 test_info = testsuite.info[task]["capability"]+"::"+testsuite.info[task]["description"]

@@ -27,7 +27,8 @@ function eval_models(){
 }
 
 function main() {
-        gen_templates
+        # gen_templates
+        gen_testsuite
 }
 
 # please make sure you actiavte nlptest conda environment

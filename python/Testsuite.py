@@ -33,14 +33,14 @@ class Testsuite:
         return
 
     @classmethod
-    def get_template(cls, template, is_seed):
+    def get_template(cls, template, task):
         template_list = list()
         template_values = dict()
-        input_sent = tp["input"]
+        input_sent = template["input"]
         for tok_i in range(len(template["place_holder"])):
             if type(template["place_holder"][tok_i])==str:
                 template_list.append(template["place_holder"][tok_i])
-            elif type(tp["place_holder"][tok_i])==dict:
+            elif type(template["place_holder"][tok_i])==dict:
                 key = list(template["place_holder"][tok_i].keys())[0]
                 _key = key[1:-1]
                 template_list.append(key)
@@ -76,7 +76,7 @@ class Testsuite:
                 seed_res = list()
                 seeds = Utils.read_json(res_dir / f"seeds_{req_cksum}.json")
                 for sd in seeds:
-                    sd_res = cls.get_template(sd)
+                    sd_res = cls.get_template(sd, task)
                     seed_res.append(sd_res)
                 # end for
                 seeds_per_task.append({
@@ -88,7 +88,7 @@ class Testsuite:
                 seed_template_res = list()
                 seed_templates = Utils.read_json(res_dir / f"templates_seed_{req_cksum}.json")
                 for tp in seed_templates:
-                    tp_res = cls.get_template(tp)
+                    tp_res = cls.get_template(tp, task)
                     seed_template_res.append(tp_res)
                 # end for
                 seed_templates_per_task.append({
@@ -100,7 +100,7 @@ class Testsuite:
                 exp_template_res = list()
                 exp_templates = Utils.read_json(res_dir / f"templates_exp_{req_cksum}.json")
                 for tp in exp_templates:
-                    tp_res = cls.get_template(tp)
+                    tp_res = cls.get_template(tp, task)
                     exp_template_res.append(tp_res)
                 # end for
                 exp_templates_per_task.append({
@@ -108,7 +108,6 @@ class Testsuite:
                     "description": new_input_dicts[t_i]["requirement"]["description"],
                     "templates": exp_template_res
                 })
-                print(f"#TEMPLATES: {len(template_res)}")
             # end for
             yield task, seeds_per_task, seed_templates_per_task, exp_templates_per_task
         # end for
