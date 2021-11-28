@@ -26,14 +26,20 @@ class Macros:
     ## NLP dataset
     sa_task = "sentiment_analysis"
     sa_label_map = {'negative': 0, 'positive': 2, 'neutral': 1}
+
+    # stanfordSentimentTreebank:
+    # dynasent paper: https://arxiv.org/pdf/2012.15349.pdf
     datasets = {
-        sa_task: "stanfordSentimentTreebank"
+        sa_task: ["stanfordSentimentTreebank", "dynasent"]
     }
 
     # SST
     sst_datasent_file: Path = dataset_dir / "stanfordSentimentTreebank" / "datasetSentences.txt"
     sst_dict_file: Path = dataset_dir / "stanfordSentimentTreebank" / "dictionary.txt"
     sst_label_file: Path = dataset_dir / "stanfordSentimentTreebank" / "sentiment_labels.txt"
+
+    # Dynasent
+    dyna_r1_test_src_file: Path = dataset_dir / "dynasent" / "dynasent-v1.1" / "dynasent-v1.1-round01-yelp-test.jsonl"
 
     # SentiWordNet
     swn_data_file: Path = download_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"
