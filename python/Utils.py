@@ -60,3 +60,12 @@ class Utils:
     @classmethod
     def get_cksum(cls, input_str: str, length=7):
         return hashlib.md5(input_str.encode('utf-8')).hexdigest()[:length]
+
+    @classmethod
+    def compute_failure_rate(cls, task, preds, target):
+        if task==Macros.sa_task:
+            pred_res = [True if p!=t else False for p,t in zip(preds, targets)]
+            fail_cnt = sum(pred_res)
+            fail_rate = round(fail_cnt*1. / len(pred_res), 2)
+            return fail_cnt, fail_rate
+        # end if

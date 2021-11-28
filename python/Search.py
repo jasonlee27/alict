@@ -230,7 +230,7 @@ class TransformOperator:
 class SST:
 
     @classmethod
-    def get_labels(cls, sent_file, label_file):
+    def get_sents(cls, sent_file, label_file):
         sents = [tuple(l.split("\t")) for l in Utils.read_txt(sent_file)[1:]]
         label_scores = [tuple(l.split("|")) for l in Utils.read_txt(label_file)[1:]]
         labels = dict()
@@ -249,7 +249,7 @@ class SST:
     def search_sst(cls, req):
         # sent: (index, sentence)
         # label: (index, label score) 
-        sents = cls.get_labels(Macros.sst_datasent_file, Macros.sst_label_file)
+        sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file)
         req_obj = SearchOperator(req)
         selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
@@ -265,13 +265,14 @@ class SST:
 class DynasentRoundOne:
 
     @classmethod
-    def get_labela(cls, src_file):
+    def get_sents(cls, src_file):
         sents = list()
         sent_i = 0
         with open(yelp_src_filename) as f:
             for line in f:
                 d = json.loads(line)
                 sents.append((sent_i, d['sentence'], d['gold_label']))
+                sent_i += 1
             # end for
         # end with
         return [(s_i,s,labels[s_i]) for s_i, s in sents]
