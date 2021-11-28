@@ -1,14 +1,11 @@
 TASKS
 
+  - [JL] test sentiment analysis models with the other dataset than
+    SST (imdb dataset)
+
   - [JL] using the seed dataset and its augmented dataset, re-train
     the models and see the performance on the other dataset.
-
-  + [JL] get the testsuite in checklist githubpage and run the models
-    with the testsuite and compare the performance between the
-    checklist and our testsuite.
-
-  - [JL] get the original test performance of the model tested.
-  
+    
   - [JL] expand the requirements defined to other testing linguistic
     capabilities.
 
@@ -17,6 +14,12 @@ TASKS
 
   
 ==========
+
+  + [JL] get the original test performance of the model tested.
+
+  + [JL] get the testsuite in checklist githubpage and run the models
+    with the testsuite and compare the performance between the
+    checklist and our testsuite.
 
   + [JL] split the test cases into seed and expanded test cases and
     sese the model prediction and compare them between the seed and

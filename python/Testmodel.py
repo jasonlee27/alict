@@ -12,21 +12,6 @@ from Testsuite import Testsuite
 from Model import Model
 
 import os
-import sys
-
-
-def argparse():
-    arg_dict = dict()
-    if len(sys.argv)==0:
-        return
-    else:
-        arg_key_ids = list(range(len(sys.argv)))
-        for kid in range(len(sys.argv)):
-            key, val = sys.argv[kid].split("=")[0], sys.argv[kid].split("=")[1]
-            arg_dict[key] = val
-        # end for
-        return arg_dict
-    # end if
 
 
 class Testmodel:
@@ -75,7 +60,7 @@ class Testmodel:
     def _run_bl(cls, task, bl_name):
         print(f"***** TASK: {task} *****")
         print(f"***** Baseline: {bl_name} *****")
-        testsuite = cls.load_testsuite(Macros.BASELINES[bs_name]["testsuite_file"])
+        testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
         for mname, model in Model.load_models(task):
             print(f">>>>> MODEL: {mname}")
             Model.run(testsuite, model, cls.model_func_map[task])
@@ -86,25 +71,24 @@ class Testmodel:
         return
 
     @classmethod
-    def run(cls, task):
-        args = argparse()
+    def run(cls, task, args=None):
         bl_name = None
-        if "baseline" in args.keys():
-            bl_name = args["baseline"]
+        if args is not None and "baseline" in args.keys():
+            cls._run_bl(task, args["baseline"])
+        else:
+            print("no bl_name")
+            # cls._run(task)
         # end if
-        for task in Macros.datasets.keys():
-            if bl_name:
-                cls._run_baseline(task, bl_name)
-            else:
-                cls._run(task)
-            # end if
-        # end for
         return
+
     
-    
-if __name__=="__main__":
-    args = argparse()
+def main():
+    args = Utils.argparse()
     for task in Macros.datasets.keys():
         Testmodel.run(task, args)
     # end for
-    
+    return
+
+
+if __name__=="__main__":
+    main()

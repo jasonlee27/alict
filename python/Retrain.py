@@ -14,6 +14,7 @@ from Model import Model
 import os
 import sys
 
+
 class Retrain:
 
     @classmethod
@@ -35,8 +36,4 @@ class Retrain:
     @classmethod
     def test(cls):
         pass
-
-    
-
-    
     

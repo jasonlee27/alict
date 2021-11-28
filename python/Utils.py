@@ -12,6 +12,24 @@ from Macros import Macros
 class Utils:
 
     @classmethod
+    def argparse(cls):
+        if len(sys.argv)>1:
+            arguments = sys.argv[1:]
+            arg_dict = dict()
+            for arg in arguments:
+                if arg.startswith('--'):
+                    arg = arg[2:]
+                    key, val = arg.split("=")[0], arg.split("=")[1]
+                    arg_dict[key] = val
+                else:
+                    raise("Invalid argument format!")
+                # end if
+            # end for
+            return arg_dict
+        # end if
+        return
+
+    @classmethod
     def read_txt(cls, data_file):
         with open(data_file, 'r') as f:
             lines = f.readlines()
