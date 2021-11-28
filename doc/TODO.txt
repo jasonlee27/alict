@@ -1,7 +1,7 @@
 TASKS
 
   - [JL] test sentiment analysis models with the other dataset than
-    SST (imdb dataset)
+    SST (dynasent dataset)
 
   - [JL] using the seed dataset and its augmented dataset, re-train
     the models and see the performance on the other dataset.
