@@ -77,6 +77,11 @@ class Testmodel:
         print(f"***** Baseline: {bl_name} *****")
         testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
         for mname, model in Model.load_models(task):
+            # Run Google nlp model
+            print(f">>>>> MODEL: Google NLP model")
+            GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
+            print(f"<<<<< MODEL: Google NLP model")
+            
             print(f">>>>> MODEL: {mname}")
             Model.run(testsuite, model, cls.model_func_map[task])
             print(f"<<<<< MODEL: {mname}")
@@ -87,7 +92,7 @@ class Testmodel:
 
     @classmethod
     def run_testsuite(cls, task, args=None):
-        # run models on checklist testsuite
+        # run models on checklist introduced testsuite
         bl_name = None
         if args is not None and "baseline" in args.keys():
             cls._run_bl_testsuite(task, args["baseline"])
