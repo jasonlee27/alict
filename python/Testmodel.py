@@ -11,10 +11,13 @@ from Utils import Utils
 from Testsuite import Testsuite
 from Model import Model
 from Search import DynasentRoundOne
+from GoogleModel import GoogleModel
+
 
 import os
 
 args = Utils.argparse()
+args = dict() if args is None else args
 if "test-type" not in args.keys():
     args["test-type"] = "testsuite"
 # end if
@@ -51,6 +54,12 @@ class Testmodel:
                 testsuite = cls.load_testsuite(testsuite_file)
                 test_info = testsuite.info[task]["capability"]+"::"+testsuite.info[task]["description"]
                 print(f">>>>> TEST: {test_info}")
+
+                # Run Google nlp model
+                print(f">>>>> MODEL: Google NLP model")
+                GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
+                print(f"<<<<< MODEL: Google NLP model")
+                
                 for mname, model in Model.load_models(task):
                     print(f">>>>> MODEL: {mname}")
                     Model.run(testsuite, model, cls.model_func_map[task])
@@ -78,6 +87,7 @@ class Testmodel:
 
     @classmethod
     def run_testsuite(cls, task, args=None):
+        # run models on checklist testsuite
         bl_name = None
         if args is not None and "baseline" in args.keys():
             cls._run_bl_testsuite(task, args["baseline"])
@@ -88,6 +98,7 @@ class Testmodel:
 
     @classmethod
     def run_on_diff_dataset(cls, task, args=None):
+        # run models on other type of dataset
         def run(model, data):
             preds_all, pp_all = list(), list()
             for batch in Model.get_batch(data, 32):

@@ -7,34 +7,44 @@
 # each expression of emotion within the text (both positive and negative)
 # contributes to the text's magnitude (so longer text blocks may have greater magnitudes).
 
-import argparse
+# import argparse
+
+from typing import *
+from pathlib import Path
+
+import numpy as np
 
 from google.cloud import language_v1
 
 
 class GoogleModel:
 
+    @classmethod
     def load_model_client(cls):
         return language_v1.LanguageServiceClient()
         
     @classmethod
     def get_batch(cls, l, n):
         """Yield successive n-sized chunks from l."""
-       for i in range(0, len(l), n):
+        for i in range(0, len(l), n):
             yield l[i:i + n]
         # end for
 
     @classmethod
     def batch_predict(cls, data: List[str], batch_size: int = 32):
         preds = list()
+        client = cls.load_model_client()
         for batch in cls.get_batch(data, batch_size):
             for d in batch:
-                document = language_v1.Document(content=s, type_=language_v1.Document.Type.PLAIN_TEXT)
+                document = language_v1.Document(content=d, type_=language_v1.Document.Type.PLAIN_TEXT)
                 annotations = client.analyze_sentiment(request={'document': document})
                 score = annotations.document_sentiment.score
                 magnitude = annotations.document_sentiment.magnitude
+                # score of the sentiment ranges between -1.0(negative) and 1.0(positive)
+                # score in [-1.0, 1.0] is normalized into the range of [0,1]
+                norm_score = (score+1)/2.
                 preds.append({
-                    'score': abs(score),
+                    'score': norm_score,
                     'label': "POSITIVE" if score>=0.0 else "NEGATIVE"
                 })
             # end for
@@ -43,12 +53,10 @@ class GoogleModel:
 
     @classmethod
     def sentiment_pred_and_conf(cls, data: List[str]):
-        # distilbert-base-uncased-finetuned-sst-2-english: label [NEGATIVE, POSITIVE]
-        # textattack/bert-base-uncased-SST-2: label [LABEL_0, LABEL_1]
-        # textattack/bert-base-SST-2: label [LABEL_0, LABEL_1]
-        # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
+        # score of the sentiment ranges between -1.0(negative) and 1.0(positive)
+        # First, score in [-1.0, 1.0] is normalized into the range of [0,1] 
         preds = cls.batch_predict(data)
-        pr = np.array([x['score'] if x['label']=='POSITIVE' or x['label']=='LABEL_1' else 1 - x['score'] for x in preds])
+        pr = np.array([x['score'] if x['label']=='POSITIVE' else 1 - x['score'] for x in preds])
         pp = np.zeros((pr.shape[0], 3))
         margin_neutral = 1/3.
         mn = margin_neutral / 2.
@@ -68,7 +76,7 @@ class GoogleModel:
         return preds, pp
     
     @classmethod
-    def run(cls, testsuite, model, pred_and_conf_fn):
+    def run(cls, testsuite, pred_and_conf_fn):
         testsuite.run(pred_and_conf_fn, n=500, overwrite=True)
         testsuite.summary(n=100)
         return
