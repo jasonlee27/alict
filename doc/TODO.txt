@@ -1,5 +1,15 @@
 TASKS
 
+  - [JL] retrain the NLP model with CHECKLIST generated test cases and
+    test the model using the proposed methodology
+
+  - [JL] generated test cases using the proposed methodology searched
+    over the CHECKLIST generated test cases
+
+  - [JL] send/ask for mapping test type descriptions in CHECKLIST
+    testsuites and test types listed in CHECKLIST paper (sentiment
+    analysis)
+
   - [JL] test sentiment analysis models with the other dataset than
     SST (dynasent dataset)
 
