@@ -76,12 +76,13 @@ class Testmodel:
         print(f"***** TASK: {task} *****")
         print(f"***** Baseline: {bl_name} *****")
         testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
+
+        # Run Google nlp model
+        print(f">>>>> MODEL: Google NLP model")
+        GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
+        print(f"<<<<< MODEL: Google NLP model")
+
         for mname, model in Model.load_models(task):
-            # Run Google nlp model
-            print(f">>>>> MODEL: Google NLP model")
-            GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
-            print(f"<<<<< MODEL: Google NLP model")
-            
             print(f">>>>> MODEL: {mname}")
             Model.run(testsuite, model, cls.model_func_map[task])
             print(f"<<<<< MODEL: {mname}")

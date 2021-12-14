@@ -47,7 +47,7 @@ class Macros:
     # Test
     checklist_dir: Path = download_dir / "checklist"
     checklist_data_dir: Path = checklist_dir / "release_suites"
-    checklist_sst_dataset_file: Path = checklist_data_dir / "sentiment_suite.pkl"
+    checklist_sst_dataset_file: Path = checklist_data_dir / "ex_sentiment_suite.pkl"
     
     sa_models_file = download_dir / "models" / "sentiment_models.txt"
     
