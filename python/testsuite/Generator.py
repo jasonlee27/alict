@@ -17,12 +17,11 @@ from nltk import CFG
 
 from checklist.editor import Editor
 
-from Macros import Macros
-from Utils import Utils
-# from Search import Search
-from Requirements import Requirements
-from CFGExpander import CFGExpander
-from Suggest import Suggest
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
+from ..requrement.Requirements import Requirements
+from .cfg.CFGExpander import CFGExpander
+from .Suggest import Suggest
 
 random.seed(Macros.SEED)
 

@@ -9,8 +9,8 @@ import json
 import random
 
 from pathlib import Path
-from Macros import Macros
-from Utils import Utils
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
 
 # dataset for NLP task
 # key: NLP task
@@ -142,17 +142,13 @@ class Requirements:
     #     requirements = cls.get_requirements(task)
     #     dataset_dir = Macros.dataset_dir / datasets[task]
     #     if task=="sentiment_analysis":
-    #         # stanford sentiment treebank dataset
-            
-            
-            
-        # end if
-        
 
-if __name__=="__main__":
-    Requirements.convert_test_type_txt_to_json()
-    # for task in datasets.keys():
-    #     reqs = Requirements.get_requirements(task)
-    # # end for
+
+# if __name__=="__main__":
+#     Requirements.convert_test_type_txt_to_json()
+#     for task in datasets.keys():
+#         reqs = Requirements.get_requirements(task)
+#     # end for
     
     
+Requirements.convert_test_type_txt_to_json()

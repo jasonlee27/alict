@@ -13,8 +13,8 @@ from pathlib import Path
 from nltk.parse.generate import generate, demo_grammar
 from nltk import CFG
 
-from Macros import Macros
-from Utils import Utils
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
 
 class InputPerturb:
 
@@ -71,7 +71,7 @@ class InputPerturb:
 
 
 if __name__=="__main__":
-    cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
+    # cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
     input_file = Macros.this_dir / 'ex.txt'
     cfg_ut_file = Macros.result_dir / 'ex_cfg.json'
     cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'

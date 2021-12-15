@@ -10,11 +10,11 @@ import random
 from nltk.tokenize import word_tokenize as tokenize
 
 from pathlib import Path
-from Macros import Macros
-from Utils import Utils
 
-from Requirements import Requirements
-from Sentiwordnet import Sentiwordnet
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
+from ..requrement.Requirements import Requirements
+from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
 
 # DATASETS = Macros.datasets

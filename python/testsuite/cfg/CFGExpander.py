@@ -13,11 +13,9 @@ from pathlib import Path
 from nltk.parse.generate import generate, demo_grammar
 from nltk import CFG
 
-from Macros import Macros
-from Utils import Utils
-from CFG import BeneparCFG, TreebankCFG
-from Search import Search
-from Requirements import Requirements
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
+from .CFG import BeneparCFG, TreebankCFG
 
 random.seed(Macros.SEED)
 COMP_LENGTH = 3

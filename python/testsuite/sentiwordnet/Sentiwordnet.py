@@ -13,9 +13,8 @@ import json
 import random
 
 from pathlib import Path
-from Macros import Macros
-from Utils import Utils
-
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
 
 class Sentiwordnet:
 
@@ -157,5 +156,5 @@ class Sentiwordnet:
         return data
 
 
-if __name__=="__main__":
-    Sentiwordnet.get_sent_words()
+# if __name__=="__main__":
+#     Sentiwordnet.get_sent_words()

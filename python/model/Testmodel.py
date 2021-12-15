@@ -6,13 +6,13 @@ from pathlib import Path
 
 from checklist.test_suite import TestSuite as suite
 
-from Macros import Macros
-from Utils import Utils
-from Testsuite import Testsuite
-from Model import Model
-from Search import DynasentRoundOne
-from GoogleModel import GoogleModel
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
+from ..testsuite.Testsuite import Testsuite
+from ..testsuite.Search import DynasentRoundOne
 
+from .Model import Model
+from .GoogleModel import GoogleModel
 
 import os
 

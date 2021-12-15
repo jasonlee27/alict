@@ -9,8 +9,8 @@ from transformers import pipeline, AutoTokenizer
 import os
 import numpy as np
 
-from Utils import Utils
-from Macros import Macros
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
 
 class Model:
     

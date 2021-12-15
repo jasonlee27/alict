@@ -8,7 +8,7 @@ import json
 import random
 
 # from nltk.corpus import wordnet
-from CFG import BeneparCFG
+from .cfg.CFG import BeneparCFG
 
 
 class Synonyms:
@@ -86,8 +86,8 @@ class Synonyms:
 
     
 
-if __name__=="__main__":
-    word = "traditional"
-    wpos = "VB"
-    syns = Synonyms.get_synonyms(word, wpos)
-    print(f"{word}: {syns}")
+# if __name__=="__main__":
+#     word = "traditional"
+#     wpos = "VB"
+#     syns = Synonyms.get_synonyms(word, wpos)
+#     print(f"{word}: {syns}")

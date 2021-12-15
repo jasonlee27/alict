@@ -19,9 +19,9 @@ from checklist.expect import Expect
 from checklist.test_suite import TestSuite
 # from checklist.perturb import Perturb
 
-from Macros import Macros
-from Utils import Utils
-from Template import Template
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
+from .Template import Template
 
 class Testsuite:
 
@@ -214,6 +214,6 @@ class Testsuite:
         return
 
 
-if __name__=="__main__":
-    Testsuite.write_testsuites()
-        
+# if __name__=="__main__":
+#     Testsuite.write_testsuites()
+Testsuite.write_testsuites()

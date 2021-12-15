@@ -18,11 +18,10 @@ import checklist
 from checklist.editor import Editor
 from checklist.perturb import Perturb
 
-from Macros import Macros
-from Utils import Utils
-from CFG import BeneparCFG
-from Search import SearchOperator
-# from Requirements import Requirements
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
+from .cfg.CFG import BeneparCFG
+from .Search import SearchOperator
 
 random.seed(Macros.SEED)
 

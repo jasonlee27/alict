@@ -14,14 +14,15 @@ from pathlib import Path
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 from nltk.tokenize import word_tokenize as tokenize
 
-from Macros import Macros
-from Utils import Utils
-from Requirements import Requirements
-from Generator import Generator
-from Synonyms import Synonyms
-from Search import Search
-from CFGExpander import CFGExpander
-from Suggest import Suggest
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
+from ..requrement.Requirements import Requirements
+
+from .Generator import Generator
+from .Synonyms import Synonyms
+from .Search import Search
+from .Suggest import Suggest
+from .cfg.CFGExpander import CFGExpander
 
 
 class Template:
@@ -241,6 +242,6 @@ class Template:
         # end for
         return
 
-    
-if __name__=="__main__":
-    Template.get_templates(num_seeds=10)
+
+# Write templates
+Template.get_templates(num_seeds=10)

@@ -7,7 +7,7 @@ import hashlib
 from pathlib import Path
 from nltk.corpus import treebank
 
-from Macros import Macros
+from .Macros import Macros
 
 class Utils:
 
