@@ -11,8 +11,8 @@ import spacy
 from pathlib import Path
 from nltk.corpus import treebank
 
-from Macros import Macros
-from Utils import Utils
+from ...utils.Macros import Macros
+from ...utils.Utils import Utils
 
 class BeneparCFG:
     benepar_parser_model = 'benepar_en3'

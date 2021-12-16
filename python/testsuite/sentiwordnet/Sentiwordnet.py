@@ -13,8 +13,8 @@ import json
 import random
 
 from pathlib import Path
-from ..utils.Macros import Macros
-from ..utils.Utils import Utils
+from ...utils.Macros import Macros
+from ...utils.Utils import Utils
 
 class Sentiwordnet:
 

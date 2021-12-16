@@ -1,10 +1,9 @@
 # This script is for defining all macros used in scripts in slpproject/python/hdlp/
 
 from typing import *
-
-import os
 from pathlib import Path
 
+import os
 
 class Macros:
 
@@ -46,8 +45,11 @@ class Macros:
 
     # Test
     checklist_dir: Path = download_dir / "checklist"
+    checklist_result_dir: Path = result_dir / "checklist"
     checklist_data_dir: Path = checklist_dir / "release_suites"
     checklist_sst_dataset_file: Path = checklist_data_dir / "ex_sentiment_suite.pkl"
+    checklist_sst_testcase_file: Path = checklist_result_dir / "checklist_sst_testcase.json"
+    
     
     sa_models_file = download_dir / "models" / "sentiment_models.txt"
     

@@ -13,7 +13,7 @@ from pathlib import Path
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from ..requrement.Requirements import Requirements
+from ..requirement.Requirements import Requirements
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
 

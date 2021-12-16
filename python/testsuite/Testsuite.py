@@ -216,4 +216,3 @@ class Testsuite:
 
 # if __name__=="__main__":
 #     Testsuite.write_testsuites()
-Testsuite.write_testsuites()

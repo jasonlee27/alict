@@ -19,7 +19,7 @@ from checklist.editor import Editor
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from ..requrement.Requirements import Requirements
+from ..requirement.Requirements import Requirements
 from .cfg.CFGExpander import CFGExpander
 from .Suggest import Suggest
 

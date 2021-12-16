@@ -13,8 +13,8 @@ from pathlib import Path
 from nltk.parse.generate import generate, demo_grammar
 from nltk import CFG
 
-from ..utils.Macros import Macros
-from ..utils.Utils import Utils
+from ...utils.Macros import Macros
+from ...utils.Utils import Utils
 from .CFG import BeneparCFG, TreebankCFG
 
 random.seed(Macros.SEED)

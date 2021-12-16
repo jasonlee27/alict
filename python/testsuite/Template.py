@@ -16,7 +16,7 @@ from nltk.tokenize import word_tokenize as tokenize
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from ..requrement.Requirements import Requirements
+from ..requirement.Requirements import Requirements
 
 from .Generator import Generator
 from .Synonyms import Synonyms
@@ -244,4 +244,4 @@ class Template:
 
 
 # Write templates
-Template.get_templates(num_seeds=10)
+# Template.get_templates(num_seeds=10)
