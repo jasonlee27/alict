@@ -18,6 +18,7 @@ class Macros:
     FMT_INT = "{:,d}"
     FMT_PER = "{:.1%}"
     FMT_FLOAT = "{:,.2f}"
+    TRAIN_RATIO = 0.8
     
     SEED = 27
     MASK = "{mask}"
