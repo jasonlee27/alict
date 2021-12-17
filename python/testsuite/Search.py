@@ -17,8 +17,6 @@ from ..requirement.Requirements import Requirements
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
 
-# DATASETS = Macros.datasets
-
 # get pos/neg/neu words from SentiWordNet
 SENT_WORDS = Sentiwordnet.get_sent_words()
 SENT_DICT = {
@@ -231,6 +229,7 @@ class Sst:
 
     @classmethod
     def get_sents(cls, sent_file, label_file):
+        # sents: List of [sent_index, sent]
         sents = [tuple(l.split("\t")) for l in Utils.read_txt(sent_file)[1:]]
         label_scores = [tuple(l.split("|")) for l in Utils.read_txt(label_file)[1:]]
         labels = dict()
@@ -246,17 +245,13 @@ class Sst:
         return [(s_i,s,labels[s_i]) for s_i, s in sents]
     
     @classmethod
-    def search_sst(cls, req, dataset_name):
+    def search(cls, req, dataset_name):
         # sent: (index, sentence)
         # label: (index, label score)
         sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file)
         req_obj = SearchOperator(req)
         selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
-        # selected_res = {
-        #     "requirement": req,
-        #     "selected_inputs": selected
-        # }
         req_obj = TransformOperator(req)
         selected = req_obj.transform(selected)
         return selected
@@ -267,36 +262,33 @@ class ChecklistTestsuite:
     @classmethod
     def get_sents(cls, testsuite_file):
         tsuite, tsuite_dict = read_testsuite(testsuite_file)
+        sents, raw_labels = list(), list()
         for test_name in test_names:
-            
-        
-        
-        sents = [tuple(l.split("\t")) for l in Utils.read_txt(sent_file)[1:]]
-        label_scores = [tuple(l.split("|")) for l in Utils.read_txt(label_file)[1:]]
+            # sents: List of sent
+            # label: 0(neg), 1(neu) and 2(pos)
+            sents.extend(tsuite.tests[test_name].data) 
+            raw_labels.extend(tsuite.tests[test_name].labels)
+        # end for        
         labels = dict()
-        for s_i, s in label_scores:
-            s = float(s)
-            labels[s_i] = "neutral"
-            if s<=0.4:
+        for s_i, s in enumerate(raw_labels):
+            if s=='0':
                 labels[s_i] = "negative"
-            elif s>0.6:
+            elif s=='1':
+                labels[s_i] = "neutral"
+            else:
                 labels[s_i] = "positive"
             # end if
         #end for
-        return [(s_i,s,labels[s_i]) for s_i, s in sents]
+        return [(s_i, s, labels[s_i]) for s_i, s in enumerate(sents)]
     
     @classmethod
-    def search_sst(cls, req, dataset_name):
+    def search(cls, req, dataset_name):
         # sent: (index, sentence)
         # label: (index, label score)
-        sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file)
+        sents = cls.get_sents(Macros.checklist_sa_dataset_file)
         req_obj = SearchOperator(req)
         selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
-        # selected_res = {
-        #     "requirement": req,
-        #     "selected_inputs": selected
-        # }
         req_obj = TransformOperator(req)
         selected = req_obj.transform(selected)
         return selected
@@ -337,10 +329,13 @@ class DynasentRoundOne:
 class Search:
 
     SEARCH_MAP = {
-        Macros.sa_task : [Sst.search_sst]
+        Macros.sa_task : [Sst.search, ChecklistTestsuite.search]
     }
 
-    
+    @classmethod
+    def get_dataset(cls, task_name, dataset_name):
+        pass
+
     @classmethod
     def search_sentiment_analysis(cls, requirements):
         func_list = cls.SEARCH_MAP[Macros.sa_task]
@@ -356,10 +351,4 @@ class Search:
         # end for
         return
 
-# if __name__=="__main__":
-#     for task in DATASETS.keys():
-#         reqs = Requirements.get_requirements(task)
-#         for task_dataset in Search.SEARCH_MAP[task]:
-#             Search.search_sst(reqs)
-#         # end for
-#     # end for
+

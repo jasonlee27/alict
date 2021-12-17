@@ -163,7 +163,7 @@ class CFGExpander:
 #     for task in Macros.datasets.keys():
 #         print(task)
 #         reqs = Requirements.get_requirements(task)
-#         for selected in Search.search_sst(reqs):
+#         for selected in Search.search(reqs):
 #             print(selected["description"])
 #             for inp in selected["selected_inputs"]:
 #                 _id, seed = inp[0], inp[1]

@@ -115,7 +115,7 @@ class Generator:
 #         print(f"TASK: {task}")
 #         reqs = Requirements.get_requirements(task)
 #         results = list()
-#         for selected in Search.search_sst(reqs):
+#         for selected in Search.search(reqs):
 #             exp_inputs = dict()
 #             for _id, seed, seed_label in selected["selected_inputs"]:
 #                 print(f"SEED: {seed} -> {seed_label}")
