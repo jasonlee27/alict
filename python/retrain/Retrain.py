@@ -25,10 +25,7 @@ class ChecklistTestcases:
     
     @classmethod
     def write_checklist_testcase(cls, save_file):
-        def example_to_dict_fn(data):
-            return { 'test_sent': data }
-        tsuite = suite().from_file(Macros.checklist_sst_dataset_file)
-        tsuite_dict = tsuite.to_dict(example_to_dict_fn=example_to_dict_fn)
+        tsuite, tsuite_dict = Utils.read_testsuite(Macros.checklist_sst_dataset_file)
         test_names = list(set(tsuite_dict['test_name']))
         test_data = dict()
         for test_name in test_names:

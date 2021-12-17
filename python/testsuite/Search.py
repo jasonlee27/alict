@@ -227,7 +227,7 @@ class TransformOperator:
         # # end for
         # return _sents
 
-class SST:
+class Sst:
 
     @classmethod
     def get_sents(cls, sent_file, label_file):
@@ -246,9 +246,49 @@ class SST:
         return [(s_i,s,labels[s_i]) for s_i, s in sents]
     
     @classmethod
-    def search_sst(cls, req):
+    def search_sst(cls, req, dataset_name):
         # sent: (index, sentence)
-        # label: (index, label score) 
+        # label: (index, label score)
+        sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file)
+        req_obj = SearchOperator(req)
+        selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
+        random.shuffle(selected)
+        # selected_res = {
+        #     "requirement": req,
+        #     "selected_inputs": selected
+        # }
+        req_obj = TransformOperator(req)
+        selected = req_obj.transform(selected)
+        return selected
+
+
+class ChecklistTestsuite:
+
+    @classmethod
+    def get_sents(cls, testsuite_file):
+        tsuite, tsuite_dict = read_testsuite(testsuite_file)
+        for test_name in test_names:
+            
+        
+        
+        sents = [tuple(l.split("\t")) for l in Utils.read_txt(sent_file)[1:]]
+        label_scores = [tuple(l.split("|")) for l in Utils.read_txt(label_file)[1:]]
+        labels = dict()
+        for s_i, s in label_scores:
+            s = float(s)
+            labels[s_i] = "neutral"
+            if s<=0.4:
+                labels[s_i] = "negative"
+            elif s>0.6:
+                labels[s_i] = "positive"
+            # end if
+        #end for
+        return [(s_i,s,labels[s_i]) for s_i, s in sents]
+    
+    @classmethod
+    def search_sst(cls, req, dataset_name):
+        # sent: (index, sentence)
+        # label: (index, label score)
         sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file)
         req_obj = SearchOperator(req)
         selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
@@ -297,7 +337,7 @@ class DynasentRoundOne:
 class Search:
 
     SEARCH_MAP = {
-        Macros.sa_task : [SST.search_sst]
+        Macros.sa_task : [Sst.search_sst]
     }
 
     

@@ -47,6 +47,15 @@ class Utils:
         return None
 
     @classmethod
+    def read_testsuite(cls, testsuite_file):
+        def example_to_dict_fn(data):
+            return { 'text': data }
+        # read checklist testsuite file (.pkl)
+        tsuite = suite().from_file(testsuite_file)
+        tsuite_dict = tsuite.to_dict(example_to_dict_fn=example_to_dict_fn)
+        return tsuite, tsuite_dict
+    
+    @classmethod
     def write_json(cls, input_dict, json_file, pretty_format=False):
         with open(json_file, 'w') as f:
             if pretty_format:
