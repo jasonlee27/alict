@@ -23,13 +23,18 @@ class Macros:
     MASK = "{mask}"
     
     ## NLP dataset
-    sa_task = "sentiment_analysis"
+    sa_task = 'sa'
+    mc_task = 'mc'
+    qqp_task = 'qqp'
+    nlp_tasks = [sa_task, mc_task, qqp_task]
     sa_label_map = {'negative': 0, 'positive': 2, 'neutral': 1}
 
     # stanfordSentimentTreebank:
     # dynasent paper: https://arxiv.org/pdf/2012.15349.pdf
     datasets = {
-        sa_task: ["stanfordSentimentTreebank", "dynasent"]
+        sa_task: ['sst', 'checklist', 'dynasent'],
+        mc_task: [],
+        qqp_task: []
     }
 
     # SST
@@ -43,17 +48,17 @@ class Macros:
     # SentiWordNet
     swn_data_file: Path = download_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"
 
-    # Test
+    # Checklist Testsuite
     checklist_dir: Path = download_dir / "checklist"
     checklist_data_dir: Path = checklist_dir / "release_suites"
-    checklist_sst_dataset_file: Path = checklist_data_dir / "ex_sentiment_suite.pkl"
+    checklist_sa_dataset_file: Path = checklist_data_dir / "ex_sentiment_suite.pkl"
     
     sa_models_file = download_dir / "models" / "sentiment_models.txt"
     
     
     BASELINES = {
         "checklist": {
-            "testsuite_file": checklist_sst_dataset_file
+            "testsuite_file": checklist_sa_dataset_file
         }
     }
 
@@ -61,4 +66,4 @@ class Macros:
     TRAIN_RATIO = 0.8
     retrain_output_dir: Path = result_dir / "retrain"
     checklist_result_dir: Path = result_dir / "checklist"
-    checklist_sst_testcase_file: Path = checklist_result_dir / "checklist_sst_testcase.json"
+    checklist_sa_testcase_file: Path = checklist_result_dir / "checklist_sa_testcase.json"

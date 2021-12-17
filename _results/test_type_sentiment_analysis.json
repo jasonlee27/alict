@@ -27,5 +27,29 @@
         "Author sentiment is more important than of others",
         "parsing sentiment in (question, \"yes\") form",
         "Parsing sentiment in (question, \"no\") form"
+    ],
+    "": [
+        ""
+    ],
+    "Replace neutral words with other neutral word": [
+        "Replace neutral words with other neutral word"
+    ],
+    "it = [The, This, That]": [
+        "it = [The, This, That]"
+    ],
+    "i = [I, We]": [
+        "i = [I, We]"
+    ],
+    "neutral_adj = [American, international, commercial, British, private,": [
+        "neutral_adj = [American, international, commercial, British, private,"
+    ],
+    "Italian, Indian, Australian, Israeli]": [
+        "Italian, Indian, Australian, Israeli]"
+    ],
+    "neutral_verb = [see, find, He/She is, You are, I am, We are,": [
+        "neutral_verb = [see, find, He/She is, You are, I am, We are,"
+    ],
+    "They are, It is]": [
+        "They are, It is]"
     ]
 }

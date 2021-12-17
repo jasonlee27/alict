@@ -12,10 +12,18 @@ from .utils.Macros import Macros
 from .utils.Utils import Utils
 
 parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('--task', type=str, nargs='+',
+parser.add_argument('--run', type=str, required=True,
+                    choices=['requirement', 'template', 'testsuite', 'testmodel', 'retrain'],
                     help='task to be run')
+parser.add_argument('--nlp_task', type=str, default="sa",
+                    choices=['sa', 'qqp', 'mc'],
+                    help='nlp task of focus')
+parser.add_argument('--search_dataset', type=str, default=None
+                    help='name of dataset for searching testcases that meets the requirement')
+parser.add_argument('--num_seeds', type=int, default=10,
+                    help='number of seed inputs found in search dataset')
 parser.add_argument('--model_name', type=str, default=None
-                    help='sum the integers (default: find the max)')
+                    help='name of model to be evaluated')
 
 args = parser.parse_args()
 
@@ -26,12 +34,26 @@ def run_requirements():
 
 def run_templates():
     from .testsuite.Template import Template
-    Template.get_templates(num_seeds=10)
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    num_seeds = args.num_seeds
+    Template.get_templates(
+        nlp_task=nlp_task,
+        dataset=search_dataset_name,
+        num_seeds=num_seeds
+    )
     return
 
 def run_testsuites():
     from .testsuite.Testsuite import Testsuite
-    Testsuite.write_testsuites()
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    num_seeds = args.num_seeds
+    Testsuite.write_testsuites(
+        nlp_task=nlp_task,
+        dataset=search_dataset_name,
+        num_seeds=num_seeds
+    )
     return
 
 def run_testmodel():
@@ -41,25 +63,26 @@ def run_testmodel():
 
 def run_retrain():
     from .retrain.Retrain import Retrain
-    if not os.path.exists(Macros.checklist_sst_testcase_file):
+    if not os.path.exists(Macros.checklist_sa_testcase_file):
         Retrain.get_checklist_testcase()
     # end if
     model_name = args.model_name[0]
     Retrain.retrain(
         model_name=model_name,
-        dataset_file=Macros.checklist_sst_testcase_file
+        dataset_file=Macros.checklist_sa_testcase_file
     )
     return
     
 
 func_map = {
-    "requirement": run_requirements,
-    "template": run_templates,
-    "testsuite": run_testsuites,
-    "testmodel": run_testmodel,
-    "retrain": run_retrain
+    "sa": {
+        "requirement": run_requirements,
+        "template": run_templates,
+        "testsuite": run_testsuites,
+        "testmodel": run_testmodel,
+        "retrain": run_retrain
+    }
 }
 
 if __name__=="__main__":
-    task_name = args.task[0]
-    func_map[task_name]()
+    func_map[args.nlp_task][args.run]()

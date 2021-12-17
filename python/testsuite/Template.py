@@ -34,67 +34,74 @@ class Template:
         "PRP$": "PP$"
     }
 
-    SEARCH_MAP = {
+    # SEARCH_MAP = {
+    #     Macros.sa_task: Search.search_sentiment_analysis
+    #     Macros.mc_task:
+    #     Macros.qqp_task: 
+    # }
+    SEARCH_FUNC = {
         Macros.sa_task: Search.search_sentiment_analysis
     }
-
+    
     @classmethod
-    def generate_inputs(cls, n=None):
+    def generate_inputs(cls, task, dataset, n=None):
         cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
-        for task in Macros.datasets.keys():
-            print(f"***** TASK: {task} *****")
-            reqs = Requirements.get_requirements(task)
-            results = list()
-            for selected in cls.SEARCH_MAP[task](reqs):
-                exp_inputs = dict()
-                print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
-                selected_inputs = selected["selected_inputs"][:n] if n is not None else selected["selected_inputs"]
-                for _id, seed, seed_label in selected_inputs:
-                    print(f"\tSELECTED_SEED: {_id} {seed}, {seed_label}")
-                    expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
-                    generator = Generator(expander=expander)
-                    gen_inputs = generator.masked_input_generator()
-                    new_input_results = list()
-                    if len(gen_inputs)>0:
-                        gen_inputs = Suggest.get_new_inputs(generator.editor, gen_inputs, num_target=10)
-                        _gen_inputs = list()
-                        for g_i in range(len(gen_inputs)):
-                            eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], seed_label, selected["requirement"])
-                            if len(eval_results)>0:
-                                del gen_inputs[g_i]["words_suggest"]
-                                gen_inputs[g_i]["new_iputs"] = eval_results
-                                _gen_inputs.append(gen_inputs[g_i])
-                                new_input_results.extend(eval_results)
-                            # end if
-                        # end for
-                    # end if
-                    exp_inputs[seed] = {
-                        "cfg_seed": expander.cfg_seed,
-                        "exp_inputs": new_input_results,
-                        "label": seed_label
-                    }
-                # end for
-                results.append({
-                    "requirement": selected["requirement"],
-                    "inputs": exp_inputs
-                })
-                print(f"<<<<< REQUIREMENT:", selected["requirement"]["description"])
+        print(f"***** TASK: {task} *****")
+        reqs = Requirements.get_requirements(task)
+        results = list()
+        for selected in cls.SEARCH_FUNC[task](reqs, dataset):
+            exp_inputs = dict()
+            print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
+            selected_inputs = selected["selected_inputs"][:n] if n is not None else selected["selected_inputs"]
+            for _id, seed, seed_label in selected_inputs:
+                print(f"\tSELECTED_SEED: {_id} {seed}, {seed_label}")
+                expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
+                generator = Generator(expander=expander)
+                gen_inputs = generator.masked_input_generator()
+                new_input_results = list()
+                if len(gen_inputs)>0:
+                    gen_inputs = Suggest.get_new_inputs(generator.editor, gen_inputs, num_target=10)
+                    _gen_inputs = list()
+                    for g_i in range(len(gen_inputs)):
+                        eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], seed_label, selected["requirement"])
+                        if len(eval_results)>0:
+                            del gen_inputs[g_i]["words_suggest"]
+                            gen_inputs[g_i]["new_iputs"] = eval_results
+                            _gen_inputs.append(gen_inputs[g_i])
+                            new_input_results.extend(eval_results)
+                        # end if
+                    # end for
+                # end if
+                exp_inputs[seed] = {
+                    "cfg_seed": expander.cfg_seed,
+                    "exp_inputs": new_input_results,
+                    "label": seed_label
+                }
             # end for
-            
-            # write raw new inputs
-            Utils.write_json(results,
-                             Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
-                             pretty_format=True)
-            print(f"**********")
+            results.append({
+                "requirement": selected["requirement"],
+                "inputs": exp_inputs
+            })
+            print(f"<<<<< REQUIREMENT:", selected["requirement"]["description"])
         # end for
+            
+        # write raw new inputs
+        Utils.write_json(results,
+                         Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+                         pretty_format=True)
+        print(f"**********")        
         return results
     
     @classmethod
-    def get_new_inputs(cls, input_file, n=None):
+    def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None):
         if os.path.exists(input_file):
             return Utils.read_json(input_file)
         # end if
-        return cls.generate_inputs(n=n)
+        return cls.generate_inputs(
+            task=nlp_task,
+            dataset=dataset_name,
+            n=n
+        )
 
     @classmethod
     def find_pos_from_cfg_seed(cls, token, cfg_seed):
@@ -182,63 +189,75 @@ class Template:
         }, prev_synonyms
 
     @classmethod
-    def get_templates(cls, num_seeds=None):
+    def get_templates(cls, num_seeds, nlp_task, dataset_name):
+        assert nlp_task in Macros.nlp_tasks
+        assert dataset_name in Macros.datasets[nlp_task]
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        for task in Macros.datasets.keys():
-            new_input_dicts = cls.get_new_inputs(Macros.result_dir/f"cfg_expanded_inputs_{task}.json", n=num_seeds)
-            prev_synonyms = dict()
-            # for each testing linguistic capabilities,
-            for t_i in range(len(new_input_dicts)):
-                inputs_per_req = new_input_dicts[t_i]
-                req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])
-                inputs = inputs_per_req["inputs"]
-                
-                seed_inputs, seed_templates, exp_templates = list(), list(), list()
-                for seed_input in inputs.keys():
-                    print(f"SEED: {seed_input}")
-                    
-                    cfg_seed = inputs[seed_input]["cfg_seed"]
-                    label_seed = inputs[seed_input]["label"]
-                    exp_inputs = inputs[seed_input]["exp_inputs"]
-                    seed_inputs.append({
-                        "input": seed_input,
-                        "place_holder": tokenize(seed_input),
-                        "label": label_seed
-                    })
+        task = "sentiment_analysis"
+        if nlp_task=="mc":
+            task = "machine_comprehension"
+        elif nlp_task=="qqp":
+            task = "qqp"
+        # end if
+        new_input_dicts = cls.get_new_inputs(
+            Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+            task,
+            dataset_name,
+            n=num_seeds
+        )
+        new_input_dicts = cls.get_new_inputs(Macros.result_dir/f"cfg_expanded_inputs_{task}.json", n=num_seeds)
+        prev_synonyms = dict()
+        # for each testing linguistic capabilities,
+        for t_i in range(len(new_input_dicts)):
+            inputs_per_req = new_input_dicts[t_i]
+            req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])
+            inputs = inputs_per_req["inputs"]
 
-                    # make template for seed input
-                    tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
+            seed_inputs, seed_templates, exp_templates = list(), list(), list()
+            for seed_input in inputs.keys():
+                print(f"SEED: {seed_input}")
+                
+                cfg_seed = inputs[seed_input]["cfg_seed"]
+                label_seed = inputs[seed_input]["label"]
+                exp_inputs = inputs[seed_input]["exp_inputs"]
+                seed_inputs.append({
+                    "input": seed_input,
+                    "place_holder": tokenize(seed_input),
+                    "label": label_seed
+                })
+
+                # make template for seed input
+                tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
+                _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
+                _templates["label"] = label_seed
+                seed_templates.append(_templates)
+                
+                # Make template for expanded inputs
+                for inp_i, inp in enumerate(exp_inputs):
+                    (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
+                    tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
                     _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
-                    _templates["label"] = label_seed
-                    seed_templates.append(_templates)
-
-                    # Make template for expanded inputs
-                    for inp_i, inp in enumerate(exp_inputs):
-                        (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
-                        tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
-                        _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
-                        _templates["label"] = exp_input_label
-                        exp_templates.append(_templates)
-                        print(".", end="")
-                    # end for
-                    print()
+                    _templates["label"] = exp_input_label
+                    exp_templates.append(_templates)
+                    print(".", end="")
                 # end for
-                
-                # Write the template results
-                res_dir = Macros.result_dir/ f"templates_{task}"
-                res_dir.mkdir(parents=True, exist_ok=True)
-                
-                Utils.write_json(seed_inputs,
-                                 res_dir / f"seeds_{req_cksum}.json",
-                                 pretty_format=True)
-                Utils.write_json(seed_templates,
-                                 res_dir / f"templates_seed_{req_cksum}.json",
-                                 pretty_format=True)
-                Utils.write_json(exp_templates,
-                                 res_dir / f"templates_exp_{req_cksum}.json",
-                                 pretty_format=True)
+                print()
             # end for
+
+            # Write the template results
+            res_dir = Macros.result_dir/ f"templates_{task}"
+            res_dir.mkdir(parents=True, exist_ok=True)
+            
+            Utils.write_json(seed_inputs,
+                             res_dir / f"seeds_{req_cksum}.json",
+                             pretty_format=True)
+            Utils.write_json(seed_templates,
+                             res_dir / f"templates_seed_{req_cksum}.json",
+                             pretty_format=True)
+            Utils.write_json(exp_templates,
+                             res_dir / f"templates_exp_{req_cksum}.json",
+                             pretty_format=True)
         # end for
         return
 

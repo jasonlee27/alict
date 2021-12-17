@@ -328,8 +328,13 @@ class DynasentRoundOne:
 
 class Search:
 
-    SEARCH_MAP = {
-        Macros.sa_task : [Sst.search, ChecklistTestsuite.search]
+    SEARCH_FUNC = {
+        Macros.sa_task : {
+            Macros.datasets[Macros.sa_task][0]: Sst.search,
+            Macros.datasets[Macros.sa_task][1]: ChecklistTestsuite.search
+        }
+        Macros.mc_task : {}
+        Macros.qqp_task : {}
     }
 
     @classmethod
@@ -337,13 +342,10 @@ class Search:
         pass
 
     @classmethod
-    def search_sentiment_analysis(cls, requirements):
-        func_list = cls.SEARCH_MAP[Macros.sa_task]
+    def search_sentiment_analysis(cls, requirements, dataset):
+        func = cls.SEARCH_FUNC[Macros.sa_task][dataset]
         for req in requirements:
-            selected = list()
-            for func in func_list:
-                selected.extend(func(req))
-            # end for
+            selected = func(req)
             yield {
                 "requirement": req,
                 "selected_inputs": selected

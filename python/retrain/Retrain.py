@@ -25,7 +25,7 @@ class ChecklistTestcases:
     
     @classmethod
     def write_checklist_testcase(cls, save_file):
-        tsuite, tsuite_dict = Utils.read_testsuite(Macros.checklist_sst_dataset_file)
+        tsuite, tsuite_dict = Utils.read_testsuite(Macros.checklist_sa_dataset_file)
         test_names = list(set(tsuite_dict['test_name']))
         test_data = dict()
         for test_name in test_names:
@@ -82,14 +82,14 @@ class ChecklistTestcases:
     
     @classmethod
     def get_checklist_testcase(cls):
-        if os.path.exists(Macros.checklist_sst_testcase_file):
+        if os.path.exists(Macros.checklist_sa_testcase_file):
             Macros.checklist_result_dir.mkdir(parents=True, exist_ok=True)
             return cls.write_checklist_testcase(
-                Macros.checklist_sst_testcase_file
+                Macros.checklist_sa_testcase_file
             )
         # end if
         return Utils.read_json(
-            Macros.checklist_sst_testcase_file
+            Macros.checklist_sa_testcase_file
         )
 
 
