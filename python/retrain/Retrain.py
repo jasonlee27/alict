@@ -176,4 +176,5 @@ def retrain(model_name, dataset_file):
     retrainer = Retrain(model_name, dataset_file)
     retrainer.train()
     eval_result = retrainer.evaluate()
+    print(eval_result)
     return eval_result

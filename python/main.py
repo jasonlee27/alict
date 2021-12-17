@@ -14,6 +14,8 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--task', type=str, nargs='+',
                     help='task to be run')
+parser.add_argument('--model_name', type=str, default=None
+                    help='sum the integers (default: find the max)')
 
 args = parser.parse_args()
 
@@ -39,7 +41,15 @@ def run_testmodel():
 
 def run_retrain():
     from .retrain.Retrain import Retrain
-    Retrain.get_checklist_testcase()
+    if not os.path.exists(Macros.checklist_sst_testcase_file):
+        Retrain.get_checklist_testcase()
+    # end if
+    model_name = args.model_name[0]
+    Retrain.retrain(
+        model_name=model_name,
+        dataset_file=Macros.checklist_sst_testcase_file
+    )
+    return
     
 
 func_map = {
