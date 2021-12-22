@@ -28,7 +28,7 @@ parser.add_argument('--model_name', type=str, default=None,
 # arguments for testing model
 parser.add_argument('--test_type', type=str, default="testsuite",
                     help='test dataset type (testsuite file or different dataset format)')
-parser.add_argument('--test_baseline', action='store_true'
+parser.add_argument('--test_baseline', action='store_true',
                     help='test models on running baseline (checklist) test cases')
 
 # arguments for retraining
@@ -67,20 +67,16 @@ def run_testsuites():
     return
 
 def run_testmodel():
-    from .model.Testmodel import Testmodel
+    from .model.Testmodel import main as Testmodel_main
     nlp_task = args.nlp_task
-    test_baseline = test_baseline
+    test_baseline = args.test_baseline
     test_type = args.test_type
     local_model_name = args.model_name
-    local_model_dir = None
-    if model_name is not None:
-        local_model_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
-    # end if
-    Testmodel.main(
+    Testmodel_main(
         nlp_task,
         test_baseline,
         test_type,
-        local_model_name=local_model_dir
+        local_model_name=local_model_name
     )
     return
 

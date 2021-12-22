@@ -31,8 +31,8 @@ function gen_testsuite() {
 
 function eval_models(){
         # evaluate NLP models with generated testsuites
-        (cd ${PYTHON_DIR}
-         python -m python.main --run testmodel
+        (cd ${_DIR}
+         python -m python.main --run testmodel --model_name textattack/bert-base-uncased-SST-2 --test_baseline 
         )
 }
 
@@ -47,7 +47,8 @@ function main() {
         # gen_requirements
         # gen_templates
         # gen_testsuite
-        retrain_models
+        eval_models
+        # retrain_models
 }
 
 # please make sure you actiavte nlptest conda environment

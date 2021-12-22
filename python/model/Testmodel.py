@@ -16,17 +16,11 @@ from .GoogleModel import GoogleModel
 
 import os
 
-args = Utils.argparse()
-args = dict() if args is None else args
-if "test-type" not in args.keys():
-    args["test-type"] = "testsuite"
-# end if
-
 
 class Testmodel:
 
     model_func_map = {
-        "sentiment_analysis": Model.sentiment_pred_and_conf
+        "sa": Model.sentiment_pred_and_conf
     }
 
     @classmethod
@@ -69,7 +63,7 @@ class Testmodel:
                     # end for
                 else:
                     print(f">>>>> RETRAINED MODEL: {local_model_name}")
-                    model = Model.load_local_models(task, local_model_name):
+                    model = Model.load_local_models(task, local_model_name)
                     Model.run(testsuite, model, cls.model_func_map[task])
                     print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                 # end if
@@ -85,7 +79,7 @@ class Testmodel:
         print(f"***** Baseline: {bl_name} *****")
         testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
 
-        if local_model_name is not None:
+        if local_model_name is None:
             # Run Google nlp model
             print(f">>>>> MODEL: Google NLP model")
             GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
@@ -100,7 +94,7 @@ class Testmodel:
             print("**********")
         else:
             print(f">>>>> RETRAINED MODEL: {local_model_name}")
-            model = Model.load_local_models(task, local_model_name):
+            model = Model.load_local_model(task, local_model_name)
             Model.run(testsuite, model, cls.model_func_map[task])
             print(f"<<<<< RETRAINED MODEL: {local_model_name}")
         # end if

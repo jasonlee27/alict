@@ -15,7 +15,7 @@ from ..utils.Utils import Utils
 class Model:
     
     model_map = {
-        "sentiment_analysis": ("sentiment-analysis", Macros.sa_models_file)
+        "sa": ("sentiment-analysis", Macros.sa_models_file)
     }
 
     @classmethod
@@ -35,10 +35,10 @@ class Model:
     def load_local_model(cls, task, model_name):
         model_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
         _task, model_file = cls.model_map[task]
-        checkpoints = sorted([d for d in os.listdir(model_dir) if os.path.isdir(os.path.join(model_dir,d)) and d.startswhith("checkpoint-")])
+        checkpoints = sorted([d for d in os.listdir(model_dir) if os.path.isdir(os.path.join(model_dir,d)) and d.startswith("checkpoint-")])
         checkpoint_dir = model_dir / checkpoints[-1]
         tokenizer = AutoTokenizer.from_pretrained(model_dir)
-        return pipeline(_task, model=checkpoint_dir, tokenizer=tokenizer, framework="pt", device=0)
+        return pipeline(_task, model=str(checkpoint_dir), tokenizer=tokenizer, framework="pt", device=0)
 
     @classmethod
     def get_batch(cls, l, n):
