@@ -332,8 +332,8 @@ class Search:
         Macros.sa_task : {
             Macros.datasets[Macros.sa_task][0]: Sst.search,
             Macros.datasets[Macros.sa_task][1]: ChecklistTestsuite.search
-        }
-        Macros.mc_task : {}
+        },
+        Macros.mc_task : {},
         Macros.qqp_task : {}
     }
 

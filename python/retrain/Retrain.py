@@ -43,11 +43,14 @@ class ChecklistTestcases:
             type_list[:num_train_data] = ['train']*num_train_data
             random.shuffle(type_list)
             test_data[test_name]['types'] = type_list
+
+            # set data labels in a range between 0. and 1. from 0,1,2
+            test_data[test_name]['labels'] = [0.5*float(l) for l in test_data[test_name]['labels']]
         # end for
 
         dataset = dict()
-        for idx in range(len(tsuite_dict['test_sent'])):
-            test_sent = tsuite_dict['test_sent'][idx]
+        for idx in range(len(tsuite_dict['text'])):
+            test_sent = tsuite_dict['text'][idx]
             test_name = tsuite_dict['test_name'][idx]
             test_case = tsuite_dict['test_case'][idx]
             sent_idx = test_data[test_name]['sents'].index(test_sent)
@@ -82,7 +85,7 @@ class ChecklistTestcases:
     
     @classmethod
     def get_checklist_testcase(cls):
-        if os.path.exists(Macros.checklist_sa_testcase_file):
+        if not os.path.exists(Macros.checklist_sa_testcase_file):
             Macros.checklist_result_dir.mkdir(parents=True, exist_ok=True)
             return cls.write_checklist_testcase(
                 Macros.checklist_sa_testcase_file
@@ -95,8 +98,9 @@ class ChecklistTestcases:
 
 class Retrain:
 
-    def __init__(self, model_name, dataset_file):
+    def __init__(self, model_name, num_labels, dataset_file):
         self.model = self.load_model(model_name)
+        self.num_labels = num_labels
         self.tokenizer = self.load_tokenizer(model_name)
         self.train_dataset, self.eval_dataset = self.get_tokenized_dataset(dataset_file)
         self.output_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
@@ -109,12 +113,12 @@ class Retrain:
 
     def get_tokenized_dataset(self, dataset_file):
         raw_dataset = Utils.read_json(dataset_file)
-        train_texts = self.tokenizer(raw_dataset['train']['text'], truncatiion=True, padding=True)
+        train_texts = self.tokenizer(raw_dataset['train']['text'], truncation=True, padding=True)
         train_labels = raw_dataset['train']['label']
-        eval_texts = self.tokenizer(raw_dataset['test']['text'], truncatiion=True, padding=True)
+        eval_texts = self.tokenizer(raw_dataset['test']['text'], truncation=True, padding=True)
         eval_labels = raw_dataset['test']['label']
-        train_dataset = Dataset(train_texts, train_labels)
-        eval_dataset = Dataset(eval_texts, eval_labels)
+        train_dataset = Dataset(train_texts, labels=train_labels, num_labels=self.num_labels)
+        eval_dataset = Dataset(eval_texts, labels=eval_labels, num_labels=self.num_labels)
         return train_dataset, eval_dataset
 
     def compute_metrics(self, p):
@@ -135,8 +139,9 @@ class Retrain:
         training_args = TrainingArguments(
             output_dir=self.output_dir,
             num_train_epochs=1.0,
+            per_device_train_batch_size=4,
             do_train=True
-        )
+        )       
         trainer = Trainer(
             model=self.model,
             args=training_args,
@@ -149,6 +154,7 @@ class Retrain:
     def evaluate(self):
         training_args = TrainingArguments(
             output_dir=self.output_dir,
+            per_device_eval_batch_size=4,
             do_eval=True
         )
         trainer = Trainer(
@@ -169,8 +175,8 @@ class Retrain:
         return ChecklistTestcases.get_checklist_testcase()
 
     
-def retrain(model_name, dataset_file):
-    retrainer = Retrain(model_name, dataset_file)
+def retrain(model_name, num_labels, dataset_file):
+    retrainer = Retrain(model_name, num_labels, dataset_file)
     retrainer.train()
     eval_result = retrainer.evaluate()
     print(eval_result)

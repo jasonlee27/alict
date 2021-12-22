@@ -6,6 +6,7 @@ import hashlib
 
 from pathlib import Path
 from nltk.corpus import treebank
+from checklist.test_suite import TestSuite
 
 from .Macros import Macros
 
@@ -51,7 +52,8 @@ class Utils:
         def example_to_dict_fn(data):
             return { 'text': data }
         # read checklist testsuite file (.pkl)
-        tsuite = suite().from_file(testsuite_file)
+        suite = TestSuite()
+        tsuite = suite.from_file(testsuite_file)
         tsuite_dict = tsuite.to_dict(example_to_dict_fn=example_to_dict_fn)
         return tsuite, tsuite_dict
     

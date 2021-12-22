@@ -39,7 +39,7 @@ function eval_models(){
 function retrain_models(){
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         python -m python.main --run retrain
+         CUDA_VISIBLE_DEVICES="" python -m python.main --run retrain --model_name textattack/bert-base-uncased-SST-2
         )
 }
 
