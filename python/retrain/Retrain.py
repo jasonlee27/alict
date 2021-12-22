@@ -9,6 +9,7 @@ from transformers import AutoModelForSequenceClassification
 from transformers import TrainingArguments, Trainer
 
 from checklist.test_suite import TestSuite as suite
+from sklearn.metrics import recall_score, accuracy_score, precision_score, f1_score
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -17,6 +18,7 @@ from ..model.Model import Model
 from .Dataset import Dataset
 
 import os
+import torch
 import random
 import numpy as np
 
@@ -122,12 +124,59 @@ class Retrain:
         return train_dataset, eval_dataset
 
     def compute_metrics(self, p):
-        pred, labels = p
-        pred = np.argmax(pred, axis=1)
-        accuracy = accuracy_score(y_true=labels, y_pred=pred)
-        recall = recall_score(y_true=labels, y_pred=pred)
-        precision = precision_score(y_true=labels, y_pred=pred)
-        f1 = f1_score(y_true=labels, y_pred=pred)
+        scores, labels = p
+        pr, preds_all, pp_all = list(), list(), list()
+        labels_all = list()
+        preds = torch.nn.functional.softmax(torch.tensor(scores), dim=-1)
+        for pred, label in zip(preds, labels):
+            if np.array_equal(label,[0.,1.]): # positive
+                pr.append(pred[-1])
+                labels_all.append(2.)
+            elif np.array_equal(label,[0.,0.,1.]): # positive
+                pr.append(pred[-1])
+                labels_all.append(2.)
+            elif np.array_equal(label,[1.,0.]): # negative
+                pr.append(1.-pred[-1])
+                labels_all.append(0.)
+            elif np.array_equal(label,[1.,0.,0.]): # negative
+                pr.append(pred[0])
+                labels_all.append(0.)
+            elif np.array_equal(label,[0.5,0.5]): # neutral
+                pr.append(pred[-1])
+                labels_all.append(1.)
+            elif np.array_equal(label,[0.,1.,0.]): # neutral
+                pr.append(pred[1])
+                labels_all.append(1.)
+            # end if
+        # end for
+        pr = np.array(pr)
+        pp = np.zeros((pr.shape[0], 3))
+        margin_neutral = 1/3.
+        mn = margin_neutral / 2.
+        neg = pr < 0.5 - mn
+        pp[neg, 0] = 1 - pr[neg]
+        pp[neg, 2] = pr[neg]
+        pos = pr > 0.5 + mn
+        pp[pos, 0] = 1 - pr[pos]
+        pp[pos, 2] = pr[pos]
+        neutral_pos = (pr >= 0.5) * (pr < 0.5 + mn)
+        pp[neutral_pos, 1] = 1 - (1 / margin_neutral) * np.abs(pr[neutral_pos] - 0.5)
+        pp[neutral_pos, 2] = 1 - pp[neutral_pos, 1]
+        neutral_neg = (pr < 0.5) * (pr > 0.5 - mn)
+        pp[neutral_neg, 1] = 1 - (1 / margin_neutral) * np.abs(pr[neutral_neg] - 0.5)
+        pp[neutral_neg, 0] = 1 - pp[neutral_neg, 1]
+        preds = np.argmax(pp, axis=1)
+        preds_all.extend(preds)
+        pp_all.extend(pp)
+        accuracy = accuracy_score(y_true=labels_all, y_pred=preds_all)
+        recall = recall_score(y_true=labels_all, y_pred=preds_all, average='weighted')
+        precision = precision_score(y_true=labels_all, y_pred=preds_all, average='weighted')
+        f1 = f1_score(y_true=labels_all, y_pred=preds_all, average='weighted')
+        
+        # accuracy = accuracy_score(y_true=labels, y_pred=pred)
+        # recall = recall_score(y_true=labels, y_pred=pred)
+        # precision = precision_score(y_true=labels, y_pred=pred)
+        # f1 = f1_score(y_true=labels, y_pred=pred)
         return {
             "accuracy": accuracy,
             "precision": precision,
@@ -177,7 +226,9 @@ class Retrain:
     
 def retrain(model_name, num_labels, dataset_file):
     retrainer = Retrain(model_name, num_labels, dataset_file)
+    eval_result_before = retrainer.evaluate()
+    print(f"BEFORE_TRAIN:\n{eval_result_before}")
     retrainer.train()
-    eval_result = retrainer.evaluate()
-    print(eval_result)
-    return eval_result
+    eval_result_after = retrainer.evaluate()
+    print(f"AFTER_TRAIN:\n{eval_result_after}")
+    return eval_result_before, eval_result_after

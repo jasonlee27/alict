@@ -36,7 +36,6 @@ class Dataset(torch.utils.data.Dataset):
                 # end if
             item["labels"] = torch.tensor(label)
         # end if
-        print(self.num_labels, item["labels"])
         return item
 
     def __len__(self):
