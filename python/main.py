@@ -24,7 +24,7 @@ parser.add_argument('--num_seeds', type=int, default=10,
                     help='number of seed inputs found in search dataset')
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
-parser.add_argument('--num_labels', type=int, default=2,
+parser.add_argument('--num_labels', type=int, default=2x,
                     help='number of labels for the model to be evaluated or retrained')
 
 args = parser.parse_args()

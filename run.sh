@@ -18,14 +18,14 @@ function gen_requirements() {
 function gen_templates() {
         # write templates in json
         (cd ${PYTHON_DIR}
-         python -m Template
+         python -m Template --search_dataset checklist
         )
 }
 
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
         (cd ${PYTHON_DIR}
-         python -m python.main --run testsuite
+         python -m python.main --run testsuite --search_dataset checklist
         )
 }
 
