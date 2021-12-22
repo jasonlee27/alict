@@ -5,10 +5,10 @@ import torch
 
 # Create torch dataset
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, encodings, labels=None, num_labels=2):
+    def __init__(self, encodings, labels=None, label_vec_len=2):
         self.encodings = encodings
         self.labels = labels
-        self.num_labels = num_labels
+        self.label_vec_len = label_vec_len
 
     def __getitem__(self, idx):
         item = {
@@ -16,7 +16,7 @@ class Dataset(torch.utils.data.Dataset):
             for key, val in self.encodings.items()
         }
         if self.labels:
-            if self.num_labels==2: # when labels consists of (neg, pos)
+            if self.label_vec_len==2: # when labels consists of (neg, pos)
                 label = self.labels[idx]
                 if label==0:
                     label = [1.,0.]

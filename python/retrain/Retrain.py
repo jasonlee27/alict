@@ -100,9 +100,10 @@ class ChecklistTestcases:
 
 class Retrain:
 
-    def __init__(self, model_name, num_labels, dataset_file):
+    def __init__(self, model_name, label_vec_len, dataset_file):
         self.model = self.load_model(model_name)
-        self.num_labels = num_labels
+        self.dataset_file = dataset_file
+        self.label_vec_len = label_vec_len
         self.tokenizer = self.load_tokenizer(model_name)
         self.train_dataset, self.eval_dataset = self.get_tokenized_dataset(dataset_file)
         self.output_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
@@ -111,7 +112,7 @@ class Retrain:
         return AutoTokenizer.from_pretrained(model_name)
 
     def load_model(self, model_name):
-        return AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=2)
+        return AutoModelForSequenceClassification.from_pretrained(model_name)
 
     def get_tokenized_dataset(self, dataset_file):
         raw_dataset = Utils.read_json(dataset_file)
@@ -119,8 +120,8 @@ class Retrain:
         train_labels = raw_dataset['train']['label']
         eval_texts = self.tokenizer(raw_dataset['test']['text'], truncation=True, padding=True)
         eval_labels = raw_dataset['test']['label']
-        train_dataset = Dataset(train_texts, labels=train_labels, num_labels=self.num_labels)
-        eval_dataset = Dataset(eval_texts, labels=eval_labels, num_labels=self.num_labels)
+        train_dataset = Dataset(train_texts, labels=train_labels, label_vec_len=self.label_vec_len)
+        eval_dataset = Dataset(eval_texts, labels=eval_labels, label_vec_len=self.label_vec_len)
         return train_dataset, eval_dataset
 
     def compute_metrics(self, p):
@@ -171,18 +172,24 @@ class Retrain:
         accuracy = accuracy_score(y_true=labels_all, y_pred=preds_all)
         recall = recall_score(y_true=labels_all, y_pred=preds_all, average='weighted')
         precision = precision_score(y_true=labels_all, y_pred=preds_all, average='weighted')
-        f1 = f1_score(y_true=labels_all, y_pred=preds_all, average='weighted')
-        
-        # accuracy = accuracy_score(y_true=labels, y_pred=pred)
-        # recall = recall_score(y_true=labels, y_pred=pred)
-        # precision = precision_score(y_true=labels, y_pred=pred)
-        # f1 = f1_score(y_true=labels, y_pred=pred)
+        f1 = f1_score(y_true=labels_all, y_pred=preds_all, average='weighted')        
         return {
+            "num_data": len(preds_all),
             "accuracy": accuracy,
             "precision": precision,
             "recall": recall,
             "f1": f1
         }
+    def get_eval_data_by_testtypes(self):
+        eval_dataset = dict()
+        raw_dataset = Utils.read_json(self.dataset_file)
+        for test_name in list(set(raw_dataset['test']["test_name"])):
+            eval_texts =[raw_dataset['test']['text'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==test_name]
+            eval_texts = self.tokenizer(eval_texts, truncation=True, padding=True)
+            eval_labels =[raw_dataset['test']['label'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==test_name]
+            eval_dataset[test_name] = Dataset(eval_texts, labels=eval_labels, label_vec_len=self.label_vec_len)
+        # end for
+        return eval_dataset
 
     def train(self):
         training_args = TrainingArguments(
@@ -200,22 +207,38 @@ class Retrain:
         trainer.train()
         return
 
-    def evaluate(self):
+    def evaluate(self, test_by_types=False):
         training_args = TrainingArguments(
             output_dir=self.output_dir,
             per_device_eval_batch_size=4,
             do_eval=True
         )
-        trainer = Trainer(
-            model=self.model,
-            args=training_args,
-            train_dataset=self.train_dataset,
-            eval_dataset=self.eval_dataset,
-            compute_metrics=self.compute_metrics,
-        )
-        results = trainer.evaluate()
+        if test_by_types:
+            results = dict()
+            eval_dataset = self.get_eval_data_by_testtypes()
+            for test_name in eval_dataset.keys():
+                print(test_name)
+                trainer = Trainer(
+                    model=self.model,
+                    args=training_args,
+                    train_dataset=self.train_dataset,
+                    eval_dataset=eval_dataset[test_name],
+                    compute_metrics=self.compute_metrics,
+                )
+                results[test_name] = trainer.evaluate()
+            # end for
+        else:
+            trainer = Trainer(
+                model=self.model,
+                args=training_args,
+                train_dataset=self.train_dataset,
+                eval_dataset=self.eval_dataset,
+                compute_metrics=self.compute_metrics,
+            )
+            results = trainer.evaluate()
+        # end if
         return results
-
+        
     def test(cls):
         pass
     
@@ -224,11 +247,15 @@ class Retrain:
         return ChecklistTestcases.get_checklist_testcase()
 
     
-def retrain(model_name, num_labels, dataset_file):
-    retrainer = Retrain(model_name, num_labels, dataset_file)
-    eval_result_before = retrainer.evaluate()
-    print(f"BEFORE_TRAIN:\n{eval_result_before}")
+def retrain(model_name, label_vec_len, dataset_file, test_by_types=False):
+    retrainer = Retrain(model_name, label_vec_len, dataset_file)
+    eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
     retrainer.train()
-    eval_result_after = retrainer.evaluate()
-    print(f"AFTER_TRAIN:\n{eval_result_after}")
-    return eval_result_before, eval_result_after
+    eval_result_after = retrainer.evaluate(test_by_types=test_by_types)
+    eval_result = {
+        "before_retraining": eval_result_before,
+        "after_retraining": eval_result_after
+    }
+    output_file = Macros.retrain_output_dir / model_name.replace("/", "-") / "eval_results.json"
+    Utils.write_json(eval_result, output_file, pretty_format=True)
+    return eval_result

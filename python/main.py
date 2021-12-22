@@ -24,8 +24,8 @@ parser.add_argument('--num_seeds', type=int, default=10,
                     help='number of seed inputs found in search dataset')
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
-parser.add_argument('--num_labels', type=int, default=2,
-                    help='number of labels for the model to be evaluated or retrained')
+parser.add_argument('--label_vec_len', type=int, default=2,
+                    help='label vector length for the model to be evaluated or retrained')
 
 args = parser.parse_args()
 
@@ -70,11 +70,12 @@ def run_retrain():
         Retrain.get_checklist_testcase()
     # end if
     model_name = args.model_name
-    num_labels = args.num_labels
-    _, _ = retrain(
+    label_vec_len = args.label_vec_len
+    _ = retrain(
         model_name=model_name,
-        num_labels=num_labels,
-        dataset_file=Macros.checklist_sa_testcase_file
+        label_vec_len=label_vec_len,
+        dataset_file=Macros.checklist_sa_testcase_file,
+        test_by_types=True
     )
     return
     
