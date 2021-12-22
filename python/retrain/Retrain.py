@@ -256,6 +256,8 @@ def retrain(model_name, label_vec_len, dataset_file, test_by_types=False):
         "before_retraining": eval_result_before,
         "after_retraining": eval_result_after
     }
-    output_file = Macros.retrain_output_dir / model_name.replace("/", "-") / "eval_results.json"
+    output_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
+    output_file = output_dir / "eval_results.json"
+    retrainer.save_pretrained(output_dir)
     Utils.write_json(eval_result, output_file, pretty_format=True)
     return eval_result

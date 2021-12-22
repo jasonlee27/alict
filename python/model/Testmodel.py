@@ -34,7 +34,7 @@ class Testmodel:
         return suite().from_file(testsuite_file)
 
     @classmethod
-    def _run_testsuite(cls, task: str):
+    def _run_testsuite(cls, task: str, local_model_name=None):
         print(f"***** TASK: {task} *****")
         cksum_vals = [
             os.path.basename(test_file).split("_")[-1].split(".")[0]
@@ -55,16 +55,24 @@ class Testmodel:
                 test_info = testsuite.info[task]["capability"]+"::"+testsuite.info[task]["description"]
                 print(f">>>>> TEST: {test_info}")
 
-                # Run Google nlp model
-                print(f">>>>> MODEL: Google NLP model")
-                GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
-                print(f"<<<<< MODEL: Google NLP model")
-                
-                for mname, model in Model.load_models(task):
-                    print(f">>>>> MODEL: {mname}")
+                if local_model_name is not None:
+
+                    # Run Google nlp model
+                    print(f">>>>> MODEL: Google NLP model")
+                    GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
+                    print(f"<<<<< MODEL: Google NLP model")
+                    
+                    for mname, model in Model.load_models(task):
+                        print(f">>>>> MODEL: {mname}")
+                        Model.run(testsuite, model, cls.model_func_map[task])
+                        print(f"<<<<< MODEL: {mname}")
+                    # end for
+                else:
+                    print(f">>>>> RETRAINED MODEL: {local_model_name}")
+                    model = Model.load_local_models(task, local_model_name):
                     Model.run(testsuite, model, cls.model_func_map[task])
-                    print(f"<<<<< MODEL: {mname}")
-                # end for
+                    print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+                # end if
                 print(f"<<<<< TEST")
             # end for
         # end for
@@ -72,38 +80,45 @@ class Testmodel:
         return
     
     @classmethod
-    def _run_bl_testsuite(cls, task, bl_name):
+    def _run_bl_testsuite(cls, task, bl_name, local_model_name=None):
         print(f"***** TASK: {task} *****")
         print(f"***** Baseline: {bl_name} *****")
         testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
 
-        # Run Google nlp model
-        print(f">>>>> MODEL: Google NLP model")
-        GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
-        print(f"<<<<< MODEL: Google NLP model")
-
-        for mname, model in Model.load_models(task):
-            print(f">>>>> MODEL: {mname}")
-            Model.run(testsuite, model, cls.model_func_map[task])
-            print(f"<<<<< MODEL: {mname}")
-        # end for
-        print("**********")
-        print("**********")
-        return
-
-    @classmethod
-    def run_testsuite(cls, task, args=None):
-        # run models on checklist introduced testsuite
-        bl_name = None
-        if args is not None and "baseline" in args.keys():
-            cls._run_bl_testsuite(task, args["baseline"])
+        if local_model_name is not None:
+            # Run Google nlp model
+            print(f">>>>> MODEL: Google NLP model")
+            GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
+            print(f"<<<<< MODEL: Google NLP model")
+            
+            for mname, model in Model.load_models(task):
+                print(f">>>>> MODEL: {mname}")
+                Model.run(testsuite, model, cls.model_func_map[task])
+                print(f"<<<<< MODEL: {mname}")
+            # end for
+            print("**********")
+            print("**********")
         else:
-            cls._run_testsuite(task)
+            print(f">>>>> RETRAINED MODEL: {local_model_name}")
+            model = Model.load_local_models(task, local_model_name):
+            Model.run(testsuite, model, cls.model_func_map[task])
+            print(f"<<<<< RETRAINED MODEL: {local_model_name}")
         # end if
         return
 
     @classmethod
-    def run_on_diff_dataset(cls, task, args=None):
+    def run_testsuite(cls, task: str, test_baseline: bool, local_model_name:str = None):
+        # run models on checklist introduced testsuite format
+        bl_name = None
+        if test_baseline:
+            cls._run_bl_testsuite(task, "checklist", local_model_name=local_model_name)
+        else:
+            cls._run_testsuite(task, local_model_name=local_model_name)
+        # end if
+        return
+
+    @classmethod
+    def run_on_diff_dataset(cls, task: str, test_type: str = None):
         # run models on other type of dataset
         def run(model, data):
             preds_all, pp_all = list(), list()
@@ -132,8 +147,8 @@ class Testmodel:
             return preds_all, pp_all
         
         dataset_name = None
-        if args is not None:
-            dataset_name = args["dataset"]
+        if test_type is not None:
+            dataset_name = test_type
             assert(dataset_name in Macros.datasets[task])
             print(f"***** TASK: {task} *****")
             print(f"***** DATASET: {dataset_name} *****")
@@ -155,17 +170,19 @@ class Testmodel:
         return
 
     
-def main():
-    test_type = args["test-type"]
-    if test_type=="testsuite":
-        for task in Macros.datasets.keys():
-            Testmodel.run_testsuite(task, args)
-        # end for
+def main(task, test_baseline, test_type, local_model_name=None):
+    if local_model_name is None:
+        if test_type=="testsuite":
+            Testmodel.run_testsuite(task, test_baseline)
+        else:
+            Testmodel.run_on_diff_dataset(task, test_type=test_type)
+        # end if
     else:
-        for task in Macros.datasets.keys():
-            Testmodel.run_on_diff_dataset(task, args)
-        # end for
-    # end if
+        if test_type=="testsuite":
+            Testmodel.run_testsuite(task, test_baseline, local_model_name=local_model_name)
+        else:
+            Testmodel.run_on_diff_dataset(task, test_type=test_type)
+        # end if
     return
 
 

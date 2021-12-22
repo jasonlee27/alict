@@ -17,10 +17,10 @@ class Utils:
         if len(sys.argv)>1:
             arguments = sys.argv[1:]
             arg_dict = dict()
-            for arg in arguments:
-                if arg.startswith('--'):
-                    arg = arg[2:]
-                    key, val = arg.split("=")[0], arg.split("=")[1]
+            for arg_i in range(0, len(arguments), 2):
+                if arguments[arg_i].startswith('--'):
+                    key = arguments[arg_i][2:]
+                    val = arguments[arg_i+1]
                     arg_dict[key] = val
                 else:
                     raise("Invalid argument format!")

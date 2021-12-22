@@ -24,6 +24,14 @@ parser.add_argument('--num_seeds', type=int, default=10,
                     help='number of seed inputs found in search dataset')
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
+
+# arguments for testing model
+parser.add_argument('--test_type', type=str, default="testsuite",
+                    help='test dataset type (testsuite file or different dataset format)')
+parser.add_argument('--test_baseline', action='store_true'
+                    help='test models on running baseline (checklist) test cases')
+
+# arguments for retraining
 parser.add_argument('--label_vec_len', type=int, default=2,
                     help='label vector length for the model to be evaluated or retrained')
 
@@ -60,7 +68,20 @@ def run_testsuites():
 
 def run_testmodel():
     from .model.Testmodel import Testmodel
-    Testmodel.main()
+    nlp_task = args.nlp_task
+    test_baseline = test_baseline
+    test_type = args.test_type
+    local_model_name = args.model_name
+    local_model_dir = None
+    if model_name is not None:
+        local_model_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
+    # end if
+    Testmodel.main(
+        nlp_task,
+        test_baseline,
+        test_type,
+        local_model_name=local_model_dir
+    )
     return
 
 def run_retrain():
