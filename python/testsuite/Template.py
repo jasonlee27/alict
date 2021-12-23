@@ -46,7 +46,7 @@ class Template:
     @classmethod
     def generate_inputs(cls, task, dataset, n=None):
         cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
-        print(f"***** TASK: {task} *****")
+        print(f"***** TASK: {task}, SEARCH_DATASET: {dataset} *****")
         reqs = Requirements.get_requirements(task)
         results = list()
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
@@ -194,19 +194,23 @@ class Template:
         assert dataset_name in Macros.datasets[nlp_task]
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        task = "sentiment_analysis"
-        if nlp_task=="mc":
-            task = "machine_comprehension"
-        elif nlp_task=="qqp":
-            task = "qqp"
-        # end if
+        task = nlp_task
+        # task = "sentiment_analysis"
+        # if nlp_task=="mc":
+        #     task = "machine_comprehension"
+        # elif nlp_task=="qqp":
+        #     task = "qqp"
+        # # end if
         new_input_dicts = cls.get_new_inputs(
             Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
             task,
             dataset_name,
             n=num_seeds
         )
-        new_input_dicts = cls.get_new_inputs(Macros.result_dir/f"cfg_expanded_inputs_{task}.json", n=num_seeds)
+        # new_input_dicts = cls.get_new_inputs(
+        #     Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+        #     n=num_seeds
+        # )
         prev_synonyms = dict()
         # for each testing linguistic capabilities,
         for t_i in range(len(new_input_dicts)):

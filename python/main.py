@@ -18,7 +18,7 @@ parser.add_argument('--run', type=str, required=True,
 parser.add_argument('--nlp_task', type=str, default="sa",
                     choices=['sa', 'qqp', 'mc'],
                     help='nlp task of focus')
-parser.add_argument('--search_dataset', type=str, default=None,
+parser.add_argument('--search_dataset', type=str, default="sst",
                     help='name of dataset for searching testcases that meets the requirement')
 parser.add_argument('--num_seeds', type=int, default=10,
                     help='number of seed inputs found in search dataset')
@@ -26,6 +26,8 @@ parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
 
 # arguments for testing model
+parser.add_argument('--local_model_name', type=str, default=None,
+                    help='name of retrained model to be evaluated')
 parser.add_argument('--test_type', type=str, default="testsuite",
                     help='test dataset type (testsuite file or different dataset format)')
 parser.add_argument('--test_baseline', action='store_true',
@@ -48,9 +50,9 @@ def run_templates():
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
     Template.get_templates(
+        num_seeds=num_seeds,
         nlp_task=nlp_task,
-        dataset=search_dataset_name,
-        num_seeds=num_seeds
+        dataset_name=search_dataset_name
     )
     return
 
@@ -71,7 +73,7 @@ def run_testmodel():
     nlp_task = args.nlp_task
     test_baseline = args.test_baseline
     test_type = args.test_type
-    local_model_name = args.model_name
+    local_model_name = args.local_model_name
     Testmodel_main(
         nlp_task,
         test_baseline,

@@ -17,14 +17,14 @@ function gen_requirements() {
 
 function gen_templates() {
         # write templates in json
-        (cd ${PYTHON_DIR}
-         python -m Template --search_dataset checklist
+        (cd ${_DIR}
+         python -m python.main --run template --search_dataset sst
         )
 }
 
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
-        (cd ${PYTHON_DIR}
+        (cd ${_DIR}
          python -m python.main --run testsuite --search_dataset checklist
         )
 }
@@ -32,7 +32,14 @@ function gen_testsuite() {
 function eval_models(){
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         python -m python.main --run testmodel --model_name textattack/bert-base-uncased-SST-2 --test_baseline 
+         python -m python.main --run testmodel --test_baseline
+        )
+}
+
+function eval_retrained_models(){
+        # evaluate NLP models with generated testsuites
+        (cd ${_DIR}
+         python -m python.main --run testmodel --local_model_name textattack/bert-base-uncased-SST-2
         )
 }
 
@@ -45,9 +52,10 @@ function retrain_models(){
 
 function main() {
         # gen_requirements
-        # gen_templates
+        gen_templates
         # gen_testsuite
-        eval_models
+        # eval_models
+        # eval_retrained_models
         # retrain_models
 }
 

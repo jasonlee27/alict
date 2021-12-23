@@ -203,7 +203,7 @@ class TransformOperator:
         self.description = requirements['description']
         self.transform_reqs = requirements['transform']
         self.transform_methods = {
-            "get": cls.extract,
+            "get": self.extract,
             # "add": cls.search_by_add,
             # "remove": cls.search_by_remove
         }
@@ -211,11 +211,12 @@ class TransformOperator:
         
 
     def transform(self, sents):
-        sents_res = list()
-        for req_key in self.transform_reqs.keys():
-            sents = self.transform_methods[req_key](sents, self.transform_reqs[req_key])
-        # end for
         return sents
+        # sents_res = list()
+        # for req_key in self.transform_reqs.keys():
+        #     sents = self.transform_methods[req_key](sents, self.transform_reqs[req_key])
+        # # end for
+        # return sents
 
     def extract(self, sents, cond_key):
         pass
@@ -245,13 +246,14 @@ class Sst:
         return [(s_i,s,labels[s_i]) for s_i, s in sents]
     
     @classmethod
-    def search(cls, req, dataset_name):
+    def search(cls, req):
         # sent: (index, sentence)
         # label: (index, label score)
         sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file)
         req_obj = SearchOperator(req)
         selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
+        
         req_obj = TransformOperator(req)
         selected = req_obj.transform(selected)
         return selected
@@ -282,7 +284,7 @@ class ChecklistTestsuite:
         return [(s_i, s, labels[s_i]) for s_i, s in enumerate(sents)]
     
     @classmethod
-    def search(cls, req, dataset_name):
+    def search(cls, req):
         # sent: (index, sentence)
         # label: (index, label score)
         sents = cls.get_sents(Macros.checklist_sa_dataset_file)

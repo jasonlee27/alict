@@ -35,7 +35,6 @@ class Testmodel:
             for test_file in os.listdir(Macros.result_dir / "test_results")
             if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
         ]
-
         for cksum_val in cksum_vals:
             test_files = [
                 f"{task}_testsuite_seeds_{cksum_val}.pkl",
@@ -43,13 +42,12 @@ class Testmodel:
                 f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
             ]
             for test_file in test_files:
-                print(test_file)
                 testsuite_file = Macros.result_dir / "test_results" / test_file
                 testsuite = cls.load_testsuite(testsuite_file)
                 test_info = testsuite.info[task]["capability"]+"::"+testsuite.info[task]["description"]
                 print(f">>>>> TEST: {test_info}")
 
-                if local_model_name is not None:
+                if local_model_name is None:
 
                     # Run Google nlp model
                     print(f">>>>> MODEL: Google NLP model")
@@ -63,7 +61,7 @@ class Testmodel:
                     # end for
                 else:
                     print(f">>>>> RETRAINED MODEL: {local_model_name}")
-                    model = Model.load_local_models(task, local_model_name)
+                    model = Model.load_local_model(task, local_model_name)
                     Model.run(testsuite, model, cls.model_func_map[task])
                     print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                 # end if

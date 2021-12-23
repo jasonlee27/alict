@@ -24,20 +24,22 @@ class Requirements:
         for task, dataset_name in datasets.items():
             dataset_path = Macros.result_dir / f"test_type_{task}.txt"
             result = None
-            with open(dataset_path, 'r') as f:
-                result = {
-                    l.split("::")[0].strip(): [
-                        _l.strip()
-                        for _l in l.split("::")[-1].split("|")
-                    ]
-                    for l in f.readlines()
-                }
-            # end with
-            if result is not None:
-                 Utils.write_json(result,
-                                  Macros.result_dir / f"test_type_{task}.json",
-                                  pretty_format=True)
-            # end if                
+            if os.path.exists(dataset_path):
+                with open(dataset_path, 'r') as f:
+                    result = {
+                        l.split("::")[0].strip(): [
+                            _l.strip()
+                            for _l in l.split("::")[-1].split("|")
+                        ]
+                        for l in f.readlines()
+                    }
+                # end with
+                if result is not None:
+                    Utils.write_json(result,
+                                     Macros.result_dir / f"test_type_{task}.json",
+                                     pretty_format=True)
+                # end if
+            # end if
         # end for
         return
 
@@ -50,16 +52,15 @@ class Requirements:
         # end if
         reqs = None
         test_type_file = Macros.result_dir / f"test_type_{task}.json"
-        # if not os.path.exists(test_type_file):
-        #     cap_desc = cls.convert_test_type_txt_to_json()
-        # else:
-        #     cap_desc = Utils.read_json(test_type_file)
-        # # end if
 
-        cap_desc = cls.convert_test_type_txt_to_json()
         # cap_decp:
         # key: liguistic capability to be evaluated
         # value: each test type description
+        if not os.path.exists(test_type_file):
+            cap_desc = cls.convert_test_type_txt_to_json()
+        else:
+            cap_desc = Utils.read_json(test_type_file)
+        # end if
         reqs = list()
         for cap, descs in cap_desc.items():
             for d in descs:
