@@ -25,7 +25,7 @@ function gen_templates() {
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
         (cd ${_DIR}
-         python -m python.main --run testsuite --search_dataset checklist
+         python -m python.main --run testsuite --search_dataset sst
         )
 }
 
@@ -52,10 +52,10 @@ function retrain_models(){
 
 function main() {
         # gen_requirements
-        # gen_templates
+        gen_templates
         # gen_testsuite
         # eval_models
-        eval_retrained_models
+        # eval_retrained_models
         # retrain_models
 }
 

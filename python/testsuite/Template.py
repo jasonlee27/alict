@@ -44,7 +44,7 @@ class Template:
     }
     
     @classmethod
-    def generate_inputs(cls, task, dataset, n=None):
+    def generate_inputs(cls, task, dataset, n=None, save_to=None):
         cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
         print(f"***** TASK: {task}, SEARCH_DATASET: {dataset} *****")
         reqs = Requirements.get_requirements(task)
@@ -86,9 +86,7 @@ class Template:
         # end for
             
         # write raw new inputs
-        Utils.write_json(results,
-                         Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
-                         pretty_format=True)
+        Utils.write_json(results, save_to, pretty_format=True)
         print(f"**********")        
         return results
     
@@ -100,7 +98,8 @@ class Template:
         return cls.generate_inputs(
             task=nlp_task,
             dataset=dataset_name,
-            n=n
+            n=n,
+            save_to=input_file
         )
 
     @classmethod
@@ -192,6 +191,8 @@ class Template:
     def get_templates(cls, num_seeds, nlp_task, dataset_name):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
+
+        # Search inputs from searching dataset and expand the inputs using ref_cfg
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         task = nlp_task
@@ -211,6 +212,8 @@ class Template:
         #     Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
         #     n=num_seeds
         # )
+
+        # Make templates by synonyms
         prev_synonyms = dict()
         # for each testing linguistic capabilities,
         for t_i in range(len(new_input_dicts)):

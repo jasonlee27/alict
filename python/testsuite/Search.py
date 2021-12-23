@@ -253,7 +253,7 @@ class Sst:
         req_obj = SearchOperator(req)
         selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
-        
+        print(selected)
         req_obj = TransformOperator(req)
         selected = req_obj.transform(selected)
         return selected
