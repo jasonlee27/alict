@@ -84,16 +84,29 @@ def run_testmodel():
 
 def run_retrain():
     from.retrain.Retrain import retrain
-    if not os.path.exists(Macros.checklist_sa_testcase_file):
-        from .retrain.Retrain import Retrain
-        Retrain.get_checklist_testcase()
-    # end if
+    search_dataset_name = args.search_dataset
     model_name = args.model_name
     label_vec_len = args.label_vec_len
+    testcase_file = None
+    if search_dataset_name==Macros.datasets[0]:
+        testcase_file = Macros.sst_sa_testcase_file
+        if not os.path.exists(testcase_file):
+            from .retrain.Retrain import Retrain
+            task = args.nlp_task
+            Retrain.get_sst_testcase_for_retrain(task)
+        # end if
+    elif search_dataset_name==Macros.datasets[1]:
+        testcase_flie = Macros.checklist_sa_testcase_file
+        if not os.path.exists(testcase_file):
+            from .retrain.Retrain import Retrain
+            task = args.nlp_task
+            Retrain.get_checklist_testcase_for_retrain(task)
+        # end if
+    # end if
     _ = retrain(
         model_name=model_name,
         label_vec_len=label_vec_len,
-        dataset_file=Macros.checklist_sa_testcase_file,
+        dataset_file=testcase_file,
         test_by_types=True
     )
     return

@@ -52,10 +52,10 @@ function retrain_models(){
 
 function main() {
         # gen_requirements
-        gen_templates
+        # gen_templates
         # gen_testsuite
         # eval_models
-        # eval_retrained_models
+        eval_retrained_models
         # retrain_models
 }
 

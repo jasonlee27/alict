@@ -47,7 +47,7 @@ class Macros:
 
     # SentiWordNet
     swn_data_file: Path = download_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"
-
+    
     # Checklist Testsuite
     checklist_dir: Path = download_dir / "checklist"
     checklist_data_dir: Path = checklist_dir / "release_suites"
@@ -67,3 +67,5 @@ class Macros:
     retrain_output_dir: Path = result_dir / "retrain"
     checklist_result_dir: Path = result_dir / "checklist"
     checklist_sa_testcase_file: Path = checklist_result_dir / "checklist_sa_testcase.json"
+    sst_sa_testsuite_dir: Path = result_dir / "test_results"
+    sst_sa_testcase_file: Path = sst_sa_testsuite_dir / "sst_sa_testcase.json"

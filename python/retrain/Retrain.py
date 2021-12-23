@@ -23,6 +23,94 @@ import random
 import numpy as np
 
 
+class SstTestcases:
+
+    @classmethod
+    def write_sst_testcase(cls, task, save_file):
+        cksum_vals = [
+            os.path.basename(test_file).split("_")[-1].split(".")[0]
+            for testsuite_file in os.listdir(Macros.sst_sa_testsuite_dir)
+            if testsuite_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
+        ]
+
+        for cksum_val in cksum_vals:
+            testsuite_files = [
+                f"{task}_testsuite_seeds_{cksum_val}.pkl",
+                f"{task}_testsuite_seed_templates_{cksum_val}.pkl",
+                f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
+            ]
+            test_name = None
+            for f_i, testsuite_file in enumerate(testsuite_files):
+                tsuite, tsuite_dict = Utils.read_testsuite(testsuite_file)
+                test_name = tsuite.info["sentiment_analysis"]["capability"]+"::"+tsuite.info["sentiment_analysis"]["description"]
+                if f_i==0:
+                    test_data = dict()
+                    test_data[test_name] = {
+                        'sents': tsuite.tests["sentiment_analysis"].data,
+                        'labels': tsuite.tests["sentiment_analysis"].labels
+                    }
+                else:
+                    test_data[test_name]["sents"].extend(tsuite.tests["sentiment_analysis"].data)
+                    test_data[test_name]["labels"].extend(tsuite.tests["sentiment_analysis"].labels)
+                # end if
+            # end for
+            num_data = len(test_data[test_name]['sents'])
+            type_list = ['test']*num_data
+            num_train_data = int(num_data*Macros.TRAIN_RATIO)
+            num_train_data += ((num_data*Macros.TRAIN_RATIO)%num_train_data)>0
+            type_list[:num_train_data] = ['train']*num_train_data
+            random.shuffle(type_list)
+            test_data[test_name]['types'] = type_list
+
+            # set data labels in a range between 0. and 1. from 0,1,2
+            test_data[test_name]['labels'] = [0.5*float(l) for l in test_data[test_name]['labels']]
+        # end for
+        dataset = dict()
+        for test_name in test_data.keys():
+            for idx in range(len(test_data[test_name]['sents'])):
+                test_sent = test_data[test_name]['sents'][idx]
+                label = test_data[test_name]['labels'][idx]
+                _type = test_data[test_name]['types'][idx]
+                if _type=='train':
+                    if 'train' not in dataset.keys():
+                        dataset['train'] = dict()
+                        dataset['train']['text'] = [test_sent]
+                        dataset['train']['label'] = [label]
+                        dataset['train']['test_name'] = [test_name]
+                    else:
+                        dataset['train']['text'].append(test_sent)
+                        dataset['train']['label'].append(label)
+                        dataset['train']['test_name'].append(test_name)
+                    # end if
+                else:
+                    if 'test' not in dataset.keys():
+                        dataset['test'] = dict()
+                        dataset['test']['text'] = [test_sent]
+                        dataset['test']['label'] = [label]
+                        dataset['test']['test_name'] = [test_name]
+                    else:
+                        dataset['test']['text'].append(test_sent)
+                        dataset['test']['label'].append(label)
+                        dataset['test']['test_name'].append(test_name)
+                    # end if
+                # end if
+            # end for
+        # end for
+        Utils.write_json(dataset, save_file, pretty_format=True)
+        return dataset
+
+    @classmethod
+    def get_testcase_for_retrain(cls, task):
+        if not os.path.exists(Macros.sst_sa_testcase_file):
+            return cls.write_sst_testcase(
+                task, Macros.sst_sa_testcase_file
+            )
+        # end if
+        return Utils.read_json(
+            Macros.sst_sa_testcase_file
+        )
+
+    
 class ChecklistTestcases:
     
     @classmethod
@@ -86,11 +174,11 @@ class ChecklistTestcases:
         return dataset
     
     @classmethod
-    def get_checklist_testcase(cls):
+    def get_testcase_for_retrain(cls, task):
         if not os.path.exists(Macros.checklist_sa_testcase_file):
             Macros.checklist_result_dir.mkdir(parents=True, exist_ok=True)
             return cls.write_checklist_testcase(
-                Macros.checklist_sa_testcase_file
+                Macros.checklist_sa_testcase_file,
             )
         # end if
         return Utils.read_json(
@@ -241,10 +329,14 @@ class Retrain:
         
     def test(cls):
         pass
+
+    @classmethod
+    def get_sst_testcase_for_retrain(cls, task):
+        return SstTestcases.get_testcase_for_retrain(task)
     
     @classmethod
-    def get_checklist_testcase(cls):
-        return ChecklistTestcases.get_checklist_testcase()
+    def get_checklist_testcase_for_retrain(cls, task):
+        return ChecklistTestcases.get_testcase_for_retrain(task)
 
     
 def retrain(model_name, label_vec_len, dataset_file, test_by_types=False):
