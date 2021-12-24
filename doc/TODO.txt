@@ -1,10 +1,9 @@
 TASKS
 
-  - [JL] retrain the NLP model with CHECKLIST generated test cases and
-    test the model using the proposed methodology (modified code, but
-    not yet run)
+  + [JL] retrain the NLP model with CHECKLIST generated test cases and
+    test the model using the proposed methodology
 
-  - [JL] generated test cases using the proposed methodology searched
+  + [JL] generated test cases using the proposed methodology searched
     over the CHECKLIST generated test cases (modified code, but
     not yet run)
 
