@@ -38,7 +38,6 @@ class SearchOperator:
         self.capability = requirements['capability']
         self.description = requirements['description']
         self.search_reqs_list = requirements['search']
-        self.transform_reqs = requirements['transform']
         self.search_method = {
             "length": self.search_by_len,
             "include": self.search_by_include,
@@ -113,39 +112,50 @@ class SearchOperator:
         return selected
         
     def search_by_include(self, sents, search_reqs):
-        param = search_reqs["include"]
         _sents = sents.copy()
         _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
-        word_include = param["word"]
-        tpos_include = param["POS"]
-        if word_include is not None:
-            for w in word_include:
-                _sents = [(s_i, s, l) for s_i, s, l in _sents if w in s]
-            # end for
+        params = search_reqs["include"]
+        if type(param)==dict:
+            params = [params]
         # end if
+        selected_indices = list()
+        for param in params:
+            word_include = param["word"]
+            tpos_include = param["POS"]
+            if word_include is not None:
+                for w in word_include:
+                    _sents = [(s_i, s, l) for s_i, s, l in _sents if w in s]
+                # end for
+            # end if
         
-        if tpos_include is not None:
-            temp_sents = list()
-            for cond in tpos_include:
-                match = re.search(r"(\d+)?\s?(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
-                num, sentiment, pos, is_plural = match.groups()
-                if pos is None: raise("Tag of POS is not valid!")
-                num = -1
-                if num is None and not is_plural:
-                    num = 1
-                # end if
+            if tpos_include is not None:
+                temp_sents = list()
+                for cond in tpos_include:
+                    match = re.search(r"(\d+)?\s?(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
+                    num, sentiment, pos, is_plural = match.groups()
+                    if pos is None: raise("Tag of POS is not valid!")
+                    num = -1
+                    if num is None and not is_plural:
+                        num = 1
+                    # end if
                 
-                if sentiment is None:
-                    for _sentiment in ["neutral","positive","negative"]:
-                        temp_sents.extend(self._search_by_pos_include(_sents, f"{_sentiment}_{pos}", num))
-                    # end for
-                else:
-                    temp_sents = self._search_by_pos_include(_sents, f"{sentiment}_{pos}", num)
+                    if sentiment is None:
+                        for _sentiment in ["neutral","positive","negative"]:
+                            temp_sents.extend(self._search_by_pos_include(_sents, f"{_sentiment}_{pos}", num))
+                        # end for
+                    else:
+                        temp_sents = self._search_by_pos_include(_sents, f"{sentiment}_{pos}", num)
+                    # end if
+                    _sents = temp_sents
+                # end for
+            # end if
+            for s_i, _, _ in _sents:
+                if s_i not in selected_indices:
+                    selected_indices.append(s_i)
                 # end if
-                _sents = temp_sents
             # end for
-        # end if
-        return [(s_i," ".join(s),l) for s_i, s, l in _sents]
+        # end for
+        return [(s_i," ".join(s),l) for s_i, s, l in selected is s_i in selected_indices]
 
     def _search_by_exclude(self, sents, cond_key):
         # sents: (s_i, tokenizes sentence, label)
@@ -168,32 +178,47 @@ class SearchOperator:
         param = search_reqs["exclude"]
         _sents = sents.copy()
         _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
-        word_exclude = param["word"]
-        tpos_exclude = param["POS"]
-        if word_exclude is not None:
-            for w in word_exclude:
-                _sents = [(s_i, s, l) for s_i, s, l in _sents if w not in s]
-            # end for
+        params = search_reqs["include"]
+        selected_indices = list()
+        if type(param)==dict:
+            params = [params]
         # end if
+        for param in params:
+
+            
+            word_exclude = param["word"]
+            tpos_exclude = param["POS"]
+            if word_exclude is not None:
+                for w in word_exclude:
+                    _sents = [(s_i, s, l) for s_i, s, l in _sents if w not in s]
+                # end for
+            # end if
         
-        if tpos_exclude is not None:
-            temp_sents = list()
-            for cond in tpos_exclude:
-                match = re.search(r"(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
-                sentiment, pos, is_plural = match.groups()
-                if pos is None: raise("Tag of POS is not valid!")
+            if tpos_exclude is not None:
+                temp_sents = list()
+                for cond in tpos_exclude:
+                    match = re.search(r"(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
+                    sentiment, pos, is_plural = match.groups()
+                    if pos is None: raise("Tag of POS is not valid!")
                 
-                if sentiment is None:
-                    for _sentiment in ["neutral","positive","negative"]:
-                        temp_sents.extend(self._search_by_exclude(_sents, f"{_sentiment}_{pos}"))
-                    # end for
-                else:
-                    temp_sents = self._search_by_exclude(_sents, f"{sentiment}_{pos}")
+                    if sentiment is None:
+                        for _sentiment in ["neutral","positive","negative"]:
+                            temp_sents.extend(self._search_by_exclude(_sents, f"{_sentiment}_{pos}"))
+                        # end for
+                    else:
+                        temp_sents = self._search_by_exclude(_sents, f"{sentiment}_{pos}")
+                    # end if
+                    _sents = temp_sents
+                # end for
+            # end if
+
+            for s_i, _, _ in _sents:
+                if s_i not in selected_indices:
+                    selected_indices.append(s_i)
                 # end if
-                _sents = temp_sents
             # end for
-        # end if
-        return [(s_i," ".join(s),l) for s_i, s, l in _sents]
+        # end for
+        return [(s_i," ".join(s),l) for s_i, s, l in selected is s_i in selected_indices]
 
 
 class TransformOperator:
@@ -210,7 +235,18 @@ class TransformOperator:
         # print(f"{self.capability}: {self.description}")
         
 
-    def transform(self, sents):
+    def replace(self, sents, replace_rules: str):
+        replace_from, replace_to = replace_rule.split('->')
+        replace_from_search = re.search(r"(positive|negative|neutral)?\::?(adj|noun|verb)?(s)?", cond)
+        if replace_from in ["neutral","positive","negative"] and \
+           replace_to in ["neutral","positive","negative"]:
+            # SA task
+            pos_from = replace_from.split('::')
+            
+            for sent in sents:
+                replace_word_indices = find_words_w_sentiment 
+            
+        # end if
         return sents
         # sents_res = list()
         # for req_key in self.transform_reqs.keys():
@@ -253,9 +289,6 @@ class Sst:
         req_obj = SearchOperator(req)
         selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
-        print(selected)
-        req_obj = TransformOperator(req)
-        selected = req_obj.transform(selected)
         return selected
 
 
@@ -291,8 +324,6 @@ class ChecklistTestsuite:
         req_obj = SearchOperator(req)
         selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
-        req_obj = TransformOperator(req)
-        selected = req_obj.transform(selected)
         return selected
 
     
@@ -312,19 +343,13 @@ class DynasentRoundOne:
         return [(s_i,s,labels[s_i]) for s_i, s in sents]
 
     @classmethod
-    def search_dyna(cls, req):
+    def search(cls, req):
         # sent: (index, sentence)
         # label: (index, label score) 
         sents = cls.get_labels(Macros.dyna_r1_test_src_file)
         req_obj = SearchOperator(req)
         selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
-        # selected_res = {
-        #     "requirement": req,
-        #     "selected_inputs": selected
-        # }
-        req_obj = TransformOperator(req)
-        selected = req_obj.transform(selected)
         return selected
 
 

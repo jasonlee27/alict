@@ -71,7 +71,7 @@ class Requirements:
                         "search": [{
                             "length": "<10",
                             "include": {
-                                "POS": ["neutral adjs", "neutral nouns"],
+                                "POS": ["neutral adjs", "neutral nouns"], # elements in list is AND relationship
                                 "word": None
                             },
                             "exclude": {
@@ -116,15 +116,25 @@ class Requirements:
                         "capability": cap,
                         "description": d,
                         "search": {
-                            "include": {
-                                "POS": ["neutral adj", "neutral noun", "neutral verb"],
-                                "word": None,
-                            },
+                            "include": [
+                                {
+                                    "POS": ["neutral adjs"],
+                                    "word": None,
+                                },
+                                {
+                                    "POS": ["neutral verbs"],
+                                    "word": None,
+                                },
+                                {
+                                    "POS": ["neutral nouns"],
+                                    "word": None,
+                                }
+                            ],
                             "exclude": None,
                             "label": None,
                         },
                         "transform": {
-                            "get": "pos::neutral"
+                            "replace_pos": ["neutral::adj->neutral::adj", "neutral::noun->neutral::noun", "neutral::verb->neutral::verb"]
                         }
                     })
                 # end if
