@@ -1,5 +1,8 @@
 TASKS
 
+  - [JL] complete writing code for the requirement of "Replace neutral
+    words with other neutral words"
+  
   + [JL] retrain the NLP model with CHECKLIST generated test cases and
     test the model using the proposed methodology
 
