@@ -48,7 +48,6 @@ class Testmodel:
                 print(f">>>>> TEST: {test_info}")
 
                 if local_model_name is None:
-
                     # Run Google nlp model
                     print(f">>>>> MODEL: Google NLP model")
                     GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)

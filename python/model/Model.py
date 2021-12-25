@@ -33,7 +33,8 @@ class Model:
 
     @classmethod
     def load_local_model(cls, task, model_name):
-        model_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
+        # model_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
+        model_dir = Macros.retrain_model_dir / task / model_name
         _task, model_file = cls.model_map[task]
         checkpoints = sorted([d for d in os.listdir(model_dir) if os.path.isdir(os.path.join(model_dir,d)) and d.startswith("checkpoint-")])
         checkpoint_dir = model_dir / checkpoints[-1]

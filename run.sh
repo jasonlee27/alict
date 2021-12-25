@@ -40,7 +40,7 @@ function eval_models(){
 function eval_retrained_models(){
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         python -m python.main --run testmodel --local_model_name textattack/bert-base-uncased-SST-2
+         python -m python.main --run testmodel --local_model_name checklist-textattack-bert-base-uncased-SST-2
         )
 }
 
@@ -56,8 +56,8 @@ function main() {
         # gen_templates
         # gen_testsuite
         # eval_models
-        retrain_models
-        # eval_retrained_models
+        # retrain_models
+        eval_retrained_models
 
 }
 
