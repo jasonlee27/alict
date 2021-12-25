@@ -288,7 +288,7 @@ class Retrain:
             num_train_epochs=1.0,
             per_device_train_batch_size=4,
             do_train=True
-        )       
+        )
         trainer = Trainer(
             model=self.model,
             args=training_args,
@@ -296,6 +296,7 @@ class Retrain:
             eval_dataset=self.eval_dataset
         )
         trainer.train()
+        self.tokenizer.save_pretrained(self.output_dir)
         return
 
     def evaluate(self, test_by_types=False):
@@ -343,10 +344,9 @@ class Retrain:
 
     
 def retrain(task, model_name, label_vec_len, dataset_file, test_by_types=False):
-    dataset_name = str(dataset_file).split('_')[0]
+    dataset_name = os.path.basename(str(dataset_file)).split('_')[0]
     model_dir_name = dataset_name+"-"+model_name.replace("/", "-")
     output_dir = Macros.retrain_model_dir / task / model_dir_name
-    
     retrainer = Retrain(task, model_name, label_vec_len, dataset_file, output_dir)
     eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
     retrainer.train()
@@ -356,6 +356,5 @@ def retrain(task, model_name, label_vec_len, dataset_file, test_by_types=False):
         "after_retraining": eval_result_after
     }
     output_file = output_dir / "eval_results.json"
-    retrainer.save_pretrained(output_dir)
     Utils.write_json(eval_result, output_file, pretty_format=True)
     return eval_result
