@@ -29,7 +29,7 @@ class SstTestcases:
     def write_sst_testcase(cls, task, save_file):
         cksum_vals = [
             os.path.basename(test_file).split("_")[-1].split(".")[0]
-            for testsuite_file in os.listdir(Macros.sst_sa_testsuite_dir)
+            for testsuite_file in os.listdir(Macros.result_dir / "test_results")
             if testsuite_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
         ]
 
@@ -102,6 +102,7 @@ class SstTestcases:
     @classmethod
     def get_testcase_for_retrain(cls, task):
         if not os.path.exists(Macros.sst_sa_testcase_file):
+            Macros.retrain_dataset_dir.mkdir(parents=True, exist_ok=True)
             return cls.write_sst_testcase(
                 task, Macros.sst_sa_testcase_file
             )
@@ -176,7 +177,7 @@ class ChecklistTestcases:
     @classmethod
     def get_testcase_for_retrain(cls, task):
         if not os.path.exists(Macros.checklist_sa_testcase_file):
-            Macros.checklist_result_dir.mkdir(parents=True, exist_ok=True)
+            Macros.retrain_dataset_dir.mkdir(parents=True, exist_ok=True)
             return cls.write_checklist_testcase(
                 Macros.checklist_sa_testcase_file,
             )
@@ -188,13 +189,15 @@ class ChecklistTestcases:
 
 class Retrain:
 
-    def __init__(self, model_name, label_vec_len, dataset_file):
+    def __init__(self, task, model_name, label_vec_len, dataset_file, output_dir):
+        self.task = task
         self.model = self.load_model(model_name)
         self.dataset_file = dataset_file
         self.label_vec_len = label_vec_len
         self.tokenizer = self.load_tokenizer(model_name)
         self.train_dataset, self.eval_dataset = self.get_tokenized_dataset(dataset_file)
-        self.output_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
+        model_dir_name = model_name.replace("/", "-")
+        self.output_dir = output_dir
         
     def load_tokenizer(self, model_name):
         return AutoTokenizer.from_pretrained(model_name)
@@ -339,8 +342,12 @@ class Retrain:
         return ChecklistTestcases.get_testcase_for_retrain(task)
 
     
-def retrain(model_name, label_vec_len, dataset_file, test_by_types=False):
-    retrainer = Retrain(model_name, label_vec_len, dataset_file)
+def retrain(task, model_name, label_vec_len, dataset_file, test_by_types=False):
+    dataset_name = str(dataset_file).split('_')[0]
+    model_dir_name = dataset_name+"-"+model_name.replace("/", "-")
+    output_dir = Macros.retrain_model_dir / task / model_dir_name
+    
+    retrainer = Retrain(task, model_name, label_vec_len, dataset_file, output_dir)
     eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
     retrainer.train()
     eval_result_after = retrainer.evaluate(test_by_types=test_by_types)
@@ -348,7 +355,6 @@ def retrain(model_name, label_vec_len, dataset_file, test_by_types=False):
         "before_retraining": eval_result_before,
         "after_retraining": eval_result_after
     }
-    output_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
     output_file = output_dir / "eval_results.json"
     retrainer.save_pretrained(output_dir)
     Utils.write_json(eval_result, output_file, pretty_format=True)

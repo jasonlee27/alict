@@ -40,7 +40,7 @@ class Utils:
     @classmethod
     def read_json(cls, json_file):
         # read cfg json file
-        if os.path.exists(json_file):
+        if os.path.exists(str(json_file)):
             with open(json_file, 'r') as f:
                 return json.load(f)
             # end with

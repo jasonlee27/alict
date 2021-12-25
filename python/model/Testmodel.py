@@ -89,7 +89,6 @@ class Testmodel:
                 print(f"<<<<< MODEL: {mname}")
             # end for
             print("**********")
-            print("**********")
         else:
             print(f">>>>> RETRAINED MODEL: {local_model_name}")
             model = Model.load_local_model(task, local_model_name)
