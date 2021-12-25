@@ -55,17 +55,13 @@ class Testsuite:
 
     @classmethod
     def get_templates(cls, nlp_task, dataset, num_seeds):
-        task = 'sentiment_analysis'
-        if nlp_task=="mc":
-            task = "machine_comprehension"
-        elif nlp_task=="qqp":
-            task = "qqp"
-        # end if
+        task = nlp_task
         print(f"TASK: {task}")
         new_input_dicts = Template.get_new_inputs(Macros.result_dir/f"cfg_expanded_inputs_{task}.json")
         seeds_per_task = list()
         seed_templates_per_task = list()
         exp_templates_per_task = list()
+        transform_reqs = list()
         for t_i in range(len(new_input_dicts)):
             req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
             print("CAP: ", new_input_dicts[t_i]["requirement"]["capability"])
@@ -81,6 +77,8 @@ class Testsuite:
                     num_seeds=num_seeds
                 )
             # end if
+
+            transform_reqs.append(new_input_dicts[t_i]["requirement"]["transform"])
 
             seed_res = list()
             seeds = Utils.read_json(res_dir / f"seeds_{req_cksum}.json")
@@ -118,12 +116,18 @@ class Testsuite:
                 "templates": exp_template_res
             })
         # end for
-        yield task, seeds_per_task, seed_templates_per_task, exp_templates_per_task
+        yield task, seeds_per_task, seed_templates_per_task, exp_templates_per_task, transform_reqs
         return
 
     @classmethod
-    def write_editor_template(cls, editor, task,
-                              seed_dicts, seed_template_dicts, exp_template_dicts):
+    def write_editor_template(cls,
+                              editor,
+                              task,
+                              seed_dicts,
+                              seed_template_dicts,
+                              exp_template_dicts,
+                              transform_reqs):
+        
         res_dir = Macros.result_dir / "test_results"
         res_dir.mkdir(parents=True, exist_ok=True)
 
@@ -215,9 +219,9 @@ class Testsuite:
 
     @classmethod
     def write_testsuites(cls, nlp_task, dataset, num_seeds):
-        for task, seed, seed_temp, exp_temp in cls.get_templates(nlp_task=nlp_task, dataset=dataset, num_seeds=num_seeds):
+        for task, seed, seed_temp, exp_temp, transform_reqs in cls.get_templates(nlp_task=nlp_task, dataset=dataset, num_seeds=num_seeds):
             editor = Editor()
-            Testsuite.write_editor_template(editor, task, seed, seed_temp, exp_temp)
+            Testsuite.write_editor_template(editor, task, seed, seed_temp, exp_temp, transform_reqs)
         # end for
         return
 
