@@ -57,7 +57,12 @@ class Testsuite:
     def get_templates(cls, nlp_task, dataset, num_seeds):
         task = nlp_task
         print(f"TASK: {task}")
-        new_input_dicts = Template.get_new_inputs(Macros.result_dir/f"cfg_expanded_inputs_{task}.json")
+        new_input_dicts = Template.get_new_inputs(
+            Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+            task,
+            dataset,
+            n=num_seeds
+        )
         seeds_per_task = list()
         seed_templates_per_task = list()
         exp_templates_per_task = list()
