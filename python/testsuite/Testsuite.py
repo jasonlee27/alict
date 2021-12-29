@@ -21,6 +21,7 @@ from checklist.test_suite import TestSuite
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from .Search import TransformOperator
 from .Template import Template
 
 class Testsuite:
@@ -52,6 +53,17 @@ class Testsuite:
             "values": template_values,
             "label": cls.map_labels(task, template["label"])
         }
+
+    @classmethod
+    def perturb_sentences_from_templates(cls, template):
+        sentences = list()
+        for tok_i in range(len(template["place_holder"])):
+            if type(template["place_holder"][tok_i])==str:
+                sentences.append(template["place_holder"][tok_i])
+            if type(template["place_holder"][tok_i])==dict:
+                
+
+                
 
     @classmethod
     def get_templates(cls, nlp_task, dataset, num_seeds):
@@ -136,7 +148,7 @@ class Testsuite:
         res_dir = Macros.result_dir / "test_results"
         res_dir.mkdir(parents=True, exist_ok=True)
 
-        for templates_per_req in seed_dicts:
+        for t_i, templates_per_req in enumerate(seed_dicts):
             t = None
             suite = TestSuite()
             for temp_i, temp in enumerate(templates_per_req["templates"]):
@@ -150,11 +162,28 @@ class Testsuite:
                                          save=True)
                 # end if
             # end for
-            test = MFT(**t)
-            suite.add(test, 
-                      name=task,
-                      capability=templates_per_req["capability"]+"::SEED",
-                      description=templates_per_req["description"])
+            if len(transform_reqs)>0:
+                transform_req = transform_reqs[t_i]
+                transformer = TransformOperator(templates_per_req['capability'],
+                                                templates_per_req['description'],
+                                                transform_req)
+                test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
+                if func=="replace":
+                    t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
+                    test = INV(t.data)
+                    suite.add(test,
+                          name=task,
+                          capability=templates_per_req["capability"]+"::SEED",
+                          description=templates_per_req["description"])
+                # end if
+            else:
+                test = MFT(**t)
+                suite.add(test,
+                          name=task,
+                          capability=templates_per_req["capability"]+"::SEED",
+                          description=templates_per_req["description"])
+                
+            # end if
             test_cksum = Utils.get_cksum(
                 task+templates_per_req["capability"]+templates_per_req["description"]
             )
@@ -180,11 +209,27 @@ class Testsuite:
                                          save=True)
                 # end if
             # end for
-            test = MFT(**t)
-            suite.add(test, 
-                      name=task,
-                      capability=templates_per_req["capability"]+"::SEED_TEMPS",
-                      description=templates_per_req["description"])
+            if len(transform_reqs)>0:
+                transform_req = transform_reqs[t_i]
+                transformer = TransformOperator(templates_per_req['capability'],
+                                                templates_per_req['description'],
+                                                transform_req)
+                test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
+                if func=="replace":
+                    t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
+                    test = INV(t.data)
+                    suite.add(test,
+                          name=task,
+                          capability=templates_per_req["capability"]+"::SEED",
+                          description=templates_per_req["description"])
+                # end if
+            else:
+                test = MFT(**t)
+                suite.add(test, 
+                          name=task,
+                          capability=templates_per_req["capability"]+"::SEED_TEMPS",
+                          description=templates_per_req["description"])
+            # end if
             test_cksum = Utils.get_cksum(
                 task+templates_per_req["capability"]+templates_per_req["description"]
             )
@@ -210,11 +255,27 @@ class Testsuite:
                                          save=True)
                 # end if
             # end for
-            test = MFT(**t)
-            suite.add(test, 
-                      name=task,
-                      capability=templates_per_req["capability"]+"::EXP_TEMPS",
-                      description=templates_per_req["description"])
+            if len(transform_reqs)>0:
+                transform_req = transform_reqs[t_i]
+                transformer = TransformOperator(templates_per_req['capability'],
+                                                templates_per_req['description'],
+                                                transform_req)
+                test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
+                if func=="replace":
+                    t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
+                    test = INV(t.data)
+                    suite.add(test,
+                          name=task,
+                          capability=templates_per_req["capability"]+"::SEED",
+                          description=templates_per_req["description"])
+                # end if
+            else:
+                test = MFT(**t)
+                suite.add(test, 
+                          name=task,
+                          capability=templates_per_req["capability"]+"::EXP_TEMPS",
+                          description=templates_per_req["description"])
+            # end if
             test_cksum = Utils.get_cksum(
                 task+templates_per_req["capability"]+templates_per_req["description"]
             )

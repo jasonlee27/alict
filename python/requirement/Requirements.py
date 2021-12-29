@@ -134,7 +134,8 @@ class Requirements:
                             "label": None,
                         },
                         "transform": {
-                            "INV": ["replace_neutral_adj", "replace_neutral_noun", "replace_neutral_verb"]
+                            "INV": "replace neutral word",
+                            "DIR": None
                         }
                     })
                 # end if

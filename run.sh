@@ -37,17 +37,17 @@ function eval_models(){
         )
 }
 
-function eval_retrained_models(){
-        # evaluate NLP models with generated testsuites
-        (cd ${_DIR}
-         python -m python.main --run testmodel --local_model_name checklist-textattack-bert-base-uncased-SST-2
-        )
-}
-
 function retrain_models(){
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
          CUDA_VISIBLE_DEVICES=1,2,3,4 python -m python.main --run retrain --search_dataset checklist --model_name textattack/bert-base-uncased-SST-2
+        )
+}
+
+function eval_retrained_models(){
+        # evaluate NLP models with generated testsuites
+        (cd ${_DIR}
+         python -m python.main --run testmodel --local_model_name checklist-textattack-bert-base-uncased-SST-2
         )
 }
 
@@ -58,7 +58,6 @@ function main() {
         # eval_models
         # retrain_models
         eval_retrained_models
-
 }
 
 # please make sure you actiavte nlptest conda environment

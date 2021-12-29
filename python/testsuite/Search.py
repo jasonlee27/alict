@@ -6,9 +6,9 @@ import re, os
 import sys
 import json
 import random
+import checklist
 
 from nltk.tokenize import word_tokenize as tokenize
-
 from pathlib import Path
 
 from ..utils.Macros import Macros
@@ -223,44 +223,61 @@ class SearchOperator:
 
 class TransformOperator:
 
-    def __init__(self, requirements):
-        self.capability = requirements['capability']
-        self.description = requirements['description']
-        self.transform_reqs = requirements['transform']
-        self.transform_methods = {
-            "get": self.extract,
-            # "add": cls.search_by_add,
-            # "remove": cls.search_by_remove
-        }
-        # print(f"{self.capability}: {self.description}")
-        
+    def __init__(self, req_capability, req_description, transform_reqs):
+        self.capability = req_capability
+        self.description = req_description
+        self.transform_reqs = transform_reqs
+        self.editor = checklist.editor.Editor()
+        self.inv_replace_target_words = None
+        self.inv_replace_forbidden_words = None
+        self.transformation_funcs = None
 
-    def replace(self, sents, replace_rules: str):
-        replace_from, replace_to = replace_rule.split('->')
-        replace_from_search = re.search(r"(positive|negative|neutral)?\::?(adj|noun|verb)?(s)?", cond)
-        if replace_from in ["neutral","positive","negative"] and \
-           replace_to in ["neutral","positive","negative"]:
-            # SA task
-            pos_from = replace_from.split('::')
-            
-            for sent in sents:
-                replace_word_indices = find_words_w_sentiment 
-            
+        # Find INV transformation operations
+        func = transform_reqs["INV"].split()[0]
+        sentiment = transform_reqs["INV"].split()[1]
+        woi = transform_reqs["INV"].split()[2]
+        if func=="replace":
+            self.inv_replace_target_words = list()
+            self.inv_replace_forbidden_words = list()
+            if woi=="word":
+                self.inv_replace_target_words.extends(SENT_DICT[f"{sentiment}_adj"]+SENT_DICT[f"{sentiment}_verb"]+SENT_DICT[f"{sentiment}_noun"])
+                self.inv_replace_forbidden_words.extends(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + SENT_DICT["positive_adj"] + SENT_DICT[f"negative_adj"] + SENT_DICT[f"positive_verb"] + SENT_DICT[f"negative_verb"])
+            else:
+                self.inv_replace_target_words.extends(SENT_DICT[f"{sentiment}_{woi}"])
+                forbidden_sentiment = "negative"
+                if sentiment=="negative":
+                    forbidden_sentiment = "positive"
+                # end if
+                self.inv_replace_forbidden_words.extends(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + SENT_DICT[f"{forbidden_sentiment}_adj"] + SENT_DICT[f"{forbidden_sentiment}_verb"] + SENT_DICT[f"{forbidden_sentiment}_noun"])
+            # end if
+            self.transformation_funcs = f"INV_{func}_{sentiment}_{woi}"
+            self.inv_replace_target_words = set(self.inv_replace_target_words)
+            self.inv_replace_forbidden_words = set(self.inv_replace_forbidden_words)
         # end if
-        return sents
-        # sents_res = list()
-        # for req_key in self.transform_reqs.keys():
-        #     sents = self.transform_methods[req_key](sents, self.transform_reqs[req_key])
-        # # end for
-        # return sents
-
-    def extract(self, sents, cond_key):
-        pass
-        # _sents = list()
-        # for s in sents:
-            
-        # # end for
-        # return _sents
+                
+    def replace(d):
+        examples = list()
+        subs = list()
+        target_words = set(self.inv_replace_target_words)
+        forbidden = self.inv_replace_forbidden_words
+        
+        words_in = [x for x in d.split() if x in target_words]
+        if not words_in:
+            return None
+        # end if
+        for w in words_in:
+            suggestions = [
+                x for x in self.editor.suggest_replace(d, w, beam_size=5, words_and_sentences=True)
+                if x[0] not in forbidden
+            ]
+            examples.extend([x[1] for x in suggestions])
+            subs.extend(['%s -> %s' % (w, x[0]) for x in suggestions])
+        # end for
+        if examples:
+            idxs = np.random.choice(len(examples), min(len(examples), 10), replace=False)
+            return [examples[i] for i in idxs]#, [subs[i] for i in idxs])
+        # end if
+        
 
 class Sst:
 
