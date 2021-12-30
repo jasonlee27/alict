@@ -52,12 +52,12 @@ function eval_retrained_models(){
 }
 
 function main() {
-        # gen_requirements
-        # gen_templates
+        # gen_requirements # to generate test_type_sa.json and requirement_sa.json
+        gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json
         # gen_testsuite
         # eval_models
         # retrain_models
-        eval_retrained_models
+        # eval_retrained_models
 }
 
 # please make sure you actiavte nlptest conda environment

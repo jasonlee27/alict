@@ -115,24 +115,32 @@ class Requirements:
                     reqs.append({
                         "capability": cap,
                         "description": d,
-                        "search": {
-                            "include": [
-                                {
-                                    "POS": ["neutral adjs"],
-                                    "word": None,
-                                },
-                                {
-                                    "POS": ["neutral verbs"],
-                                    "word": None,
-                                },
-                                {
-                                    "POS": ["neutral nouns"],
-                                    "word": None,
+                        "search": [
+                            {
+                                "include": {
+                                    "POS": [
+                                        "neutral adjs"
+                                    ],
+                                    "word": null
                                 }
-                            ],
-                            "exclude": None,
-                            "label": None,
-                        },
+                            },
+                            {
+                                "include": {
+                                    "POS": [
+                                        "neutral verbs"
+                                    ],
+                                    "word": null
+                                }
+                            },
+                            {
+                                "include": {
+                                    "POS": [
+                                        "neutral nouns"
+                                    ],
+                                    "word": null
+                                }
+                            }
+                        ],
                         "transform": {
                             "INV": "replace neutral word",
                             "DIR": None

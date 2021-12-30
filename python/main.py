@@ -41,7 +41,9 @@ args = parser.parse_args()
 
 def run_requirements():
     from .requirement.Requirements import Requirements
+    nlp_task = args.nlp_task
     Requirements.convert_test_type_txt_to_json()
+    Requirements.get_requirements(nlp_task)
     return
 
 def run_templates():

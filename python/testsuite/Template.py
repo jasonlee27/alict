@@ -191,6 +191,7 @@ class Template:
     def get_templates(cls, num_seeds, nlp_task, dataset_name):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
+        print("Generate Templates ...")
 
         # Search inputs from searching dataset and expand the inputs using ref_cfg
         nlp = spacy.load('en_core_web_md')
@@ -221,6 +222,8 @@ class Template:
             req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])
             inputs = inputs_per_req["inputs"]
 
+            print(inputs_per_req["requirement"]["capability"])
+            print(inputs_per_req["requirement"]["description"])
             seed_inputs, seed_templates, exp_templates = list(), list(), list()
             for seed_input in inputs.keys():
                 print(f"SEED: {seed_input}")

@@ -43,11 +43,7 @@ class SearchOperator:
             "include": self.search_by_include,
             "exclude": self.search_by_exclude,
             "label": self.search_by_label
-            # "replace": cls.search_by_replacement,
-            # "add": cls.search_by_add,
-            # "remove": cls.search_by_remove
         }
-        self.transform_methos = dict() # TODO
 
     def search(self, sents):
         selected = list()
@@ -115,7 +111,7 @@ class SearchOperator:
         _sents = sents.copy()
         _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
         params = search_reqs["include"]
-        if type(param)==dict:
+        if type(params)==dict:
             params = [params]
         # end if
         selected_indices = list()
@@ -155,9 +151,9 @@ class SearchOperator:
                 # end if
             # end for
         # end for
-        return [(s_i," ".join(s),l) for s_i, s, l in selected is s_i in selected_indices]
+        return [(s_i," ".join(s),l) for s_i, s, l in _sents if s_i in selected_indices]
 
-    def _search_by_exclude(self, sents, cond_key):
+    def _search_by_pos_exclude(self, sents, cond_key):
         # sents: (s_i, tokenizes sentence, label)
         target_words = SENT_DICT[cond_key]
         selected = list()
@@ -175,17 +171,14 @@ class SearchOperator:
         return selected
 
     def search_by_exclude(self, sents, search_reqs):
-        param = search_reqs["exclude"]
+        params = search_reqs["exclude"]
         _sents = sents.copy()
         _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
-        params = search_reqs["include"]
         selected_indices = list()
-        if type(param)==dict:
+        if type(params)==dict:
             params = [params]
         # end if
         for param in params:
-
-            
             word_exclude = param["word"]
             tpos_exclude = param["POS"]
             if word_exclude is not None:
@@ -203,10 +196,10 @@ class SearchOperator:
                 
                     if sentiment is None:
                         for _sentiment in ["neutral","positive","negative"]:
-                            temp_sents.extend(self._search_by_exclude(_sents, f"{_sentiment}_{pos}"))
+                            temp_sents.extend(self._search_by_pos_exclude(_sents, f"{_sentiment}_{pos}"))
                         # end for
                     else:
-                        temp_sents = self._search_by_exclude(_sents, f"{sentiment}_{pos}")
+                        temp_sents = self._search_by_pos_exclude(_sents, f"{sentiment}_{pos}")
                     # end if
                     _sents = temp_sents
                 # end for
@@ -218,7 +211,7 @@ class SearchOperator:
                 # end if
             # end for
         # end for
-        return [(s_i," ".join(s),l) for s_i, s, l in selected is s_i in selected_indices]
+        return [(s_i," ".join(s),l) for s_i, s, l in _sents if s_i in selected_indices]
 
 
 class TransformOperator:
