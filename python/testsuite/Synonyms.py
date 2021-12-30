@@ -69,6 +69,9 @@ class Synonyms:
     @classmethod
     def get_synonyms(cls, nlp, word: str, wpos:str):
         synonyms = list()
+        if wpos is None:
+            return synonyms
+        # end if
         for syn in cls.get_synsets(nlp, word):
             wn_spos = cls.get_wn_syn_pos(syn)
             syns = [lm.name() for lm in syn.lemmas()]

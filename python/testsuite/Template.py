@@ -74,7 +74,7 @@ class Template:
                 # end if
                 exp_inputs[seed] = {
                     "cfg_seed": expander.cfg_seed,
-                    "exp_inputs": new_input_results,
+                    "exp_inputs": new_iput_results,
                     "label": seed_label
                 }
             # end for
@@ -104,10 +104,20 @@ class Template:
 
     @classmethod
     def find_pos_from_cfg_seed(cls, token, cfg_seed):
+        # when tokenized token can be found in the leaves of cfg
         for key, vals in cfg_seed.items():
             for val in vals:
                 if val["pos"]==val["word"] and token==val["word"]:
                     return key
+                # end if
+            # end for
+        # end for
+        # when tokenized token cannot be found in the leaves of cfg
+        for key, vals in cfg_seed.items():
+            for val in vals:
+                if type(val["word"])==list and token in val["word"]:
+                    tok_idx = val["word"].index(token)
+                    return val["pos"][tok_idx]
                 # end if
             # end for
         # end for
@@ -129,7 +139,7 @@ class Template:
             # end if
         # end for
         tokens = _tokens
-                
+        
         for t in tokens:
             if t=="{mask}":
                 if type(words_sug)==str:
@@ -142,8 +152,8 @@ class Template:
                 tpos = cls.find_pos_from_cfg_seed(t, cfg_seed)
             # end if
             tokens_pos.append(tpos)
-        # end for        
-        return tokenize(exp_input), tokens_pos 
+        # end for
+        return tokenize(exp_input), tokens_pos
 
     @classmethod
     def get_templates_by_synonyms(cls, nlp, tokens: List[str], tokens_pos: List[str], prev_synonyms):
@@ -227,7 +237,7 @@ class Template:
             seed_inputs, seed_templates, exp_templates = list(), list(), list()
             for seed_input in inputs.keys():
                 print(f"SEED: {seed_input}")
-                
+                    
                 cfg_seed = inputs[seed_input]["cfg_seed"]
                 label_seed = inputs[seed_input]["label"]
                 exp_inputs = inputs[seed_input]["exp_inputs"]
@@ -236,7 +246,7 @@ class Template:
                     "place_holder": tokenize(seed_input),
                     "label": label_seed
                 })
-
+                    
                 # make template for seed input
                 tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
                 _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
