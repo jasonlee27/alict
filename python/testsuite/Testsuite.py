@@ -17,7 +17,7 @@ from checklist.editor import Editor
 from checklist.test_types import MFT, INV, DIR
 from checklist.expect import Expect
 from checklist.test_suite import TestSuite
-# from checklist.perturb import Perturb
+from checklist.perturb import Perturb
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -53,17 +53,6 @@ class Testsuite:
             "values": template_values,
             "label": cls.map_labels(task, template["label"])
         }
-
-    @classmethod
-    def perturb_sentences_from_templates(cls, template):
-        sentences = list()
-        for tok_i in range(len(template["place_holder"])):
-            if type(template["place_holder"][tok_i])==str:
-                sentences.append(template["place_holder"][tok_i])
-            if type(template["place_holder"][tok_i])==dict:
-                
-
-                
 
     @classmethod
     def get_templates(cls, nlp_task, dataset, num_seeds):
@@ -162,11 +151,11 @@ class Testsuite:
                                          save=True)
                 # end if
             # end for
-            if len(transform_reqs)>0:
-                transform_req = transform_reqs[t_i]
-                transformer = TransformOperator(templates_per_req['capability'],
+            if transform_reqs[t_i] is not None:
+                transformer = TransformOperator(editor,
+                                                templates_per_req['capability'],
                                                 templates_per_req['description'],
-                                                transform_req)
+                                                transform_reqs[t_i])
                 test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
                 if func=="replace":
                     t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
@@ -209,11 +198,12 @@ class Testsuite:
                                          save=True)
                 # end if
             # end for
-            if len(transform_reqs)>0:
+            if transform_reqs[t_i] is not None:
                 transform_req = transform_reqs[t_i]
-                transformer = TransformOperator(templates_per_req['capability'],
+                transformer = TransformOperator(editor,
+                                                templates_per_req['capability'],
                                                 templates_per_req['description'],
-                                                transform_req)
+                                                transform_reqs[t_i])
                 test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
                 if func=="replace":
                     t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
@@ -255,11 +245,12 @@ class Testsuite:
                                          save=True)
                 # end if
             # end for
-            if len(transform_reqs)>0:
+            if transform_reqs[t_i] is not None:
                 transform_req = transform_reqs[t_i]
-                transformer = TransformOperator(templates_per_req['capability'],
+                transformer = TransformOperator(editor,
+                                                templates_per_req['capability'],
                                                 templates_per_req['description'],
-                                                transform_req)
+                                                transform_reqs[t_i])
                 test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
                 if func=="replace":
                     t = Perturb.perturb(t.data, transformer.replace, nsamples=500)

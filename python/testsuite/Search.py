@@ -7,6 +7,7 @@ import sys
 import json
 import random
 import checklist
+import numpy as np
 
 from nltk.tokenize import word_tokenize as tokenize
 from pathlib import Path
@@ -216,11 +217,11 @@ class SearchOperator:
 
 class TransformOperator:
 
-    def __init__(self, req_capability, req_description, transform_reqs):
+    def __init__(self, editor, req_capability, req_description, transform_reqs):
+        self.editor = editor # checklist.editor.Editor()
         self.capability = req_capability
         self.description = req_description
         self.transform_reqs = transform_reqs
-        self.editor = checklist.editor.Editor()
         self.inv_replace_target_words = None
         self.inv_replace_forbidden_words = None
         self.transformation_funcs = None
@@ -233,22 +234,31 @@ class TransformOperator:
             self.inv_replace_target_words = list()
             self.inv_replace_forbidden_words = list()
             if woi=="word":
-                self.inv_replace_target_words.extends(SENT_DICT[f"{sentiment}_adj"]+SENT_DICT[f"{sentiment}_verb"]+SENT_DICT[f"{sentiment}_noun"])
-                self.inv_replace_forbidden_words.extends(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + SENT_DICT["positive_adj"] + SENT_DICT[f"negative_adj"] + SENT_DICT[f"positive_verb"] + SENT_DICT[f"negative_verb"])
+                self.inv_replace_target_words = set(SENT_DICT[f"{sentiment}_adj"] + \
+                                                    SENT_DICT[f"{sentiment}_verb"] + \
+                                                    SENT_DICT[f"{sentiment}_noun"])
+                self.inv_replace_forbidden_words = set(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + \
+                                                       SENT_DICT["positive_adj"] + \
+                                                       SENT_DICT[f"negative_adj"] + \
+                                                       SENT_DICT[f"positive_verb"] + \
+                                                       SENT_DICT[f"negative_verb"])
             else:
-                self.inv_replace_target_words.extends(SENT_DICT[f"{sentiment}_{woi}"])
+                self.inv_replace_target_words = set(SENT_DICT[f"{sentiment}_{woi}"])
                 forbidden_sentiment = "negative"
                 if sentiment=="negative":
                     forbidden_sentiment = "positive"
                 # end if
-                self.inv_replace_forbidden_words.extends(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + SENT_DICT[f"{forbidden_sentiment}_adj"] + SENT_DICT[f"{forbidden_sentiment}_verb"] + SENT_DICT[f"{forbidden_sentiment}_noun"])
+                self.inv_replace_forbidden_words = set(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + \
+                                                       SENT_DICT[f"{forbidden_sentiment}_adj"] + \
+                                                       SENT_DICT[f"{forbidden_sentiment}_verb"] + \
+                                                       SENT_DICT[f"{forbidden_sentiment}_noun"])
             # end if
             self.transformation_funcs = f"INV_{func}_{sentiment}_{woi}"
             self.inv_replace_target_words = set(self.inv_replace_target_words)
             self.inv_replace_forbidden_words = set(self.inv_replace_forbidden_words)
         # end if
                 
-    def replace(d):
+    def replace(self, d):
         examples = list()
         subs = list()
         target_words = set(self.inv_replace_target_words)
