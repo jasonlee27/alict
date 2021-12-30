@@ -179,7 +179,7 @@ class Testsuite:
             suite.save(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')
         # end for
         
-        for templates_per_req in seed_template_dicts:
+        for t_i, templates_per_req in enumerate(seed_template_dicts):
             t = None
             suite = TestSuite()
             for temp_i, temp in enumerate(templates_per_req["templates"]):
@@ -210,7 +210,7 @@ class Testsuite:
                     test = INV(t.data)
                     suite.add(test,
                           name=task,
-                          capability=templates_per_req["capability"]+"::SEED",
+                          capability=templates_per_req["capability"]+"::SEED_TEMPS",
                           description=templates_per_req["description"])
                 # end if
             else:
@@ -226,7 +226,7 @@ class Testsuite:
             suite.save(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')
         # end for
         
-        for templates_per_req in exp_template_dicts:
+        for t_i, templates_per_req in enumerate(exp_template_dicts):
             t = None
             suite = TestSuite()
             for temp_i, temp in enumerate(templates_per_req["templates"]):
@@ -257,7 +257,7 @@ class Testsuite:
                     test = INV(t.data)
                     suite.add(test,
                           name=task,
-                          capability=templates_per_req["capability"]+"::SEED",
+                          capability=templates_per_req["capability"]+"::EXP_TEMPS",
                           description=templates_per_req["description"])
                 # end if
             else:

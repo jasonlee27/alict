@@ -42,16 +42,18 @@ class Testmodel:
                 f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
             ]
             for test_file in test_files:
+                print(test_file)
                 testsuite_file = Macros.result_dir / "test_results" / test_file
                 testsuite = cls.load_testsuite(testsuite_file)
+                print(testsuite.info)
                 test_info = testsuite.info[task]["capability"]+"::"+testsuite.info[task]["description"]
                 print(f">>>>> TEST: {test_info}")
 
                 if local_model_name is None:
                     # Run Google nlp model
-                    print(f">>>>> MODEL: Google NLP model")
-                    GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
-                    print(f"<<<<< MODEL: Google NLP model")
+                    # print(f">>>>> MODEL: Google NLP model")
+                    # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
+                    # print(f"<<<<< MODEL: Google NLP model")
                     
                     for mname, model in Model.load_models(task):
                         print(f">>>>> MODEL: {mname}")
