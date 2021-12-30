@@ -146,6 +146,26 @@ class Requirements:
                             "DIR": None
                         }
                     })
+                elif d.lower()=="add positive phrases, fails if sent. goes down by > 0.1":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [],
+                        "transform": {
+                            "INV": "add positive phrase",
+                            "DIR": None
+                        }
+                    })
+                elif d.lower()=="add negative phrases, fails if sent. goes up by > 0.1":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [],
+                        "transform": {
+                            "INV": "add negative phrase",
+                            "DIR": None
+                        }
+                    })
                 # end if
             # end for
         # end for
