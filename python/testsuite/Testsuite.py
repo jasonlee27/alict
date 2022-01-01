@@ -70,9 +70,7 @@ class Testsuite:
         transform_reqs = list()
         for t_i in range(len(new_input_dicts)):
             req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
-            print("CAP: ", new_input_dicts[t_i]["requirement"]["capability"])
-            print("REQ: ", new_input_dicts[t_i]["requirement"]["description"])
-            
+            print(new_input_dicts[t_i]["requirement"]["capability"]+"::"+new_input_dicts[t_i]["requirement"]["description"])            
             res_dir = Macros.result_dir/ f"templates_{task}"
             if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))) or \
                (not os.path.exists(str(res_dir / f"templates_seed_{req_cksum}.json"))) or \
@@ -205,9 +203,7 @@ class Testsuite:
                                                 transform_reqs[t_i])
                 test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
                 if func=="replace":
-                    print(len(t.data))
                     t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
-                    print(len(t.data))
                     test = INV(t.data)
                     suite.add(test,
                               name=f"{task}::SEED_TEMPS::"+templates_per_req["description"],
@@ -254,9 +250,7 @@ class Testsuite:
                                                 transform_reqs[t_i])
                 test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
                 if func=="replace":
-                    print(len(t.data))
                     t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
-                    print(len(t.data))
                     test = INV(t.data)
                     suite.add(test,
                               name=f"{task}::EXP_TEMPS::"+templates_per_req["description"],
