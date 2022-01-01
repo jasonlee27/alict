@@ -53,13 +53,14 @@ class Template:
             exp_inputs = dict()
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
             selected_inputs = selected["selected_inputs"][:n] if n is not None else selected["selected_inputs"]
-            for _id, seed, seed_label in selected_inputs:
-                print(f"\tSELECTED_SEED: {_id} {seed}, {seed_label}")
+            for _id, seed, seed_label, seed_score in selected_inputs:
+                print(f"\tSELECTED_SEED: {_id} {seed}, {seed_label}, {seed_score}")
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                 generator = Generator(expander=expander)
                 gen_inputs = generator.masked_input_generator()
                 new_input_results = list()
                 if len(gen_inputs)>0:
+                    # get the word suggesteion at the expended grammar elements
                     gen_inputs = Suggest.get_new_inputs(generator.editor, gen_inputs, num_target=10)
                     _gen_inputs = list()
                     for g_i in range(len(gen_inputs)):
@@ -74,8 +75,9 @@ class Template:
                 # end if
                 exp_inputs[seed] = {
                     "cfg_seed": expander.cfg_seed,
-                    "exp_inputs": new_iput_results,
-                    "label": seed_label
+                    "exp_inputs": new_input_results,
+                    "label": seed_label,
+                    "label_score": seed_score
                 }
             # end for
             results.append({

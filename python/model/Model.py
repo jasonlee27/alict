@@ -83,8 +83,8 @@ class Model:
         return preds, pp
 
     @classmethod
-    def run(cls, testsuite, model, pred_and_conf_fn):
+    def run(cls, testsuite, model, pred_and_conf_fn, n=500):
         cls.model = model
-        testsuite.run(pred_and_conf_fn, n=500, overwrite=True)
+        testsuite.run(pred_and_conf_fn, n=n, overwrite=True)
         testsuite.summary(n=100)
         return

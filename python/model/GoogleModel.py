@@ -76,8 +76,8 @@ class GoogleModel:
         return preds, pp
     
     @classmethod
-    def run(cls, testsuite, pred_and_conf_fn):
-        testsuite.run(pred_and_conf_fn, n=500, overwrite=True)
+    def run(cls, testsuite, pred_and_conf_fn, n=500):
+        testsuite.run(pred_and_conf_fn, n=n, overwrite=True)
         testsuite.summary(n=100)
         return
         

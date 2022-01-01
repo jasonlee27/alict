@@ -42,22 +42,17 @@ class Testmodel:
                 f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
             ]
             for test_file in test_files:
-                print(test_file)
                 testsuite_file = Macros.result_dir / "test_results" / test_file
                 testsuite = cls.load_testsuite(testsuite_file)
-                print(testsuite.info)
-                test_info = testsuite.info[task]["capability"]+"::"+testsuite.info[task]["description"]
-                print(f">>>>> TEST: {test_info}")
-
                 if local_model_name is None:
-                    # Run Google nlp model
+                    # # Run Google nlp model
                     # print(f">>>>> MODEL: Google NLP model")
-                    # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
+                    # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=500)
                     # print(f"<<<<< MODEL: Google NLP model")
                     
                     for mname, model in Model.load_models(task):
                         print(f">>>>> MODEL: {mname}")
-                        Model.run(testsuite, model, cls.model_func_map[task])
+                        Model.run(testsuite, model, cls.model_func_map[task], n=500)
                         print(f"<<<<< MODEL: {mname}")
                     # end for
                 else:
@@ -66,7 +61,6 @@ class Testmodel:
                     Model.run(testsuite, model, cls.model_func_map[task])
                     print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                 # end if
-                print(f"<<<<< TEST")
             # end for
         # end for
         print("**********")
@@ -81,19 +75,19 @@ class Testmodel:
         if local_model_name is None:
             # Run Google nlp model
             print(f">>>>> MODEL: Google NLP model")
-            GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf)
+            GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=500)
             print(f"<<<<< MODEL: Google NLP model")
             
             for mname, model in Model.load_models(task):
                 print(f">>>>> MODEL: {mname}")
-                Model.run(testsuite, model, cls.model_func_map[task])
+                Model.run(testsuite, model, cls.model_func_map[task], n=500)
                 print(f"<<<<< MODEL: {mname}")
             # end for
             print("**********")
         else:
             print(f">>>>> RETRAINED MODEL: {local_model_name}")
             model = Model.load_local_model(task, local_model_name)
-            Model.run(testsuite, model, cls.model_func_map[task])
+            Model.run(testsuite, model, cls.model_func_map[task], n=500)
             print(f"<<<<< RETRAINED MODEL: {local_model_name}")
         # end if
         return

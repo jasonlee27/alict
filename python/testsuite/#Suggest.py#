@@ -169,7 +169,6 @@ class Suggest:
         masked_input, mask_pos = gen_input["masked_input"]
         for w_sug in gen_input["words_suggest"]:
             words_sug_pos, word_sug_prs_string = cls.get_sug_words_pos(w_sug)
-            
             # check pos
             if cls.eval_sug_words_by_pos(words_sug_pos, mask_pos):
                 input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)

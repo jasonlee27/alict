@@ -161,17 +161,16 @@ class Testsuite:
                     t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
                     test = INV(t.data)
                     suite.add(test,
-                          name=task,
-                          capability=templates_per_req["capability"]+"::SEED",
-                          description=templates_per_req["description"])
+                              name=f"{task}::SEED::"+templates_per_req["description"],
+                              capability=templates_per_req["capability"]+"::SEED",
+                              description=templates_per_req["description"])
                 # end if
             else:
                 test = MFT(**t)
                 suite.add(test,
-                          name=task,
+                          name=f"{task}::SEED::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::SEED",
                           description=templates_per_req["description"])
-                
             # end if
             test_cksum = Utils.get_cksum(
                 task+templates_per_req["capability"]+templates_per_req["description"]
@@ -206,17 +205,19 @@ class Testsuite:
                                                 transform_reqs[t_i])
                 test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
                 if func=="replace":
+                    print(len(t.data))
                     t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
+                    print(len(t.data))
                     test = INV(t.data)
                     suite.add(test,
-                          name=task,
-                          capability=templates_per_req["capability"]+"::SEED_TEMPS",
-                          description=templates_per_req["description"])
+                              name=f"{task}::SEED_TEMPS::"+templates_per_req["description"],
+                              capability=templates_per_req["capability"]+"::SEED_TEMPS",
+                              description=templates_per_req["description"])
                 # end if
             else:
                 test = MFT(**t)
-                suite.add(test, 
-                          name=task,
+                suite.add(test,
+                          name=f"{task}::SEED_TEMPS::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::SEED_TEMPS",
                           description=templates_per_req["description"])
             # end if
@@ -253,17 +254,19 @@ class Testsuite:
                                                 transform_reqs[t_i])
                 test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
                 if func=="replace":
+                    print(len(t.data))
                     t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
+                    print(len(t.data))
                     test = INV(t.data)
                     suite.add(test,
-                          name=task,
-                          capability=templates_per_req["capability"]+"::EXP_TEMPS",
-                          description=templates_per_req["description"])
+                              name=f"{task}::EXP_TEMPS::"+templates_per_req["description"],
+                              capability=templates_per_req["capability"]+"::EXP_TEMPS",
+                              description=templates_per_req["description"])
                 # end if
             else:
                 test = MFT(**t)
                 suite.add(test, 
-                          name=task,
+                          name=f"{task}::EXP_TEMPS::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::EXP_TEMPS",
                           description=templates_per_req["description"])
             # end if

@@ -51,7 +51,9 @@ class SearchOperator:
         for search_reqs in self.search_reqs_list:
             _sents = sents.copy()
             for op, param in search_reqs.items():
-                _sents = self.search_method[op](_sents, search_reqs)
+                if len(_sents)>0:
+                    _sents = self.search_method[op](_sents, search_reqs)
+                # end if
             # end for
             selected.extend(_sents)
         # end for
@@ -61,30 +63,40 @@ class SearchOperator:
         param = search_reqs["length"]
         match = re.search(r"([<>]=?|==)(\d+)", param)
         op, _len = match.groups()
-        _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
-        return [(s_i," ".join(s),l) for s_i, s, l in _sents if len(s) < int(_len)]
+        results = list()
+        if len(sents[0])==4:
+            _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in sents]
+            for s_i, s, l, sc in _sents:
+                if s[-1]=="." and (len(s)-1 < int(_len)):
+                    results.append((s_i," ".join(s),l,sc))
+                elif s[-1]!="." and (len(s) < int(_len)):
+                    results.append((s_i," ".join(s),l,sc))
+                # end if
+            # end for
+        else:
+            _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
+            for s_i, s, l in _sents:
+                if s[-1]=="." and (len(s)-1 < int(_len)):
+                    results.append((s_i," ".join(s),l))
+                elif s[-1]!="." and (len(s) < int(_len)):
+                    results.append((s_i," ".join(s),l))
+                # end if
+            # end for
+        # end if
+        return results
 
     def search_by_label(self, sents, search_reqs):
         label = search_reqs["label"]
         if label=="neutral" or label=="positive" or label=="negative":
-            _sents = [(s_i,s,l) for s_i, s, l in sents if l==label]
-        # elif label.startswith("same as"):
-        #     print(label)
-        #     match = re.search(r"same as\s?(include|exclude)?\s?(POS|word)?", label)
-        #     in_or_ex_clude, search_key = match.groups()
-        #     if in_or_ex_clude is None:
-        #         in_or_ex_clude = "include"
-        #     # end if
-        #     poss = search_reqs[in_or_ex_clude][search_key]
-        #     _sents = list()
-        #     for pos in poss:
-        #         pos_sentiment = pos.split()[0]
-        #         _sents.extend([(s_i,s,l) for s_i, s, l in sents if l==pos_sentiment])
-        #     # end for
+            if len(sents[0])==4:
+                _sents = [(s_i,s,l,sc) for s_i, s, l, sc in sents if l==label]
+            else:
+                _sents = [(s_i,s,l) for s_i, s, l in sents if l==label]
+            # end if
+            return _sents
         else:
             return sents
         # end if
-        return _sents
 
     def _search_by_word_include(self, sents, word_cond):
         pass
@@ -93,24 +105,29 @@ class SearchOperator:
         # sents: (s_i, tokenizes sentence, label)
         target_words = SENT_DICT[cond_key]
         selected = list()
-        for s_i, s, l in sents:
+        for sent in sents:
+            # s_i, s, l, sc = sent
             found_w = list()
-            for w in s:
+            for w in sent[1]:
                 if w.lower() in target_words:
                     found_w.append(w)
                 # end if
             # end for
             if cond_number>0 and len(found_w)==cond_number:
-                selected.append((s_i, s, l))
+                selected.append(sent)
             elif cond_number<0 and len(found_w)>0:
-                selected.append((s_i, s, l))
+                selected.append(sent)
             # end if
         # end for
         return selected
         
     def search_by_include(self, sents, search_reqs):
         _sents = sents.copy()
-        _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
+        if len(sents[0])==4:
+            _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in sents]
+        else:
+            _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
+        # end if
         params = search_reqs["include"]
         if type(params)==dict:
             params = [params]
@@ -121,7 +138,11 @@ class SearchOperator:
             tpos_include = param["POS"]
             if word_include is not None:
                 for w in word_include:
-                    _sents = [(s_i, s, l) for s_i, s, l in _sents if w in s]
+                    if len(sents[0])==4:
+                        _sents = [(s_i,s,l,sc) for s_i, s, l, sc in _sents if w in s]
+                    else:
+                        _sents = [(s_i,s,l) for s_i, s, l in _sents if w in s]
+                    # end if
                 # end for
             # end if
         
@@ -146,27 +167,33 @@ class SearchOperator:
                     _sents = temp_sents
                 # end for
             # end if
-            for s_i, _, _ in _sents:
-                if s_i not in selected_indices:
-                    selected_indices.append(s_i)
+            for sent in _sents:
+                if sent[0] not in selected_indices:
+                    selected_indices.append(sent[0])
                 # end if
             # end for
         # end for
-        return [(s_i," ".join(s),l) for s_i, s, l in _sents if s_i in selected_indices]
+        result = list()
+        if len(sents[0])==4:
+            result = [(s_i," ".join(s),l,sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
+        else:
+            result = [(s_i," ".join(s),l) for s_i, s, l in _sents if s_i in selected_indices]
+        # end if
+        return result
 
     def _search_by_pos_exclude(self, sents, cond_key):
         # sents: (s_i, tokenizes sentence, label)
         target_words = SENT_DICT[cond_key]
         selected = list()
-        for s_i, s, l in sents:
+        for sent in sents:
             found_w = list()
-            for w in s:
+            for w in sent[1]:
                 if w.lower() in target_words:
                     found_w.append(w)
                 # end if
             # end for
             if len(found_w)==0:
-                selected.append((s_i, s, l))
+                selected.append(sent)
             # end if
         # end for
         return selected
@@ -174,7 +201,11 @@ class SearchOperator:
     def search_by_exclude(self, sents, search_reqs):
         params = search_reqs["exclude"]
         _sents = sents.copy()
-        _sents = [(s_i, tokenize(s), l) for s_i, s, l in sents]
+        if len(sents[0])==4:
+            _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in sents]
+        else:
+            _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
+        # end if
         selected_indices = list()
         if type(params)==dict:
             params = [params]
@@ -184,10 +215,9 @@ class SearchOperator:
             tpos_exclude = param["POS"]
             if word_exclude is not None:
                 for w in word_exclude:
-                    _sents = [(s_i, s, l) for s_i, s, l in _sents if w not in s]
+                    _sents = [(s_i, s, l, sc) for s_i, s, l, sc in _sents if w not in s]
                 # end for
             # end if
-        
             if tpos_exclude is not None:
                 temp_sents = list()
                 for cond in tpos_exclude:
@@ -206,13 +236,19 @@ class SearchOperator:
                 # end for
             # end if
 
-            for s_i, _, _ in _sents:
-                if s_i not in selected_indices:
-                    selected_indices.append(s_i)
+            for sent in _sents:
+                if sent[0] not in selected_indices:
+                    selected_indices.append(sent[0])
                 # end if
             # end for
         # end for
-        return [(s_i," ".join(s),l) for s_i, s, l in _sents if s_i in selected_indices]
+        result = list()
+        if len(sents[0])==4:
+            result = [(s_i," ".join(s),l, sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
+        else:
+            result = [(s_i," ".join(s),l) for s_i, s, l in _sents if s_i in selected_indices]
+        # end if
+        return result
 
 
 class TransformOperator:
@@ -233,7 +269,7 @@ class TransformOperator:
         if func=="replace":
             self.inv_replace_target_words = list()
             self.inv_replace_forbidden_words = list()
-            if woi=="word":
+            if sentiment=="neutral" and woi=="word":
                 self.inv_replace_target_words = set(SENT_DICT[f"{sentiment}_adj"] + \
                                                     SENT_DICT[f"{sentiment}_verb"] + \
                                                     SENT_DICT[f"{sentiment}_noun"])
@@ -241,17 +277,9 @@ class TransformOperator:
                                                        SENT_DICT["positive_adj"] + \
                                                        SENT_DICT[f"negative_adj"] + \
                                                        SENT_DICT[f"positive_verb"] + \
-                                                       SENT_DICT[f"negative_verb"])
-            else:
-                self.inv_replace_target_words = set(SENT_DICT[f"{sentiment}_{woi}"])
-                forbidden_sentiment = "negative"
-                if sentiment=="negative":
-                    forbidden_sentiment = "positive"
-                # end if
-                self.inv_replace_forbidden_words = set(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + \
-                                                       SENT_DICT[f"{forbidden_sentiment}_adj"] + \
-                                                       SENT_DICT[f"{forbidden_sentiment}_verb"] + \
-                                                       SENT_DICT[f"{forbidden_sentiment}_noun"])
+                                                       SENT_DICT[f"negative_verb"] + \
+                                                       SENT_DICT[f"positive_noun"] + \
+                                                       SENT_DICT[f"negative_noun"])
             # end if
             self.transformation_funcs = f"INV_{func}_{sentiment}_{woi}"
             self.inv_replace_target_words = set(self.inv_replace_target_words)
@@ -285,29 +313,66 @@ class TransformOperator:
 class Sst:
 
     @classmethod
-    def get_sents(cls, sent_file, label_file):
+    def replace_non_english_letter(cls, sent):
+        _sent = sent.replace("-LRB-", "(")
+        _sent = _sent.replace("-RRB-", ")")
+        _sent = _sent.replace("Ã´", "ô")
+        _sent = _sent.replace("8Â 1\/2", "8 1\/2")
+        _sent = _sent.replace("2Â 1\/2", "2 1\/2")
+        _sent = _sent.replace("Ã§", "ç")
+        _sent = _sent.replace("Ã¶", "ö")
+        _sent = _sent.replace("Ã»", "û")
+        _sent = _sent.replace("Ã£", "ã")        
+        _sent = _sent.replace("Ã¨", "è")
+        _sent = _sent.replace("Ã¯", "ï")
+        _sent = _sent.replace("Ã±", "ñ")
+        _sent = _sent.replace("Ã¢", "â")
+        _sent = _sent.replace("Ã¡", "á")
+        _sent = _sent.replace("Ã©", "é")
+        _sent = _sent.replace("Ã¦", "æ")
+        _sent = _sent.replace("Ã­", "í")
+        _sent = _sent.replace("Ã³", "ó")
+        _sent = _sent.replace("Ã¼", "ü")
+        _sent = _sent.replace("Ã ", "à")
+        _sent = _sent.replace("Ã", "à")
+        return _sent
+
+    @classmethod
+    def get_sents(cls, sent_file, label_file, phrase_dict_file):
         # sents: List of [sent_index, sent]
-        sents = [tuple(l.split("\t")) for l in Utils.read_txt(sent_file)[1:]]
-        label_scores = [tuple(l.split("|")) for l in Utils.read_txt(label_file)[1:]]
-        labels = dict()
-        for s_i, s in label_scores:
-            s = float(s)
-            labels[s_i] = "neutral"
-            if s<=0.4:
-                labels[s_i] = "negative"
-            elif s>0.6:
-                labels[s_i] = "positive"
+        sents = [(l.split("\t")[0].strip(),l.split("\t")[1].strip()) for l in Utils.read_txt(sent_file)[1:]]
+        label_scores = {
+            l.split("|")[0].strip():l.split("|")[1].strip() # id: score
+            for l in Utils.read_txt(label_file)[1:]
+        }
+        phrases = {
+            l.split("|")[0].strip(): l.split("|")[1].strip() # phrase: id
+            for l in Utils.read_txt(phrase_dict_file)
+        }
+        result = list()
+        for s_i, s in sents:
+            s = cls.replace_non_english_letter(s)
+            if s in phrases.keys():
+                phrase_id = phrases[s]
+                label_score = float(label_scores[phrase_id])
+                label = "neutral"
+                if label_score<=0.4:
+                    label = "negative"
+                elif label_score>0.6:
+                    label = "positive"
+                # end if
+                result.append((s_i,s,label,label_score))
             # end if
-        #end for
-        return [(s_i,s,labels[s_i]) for s_i, s in sents]
+        # end for
+        return result
     
     @classmethod
     def search(cls, req):
         # sent: (index, sentence)
         # label: (index, label score)
-        sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file)
+        sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file, Macros.sst_dict_file)
         req_obj = SearchOperator(req)
-        selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
+        selected = sorted([(s[0],s[1],s[2],s[3]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
         return selected
 
@@ -342,7 +407,7 @@ class ChecklistTestsuite:
         # label: (index, label score)
         sents = cls.get_sents(Macros.checklist_sa_dataset_file)
         req_obj = SearchOperator(req)
-        selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
+        selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
         return selected
 
@@ -368,7 +433,7 @@ class DynasentRoundOne:
         # label: (index, label score) 
         sents = cls.get_labels(Macros.dyna_r1_test_src_file)
         req_obj = SearchOperator(req)
-        selected = sorted([(s[0],s[1].strip()[:-1],s[2]) if s[1].strip()[-1]=="." else (s[0],s[1].strip(),s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
+        selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
         return selected
 
