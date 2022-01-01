@@ -21,7 +21,7 @@ from checklist.perturb import Perturb
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from .Search import TransformOperator
+from .Transform import TransformOperator
 from .Template import Template
 
 class Testsuite:
@@ -124,9 +124,52 @@ class Testsuite:
         return
 
     @classmethod
+    def suite_add_transform(cls,
+                            transform_req,
+                            templates_per_req,
+                            test_type, task, dataset, suite, seed_type):
+        transformer = TransformOperator(editor,
+                                        templates_per_req['capability'],
+                                        templates_per_req['description'],
+                                        transform_reqs[t_i],
+                                        nlp_task=task,
+                                        search_dataset=dataset)
+        test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
+        if test_type=="INV":
+            if func=="replace":
+                t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
+                test = INV(t.data)
+                suite.add(test,
+                          name=f"{task}::{seed_type}::"+templates_per_req["description"],
+                          capability=templates_per_req["capability"]+f"::{seed_type}",
+                          description=templates_per_req["description"])
+            # end if
+        elif test_type=="DIR":
+            if func=="add":
+                if self.nlp_task==Macros.sa_task:
+                    selected = Search.search_sentiment_analysis(
+                        transformer.search_reqs,
+                        transformer.search_dataset
+                    )
+                    phrases = [s[1] for s in selected["selected_inputs"]]
+                    goes_up = Expect.pairwise(transformer.diff_up)
+                    goes_down = Expect.pairwise(transformer.diff_down)
+                    t = Perturb.perturb(t.data, transformer.add(phrases), nsamples=500)
+                    test = DIR(t.data, transformer.dir_expect_func)
+                    suite.add(test,
+                              name=f"{task}::{seed_type}::"+templates_per_req["description"],
+                              capability=templates_per_req["capability"]+"::{seed_type}",
+                              description=templates_per_req["description"])
+                # end if
+            # end if
+        # end if
+        return suite
+        
+    @classmethod
     def write_editor_template(cls,
                               editor,
                               task,
+                              dataset,
                               seed_dicts,
                               seed_template_dicts,
                               exp_template_dicts,
@@ -150,19 +193,9 @@ class Testsuite:
                 # end if
             # end for
             if transform_reqs[t_i] is not None:
-                transformer = TransformOperator(editor,
-                                                templates_per_req['capability'],
-                                                templates_per_req['description'],
-                                                transform_reqs[t_i])
-                test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
-                if func=="replace":
-                    t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
-                    test = INV(t.data)
-                    suite.add(test,
-                              name=f"{task}::SEED::"+templates_per_req["description"],
-                              capability=templates_per_req["capability"]+"::SEED",
-                              description=templates_per_req["description"])
-                # end if
+                suite = cls.suite_add_transform(transform_reqs[t_i],
+                                                templates_per_req,
+                                                test_type, task, dataset, suite, "SEED")
             else:
                 test = MFT(**t)
                 suite.add(test,
@@ -196,20 +229,9 @@ class Testsuite:
                 # end if
             # end for
             if transform_reqs[t_i] is not None:
-                transform_req = transform_reqs[t_i]
-                transformer = TransformOperator(editor,
-                                                templates_per_req['capability'],
-                                                templates_per_req['description'],
-                                                transform_reqs[t_i])
-                test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
-                if func=="replace":
-                    t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
-                    test = INV(t.data)
-                    suite.add(test,
-                              name=f"{task}::SEED_TEMPS::"+templates_per_req["description"],
-                              capability=templates_per_req["capability"]+"::SEED_TEMPS",
-                              description=templates_per_req["description"])
-                # end if
+                suite = cls.suite_add_transform(transform_reqs[t_i],
+                                                templates_per_req,
+                                                test_type, task, dataset, suite, "SEED_TEMPS")
             else:
                 test = MFT(**t)
                 suite.add(test,
@@ -243,20 +265,9 @@ class Testsuite:
                 # end if
             # end for
             if transform_reqs[t_i] is not None:
-                transform_req = transform_reqs[t_i]
-                transformer = TransformOperator(editor,
-                                                templates_per_req['capability'],
-                                                templates_per_req['description'],
-                                                transform_reqs[t_i])
-                test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
-                if func=="replace":
-                    t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
-                    test = INV(t.data)
-                    suite.add(test,
-                              name=f"{task}::EXP_TEMPS::"+templates_per_req["description"],
-                              capability=templates_per_req["capability"]+"::EXP_TEMPS",
-                              description=templates_per_req["description"])
-                # end if
+                suite = cls.suite_add_transform(transform_reqs[t_i],
+                                                templates_per_req,
+                                                test_type, task, dataset, suite, "EXP_TEMPS")
             else:
                 test = MFT(**t)
                 suite.add(test, 
@@ -275,7 +286,7 @@ class Testsuite:
     def write_testsuites(cls, nlp_task, dataset, num_seeds):
         for task, seed, seed_temp, exp_temp, transform_reqs in cls.get_templates(nlp_task=nlp_task, dataset=dataset, num_seeds=num_seeds):
             editor = Editor()
-            Testsuite.write_editor_template(editor, task, seed, seed_temp, exp_temp, transform_reqs)
+            Testsuite.write_editor_template(editor, task, dataset, seed, seed_temp, exp_temp, transform_reqs)
         # end for
         return
 

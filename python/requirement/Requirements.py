@@ -152,8 +152,8 @@ class Requirements:
                         "description": d,
                         "search": [],
                         "transform": {
-                            "INV": "add positive phrase",
-                            "DIR": None
+                            "INV": None,
+                            "DIR": "add positive phrase"
                         }
                     })
                 elif d.lower()=="add negative phrases, fails if sent. goes up by > 0.1":
@@ -162,8 +162,8 @@ class Requirements:
                         "description": d,
                         "search": [],
                         "transform": {
-                            "INV": "add negative phrase",
-                            "DIR": None
+                            "INV": None,
+                            "DIR": "add negative phrase"
                         }
                     })
                 # end if

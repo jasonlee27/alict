@@ -14,6 +14,7 @@ from pathlib import Path
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from .Search import Search
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
 
@@ -35,11 +36,21 @@ random.seed(27)
 
 class TransformOperator:
 
-    def __init__(self, editor, req_capability, req_description, transform_reqs):
+    def __init__(self,
+                 editor,
+                 req_capability,
+                 req_description,
+                 transform_reqs,
+                 nlp_task=Macros.sa_task,
+                 search_dataset="sst"):
+        
         self.editor = editor # checklist.editor.Editor()
         self.capability = req_capability
         self.description = req_description
+        self.search_dataset = search_dataset
+        self.nlp_task = nlp_task
         self.transform_reqs = transform_reqs
+        self.search_reqs = None
         self.inv_replace_target_words = None
         self.inv_replace_forbidden_words = None
         self.transformation_funcs = None
@@ -51,7 +62,7 @@ class TransformOperator:
         if func=="replace":
             self.inv_replace_target_words = list()
             self.inv_replace_forbidden_words = list()
-            if woi=="word":
+            if sentiment=="neutral" and woi=="word":
                 self.inv_replace_target_words = set(SENT_DICT[f"{sentiment}_adj"] + \
                                                     SENT_DICT[f"{sentiment}_verb"] + \
                                                     SENT_DICT[f"{sentiment}_noun"])
@@ -59,7 +70,9 @@ class TransformOperator:
                                                        SENT_DICT["positive_adj"] + \
                                                        SENT_DICT[f"negative_adj"] + \
                                                        SENT_DICT[f"positive_verb"] + \
-                                                       SENT_DICT[f"negative_verb"])
+                                                       SENT_DICT[f"negative_verb"] + \
+                                                       SENT_DICT[f"positive_noun"] + \
+                                                       SENT_DICT[f"negative_noun"])
             else:
                 self.inv_replace_target_words = set(SENT_DICT[f"{sentiment}_{woi}"])
                 forbidden_sentiment = "negative"
@@ -72,8 +85,29 @@ class TransformOperator:
                                                        SENT_DICT[f"{forbidden_sentiment}_noun"])
             # end if
             self.transformation_funcs = f"INV_{func}_{sentiment}_{woi}"
-            self.inv_replace_target_words = set(self.inv_replace_target_words)
-            self.inv_replace_forbidden_words = set(self.inv_replace_forbidden_words)
+        elif func=="add":
+            if sentiment=="positive" and woi=="phrase":
+                self.search_reqs = {
+                    "capability": "",
+                    "description": "",
+                    "search": {
+                        "length": "<5",
+                        "score": ">0.9"
+                    }
+                }
+                self.dir_expect_func = Expect.pairwise(diff_up)
+            elif sentiment=="negative" and woi=="phrase":
+                self.search_reqs = {
+                    "capability": "",
+                    "description": "",
+                    "search": {
+                        "length": "<5",
+                        "score": "<0.1"
+                    }
+                }
+                self.dir_expect_func = Expect.pairwise(diff_down)
+            # end if
+            self.transformation_funcs = f"DIR_{func}_{sentiment}_{woi}"
         # end if
                 
     def replace(self, d):
@@ -100,7 +134,7 @@ class TransformOperator:
         # end if
 
     # functions for adding positive/negative phrase
-    def add_phrase_function(self, phrases):
+    def add(self, phrases):
         def pert(d):
             while d[-1].pos_ == 'PUNCT':
                 d = d[:-1]
@@ -136,3 +170,6 @@ class TransformOperator:
         else:
             return -(change - tolerance)
         # end if
+
+if __name__=="__main__":
+    
