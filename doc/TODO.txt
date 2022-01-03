@@ -1,14 +1,6 @@
 TASKS
 
-  - [JL] complete writing code for the requirement of "Replace neutral
-    words with other neutral words"
-  
-  + [JL] retrain the NLP model with CHECKLIST generated test cases and
-    test the model using the proposed methodology
-
-  + [JL] generated test cases using the proposed methodology searched
-    over the CHECKLIST generated test cases (modified code, but
-    not yet run)
+  - [JL] add more test capabilities (e.g. Robustness and NER)
 
   - [JL] send/ask for mapping test type descriptions in CHECKLIST
     testsuites and test types listed in CHECKLIST paper (sentiment
@@ -28,6 +20,15 @@ TASKS
 
   
 ==========
+  + [JL] complete writing code for the requirement of "Replace neutral
+    words with other neutral words"
+  
+  + [JL] retrain the NLP model with CHECKLIST generated test cases and
+    test the model using the proposed methodology
+
+  + [JL] generated test cases using the proposed methodology searched
+    over the CHECKLIST generated test cases (modified code, but
+    not yet run)
 
   + [JL] get the original test performance of the model tested.
 
