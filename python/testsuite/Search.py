@@ -14,6 +14,7 @@ from pathlib import Path
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from .Transform import CONTRACTION_MAP
 from ..requirement.Requirements import Requirements
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
@@ -113,8 +114,27 @@ class SearchOperator:
         # end if
 
     def _search_by_word_include(self, sents, word_cond):
-        pass
-
+        search = re.search("\<([^\<\>]+)\>", word_cond)
+        selected = list()
+        if search:
+            # if word condition searches a specific group of words
+            # such as "name of person, location"
+            word_group = search.group(1)
+            word_list = list()
+            if word_group=="punctuation":
+                word_list = CONTRACTION_MAP.keys()+CONTRACTION_MAP.values()
+            # end if
+            for s in sents:
+                is_contained = [True for w in word_list if w in s]
+                if any(is_contained):
+                    selected.append(s)
+                # end if
+            # end for
+        else:
+            selected = [s for s in sents if word_cond in s]
+        # end if
+        return selected
+    
     def _search_by_pos_include(self, sents, cond_key, cond_number):
         # sents: (s_i, tokenizes sentence, label)
         target_words = SENT_DICT[cond_key]
@@ -150,14 +170,13 @@ class SearchOperator:
         for param in params:
             word_include = param["word"]
             tpos_include = param["POS"]
+            
             if word_include is not None:
+                temp_sents = list()
                 for w in word_include:
-                    if len(sents[0])==4:
-                        _sents = [(s_i,s,l,sc) for s_i, s, l, sc in _sents if w in s]
-                    else:
-                        _sents = [(s_i,s,l) for s_i, s, l in _sents if w in s]
-                    # end if
+                    temp_sents.extend(self._search_by_word_include(_sents, w))
                 # end for
+                _sents = temp_sents
             # end if
         
             if tpos_include is not None:
@@ -262,68 +281,9 @@ class SearchOperator:
         else:
             result = [(s_i," ".join(s),l) for s_i, s, l in _sents if s_i in selected_indices]
         # end if
-        return result
+        return result        
 
-
-# class TransformOperator:
-
-#     def __init__(self, editor, req_capability, req_description, transform_reqs):
-#         self.editor = editor # checklist.editor.Editor()
-#         self.capability = req_capability
-#         self.description = req_description
-#         self.transform_reqs = transform_reqs
-#         self.inv_replace_target_words = None
-#         self.inv_replace_forbidden_words = None
-#         self.transformation_funcs = None
-
-#         # Find INV transformation operations
-#         func = transform_reqs["INV"].split()[0]
-#         sentiment = transform_reqs["INV"].split()[1]
-#         woi = transform_reqs["INV"].split()[2]
-#         if func=="replace":
-#             self.inv_replace_target_words = list()
-#             self.inv_replace_forbidden_words = list()
-#             if sentiment=="neutral" and woi=="word":
-#                 self.inv_replace_target_words = set(SENT_DICT[f"{sentiment}_adj"] + \
-#                                                     SENT_DICT[f"{sentiment}_verb"] + \
-#                                                     SENT_DICT[f"{sentiment}_noun"])
-#                 self.inv_replace_forbidden_words = set(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + \
-#                                                        SENT_DICT["positive_adj"] + \
-#                                                        SENT_DICT[f"negative_adj"] + \
-#                                                        SENT_DICT[f"positive_verb"] + \
-#                                                        SENT_DICT[f"negative_verb"] + \
-#                                                        SENT_DICT[f"positive_noun"] + \
-#                                                        SENT_DICT[f"negative_noun"])
-#             # end if
-#             self.transformation_funcs = f"INV_{func}_{sentiment}_{woi}"
-#             self.inv_replace_target_words = set(self.inv_replace_target_words)
-#             self.inv_replace_forbidden_words = set(self.inv_replace_forbidden_words)
-#         # end if
- 
-#     def replace(self, d):
-#         examples = list()
-#         subs = list()
-#         target_words = set(self.inv_replace_target_words)
-#         forbidden = self.inv_replace_forbidden_words
-        
-#         words_in = [x for x in d.split() if x in target_words]
-#         if not words_in:
-#             return None
-#         # end if
-#         for w in words_in:
-#             suggestions = [
-#                 x for x in self.editor.suggest_replace(d, w, beam_size=5, words_and_sentences=True)
-#                 if x[0] not in forbidden
-#             ]
-#             examples.extend([x[1] for x in suggestions])
-#             subs.extend(['%s -> %s' % (w, x[0]) for x in suggestions])
-#         # end for
-#         if examples:
-#             idxs = np.random.choice(len(examples), min(len(examples), 10), replace=False)
-#             return [examples[i] for i in idxs]#, [subs[i] for i in idxs])
-#         # end if
-        
-
+    
 class Sst:
 
     @classmethod

@@ -214,7 +214,9 @@ class Requirements:
                             {
                                 "include": {
                                     "POS":,
-                                    "word": "<punctuation>"
+                                    "word": [
+                                        "<punctuation>"
+                                    ]
                                 }
                             }
                         ],
