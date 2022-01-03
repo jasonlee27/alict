@@ -166,6 +166,63 @@ class Requirements:
                             "DIR": "add negative phrase"
                         }
                     })
+                elif d.lower()=="add randomly generated URLs and handles":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [],
+                        "transform": {
+                            "INV": "add random URL_handles",
+                            "DIR": None
+                        }
+                    })
+                elif d.lower()=="strip punctuation and/or add \".\"":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [],
+                        "transform": {
+                            "INV": "strip punctuation",
+                            "DIR": None
+                        }
+                    })
+                elif d.lower()=="swap two adjacent characters":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [],
+                        "transform": {
+                            "INV": "swap two_adjacent_characters",
+                            "DIR": None
+                        }
+                    })
+                elif d.lower()=="swap two adjacent characters twice":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [],
+                        "transform": {
+                            "INV": "swap two two_adjacent_characters",
+                            "DIR": None
+                        }
+                    })
+                elif d.lower()=="Contract or expand contractions":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [
+                            {
+                                "include": {
+                                    "POS":,
+                                    "word": "<punctuation>"
+                                }
+                            }
+                        ],
+                        "transform": {
+                            "INV": "contractions",
+                            "DIR": None
+                        }
+                    })
                 # end if
             # end for
         # end for

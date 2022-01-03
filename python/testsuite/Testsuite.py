@@ -156,7 +156,7 @@ class Testsuite:
                                 transformer.search_reqs,
                                 transformer.search_dataset
                         ) for _s in s["selected_inputs"]
-                    ]
+                    ][:10]
                     nlp = spacy.load('en_core_web_sm')
                     parsed_data = list(nlp.pipe(sentences))
                     t = Perturb.perturb(parsed_data, transformer.add(phrases), nsamples=500)
