@@ -121,7 +121,7 @@ class Requirements:
                                     "POS": [
                                         "neutral adjs"
                                     ],
-                                    "word": null
+                                    "word": None
                                 }
                             },
                             {
@@ -129,7 +129,7 @@ class Requirements:
                                     "POS": [
                                         "neutral verbs"
                                     ],
-                                    "word": null
+                                    "word": None
                                 }
                             },
                             {
@@ -137,7 +137,7 @@ class Requirements:
                                     "POS": [
                                         "neutral nouns"
                                     ],
-                                    "word": null
+                                    "word": None
                                 }
                             }
                         ],

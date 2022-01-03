@@ -15,12 +15,12 @@ from nltk.tokenize import word_tokenize as tokenize
 
 from checklist.editor import Editor
 from checklist.test_types import MFT, INV, DIR
-from checklist.expect import Expect
 from checklist.test_suite import TestSuite
 from checklist.perturb import Perturb
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from .Search import Search
 from .Transform import TransformOperator
 from .Template import Template
 
@@ -125,36 +125,41 @@ class Testsuite:
 
     @classmethod
     def suite_add_transform(cls,
+                            editor,
+                            sentences,
                             transform_req,
                             templates_per_req,
-                            test_type, task, dataset, suite, seed_type):
+                            task, dataset, suite, seed_type):
         transformer = TransformOperator(editor,
                                         templates_per_req['capability'],
                                         templates_per_req['description'],
-                                        transform_reqs[t_i],
+                                        transform_req,
                                         nlp_task=task,
                                         search_dataset=dataset)
         test_type, func, sentiment, woi = transformer.transformation_funcs.split('_')
         if test_type=="INV":
             if func=="replace":
-                t = Perturb.perturb(t.data, transformer.replace, nsamples=500)
-                test = INV(t.data)
-                suite.add(test,
-                          name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                          capability=templates_per_req["capability"]+f"::{seed_type}",
-                          description=templates_per_req["description"])
+                if task==Macros.sa_task:
+                    t = Perturb.perturb(sentences, transformer.replace, nsamples=500)
+                    test = INV(t.data)
+                    suite.add(test,
+                              name=f"{task}::{seed_type}::"+templates_per_req["description"],
+                              capability=templates_per_req["capability"]+f"::{seed_type}",
+                              description=templates_per_req["description"])
+                # end if
             # end if
         elif test_type=="DIR":
             if func=="add":
-                if self.nlp_task==Macros.sa_task:
-                    selected = Search.search_sentiment_analysis(
-                        transformer.search_reqs,
-                        transformer.search_dataset
-                    )
-                    phrases = [s[1] for s in selected["selected_inputs"]]
-                    goes_up = Expect.pairwise(transformer.diff_up)
-                    goes_down = Expect.pairwise(transformer.diff_down)
-                    t = Perturb.perturb(t.data, transformer.add(phrases), nsamples=500)
+                if task==Macros.sa_task:
+                    phrases = [ _s[1]
+                        for s in Search.search_sentiment_analysis(
+                                transformer.search_reqs,
+                                transformer.search_dataset
+                        ) for _s in s["selected_inputs"]
+                    ]
+                    nlp = spacy.load('en_core_web_sm')
+                    parsed_data = list(nlp.pipe(sentences))
+                    t = Perturb.perturb(parsed_data, transformer.add(phrases), nsamples=500)
                     test = DIR(t.data, transformer.dir_expect_func)
                     suite.add(test,
                               name=f"{task}::{seed_type}::"+templates_per_req["description"],
@@ -167,20 +172,18 @@ class Testsuite:
         
     @classmethod
     def write_editor_template(cls,
-                              editor,
                               task,
                               dataset,
                               seed_dicts,
                               seed_template_dicts,
                               exp_template_dicts,
                               transform_reqs):
-        
         res_dir = Macros.result_dir / "test_results"
         res_dir.mkdir(parents=True, exist_ok=True)
-
         for t_i, templates_per_req in enumerate(seed_dicts):
             t = None
             suite = TestSuite()
+            editor = Editor()
             for temp_i, temp in enumerate(templates_per_req["templates"]):
                 if temp_i==0:
                     t = editor.template(temp["sent"],
@@ -193,9 +196,11 @@ class Testsuite:
                 # end if
             # end for
             if transform_reqs[t_i] is not None:
-                suite = cls.suite_add_transform(transform_reqs[t_i],
+                suite = cls.suite_add_transform(editor,
+                                                t.data,
+                                                transform_reqs[t_i],
                                                 templates_per_req,
-                                                test_type, task, dataset, suite, "SEED")
+                                                task, dataset, suite, "SEED")
             else:
                 test = MFT(**t)
                 suite.add(test,
@@ -212,6 +217,7 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(seed_template_dicts):
             t = None
             suite = TestSuite()
+            editor = Editor()
             for temp_i, temp in enumerate(templates_per_req["templates"]):
                 for key, val in temp["values"].items():
                     if key not in editor.lexicons.keys():
@@ -229,9 +235,11 @@ class Testsuite:
                 # end if
             # end for
             if transform_reqs[t_i] is not None:
-                suite = cls.suite_add_transform(transform_reqs[t_i],
+                suite = cls.suite_add_transform(editor,
+                                                t.data,
+                                                transform_reqs[t_i],
                                                 templates_per_req,
-                                                test_type, task, dataset, suite, "SEED_TEMPS")
+                                                task, dataset, suite, "SEED_TEMPS")
             else:
                 test = MFT(**t)
                 suite.add(test,
@@ -248,6 +256,7 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(exp_template_dicts):
             t = None
             suite = TestSuite()
+            editor = Editor()
             for temp_i, temp in enumerate(templates_per_req["templates"]):
                 for key, val in temp["values"].items():
                     if key not in editor.lexicons.keys():
@@ -265,9 +274,11 @@ class Testsuite:
                 # end if
             # end for
             if transform_reqs[t_i] is not None:
-                suite = cls.suite_add_transform(transform_reqs[t_i],
+                suite = cls.suite_add_transform(editor,
+                                                t.data,
+                                                transform_reqs[t_i],
                                                 templates_per_req,
-                                                test_type, task, dataset, suite, "EXP_TEMPS")
+                                                task, dataset, suite, "EXP_TEMPS")
             else:
                 test = MFT(**t)
                 suite.add(test, 
@@ -285,8 +296,7 @@ class Testsuite:
     @classmethod
     def write_testsuites(cls, nlp_task, dataset, num_seeds):
         for task, seed, seed_temp, exp_temp, transform_reqs in cls.get_templates(nlp_task=nlp_task, dataset=dataset, num_seeds=num_seeds):
-            editor = Editor()
-            Testsuite.write_editor_template(editor, task, dataset, seed, seed_temp, exp_temp, transform_reqs)
+            Testsuite.write_editor_template(task, dataset, seed, seed_temp, exp_temp, transform_reqs)
         # end for
         return
 

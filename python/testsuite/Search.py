@@ -382,11 +382,17 @@ class Sst:
     
     @classmethod
     def search(cls, req):
-        # sent: (index, sentence)
-        # label: (index, label score)
         sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file, Macros.sst_dict_file)
         req_obj = SearchOperator(req)
-        selected = sorted([(s[0],s[1],s[2],s[3]) for s in req_obj.search(sents)], key=lambda x: x[0])
+        if len(req_obj.search_reqs_list)>0:
+            if len(sents[0])==4:
+                selected = sorted([(s[0],s[1],s[2],s[3]) for s in req_obj.search(sents)], key=lambda x: x[0])
+            else:
+                selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
+            # end if
+        else:
+            selected = sents
+        # end if
         random.shuffle(selected)
         return selected
 

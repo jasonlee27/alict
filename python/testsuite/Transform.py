@@ -10,11 +10,11 @@ import checklist
 import numpy as np
 
 from nltk.tokenize import word_tokenize as tokenize
+from checklist.expect import Expect
 from pathlib import Path
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from .Search import Search
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
 
@@ -56,9 +56,18 @@ class TransformOperator:
         self.transformation_funcs = None
 
         # Find INV transformation operations
-        func = transform_reqs["INV"].split()[0]
-        sentiment = transform_reqs["INV"].split()[1]
-        woi = transform_reqs["INV"].split()[2]
+        if transform_reqs["INV"] is not None:
+            self.set_inv_env(transform_reqs["INV"])
+        # end if
+        
+        if transform_reqs["DIR"] is not None:
+            self.set_dir_env(transform_reqs["DIR"])
+        # end if
+        
+    def set_inv_env(self, inv_transform_reqs):
+        func = inv_transform_reqs.split()[0]
+        sentiment = inv_transform_reqs.split()[1]
+        woi = inv_transform_reqs.split()[2]
         if func=="replace":
             self.inv_replace_target_words = list()
             self.inv_replace_forbidden_words = list()
@@ -85,30 +94,38 @@ class TransformOperator:
                                                        SENT_DICT[f"{forbidden_sentiment}_noun"])
             # end if
             self.transformation_funcs = f"INV_{func}_{sentiment}_{woi}"
-        elif func=="add":
+        # end if
+        return
+
+    def set_dir_env(self, dir_transform_reqs):
+        func = dir_transform_reqs.split()[0]
+        sentiment = dir_transform_reqs.split()[1]
+        woi = dir_transform_reqs.split()[2]
+        if func=="add":
             if sentiment=="positive" and woi=="phrase":
-                self.search_reqs = {
+                self.search_reqs = [{
                     "capability": "",
                     "description": "",
-                    "search": {
+                    "search": [{
                         "length": "<5",
                         "score": ">0.9"
-                    }
-                }
-                self.dir_expect_func = Expect.pairwise(diff_up)
+                    }]
+                }]
+                self.dir_expect_func = Expect.pairwise(self.diff_up)
             elif sentiment=="negative" and woi=="phrase":
-                self.search_reqs = {
+                self.search_reqs = [{
                     "capability": "",
                     "description": "",
-                    "search": {
+                    "search": [{
                         "length": "<5",
                         "score": "<0.1"
-                    }
-                }
-                self.dir_expect_func = Expect.pairwise(diff_down)
+                    }]
+                }]
+                self.dir_expect_func = Expect.pairwise(self.diff_down)
             # end if
             self.transformation_funcs = f"DIR_{func}_{sentiment}_{woi}"
         # end if
+        return
                 
     def replace(self, d):
         examples = list()
@@ -171,5 +188,4 @@ class TransformOperator:
             return -(change - tolerance)
         # end if
 
-if __name__=="__main__":
     
