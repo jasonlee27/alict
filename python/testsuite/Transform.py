@@ -6,6 +6,7 @@ import re, os
 import sys
 import json
 import random
+import string
 import checklist
 import numpy as np
 
@@ -96,16 +97,22 @@ class TransformOperator:
         # end if
         
     def set_inv_env(self, inv_transform_reqs):
-        func = inv_transform_reqs.split()[0]
-        sentiment = inv_transform_reqs.split()[1]
-        woi = inv_transform_reqs.split()[2]
+        if len(inv_transform_reqs.split())==2:
+            func = inv_transform_reqs.split()[0]
+            _property = None
+            woi = inv_transform_reqs.split()[1]
+        else:
+            func = inv_transform_reqs.split()[0]
+            _property = inv_transform_reqs.split()[1]
+            woi = inv_transform_reqs.split()[2]
+        # end if
         if func=="replace":
             self.inv_replace_target_words = list()
             self.inv_replace_forbidden_words = list()
-            if sentiment=="neutral" and woi=="word":
-                self.inv_replace_target_words = set(SENT_DICT[f"{sentiment}_adj"] + \
-                                                    SENT_DICT[f"{sentiment}_verb"] + \
-                                                    SENT_DICT[f"{sentiment}_noun"])
+            if _property=="neutral" and woi=="word":
+                self.inv_replace_target_words = set(SENT_DICT[f"{_property}_adj"] + \
+                                                    SENT_DICT[f"{_property}_verb"] + \
+                                                    SENT_DICT[f"{_property}_noun"])
                 self.inv_replace_forbidden_words = set(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + \
                                                        SENT_DICT["positive_adj"] + \
                                                        SENT_DICT[f"negative_adj"] + \
@@ -114,26 +121,32 @@ class TransformOperator:
                                                        SENT_DICT[f"positive_noun"] + \
                                                        SENT_DICT[f"negative_noun"])
             else:
-                self.inv_replace_target_words = set(SENT_DICT[f"{sentiment}_{woi}"])
-                forbidden_sentiment = "negative"
-                if sentiment=="negative":
-                    forbidden_sentiment = "positive"
+                self.inv_replace_target_words = set(SENT_DICT[f"{_property}_{woi}"])
+                forbidden_property = "negative"
+                if _property=="negative":
+                    forbidden_property = "positive"
                 # end if
                 self.inv_replace_forbidden_words = set(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + \
-                                                       SENT_DICT[f"{forbidden_sentiment}_adj"] + \
-                                                       SENT_DICT[f"{forbidden_sentiment}_verb"] + \
-                                                       SENT_DICT[f"{forbidden_sentiment}_noun"])
+                                                       SENT_DICT[f"{forbidden_property}_adj"] + \
+                                                       SENT_DICT[f"{forbidden_property}_verb"] + \
+                                                       SENT_DICT[f"{forbidden_property}_noun"])
             # end if
-            self.transformation_funcs = f"INV_{func}_{sentiment}_{woi}"
+            self.transformation_funcs = f"INV_{func}_{_property}_{woi}"
         # end if
         return
 
     def set_dir_env(self, dir_transform_reqs):
-        func = dir_transform_reqs.split()[0]
-        sentiment = dir_transform_reqs.split()[1]
-        woi = dir_transform_reqs.split()[2]
+        if len(inv_transform_reqs.split())==2:
+            func = dir_transform_reqs.split()[0]
+            _property = None
+            woi = dir_transform_reqs.split()[2]
+        else:
+            func = dir_transform_reqs.split()[0]
+            _property = dir_transform_reqs.split()[1]
+            woi = dir_transform_reqs.split()[2]
+        # end if
         if func=="add":
-            if sentiment=="positive" and woi=="phrase":
+            if _property=="positive" and woi=="phrase":
                 self.search_reqs = [{
                     "capability": "",
                     "description": "",
@@ -143,7 +156,7 @@ class TransformOperator:
                     }]
                 }]
                 self.dir_expect_func = Expect.pairwise(self.diff_up)
-            elif sentiment=="negative" and woi=="phrase":
+            elif _property=="negative" and woi=="phrase":
                 self.search_reqs = [{
                     "capability": "",
                     "description": "",
@@ -154,7 +167,7 @@ class TransformOperator:
                 }]
                 self.dir_expect_func = Expect.pairwise(self.diff_down)
             # end if
-            self.transformation_funcs = f"DIR_{func}_{sentiment}_{woi}"
+            self.transformation_funcs = f"DIR_{func}_{_property}_{woi}"
         # end if
         return
                 
@@ -182,14 +195,14 @@ class TransformOperator:
         # end if
 
     # functions for adding positive/negative phrase
-    def add(self, phrases):
+    def add_phrase(self, phrases):
         def pert(d):
             while d[-1].pos_ == 'PUNCT':
                 d = d[:-1]
             # end while
             d = d.text
             ret = [d + '. ' + x for x in phrases]
-            idx = np.random.choice(len(ret), 10, replace=False)
+            idx = np.random.choice(len(ret), min(len(ret),10), replace=False)
             ret = [ret[i] for i in idx]
             return ret
         return pert
@@ -219,4 +232,20 @@ class TransformOperator:
             return -(change - tolerance)
         # end if
 
+    def random_string(self, n):
+        return ''.join(np.random.choice([x for x in string.ascii_letters + string.digits], n))
+        
+    def random_url(self, n=6):
+        return 'https://t.co/%s' % self.random_string(n)
+    
+    def random_handle(self, n=6):
+        return '@%s' % self.random_string(n)
+
+    def add_irrelevant(self, sentence):
+        urls_and_handles = [self.random_url(n=6) for _ in range(5)] + [self.random_handle() for _ in range(5)]
+        irrelevant_before = ['@airline '] + urls_and_handles
+        irrelevant_after = urls_and_handles 
+        rets = ['%s %s' % (x, sentence) for x in irrelevant_before ]
+        rets += ['%s %s' % (sentence, x) for x in irrelevant_after]
+        return rets
     

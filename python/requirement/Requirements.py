@@ -192,11 +192,11 @@ class Requirements:
                         "description": d,
                         "search": [],
                         "transform": {
-                            "INV": "swap two_adjacent_characters",
+                            "INV": "swap one two_adjacent_characters",
                             "DIR": None
                         }
                     })
-                elif d.lower()=="swap two adjacent characters twice":
+                elif d.lower()=="swap two adjacent_characters":
                     reqs.append({
                         "capability": cap,
                         "description": d,
@@ -206,14 +206,14 @@ class Requirements:
                             "DIR": None
                         }
                     })
-                elif d.lower()=="Contract or expand contractions":
+                elif d.lower()=="contract or expand contractions":
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search": [
                             {
                                 "include": {
-                                    "POS":,
+                                    "POS": None,
                                     "word": [
                                         "<punctuation>"
                                     ]
@@ -221,7 +221,7 @@ class Requirements:
                             }
                         ],
                         "transform": {
-                            "INV": "contractions",
+                            "INV": "contract/expand contraction",
                             "DIR": None
                         }
                     })
