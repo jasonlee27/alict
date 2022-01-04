@@ -253,15 +253,7 @@ class Requirements:
                                 "include": {
                                     "POS": None,
                                     "word": [
-                                        "<city_name>"
-                                    ]
-                                }
-                            }
-                            {
-                                "include": {
-                                    "POS": None,
-                                    "word": [
-                                        "<country_name>"
+                                        "<location_name>"
                                     ]
                                 }
                             }

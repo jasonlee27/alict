@@ -5,6 +5,7 @@ from typing import *
 import re, os
 import sys
 import json
+import spacy
 import random
 import checklist
 import numpy as np
@@ -87,7 +88,55 @@ class SearchOperator:
         # end if
         return results
 
-    def search_by_person_name_include(self, sents, search_reqs):
+    def search_by_person_name_include(self, sents):
+        nlp = spacy.load('en_core_web_sm')
+        results = list()
+        for sent in sents:
+            doc = nlp(sent)
+            is_person_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'PERSON' for a in x])])
+            if is_person_name_contained:
+                resluts.append(sent)
+            # end if
+        # end for
+        return results
+
+    def search_by_location_name_include(self, sents):
+        # location: city names && country names
+        nlp = spacy.load('en_core_web_sm')
+        results = list()
+        for sent in sents:
+            doc = nlp(sent)
+            is_loc_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'GPE' for a in x])])
+            if is_loc_name_contained:
+                resluts.append(sent)
+            # end if
+        # end for
+        return results
+    
+    def search_by_number_include(self, sents):
+        nlp = spacy.load('en_core_web_sm')
+        results = list()
+        for sent in sents:
+            doc = nlp(sent)
+            is_number_contained = any([True for x in doc if x.text.isdigit()])
+            if is_number_contained:
+                resluts.append(sent)
+            # end if
+        # end for
+        return results
+
+    def search_by_punctuation_include(self, sents):
+        word_list = CONTRACTION_MAP.keys()+CONTRACTION_MAP.values()
+        results = list()
+        for s in sents:
+            # if len(sents[0])==4: sents = List[(s_i,tokenize(s),label,label_scores)]
+            # if len(sents[0])==3: sents = List[(s_i,tokenize(s),label)]
+            is_contained = [True for w in word_list if w in s[1]]
+            if any(is_contained):
+                results.append(s)
+            # end if
+        # end for
+        return results
 
     def search_by_score(self, sents, search_reqs):
         param = search_reqs["score"]
@@ -124,16 +173,16 @@ class SearchOperator:
             word_group = search.group(1)
             word_list = list()
             if word_group=="punctuation":
-                word_list = CONTRACTION_MAP.keys()+CONTRACTION_MAP.values()
+                selected = self.search_by_punctuation_include(sents)
+            elif word_group=="person_name":
+                selected = self.search_by_person_name_include(sents)
+            elif word_group=="location_name":
+                selected = self.search_by_location_name_include(sents)
+            elif word_group=="number":
+                selected = self.search_by_number_include(sents)
             # end if
-            for s in sents:
-                is_contained = [True for w in word_list if w in s]
-                if any(is_contained):
-                    selected.append(s)
-                # end if
-            # end for
         else:
-            selected = [s for s in sents if word_cond in s]
+            selected = [s for s in sents if word_cond in s[1]]
         # end if
         return selected
     
@@ -175,10 +224,9 @@ class SearchOperator:
             
             if word_include is not None:
                 temp_sents = list()
-                for w in word_include:
-                    temp_sents.extend(self._search_by_word_include(_sents, w))
+                for w in word_include: # AND relationship
+                    _sents = self._search_by_word_include(_sents, w)
                 # end for
-                _sents = temp_sents
             # end if
         
             if tpos_include is not None:
