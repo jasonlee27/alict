@@ -87,6 +87,8 @@ class SearchOperator:
         # end if
         return results
 
+    def search_by_person_name_include(self, sents, search_reqs):
+
     def search_by_score(self, sents, search_reqs):
         param = search_reqs["score"]
         # match = re.search(r"([<>]=?|==)(\d+\.?\d+)", param)

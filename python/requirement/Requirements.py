@@ -225,6 +225,71 @@ class Requirements:
                             "DIR": None
                         }
                     })
+                elif d.lower()=="replace names with other common names":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [
+                            {
+                                "include": {
+                                    "POS": None,
+                                    "word": [
+                                        "<person_name>"
+                                    ]
+                                }
+                            }
+                        ],
+                        "transform": {
+                            "INV": "change name",
+                            "DIR": None
+                        }
+                    })
+                elif d.lower()=="replace city or country names with other cities or countries":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [
+                            {
+                                "include": {
+                                    "POS": None,
+                                    "word": [
+                                        "<city_name>"
+                                    ]
+                                }
+                            }
+                            {
+                                "include": {
+                                    "POS": None,
+                                    "word": [
+                                        "<country_name>"
+                                    ]
+                                }
+                            }
+                        ],
+                        "transform": {
+                            "INV": "change location",
+                            "DIR": None
+                        }
+                    })
+                elif d.lower()=="replace integers with random integers within a 20% radius of the original":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [
+                            {
+                                "include": {
+                                    "POS": None,
+                                    "word": [
+                                        "<number>"
+                                    ]
+                                }
+                            }
+                        ],
+                        "transform": {
+                            "INV": "change number",
+                            "DIR": None
+                        }
+                    })
                 # end if
             # end for
         # end for

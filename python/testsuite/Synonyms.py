@@ -9,7 +9,8 @@ import random
 
 # from nltk.corpus import wordnet
 from .cfg.CFG import BeneparCFG
-
+from ..utils.Macros import Macros
+from ..utils.Utils import Utils
 
 class Synonyms:
 
@@ -85,8 +86,7 @@ class Synonyms:
                 synonyms.append(word)
             # end if
         # end for
-        synonyms = list(set(synonyms))
-        return synonyms[Macros.max_num_synonyms]
+        return list(set(synonyms))
 
     
 
