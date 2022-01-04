@@ -136,7 +136,7 @@ class TransformOperator:
         return
 
     def set_dir_env(self, dir_transform_reqs):
-        if len(inv_transform_reqs.split())==2:
+        if len(dir_transform_reqs.split())==2:
             func = dir_transform_reqs.split()[0]
             _property = None
             woi = dir_transform_reqs.split()[2]

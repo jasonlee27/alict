@@ -85,7 +85,8 @@ class Synonyms:
                 synonyms.append(word)
             # end if
         # end for
-        return list(set(synonyms))
+        synonyms = list(set(synonyms))
+        return synonyms[Macros.max_num_synonyms]
 
     
 

@@ -47,12 +47,12 @@ class Testmodel:
                 if local_model_name is None:
                     # # Run Google nlp model
                     # print(f">>>>> MODEL: Google NLP model")
-                    # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=500)
+                    # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
                     # print(f"<<<<< MODEL: Google NLP model")
                     
                     for mname, model in Model.load_models(task):
                         print(f">>>>> MODEL: {mname}")
-                        Model.run(testsuite, model, cls.model_func_map[task], n=500)
+                        Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples)
                         print(f"<<<<< MODEL: {mname}")
                     # end for
                 else:
@@ -75,19 +75,19 @@ class Testmodel:
         if local_model_name is None:
             # Run Google nlp model
             print(f">>>>> MODEL: Google NLP model")
-            GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=500)
+            GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
             print(f"<<<<< MODEL: Google NLP model")
             
             for mname, model in Model.load_models(task):
                 print(f">>>>> MODEL: {mname}")
-                Model.run(testsuite, model, cls.model_func_map[task], n=500)
+                Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples)
                 print(f"<<<<< MODEL: {mname}")
             # end for
             print("**********")
         else:
             print(f">>>>> RETRAINED MODEL: {local_model_name}")
             model = Model.load_local_model(task, local_model_name)
-            Model.run(testsuite, model, cls.model_func_map[task], n=500)
+            Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples)
             print(f"<<<<< RETRAINED MODEL: {local_model_name}")
         # end if
         return

@@ -76,7 +76,7 @@ class GoogleModel:
         return preds, pp
     
     @classmethod
-    def run(cls, testsuite, pred_and_conf_fn, n=500):
+    def run(cls, testsuite, pred_and_conf_fn, n=Macros.nsamples):
         testsuite.run(pred_and_conf_fn, n=n, overwrite=True)
         testsuite.summary(n=100)
         return
