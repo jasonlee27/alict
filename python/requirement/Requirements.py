@@ -180,7 +180,16 @@ class Requirements:
                     reqs.append({
                         "capability": cap,
                         "description": d,
-                        "search": [],
+                        "search": [
+                            {
+                                "include": {
+                                    "POS": None,
+                                    "word": [
+                                        "<punctuation>"
+                                    ]
+                                }
+                            }
+                        ],
                         "transform": {
                             "INV": "strip punctuation",
                             "DIR": None
@@ -215,7 +224,7 @@ class Requirements:
                                 "include": {
                                     "POS": None,
                                     "word": [
-                                        "<punctuation>"
+                                        "<contraction>"
                                     ]
                                 }
                             }

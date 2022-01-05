@@ -11,6 +11,7 @@ import checklist
 import numpy as np
 
 from nltk.tokenize import word_tokenize as tokenize
+from nltk.tokenize.treebank import TreebankWordDetokenizer
 from pathlib import Path
 
 from ..utils.Macros import Macros
@@ -71,31 +72,44 @@ class SearchOperator:
             _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in sents]
             for s_i, s, l, sc in _sents:
                 if s[-1]=="." and (eval(f"{len(s)-1} {op} {_len}")):
-                    results.append((s_i," ".join(s),l,sc))
+                    results.append((s_i,TreebankWordDetokenizer().detokenize(s),l,sc))
                 elif s[-1]!="." and (eval(f"{len(s)} {op} {_len}")):
-                    results.append((s_i," ".join(s),l,sc))
+                    results.append((s_i,TreebankWordDetokenizer().detokenize(s),l,sc))
                 # end if
             # end for
         else:
             _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
             for s_i, s, l in _sents:
                 if s[-1]=="." and (eval(f"{len(s)-1}{op}{_len}")):
-                    results.append((s_i," ".join(s),l))
+                    results.append((s_i,TreebankWordDetokenizer().detokenize(s),l))
                 elif s[-1]!="." and (eval(f"{len(s)}{op}{_len}")):
-                    results.append((s_i," ".join(s),l))
+                    results.append((s_i,TreebankWordDetokenizer().detokenize(s),l))
                 # end if
             # end for
         # end if
         return results
 
+    def search_by_punctuation_include(self, sents):
+        nlp = spacy.load('en_core_web_sm')
+        results = list()
+        for sent in sents:
+            s = TreebankWordDetokenizer().detokenize(sent[1])
+            doc = nlp(s)
+            if len(doc) and doc[-1].pos_ == 'PUNCT':
+                results.append(sent)
+            # end if
+        # end for
+        return results
+    
     def search_by_person_name_include(self, sents):
         nlp = spacy.load('en_core_web_sm')
         results = list()
         for sent in sents:
-            doc = nlp(sent)
+            s = TreebankWordDetokenizer().detokenize(sent[1])
+            doc = nlp(s)
             is_person_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'PERSON' for a in x])])
             if is_person_name_contained:
-                resluts.append(sent)
+                results.append(sent)
             # end if
         # end for
         return results
@@ -105,10 +119,11 @@ class SearchOperator:
         nlp = spacy.load('en_core_web_sm')
         results = list()
         for sent in sents:
-            doc = nlp(sent)
+            s = TreebankWordDetokenizer().detokenize(sent[1])
+            doc = nlp(s)
             is_loc_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'GPE' for a in x])])
             if is_loc_name_contained:
-                resluts.append(sent)
+                results.append(sent)
             # end if
         # end for
         return results
@@ -116,24 +131,24 @@ class SearchOperator:
     def search_by_number_include(self, sents):
         nlp = spacy.load('en_core_web_sm')
         results = list()
-        for sent in sents:
-            doc = nlp(sent)
+        for s in sents:
+            s = TreebankWordDetokenizer().detokenize(sent[1])
+            doc = nlp(s)
             is_number_contained = any([True for x in doc if x.text.isdigit()])
             if is_number_contained:
-                resluts.append(sent)
+                results.append(sent)
             # end if
         # end for
         return results
 
-    def search_by_punctuation_include(self, sents):
-        word_list = CONTRACTION_MAP.keys()+CONTRACTION_MAP.values()
+    def search_by_contraction_include(self, sents):
+        word_list = list(CONTRACTION_MAP.keys())+[v for vals in CONTRACTION_MAP.values() for v in vals]
         results = list()
-        for s in sents:
-            # if len(sents[0])==4: sents = List[(s_i,tokenize(s),label,label_scores)]
-            # if len(sents[0])==3: sents = List[(s_i,tokenize(s),label)]
-            is_contained = [True for w in word_list if w in s[1]]
+        for sent in sents:
+            s = TreebankWordDetokenizer().detokenize(sent[1])
+            is_contained = [True for w in word_list if w in s]
             if any(is_contained):
-                results.append(s)
+                results.append(sent)
             # end if
         # end for
         return results
@@ -143,10 +158,14 @@ class SearchOperator:
         # match = re.search(r"([<>]=?|==)(\d+\.?\d+)", param)
         # op, score = match.groups()
         results = list()
-        _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in sents]
+        if len(sents[0])==4:
+            _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in sents]
+        else:
+            _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
+        # end if
         for s_i, s, l, sc in _sents:
             if eval(f"{sc}{param}"):
-                results.append((s_i," ".join(s),l,sc))
+                results.append((s_i,TreebankWordDetokenizer().detokenize(s),l,sc))
             # end if
         # end for
         return results
@@ -172,7 +191,9 @@ class SearchOperator:
             # such as "name of person, location"
             word_group = search.group(1)
             word_list = list()
-            if word_group=="punctuation":
+            if word_group=="contraction":
+                selected = self.search_by_contraction_include(sents)
+            elif word_group=="punctuation":
                 selected = self.search_by_punctuation_include(sents)
             elif word_group=="person_name":
                 selected = self.search_by_person_name_include(sents)
@@ -207,23 +228,22 @@ class SearchOperator:
         return selected
         
     def search_by_include(self, sents, search_reqs):
-        _sents = sents.copy()
-        if len(sents[0])==4:
-            _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in sents]
-        else:
-            _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
-        # end if
         params = search_reqs["include"]
         if type(params)==dict:
             params = [params]
         # end if
         selected_indices = list()
+        _sents = sents.copy()
+        if len(sents[0])==4:
+            _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in _sents]
+        else:
+            _sents = [(s_i,tokenize(s),l) for s_i, s, l in _sents]
+        # end if
         for param in params:
             word_include = param["word"]
             tpos_include = param["POS"]
             
             if word_include is not None:
-                temp_sents = list()
                 for w in word_include: # AND relationship
                     _sents = self._search_by_word_include(_sents, w)
                 # end for
@@ -258,9 +278,9 @@ class SearchOperator:
         # end for
         result = list()
         if len(sents[0])==4:
-            result = [(s_i," ".join(s),l,sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
+            result = [(s_i,TreebankWordDetokenizer().detokenize(s),l,sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
         else:
-            result = [(s_i," ".join(s),l) for s_i, s, l in _sents if s_i in selected_indices]
+            result = [(s_i,TreebankWordDetokenizer().detokenize(s),l) for s_i, s, l in _sents if s_i in selected_indices]
         # end if
         return result
 
@@ -327,11 +347,11 @@ class SearchOperator:
         # end for
         result = list()
         if len(sents[0])==4:
-            result = [(s_i," ".join(s),l, sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
+            result = [(s_i,TreebankWordDetokenizer().detokenize(s),l, sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
         else:
-            result = [(s_i," ".join(s),l) for s_i, s, l in _sents if s_i in selected_indices]
+            result = [(s_i,TreebankWordDetokenizer().detokenize(s),l) for s_i, s, l in _sents if s_i in selected_indices]
         # end if
-        return result        
+        return result
 
     
 class Sst:

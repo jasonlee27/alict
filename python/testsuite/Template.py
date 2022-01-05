@@ -13,6 +13,7 @@ import spacy
 from pathlib import Path
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 from nltk.tokenize import word_tokenize as tokenize
+from nltk.tokenize.treebank import TreebankWordDetokenizer
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -197,7 +198,7 @@ class Template:
             # end if
        # end for
         return {
-            "input": " ".join(tokens),
+            "input": TreebankWordDetokenizer().detokenize(tokens),
             "place_holder": template
         }, prev_synonyms
 
