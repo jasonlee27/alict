@@ -1,6 +1,10 @@
 TASKS
 
-  - [JL] add more test capabilities (e.g. Robustness and NER)
+  - [JL] add more Temporal test capabilities.
+
+  - [JL] add more Temporal Negation test capabilities.
+
+  - [JL] add more Temporal SRL test capabilities.
 
   - [JL] send/ask for mapping test type descriptions in CHECKLIST
     testsuites and test types listed in CHECKLIST paper (sentiment
@@ -20,6 +24,8 @@ TASKS
 
   
 ==========
+  + [JL] add more test capabilities (e.g. Robustness and NER)
+
   + [JL] complete writing code for the requirement of "Replace neutral
     words with other neutral words"
   
