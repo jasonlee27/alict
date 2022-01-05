@@ -240,7 +240,7 @@ class Requirements:
                             }
                         ],
                         "transform": {
-                            "INV": "change name",
+                            "INV": "replace person_name",
                             "DIR": None
                         }
                     })
@@ -259,7 +259,7 @@ class Requirements:
                             }
                         ],
                         "transform": {
-                            "INV": "change location",
+                            "INV": "replace location_name",
                             "DIR": None
                         }
                     })
@@ -278,7 +278,7 @@ class Requirements:
                             }
                         ],
                         "transform": {
-                            "INV": "change number",
+                            "INV": "replace number",
                             "DIR": None
                         }
                     })
