@@ -1,0 +1,187 @@
+
+%%% macros.tex
+%%% Import packages, define utility commands and define macros
+%%% Version 1.2.0
+
+%%%----------
+%%% Imports
+
+%%% Text Formatting
+\usepackage{microtype}
+\usepackage{xspace}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[normalem]{ulem} % normalem do not replace \emph to underline
+\usepackage{amsmath}
+\usepackage{enumitem}
+
+%%% Reference, Citation and Link
+\usepackage{hyperref}
+%\usepackage{url}
+\usepackage{breakurl}
+%\usepackage{cite}
+
+%%% Tables
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{ragged2e}
+
+%%% Plots
+\usepackage{caption}
+%\usepackage{subcaption}
+%\usepackage{subfloat}
+%\usepackage{wrapfig}
+\usepackage{subfig}
+
+% Code
+\usepackage{listings}
+
+% Tikz Figs
+\usepackage{tikz}
+%\usepackage{pgf-umlsd} % for flow diagram
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{positioning}
+%\usetikzlibrary{shapes}
+
+%%% Miscellaneous
+%\usepackage{flushend} % balance the end of double column document
+\usepackage{datetime} % for getting current date time
+
+%%%----------
+%%% Utility Commands
+\newcommand{\XSpace}[1]{}
+\newcommand{\XComment}[1]{}
+\newcommand{\Fix}[1]{\textcolor{red}{#1}}
+%\newcommand{\CR}[2]{\textcolor{blue}{#1}\textcolor{brown}{\sout{#2}}}
+\newcommand{\CR}[2]{#1}
+\newcommand{\EditAdd}[1]{\textcolor{green}{[#1]}}
+\newcommand{\EditRm}[1]{\textcolor{red}{[\sout{#1}]}}
+\newcommand{\EditMod}[2]{\textcolor{red}{[\sout{#1}]}\textcolor{green}{[#2]}}
+\newcommand{\DefMacro}[2]{\expandafter\newcommand\csname rmk-#1\endcsname{#2}}
+\newcommand{\UseMacro}[1]{\csname rmk-#1\endcsname}
+\newcommand{\CfgStmtTableCaptionVSpace}{-5pt}
+\newcommand{\ResultTableCaptionVSpace}{-5pt}
+\newcommand{\AblationResultTableCaptionVSpace}{-5pt}
+
+\newcommand{\jl}[1]{\textcolor{magenta}{JL: #1}}
+
+\newcommand{\MyPara}[1]{\vspace{0pt}\noindent\textbf{#1}.}
+\newcommand{\MyParaOnly}[1]{\noindent\textbf{#1}}
+\newcommand{\reducedstrut}{\vrule width 0pt height .9\ht\strutbox depth .9\dp\strutbox\relax}
+\newcommand{\InputWithSpace}[1]{\bgroup\def\arraystretch{1.2}\input{#1}\egroup}
+\newcommand{\Code}[1]{{\ifmmode{\mathtt{#1}}\else$\mathtt{#1}$\fi}}
+\newcommand{\CodeIn}[1]{{\ifmmode{\mathtt{#1}}\else$\mathtt{#1}$\fi}}
+\newcommand{\ColorBack}[1]{%
+  \begingroup
+  \setlength{\fboxsep}{0pt}%
+  \colorbox{purple!20}{\reducedstrut#1\/}%
+  \endgroup
+}
+
+% for table headers
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+\newcolumntype{R}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\def\clap#1{\hbox to 0pt{\hss#1\hss}}
+
+%%% TEXT
+%% \newcommand{\Title}{Naturalness of Hardware Designs}
+%% \newcommand{\Title}{On the Naturalness of Hardware Designs}
+\newcommand{\Title}{Programming Language Representation with Semantic-level Structure}
+
+\newcommand{\TreeSitterURL}{https://github.com/tree-sitter/tree-sitter}
+
+% Sorted alphabetically, ignoring case
+\newcommand{\Java}{Java\xspace}
+\newcommand{\Cs}{C\#\xspace}
+\newcommand{\Cfg}{CFG\xspace}
+\newcommand{\Dfg}{DFG\xspace}
+\newcommand{\lm}{langugae model\xspace}
+\newcommand{\lms}{langugae models\xspace}
+\newcommand{\Lm}{Langugae model\xspace}
+\newcommand{\ml}{machine learning\xspace}
+\newcommand{\ML}{Machine Learning\xspace}
+\newcommand{\Trsfm}{Transformer\xspace}
+\newcommand{\nlp}{nlp\xspace}
+\newcommand{\Nlp}{NLP\xspace}
+\newcommand{\Sw}{SW\xspace}
+\newcommand{\Mlm}{Masked langauge model\xspace}
+\newcommand{\mlm}{masked langauge model\xspace}
+\newcommand{\ie}{i.e.\xspace}
+\newcommand{\etal}{et al.\xspace}
+
+\newcommand{\src}{source code\xspace}
+\newcommand{\Src}{Source code\xspace}
+\newcommand{\pl}{programming language\xspace}
+\newcommand{\Pl}{Programming language\xspace}
+\newcommand{\pls}{programming languages\xspace}
+\newcommand{\PL}{Programming Language\xspace}
+\newcommand{\sota}{state-of-the-art\xspace}
+\newcommand{\Ast}{AST\xspace}
+\newcommand{\Py}{Python\xspace}
+\newcommand{\ds}{downstream\xspace}
+\newcommand{\Ds}{Downstream\xspace}
+\newcommand{\Ccd}{Code clone detection\xspace}
+\newcommand{\ccd}{code clone detection\xspace}
+\newcommand{\Ctr}{Code transtion\xspace}
+\newcommand{\ctr}{code transtion\xspace}
+\newcommand{\Cref}{Code refinement\xspace}
+\newcommand{\cref}{code refinement\xspace}
+\newcommand{\csum}{code summarization\xspace}
+\newcommand{\cgen}{code generation\xspace}
+\newcommand{\bccb}{BigCloneCodeBench\xspace}
+\newcommand{\Fone}{F1-score\xspace}
+\newcommand{\fone}{f1-score\xspace}   
+\newcommand{\Bleu}{BLEU\xspace}
+\newcommand{\Xmatch}{xMatch\xspace}
+
+\newcommand{\Ngram}{N-gram\xspace}
+\newcommand{\nn}{neural network\xspace}
+\newcommand{\dl}{deep learning\xspace}
+\newcommand{\Elmo}{ELMO\xspace}
+\newcommand{\Gpt}{GPT\xspace}
+\newcommand{\Bert}{BERT\xspace}
+\newcommand{\Roberta}{RoBERTa\xspace}
+\newcommand{\Xlnet}{XLNet\xspace}
+\newcommand{\Tf}{T5\xspace}
+\newcommand{\graphcodebert}{GraphCodeBERT\xspace}
+\newcommand{\graphcodebertcfg}{GraphCodeBERT+\Cfg\xspace}
+\newcommand{\CfgDistnodeModel}{Dir\Cfg+dist+node}
+\newcommand{\CfgUndirDistnodeModel}{Undir\Cfg+dist+node}
+\newcommand{\CfgUndirDistModel}{Undir\Cfg+dist}
+
+%% Table
+\newcommand{\tStatement}{\textbf{Statement Types}}
+\newcommand{\tModel}{\textbf{Models}}
+\newcommand{\tMetric}{\textbf{Metrics}}
+
+
+%% Fig Caption
+\newcommand{\PythonIntroExampleFigCaption}{
+    An example \Py code snippet(\ref{fig:PythonCodeExample}) and its \Ast(\ref{fig:PythonAstExample}).\label{fig:PythonIntroExample}}
+\newcommand{\CfgFigCaption}{Control-flow graph of code in
+Fig~\ref{fig:PythonCodeExample}.\label{fig:PythonCfgExample}}
+\newcommand{\PythonMotExampleFigCaption}{
+    A motivational example \Py code snippet.\label{fig:PythonMotCodeExample}}
+\newcommand{\MotCfgFigCaption}{Control-flow graph of code in
+Fig~\ref{fig:PythonMotCodeExample}.\label{fig:MotCfgExample}}
+\newcommand{\CodeExampleFigCaption}{Example code snippets predicted
+from \graphcodebert and \CfgUndirDistnodeModel on \ctr task
+(\ref{fig:TranslationCodeExample} and \cref task (\ref{fig:RefinementCodeExample})}
+
+
+%% Table Caption
+\newcommand{\CfgStmtTableCaption}{List of statement used for building \Cfg.\label{table:CfgStmt}\vspace{-5pt}}
+\newcommand{\ResultTableCaption}{Results on \Nlp tasks
+of \Ccd, \Ctr, \Cref repectively.\label{table:Result}\vspace{-5pt}}
+\newcommand{\AblationResultTableCaption}{Results of ablation study
+of \Cfg node type embedding on \Nlp tasks of \Ccd, \Ctr, \Cref repectively.\label{table:AbResult}\vspace{-5pt}}
+
+
+%%% NUMBRERS
+%% \input{tables/cfg-stmt-numbers}
+%% \input{tables/results-numbers}
