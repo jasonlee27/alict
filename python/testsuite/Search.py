@@ -427,7 +427,13 @@ class Sst:
                 selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
             # end if
         else:
-            selected = sents
+            if len(sents[0])==4:
+                selected = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
+                selected = [(s_i,Utils.untokenize(s),l,sc) for s_i, s, l, sc in selected]
+            else:
+                selected = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
+                selected = [(s_i,Utils.untokenize(s),l) for s_i, s, l in selected]
+            # end if
         # end if
         random.shuffle(selected)
         return selected
