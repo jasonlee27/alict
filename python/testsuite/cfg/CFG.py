@@ -83,7 +83,7 @@ class BeneparCFG:
                         non_terminals.append(r._.labels[0])
                         non_terminal_words.append(str(r))
                     else:
-                        re_search = re.search(r'\((\:|\,|\'\'|\`\`|\.|\-?[A-Z]+\-?|[A-Z]+\$)\s(.+)\)', r._.parse_string)
+                        re_search = re.search(r'\((\:|\,|\$|\'\'|\`\`|\.|\-?[A-Z]+\-?|[A-Z]+\$)\s(.+)\)', r._.parse_string)
                         rlabel = re_search.group(1)
                         rword = re_search.group(2)
                         non_terminals.append(rlabel)
@@ -125,7 +125,7 @@ class BeneparCFG:
 
     @classmethod
     def get_cfg_dict_per_sent(cls, parser, sent, rule_dict):
-        tree = cls.get_tree(parser,sent.strip())
+        tree = cls.get_tree(parser,sent)
         return {
             "tree": tree._.parse_string,
             "rule": cls.get_cfg_per_tree(tree, rule_dict)

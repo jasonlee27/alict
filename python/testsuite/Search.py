@@ -1,6 +1,7 @@
 # This script searches inputs in datasets that meet requirements
 
 from typing import *
+from pathlib import Path
 
 import re, os
 import sys
@@ -9,10 +10,6 @@ import spacy
 import random
 import checklist
 import numpy as np
-
-from nltk.tokenize import word_tokenize as tokenize
-from nltk.tokenize.treebank import TreebankWordDetokenizer
-from pathlib import Path
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -69,21 +66,21 @@ class SearchOperator:
         op, _len = match.groups()
         results = list()
         if len(sents[0])==4:
-            _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in sents]
+            _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
             for s_i, s, l, sc in _sents:
                 if s[-1]=="." and (eval(f"{len(s)-1} {op} {_len}")):
-                    results.append((s_i,TreebankWordDetokenizer().detokenize(s),l,sc))
+                    results.append((s_i,Utils.detokenize(s),l,sc))
                 elif s[-1]!="." and (eval(f"{len(s)} {op} {_len}")):
-                    results.append((s_i,TreebankWordDetokenizer().detokenize(s),l,sc))
+                    results.append((s_i,Utils.detokenize(s),l,sc))
                 # end if
             # end for
         else:
-            _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
+            _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
             for s_i, s, l in _sents:
                 if s[-1]=="." and (eval(f"{len(s)-1}{op}{_len}")):
-                    results.append((s_i,TreebankWordDetokenizer().detokenize(s),l))
+                    results.append((s_i,Utils.detokenize(s),l))
                 elif s[-1]!="." and (eval(f"{len(s)}{op}{_len}")):
-                    results.append((s_i,TreebankWordDetokenizer().detokenize(s),l))
+                    results.append((s_i,Utils.detokenize(s),l))
                 # end if
             # end for
         # end if
@@ -93,7 +90,7 @@ class SearchOperator:
         nlp = spacy.load('en_core_web_sm')
         results = list()
         for sent in sents:
-            s = TreebankWordDetokenizer().detokenize(sent[1])
+            s = Utils.detokenize(sent[1])
             doc = nlp(s)
             if len(doc) and doc[-1].pos_ == 'PUNCT':
                 results.append(sent)
@@ -105,7 +102,7 @@ class SearchOperator:
         nlp = spacy.load('en_core_web_sm')
         results = list()
         for sent in sents:
-            s = TreebankWordDetokenizer().detokenize(sent[1])
+            s = Utils.detokenize(sent[1])
             doc = nlp(s)
             is_person_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'PERSON' for a in x])])
             if is_person_name_contained:
@@ -119,7 +116,7 @@ class SearchOperator:
         nlp = spacy.load('en_core_web_sm')
         results = list()
         for sent in sents:
-            s = TreebankWordDetokenizer().detokenize(sent[1])
+            s = Utils.detokenize(sent[1])
             doc = nlp(s)
             is_loc_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'GPE' for a in x])])
             if is_loc_name_contained:
@@ -132,7 +129,7 @@ class SearchOperator:
         nlp = spacy.load('en_core_web_sm')
         results = list()
         for s in sents:
-            s = TreebankWordDetokenizer().detokenize(sent[1])
+            s = Utils.detokenize(sent[1])
             doc = nlp(s)
             is_number_contained = any([True for x in doc if x.text.isdigit()])
             if is_number_contained:
@@ -142,10 +139,10 @@ class SearchOperator:
         return results
 
     def search_by_contraction_include(self, sents):
-        word_list = list(CONTRACTION_MAP.keys())+[v for vals in CONTRACTION_MAP.values() for v in vals]
+        word_list = list(CONTRACTION_MAP.keys())+[val for val in CONTRACTION_MAP.values()]
         results = list()
         for sent in sents:
-            s = TreebankWordDetokenizer().detokenize(sent[1])
+            s = Utils.detokenize(sent[1])
             is_contained = [True for w in word_list if w in s]
             if any(is_contained):
                 results.append(sent)
@@ -159,13 +156,13 @@ class SearchOperator:
         # op, score = match.groups()
         results = list()
         if len(sents[0])==4:
-            _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in sents]
+            _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
         else:
-            _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
+            _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
         # end if
         for s_i, s, l, sc in _sents:
             if eval(f"{sc}{param}"):
-                results.append((s_i,TreebankWordDetokenizer().detokenize(s),l,sc))
+                results.append((s_i,Utils.detokenize(s),l,sc))
             # end if
         # end for
         return results
@@ -174,14 +171,23 @@ class SearchOperator:
         label = search_reqs["label"]
         if label=="neutral" or label=="positive" or label=="negative":
             if len(sents[0])==4:
-                _sents = [(s_i,s,l,sc) for s_i, s, l, sc in sents if l==label]
+                _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
+                _sents = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in _sents if l==label]
             else:
-                _sents = [(s_i,s,l) for s_i, s, l in sents if l==label]
+                _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
+                _sents = [(s_i,Utils.detokenize(s),l) for s_i, s, l in sents if l==label]
             # end if
             return _sents
         else:
-            return sents
+            if len(sents[0])==4:
+                _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
+                _sents = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in _sents]
+            else:
+                _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
+                _sents = [(s_i,Utils.detokenize(s),l) for s_i, s, l in sents]
+            # end if
         # end if
+        return _sents
 
     def _search_by_word_include(self, sents, word_cond):
         search = re.search("\<([^\<\>]+)\>", word_cond)
@@ -203,12 +209,12 @@ class SearchOperator:
                 selected = self.search_by_number_include(sents)
             # end if
         else:
-            selected = [s for s in sents if word_cond in s[1]]
+            selected = [sent for sent in sents if word_cond in sent[1]]
         # end if
         return selected
     
     def _search_by_pos_include(self, sents, cond_key, cond_number):
-        # sents: (s_i, tokenizes sentence, label)
+        # sents: (s_i, tokenized sentence, label)
         target_words = SENT_DICT[cond_key]
         selected = list()
         for sent in sents:
@@ -235,9 +241,9 @@ class SearchOperator:
         selected_indices = list()
         _sents = sents.copy()
         if len(sents[0])==4:
-            _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in _sents]
+            _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in _sents]
         else:
-            _sents = [(s_i,tokenize(s),l) for s_i, s, l in _sents]
+            _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in _sents]
         # end if
         for param in params:
             word_include = param["word"]
@@ -278,9 +284,9 @@ class SearchOperator:
         # end for
         result = list()
         if len(sents[0])==4:
-            result = [(s_i,TreebankWordDetokenizer().detokenize(s),l,sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
+            result = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
         else:
-            result = [(s_i,TreebankWordDetokenizer().detokenize(s),l) for s_i, s, l in _sents if s_i in selected_indices]
+            result = [(s_i,Utils.detokenize(s),l) for s_i, s, l in _sents if s_i in selected_indices]
         # end if
         return result
 
@@ -305,9 +311,9 @@ class SearchOperator:
         params = search_reqs["exclude"]
         _sents = sents.copy()
         if len(sents[0])==4:
-            _sents = [(s_i,tokenize(s),l,sc) for s_i, s, l, sc in sents]
+            _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
         else:
-            _sents = [(s_i,tokenize(s),l) for s_i, s, l in sents]
+            _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
         # end if
         selected_indices = list()
         if type(params)==dict:
@@ -318,7 +324,7 @@ class SearchOperator:
             tpos_exclude = param["POS"]
             if word_exclude is not None:
                 for w in word_exclude:
-                    _sents = [(s_i, s, l, sc) for s_i, s, l, sc in _sents if w not in s]
+                    _sents = [sent for sent in _sents if w not in sent[1]]
                 # end for
             # end if
             if tpos_exclude is not None:
@@ -347,9 +353,9 @@ class SearchOperator:
         # end for
         result = list()
         if len(sents[0])==4:
-            result = [(s_i,TreebankWordDetokenizer().detokenize(s),l, sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
+            result = [(s_i,Utils.detokenize(s),l, sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
         else:
-            result = [(s_i,TreebankWordDetokenizer().detokenize(s),l) for s_i, s, l in _sents if s_i in selected_indices]
+            result = [(s_i,Utils.detokenize(s),l) for s_i, s, l in _sents if s_i in selected_indices]
         # end if
         return result
 

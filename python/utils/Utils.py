@@ -2,11 +2,14 @@
 import re, os
 import sys
 import json
+import string
 import hashlib
 
 from pathlib import Path
 from nltk.corpus import treebank
 from checklist.test_suite import TestSuite
+from nltk.tokenize import word_tokenize
+from nltk.tokenize.treebank import TreebankWordDetokenizer
 
 from .Macros import Macros
 
@@ -29,6 +32,16 @@ class Utils:
             return arg_dict
         # end if
         return
+
+    @classmethod
+    def tokenize(cls, sent: str)->list:
+        return word_tokenize(sent)
+
+    @classmethod
+    def detokenize(cls, tokens: list)->str:
+        tokens = ['"' if (t=='``' or t=='\'\'') else t for t in tokens]
+        sent = TreebankWordDetokenizer().detokenize(tokens)
+        return sent
 
     @classmethod
     def read_txt(cls, data_file):

@@ -12,8 +12,6 @@ import spacy
 
 from pathlib import Path
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
-from nltk.tokenize import word_tokenize as tokenize
-from nltk.tokenize.treebank import TreebankWordDetokenizer
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -55,7 +53,7 @@ class Template:
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
             selected_inputs = selected["selected_inputs"][:n] if n is not None else selected["selected_inputs"]
             for _id, seed, seed_label, seed_score in selected_inputs:
-                print(f"\tSELECTED_SEED: {_id} {seed}, {seed_label}, {seed_score}")
+                print(f"\tSELECTED_SEED: {_id}, {seed}, {seed_label}, {seed_score}")
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                 generator = Generator(expander=expander)
                 gen_inputs = generator.masked_input_generator()
@@ -130,7 +128,7 @@ class Template:
     
     @classmethod
     def get_pos(cls, mask_input: str, mask_pos: List[str], cfg_seed: Dict, words_sug: List[str], exp_input:str):
-        tokens = tokenize(mask_input)
+        tokens = Utils.tokenize(mask_input)
         _tokens = list()
         tokens_pos = list()
         tok_i, mask_tok_i = 0, 0
@@ -158,7 +156,7 @@ class Template:
             # end if
             tokens_pos.append(tpos)
         # end for
-        return tokenize(exp_input), tokens_pos
+        return Utils.tokenize(exp_input), tokens_pos
 
     @classmethod
     def get_templates_by_synonyms(cls, nlp, tokens: List[str], tokens_pos: List[str], prev_synonyms):
@@ -198,7 +196,7 @@ class Template:
             # end if
        # end for
         return {
-            "input": TreebankWordDetokenizer().detokenize(tokens),
+            "input": Utils.detokenize(tokens),
             "place_holder": template
         }, prev_synonyms
 
@@ -248,7 +246,7 @@ class Template:
                 exp_inputs = inputs[seed_input]["exp_inputs"]
                 seed_inputs.append({
                     "input": seed_input,
-                    "place_holder": tokenize(seed_input),
+                    "place_holder": Utils.tokenize(seed_input),
                     "label": label_seed
                 })
                     
