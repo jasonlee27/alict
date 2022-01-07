@@ -1,2 +1,24 @@
 \section{Introduction}
 \label{sec:intro}
+
+\Nlp testing is crucial part for developing a reliable \Nlp model. In
+\Nlp, testing is mainly used to check the ML model's performance on
+\ho set with respect to the accuracy of the model. The \ho data refers
+to a portion of dataset that is held out of the datasets used for
+training \ml models. Generally, the \ho set is extracted via
+Train-Validation-Test split.
+
+%% One of the primary goals of training NLP models is
+%% generalization. Since testing “in the wild” is expensive and does not
+%% allow for fast iterations, the standard paradigm for evaluation is
+%% using trainvalidation-test splits to estimate the accuracy of the
+%% model, including the use of leader boards to track progress on a task
+%% (Rajpurkar et al., 2016).
+
+%% While performance on held-out data is a
+%% useful indicator, held-out datasets are often not comprehensive, and
+%% contain the same biases as the training data (Rajpurkar et al., 2018),
+%% such that real-world performance may be overestimated (Patel et al.,
+%% 2008; Recht et al., 2019). Further, by summarizing the performance as
+%% a single aggregate statistic, it becomes difficult to figure out where
+%% the model is failing, and how to fix it (Wu et al., 2019).
