@@ -429,10 +429,10 @@ class Sst:
         else:
             if len(sents[0])==4:
                 selected = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
-                selected = [(s_i,Utils.untokenize(s),l,sc) for s_i, s, l, sc in selected]
+                selected = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in selected]
             else:
                 selected = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
-                selected = [(s_i,Utils.untokenize(s),l) for s_i, s, l in selected]
+                selected = [(s_i,Utils.detokenize(s),l) for s_i, s, l in selected]
             # end if
         # end if
         random.shuffle(selected)
