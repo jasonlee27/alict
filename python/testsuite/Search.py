@@ -128,7 +128,7 @@ class SearchOperator:
     def search_by_number_include(self, sents):
         nlp = spacy.load('en_core_web_sm')
         results = list()
-        for s in sents:
+        for sent in sents:
             s = Utils.detokenize(sent[1])
             doc = nlp(s)
             is_number_contained = any([True for x in doc if x.text.isdigit()])
@@ -238,13 +238,13 @@ class SearchOperator:
         if type(params)==dict:
             params = [params]
         # end if
-        selected_indices = list()
         _sents = sents.copy()
         if len(sents[0])==4:
             _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in _sents]
         else:
             _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in _sents]
         # end if
+        selected_indices = list()
         for param in params:
             word_include = param["word"]
             tpos_include = param["POS"]
@@ -284,9 +284,9 @@ class SearchOperator:
         # end for
         result = list()
         if len(sents[0])==4:
-            result = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
+            result = [(s[0],Utils.detokenize(s[1]),s[2],s[3]) for s in _sents if s[0] in selected_indices]
         else:
-            result = [(s_i,Utils.detokenize(s),l) for s_i, s, l in _sents if s_i in selected_indices]
+            result = [(s[0],Utils.detokenize(s[1]),s[2]) for s in _sents if s[0] in selected_indices]
         # end if
         return result
 

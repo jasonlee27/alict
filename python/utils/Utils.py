@@ -41,6 +41,8 @@ class Utils:
     def detokenize(cls, tokens: list)->str:
         tokens = ['"' if (t=='``' or t=='\'\'') else t for t in tokens]
         sent = TreebankWordDetokenizer().detokenize(tokens)
+        sent = re.sub(r"(.+)\-\-(.+)", r"\1 -- \2", sent)
+        sent = re.sub(r"(.+)\.\.\.(.+)", r"\1 ... \2", sent)
         return sent
 
     @classmethod
