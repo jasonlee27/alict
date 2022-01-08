@@ -8,23 +8,46 @@ software under test. Software testing in the early stage of the
 development finds bugs, and fixing them saves amount of costs. In
 addition, reliable software testing methodology ensures software
 quality to users in that the software meets requirements by
-verification and validation. Regarding that, testing NLP application
-becomes important process as well in that NLP application is a branch
-of artifical intelligence software.
+verification and validation. Regarding that, NLP application is a branch
+of artifical intelligence software, and testing NLP application
+also becomes important process as well.
 
-Prevalent NLP model is evaluated via train-validation-test
+The prevalent models of NLP are evaluated via train-validation-test
 splits. train and validation set is used to train the NLP model and
-the \ho set is used for testing by measuring accuracy 
+the \ho set is used for testing by measuring accuracy. The accuracy is
+a indicator of the performance of the models.
 
-testing \ml becomes major 
+Despite its usefulness, the main limitation of the testing paradaigm
+is that the \ho set often overestimates the performances. Each dataset
+comes with specific biases, and the biases increase the discrepancy of
+distribution between dataset and
+real-world~\cite{recht2019imagenetbias}. The aforementioned accuracy
+on \ho set does not consider the discrepancy and it is limited to
+achieve comprehensive performrance of the NLP model. As a consequence,
+it is difficult to analyze where the errors comes
+from~\cite{wu2019errudite}.
 
-\Nlp testing is crucial part for developing a reliable \Nlp
-applications. For developing \Nlp applications, testing is mainly used
-to check the ML model's performance on \ho set with respect to the
-accuracy of the model. The \ho data refers to a portion of dataset
-that is held out of the datasets used for training \ml
-models. Generally, the \ho set is extracted via Train-Validation-Test
-split.
+On the subject of the limitation of traditional testing paradaigm, a
+number of methods have been proposed. They approach evaluating
+robustness of the model on adversarial sets~\cite{}, fairness~\cite{},
+logical consistancy~\cite{}, explanations~\cite{}, diagnostic
+datasets~\cite{}, and interactive error analysis. In addition,
+inspired by the behavioral testing of software engineering research,
+Marco \etal proposed a tool for comprehensive behavioral
+testing of NLP models~\cite{marcoACL2020checklist}
+
+%% Machine learning testing poses challenges that arise
+%% from the fundamentally different nature and construction
+%% of machine learning systems, compared to traditional (relatively more deterministic and less statistically-orientated)
+%% software systems. 
+
+%% \Nlp testing is crucial part for developing a reliable \Nlp
+%% applications. For developing \Nlp applications, testing is mainly used
+%% to check the ML model's performance on \ho set with respect to the
+%% accuracy of the model. The \ho data refers to a portion of dataset
+%% that is held out of the datasets used for training \ml
+%% models. Generally, the \ho set is extracted via Train-Validation-Test
+%% split.
 
 %% One of the primary goals of training NLP models is
 %% generalization. Since testing “in the wild” is expensive and does not

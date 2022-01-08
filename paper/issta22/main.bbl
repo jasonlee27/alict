@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{0}
+\begin{thebibliography}{2}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -36,5 +36,42 @@
 \providecommand\bibinfo[2]{#2}
 \providecommand\natexlab[1]{#1}
 \providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[\protect\citeauthoryear{Recht, Roelofs, Schmidt, and Shankar}{Recht
+  et~al\mbox{.}}{2019}]%
+        {recht2019imagenetbias}
+\bibfield{author}{\bibinfo{person}{Benjamin Recht}, \bibinfo{person}{Rebecca
+  Roelofs}, \bibinfo{person}{Ludwig Schmidt}, {and} \bibinfo{person}{Vaishaal
+  Shankar}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Do {I}mage{N}et Classifiers Generalize to
+  {I}mage{N}et?}. In \bibinfo{booktitle}{\emph{Proceedings of the 36th
+  International Conference on Machine Learning}}
+  \emph{(\bibinfo{series}{Proceedings of Machine Learning Research},
+  Vol.~\bibinfo{volume}{97})}, \bibfield{editor}{\bibinfo{person}{Kamalika
+  Chaudhuri} {and} \bibinfo{person}{Ruslan Salakhutdinov}} (Eds.).
+  \bibinfo{publisher}{PMLR}, \bibinfo{pages}{5389--5400}.
+\newblock
+\urldef\tempurl%
+\url{https://proceedings.mlr.press/v97/recht19a.html}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Wu, Ribeiro, Heer, and Weld}{Wu
+  et~al\mbox{.}}{2019}]%
+        {wu2019errudite}
+\bibfield{author}{\bibinfo{person}{Tongshuang Wu}, \bibinfo{person}{Marco~Tulio
+  Ribeiro}, \bibinfo{person}{Jeffrey Heer}, {and} \bibinfo{person}{Daniel
+  Weld}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{{E}rrudite: Scalable, Reproducible, and Testable
+  Error Analysis}. In \bibinfo{booktitle}{\emph{Proceedings of the 57th Annual
+  Meeting of the Association for Computational Linguistics}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Florence, Italy}, \bibinfo{pages}{747--763}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/P19-1073}
+\showDOI{\tempurl}
+
 
 \end{thebibliography}
