@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.5.11)  8 JAN 2022 01:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.5.11)  9 JAN 2022 00:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1465,9 +1465,32 @@ File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 (/usr/local/texlive/2021/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
-(./intro.tex) (./background.tex) (./related.tex) (./approach.tex) (./rq.tex)
-(./experiment.tex) (./result.tex) (./main.bbl
-LaTeX Info: Redefining \tempurl on input line 73.
+(./intro.tex
+Overfull \hbox (3.90517pt too wide) in paragraph at lines 20--29
+[]\T1/LinuxLibertineT-TLF/m/n/9 (-20) Despite its use-ful-ness, the main lim-i-
+ta-tion of the test-ing paradaigm
+ []
+
+) (./background.tex) (./related.tex) (./approach.tex) (./rq.tex)
+(./experiment.tex) (./result.tex
+Underfull \vbox (badness 3724) has occurred while \output is active []
+
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 10.95pt on input line 1.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 6.0pt on input line 1.
+ [1.1{/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+
+]) (./main.bbl
+LaTeX Info: Redefining \tempurl on input line 70.
+LaTeX Info: Redefining \tempurl on input line 87.
+LaTeX Info: Redefining \tempurl on input line 107.
+LaTeX Info: Redefining \tempurl on input line 125.
+LaTeX Info: Redefining \tempurl on input line 142.
+LaTeX Info: Redefining \tempurl on input line 161.
+LaTeX Info: Redefining \tempurl on input line 191.
+LaTeX Info: Redefining \tempurl on input line 226.
+LaTeX Info: Redefining \tempurl on input line 244.
 )
 (/usr/local/texlive/2021/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
 File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
@@ -1475,41 +1498,38 @@ File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
 (/usr/local/texlive/2021/texmf-dist/tex/generic/stringenc/se-utf8.def
 File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
 )
-
-Package balance Warning: You have called \balance in second column
-(balance)                Columns might not be balanced.
-
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 6.0pt on input line 217.
-[1.1{/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
-
-]
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 9.0pt on input line 217.
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 217.
+ [2.2]
 (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 3DEFD2CDF40BA9A1B777A4CC980ACCF2;1037.
  ) 
 Here is how much of TeX's memory you used:
- 33322 strings out of 478994
- 589324 string characters out of 5858184
- 972517 words of memory out of 5000000
- 49704 multiletter control sequences out of 15000+600000
- 513751 words of font info for 213 fonts, out of 8000000 for 9000
+ 33457 strings out of 478994
+ 592614 string characters out of 5858184
+ 978151 words of memory out of 5000000
+ 49744 multiletter control sequences out of 15000+600000
+ 536311 words of font info for 268 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 96i,15n,131p,997b,548s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/libertine/lbtn_naooyc.enc
-}{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}
-{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{
-/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/
+ 96i,16n,131p,997b,649s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc
+}{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/libertine/lbtn_naooyc.enc}
+{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{
+/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{/
 usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}</u
-sr/local/texlive/2021/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.pfb
-></usr/local/texlive/2021/texmf-dist/fonts/type1/public/libertine/LinLibertineT
-.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/libertine/LinLibert
-ineTB.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/libertine/LinL
-ibertineTI.pfb>
-Output written on main.pdf (1 page, 304935 bytes).
+sr/local/texlive/2021/texmf-dist/fonts/type1/public/libertine/LinBiolinumT.pfb>
+</usr/local/texlive/2021/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.
+pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/libertine/LinLiberti
+neT.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/libertine/LinLib
+ertineTB.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/libertine/L
+inLibertineTI.pfb>
+Output written on main.pdf (2 pages, 354915 bytes).
 PDF statistics:
- 100 PDF objects out of 1000 (max. 8388607)
- 83 compressed objects within 1 object stream
- 15 named destinations out of 1000 (max. 500000)
- 61541 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 147 PDF objects out of 1000 (max. 8388607)
+ 126 compressed objects within 2 object streams
+ 26 named destinations out of 1000 (max. 500000)
+ 69733 words of extra memory for PDF output out of 74296 (max. 10000000)
 

@@ -6,51 +6,63 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Database file #1: bib.bib
+Repeated entry---line 244 of file bib.bib
+ : @inproceedings{wu2019errudite
+ :                              ,
+I'm skipping whatever remains of this entry
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=200001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--page numbers missing in both pages and numpages fields in belinkov2018breaknmt
+Warning--page numbers missing in both pages and numpages fields in prabhakaran2019fairness
 Warning--empty address in recht2019imagenetbias
-You've used 2 entries,
+Warning--page numbers missing in both pages and numpages fields in ribeiroSG16lime
+Warning--empty publisher in marcoACL2020checklist
+Warning--empty address in marcoACL2020checklist
+Warning--page numbers missing in both pages and numpages fields in marcoACL2020checklist
+Warning--page numbers missing in both pages and numpages fields in rottger2020hatecheck
+Warning--page numbers missing in both pages and numpages fields in wang2018glue
+You've used 12 entries,
             5959 wiz_defined-function locations,
-            1580 strings with 21497 characters,
-and the built_in function-call counts, 2929 in all, are:
-= -- 301
-> -- 112
+            1653 strings with 24142 characters,
+and the built_in function-call counts, 15474 in all, are:
+= -- 1859
+> -- 629
 < -- 0
-+ -- 36
-- -- 34
-* -- 225
-:= -- 298
-add.period$ -- 10
-call.type$ -- 2
-change.case$ -- 16
-chr.to.int$ -- 2
-cite$ -- 3
-duplicate$ -- 263
-empty$ -- 182
-format.name$ -- 42
-if$ -- 657
++ -- 205
+- -- 197
+* -- 1219
+:= -- 1541
+add.period$ -- 59
+call.type$ -- 12
+change.case$ -- 94
+chr.to.int$ -- 12
+cite$ -- 21
+duplicate$ -- 1344
+empty$ -- 952
+format.name$ -- 245
+if$ -- 3719
 int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 10
-newline$ -- 61
-num.names$ -- 18
-pop$ -- 96
+missing$ -- 55
+newline$ -- 171
+num.names$ -- 100
+pop$ -- 541
 preamble$ -- 1
-purify$ -- 34
+purify$ -- 202
 quote$ -- 0
-skip$ -- 101
+skip$ -- 453
 stack$ -- 0
-substring$ -- 230
-swap$ -- 33
+substring$ -- 1051
+swap$ -- 132
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 60
-warning$ -- 1
-while$ -- 15
+type$ -- 290
+warning$ -- 9
+while$ -- 72
 width$ -- 0
-write$ -- 83
-(There was 1 warning)
+write$ -- 286
+(There was 1 error message)

@@ -28,38 +28,46 @@ it is difficult to analyze where the errors comes
 from~\cite{wu2019errudite}.
 
 On the subject of the limitation of traditional testing paradaigm, a
-number of methods have been proposed. They approach evaluating
-robustness of the model on adversarial sets~\cite{}, fairness~\cite{},
-logical consistancy~\cite{}, explanations~\cite{}, diagnostic
-datasets~\cite{}, and interactive error analysis. In addition,
-inspired by the behavioral testing of software engineering research,
-Marco \etal proposed a tool for comprehensive behavioral
-testing of NLP models~\cite{marcoACL2020checklist}
+number of methods have been proposed. First, multiple diagnostic
+datasets for evaluating NLP model were introduced for obtaning
+generalized evaluation of the NLP model~\cite{wang2018glue}. Not only
+that, model is evaluated on different aspects such as robustness of
+the model on adversarial
+sets~\cite{ribeiro2018sear,belinkov2018breaknmt,
+  rychalska2019wildnlp,iyyer2018adversarial},
+fairness~\cite{prabhakaran2019fairness,rottger2020hatecheck}, logical
+consistancy~\cite{ribeiro2019consistencyeval}, prediction
+interpretations~\cite{ribeiroSG16lime} and interactive error
+analysis~\cite{wu2019errudite}. Especially, \Chlst implements
+behavioral testing methodolgy for evaluating multiple linguistic
+capabilities of NLP model~\cite{marcoACL2020checklist}. \Chlst
+introduces input-output behaviors of linguistic capabilities and
+generates behavior-guided inputs for validating the behaviors. It
+provides comprehensive behavioral testing of NLP models through a
+number of generated inputs. However, the approach only relies on
+manually generated input templates, thus the template generation
+becomes expensive and time consuming. In addition, the generated
+templates are selective and often too simple, and it is limited to
+provide restricted evaluation of linguistic capabilities. Thus, it
+does not garauntee the comprehensive evaluation.
 
-%% Machine learning testing poses challenges that arise
-%% from the fundamentally different nature and construction
-%% of machine learning systems, compared to traditional (relatively more deterministic and less statistically-orientated)
-%% software systems. 
+In this paper, we present \Model, an automated NLP model evaluation
+method for comprehensive behavioral testing of NLP models on \sa
+task. For each behavior of linguistic capability, \Model does not rely
+on the manual input generation. Instead, it establishes input
+requirement for evaluating a linguistic capability and finds suitable
+inputs that meet the requirement from existing public dataset.
+Therefore, \Model increases input diversity and generality. Further,
+\Model applies the fuzzing testing principle to generate inputs by
+mutating the selected inputs as seed inputs. Fuzzer in \Model first
+expands seed input grammar structures and determines its available
+\pos to maintain structural naturalness. After that, to hold
+contextual naturalness of the mutated inputs, the fuzzer completes the
+expanded new structures via data-driven context-aware word
+suggestion. Additionally, sentiment-independent words in the inputs
+are replaced with rule-based word suggestion.
 
-%% \Nlp testing is crucial part for developing a reliable \Nlp
-%% applications. For developing \Nlp applications, testing is mainly used
-%% to check the ML model's performance on \ho set with respect to the
-%% accuracy of the model. The \ho data refers to a portion of dataset
-%% that is held out of the datasets used for training \ml
-%% models. Generally, the \ho set is extracted via Train-Validation-Test
-%% split.
-
-%% One of the primary goals of training NLP models is
-%% generalization. Since testing “in the wild” is expensive and does not
-%% allow for fast iterations, the standard paradigm for evaluation is
-%% using trainvalidation-test splits to estimate the accuracy of the
-%% model, including the use of leader boards to track progress on a task
-%% (Rajpurkar et al., 2016).
-
-%% While performance on held-out data is a
-%% useful indicator, held-out datasets are often not comprehensive, and
-%% contain the same biases as the training data (Rajpurkar et al., 2018),
-%% such that real-world performance may be overestimated (Patel et al.,
-%% 2008; Recht et al., 2019). Further, by summarizing the performance as
-%% a single aggregate statistic, it becomes difficult to figure out where
-%% the model is failing, and how to fix it (Wu et al., 2019).
+We demonstrate its generality and utility as a NLP model evaluation
+tool by evaluating well-known \sa models: \Bert~\cite{devlin2019bert},
+\Roberta~\cite{liu2019roberta} and \Dbert~\cite{sanh2019distilbert}.
+We show that
