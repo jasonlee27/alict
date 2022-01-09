@@ -16,6 +16,8 @@ Reallocated global_strs (elt_size=200001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Warning--page numbers missing in both pages and numpages fields in belinkov2018breaknmt
+Warning--page numbers missing in both pages and numpages fields in devlin2019bert
+Warning--page numbers missing in both pages and numpages fields in liu2019roberta
 Warning--page numbers missing in both pages and numpages fields in prabhakaran2019fairness
 Warning--empty address in recht2019imagenetbias
 Warning--page numbers missing in both pages and numpages fields in ribeiroSG16lime
@@ -23,46 +25,47 @@ Warning--empty publisher in marcoACL2020checklist
 Warning--empty address in marcoACL2020checklist
 Warning--page numbers missing in both pages and numpages fields in marcoACL2020checklist
 Warning--page numbers missing in both pages and numpages fields in rottger2020hatecheck
+Warning--page numbers missing in both pages and numpages fields in sanh2019distilbert
 Warning--page numbers missing in both pages and numpages fields in wang2018glue
-You've used 12 entries,
+You've used 15 entries,
             5959 wiz_defined-function locations,
-            1653 strings with 24142 characters,
-and the built_in function-call counts, 15474 in all, are:
-= -- 1859
-> -- 629
+            1670 strings with 24829 characters,
+and the built_in function-call counts, 19342 in all, are:
+= -- 2393
+> -- 851
 < -- 0
-+ -- 205
-- -- 197
-* -- 1219
-:= -- 1541
-add.period$ -- 59
-call.type$ -- 12
-change.case$ -- 94
-chr.to.int$ -- 12
-cite$ -- 21
-duplicate$ -- 1344
-empty$ -- 952
-format.name$ -- 245
-if$ -- 3719
++ -- 280
+- -- 269
+* -- 1567
+:= -- 1958
+add.period$ -- 74
+call.type$ -- 15
+change.case$ -- 124
+chr.to.int$ -- 15
+cite$ -- 27
+duplicate$ -- 1609
+empty$ -- 1148
+format.name$ -- 329
+if$ -- 4681
 int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 55
-newline$ -- 171
-num.names$ -- 100
-pop$ -- 541
+missing$ -- 67
+newline$ -- 205
+num.names$ -- 124
+pop$ -- 662
 preamble$ -- 1
-purify$ -- 202
+purify$ -- 259
 quote$ -- 0
-skip$ -- 453
+skip$ -- 522
 stack$ -- 0
-substring$ -- 1051
-swap$ -- 132
+substring$ -- 1234
+swap$ -- 147
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 290
-warning$ -- 9
-while$ -- 72
+type$ -- 338
+warning$ -- 12
+while$ -- 84
 width$ -- 0
-write$ -- 286
+write$ -- 344
 (There was 1 error message)

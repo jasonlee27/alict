@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{12}
+\begin{thebibliography}{15}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -53,6 +53,24 @@
 \tempurl}
 
 
+\bibitem[\protect\citeauthoryear{Devlin, Chang, Lee, and Toutanova}{Devlin
+  et~al\mbox{.}}{2018}]%
+        {devlin2019bert}
+\bibfield{author}{\bibinfo{person}{Jacob Devlin}, \bibinfo{person}{Ming{-}Wei
+  Chang}, \bibinfo{person}{Kenton Lee}, {and} \bibinfo{person}{Kristina
+  Toutanova}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{{BERT:} Pre-training of Deep Bidirectional
+  Transformers for Language Understanding}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1810.04805}
+  (\bibinfo{year}{2018}).
+\newblock
+\showeprint[arXiv]{1810.04805}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1810.04805}
+\showURL{%
+\tempurl}
+
+
 \bibitem[\protect\citeauthoryear{Iyyer, Wieting, Gimpel, and Zettlemoyer}{Iyyer
   et~al\mbox{.}}{2018}]%
         {iyyer2018adversarial}
@@ -69,6 +87,27 @@
 \urldef\tempurl%
 \url{https://doi.org/10.18653/v1/N18-1170}
 \showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Liu, Ott, Goyal, Du, Joshi, Chen, Levy, Lewis,
+  Zettlemoyer, and Stoyanov}{Liu et~al\mbox{.}}{2019}]%
+        {liu2019roberta}
+\bibfield{author}{\bibinfo{person}{Yinhan Liu}, \bibinfo{person}{Myle Ott},
+  \bibinfo{person}{Naman Goyal}, \bibinfo{person}{Jingfei Du},
+  \bibinfo{person}{Mandar Joshi}, \bibinfo{person}{Danqi Chen},
+  \bibinfo{person}{Omer Levy}, \bibinfo{person}{Mike Lewis},
+  \bibinfo{person}{Luke Zettlemoyer}, {and} \bibinfo{person}{Veselin
+  Stoyanov}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{RoBERTa: {A} Robustly Optimized {BERT} Pretraining
+  Approach}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1907.11692}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1907.11692}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1907.11692}
+\showURL{%
+\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Prabhakaran, Hutchinson, and
@@ -207,6 +246,19 @@
   \bibinfo{address}{Cham}, \bibinfo{pages}{235--247}.
 \newblock
 \showISBNx{978-3-030-36718-3}
+
+
+\bibitem[\protect\citeauthoryear{Sanh, Debut, Chaumond, and Wolf}{Sanh
+  et~al\mbox{.}}{2019}]%
+        {sanh2019distilbert}
+\bibfield{author}{\bibinfo{person}{Victor Sanh}, \bibinfo{person}{Lysandre
+  Debut}, \bibinfo{person}{Julien Chaumond}, {and} \bibinfo{person}{Thomas
+  Wolf}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{DistilBERT, a distilled version of BERT: smaller,
+  faster, cheaper and lighter}.
+\newblock \bibinfo{journal}{\emph{ArXiv}}  \bibinfo{volume}{abs/1910.01108}
+  (\bibinfo{year}{2019}).
+\newblock
 
 
 \bibitem[\protect\citeauthoryear{Wang, Singh, Michael, Hill, Levy, and
