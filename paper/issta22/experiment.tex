@@ -1,2 +1,51 @@
 \section{Experiment}
 \label{sec:experiment}
+
+In this section, we present experiments to
+evaluate the effectiveness of our proposed evaluation methodology. In
+particular, we address the following research questions:
+
+\begin{enumerate}
+  \item[\textbf{RQ1}:] How effective is our proposed evaluation model
+    for generating diverse test cases? % self bleu score
+    
+  \item[\textbf{RQ2}:] How effective is our new test case generation
+    using \cfg expansion?
+  \item[\textbf{RQ3}:] How effective is our proposed evaluation model
+    for finding failures given a linguistic capability?
+\end{enumerate}
+
+\subsection(Experiment Setup}
+
+For \sa task, input requirements are given for each linguistic
+capability. Based on the requirements, \Model generates templates and
+lexicons.
+\MyPara{Model}
+\Bert, \Roberta, \Dbert
+
+\MyPara{Dataset}
+reference CFG generation: Treebank corpus
+word sentiments: sentiwordnet (https://github.com/aesuli/SentiWordNet)
+cfg parser: berkeley neural parser (https://github.com/nikitakit/self-attentive-parser)
+synonyms: spacy wordnet synsets (https://spacy.io/universe/project/spacy-wordnet)
+seed search dataset: stanford sentiment treebank (sst) dataset (https://nlp.stanford.edu/sentiment/)
+
+\MyPara{Hyper-Parameter}
+Number of seed inputs: 10 (random sample)
+Number of cfg expansions: 10 (random sample)
+Number of synonyms for a word: 10 (random sample)
+
+Besides, we retrain the \sota \sa models aformentioned from test cases
+generated from \Chlst and \Model. The goal of the retraining is to
+assess comprehensiveness of test cases according to performance of
+fine-tuned model. We assume that the comprehensive test cases improve
+performance of \sa task when fine-tuning with them. On the other hand,
+fine-tuning models with less comprehensive test cases increases
+overfitting and decrece model performance.
+
+\MyPara{Dataset}
+Retraining dataset: checklist and our proposed model test cases
+
+\MyPara{Hyper-Parameter}
+Retraining epoach: 1
+Retraining batch_size: 16
