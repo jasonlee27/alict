@@ -5,24 +5,30 @@ In this section, we present experiments to
 evaluate the effectiveness of our proposed evaluation methodology. In
 particular, we address the following research questions:
 
-\begin{enumerate}[label=\textbf{RQ\arabic*}:]
-\item \label{rq:one} How effective is our proposed evaluation model
+\begin{enumerate}[label=\textbf{RQ\arabic*}]
+\item \label{rq:one}: How effective is our proposed evaluation model
   for finding failures given a linguistic capability?
-\item \label{rq:two} How effective is our proposed model for
+\item \label{rq:two}: How effective is our proposed model for
   generating diverse test cases? % self bleu score
-\item \label{rq:three} How effective is our proposed model for
+\item \label{rq:three}: How effective is our proposed model for
   detecting diverse type of errors? % retraining acc score
-\item \label{rq:four} How effective is our new test case generation
+\item \label{rq:four}: How effective is our new test case generation
   using \cfg expansion? % ablation study
 \end{enumerate}
 
 \subsection{Experiment Setup}
 
-For answering \ref{rq:one} and \ref{rq:two}, we organize the experiment as
-follows:
-%
-\MyPara{Selection of seed inputs} \MyPara{\Cfg expansion}
-\MyPara{Models}
+For answering \ref{rq:one} and \ref{rq:two}, we organize the
+experiment as follows: we generate test cases used for model
+evaluation.
+
+\MyPara{Seed Input Selection.} For each linguistic capability, we
+search all sentences that meet its requirement. Among found sentences,
+we randomly select 10 sentences due to space constraint.
+
+\MyPara{\Cfg Expansion.}
+
+\MyPara{Models.}
 
 In addition, we answer \ref{rq:four} by organizing the another
 experiment as follows:
