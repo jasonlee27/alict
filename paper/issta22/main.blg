@@ -1,5 +1,5 @@
-This is BibTeX, Version 0.99d (TeX Live 2021)
-Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: main.aux
 The style file: ACM-Reference-Format.bst
 Reallocated singl_function (elt_size=4) to 100 items from 50.
@@ -12,10 +12,12 @@ Repeated entry---line 244 of file bib.bib
 I'm skipping whatever remains of this entry
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
-Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated global_strs (elt_size=20001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--page numbers missing in both pages and numpages fields in baccianella2010sentiwordnet
 Warning--page numbers missing in both pages and numpages fields in belinkov2018breaknmt
+Warning--page numbers missing in both pages and numpages fields in mihaela2017sentiwordnetlabel
 Warning--page numbers missing in both pages and numpages fields in devlin2019bert
 Warning--page numbers missing in both pages and numpages fields in liu2019roberta
 Warning--page numbers missing in both pages and numpages fields in prabhakaran2019fairness
@@ -26,46 +28,47 @@ Warning--empty address in marcoACL2020checklist
 Warning--page numbers missing in both pages and numpages fields in marcoACL2020checklist
 Warning--page numbers missing in both pages and numpages fields in rottger2020hatecheck
 Warning--page numbers missing in both pages and numpages fields in sanh2019distilbert
+Warning--empty organization in nltkTreebankCorporaWebPage
 Warning--page numbers missing in both pages and numpages fields in wang2018glue
-You've used 15 entries,
+You've used 21 entries,
             5959 wiz_defined-function locations,
-            1670 strings with 24829 characters,
-and the built_in function-call counts, 19342 in all, are:
-= -- 2393
-> -- 851
+            1716 strings with 26272 characters,
+and the built_in function-call counts, 26371 in all, are:
+= -- 3271
+> -- 1091
 < -- 0
-+ -- 280
-- -- 269
-* -- 1567
-:= -- 1958
-add.period$ -- 74
-call.type$ -- 15
-change.case$ -- 124
-chr.to.int$ -- 15
-cite$ -- 27
-duplicate$ -- 1609
-empty$ -- 1148
-format.name$ -- 329
-if$ -- 4681
++ -- 358
+- -- 349
+* -- 2066
+:= -- 2642
+add.period$ -- 104
+call.type$ -- 21
+change.case$ -- 164
+chr.to.int$ -- 21
+cite$ -- 36
+duplicate$ -- 2248
+empty$ -- 1587
+format.name$ -- 433
+if$ -- 6377
 int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 67
-newline$ -- 205
-num.names$ -- 124
-pop$ -- 662
+missing$ -- 90
+newline$ -- 266
+num.names$ -- 172
+pop$ -- 892
 preamble$ -- 1
-purify$ -- 259
+purify$ -- 353
 quote$ -- 0
-skip$ -- 522
+skip$ -- 770
 stack$ -- 0
-substring$ -- 1234
-swap$ -- 147
+substring$ -- 1741
+swap$ -- 226
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 338
-warning$ -- 12
-while$ -- 84
+type$ -- 490
+warning$ -- 15
+while$ -- 123
 width$ -- 0
-write$ -- 344
+write$ -- 461
 (There was 1 error message)

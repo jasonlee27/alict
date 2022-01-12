@@ -10,28 +10,78 @@ particular, we address the following research questions:
   for finding failures given a linguistic capability?
 \item \label{rq:two}: How effective is our proposed model for
   generating diverse test cases? % self bleu score
-\item \label{rq:three}: How effective is our proposed model for
-  detecting diverse type of errors? % retraining acc score
+\item \label{rq:three}: How effective is test cases generated from our
+  proposed model for detecting diverse type of errors? % retraining
+  acc score
 \item \label{rq:four}: How effective is our new test case generation
   using \cfg expansion? % ablation study
 \end{enumerate}
 
+For answering \ref{rq:one} and \ref{rq:two}, we generate test cases
+and use them for evaluating model on linguistic capabilities. In this
+experiment, We assess the ability to find failures by anlyzing model's
+performance on the generated test cases. We also measure the diversity
+among the generated test cases using similarites among them. Next, we
+answer \ref{rq:three} by retraining \sa model with generated test
+cases and measuring performances. The idea behind this is that more
+comprehensive inputs becomes closer to real-world distribution and
+addresses more type of errors.  Therefore, it leads to improve the
+model performance. In this experiment, We retrain the model and
+compare performances of the retrained model. Not only that, we conduct
+ablation study of \cfg expansion to understand the its impact in our
+approach.
+
 \subsection{Experiment Setup}
+%
+\MyPara{Seed Input Selection}
+%
+For each linguistic capability, we first search all sentences that
+meet its requirement. Among found sentences, we randomly select 10
+sentences due to memory constraint.
 
-For answering \ref{rq:one} and \ref{rq:two}, we organize the
-experiment as follows: we generate test cases used for model
-evaluation.
+\MyPara{Word Sentiment}
+%
+we extract sentiments of words using the
+\Swn~\cite{baccianella2010sentiwordnet}. The \Swn is a publicly
+available lexical resource of wrods on Wordnet with three numerical
+scores of objectivity, positivity and negativity. Sentiment word
+labels from the scores are classified from the algorithm from Mihaela
+\etal~\cite{mihaela2017sentiwordnetlabel}.
 
-\MyPara{Seed Input Selection.} For each linguistic capability, we
-search all sentences that meet its requirement. Among found sentences,
-we randomly select 10 sentences due to space constraint.
+\MyPara{\Cfg Expansion}
+%
+We build a reference \Cfg of natural language from the Englush Penn
+\Trb corpora~\cite{mitchell1993treebank,nltkTreebankCorporaWebPage}.
+The corpus is sampled from 2,499 stories from a tree year \Wsj
+collection The \Trb provides a parsed text corpus with annotation of
+syntactic and semantic structure. In this experiment We implement the
+\trb corpora available through \Nltk, which is a suite of libraries
+and programs for \Nlp for english. In addition, we parse the seed
+input using into its CFG using the Berkeley Neural
+Parser~\cite{kitaev2018constituency, kitaev2019multilingual}, a
+high-accuracy parser with models for 11 languages. The input is a raw
+text in natural languge and the output is the string representation of
+parse tree. Next after comparing CFGs beteen reference and seed input,
+we randomly select 10 expansions for generating templates due to
+memory constraint.
 
-\MyPara{\Cfg Expansion.}
+\MyPara{Synonyms}
+%
+\Model searches synosyms of each token from synonym sets extracted
+from \Wrdnt using \Spacy open-source library for NLP.
 
-\MyPara{Models.}
+\MyPara{Models}
+%
+We evaluate the following \sa nmodels via \Model:
+\Bert~\cite{devlin2019bert}, \Roberta~\cite{liu2019roberta} and
+\Dbert~\cite{sanh2019distilbert}. These models are fineturend on \Sstt
+and ther accuracies are \BertAcc, \RobertaAcc and \DbertAcc.
 
-In addition, we answer \ref{rq:four} by organizing the another
-experiment as follows:
+\MyPara{Retraining}
+%
+We retrain \sa models. we split \Model generated test cases into
+train/validation/test sets with the ratio of 8:1:1. The number of
+epochs and batch_size for retraining are 1 and 16 respectively.
 
 %% For \sa task, input requirements are given for each linguistic
 %% capability. Based on the requirements, \Model generates templates and
