@@ -1,9 +1,9 @@
 \section{Experiment}
 \label{sec:experiment}
 %
-In this section, we present experiments to
-evaluate the effectiveness of our proposed evaluation methodology. In
-particular, we address the following research questions:
+In this section, we present experiments to evaluate the effectiveness
+of our proposed evaluation methodology. In particular, we address the
+following research questions:
 
 \begin{enumerate}[label=\textbf{RQ\arabic*}]
 \item \label{rq:one}: How effective is our proposed evaluation model
@@ -43,75 +43,42 @@ sentences due to memory constraint.
 %
 we extract sentiments of words using the
 \Swn~\cite{baccianella2010sentiwordnet}. The \Swn is a publicly
-available lexical resource of wrods on Wordnet with three numerical
+available lexical resource of words on Wordnet with three numerical
 scores of objectivity, positivity and negativity. Sentiment word
 labels from the scores are classified from the algorithm from Mihaela
 \etal~\cite{mihaela2017sentiwordnetlabel}.
 
 \MyPara{\Cfg Expansion}
 %
-We build a reference \Cfg of natural language from the Englush Penn
+We build a reference \Cfg of natural language from the English Penn
 \Trb corpora~\cite{mitchell1993treebank,nltkTreebankCorporaWebPage}.
 The corpus is sampled from 2,499 stories from a tree year \Wsj
 collection The \Trb provides a parsed text corpus with annotation of
 syntactic and semantic structure. In this experiment We implement the
 \trb corpora available through \Nltk, which is a suite of libraries
-and programs for \Nlp for english. In addition, we parse the seed
+and programs for \Nlp for English. In addition, we parse the seed
 input using into its CFG using the Berkeley Neural
 Parser~\cite{kitaev2018constituency, kitaev2019multilingual}, a
 high-accuracy parser with models for 11 languages. The input is a raw
-text in natural languge and the output is the string representation of
-parse tree. Next after comparing CFGs beteen reference and seed input,
+text in natural language and the output is the string representation of
+parse tree. Next after comparing CFGs between reference and seed input,
 we randomly select 10 expansions for generating templates due to
 memory constraint.
 
 \MyPara{Synonyms}
 %
-\Model searches synosyms of each token from synonym sets extracted
+\Model searches synonyms of each token from synonym sets extracted
 from \Wrdnt using \Spacy open-source library for NLP.
 
 \MyPara{Models}
 %
-We evaluate the following \sa nmodels via \Model:
+We evaluate the following \sa models via \Model:
 \Bert~\cite{devlin2019bert}, \Roberta~\cite{liu2019roberta} and
-\Dbert~\cite{sanh2019distilbert}. These models are fineturend on \Sstt
-and ther accuracies are \BertAcc, \RobertaAcc and \DbertAcc.
+\Dbert~\cite{sanh2019distilbert}. These models are fine-tuned on \Sstt
+and their accuracies are \BertAcc, \RobertaAcc and \DbertAcc.
 
 \MyPara{Retraining}
 %
 We retrain \sa models. we split \Model generated test cases into
 train/validation/test sets with the ratio of 8:1:1. The number of
-epochs and batch_size for retraining are 1 and 16 respectively.
-
-%% For \sa task, input requirements are given for each linguistic
-%% capability. Based on the requirements, \Model generates templates and
-%% lexicons.
-%% \MyPara{Model}
-%% \Bert, \Roberta, \Dbert
-
-%% \MyPara{Dataset}
-%% reference CFG generation: Treebank corpus
-%% word sentiments: sentiwordnet (https://github.com/aesuli/SentiWordNet)
-%% cfg parser: berkeley neural parser (https://github.com/nikitakit/self-attentive-parser)
-%% synonyms: spacy wordnet synsets (https://spacy.io/universe/project/spacy-wordnet)
-%% seed search dataset: stanford sentiment treebank (sst) dataset (https://nlp.stanford.edu/sentiment/)
-
-%% \MyPara{Hyper-Parameter}
-%% Number of seed inputs: 10 (random sample)
-%% Number of cfg expansions: 10 (random sample)
-%% Number of synonyms for a word: 10 (random sample)
-
-%% Besides, we retrain the \sota \sa models aformentioned from test cases
-%% generated from \Chlst and \Model. The goal of the retraining is to
-%% assess comprehensiveness of test cases according to performance of
-%% fine-tuned model. We assume that the comprehensive test cases improve
-%% performance of \sa task when fine-tuning with them. On the other hand,
-%% fine-tuning models with less comprehensive test cases increases
-%% overfitting and decrece model performance.
-
-%% \MyPara{Dataset}
-%% Retraining dataset: checklist and our proposed model test cases
-
-%% \MyPara{Hyper-Parameter}
-%% Retraining epoach: 1
-%% Retraining batch_size: 16
+epochs and batch size for retraining are 1 and 16 respectively.
