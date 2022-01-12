@@ -18,7 +18,7 @@ function gen_requirements() {
 function gen_templates() {
         # write templates in json
         (cd ${_DIR}
-         python -m python.main --run template --search_dataset sst
+         CUDA_VISIBLE_DEVICES=1,2,3,4 python -m python.main --run template --search_dataset sst
         )
 }
 

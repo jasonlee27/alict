@@ -120,19 +120,9 @@ class TransformOperator:
                                                        SENT_DICT[f"negative_verb"] + \
                                                        SENT_DICT[f"positive_noun"] + \
                                                        SENT_DICT[f"negative_noun"])
-            else:
-                self.inv_replace_target_words = set(SENT_DICT[f"{_property}_{woi}"])
-                forbidden_property = "negative"
-                if _property=="negative":
-                    forbidden_property = "positive"
-                # end if
-                self.inv_replace_forbidden_words = set(['No', 'no', 'Not', 'not', 'Nothing', 'nothing', 'without', 'but'] + \
-                                                       SENT_DICT[f"{forbidden_property}_adj"] + \
-                                                       SENT_DICT[f"{forbidden_property}_verb"] + \
-                                                       SENT_DICT[f"{forbidden_property}_noun"])
             # end if
-            self.transformation_funcs = f"INV_{func}_{_property}_{woi}"
         # end if
+        self.transformation_funcs = f"INV:{func}:{_property}:{woi}"
         return
 
     def set_dir_env(self, dir_transform_reqs):
@@ -167,7 +157,7 @@ class TransformOperator:
                 }]
                 self.dir_expect_func = Expect.pairwise(self.diff_down)
             # end if
-            self.transformation_funcs = f"DIR_{func}_{_property}_{woi}"
+            self.transformation_funcs = f"DIR:{func}:{_property}:{woi}"
         # end if
         return
                 

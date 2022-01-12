@@ -172,7 +172,7 @@ class Testsuite:
                                         transform_req,
                                         nlp_task=task,
                                         search_dataset=dataset)
-        test_type, func, _property, woi = transformer.transformation_funcs.split('_')
+        test_type, func, _property, woi = transformer.transformation_funcs.split(':')
         if test_type=="INV":
             if func=="replace":
                 if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
