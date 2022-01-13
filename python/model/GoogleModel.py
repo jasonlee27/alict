@@ -16,6 +16,7 @@ import numpy as np
 
 from google.cloud import language_v1
 
+from ..utils.Macros import Macros
 
 class GoogleModel:
 

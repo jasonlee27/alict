@@ -31,6 +31,18 @@ SENT_DICT = {
     "negative_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="negative"],
     "neutral_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="pure neutral"]
 }
+
+# get name and location data
+basic = Utils.read_json(Macros.checklist_dir / 'checklist' / 'data' / 'lexicons' / 'basic.json')
+names = Utils.read_json(Macros.checklist_dir / 'checklist' / 'data' / 'names.json')
+name_set = { x:set(names[x]) for x in names }
+NAME_LOC_DICT = {
+    'name': names,
+    'name_set': name_set,
+    'city': basic['city'],
+    'country': basic['country'],
+}
+
 random.seed(27)
 
 class SearchOperator: 
@@ -106,7 +118,10 @@ class SearchOperator:
             doc = nlp(s)
             is_person_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'PERSON' for a in x])])
             if is_person_name_contained:
-                results.append(sent)
+                ents = [x.text for x in doc.ents if np.all([a.ent_type_ == 'PERSON' for a in x])]
+                if any([x for x in ents if x in NAME_LOC_DICT['name_set']['women'] or x in NAME_LOC_DICT['name_set']['men']]):
+                    results.append(sent)
+                # end if
             # end if
         # end for
         return results
@@ -120,7 +135,10 @@ class SearchOperator:
             doc = nlp(s)
             is_loc_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'GPE' for a in x])])
             if is_loc_name_contained:
-                results.append(sent)
+                ents = [x.text for x in doc.ents if np.all([a.ent_type_ == 'GPE' for a in x])]
+                if any([x for x in ents if x in NAME_LOC_DICT['city'] or x in NAME_LOC_DICT['country']]):
+                    results.append(sent)
+                # end if
             # end if
         # end for
         return results
@@ -131,8 +149,8 @@ class SearchOperator:
         for sent in sents:
             s = Utils.detokenize(sent[1])
             doc = nlp(s)
-            is_number_contained = any([True for x in doc if x.text.isdigit()])
-            if is_number_contained:
+            nums = [x.text for x in doc if x.text.isdigit()]
+            if any(nums) and any([x for x in nums if x != '2' and x != '4']):
                 results.append(sent)
             # end if
         # end for

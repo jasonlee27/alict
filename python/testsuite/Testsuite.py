@@ -85,7 +85,7 @@ class Testsuite:
             # end if
         # end for
         return {
-            "sent": " ".join(template_list),
+            "sent": Utils.detokenize(template_list), #" ".join(template_list),
             "values": template_values,
             "label": cls.map_labels(task, template["label"])
         }
@@ -220,7 +220,7 @@ class Testsuite:
                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::{seed_type}",
                           description=templates_per_req["description"])
-            elif func=="strip" and _property=="None" and woi=="puncuation":
+            elif func=="strip" and _property=="None" and woi=="punctuation":
                 if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
                 nlp = spacy.load('en_core_web_sm')
                 parsed_data = list(nlp.pipe(sentences))
@@ -263,7 +263,7 @@ class Testsuite:
                                     transformer.search_reqs,
                                     transformer.search_dataset
                             ) for _s in s["selected_inputs"]
-                ][:5]
+                ][:10]
                 nlp = spacy.load('en_core_web_sm')
                 parsed_data = list(nlp.pipe(sentences))
                 t = Perturb.perturb(parsed_data, transformer.add_phrase(phrases), nsamples=Macros.nsamples)
@@ -326,9 +326,7 @@ class Testsuite:
             editor = Editor()
             for template in templates_per_req["templates"]:
                 editor = cls.add_lexicon(editor, template["values"])
-                print(editor)
                 t = cls.add_template(t, editor, template)
-                print(len(t.data))
             # end for
             if transform_reqs[t_i] is not None:
                 suite = cls.suite_add_transform(editor,

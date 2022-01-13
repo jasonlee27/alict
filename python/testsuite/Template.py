@@ -162,7 +162,11 @@ class Template:
     def get_templates_by_synonyms(cls, nlp, tokens: List[str], tokens_pos: List[str], prev_synonyms):
         template = list()
         for t, tpos in zip(tokens, tokens_pos):
-            key = "{"+f"{t}_{tpos}"+"}"
+            newt = re.sub(r'\..*', '', t)
+            newt = re.sub(r'\[.*\]', '', newt)
+            newt = re.sub(r'.*?:', '', newt)
+            newt = re.sub(r'\d+$', '', newt)
+            key = "{"+f"{newt}_{tpos}"+"}"
             if key in prev_synonyms.keys():
                 if prev_synonyms[key] is None or len(prev_synonyms[key])==0:
                     template.append(t)
@@ -249,7 +253,7 @@ class Template:
                     "place_holder": Utils.tokenize(seed_input),
                     "label": label_seed
                 })
-                    
+                
                 # make template for seed input
                 tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
                 _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
