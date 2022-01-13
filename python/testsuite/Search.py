@@ -33,8 +33,8 @@ SENT_DICT = {
 }
 
 # get name and location data
-basic = Utils.read_json(Macros.checklist_dir / 'checklist' / 'data' / 'lexicons' / 'basic.json')
-names = Utils.read_json(Macros.checklist_dir / 'checklist' / 'data' / 'names.json')
+basic = Utils.read_json(Macros.dataset_dir / 'checklist' / 'lexicons' / 'basic.json')
+names = Utils.read_json(Macros.dataset_dir / 'checklist' / 'names.json')
 name_set = { x:set(names[x]) for x in names }
 NAME_LOC_DICT = {
     'name': names,
