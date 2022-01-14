@@ -25,7 +25,9 @@ class Testmodel:
 
     @classmethod
     def load_testsuite(cls, testsuite_file: Path):
-        return suite().from_file(testsuite_file)
+        tsuite = suite().from_file(testsuite_file)
+        print(tsuite.info)
+        return tsuite
 
     @classmethod
     def _run_testsuite(cls, task: str, local_model_name=None):
@@ -36,13 +38,14 @@ class Testmodel:
             if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
         ]
         for cksum_val in cksum_vals:
-            test_files = [
-                f"{task}_testsuite_seeds_{cksum_val}.pkl",
-                f"{task}_testsuite_seed_templates_{cksum_val}.pkl",
-                f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
+            testsuite_files = [
+                Macros.result_dir / "test_results" / f for f in [
+                    f"{task}_testsuite_seeds_{cksum_val}.pkl",
+                    f"{task}_testsuite_seed_templates_{cksum_val}.pkl",
+                    f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
+                ] if os.path.exists(Macros.result_dir / "test_results" / f)
             ]
-            for test_file in test_files:
-                testsuite_file = Macros.result_dir / "test_results" / test_file
+            for testsuite_file in testsuite_files:
                 testsuite = cls.load_testsuite(testsuite_file)
                 if local_model_name is None:
                     # # Run Google nlp model

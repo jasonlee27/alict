@@ -93,7 +93,6 @@ class Testsuite:
     @classmethod
     def get_templates(cls, nlp_task, dataset, num_seeds):
         task = nlp_task
-        print(f"TASK: {task}")
         new_input_dicts = Template.get_new_inputs(
             Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
             task,
@@ -106,7 +105,6 @@ class Testsuite:
         transform_reqs = list()
         for t_i in range(len(new_input_dicts)):
             req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
-            # print(new_input_dicts[t_i]["requirement"]["capability"]+"::"+new_input_dicts[t_i]["requirement"]["description"])
             res_dir = Macros.result_dir/ f"templates_{task}"
             if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))) or \
                (not os.path.exists(str(res_dir / f"templates_seed_{req_cksum}.json"))) or \
@@ -176,10 +174,9 @@ class Testsuite:
         if test_type=="INV":
             if func=="replace":
                 if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-                if woi=="phrase":
+                if woi=="word":
                     t = Perturb.perturb(sentences, transformer.replace, nsamples=Macros.nsamples)
                     test = INV(t.data)
-                    print(len(t.data))
                     suite.add(test,
                               name=f"{task}::{seed_type}::"+templates_per_req["description"],
                               capability=templates_per_req["capability"]+f"::{seed_type}",
@@ -189,7 +186,6 @@ class Testsuite:
                     parsed_data = list(nlp.pipe(sentences))
                     t = Perturb.perturb(parsed_data, Perturb.change_names, nsamples=2*Macros.nsamples)
                     test = INV(t.data)
-                    print(len(t.data))
                     suite.add(test,
                               name=f"{task}::{seed_type}::"+templates_per_req["description"],
                               capability=templates_per_req["capability"]+f"::{seed_type}",
@@ -199,7 +195,6 @@ class Testsuite:
                     parsed_data = list(nlp.pipe(sentences))
                     t = Perturb.perturb(parsed_data, Perturb.change_location, nsamples=2*Macros.nsamples)
                     test = INV(t.data)
-                    print(len(t.data))
                     suite.add(test,
                               name=f"{task}::{seed_type}::"+templates_per_req["description"],
                               capability=templates_per_req["capability"]+f"::{seed_type}",
@@ -209,7 +204,6 @@ class Testsuite:
                     parsed_data = list(nlp.pipe(sentences))
                     t = Perturb.perturb(parsed_data, Perturb.change_number, nsamples=2*Macros.nsamples)
                     test = INV(t.data)
-                    print(len(t.data))
                     suite.add(test,
                               name=f"{task}::{seed_type}::"+templates_per_req["description"],
                               capability=templates_per_req["capability"]+f"::{seed_type}",
@@ -220,7 +214,6 @@ class Testsuite:
                 if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
                 t = Perturb.perturb(sentences, transformer.add_irrelevant, nsamples=Macros.nsamples)
                 test = INV(t.data)
-                print(len(t.data))
                 suite.add(test,
                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::{seed_type}",
@@ -231,7 +224,6 @@ class Testsuite:
                 parsed_data = list(nlp.pipe(sentences))
                 t = Perturb.perturb(parsed_data, Perturb.punctuation, nsamples=Macros.nsamples)
                 test = INV(t.data)
-                print(len(t.data))
                 suite.add(test,
                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::{seed_type}",
@@ -240,7 +232,6 @@ class Testsuite:
                 if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
                 t = Perturb.perturb(sentences, Perturb.add_typos, nsamples=Macros.nsamples, typos=1)
                 test = INV(t.data)
-                print(len(t.data))
                 suite.add(test,
                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::{seed_type}",
@@ -249,7 +240,6 @@ class Testsuite:
                 if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
                 t = Perturb.perturb(sentences, Perturb.add_typos, nsamples=Macros.nsamples, typos=2)
                 test = INV(t.data)
-                print(len(t.data))
                 suite.add(test,
                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::{seed_type}",
@@ -258,7 +248,7 @@ class Testsuite:
                 if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
                 t = Perturb.perturb(sentences, Perturb.contractions, nsamples=2*Macros.nsamples)
                 test = INV(t.data)
-                print(len(t.data))
+                print(len(sentences), len(t.data))
                 suite.add(test,
                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::{seed_type}",
@@ -277,7 +267,6 @@ class Testsuite:
                 parsed_data = list(nlp.pipe(sentences))
                 t = Perturb.perturb(parsed_data, transformer.add_phrase(phrases), nsamples=Macros.nsamples)
                 test = DIR(t.data, transformer.dir_expect_func)
-                print(len(t.data))
                 suite.add(test,
                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::{seed_type}",
@@ -295,7 +284,8 @@ class Testsuite:
                              transform_reqs,
                              res_dir):
         for t_i, templates_per_req in enumerate(seed_dicts):
-            print(f"{task}::SEED::"+templates_per_req["description"])
+            test_cksum = Utils.get_cksum(templates_per_req["description"])
+            print(f"{task}::SEED::"+templates_per_req["description"]+f"::CKSUM:{test_cksum}::", end="")
             t = None
             suite = TestSuite()
             editor = Editor()
@@ -304,7 +294,7 @@ class Testsuite:
             # end for
             if transform_reqs[t_i] is not None:
                 suite = cls.suite_add_transform(editor,
-                                                t.data,
+                                               t.data,
                                                 transform_reqs[t_i],
                                                 templates_per_req,
                                                 task, dataset, suite, "SEED")
@@ -315,10 +305,16 @@ class Testsuite:
                           capability=templates_per_req["capability"]+"::SEED",
                           description=templates_per_req["description"])
             # end if
-            test_cksum = Utils.get_cksum(
-                task+templates_per_req["capability"]+templates_per_req["description"]
-            )
-            suite.save(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')
+            num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
+            if num_data>0:
+                # test_cksum = Utils.get_cksum(
+                #     task+templates_per_req["capability"]+templates_per_req["description"]
+                # )
+                suite.save(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')
+                print("SAVED")
+            else:
+                print("NO_DATA")
+            # end if
         # end for
         return
 
@@ -330,7 +326,8 @@ class Testsuite:
                                       transform_reqs,
                                       res_dir):
         for t_i, templates_per_req in enumerate(seed_template_dicts):
-            print(f"{task}::SEED_TEMPS::"+templates_per_req["description"])
+            test_cksum = Utils.get_cksum(templates_per_req["description"])
+            print(f"{task}::SEED_TEMPS::"+templates_per_req["description"]+f"::CKSUM:{test_cksum}::", end="")
             t = None
             suite = TestSuite()
             editor = Editor()
@@ -351,10 +348,13 @@ class Testsuite:
                           capability=templates_per_req["capability"]+"::SEED_TEMPS",
                           description=templates_per_req["description"])
             # end if
-            test_cksum = Utils.get_cksum(
-                task+templates_per_req["capability"]+templates_per_req["description"]
-            )
-            suite.save(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')
+            num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
+            if num_data>0:
+                suite.save(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')
+                print("SAVED")
+            else:
+                print("NO_DATA")
+            # end if
         # end for
         return
 
@@ -365,9 +365,10 @@ class Testsuite:
                                      exp_template_dicts,
                                      transform_reqs,
                                      res_dir):
-        for t_i, templates_per_req in enumerate(exp_template_dicts):
-            print(f"{task}::EXP_TEMPS::"+templates_per_req["description"])
+        for t_i, templates_per_req in enumerate(exp_template_dicts):            
             if any(templates_per_req["templates"]):
+                test_cksum = Utils.get_cksum(templates_per_req["description"])
+                print(f"{task}::EXP_TEMPS::"+templates_per_req["description"]+f"::CKSUM:{test_cksum}::", end="")
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -389,10 +390,13 @@ class Testsuite:
                               capability=templates_per_req["capability"]+"::EXP_TEMPS",
                               description=templates_per_req["description"])
                 # end if
-                test_cksum = Utils.get_cksum(
-                    task+templates_per_req["capability"]+templates_per_req["description"]
-                )
-                suite.save(res_dir / f'{task}_testsuite_exp_templates_{test_cksum}.pkl')
+                num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
+                if num_data>0:
+                    suite.save(res_dir / f'{task}_testsuite_exp_templates_{test_cksum}.pkl')
+                    print("SAVED")
+                else:
+                    print("NO_DATA")
+                # end if
             # end for
         # end for
         return
@@ -426,6 +430,7 @@ class Testsuite:
 
     @classmethod
     def write_testsuites(cls, nlp_task, dataset, num_seeds):
+        print("Generate Testsuites from Templates ...")
         for task, seed, seed_temp, exp_temp, transform_reqs in cls.get_templates(nlp_task=nlp_task, dataset=dataset, num_seeds=num_seeds):
             Testsuite.write_editor_templates(task, dataset, seed, seed_temp, exp_temp, transform_reqs)
         # end for
