@@ -157,12 +157,12 @@ class SearchOperator:
         return results
 
     def search_by_contraction_include(self, sents):
-        word_list = list(CONTRACTION_MAP.keys())+[val for val in CONTRACTION_MAP.values()]
+        contraction_pattern = re.compile(r'\b({})\b'.format('|'.join(CONTRACTION_MAP.keys())), flags=re.IGNORECASE|re.DOTALL)
+        reverse_contraction_pattern = re.compile(r'\b({})\b'.format('|'.join(CONTRACTION_MAP.values())), flags=re.IGNORECASE|re.DOTALL)        
         results = list()
         for sent in sents:
             s = Utils.detokenize(sent[1])
-            is_contained = [True for w in word_list if w in s]
-            if any(is_contained):
+            if contraction_pattern.search(s) or reverse_contraction_pattern.search(s):
                 results.append(sent)
             # end if
         # end for
