@@ -83,7 +83,6 @@ class Synonyms:
                         synonyms.append(sword.lower())
                     # end if
                 # end for
-                synonyms.append(word)
             # end if
         # end for
         return list(set(synonyms))[:Macros.max_num_synonyms]

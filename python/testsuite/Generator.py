@@ -103,7 +103,6 @@ class Generator:
             idxs = np.random.choice(len(result), Macros.num_cfg_exp_elem, replace=False)
             result = [result[i] for i in idxs]
         # end if
-        print(len(result))
         return result
 
     def get_pos_from_mask(self, masked_input: str):
