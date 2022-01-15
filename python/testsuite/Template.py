@@ -50,10 +50,16 @@ class Template:
         results = list()
         if os.path.exists(save_to):
             results = Utils.read_json(save_to)
+            _reqs = list()
+            for req in reqs:
+                if not any([True for r in results if r["requirement"]["description"]==req["description"]]):
+                    _reqs.append(req)
+                # end if
+            # end for
+            reqs = _reqs
         # end if
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
-            if any(results) and any([True for r in results if r["requirement"]==selected["requirement"]]):
-                continue
+            
             exp_inputs = dict()
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
             num_selected_inputs = len(selected["selected_inputs"])
@@ -108,9 +114,9 @@ class Template:
     
     @classmethod
     def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None):
-        if os.path.exists(input_file):
-            return Utils.read_json(input_file)
-        # end if
+        # if os.path.exists(input_file):
+        #     return Utils.read_json(input_file)
+        # # end if
         return cls.generate_inputs(
             task=nlp_task,
             dataset=dataset_name,

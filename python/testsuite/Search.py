@@ -527,8 +527,8 @@ class Search:
     SEARCH_FUNC = {
         Macros.sa_task : {
             Macros.datasets[Macros.sa_task][0]: Sst.search,
-            Macros.datasets[Macros.sa_task][1]: ChecklistTestsuite.search
-            Macros.datasets[Macros.sa_task][2]: AirlineTweets.search
+            Macros.datasets[Macros.sa_task][1]: ChecklistTestsuite.search,
+            Macros.datasets[Macros.sa_task][2]: AirlineTweets.search,
         },
         Macros.mc_task : {},
         Macros.qqp_task : {}

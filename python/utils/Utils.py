@@ -95,3 +95,28 @@ class Utils:
             fail_rate = round(fail_cnt*1. / len(pred_res), 2)
             return fail_cnt, fail_rate
         # end if
+
+    @classmethod
+    def replace_non_english_letter(cls, sent):
+        _sent = sent.replace("-LRB-", "(")
+        _sent = _sent.replace("-RRB-", ")")
+        _sent = _sent.replace("Ã´", "ô")
+        _sent = _sent.replace("8Â 1\/2", "8 1\/2")
+        _sent = _sent.replace("2Â 1\/2", "2 1\/2")
+        _sent = _sent.replace("Ã§", "ç")
+        _sent = _sent.replace("Ã¶", "ö")
+        _sent = _sent.replace("Ã»", "û")
+        _sent = _sent.replace("Ã£", "ã")        
+        _sent = _sent.replace("Ã¨", "è")
+        _sent = _sent.replace("Ã¯", "ï")
+        _sent = _sent.replace("Ã±", "ñ")
+        _sent = _sent.replace("Ã¢", "â")
+        _sent = _sent.replace("Ã¡", "á")
+        _sent = _sent.replace("Ã©", "é")
+        _sent = _sent.replace("Ã¦", "æ")
+        _sent = _sent.replace("Ã­", "í")
+        _sent = _sent.replace("Ã³", "ó")
+        _sent = _sent.replace("Ã¼", "ü")
+        _sent = _sent.replace("Ã ", "à")
+        _sent = _sent.replace("Ã", "à")
+        return _sent

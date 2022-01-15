@@ -32,7 +32,7 @@ class Macros:
     # stanfordSentimentTreebank:
     # dynasent paper: https://arxiv.org/pdf/2012.15349.pdf
     datasets = {
-        sa_task: ['sst', 'checklist', 'dynasent'],
+        sa_task: ['sst', 'checklist', 'airlinetweets'],
         mc_task: [],
         qqp_task: []
     }
@@ -51,6 +51,8 @@ class Macros:
     sst_datasent_file: Path = dataset_dir / "stanfordSentimentTreebank" / "datasetSentences.txt"
     sst_dict_file: Path = dataset_dir / "stanfordSentimentTreebank" / "dictionary.txt"
     sst_label_file: Path = dataset_dir / "stanfordSentimentTreebank" / "sentiment_labels.txt"
+    # Tweets
+    tweet_file: Path = dataset_dir / "airplanetweets" / "Tweets.csv"
 
     # Dynasent
     dyna_r1_test_src_file: Path = dataset_dir / "dynasent" / "dynasent-v1.1" / "dynasent-v1.1-round01-yelp-test.jsonl"
