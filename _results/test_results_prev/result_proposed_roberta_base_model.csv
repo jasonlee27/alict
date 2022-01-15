@@ -2,8 +2,8 @@ test_type,linguistic_cap,num_seed_tests,num_seed_tests_run,num_seed_fails,seed_f
 Vocab_POS,Short sentences with neutral adjectives and nouns,10,10,9,90.0,282,282,249,88.3,4,4,4,100.0
 Vocab_POS,Short sentences with sentiment-laden adjectives,10,10,0,0.0,7547,500,19,3.8,9594,500,138,27.6
 Vocab_POS,Replace neutral words with other neutral words,10,10,2,20.0,500,500,454,90.8,500,500,1,0.2
-Vocab_POS,Add positive phrases, fails if sent. goes down by > 0.1,10,10,0,0.0,500,500,1,0.2,,,,
-Vocab_POS,Add negative phrases, fails if sent. goes up by > 0.1,10,10,0,0.0,500,500,0,0.0,,,,
+Vocab_POS,Add positive phrases and fails if sent. goes down by > 0.1,10,10,0,0.0,500,500,1,0.2,,,,
+Vocab_POS,Add negative phrases and fails if sent. goes up by > 0.1,10,10,0,0.0,500,500,0,0.0,,,,
 Robustness,Add randomly generated URLs and handles,10,10,,,,,,,,,,
 Robustness,Strip punctuation and/or add ".",10,10,1,10.0,500,500,7,1.4,500,500,0,0.0
 Robustness,Swap two adjacent characters,10,10,0,0.0,500,500,4,0.8,,,,
