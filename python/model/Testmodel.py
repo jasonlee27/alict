@@ -26,7 +26,7 @@ class Testmodel:
     @classmethod
     def load_testsuite(cls, testsuite_file: Path):
         tsuite = suite().from_file(testsuite_file)
-        print(tsuite.info)
+        # print(tsuite.info)
         return tsuite
 
     @classmethod
@@ -77,9 +77,9 @@ class Testmodel:
 
         if local_model_name is None:
             # Run Google nlp model
-            print(f">>>>> MODEL: Google NLP model")
-            GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
-            print(f"<<<<< MODEL: Google NLP model")
+            # print(f">>>>> MODEL: Google NLP model")
+            # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
+            # print(f"<<<<< MODEL: Google NLP model")
             
             for mname, model in Model.load_models(task):
                 print(f">>>>> MODEL: {mname}")

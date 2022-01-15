@@ -9,7 +9,7 @@ import re, os
 import nltk
 import copy
 import random
-import numpy
+import numpy as np
 
 from pathlib import Path
 from nltk.parse.generate import generate, demo_grammar
@@ -98,6 +98,12 @@ class Generator:
                 # end for
             # end for
         # end for
+        if len(result)>Macros.num_cfg_exp_elem:
+            # random sampling N cfg diffs
+            idxs = np.random.choice(len(result), Macros.num_cfg_exp_elem, replace=False)
+            result = [result[i] for i in idxs]
+        # end if
+        print(len(result))
         return result
 
     def get_pos_from_mask(self, masked_input: str):

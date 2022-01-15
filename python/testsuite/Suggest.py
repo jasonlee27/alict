@@ -158,7 +158,7 @@ class Suggest:
         for g_i in range(len(gen_inputs)):
             gen_input = gen_inputs[g_i]
             masked_input, mask_pos = gen_input["masked_input"]
-            gen_input["words_suggest"] = cls.get_word_suggestion(editor, masked_input, mask_pos)
+            gen_input["words_suggest"] = cls.get_word_suggestion(editor, masked_input, mask_pos, num_target=num_target)
             gen_inputs[g_i] = gen_input
         # end for
         return gen_inputs

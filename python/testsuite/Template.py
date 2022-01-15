@@ -60,14 +60,15 @@ class Template:
                 new_input_results = list()
                 if len(gen_inputs)>0:
                     # get the word suggesteion at the expended grammar elements
-                    gen_inputs = Suggest.get_new_inputs(generator.editor, gen_inputs, num_target=10)
-                    _gen_inputs = list()
-                    for g_i in range(len(gen_inputs[:n])):
+                    gen_inputs = Suggest.get_new_inputs(
+                        generator.editor,
+                        gen_inputs,
+                        num_target=Macros.num_suggestions_on_exp_grammer_elem
+                    )
+                    for g_i in range(len(gen_inputs)):
                         eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], seed_label, selected["requirement"])
                         if len(eval_results)>0:
                             del gen_inputs[g_i]["words_suggest"]
-                            gen_inputs[g_i]["new_iputs"] = eval_results
-                            _gen_inputs.append(gen_inputs[g_i])
                             new_input_results.extend(eval_results)
                             print(".", end="")
                         # end if

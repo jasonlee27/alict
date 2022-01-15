@@ -38,6 +38,9 @@ class Macros:
     }
 
     # Testsuite
+    num_seeds = 30
+    num_cfg_exp_elem = 5
+    num_suggestions_on_exp_grammer_elem = 3
     nsamples = 500
     max_num_sents = 100000 # number of testcase sentences
     max_num_sents_for_perturb = 1000 # number of sentences for perturbation
@@ -58,7 +61,7 @@ class Macros:
     # Checklist Testsuite
     checklist_dir: Path = download_dir / "checklist"
     checklist_data_dir: Path = checklist_dir / "release_suites"
-    checklist_sa_dataset_file: Path = checklist_data_dir / "ex_sentiment_suite.pkl"
+    checklist_sa_dataset_file: Path = checklist_data_dir / "sentiment_suite.pkl"
     
     sa_models_file = download_dir / "models" / "sentiment_models.txt"
     

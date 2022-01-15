@@ -32,8 +32,8 @@ function gen_testsuite() {
 function eval_models(){
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         # python -m python.main --run testmodel --test_baseline # evaluating models on checklist testcases
-         python -m python.main --run testmodel # evaluating models on our generated testcases
+         python -m python.main --run testmodel --test_baseline # evaluating models on checklist testcases
+         # python -m python.main --run testmodel # evaluating models on our generated testcases
         )
 }
 

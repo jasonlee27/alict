@@ -86,7 +86,7 @@ class Synonyms:
                 synonyms.append(word)
             # end if
         # end for
-        return list(set(synonyms))
+        return list(set(synonyms))[:Macros.max_num_synonyms]
 
     
 

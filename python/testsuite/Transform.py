@@ -17,6 +17,7 @@ from pathlib import Path
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
+from .Synonyms import Synonyms
 
 
 # get pos/neg/neu words from SentiWordNet
@@ -63,6 +64,38 @@ CONTRACTION_MAP = {
     "you'd": "you would", "you'd've": "you would have",
     "you'll": "you will", "you're": "you are", "you've": "you have"
 }
+
+NEGATION_PHRASE = [
+    "I wouldn't say that ", "I don't think that", "I don't agree with that",
+    "I would never say that", "I can't say that", "I disagree that",
+    "I never thought that", "I cannot accept that", 
+]
+
+AGREEMENT_PHRASE = [
+    "I would say that ", "I do think that", "I agree with that",
+    "I accept that", "I believe that", "I accept that"
+]
+
+CUR_NEG_TEMPORAL_PHRASE = {
+    "past": [
+        "Previously, I used to {like_VB} it saying that",
+        "Last time, I {liked_VBD} it saying that",
+        "I {liked_VBD} it much as to say that"
+    ],
+    "change": ['but', 'even though', 'although'],
+    "current": ["now I don't {like_VB} it.", "now I {hate_VB} it."]
+}
+
+CUR_POS_TEMPORAL_PHRASE = {
+    "past": [
+        "I used to {hate_VB} it saying that ",
+        "Last time, I didn't {like_VB} it saying that",
+        "I {hated_VBD} it much as to say that"
+    ],
+    "change": ['but', 'even though', 'although'],
+    "current": ["now I {like_VB} it."]
+}
+
 
 random.seed(27)
 
@@ -239,3 +272,27 @@ class TransformOperator:
         rets += ['%s %s' % (sentence, x) for x in irrelevant_after]
         return rets
     
+    # def change_temporalness_template(self, templates):
+    #     # templates= List[Dict]
+    #     # convert every generate templates into temporal awareness formated templates
+    #     # each template keys: sent, values, label
+    #     new_templates = list()
+    #     nlp = spacy.load('en_core_web_md')
+    #     nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+    #     for temp in templates:
+    #         label = temp["label"]
+    #         if label = Macros.sa_label_map['positive']:
+    #             prefix_phrases= list()
+    #             for phrase in CUR_NEG_TEMPORAL_PHRASE['past']:
+    #                 search = re.search("(.+)\{([^\_]+)\_([^\_]+)\}(.+)", phrase)
+    #                 prefix, word, pos, postfix = search.group(1), search.group(2), search.group(3), search.group(4)
+    #                 syns = Synonyms.get_synonyms(nlp, word, pos)
+    #                 if len(syns)>1:
+    #                     for s in list(set(syns)):
+    #                         prefix_phrases.append(prefix+s+postfix)
+    #                     # end for
+    #                 else:
+    #                     prefix_phrases.append(prefix+word+postfix)
+    #                 # end if
+    #             # end for
+    #         elif label = Macros.sa_label_map['negative']:

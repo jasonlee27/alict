@@ -291,6 +291,22 @@ class Requirements:
                             "DIR": None
                         }
                     })
+                # elif d.lower()=="sentiment change over time, present should prevail":
+                #     reqs.append({
+                #         "capability": cap,
+                #         "description": d,
+                #         "search": [
+                #             {
+                #                 "label": "positive"
+                #             },
+                #             {
+                #                 "label": "negative"
+                #             }
+                #         ],
+                #         "transform": {
+                #             "MFT": "add temporal_awareness"
+                #         }
+                #     })J9
                 # end if
             # end for
         # end for
