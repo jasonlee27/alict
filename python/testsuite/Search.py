@@ -381,31 +381,6 @@ class SearchOperator:
 class Sst:
 
     @classmethod
-    def replace_non_english_letter(cls, sent):
-        _sent = sent.replace("-LRB-", "(")
-        _sent = _sent.replace("-RRB-", ")")
-        _sent = _sent.replace("Ã´", "ô")
-        _sent = _sent.replace("8Â 1\/2", "8 1\/2")
-        _sent = _sent.replace("2Â 1\/2", "2 1\/2")
-        _sent = _sent.replace("Ã§", "ç")
-        _sent = _sent.replace("Ã¶", "ö")
-        _sent = _sent.replace("Ã»", "û")
-        _sent = _sent.replace("Ã£", "ã")        
-        _sent = _sent.replace("Ã¨", "è")
-        _sent = _sent.replace("Ã¯", "ï")
-        _sent = _sent.replace("Ã±", "ñ")
-        _sent = _sent.replace("Ã¢", "â")
-        _sent = _sent.replace("Ã¡", "á")
-        _sent = _sent.replace("Ã©", "é")
-        _sent = _sent.replace("Ã¦", "æ")
-        _sent = _sent.replace("Ã­", "í")
-        _sent = _sent.replace("Ã³", "ó")
-        _sent = _sent.replace("Ã¼", "ü")
-        _sent = _sent.replace("Ã ", "à")
-        _sent = _sent.replace("Ã", "à")
-        return _sent
-
-    @classmethod
     def get_sents(cls, sent_file, label_file, phrase_dict_file):
         # sents: List of [sent_index, sent]
         sents = [(l.split("\t")[0].strip(),l.split("\t")[1].strip()) for l in Utils.read_txt(sent_file)[1:]]
@@ -419,7 +394,7 @@ class Sst:
         }
         result = list()
         for s_i, s in sents:
-            s = cls.replace_non_english_letter(s)
+            s = Utils.replace_non_english_letter(s)
             if s in phrases.keys():
                 phrase_id = phrases[s]
                 label_score = float(label_scores[phrase_id])
@@ -492,6 +467,35 @@ class ChecklistTestsuite:
         return selected
 
     
+class AirlineTweets:
+
+    @classmethod
+    def get_sents(cls, src_file):
+        # src_file: Tweets.csv file
+        import csv
+        rows = csv.DictReader(open(src_file))
+        labels, confs, airlines, sents, reasons = list(), list(), list(), list(), list()
+        for row in rows:
+            labels.append(row['airline_sentiment'])
+            # airlines.append(row['airline'])
+            s = Utils.replace_non_english_letter(row['text'])
+            sents.append(s)
+            reasons.append(row['negativereason'])
+        # end for
+        # labels = [Macros.sa_label_map[x] for x in labels]
+        return [(s_i, s, labels[s_i]) for s_i, s in enumerate(sents)]
+
+    @classmethod
+    def search(cls, req):
+        sents = cls.get_sents(Macros.tweet_file)
+        req_obj = SearchOperator(req)
+        if len(req_obj.search_reqs_list)>0:
+            selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
+        # end if
+        random.shuffle(selected)
+        return selected
+
+    
 class DynasentRoundOne:
 
     @classmethod
@@ -524,6 +528,7 @@ class Search:
         Macros.sa_task : {
             Macros.datasets[Macros.sa_task][0]: Sst.search,
             Macros.datasets[Macros.sa_task][1]: ChecklistTestsuite.search
+            Macros.datasets[Macros.sa_task][2]: AirlineTweets.search
         },
         Macros.mc_task : {},
         Macros.qqp_task : {}

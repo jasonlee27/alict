@@ -5,12 +5,13 @@ from typing import *
 import re, os
 import sys
 import json
+import spacy
 import random
 import string
 import checklist
 import numpy as np
 
-from nltk.tokenize import word_tokenize as tokenize
+# from checklist.editor import Editor
 from checklist.expect import Expect
 from pathlib import Path
 
@@ -105,20 +106,18 @@ class TransformOperator:
                  editor,
                  req_capability,
                  req_description,
-                 transform_reqs,
-                 nlp_task=Macros.sa_task,
-                 search_dataset="sst"):
+                 transform_reqs
+                 ):
         
         self.editor = editor # checklist.editor.Editor()
         self.capability = req_capability
         self.description = req_description
         self.search_dataset = search_dataset
-        self.nlp_task = nlp_task
         self.transform_reqs = transform_reqs
-        self.search_reqs = None
         self.inv_replace_target_words = None
         self.inv_replace_forbidden_words = None
         self.transformation_funcs = None
+        self.dir_adding_phrases = None
 
         # Find INV transformation operations
         if transform_reqs["INV"] is not None:
@@ -170,24 +169,25 @@ class TransformOperator:
         # end if
         if func=="add":
             if _property=="positive" and woi=="phrase":
-                self.search_reqs = [{
-                    "capability": "",
-                    "description": "",
-                    "search": [{
-                        "length": "<5",
-                        "score": ">0.9"
-                    }]
-                }]
+                nlp = spacy.load('en_core_web_sm')
+                labels = [
+                    {'like_VB': ['like']+Synonyms.get_synonyms(nlp, 'like', 'VB', num_synonyms=10)},
+                    {'love_VB': ['love']+Synonyms.get_synonyms(nlp, 'love', 'VB', num_synonyms=10)},
+                    {'great_ADJ': ['great']+Synonyms.get_synonyms(nlp, 'great', 'ADJ', num_synonyms=10)}
+                ]
+                self.dir_adding_phrases = self.editor.template('I {like_VB} you.', labels=labels[0]).data
+                self.dir_adding_phrases += self.editor.template('I {love_VB} it.', labels=labels[1]).data
+                self.dir_adding_phrases += self.editor.template('You are {great_ADJ}.', labels=labels[2]).data
                 self.dir_expect_func = Expect.pairwise(self.diff_up)
             elif _property=="negative" and woi=="phrase":
-                self.search_reqs = [{
-                    "capability": "",
-                    "description": "",
-                    "search": [{
-                        "length": "<5",
-                        "score": "<0.1"
-                    }]
-                }]
+                labels = [
+                    {'hate_VB': ['hate']+Synonyms.get_synonyms(nlp, 'hate', 'VB', num_synonyms=10)},
+                    {'dislike_VB': ['dislike']+Synonyms.get_synonyms(nlp, 'dislike', 'VB', num_synonyms=10)},
+                    {'bad_ADJ': ['bad']+Synonyms.get_synonyms(nlp, 'bad', 'ADJ', num_synonyms=10)}
+                ]
+                self.dir_adding_phrases = editor.template('I {hate_VB} you.', labels=labels[0]).data
+                self.dir_adding_phrases += editor.template('I {dislike_VB} it.', labels=labels[1]).data
+                self.dir_adding_phrases += editor.template('You are {bad_ADJ}.', labels=labels[2]).data
                 self.dir_expect_func = Expect.pairwise(self.diff_down)
             # end if
             self.transformation_funcs = f"DIR:{func}:{_property}:{woi}"
@@ -218,13 +218,13 @@ class TransformOperator:
         # end if
 
     # functions for adding positive/negative phrase
-    def add_phrase(self, phrases):
+    def add_phrase(self):
         def pert(d):
             while d[-1].pos_ == 'PUNCT':
                 d = d[:-1]
             # end while
             d = d.text
-            ret = [d + '. ' + x for x in phrases]
+            ret = [d + '. ' + x for x in self.dir_adding_phrases]
             idx = np.random.choice(len(ret), min(len(ret),10), replace=False)
             ret = [ret[i] for i in idx]
             return ret

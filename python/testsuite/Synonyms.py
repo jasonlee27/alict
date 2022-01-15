@@ -68,7 +68,7 @@ class Synonyms:
         return cls.wordnet_tag_map[synset.pos()]
         
     @classmethod
-    def get_synonyms(cls, nlp, word: str, wpos:str):
+    def get_synonyms(cls, nlp, word: str, wpos:str, num_synonyms=Macros.max_num_synonyms):
         synonyms = list()
         if wpos is None:
             return synonyms
@@ -85,7 +85,7 @@ class Synonyms:
                 # end for
             # end if
         # end for
-        return list(set(synonyms))[:Macros.max_num_synonyms]
+        return list(set(synonyms))[:num_synonyms]
 
     
 

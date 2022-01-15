@@ -168,8 +168,7 @@ class Testsuite:
                                         templates_per_req['capability'],
                                         templates_per_req['description'],
                                         transform_req,
-                                        nlp_task=task,
-                                        search_dataset=dataset)
+                                        nlp_task=task)
         test_type, func, _property, woi = transformer.transformation_funcs.split(':')
         if test_type=="INV":
             if func=="replace":
@@ -257,15 +256,9 @@ class Testsuite:
         elif test_type=="DIR":
             if func=="add" and woi=="phrase":
                 if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-                phrases = [ _s[1]
-                            for s in Search.search_sentiment_analysis(
-                                    transformer.search_reqs,
-                                    transformer.search_dataset
-                            ) for _s in s["selected_inputs"]
-                ][:10]
                 nlp = spacy.load('en_core_web_sm')
                 parsed_data = list(nlp.pipe(sentences))
-                t = Perturb.perturb(parsed_data, transformer.add_phrase(phrases), nsamples=Macros.nsamples)
+                t = Perturb.perturb(parsed_data, transformer.add_phrase(), nsamples=Macros.nsamples)
                 test = DIR(t.data, transformer.dir_expect_func)
                 suite.add(test,
                           name=f"{task}::{seed_type}::"+templates_per_req["description"],

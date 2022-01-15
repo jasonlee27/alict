@@ -48,14 +48,19 @@ class Template:
         print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(task)
         results = list()
+        if os.path.exists(save_to):
+            results = Utils.read_json(save_to)
+        # end if
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
+            if any(results) and any([True for r in results if r["requirement"]==selected["requirement"]]):
+                continue
             exp_inputs = dict()
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
             num_selected_inputs = len(selected["selected_inputs"])
-            print(f"{num_selected_inputs} inputs are selected.")
+            print(f"\t{num_selected_inputs} inputs are selected.")
             index = 1
             num_seed_for_exp = 0
-            for _id, seed, seed_label, seed_score in selected["selected_inputs"]:
+            for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.nsamples]:
                 print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score}")
                 index += 1
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
@@ -63,7 +68,6 @@ class Template:
                 gen_inputs = generator.masked_input_generator()
                 new_input_results = list()
                 if any(gen_inputs) and num_seed_for_exp<=n:
-                    
                     # get the word suggesteion at the expended grammar elements
                     gen_inputs = Suggest.get_new_inputs(
                         generator.editor,
@@ -92,11 +96,13 @@ class Template:
                 "requirement": selected["requirement"],
                 "inputs": exp_inputs
             })
+            # write raw new inputs for each requirement
+            Utils.write_json(results, save_to, pretty_format=True)
             print(f"<<<<< REQUIREMENT:", selected["requirement"]["description"])
         # end for
             
-        # write raw new inputs
-        Utils.write_json(results, save_to, pretty_format=True)
+        # # write raw new inputs
+        # Utils.write_json(results, save_to, pretty_format=True)
         print(f"**********")        
         return results
     
