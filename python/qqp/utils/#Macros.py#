@@ -45,7 +45,7 @@ class Macros:
     num_synonym_placeholders = 10
     max_num_synonyms = 2 # number of synonyms to be used when there are too many placeholders in one sentence
 
-    # QQP
+    # QQPx
     qqp_dataset_dir: Path = dataset_dir / "qqp"
     qqp_train_file: Path = qqp_dataset_dir / "train.tsv"
     qqp_valid_file: Path = qqp_dataset_dir / "dev.tsv"

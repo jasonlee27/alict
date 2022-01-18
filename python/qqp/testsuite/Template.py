@@ -78,11 +78,17 @@ class Template:
                     print(f"\tSELECTED_SEED {index}: {_id}\n\t\t({seed1}::{seed2}), {seed_label}")
                     expander1 = CFGExpander(seed_input=seed1, cfg_ref_file=cfg_ref_file)
                     expander2 = CFGExpander(seed_input=seed2, cfg_ref_file=cfg_ref_file)
+                    
+                    # Generate question pair based on selected sentence
+                    # based on requirement and CFG
+                    qgen_obj = Qgenerator(f"{seed1}::{seed2}",list(),
+                                          selected_sent['requirement'])
+                    
                     exp_inputs[f"{seed1}::{seed2}"] = {
                         "cfg_seed1": expander1.cfg_seed,
                         "cfg_seed2": expander2.cfg_seed,
                         "label": seed_label,
-                        "exp_inputs": None
+                        "questions": qgen_obj.generate_questions(is_input_pair=True)
                     }
                 else:
                     _id, seed = selected_sent
@@ -112,14 +118,12 @@ class Template:
 
                     # Generate question pair based on selected sentence
                     # based on requirement and CFG
-                    Qgen_obj = Qgenerator(seed,
-                                          expander.cfg_seed,
-                                          new_input_results,
-                                          selected_sent['requirement'])
-                    
                     exp_inputs[seed] = {
-                        "cfg_seed": expander.cfg_seed,
-                        "exp_inputs": new_input_results,
+                        'cfg_seed': expander.cfg_seed,
+                        'exp_inputs': new_input_results,
+                        'questions': Qgenerator(seed,
+                                                new_input_results,
+                                                selected_sent['requirement']).generaate_questions()
                     }
                 # end if
             # end for
@@ -203,8 +207,12 @@ class Template:
         return Utils.tokenize(exp_input), tokens_pos
 
     @classmethod
-    def get_templates_by_synonyms(cls, nlp, tokens: List[str], tokens_pos: List[str], prev_synonyms):
+    def get_templates_by_synonyms(cls, nlp, input_pair, prev_synonyms):
         template = list()
+        if len(_input)==2: # input is question pair
+            
+        else:
+        
         for t, tpos in zip(tokens, tokens_pos):
             newt = re.sub(r'\..*', '', t)
             newt = re.sub(r'\[.*\]', '', newt)
@@ -278,15 +286,36 @@ class Template:
             seed_inputs, seed_templates, exp_templates = list(), list(), list()
             for s_i, seed_input in enumerate(inputs.keys()):
                 print(f"\tSEED {s_i}: {seed_input}")
+
+                pair_search = re.search(r"([^\:]+)\:\:([^\:]+)", seed_input)
+                if pair_search:
+                    _input = (pair_search.group(1), pair_search.group(2))
+                    cfg_seed1 = inputs[seed_input]['cfg_seed1']
+                    cfg_seed2 = inputs[seed_input]['cfg_seed2']
+                    label_seed = inputs[seed_input]['label']
+                    questions = inputs[seed_input]['questions']
+                    seed_inputs.append({
+                        "input": _input,
+                        "label": label_seed
+                    })
                     
-                cfg_seed = inputs[seed_input]["cfg_seed"]
-                label_seed = inputs[seed_input]["label"]
-                exp_inputs = inputs[seed_input]["exp_inputs"]
-                seed_inputs.append({
-                    "input": seed_input,
-                    "place_holder": Utils.tokenize(seed_input),
-                    "label": label_seed
-                })
+                    # make template for seed input
+                    _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, _input, prev_synonyms, is_seed_pair=True)
+                    _templates["label"] = label_seed
+                    seed_templates.append(_templates)
+                else:
+                    _input = seed_input
+                    cfg_seed = inputs[seed_input]['cfg_seed']
+                    questions = inputs[seed_input]['questions']
+                    # exp_inputs = inputs[seed_input]['exp_inputs']
+
+                    # make template for seed input
+                    for q in questions[seed_input]
+                    _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, seed_input, prev_synonyms, is_seed_pair=True)
+                    _templates["label"] = label_seed
+                    seed_templates.append(_templates)
+                    
+                # end if
                 
                 # make template for seed input
                 tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
