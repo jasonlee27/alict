@@ -94,6 +94,7 @@ class Qgenerator:
             for s in self.new_inputs:
                 results['exp_inputs'][s[5]] = self._add_adj(s[5])
             # end for
+            results['label'] = Macros.qqp_label_map['same']
             return results
         else:
             # generating new question by adding word in question
@@ -210,7 +211,11 @@ class Qgenerator:
         self.nlp.add_pipe('spacy_wordnet', after='tagger', config={'lang': self.nlp.lang})
         new_sents = func_map[self.transform_props](self.seed, replace_in_pair=replace_in_pair)
         if replace_in_pair:
-            return new_sents
+            results = {
+                self.seed: new_sents,
+                'label': Macros.qqp_label_map['same']
+            }
+            return results
         # end if
         results = {
             key: new_sent_dict[key]
@@ -223,6 +228,7 @@ class Qgenerator:
                 results['exp_inputs'][key] = new_exp_dict[key]
             # end for
         # end for
+        results['label'] = Macros.qqp_label_map['same']
         nlp.remove_pipe('spacy_wordnet')
         return results
 
@@ -268,4 +274,5 @@ class Qgenerator:
                 results['exp_inputs'][key] = new_exp_dict[key]
             # end for
         # end for
+        results['label'] = Macros.qqp_label_map['same']
         return results
