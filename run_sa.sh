@@ -10,43 +10,43 @@ readonly RESULT_DIR="${_DIR}/_results"
 function gen_requirements() {
         # write requirements in json
         (cd ${_DIR}
-         python -m python.main --run requirement
+         python -m python.sa.main --run requirement
         )
 }
 
 function gen_templates() {
         # write templates in json
         (cd ${_DIR}
-         CUDA_VISIBLE_DEVICES=1,2,3,4 python -m python.main --run template --search_dataset sst
+         CUDA_VISIBLE_DEVICES=1,2,3,4 python -m python.sa.main --run template --search_dataset sst
         )
 }
 
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
         (cd ${_DIR}
-         python -m python.main --run testsuite --search_dataset sst
+         python -m python.sa.main --run testsuite --search_dataset sst
         )
 }
 
 function eval_models(){
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         # time python -m python.main --run testmodel --test_baseline # evaluating models on checklist testcases
-         time python -m python.main --run testmodel # evaluating models on our generated testcases
+         # time python -m python.sa.main --run testmodel --test_baseline # evaluating models on checklist testcases
+         time python -m python.sa.main --run testmodel # evaluating models on our generated testcases
         )
 }
 
 function retrain_models(){
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         CUDA_VISIBLE_DEVICES=1,2,3,4 python -m python.main --run retrain --search_dataset checklist --model_name textattack/bert-base-uncased-SST-2
+         CUDA_VISIBLE_DEVICES=1,2,3,4 python -m python.sa.main --run retrain --search_dataset checklist --model_name textattack/bert-base-uncased-SST-2
         )
 }
 
 function eval_retrained_models(){
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         python -m python.main --run testmodel --local_model_name checklist-textattack-bert-base-uncased-SST-2
+         python -m python.sa.main --run testmodel --local_model_name checklist-textattack-bert-base-uncased-SST-2
         )
 }
 
