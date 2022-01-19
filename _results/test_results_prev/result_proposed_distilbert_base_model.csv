@@ -1,0 +1,13 @@
+test_type,linguistic_cap,num_seed_tests,num_seed_tests_run,num_seed_fails,seed_fail_rate[%],num_seed_tests,num_seed_temp_tests_run,num_seed_temp_fails,seed_temp_fail_rate[%],num_exp_temp_tests,num_exp_temp_tests_run,num_exp_temp_fails,exp_temp_fail_rate[%]
+Vocab_POS,Short sentences with neutral adjectives and nouns,10,10,10,100.0,282,282,265,94.0,4,4,4,100.0
+Vocab_POS,Short sentences with sentiment-laden adjectives,10,10,0,0.0,7547,500,22,4.4,9594,500,177,35.4
+Vocab_POS,Replace neutral words with other neutral words,10,10,1,10.0,500,500,14,2.8,500,500,13,2.6
+Vocab_POS,Add positive phrases and fails if sent. goes down by > 0.1,10,10,0,0.0,500,500,0,0.0,,,,
+Vocab_POS,Add negative phrases and fails if sent. goes up by > 0.1,10,10,0,0.0,500,500,0,0.0,,,,
+Robustness,Add randomly generated URLs and handles,,,,,,,,,,,,
+Robustness,Strip punctuation and/or add ".",10,10,1,10.0,500,500,2,0.4,500,500,0,0.0
+Robustness,Swap two adjacent characters,10,10,0,0.0,500,500,55,11.0,,,,
+Robustness,Contract or expand contractions,5,5,0,0.0,,,,,1000,500,0,0.0
+NER,Replace names with other common names,10,10,0,0.0,1000,500,8,1.6,1000,500,0,0.0
+NER,Replace city or country names with other cities or countries,10,10,0,0.0,930,500,13,2.6,1000,500,31,6.2
+NER,Replace integers with random integers within a 20% radius of the original,10,10,0,0.0,1000,500,0,0.0,1000,500,0,0.0

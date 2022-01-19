@@ -49,7 +49,7 @@ class Synonyms:
         for tr_i, tree in enumerate(trees):
             try:
                 parse_string = tree._.parse_string
-                pattern = r"\(([^\:|^\(|^\)]+)\s"+words[tr_i]+r"\)"
+                pattern = r"\(([^\:|^\(|^\)]+)\s"+str(tree)+r"\)"
                 search = re.search(pattern, parse_string)
                 if search:
                     results.append((parse_string, search.group(1)))

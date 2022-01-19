@@ -167,8 +167,7 @@ class Testsuite:
         transformer = TransformOperator(editor,
                                         templates_per_req['capability'],
                                         templates_per_req['description'],
-                                        transform_req,
-                                        nlp_task=task)
+                                        transform_req)
         test_type, func, _property, woi = transformer.transformation_funcs.split(':')
         if test_type=="INV":
             if func=="replace":
@@ -287,7 +286,7 @@ class Testsuite:
             # end for
             if transform_reqs[t_i] is not None:
                 suite = cls.suite_add_transform(editor,
-                                               t.data,
+                                                t.data,
                                                 transform_reqs[t_i],
                                                 templates_per_req,
                                                 task, dataset, suite, "SEED")

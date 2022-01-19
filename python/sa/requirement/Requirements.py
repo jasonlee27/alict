@@ -80,6 +80,7 @@ class Requirements:
                             },
                             "label": "neutral"
                         }],
+                        "expansion": ["neutral"],
                         "transform": None
                     })
                 elif d.lower()=="short sentences with sentiment-laden adjectives":
@@ -104,11 +105,12 @@ class Requirements:
                                 "word": None
                             },
                             "exclude": {
-                                "POS": ["positive adjs", "positive verbs", "positive nouns"],
+                                "POS": ["negative verbs", "negative nouns", "positive adjs", "positive verbs", "positive nouns"],
                                 "word": None
                             },
                             "label": "negative"
                         }],
+                        "expansion": ["neutral"],
                         "transform": None
                     })
                 elif d.lower()=="replace neutral words with other neutral words":
@@ -141,6 +143,7 @@ class Requirements:
                                 }
                             }
                         ],
+                        "expansion": None,
                         "transform": {
                             "INV": "replace neutral word",
                             "DIR": None
@@ -150,7 +153,8 @@ class Requirements:
                     reqs.append({
                         "capability": cap,
                         "description": d,
-                        "search": [],
+                        "search": None,
+                        "expansion": None,
                         "transform": {
                             "INV": None,
                             "DIR": "add positive phrase"
@@ -160,7 +164,8 @@ class Requirements:
                     reqs.append({
                         "capability": cap,
                         "description": d,
-                        "search": [],
+                        "search": None,
+                        "expansion": None,
                         "transform": {
                             "INV": None,
                             "DIR": "add negative phrase"
@@ -170,7 +175,8 @@ class Requirements:
                     reqs.append({
                         "capability": cap,
                         "description": d,
-                        "search": [],
+                        "search": None,
+                        "expansion": None,
                         "transform": {
                             "INV": "add random URL_handles",
                             "DIR": None
@@ -190,6 +196,7 @@ class Requirements:
                                 }
                             }
                         ],
+                        "expansion": None,
                         "transform": {
                             "INV": "strip punctuation",
                             "DIR": None
@@ -199,7 +206,8 @@ class Requirements:
                     reqs.append({
                         "capability": cap,
                         "description": d,
-                        "search": [],
+                        "search": None,
+                        "expansion": None,
                         "transform": {
                             "INV": "swap one two_adjacent_characters",
                             "DIR": None
@@ -229,6 +237,7 @@ class Requirements:
                                 }
                             }
                         ],
+                        "expansion": None,
                         "transform": {
                             "INV": "contract/expand contraction",
                             "DIR": None
@@ -248,6 +257,7 @@ class Requirements:
                                 }
                             }
                         ],
+                        "expansion": None,
                         "transform": {
                             "INV": "replace person_name",
                             "DIR": None
@@ -267,6 +277,7 @@ class Requirements:
                                 }
                             }
                         ],
+                        "expansion": None,
                         "transform": {
                             "INV": "replace location_name",
                             "DIR": None
@@ -286,6 +297,7 @@ class Requirements:
                                 }
                             }
                         ],
+                        "expansion": None,
                         "transform": {
                             "INV": "replace number",
                             "DIR": None

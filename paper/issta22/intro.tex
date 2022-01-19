@@ -15,18 +15,18 @@ also becomes important process as well.
 The prevalent models of NLP are evaluated via train-validation-test
 splits. train and validation set is used to train the NLP model and
 the \ho set is used for testing by measuring accuracy. The accuracy is
-a indicator of the performance of the models.
+a indicator of the performance of the models. Despite its usefulness,
+the main limitation of the testing paradigm is that the \ho set often
+overestimates the performances. Each dataset comes with specific
+biases, and the biases increase the discrepancy of distribution
+between dataset and real-world~\cite{recht2019imagenetbias}. The
+aforementioned accuracy on \ho set does not consider the discrepancy
+and it is limited to achieve comprehensive performrance of the NLP
+model. As a consequence, it is difficult to analyze weekness of the
+model~\cite{wu2019errudite}.
 
-Despite its usefulness, the main limitation of the testing paradaigm
-is that the \ho set often overestimates the performances. Each dataset
-comes with specific biases, and the biases increase the discrepancy of
-distribution between dataset and
-real-world~\cite{recht2019imagenetbias}. The aforementioned accuracy
-on \ho set does not consider the discrepancy and it is limited to
-achieve comprehensive performrance of the NLP model. As a consequence,
-it is difficult to analyze where the errors comes
-from~\cite{wu2019errudite}.
-
+% this paragraph goes to related, and saying behavioral testing and
+% its limitation based on our model's novelty
 On the subject of the limitation of traditional testing paradaigm, a
 number of methods have been proposed. First, multiple diagnostic
 datasets for evaluating NLP model were introduced for obtaning
@@ -71,3 +71,6 @@ We demonstrate its generality and utility as a NLP model evaluation
 tool by evaluating well-known \sa models: \Bert~\cite{devlin2019bert},
 \Roberta~\cite{liu2019roberta} and \Dbert~\cite{sanh2019distilbert}.
 We show that
+
+
+% our paper's contribution

@@ -7,6 +7,7 @@ from typing import *
 
 import re, os
 import nltk
+import spacy
 import copy
 import random
 import numpy
@@ -21,7 +22,7 @@ from checklist.perturb import Perturb
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from .cfg.CFG import BeneparCFG
-from .Search import SearchOperator
+from .Search import SearchOperator, SENT_DICT
 
 random.seed(Macros.SEED)
 
@@ -147,18 +148,41 @@ class Suggest:
     @classmethod
     def eval_sug_words_by_req(cls, new_input, requirement, label):
         search_obj = SearchOperator(requirement)
-        search_res = search_obj.search([("1", new_input, label)])
+        search_res = search_obj.search([('1', new_input, label)])
         if len(search_res)>0:
             return True
         # end if
         return False
 
     @classmethod
+    def eval_sug_words_by_exp_req(cls, word_suggest, requirement):
+        if requirement['expansion'] is None:
+            return True
+        # end if
+        all_reqs_met = list()
+        for r in requirement['expansion']:
+            is_req_met = False
+            if len(r.split())>1:
+                is_req_met = word_suggest in SENT_DICT[r]
+            else:
+                if r in list(Macros.sa_label_map.keys()):
+                    for key in SENT_DICT.keys():
+                        if key.startswith(r):
+                            is_req_met = word_suggest in SENT_DICT[key]
+                        # end if
+                    # end for
+                # end if
+            # end if
+            all_reqs_met.append(is_req_met)
+        # end for
+        return all(all_reqs_met)
+                    
+    @classmethod
     def get_new_inputs(cls, editor, gen_inputs, num_target=10):
         for g_i in range(len(gen_inputs)):
             gen_input = gen_inputs[g_i]
-            masked_input, mask_pos = gen_input["masked_input"]
-            gen_input["words_suggest"] = cls.get_word_suggestion(editor, masked_input, mask_pos, num_target=num_target)
+            masked_input, mask_pos = gen_input['masked_input']
+            gen_input['words_suggest'] = cls.get_word_suggestion(editor, masked_input, mask_pos, num_target=num_target)
             gen_inputs[g_i] = gen_input
         # end for
         return gen_inputs
@@ -166,15 +190,16 @@ class Suggest:
     @classmethod
     def eval_word_suggest(cls, gen_input, label: str, requirement):
         results = list()
-        masked_input, mask_pos = gen_input["masked_input"]
-        for w_sug in gen_input["words_suggest"]:
+        masked_input, mask_pos = gen_input['masked_input']
+        for w_sug in gen_input['words_suggest']:
             words_sug_pos, word_sug_prs_string = cls.get_sug_words_pos(w_sug)
             
             # check pos
             if cls.eval_sug_words_by_pos(words_sug_pos, mask_pos):
                 input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
-                # check requirements
-                if cls.eval_sug_words_by_req(input_candid, requirement, label):
+                # check sentence and expansion requirements
+                if cls.eval_sug_words_by_req(input_candid, requirement, label) and \
+                   cls.eval_sug_words_by_exp_req(w_sug, requirement):
                     results.append((masked_input,
                                     gen_input["cfg_from"],
                                     gen_input["cfg_to"],

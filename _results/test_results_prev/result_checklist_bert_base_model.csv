@@ -1,0 +1,13 @@
+test_type,linguistic_cap,num_tests,num_tests_run,num_fails,fail_rate[%]
+Vocab_POS,Short sentences with neutral adjectives and nouns,8658,500,1,0.2
+Vocab_POS,Short sentences with sentiment-laden adjectives,1716,500,385,77.0
+Vocab_POS,Replace neutral words with other neutral words,500,500,64,12.8
+Vocab_POS,Add positive phrases and fails if sent. goes down by > 0.1,500,500,0,0.0
+Vocab_POS,Add negative phrases and fails if sent. goes up by > 0.1,500,500,21,4.2
+Robustness,Add randomly generated URLs and handles,500,500,71,14.2
+Robustness,Strip punctuation and/or add ".",500,500,28,5.6
+Robustness,Swap two adjacent characters,500,500,44,8.8
+Robustness,Contract or expand contractions,1000,500,11,2.2
+NER,Replace names with other common names,331,331,29,8.8
+NER,Replace city or country names with other cities or countries,909,500,59,11.8
+NER,Replace integers with random integers within a 20% radius of the original,1000,500,21,4.2

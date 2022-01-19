@@ -112,7 +112,7 @@ class TransformOperator:
         self.editor = editor # checklist.editor.Editor()
         self.capability = req_capability
         self.description = req_description
-        self.search_dataset = search_dataset
+        # self.search_dataset = search_dataset
         self.transform_reqs = transform_reqs
         self.inv_replace_target_words = None
         self.inv_replace_forbidden_words = None
@@ -170,24 +170,23 @@ class TransformOperator:
         if func=="add":
             if _property=="positive" and woi=="phrase":
                 nlp = spacy.load('en_core_web_sm')
-                labels = [
-                    {'like_VB': ['like']+Synonyms.get_synonyms(nlp, 'like', 'VB', num_synonyms=10)},
-                    {'love_VB': ['love']+Synonyms.get_synonyms(nlp, 'love', 'VB', num_synonyms=10)},
-                    {'great_ADJ': ['great']+Synonyms.get_synonyms(nlp, 'great', 'ADJ', num_synonyms=10)}
-                ]
-                self.dir_adding_phrases = self.editor.template('I {like_VB} you.', labels=labels[0]).data
-                self.dir_adding_phrases += self.editor.template('I {love_VB} it.', labels=labels[1]).data
-                self.dir_adding_phrases += self.editor.template('You are {great_ADJ}.', labels=labels[2]).data
+                nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+                self.editor.add_lexicon('like_VB', ['like']+Synonyms.get_synonyms(nlp, 'like', 'VB', num_synonyms=10))
+                self.editor.add_lexicon('love_VB', ['love']+Synonyms.get_synonyms(nlp, 'love', 'VB', num_synonyms=10))
+                self.editor.add_lexicon('great_ADJ', ['great']+Synonyms.get_synonyms(nlp, 'great', 'ADJ', num_synonyms=10))
+                self.dir_adding_phrases = self.editor.template('I {like_VB} you.').data
+                self.dir_adding_phrases += self.editor.template('I {love_VB} it.').data
+                self.dir_adding_phrases += self.editor.template('You are {great_ADJ}.').data
                 self.dir_expect_func = Expect.pairwise(self.diff_up)
             elif _property=="negative" and woi=="phrase":
-                labels = [
-                    {'hate_VB': ['hate']+Synonyms.get_synonyms(nlp, 'hate', 'VB', num_synonyms=10)},
-                    {'dislike_VB': ['dislike']+Synonyms.get_synonyms(nlp, 'dislike', 'VB', num_synonyms=10)},
-                    {'bad_ADJ': ['bad']+Synonyms.get_synonyms(nlp, 'bad', 'ADJ', num_synonyms=10)}
-                ]
-                self.dir_adding_phrases = editor.template('I {hate_VB} you.', labels=labels[0]).data
-                self.dir_adding_phrases += editor.template('I {dislike_VB} it.', labels=labels[1]).data
-                self.dir_adding_phrases += editor.template('You are {bad_ADJ}.', labels=labels[2]).data
+                nlp = spacy.load('en_core_web_sm')
+                nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+                self.editor.add_lexicon('hate_VB', ['hate']+Synonyms.get_synonyms(nlp, 'hate', 'VB', num_synonyms=10))
+                self.editor.add_lexicon('dislike_VB', ['dislike']+Synonyms.get_synonyms(nlp, 'dislike', 'VB', num_synonyms=10))
+                self.editor.add_lexicon('bad_ADJ', ['bad']+Synonyms.get_synonyms(nlp, 'bad', 'ADJ', num_synonyms=10))
+                self.dir_adding_phrases = self.editor.template('I {hate_VB} you.').data
+                self.dir_adding_phrases += self.editor.template('I {dislike_VB} it.').data
+                self.dir_adding_phrases += self.editor.template('You are {bad_ADJ}.').data
                 self.dir_expect_func = Expect.pairwise(self.diff_down)
             # end if
             self.transformation_funcs = f"DIR:{func}:{_property}:{woi}"

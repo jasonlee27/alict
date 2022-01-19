@@ -16,7 +16,7 @@ parser.add_argument('--run', type=str, required=True,
                     choices=['requirement', 'template', 'testsuite', 'testmodel', 'retrain'],
                     help='task to be run')
 parser.add_argument('--nlp_task', type=str, default="sa",
-                    choices=['sa', 'qqp', 'mc'],
+                    choices=['sa'],
                     help='nlp task of focus')
 parser.add_argument('--search_dataset', type=str, default="sst",
                     help='name of dataset for searching testcases that meets the requirement')
