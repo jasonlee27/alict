@@ -6,7 +6,7 @@ from typing import *
 import re, os
 import nltk
 import copy
-# import random
+import random
 import numpy
 import spacy
 
@@ -18,9 +18,9 @@ from ..utils.Utils import Utils
 from ..requirement.Requirements import Requirements
 
 from .Generator import Generator
+from .Qgenerator import Qgenerator
 from .Synonyms import Synonyms
 from .Search import Search
-from .Transform import Transform
 from .Suggest import Suggest
 from .cfg.CFGExpander import CFGExpander
 
@@ -60,22 +60,21 @@ class Template:
             # end for
             reqs = _reqs
         # end if
-        
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
             exp_inputs = dict()
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
             num_selected_inputs = len(selected["selected_inputs"])
             print(f"\t{num_selected_inputs} inputs are selected.")
-            index = 1
+            index = 0
             num_seed_for_exp = 0
             for selected_sent in selected["selected_inputs"][:Macros.max_num_seeds]:
                 index += 1
-                if selected_sent['requirement']['search_pairs']:
+                if selected['requirement']['search_pairs']:
                     # for seed question pairs, we don't expand the questions.
                     # it is because it is not gauranteed that the expanded new question pairs
                     # keep the same labels as origianl question pairs
                     _id, seed1, seed2, seed_label = selected_sent
-                    print(f"\tSELECTED_SEED {index}: {_id}\n\t\t({seed1}::{seed2}), {seed_label}")
+                    print(f"\tSELECTED_SENT {index}: {_id}\n\t\t({seed1}::{seed2}), {seed_label}")
                     expander1 = CFGExpander(seed_input=seed1, cfg_ref_file=cfg_ref_file)
                     expander2 = CFGExpander(seed_input=seed2, cfg_ref_file=cfg_ref_file)
                     
@@ -83,7 +82,8 @@ class Template:
                     # based on requirement and CFG
                     qgen_obj = Qgenerator(f"{seed1}::{seed2}",list(),
                                           selected_sent['requirement'])
-                    
+
+                    print(qgen_obj)
                     exp_inputs[f"{seed1}::{seed2}"] = {
                         "cfg_seed1": expander1.cfg_seed,
                         "cfg_seed2": expander2.cfg_seed,
@@ -92,29 +92,29 @@ class Template:
                     }
                 else:
                     _id, seed = selected_sent
-                    print(f"\tSELECTED_SEED {index}: {_id}, {seed}")
+                    print(f"\tSELECTED_SENT {index}: {_id}, {seed}")
                     expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
                     generator = Generator(expander=expander)
                     gen_inputs = generator.masked_input_generator()
                     new_input_results = list()
-                    if any(gen_inputs) and num_seed_for_exp<=n:
-                        # get the word suggesteion at the expended grammar elements
-                        gen_inputs = Suggest.get_new_inputs(
-                            generator.editor,
-                            gen_inputs,
-                            num_target=Macros.num_suggestions_on_exp_grammer_elem
-                        )
-                        for g_i in range(len(gen_inputs)):
-                            eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], selected["requirement"])
-                            if any(eval_results):
-                                del gen_inputs[g_i]["words_suggest"]
-                                new_input_results.extend(eval_results)
-                                num_seed_for_exp += 1
-                                print(".", end="")
-                            # end if
-                        # end for
-                        print() 
-                    # end if
+                    # if any(gen_inputs) and num_seed_for_exp<=n:
+                    #     # get the word suggesteion at the expended grammar elements
+                    #     gen_inputs = Suggest.get_new_inputs(
+                    #         generator.editor,
+                    #         gen_inputs,
+                    #         num_target=Macros.num_suggestions_on_exp_grammer_elem
+                    #     )
+                    #     for g_i in range(len(gen_inputs)):
+                    #         eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], selected["requirement"])
+                    #         if any(eval_results):
+                    #             del gen_inputs[g_i]["words_suggest"]
+                    #             new_input_results.extend(eval_results)
+                    #             num_seed_for_exp += 1
+                    #             print(".", end="")
+                    #         # end if
+                    #     # end for
+                    #     print() 
+                    # # end if
 
                     # Generate question pair based on selected sentence
                     # based on requirement and CFG
@@ -123,8 +123,9 @@ class Template:
                         'exp_inputs': new_input_results,
                         'questions': Qgenerator(seed,
                                                 new_input_results,
-                                                selected_sent['requirement']).generaate_questions()
+                                                selected['requirement']).generate_questions()
                     }
+                    print(exp_inputs[seed]['questions'])
                 # end if
             # end for
             results.append({
@@ -315,7 +316,7 @@ class Template:
     @classmethod
     def get_templates(cls, num_seeds, nlp_task, dataset_name):
         assert nlp_task==Macros.qqp_task
-        assert dataset_name in Macros.datasets[nlp_task]
+        assert dataset_name in Macros.datasets
         print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg
         nlp = spacy.load('en_core_web_md')

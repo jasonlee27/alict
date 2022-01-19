@@ -66,7 +66,7 @@ class Template:
             print(f"\t{num_selected_inputs} inputs are selected.")
             index = 1
             num_seed_for_exp = 0
-            for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.nsamples]:
+            for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
                 print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score}")
                 index += 1
                 expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)

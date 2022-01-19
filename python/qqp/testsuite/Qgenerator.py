@@ -44,16 +44,18 @@ class Qgenerator:
         self.editor = Editor()
         self.nlp = spacy.load('en_core_web_md')
         self.seed = seed
-        self.transform_action, self.transform_props = requirement['transform'].split()
+        transform_req = requirement['transform']
+        transform_type = list(transform_req.keys())[0]
+        self.transform_action, self.transform_props = transform_req[transform_type].split()
     
     def generate_questions(self, is_input_pair=False):
         new_sent_dict = None
         if self.transform_action=='add':
-            new_sent_dict = cls.add()
+            new_sent_dict = self.add()
         elif self.transform_action=='replace':
-            new_sent_dict = cls.replace(replace_in_pair=is_input_pair)
+            new_sent_dict = self.replace(replace_in_pair=is_input_pair)
         elif self.transform_action=='remove':
-            new_sent_dict = cls.remove()
+            new_sent_dict = self.remove()
         # end if
         return new_sent
 
@@ -61,25 +63,27 @@ class Qgenerator:
         # find noun and sample one
         doc = self.nlp(sent)
         tokens = [str(t) for t in doc]
-        nouns = [t_i for t_i, t in enumerate(doc) if t.tag_=='NN']
+        nouns = [t_i for t_i, t in enumerate(doc) if t.tag_.startswith('NN')]
         random.shuffle(nouns)
         
         # insert masked token before the selected noun
-        masked_tokens = tokens.insert(nouns[0], Macros.MASK)
+        masked_tokens = tokens
+        masked_tokens.insert(nouns[0], Macros.ADJ_MASK)
 
         # genereate masked sentence
         masked_sent = Utils.detokenize(masked_tokens)
-
         # get the suggested word for the masked word
         word_suggestions = Suggest.get_word_suggestion(self.editor, masked_sent, mask_pos=None)
         new_sents = list()
         for w in list(set(word_suggestions)):
-            doc = nlp(w)
+            print(w)
+            doc = self.nlp(w)
             if doc[0].tag_=='JJ':
                 new_sent = masked_sent.replace(Macros.MASK, f"<{w}>")
                 new_sents.append(new_sent)
             # end if
         # end for
+        print(new_sents)
         return new_sents
         
     def add(self):

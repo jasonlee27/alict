@@ -15,8 +15,8 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=['requirement', 'template', 'testsuite', 'testmodel', 'retrain'],
                     help='task to be run')
-parser.add_argument('--nlp_task', type=str, default="sa",
-                    choices=['sa'],
+parser.add_argument('--nlp_task', type=str, default="qqp",
+                    choices=['qqp'],
                     help='nlp task of focus')
 parser.add_argument('--search_dataset', type=str, default="sst",
                     help='name of dataset for searching testcases that meets the requirement')
@@ -115,7 +115,7 @@ def run_retrain():
     
 
 func_map = {
-    "sa": {
+    "qqp": {
         "requirement": run_requirements,
         "template": run_templates,
         "testsuite": run_testsuites,

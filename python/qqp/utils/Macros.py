@@ -21,6 +21,7 @@ class Macros:
     
     SEED = 27
     MASK = "{mask}"
+    ADJ_MASK = "{a:mask}"
 
     qqp_task = 'qqp'
     
@@ -33,7 +34,7 @@ class Macros:
 
     # Testsuite
     num_seeds = 20
-    num_cfg_exp_elem = 5
+    num_cfg_exp_elem = 20
     num_suggestions_on_exp_grammer_elem = 5
 
     num_synonyms_for_replace = 3 # number of synonyms used for replace_synosyms in Qgenerator
@@ -43,7 +44,7 @@ class Macros:
     max_num_sents = 100000 # number of testcase sentences
     max_num_sents_for_perturb = 1000 # number of sentences for perturbation
     num_synonym_placeholders = 10
-    max_num_synonyms = 2 # number of synonyms to be used when there are too many placeholders in one sentence
+    max_num_synonyms = 5 # number of synonyms to be used when there are too many placeholders in one sentence
 
     # QQP
     qqp_dataset_dir: Path = dataset_dir / "qqp"

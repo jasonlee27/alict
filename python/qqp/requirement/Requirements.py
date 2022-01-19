@@ -45,7 +45,6 @@ class Requirements:
     @classmethod
     def get_requirements(cls, task):
         req_file = Macros.result_dir / f"requirements_{task}.json"
-        
         if os.path.exists(req_file):
             return Utils.read_json(req_file)
         # end if
@@ -72,7 +71,7 @@ class Requirements:
                         "search": [{
                             "exclude": {
                                 "POS": ["adj"],
-                                "word": None,
+                                "word": ["is|are"],
                             },
                         }],
                         "transform": {
@@ -90,28 +89,28 @@ class Requirements:
                                 "word": ['really|truly|actually|indeed|in fact'],
                                 "search_pairs": False
                             },
-                        },
+                        }],
                         "transform":  {
-                            "MFT": ["remove really|truly|actually|indeed|in fact"],
+                            "MFT": "remove really|truly|actually|indeed|in fact",
                         }
                     })
-                elif d.lower()=="ask the same question about two different noun, expect prediction to be 0":
-                    reqs.append({
-                        "capability": cap,
-                        "description": d,
-                        "search_pairs": False,
-                        "search": [
-                            {
-                                "include": {
-                                    "POS": ["noun"],
-                                    "word": None
-                                }
-                            },
-                        ],
-                        "transform": {
-                            "MFT": "replace noun",
-                        }
-                    })
+                # elif d.lower()=="ask the same question about two different noun, expect prediction to be 0":
+                #     reqs.append({
+                #         "capability": cap,
+                #         "description": d,
+                #         "search_pairs": False,
+                #         "search": [
+                #             {
+                #                 "include": {
+                #                     "POS": ["noun"],
+                #                     "word": None
+                #                 }
+                #             },
+                #         ],
+                #         "transform": {
+                #             "MFT": "replace noun",
+                #         }
+                #     })
                 elif d.lower()=="synonyms in templates":
                     reqs.append({
                         "capability": cap,
@@ -120,7 +119,7 @@ class Requirements:
                         "search": [
                             {
                                 "include": {
-                                    "POS": None
+                                    "POS": None,
                                     "word": ["<synonym>"],
                                 }
                             },
@@ -129,7 +128,7 @@ class Requirements:
                             "MFT": "replace synonyms",
                         }
                     })
-                elif d.lower()=="Replace words with synonyms in real pairs":
+                elif d.lower()=="replace words with synonyms in real pairs":
                     reqs.append({
                         "capability": cap,
                         "description": d,
@@ -137,7 +136,7 @@ class Requirements:
                         "search": [
                             {
                                 "include": {
-                                    "POS": None
+                                    "POS": None,
                                     "word": ["<synonym>"],
                                 }
                             },
@@ -146,14 +145,14 @@ class Requirements:
                             "MFT": "replace synonyms",
                         }
                     })
-                elif d.lower()=="More X = Less antonym(X)":
+                elif d.lower()=="more x = less antonym(x)":
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search_pairs": False,
                         "search": [{
                                 "include": {
-                                    "POS": None
+                                    "POS": None,
                                     "word": ["more|less"],
                                 }
                             },

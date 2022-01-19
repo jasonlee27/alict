@@ -13,7 +13,6 @@ import numpy as np
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from .Transform import CONTRACTION_MAP
 from ..requirement.Requirements import Requirements
 from .Synonyms import Synonyms
 # from .sentiwordnet.Sentiwordnet import Sentiwordnet
@@ -155,7 +154,7 @@ class SearchOperator:
         for sent in sents:
             doc = nlp(Utils.detokenize(sent[1]))
             for t in doc:
-                if t.pos_==pos_map[pos_cond]:
+                if t.tag_.startswith(pos_map[pos_cond]):
                     selected.append(sent)
                     break
                 # end if
@@ -225,7 +224,7 @@ class SearchOperator:
         # end if
         return selected
 
-    def _search_by_pos_exclude(self, sents, cond_key):
+    def _search_by_pos_exclude(self, sents, pos_cond):
         # sents: (s_i, tokenized sentence, label)
         # pos_cond: e.g. adj, verb, noun
         pos_map = {'adj': 'JJ', 'verb': 'VB', 'noun': 'NN'}
@@ -233,9 +232,9 @@ class SearchOperator:
         selected = list()
         for sent in sents:
             pos_found = False
-            doc1 = nlp(Utils.detokenize(sent[1]))
+            doc = nlp(Utils.detokenize(sent[1]))
             for t in doc:
-                if t.pos_==pos_map[pos_cond]:
+                if t.tag_.startswith(pos_map[pos_cond]):
                     pos_found = True
                     break
                 # end if
@@ -267,7 +266,7 @@ class SearchOperator:
                 # end for
             # end if
 
-            if tpos_exclude is not None:
+            if pos_exclude is not None:
                 for p in pos_exclude:
                     _sents = self._search_by_pos_exclude(_sents, p)
                 # end for

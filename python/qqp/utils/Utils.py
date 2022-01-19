@@ -58,18 +58,18 @@ class Utils:
             qpairs, labels = list(), list()
             all_qs = set()
             with open(data_file) as f:
-                for l in f.readlines()[1:]:
+                for l in f.readlines()[1:1000]:
                     try:
-                        qid1, qid2, q1, q2, label = x.strip().split('\t')[1:]
+                        qid1, qid2, q1, q2, label = l.strip().split('\t')[1:]
                     except:
-                        print(l)
                         continue
+                    # end try
                     all_qs.add(q1)
                     all_qs.add(q2)
                     qpairs.append((q1, q2))
                     labels.append(int(label))
                 # end for
-                return all_qs, qpairs, labels
+                return list(all_qs), qpairs, labels
             # end with
         # end if
         return None
