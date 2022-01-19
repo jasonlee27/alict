@@ -265,11 +265,7 @@ class Qgenerator:
     
     def remove(self):
         # generate seed question pair
-        resaults = self._remove_semantic_preserving_semantics(self.seed, self.transform_props)
-        results = {
-            self.seed: new_sent_dict[key]
-            for key in new_sent_dict.items()
-        }
+        results = self._remove_semantic_preserving_semantics(self.seed, self.transform_props)
 
         # exp inputs second
         results['exp_inputs'] = dict()
