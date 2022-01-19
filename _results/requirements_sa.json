@@ -1,0 +1,223 @@
+[
+    {
+        "capability": "Vocab_POS",
+        "description": "Short sentences with neutral adjectives and nouns",
+        "search": [
+            {
+                "length": "<10",
+                "include": {
+                    "POS": [
+                        "neutral adjs",
+                        "neutral nouns"
+                    ],
+                    "word": null
+                },
+                "exclude": {
+                    "POS": [
+                        "positive adjs",
+                        "negative adjs",
+                        "positive nouns",
+                        "negative nouns"
+                    ],
+                    "word": null
+                },
+                "label": "neutral"
+            }
+        ],
+        "transform": null
+    },
+    {
+        "capability": "Vocab_POS",
+        "description": "Short sentences with sentiment-laden adjectives",
+        "search": [
+            {
+                "length": "<10",
+                "include": {
+                    "POS": [
+                        "positive adjs"
+                    ],
+                    "word": null
+                },
+                "exclude": {
+                    "POS": [
+                        "negative adjs",
+                        "negative verbs",
+                        "negative nouns"
+                    ],
+                    "word": null
+                },
+                "label": "positive"
+            },
+            {
+                "length": "<10",
+                "include": {
+                    "POS": [
+                        "negative adjs"
+                    ],
+                    "word": null
+                },
+                "exclude": {
+                    "POS": [
+                        "positive adjs",
+                        "positive verbs",
+                        "positive nouns"
+                    ],
+                    "word": null
+                },
+                "label": "negative"
+            }
+        ],
+        "transform": null
+    },
+    {
+        "capability": "Vocab_POS",
+        "description": "Replace neutral words with other neutral words",
+        "search": [
+            {
+                "include": {
+                    "POS": [
+                        "neutral adjs"
+                    ],
+                    "word": null
+                }
+            },
+            {
+                "include": {
+                    "POS": [
+                        "neutral verbs"
+                    ],
+                    "word": null
+                }
+            },
+            {
+                "include": {
+                    "POS": [
+                        "neutral nouns"
+                    ],
+                    "word": null
+                }
+            }
+        ],
+        "transform": {
+            "INV": "replace neutral word",
+            "DIR": null
+        }
+    },
+    {
+        "capability": "Vocab_POS",
+        "description": "Add positive phrases, fails if sent. goes down by > 0.1",
+        "search": [],
+        "transform": {
+            "INV": null,
+            "DIR": "add positive phrase"
+        }
+    },
+    {
+        "capability": "Vocab_POS",
+        "description": "Add negative phrases, fails if sent. goes up by > 0.1",
+        "search": [],
+        "transform": {
+            "INV": null,
+            "DIR": "add negative phrase"
+        }
+    },
+    {
+        "capability": "Robustness",
+        "description": "Strip punctuation and/or add \".\"",
+        "search": [
+            {
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<punctuation>"
+                    ]
+                }
+            }
+        ],
+        "transform": {
+            "INV": "strip punctuation",
+            "DIR": null
+        }
+    },
+    {
+        "capability": "Robustness",
+        "description": "Swap two adjacent characters",
+        "search": [],
+        "transform": {
+            "INV": "swap one two_adjacent_characters",
+            "DIR": null
+        }
+    },
+    {
+        "capability": "Robustness",
+        "description": "Contract or expand contractions",
+        "search": [
+            {
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<contraction>"
+                    ]
+                }
+            }
+        ],
+        "transform": {
+            "INV": "contract/expand contraction",
+            "DIR": null
+        }
+    },
+    {
+        "capability": "NER",
+        "description": "Replace names with other common names",
+        "search": [
+            {
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<person_name>"
+                    ]
+                }
+            }
+        ],
+        "transform": {
+            "INV": "replace person_name",
+            "DIR": null
+        }
+    },
+    {
+        "capability": "NER",
+        "description": "Replace city or country names with other cities or countries",
+        "search": [
+            {
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<location_name>"
+                    ]
+                }
+            }
+        ],
+        "transform": {
+            "INV": "replace location_name",
+            "DIR": null
+        }
+    },
+    {
+        "capability": "NER",
+        "description": "Replace integers with random integers within a 20% radius of the original",
+        "search": [
+            {
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<number>"
+                    ]
+                }
+            }
+        ],
+        "transform": {
+            "INV": "replace number",
+            "DIR": null
+        }
+    }
+]
