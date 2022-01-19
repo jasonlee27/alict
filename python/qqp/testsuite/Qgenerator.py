@@ -57,7 +57,7 @@ class Qgenerator:
         elif self.transform_action=='remove':
             new_sent_dict = self.remove()
         # end if
-        return new_sent
+        return new_sent_dict
 
     def _add_adj(self, sent):
         # find noun and sample one
@@ -72,18 +72,17 @@ class Qgenerator:
 
         # genereate masked sentence
         masked_sent = Utils.detokenize(masked_tokens)
+        print(masked_sent)
         # get the suggested word for the masked word
         word_suggestions = Suggest.get_word_suggestion(self.editor, masked_sent, mask_pos=None)
         new_sents = list()
         for w in list(set(word_suggestions)):
-            print(w)
             doc = self.nlp(w)
-            if doc[0].tag_=='JJ':
-                new_sent = masked_sent.replace(Macros.MASK, f"<{w}>")
+            if doc[0].tag_.startswith('JJ'):
+                new_sent = masked_sent.replace(Macros.ADJ_MASK, f"<{w}>")
                 new_sents.append(new_sent)
             # end if
         # end for
-        print(new_sents)
         return new_sents
         
     def add(self):
@@ -187,7 +186,7 @@ class Qgenerator:
         tokens_w_antonyms = list()
         for t_i, (t, p) in enumerate(tokens_w_tag[:-1]):
             if t.lower()=='more' or t.lower()=='less':
-                antonyms = self.get_antonyms(tokens_w_tag[t_i+1][0], tokens_w_tag[t_i+1][1])
+                antonyms = get_antonyms(tokens_w_tag[t_i+1][0], tokens_w_tag[t_i+1][1])
                 if any(antonyms):
                     tokens_w_antonyms.append((t.lower(), t_i+1, tokens_w_tag[t_i+1][0], tokens_w_tag[t_i+1][1], antonyms))
                 # end if

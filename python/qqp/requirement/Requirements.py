@@ -69,9 +69,10 @@ class Requirements:
                         "description": d,
                         "search_pairs": False,
                         "search": [{
+                            "length": "<10",
                             "exclude": {
                                 "POS": ["adj"],
-                                "word": ["is|are"],
+                                "word": None,
                             },
                         }],
                         "transform": {

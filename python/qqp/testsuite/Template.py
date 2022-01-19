@@ -80,16 +80,16 @@ class Template:
                     
                     # Generate question pair based on selected sentence
                     # based on requirement and CFG
-                    qgen_obj = Qgenerator(f"{seed1}::{seed2}",list(),
-                                          selected_sent['requirement'])
-
-                    print(qgen_obj)
-                    exp_inputs[f"{seed1}::{seed2}"] = {
-                        "cfg_seed1": expander1.cfg_seed,
-                        "cfg_seed2": expander2.cfg_seed,
-                        "label": seed_label,
-                        "questions": qgen_obj.generate_questions(is_input_pair=True)
-                    }
+                    questions = Qgenerator(f"{seed1}::{seed2}",list(),
+                                           selected_sent['requirement']).generate_questions(is_input_pair=True)
+                    if any(questions[seed]):
+                        exp_inputs[f"{seed1}::{seed2}"] = {
+                            "cfg_seed1": expander1.cfg_seed,
+                            "cfg_seed2": expander2.cfg_seed,
+                            "label": seed_label,
+                        "questions": questions
+                        }
+                    # end if
                 else:
                     _id, seed = selected_sent
                     print(f"\tSELECTED_SENT {index}: {_id}, {seed}")
@@ -115,17 +115,20 @@ class Template:
                     #     # end for
                     #     print() 
                     # # end if
-
+                    
                     # Generate question pair based on selected sentence
                     # based on requirement and CFG
-                    exp_inputs[seed] = {
-                        'cfg_seed': expander.cfg_seed,
-                        'exp_inputs': new_input_results,
-                        'questions': Qgenerator(seed,
-                                                new_input_results,
-                                                selected['requirement']).generate_questions()
-                    }
-                    print(exp_inputs[seed]['questions'])
+                    questions = Qgenerator(seed,
+                                           new_input_results,
+                                           selected['requirement']).generate_questions()
+                    if any(questions[seed]):
+                        exp_inputs[seed] = {
+                            'cfg_seed': expander.cfg_seed,
+                            'exp_inputs': new_input_results,
+                            'questions': questions
+                        }
+                        print(exp_inputs[seed]['questions'])
+                    # end if
                 # end if
             # end for
             results.append({

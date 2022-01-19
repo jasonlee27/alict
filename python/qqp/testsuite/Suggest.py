@@ -66,10 +66,13 @@ class Suggest:
     
     @classmethod
     def get_word_suggestion(cls, editor: Editor, masked_input: str, mask_pos: List, num_target=10):
-        word_suggest = editor.suggest(masked_input, remove_duplicates=True)
-        suggest_res = [ws for ws in word_suggest if cls.is_word_suggestion_not_avail(ws)]
-        suggest_res = cls.remove_duplicates(suggest_res)
-        return suggest_res[:num_target]
+        try:
+            word_suggest = editor.suggest(masked_input, remove_duplicates=True)
+            suggest_res = [ws for ws in word_suggest if cls.is_word_suggestion_not_avail(ws)]
+            suggest_res = cls.remove_duplicates(suggest_res)
+            return suggest_res[:num_target]
+        except:
+            return list()
 
     @classmethod
     def find_all_mask_placeholder(cls, masked_input, target_pattern):

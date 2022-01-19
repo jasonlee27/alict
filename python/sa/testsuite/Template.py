@@ -58,7 +58,7 @@ class Template:
             # end for
             reqs = _reqs
         # end if
-        for selected in cls.SEARCH_FUNC[task](reqs, dataset):
+        for selected in cls.SEARCH_FUNC[task](reqs[:5], dataset):
             
             exp_inputs = dict()
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])

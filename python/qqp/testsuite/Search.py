@@ -107,12 +107,13 @@ class SearchOperator:
     def _search_by_synonym_existence(self, sents, isinclude=True):
         # sents: (s_i, tokenized sentence, label)
         nlp = spacy.load("en_core_web_sm")
+        nlp.add_pipe('spacy_wordnet', after='tagger', config={'lang': nlp.lang})
         selected = list()
         for sent in sents:
-            doc1 = nlp(Utils.detokenize(sent[1]))
+            doc = nlp(Utils.detokenize(sent[1]))
             synonyms = None
             for t in doc:
-                synonyms = Synonyms.get_synosyms(nlp, t, t.pos_)
+                synonyms = Synonyms.get_synonyms(nlp, str(t), t.pos_)
                 if any(synonyms) and isinclde:
                     selected.append(sent)
                     break

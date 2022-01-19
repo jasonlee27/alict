@@ -8,7 +8,7 @@ import os
 class Macros:
 
     this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__))) # nlptest/python/utils
-    root_dir: Path = this_dir.parent.parent # nlptest/
+    root_dir: Path = this_dir.parent.parent.parent # nlptest/
     
     result_dir: Path = root_dir / "_results" # nlptest/_results
     download_dir: Path = root_dir / "_downloads" # nlptest/_downloads
@@ -39,10 +39,10 @@ class Macros:
 
     # Testsuite
     num_seeds = 20
-    num_cfg_exp_elem = 5
+    num_cfg_exp_elem = 20
     num_suggestions_on_exp_grammer_elem = 5
     nsamples = 500
-    max_num_seeds =100 # maximum number of selected sentences
+    max_num_seeds = 100 # maximum number of selected sentences
     max_num_sents = 100000 # number of testcase sentences
     max_num_sents_for_perturb = 1000 # number of sentences for perturbation
     num_synonym_placeholders = 10
