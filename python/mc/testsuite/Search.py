@@ -36,7 +36,6 @@ class SearchOperator:
         self.capability = requirements['capability']
         self.description = requirements['description']
         self.search_reqs_list = requirements['search']
-        self.search_pairs = requirements['search_pairs']
         self.search_method = {
             "length": self.search_by_len,
             "include": self.search_by_include,
@@ -46,22 +45,23 @@ class SearchOperator:
 
     def search(self, sents):
         # sents: list of dictionary with keys of question, answers, context and id
-        # issentpair: indicator if sents are question sentences or pairs of questions
-        selected = list()
+        selected, selected_ids = list(), set()
         for search_reqs in self.search_reqs_list:
             _sents = sents.copy()
             for input_type, reqs in search_reqs.items(): # req for question and context
                 if reqs is not None:
                     for op, param in reqs.items():
                         if len(_sents)>0:
-                            _sents = self.search_method[op](_sents, search_reqs, input_type)
+                            _sents = self.search_method[op](_sents, reqs, input_type)
                         # end if
                     # end for
                 # end if
             # end for
-            selected.extend(_sents)
+            for s in _sents:
+                selected_ids.add(s['id'])
+            # end for
         # end for
-        return list(set(selected))
+        return [s for s in sents if s['id'] in selected_ids]
 
     def search_by_len(self, sents, search_reqs, search_input_type):
         param = search_reqs["length"]
@@ -83,8 +83,14 @@ class SearchOperator:
     def search_by_label(self, sents, search_reqs):
         # label: 0: different, 1: same
         label = search_reqs["label"]
-        _sents = [sent for sent in sents if label in sent['answers']]
-        return _sents
+        selected = list()
+        for sent in sents:
+            answers = [a[0] for a in sent['answers']]
+            if label in answers:
+                selected.append(sent)
+            # end if
+        # end for
+        return selected
 
     def _search_by_synonym_existence(self, sents, search_input_type, isinclude=True):
         # sents: (s_i, tokenized sentence, label)
@@ -109,15 +115,13 @@ class SearchOperator:
         return selected
 
     def _search_by_comparison_existence(self, sents, search_input_type, isinclude=True):
-        comp_pat = r"[Which|Who|When|What|Whose| which| who| when| what| whose].+er(.+?)\?"
+        comp_pat = r"^[Which|Who|When|What|Whose| which| who| when| what| whose].+er(.+?)than(.+?)\?"
         selected = list()
         for sent in sents:
-            s = sent[search_input_type]
+            s = Utils.detokenize(sent[search_input_type])
             if search_input_type=='question':
                 # we split by the dot delimeter to get the real question in question
-                s = Utils.detokenize(s.split('.')[-1])
-            else:
-                s = Utils.detokenize(s)
+                s = s.split('.')[-1]
             # end if
             search = re.search(comp_pat, s)
             if search:
@@ -133,12 +137,10 @@ class SearchOperator:
         color_pat = r"[What is the color|What color|Which color| what is the color| what color].+\?"
         selected = list()
         for sent in sents:
-            s = sent[search_input_type]
+            s = Utils.detokenize(sent[search_input_type])
             if search_input_type=='question':
                 # we split by the dot delimeter to get the real question in question
-                s = Utils.detokenize(s.split('.')[-1])
-            else:
-                s = Utils.detokenize(s)
+                s = s.split('.')[-1]
             # end if
             age_search = re.search(age_pat, s)
             size_search = re.search(size_pat, s)
@@ -155,6 +157,10 @@ class SearchOperator:
         selected = list()
         for sent in sents:
             s = Utils.detokenize(sent[search_input_type])
+            if search_input_type=='question':
+                # we split by the dot delimeter to get the real question in question
+                s = s.split('.')[-1]
+            # end if
             search = re.search(comp_pat, s)
             if search:
                 selected.append(sent)
@@ -221,14 +227,14 @@ class SearchOperator:
             
             if word_include is not None:
                 for w in word_include: # AND relationship
-                    _sents = self._search_by_word_include(_sents, w)
+                    _sents = self._search_by_word_include(_sents, w, search_input_type)
                 # end for
             # end if
         
             if pos_include is not None:
                 temp_sents = list()
                 for p in pos_include:
-                    _sents = self._search_by_pos_include(_sents, p)
+                    _sents = self._search_by_pos_include(_sents, p, search_input_type)
                 # end for
             # end if
             
@@ -257,11 +263,11 @@ class SearchOperator:
             if word_group=="comparison":
                 selected = self._search_by_comparison_existence(sents, search_input_type)
                 ids_comparison = [s['id'] for s in selected]
-                selected = [for s in sents if s['id'] not in ids_comparison]
+                selected = [s for s in sents if s['id'] not in ids_comparison]
             if word_group=="synonym":
                 selected = self._search_by_synonym_existence(sents, search_input_type)
                 ids_comparison = [s['id'] for s in selected]
-                selected = [for s in sents if s['id'] not in ids_comparison]
+                selected = [s for s in sents if s['id'] not in ids_comparison]
             # end if
         else:
             word_or_list = word_cond.split("|")
@@ -341,7 +347,7 @@ class SearchOperator:
 class Squad:
 
     @classmethod
-    def get_sents(cls, squad_file, issentpair):
+    def get_sents(cls, squad_file):
         data = list()
         f = Utils.read_json(squad_file)
         for t in f['data']:
@@ -355,21 +361,21 @@ class Squad:
                         'answers': set([(x['text'], x['answer_start']) for x in qa['answers']])
                     }
                     if any(d['answers']):
-                        data.append()
+                        data.append(d)
                     # end if
                 # end for
             # end for
         # end for
-        return data, answers
+        return data
     
     @classmethod
     def search(cls, req):
         # sents: Dict
         req_obj = SearchOperator(req)
-        sents = cls.get_sents(Macros.squad_valid_file, req_obj.search_pairs)
+        sents = cls.get_sents(Macros.squad_valid_file)
         selected = None
-        if req_obj.search_reqs_list) is not None:
-            selected = sorted([s for s in req_obj.search(sents)], key=lambda x: x[0])
+        if req_obj.search_reqs_list is not None:
+            selected = sorted([s for s in req_obj.search(sents)], key=lambda x: x['id'])
         else:
             selected = sents
         # end if
@@ -415,12 +421,12 @@ class Squad:
 class Search:
 
     SEARCH_FUNC = {        
-        Macros.datasets[0]: Qqp.search,
+        Macros.datasets[0]: Squad.search,
         Macros.datasets[1]: None
     }
 
     @classmethod
-    def search_qqp(cls, requirements, dataset):
+    def search_mc(cls, requirements, dataset):
         func = cls.SEARCH_FUNC[dataset]
         for req in requirements:
             selected = func(req)

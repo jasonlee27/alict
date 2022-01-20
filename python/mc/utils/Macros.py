@@ -46,10 +46,10 @@ class Macros:
     max_num_synonyms = 5 # number of synonyms to be used when there are too many placeholders in one sentence
 
     # MC
-    mc_dataset_dir: Path = dataset_dir / "mc"
-    mc_train_file: Path = mc_dataset_dir / "train-v2.0.json"
-    mc_valid_file: Path = mc_dataset_dir / "dev-v2.0.json"
-    mc_test_file: Path = mc_dataset_dir / "test.tsv"
+    squad_dataset_dir: Path = dataset_dir / "squad"
+    squad_train_file: Path = squad_dataset_dir / "train-v2.0.json"
+    squad_valid_file: Path = squad_dataset_dir / "dev-v2.0.json"
+    squad_test_file: Path = squad_dataset_dir / "test.tsv"
     
     # SentiWordNet
     swn_data_file: Path = download_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"

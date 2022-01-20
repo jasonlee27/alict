@@ -40,7 +40,7 @@ class Template:
     #     Macros.qqp_task: 
     # }
     SEARCH_FUNC = {
-        Macros.qqp_task: Search.search_qqp
+        Macros.mc_task: Search.search_mc
     }
     
     @classmethod
@@ -291,7 +291,7 @@ class Template:
 
     @classmethod
     def get_templates(cls, num_seeds, nlp_task, dataset_name):
-        assert nlp_task==Macros.qqp_task
+        assert nlp_task==Macros.mc_task
         assert dataset_name in Macros.datasets
         print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg

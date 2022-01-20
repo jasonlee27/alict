@@ -24,6 +24,9 @@
                 "label": "neutral"
             }
         ],
+        "expansion": [
+            "neutral"
+        ],
         "transform": null
     },
     {
@@ -58,6 +61,8 @@
                 },
                 "exclude": {
                     "POS": [
+                        "negative verbs",
+                        "negative nouns",
                         "positive adjs",
                         "positive verbs",
                         "positive nouns"
@@ -66,6 +71,9 @@
                 },
                 "label": "negative"
             }
+        ],
+        "expansion": [
+            "neutral"
         ],
         "transform": null
     },
@@ -98,6 +106,7 @@
                 }
             }
         ],
+        "expansion": null,
         "transform": {
             "INV": "replace neutral word",
             "DIR": null
@@ -106,7 +115,8 @@
     {
         "capability": "Vocab_POS",
         "description": "Add positive phrases, fails if sent. goes down by > 0.1",
-        "search": [],
+        "search": null,
+        "expansion": null,
         "transform": {
             "INV": null,
             "DIR": "add positive phrase"
@@ -115,7 +125,8 @@
     {
         "capability": "Vocab_POS",
         "description": "Add negative phrases, fails if sent. goes up by > 0.1",
-        "search": [],
+        "search": null,
+        "expansion": null,
         "transform": {
             "INV": null,
             "DIR": "add negative phrase"
@@ -134,6 +145,7 @@
                 }
             }
         ],
+        "expansion": null,
         "transform": {
             "INV": "strip punctuation",
             "DIR": null
@@ -142,7 +154,8 @@
     {
         "capability": "Robustness",
         "description": "Swap two adjacent characters",
-        "search": [],
+        "search": null,
+        "expansion": null,
         "transform": {
             "INV": "swap one two_adjacent_characters",
             "DIR": null
@@ -161,6 +174,7 @@
                 }
             }
         ],
+        "expansion": null,
         "transform": {
             "INV": "contract/expand contraction",
             "DIR": null
@@ -179,6 +193,7 @@
                 }
             }
         ],
+        "expansion": null,
         "transform": {
             "INV": "replace person_name",
             "DIR": null
@@ -197,6 +212,7 @@
                 }
             }
         ],
+        "expansion": null,
         "transform": {
             "INV": "replace location_name",
             "DIR": null
@@ -215,6 +231,7 @@
                 }
             }
         ],
+        "expansion": null,
         "transform": {
             "INV": "replace number",
             "DIR": null

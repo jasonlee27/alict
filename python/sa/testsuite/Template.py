@@ -46,7 +46,7 @@ class Template:
     def generate_inputs(cls, task, dataset, n=None, save_to=None):
         cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
         print("Analyzing CFG ...")
-        reqs = Requirements.get_requirements(task)
+        reqs = Requirements.get_requirements(task)[:5]
         results = list()
         if os.path.exists(save_to):
             results = Utils.read_json(save_to)
@@ -58,7 +58,7 @@ class Template:
             # end for
             reqs = _reqs
         # end if
-        for selected in cls.SEARCH_FUNC[task](reqs[:5], dataset):
+        for selected in cls.SEARCH_FUNC[task](reqs, dataset):
             
             exp_inputs = dict()
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
@@ -114,9 +114,9 @@ class Template:
     
     @classmethod
     def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None):
-        # if os.path.exists(input_file):
-        #     return Utils.read_json(input_file)
-        # # end if
+        if os.path.exists(input_file):
+            return Utils.read_json(input_file)
+        # end if
         return cls.generate_inputs(
             task=nlp_task,
             dataset=dataset_name,

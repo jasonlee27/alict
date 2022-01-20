@@ -109,14 +109,20 @@ class SearchOperator:
         nlp = spacy.load("en_core_web_sm")
         nlp.add_pipe('spacy_wordnet', after='tagger', config={'lang': nlp.lang})
         selected = list()
+        synonym_dict = dict()
         for sent in sents:
             doc = nlp(Utils.detokenize(sent[1]))
             synonyms = None
             for t in doc:
-                synonyms = Synonyms.get_synonyms(nlp, str(t), t.pos_)
-                if any(synonyms) and isinclde:
+                if f"{str(t)}::{t.tag_}" in synonym_dict.keys():
                     selected.append(sent)
-                    break
+                else: 
+                    synonyms = Synonyms.get_synonyms(nlp, str(t), t.tag_)
+                    if any(synonyms) and isinclude:
+                        synonym_dict[f"{str(t)}::{t.tag_}"] = synonyms
+                        selected.append(sent)
+                        break
+                    # end if
                 # end if
             # end for
             if synonyms is None and not isinclude:

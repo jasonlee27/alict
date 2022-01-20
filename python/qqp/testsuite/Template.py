@@ -47,7 +47,7 @@ class Template:
     def generate_inputs(cls, task, dataset, n=None, save_to=None):
         cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
         print("Analyzing CFG ...")
-        reqs = Requirements.get_requirements(task)
+        reqs = Requirements.get_requirements(task)[2:]
         results = list()
         if os.path.exists(save_to):
             # skip requirements that have been completed.
@@ -81,7 +81,7 @@ class Template:
                     # Generate question pair based on selected sentence
                     # based on requirement and CFG
                     questions = Qgenerator(f"{seed1}::{seed2}",list(),
-                                           selected_sent['requirement']).generate_questions(is_input_pair=True)
+                                           selected['requirement']).generate_questions(is_input_pair=True)
                     if any(questions[seed]):
                         exp_inputs[f"{seed1}::{seed2}"] = {
                             "cfg_seed1": expander1.cfg_seed,
