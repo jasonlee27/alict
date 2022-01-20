@@ -5,6 +5,7 @@
         "search_pairs": false,
         "search": [
             {
+                "length": "<10",
                 "exclude": {
                     "POS": [
                         "adj"

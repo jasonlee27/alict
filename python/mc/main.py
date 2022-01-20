@@ -15,10 +15,10 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=['requirement', 'template', 'testsuite', 'testmodel', 'retrain'],
                     help='task to be run')
-parser.add_argument('--nlp_task', type=str, default="qqp",
-                    choices=['qqp'],
+parser.add_argument('--nlp_task', type=str, default="mc",
+                    choices=['mc'],
                     help='nlp task of focus')
-parser.add_argument('--search_dataset', type=str, default="sst",
+parser.add_argument('--search_dataset', type=str, default="squad",
                     help='name of dataset for searching testcases that meets the requirement')
 parser.add_argument('--num_seeds', type=int, default=Macros.num_seeds,
                     help='number of seed inputs found in search dataset')
@@ -92,13 +92,13 @@ def run_retrain():
     label_vec_len = args.label_vec_len
     testcase_file = None
     if search_dataset_name==Macros.datasets[nlp_task][0]:
-        testcase_file = Macros.sst_sa_testcase_file
+        testcase_file = Macros.squad_mc_testcase_file
         if not os.path.exists(str(testcase_file)):
             from .retrain.Retrain import Retrain
-            Retrain.get_sst_testcase_for_retrain(nlp_task)
+            Retrain.get_squad_testcase_for_retrain(nlp_task)
         # end if
     elif search_dataset_name==Macros.datasets[nlp_task][1]:
-        testcase_file = Macros.checklist_sa_testcase_file
+        testcase_file = Macros.checklist_mc_testcase_file
         if not os.path.exists(str(testcase_file)):
             from .retrain.Retrain import Retrain
             Retrain.get_checklist_testcase_for_retrain(nlp_task)
@@ -115,7 +115,7 @@ def run_retrain():
     
 
 func_map = {
-    "qqp": {
+    "mc": {
         "requirement": run_requirements,
         "template": run_templates,
         "testsuite": run_testsuites,

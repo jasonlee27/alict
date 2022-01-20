@@ -113,212 +113,137 @@ class Requirements:
                         "expansion": ["neutral"],
                         "transform": None
                     })
-                elif d.lower()=="replace neutral words with other neutral words":
+                elif d.lower()=="sentiment change over time, present should prevail":
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search": [
                             {
+                                "label": "positive"
+                            },
+                            {
+                                "label": "negative"
+                            }
+                        ],
+                        "transform": {
+                            "MFT": "add temporal_awareness"
+                        }
+                    })
+                elif d.lower()=="negated negative should be positive or neutral":
+                    # AUX : auxilary verb
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [
+                            {
+                                "label": "negative",
                                 "include": {
-                                    "POS": [
-                                        "neutral adjs"
-                                    ],
+                                    "POS": ["<^demonstratives_AUXBE>"],
                                     "word": None
                                 }
                             },
+                        ],
+                        "transform": {
+                            "MFT": "negate ^demonstratives_AUXBE"
+                        }
+                    })
+                elif d.lower()=="negated neutral should still be neutral":
+                    # AUX : auxilary verb
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [
                             {
+                                "label": "neutral",
                                 "include": {
-                                    "POS": [
-                                        "neutral verbs"
-                                    ],
+                                    "POS": ["<^demonstratives_AUXBE>"],
                                     "word": None
                                 }
                             },
-                            {
-                                "include": {
-                                    "POS": [
-                                        "neutral nouns"
-                                    ],
-                                    "word": None
-                                }
-                            }
                         ],
-                        "expansion": None,
                         "transform": {
-                            "INV": "replace neutral word",
-                            "DIR": None
+                            "MFT": "negate ^demonstratives_AUXBE"
                         }
                     })
-                elif d.lower()=="add positive phrases, fails if sent. goes down by > 0.1":
-                    reqs.append({
-                        "capability": cap,
-                        "description": d,
-                        "search": None,
-                        "expansion": None,
-                        "transform": {
-                            "INV": None,
-                            "DIR": "add positive phrase"
-                        }
-                    })
-                elif d.lower()=="add negative phrases, fails if sent. goes up by > 0.1":
-                    reqs.append({
-                        "capability": cap,
-                        "description": d,
-                        "search": None,
-                        "expansion": None,
-                        "transform": {
-                            "INV": None,
-                            "DIR": "add negative phrase"
-                        }
-                    })
-                elif d.lower()=="add randomly generated URLs and handles":
-                    reqs.append({
-                        "capability": cap,
-                        "description": d,
-                        "search": None,
-                        "expansion": None,
-                        "transform": {
-                            "INV": "add random URL_handles",
-                            "DIR": None
-                        }
-                    })
-                elif d.lower()=="strip punctuation and/or add \".\"":
+                elif d.lower()=="negation of negative at the end, should be positive or neutral":
+                    # AUX : auxilary verb
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search": [
                             {
-                                "include": {
-                                    "POS": None,
-                                    "word": [
-                                        "<punctuation>"
-                                    ]
-                                }
-                            }
+                                "label": "negative",
+                            },
                         ],
-                        "expansion": None,
                         "transform": {
-                            "INV": "strip punctuation",
-                            "DIR": None
+                            "MFT": "negate AUXBE$"
                         }
                     })
-                elif d.lower()=="swap two adjacent characters":
-                    reqs.append({
-                        "capability": cap,
-                        "description": d,
-                        "search": None,
-                        "expansion": None,
-                        "transform": {
-                            "INV": "swap one two_adjacent_characters",
-                            "DIR": None
-                        }
-                    })
-                elif d.lower()=="swap two adjacent_characters":
-                    reqs.append({
-                        "capability": cap,
-                        "description": d,
-                        "search": None,
-                        "transform": {
-                            "INV": "swap two two_adjacent_characters",
-                            "DIR": None
-                        }
-                    })
-                elif d.lower()=="contract or expand contractions":
+                elif d.lower()=="negated of positive with neutral content in the middle":
+                    # AUX : auxilary verb
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search": [
                             {
-                                "include": {
-                                    "POS": None,
-                                    "word": [
-                                        "<contraction>"
-                                    ]
-                                }
-                            }
+                                "label": "positive",
+                            },
                         ],
-                        "expansion": None,
                         "transform": {
-                            "INV": "contract/expand contraction",
-                            "DIR": None
+                            "MFT": "negate positive"
                         }
                     })
-                elif d.lower()=="replace names with other common names":
+                elif d.lower()=="author sentiment is more important than of others":
+                    # AUX : auxilary verb
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search": [
                             {
-                                "include": {
-                                    "POS": None,
-                                    "word": [
-                                        "<person_name>"
-                                    ]
-                                }
-                            }
+                                "label": "positive",
+                            },
+                            {
+                                "label": "negative",
+                            },
                         ],
-                        "expansion": None,
                         "transform": {
-                            "INV": "replace person_name",
-                            "DIR": None
+                            "MFT": ["srl"]
                         }
                     })
-                elif d.lower()=="replace city or country names with other cities or countries":
+                elif d.lower()=="parsing sentiment in (question, “yes”) form":
+                    # AUX : auxilary verb
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search": [
                             {
-                                "include": {
-                                    "POS": None,
-                                    "word": [
-                                        "<location_name>"
-                                    ]
-                                }
-                            }
+                                "label": "positive",
+                            },
+                            {
+                                "label": "negative",
+                            },
                         ],
-                        "expansion": None,
                         "transform": {
-                            "INV": "replace location_name",
-                            "DIR": None
+                            "MFT": ["questionize yes"]
                         }
                     })
-                elif d.lower()=="replace integers with random integers within a 20% radius of the original":
+                elif d.lower()=="parsing sentiment in (question, “no”) form":
+                    # AUX : auxilary verb
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search": [
                             {
-                                "include": {
-                                    "POS": None,
-                                    "word": [
-                                        "<number>"
-                                    ]
-                                }
-                            }
+                                "label": "positive",
+                            },
+                            {
+                                "label": "negative",
+                            },
                         ],
-                        "expansion": None,
                         "transform": {
-                            "INV": "replace number",
-                            "DIR": None
+                            "MFT": ["questionize no"]
                         }
                     })
-                # elif d.lower()=="sentiment change over time, present should prevail":
-                #     reqs.append({
-                #         "capability": cap,
-                #         "description": d,
-                #         "search": [
-                #             {
-                #                 "label": "positive"
-                #             },
-                #             {
-                #                 "label": "negative"
-                #             }
-                #         ],
-                #         "transform": {
-                #             "MFT": "add temporal_awareness"
-                #         }
-                #     })J9
                 # end if
             # end for
         # end for

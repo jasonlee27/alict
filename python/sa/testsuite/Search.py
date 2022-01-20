@@ -32,16 +32,21 @@ SENT_DICT = {
     "neutral_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="pure neutral"]
 }
 
-# get name and location data
-basic = Utils.read_json(Macros.dataset_dir / 'checklist' / 'lexicons' / 'basic.json')
-names = Utils.read_json(Macros.dataset_dir / 'checklist' / 'names.json')
-name_set = { x:set(names[x]) for x in names }
-NAME_LOC_DICT = {
-    'name': names,
-    'name_set': name_set,
-    'city': basic['city'],
-    'country': basic['country'],
+WORD2POS_MAP = {
+    'demonstratives': ['this', 'that', 'these', 'those'],
+    'AUXBE': ['is', 'are']
 }
+
+# # get name and location data
+# basic = Utils.read_json(Macros.dataset_dir / 'checklist' / 'lexicons' / 'basic.json')
+# names = Utils.read_json(Macros.dataset_dir / 'checklist' / 'names.json')
+# name_set = { x:set(names[x]) for x in names }
+# NAME_LOC_DICT = {
+#     'name': names,
+#     'name_set': name_set,
+#     'city': basic['city'],
+#     'country': basic['country'],
+# }
 
 random.seed(27)
 
@@ -101,75 +106,75 @@ class SearchOperator:
         # end if
         return results
 
-    def search_by_punctuation_include(self, sents):
-        nlp = spacy.load('en_core_web_sm')
-        results = list()
-        for sent in sents:
-            s = Utils.detokenize(sent[1])
-            doc = nlp(s)
-            if len(doc) and doc[-1].pos_ == 'PUNCT':
-                results.append(sent)
-            # end if
-        # end for
-        return results
+    # def search_by_punctuation_include(self, sents):
+    #     nlp = spacy.load('en_core_web_sm')
+    #     results = list()
+    #     for sent in sents:
+    #         s = Utils.detokenize(sent[1])
+    #         doc = nlp(s)
+    #         if len(doc) and doc[-1].pos_ == 'PUNCT':
+    #             results.append(sent)
+    #         # end if
+    #     # end for
+    #     return results
     
-    def search_by_person_name_include(self, sents):
-        nlp = spacy.load('en_core_web_sm')
-        results = list()
-        for sent in sents:
-            s = Utils.detokenize(sent[1])
-            doc = nlp(s)
-            is_person_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'PERSON' for a in x])])
-            if is_person_name_contained:
-                ents = [x.text for x in doc.ents if np.all([a.ent_type_ == 'PERSON' for a in x])]
-                if any([x for x in ents if x in NAME_LOC_DICT['name_set']['women'] or x in NAME_LOC_DICT['name_set']['men']]):
-                    results.append(sent)
-                # end if
-            # end if
-        # end for
-        return results
+    # def search_by_person_name_include(self, sents):
+    #     nlp = spacy.load('en_core_web_sm')
+    #     results = list()
+    #     for sent in sents:
+    #         s = Utils.detokenize(sent[1])
+    #         doc = nlp(s)
+    #         is_person_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'PERSON' for a in x])])
+    #         if is_person_name_contained:
+    #             ents = [x.text for x in doc.ents if np.all([a.ent_type_ == 'PERSON' for a in x])]
+    #             if any([x for x in ents if x in NAME_LOC_DICT['name_set']['women'] or x in NAME_LOC_DICT['name_set']['men']]):
+    #                 results.append(sent)
+    #             # end if
+    #         # end if
+    #     # end for
+    #     return results
 
-    def search_by_location_name_include(self, sents):
-        # location: city names && country names
-        nlp = spacy.load('en_core_web_sm')
-        results = list()
-        for sent in sents:
-            s = Utils.detokenize(sent[1])
-            doc = nlp(s)
-            is_loc_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'GPE' for a in x])])
-            if is_loc_name_contained:
-                ents = [x.text for x in doc.ents if np.all([a.ent_type_ == 'GPE' for a in x])]
-                if any([x for x in ents if x in NAME_LOC_DICT['city'] or x in NAME_LOC_DICT['country']]):
-                    results.append(sent)
-                # end if
-            # end if
-        # end for
-        return results
+    # def search_by_location_name_include(self, sents):
+    #     # location: city names && country names
+    #     nlp = spacy.load('en_core_web_sm')
+    #     results = list()
+    #     for sent in sents:
+    #         s = Utils.detokenize(sent[1])
+    #         doc = nlp(s)
+    #         is_loc_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'GPE' for a in x])])
+    #         if is_loc_name_contained:
+    #             ents = [x.text for x in doc.ents if np.all([a.ent_type_ == 'GPE' for a in x])]
+    #             if any([x for x in ents if x in NAME_LOC_DICT['city'] or x in NAME_LOC_DICT['country']]):
+    #                 results.append(sent)
+    #             # end if
+    #         # end if
+    #     # end for
+    #     return results
     
-    def search_by_number_include(self, sents):
-        nlp = spacy.load('en_core_web_sm')
-        results = list()
-        for sent in sents:
-            s = Utils.detokenize(sent[1])
-            doc = nlp(s)
-            nums = [x.text for x in doc if x.text.isdigit()]
-            if any(nums) and any([x for x in nums if x != '2' and x != '4']):
-                results.append(sent)
-            # end if
-        # end for
-        return results
+    # def search_by_number_include(self, sents):
+    #     nlp = spacy.load('en_core_web_sm')
+    #     results = list()
+    #     for sent in sents:
+    #         s = Utils.detokenize(sent[1])
+    #         doc = nlp(s)
+    #         nums = [x.text for x in doc if x.text.isdigit()]
+    #         if any(nums) and any([x for x in nums if x != '2' and x != '4']):
+    #             results.append(sent)
+    #         # end if
+    #     # end for
+    #     return results
 
-    def search_by_contraction_include(self, sents):
-        contraction_pattern = re.compile(r'\b({})\b'.format('|'.join(CONTRACTION_MAP.keys())), flags=re.IGNORECASE|re.DOTALL)
-        reverse_contraction_pattern = re.compile(r'\b({})\b'.format('|'.join(CONTRACTION_MAP.values())), flags=re.IGNORECASE|re.DOTALL)        
-        results = list()
-        for sent in sents:
-            s = Utils.detokenize(sent[1])
-            if contraction_pattern.search(s) or reverse_contraction_pattern.search(s):
-                results.append(sent)
-            # end if
-        # end for
-        return results
+    # def search_by_contraction_include(self, sents):
+    #     contraction_pattern = re.compile(r'\b({})\b'.format('|'.join(CONTRACTION_MAP.keys())), flags=re.IGNORECASE|re.DOTALL)
+    #     reverse_contraction_pattern = re.compile(r'\b({})\b'.format('|'.join(CONTRACTION_MAP.values())), flags=re.IGNORECASE|re.DOTALL)        
+    #     results = list()
+    #     for sent in sents:
+    #         s = Utils.detokenize(sent[1])
+    #         if contraction_pattern.search(s) or reverse_contraction_pattern.search(s):
+    #             results.append(sent)
+    #         # end if
+    #     # end for
+    #     return results
 
     def search_by_score(self, sents, search_reqs):
         param = search_reqs["score"]
@@ -218,26 +223,60 @@ class SearchOperator:
             # such as "name of person, location"
             word_group = search.group(1)
             word_list = list()
-            if word_group=="contraction":
-                selected = self.search_by_contraction_include(sents)
-            elif word_group=="punctuation":
-                selected = self.search_by_punctuation_include(sents)
-            elif word_group=="person_name":
-                selected = self.search_by_person_name_include(sents)
-            elif word_group=="location_name":
-                selected = self.search_by_location_name_include(sents)
-            elif word_group=="number":
-                selected = self.search_by_number_include(sents)
+            # if word_group=="contraction":
+            #     selected = self.search_by_contraction_include(sents)
+            # elif word_group=="punctuation":
+            #     selected = self.search_by_punctuation_include(sents)
+            # elif word_group=="person_name":
+            #     selected = self.search_by_person_name_include(sents)
+            # elif word_group=="location_name":
+            #     selected = self.search_by_location_name_include(sents)
+            # elif word_group=="number":
+            #     selected = self.search_by_number_include(sents)
             # end if
         else:
             selected = [sent for sent in sents if word_cond in sent[1]]
         # end if
         return selected
-    
+
+    def get_pospat_to_wordproduct(self, pos_pattern):
+        results = list()
+        pos_dict = {
+            p: WORD2POS_MAP[p]
+            for p in pos_pattern.split('_'):
+        }
+        word_product = [dict(zip(d, v)) for v in product(*pos_dict.values())]
+        for wp in word_product:
+            results.append(" ".join(list(wp.values())))
+        # end for
+        return results
+            
     def _search_by_pos_include(self, sents, cond_key, cond_number):
         # sents: (s_i, tokenized sentence, label)
-        target_words = SENT_DICT[cond_key]
+        search = re.search(r"\<([^\<\>]+)\>", word_cond)
         selected = list()
+        if search:
+            selected_ids = list()
+            from itertools import product
+            # search sents by tag of pos organization
+            pos_pat = search.group(1)
+            prefix_pat, postfix_pas = '',''
+            if pos_pat.startswith('^'):
+                pos_pat = pos_pat[1:]
+                prefix_pat = '^'
+            # end if
+            # if pos_pat.endswith('$'):
+            #     pos_pat = pos_pat[:-1]
+            #     postfix_pat = '$'
+            # # end if
+            for pat in self.get_pospat_to_wordproduct(pos_pat):
+                _pat = prefix_pat+pat
+                selected_ids.extends([s[0] for s in sents if re.search(_pat, Utils.detokenize(s[1]))])
+            # end for
+            selected = [s for s in sents if s[0] in selected_ids]
+            return selected
+        # end if
+        target_words = SENT_DICT[cond_key]
         for sent in sents:
             # s_i, s, l, sc = sent
             found_w = list()

@@ -118,15 +118,15 @@ class Qgenerator:
             tokens_w_tag1, tokens_w_tag2 = [(str(t),t.tag_) for t in doc1], [(str(t),t.tag_) for t in doc2]
             tokens_w_synonyms1, tokens_w_synonyms2 = list(), list()
             for t_i, (t, p) in enumerate(tokens_w_tag1):
-                synonyms = Synonyms.get_synonyms(self.nlp,t,p, num_synonyms=2)
+                synonyms = Synonyms.get_synonyms(self.nlp, t, p, num_synonyms=2)
                 if any(synonyms):
-                    tokens_w_synonyms1.append((t_i, t, t.tag_, synonyms))
+                    tokens_w_synonyms1.append((t_i, t, p, synonyms))
                 # end if
             # end for
             for t_i, (t, p) in enumerate(tokens_w_tag2):
-                synonyms = Synonyms.get_synonyms(self.nlp,t,p, num_synonyms=2)
+                synonyms = Synonyms.get_synonyms(self.nlp, t, p, num_synonyms=2)
                 if any(synonyms):
-                    tokens_w_synonyms2.append((t_i, t, t.tag_, synonyms))
+                    tokens_w_synonyms2.append((t_i, t, p, synonyms))
                 # end if
             # end for
             random.shuffle(tokens_w_synonyms1)
@@ -155,12 +155,13 @@ class Qgenerator:
         for t_i, (t, p) in enumerate(tokens_w_tag):
             synonyms = Synonyms.get_synonyms(self.nlp,t,p, num_synonyms=2)
             if any(synonyms):
-                tokens_w_synonyms.append((t_i, t, t.tag_, synonyms))
+                tokens_w_synonyms.append((t_i, t, p, synonyms))
             # end if
         # end for
         random.shuffle(tokens_w_synonyms)
         new_sents = dict()
-        for t_i, t, t_pos, synonyms in tokens_w_synonyms[Macros.num_synonyms_for_replace]:
+        for tok in tokens_w_synonyms[:Macros.num_synonyms_for_replace]:
+            t_i, t, t_pos, synonyms = tok
             new_tokens = tokens[:t_i]+['<', tokens[t_i], '>']+tokens[t_i+1:]
             sent_from = Utils.detokenize(new_tokens)
             new_sents[sent_from] = list()
@@ -172,7 +173,7 @@ class Qgenerator:
         return new_sents
     
     def _replace_more_less(self, sent, replace_in_pair=False):
-        def get_antonyms(self, word, pos):
+        def get_antonyms(word, pos):
             antonyms = list()
             for syn in wordnet.synsets(word):
                 for lm in syn.lemmas():
@@ -226,10 +227,7 @@ class Qgenerator:
             }
             return results
         # end if
-        results = {
-            key: new_sent_dict[key]
-            for key in new_sents.keys()
-        }
+        results = new_sents
         results['exp_inputs'] = dict()
         for s in self.new_inputs:
             new_exp_dict = func_map[self.transform_props](s[5])
@@ -238,7 +236,7 @@ class Qgenerator:
             # end for
         # end for
         results['label'] = Macros.qqp_label_map['same']
-        nlp.remove_pipe('spacy_wordnet')
+        self.nlp.remove_pipe('spacy_wordnet')
         return results
 
     def _remove_semantic_preserving_semantics(self, sent, targets):
@@ -265,11 +263,7 @@ class Qgenerator:
     
     def remove(self):
         # generate seed question pair
-        resaults = self._remove_semantic_preserving_semantics(self.seed, self.transform_props)
-        results = {
-            self.seed: new_sent_dict[key]
-            for key in new_sent_dict.items()
-        }
+        results = self._remove_semantic_preserving_semantics(self.seed, self.transform_props)
 
         # exp inputs second
         results['exp_inputs'] = dict()

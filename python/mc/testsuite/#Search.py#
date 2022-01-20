@@ -152,7 +152,7 @@ class SearchOperator:
         # end for
         return selected
 
-    def _search_by_superlative_existence(self, sents, search_input_type):
+    def _search_by_superlative_existence(self, sent, search_input_type):
         comp_pat = r"^(Which|Who|Whose|Where|When|What|Whose|How many|How much).+(the most|the least)(.+?)\?"
         selected = list()
         for sent in sents:

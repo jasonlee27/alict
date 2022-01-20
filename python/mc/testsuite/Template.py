@@ -40,7 +40,7 @@ class Template:
     #     Macros.qqp_task: 
     # }
     SEARCH_FUNC = {
-        Macros.qqp_task: Search.search_qqp
+        Macros.mc_task: Search.search_mc
     }
     
     @classmethod
@@ -71,38 +71,43 @@ class Template:
                 index += 1
                 _id, seed_q, seed_c, seed_a = selected_sent['id'], selected_sent['question'], selected_sent['context'], selected_sent['answers']
                 print(f"\tSELECTED_Q {index}: {_id}, {seed_q}, {seed_a}")
-                expander = CFGExpander(seed_input=seed_q, cfg_ref_file=cfg_ref_file)
-                generator = Generator(expander=expander)
-                gen_inputs = generator.masked_input_generator()
                 new_input_results = list()
-                if any(gen_inputs) and num_seed_for_exp<=n:
-                    # get the word suggesteion at the expended grammar elements
-                    gen_inputs = Suggest.get_new_inputs(
-                        generator.editor,
-                        gen_inputs,
-                        num_target=Macros.num_suggestions_on_exp_grammer_elem
-                    )
-                    for g_i in range(len(gen_inputs)):
-                        eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], selected["requirement"])
-                        if any(eval_results):
-                            del gen_inputs[g_i]["words_suggest"]
-                            new_input_results.extend(eval_results)
-                            num_seed_for_exp += 1
-                            print(".", end="")
-                        # end if
-                    # end for
-                    print() 
-                # end if
-                    
-                
-                if any(questions[seed]):
-                    exp_inputs[seed_q] = {
-                        'cfg_seed': expander.cfg_seed,
-                        'exp_inputs': new_input_results,
-                        'context': seed_c,
-                        'label': seed_a
-                    }
-                # end if
+                expander = CFGExpander(seed_input=seed_q, cfg_ref_file=cfg_ref_file)
+                # generator = Generator(expander=expander)
+                # gen_inputs = generator.masked_input_generator()
+                # if any(gen_inputs) and num_seed_for_exp<=n:
+                #     # get the word suggesteion at the expended grammar elements
+                #     gen_inputs = Suggest.get_new_inputs(
+                #         generator.editor,
+                #         gen_inputs,
+                #         num_target=Macros.num_suggestions_on_exp_grammer_elem
+                #     )
+                #     for g_i in range(len(gen_inputs)):
+                #         eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], selected_sent, selected["requirement"])
+                #         if any(eval_results):
+                #             del gen_inputs[g_i]["words_suggest"]
+                #             new_input_results.extend(eval_results)
+                #             num_seed_for_exp += 1
+                #             print(".", end="")
+                #         # end if
+                #     # end for
+                #     print() 
+                # # end if
+                # if any(questions[seed]):
+                #     exp_inputs[seed_q] = {
+                #         'cfg_seed': expander.cfg_seed,
+                #         'exp_inputs': new_input_results,
+                #         'context': seed_c,
+                #         'label': seed_a
+                #     }
+                # # end if
+                exp_inputs[seed_q] = {
+                    'id': _id,
+                    'cfg_seed': expander.cfg_seed,
+                    'exp_inputs': new_input_results,
+                    'context': seed_c,
+                    'label': seed_a
+                }
             # end for
             results.append({
                 "requirement": selected["requirement"],
@@ -150,81 +155,58 @@ class Template:
             # end for
         # end for
         return
-    
-    @classmethod
-    def get_token_n_pos(cls, nlp, input_pair):
-        q1, q2 = input_pair[0], input_pair[1]
-        doc1, doc2 = nlp(q1), nlp(q2)
-        tokens_indices1, tokens_indices2 = list(), list()
-        skip_synonym_indices1, skip_synonym_indices2 = list(), list()
-        skip_synonyms = False
-        for t_i, t in enumerate(doc1):            
-            if str(t)=='<' and not skip_synonyms:
-                skip_synonyms = True
-            elif str(t)=='>' and skip_synonyms:
-                skip_synonyms = False
-            elif str(t)!='<' and str(t)!='>' and skip_synonyms:
-                skip_synonym_indices1.append(t_i)
-                tokens_indices1.append(t_i)
-            elif str(t)!='<' and str(t)!='>' and not skip_synonyms:
-                tokens_indices1.append(t_i)
-            # end if
-        # end for
-        skip_synonyms = False
-        for t_i, t in enumerate(doc2):
-            if str(t)=='<' and not skip_synonyms:
-                skip_synonyms = True
-            elif str(t)=='>' and skip_synonyms:
-                skip_synonyms = False
-            elif str(t)!='<' and str(t)!='>' and skip_synonyms:
-                skip_synonym_indices2.append(t_i)
-                tokens_indices2.append(t_i)
-            elif str(t)!='<' and str(t)!='>' and not skip_synonyms:
-                tokens_indices2.append(t_i)
-            # end if
-        # end for
 
-        tokens1, tokens2 = list(), list()
-        tokens_pos1, tokens_pos2 = list(), list()
-        for t_i, t in enumerate(doc1):
-            if t_i in tokens_indices1 and t_i not in skip_synonyms_indices1:
-                tokens1.append(str(t))
-                tokens_pos1.append(t.tag_)
-            elif t_i in tokens_indices1 and t_i in skip_synonyms_indices1:
-                tokens1.append(f"{str(t)}_SKIP")
-                tokens_pos1.append(t.tag_)
+    @classmethod
+    def get_pos(cls, mask_input: str, mask_pos: List[str], cfg_seed: Dict, words_sug: List[str], exp_input:str):
+        tokens = Utils.tokenize(mask_input)
+        _tokens = list()
+        tokens_pos = list()
+        tok_i, mask_tok_i = 0, 0
+        while tok_i<len(tokens):
+            if tokens[tok_i:tok_i+3]==['{', 'mask', '}']:
+                _tokens.append('{mask}')
+                tok_i += 3
+            else:
+                _tokens.append(tokens[tok_i])
+                tok_i += 1
             # end if
         # end for
-        for t_i, t in enumerate(doc2):
-            if t_i in tokens_indices2 and t_i not in skip_synonyms_indices2:
-                tokens2.append(str(t))
-                tokens_pos2.append(t.tag_)
-            elif t_i in tokens_indices2 and t_i in skip_synonyms_indices2:
-                tokens2.append(f"{str(t)}_SKIP")
-                tokens_pos2.append(t.tag_)
+        tokens = _tokens
+        
+        for t in tokens:
+            if t=="{mask}":
+                if type(words_sug)==str:
+                    tpos = words_sug
+                elif ((type(words_sug)==list) or (type(words_sug)==tuple)):
+                    tpos = mask_pos[mask_tok_i]
+                    mask_tok_i += 1
+                # end if
+            else:
+                tpos = cls.find_pos_from_cfg_seed(t, cfg_seed)
             # end if
+            tokens_pos.append(tpos)
         # end for
-        return tokens1, tokens_pos1, tokens2, tokens_pos2
+        return Utils.tokenize(exp_input), tokens_pos
         
     @classmethod
-    def get_templates_by_synonyms(cls, nlp, input_pair, prev_synonyms, is_seed_pair=False):
-        template1, template2 = list(), list()
-        tokens1, tokens_pos1, tokens2, tokens_pos2 = cls.get_token_n_pos(nlp, input_pair)
-        
-        for t, p in zip(tokens1, tokens_pos1):
-            key = "{"+f"{t}_{p}"+"}"
-            if t.endswith('_SKIP'):
-                template1.append(t.split('_SKIP')[0])
-            elif key in prev_synonyms.keys():
+    def get_templates_by_synonyms(cls, nlp, tokens: List[str], tokens_pos: List[str], prev_synonyms):
+        template = list()
+        for t, tpos in zip(tokens, tokens_pos):
+            newt = re.sub(r'\..*', '', t)
+            newt = re.sub(r'\[.*\]', '', newt)
+            newt = re.sub(r'.*?:', '', newt)
+            newt = re.sub(r'\d+$', '', newt)
+            key = "{"+f"{newt}_{tpos}"+"}"
+            if key in prev_synonyms.keys():
                 if prev_synonyms[key] is None or len(prev_synonyms[key])==0:
-                    template1.append(t)
+                    template.append(t)
                 else:
-                    template1.append({
+                    template.append({
                         key: prev_synonyms[key]
                     })
                 # end if
             else:
-                syns = Synonyms.get_synonyms(nlp, t, p)
+                syns = Synonyms.get_synonyms(nlp, t, tpos)
                 if len(syns)>1:
                     _syns = list()
                     for s in syns:
@@ -235,49 +217,12 @@ class Template:
                         # end if
                     # end for
                     syns_dict = {key: _syns}
-                    template1.append(syns_dict)
+                    template.append(syns_dict)
                     if key not in prev_synonyms.keys():
                         prev_synonyms[key] = syns_dict[key]
                     # end if
                 else:
-                    template1.append(t)
-                    if key not in prev_synonyms.keys():
-                        prev_synonyms[key] = None
-                    # end if
-                # end if
-            # end if
-        # end for
-
-        for t, p in zip(tokens2, tokens_pos2):
-            key = "{"+f"{t}_{p}"+"}"
-            if t.endswith('_SKIP'):
-                template2.append(t.split('_SKIP')[0])
-            elif key in prev_synonyms.keys():
-                if prev_synonyms[key] is None or len(prev_synonyms[key])==0:
-                    template2.append(t)
-                else:
-                    template2.append({
-                        key: prev_synonyms[key]
-                    })
-                # end if
-            else:
-                syns = Synonyms.get_synonyms(nlp, t, p)
-                if len(syns)>1:
-                    _syns = list()
-                    for s in syns:
-                        if len(s.split("_"))>1:
-                            _syns.append(" ".join(s.split("_")))
-                        else:
-                            _syns.append(s)
-                        # end if
-                    # end for
-                    syns_dict = {key: _syns}
-                    template2.append(syns_dict)
-                    if key not in prev_synonyms.keys():
-                        prev_synonyms[key] = syns_dict[key]
-                    # end if
-                else:
-                    template2.append(t)
+                    template.append(t)
                     if key not in prev_synonyms.keys():
                         prev_synonyms[key] = None
                     # end if
@@ -285,13 +230,13 @@ class Template:
             # end if
         # end for
         return {
-            "input": input_pair,
-            "place_holder": (template1,template2)
+            "input": Utils.detokenize(tokens),
+            "place_holder": template
         }, prev_synonyms
 
     @classmethod
     def get_templates(cls, num_seeds, nlp_task, dataset_name):
-        assert nlp_task==Macros.qqp_task
+        assert nlp_task==Macros.mc_task
         assert dataset_name in Macros.datasets
         print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg
@@ -319,58 +264,38 @@ class Template:
             for s_i, seed_input in enumerate(inputs.keys()):
                 print(f"\tSEED {s_i}: {seed_input}")
 
-                pair_search = re.search(r"([^\:]+)\:\:([^\:]+)", seed_input)
-                if pair_search:
-                    _input = (pair_search.group(1), pair_search.group(2))
-                    cfg_seed1 = inputs[seed_input]['cfg_seed1']
-                    cfg_seed2 = inputs[seed_input]['cfg_seed2']
-                    label_seed = inputs[seed_input]['label']
-                    questions = inputs[seed_input]['questions'] # dict
-                    seed_inputs.append({
-                        "input": _input,
-                        "label": label_seed
-                    })
-                    
-                    # make template for seed input
-                    _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, _input, prev_synonyms, is_seed_pair=True)
-                    _templates["label"] = label_seed
-                    seed_templates.append(_templates)
+                _input = seed_input
+                cfg_seed = inputs[seed_input]['cfg_seed']
+                context_seed = inputs[seed_input]['context']
+                answers_seed = inputs[seed_input]['label']
+                _id_seed = inputs[seed_input]['id']
+                exp_inputs = inputs[seed_input]['exp_inputs']
+                seed_inputs.append({
+                    'input': seed_input,
+                    'place_holder': Utils.tokenize(seed_input),
+                    'label': answers_seed,
+                    'context': context_seed,
+                    'id': _id_seed
+                })
+                
+                # make template for seed input
+                tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
+                _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
+                _templates['label'] = answers_seed
+                seed_templates.append(_templates)
 
-                    # make template for generated questions from seed q pair, but not from exp questions
-                    for qs_str in questions[seed_input]:
-                        pair_search = re.search(r"([^\:]+)\:\:([^\:]+)", qs_str)
-                        _input = (pair_search.group(1), pair_search.group(2))
-                        _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, _input, prev_synonyms)
-                        _templates["label"] = questions['label']
-                        seed_templates.append(_templates)
+                # make template for generated questions from exp sentences
+                if any(exp_inputs):
+                    for inp_i, inp in enumerate(exp_inputs):
+                        (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
+                        tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
+                        _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
+                        _templates['label'] = exp_input_label
+                        _templates['context'] = context_seed
+                        exp_templates.append(_templates)
+                        print(".", end="")
                     # end for
-                else:
-                    _input = seed_input
-                    cfg_seed = inputs[seed_input]['cfg_seed']
-                    questions = inputs[seed_input]['questions']
-                    # exp_inputs = inputs[seed_input]['exp_inputs']
-
-                    # make template for generated questions from seed sentence
-                    for key in questions.keys():
-                        if key!='exp_inputs':
-                            _input = (key, questions[key])
-                            _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, _input, prev_synonyms)
-                            _templates["label"] = questions['label']
-                            seed_templates.append(_templates)
-                        # end if
-                    # end for
-
-                    # make template for generated questions from exp sentences
-                    if any(questions['exp_inputs']):
-                        for key in questions['exp_inputs'].keys():
-                            _input = (key, questions['exp_inputs'][key])
-                            _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, _input, prev_synonyms)
-                            _templates["label"] = questions['label']
-                            exp_templates.append(_templates)
-                            print(".", end="")
-                        # end for
-                        print()
-                    # end if
+                    print()
                 # end if
             # end for
 

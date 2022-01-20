@@ -81,7 +81,7 @@ class Template:
                     # Generate question pair based on selected sentence
                     # based on requirement and CFG
                     questions = Qgenerator(f"{seed1}::{seed2}",list(),
-                                           selected_sent['requirement']).generate_questions(is_input_pair=True)
+                                           selected['requirement']).generate_questions(is_input_pair=True)
                     if any(questions[seed]):
                         exp_inputs[f"{seed1}::{seed2}"] = {
                             "cfg_seed1": expander1.cfg_seed,
@@ -121,13 +121,14 @@ class Template:
                     questions = Qgenerator(seed,
                                            new_input_results,
                                            selected['requirement']).generate_questions()
-                    if any(questions[seed]):
+                    seed_key = [k for k in questions.keys() if k!='exp_inputs'][0]
+                    if any(questions[seed_key]):
+                        print(questions)
                         exp_inputs[seed] = {
                             'cfg_seed': expander.cfg_seed,
                             'exp_inputs': new_input_results,
                             'questions': questions
                         }
-                        print(exp_inputs[seed]['questions'])
                     # end if
                 # end if
             # end for

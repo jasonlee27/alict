@@ -150,7 +150,7 @@ class Suggest:
     @classmethod
     def eval_sug_words_by_req(cls, new_input, requirement):
         search_obj = SearchOperator(requirement)
-        search_res = search_obj.search([("1", new_input)])
+        search_res = search_obj.search([new_input])
         if len(search_res)>0:
             return True
         # end if
@@ -167,7 +167,7 @@ class Suggest:
         return gen_inputs
 
     @classmethod
-    def eval_word_suggest(cls, gen_input, requirement):
+    def eval_word_suggest(cls, gen_input, selected_sent, requirement):
         results = list()
         masked_input, mask_pos = gen_input["masked_input"]
         for w_sug in gen_input["words_suggest"]:
@@ -176,8 +176,14 @@ class Suggest:
             # check pos
             if cls.eval_sug_words_by_pos(words_sug_pos, mask_pos):
                 input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
+                d = {
+                    'id': "1",
+                    'question': input_candid,
+                    'context' : selected_sent['context'],
+                    'answers': selected_sent['answers']
+                }
                 # check requirements
-                if cls.eval_sug_words_by_req(input_candid, requirement):
+                if cls.eval_sug_words_by_req(d, requirement):
                     results.append((masked_input,
                                     gen_input["cfg_from"],
                                     gen_input["cfg_to"],
