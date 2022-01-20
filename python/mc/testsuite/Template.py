@@ -69,66 +69,39 @@ class Template:
             num_seed_for_exp = 0
             for selected_sent in selected["selected_inputs"][:Macros.max_num_seeds]:
                 index += 1
-                if selected['requirement']['search_pairs']:
-                    # for seed question pairs, we don't expand the questions.
-                    # it is because it is not gauranteed that the expanded new question pairs
-                    # keep the same labels as origianl question pairs
-                    _id, seed1, seed2, seed_label = selected_sent
-                    print(f"\tSELECTED_SENT {index}: {_id}\n\t\t({seed1}::{seed2}), {seed_label}")
-                    expander1 = CFGExpander(seed_input=seed1, cfg_ref_file=cfg_ref_file)
-                    expander2 = CFGExpander(seed_input=seed2, cfg_ref_file=cfg_ref_file)
+                _id, seed_q, seed_c, seed_a = selected_sent['id'], selected_sent['question'], selected_sent['context'], selected_sent['answers']
+                print(f"\tSELECTED_Q {index}: {_id}, {seed_q}, {seed_a}")
+                expander = CFGExpander(seed_input=seed_q, cfg_ref_file=cfg_ref_file)
+                generator = Generator(expander=expander)
+                gen_inputs = generator.masked_input_generator()
+                new_input_results = list()
+                if any(gen_inputs) and num_seed_for_exp<=n:
+                    # get the word suggesteion at the expended grammar elements
+                    gen_inputs = Suggest.get_new_inputs(
+                        generator.editor,
+                        gen_inputs,
+                        num_target=Macros.num_suggestions_on_exp_grammer_elem
+                    )
+                    for g_i in range(len(gen_inputs)):
+                        eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], selected["requirement"])
+                        if any(eval_results):
+                            del gen_inputs[g_i]["words_suggest"]
+                            new_input_results.extend(eval_results)
+                            num_seed_for_exp += 1
+                            print(".", end="")
+                        # end if
+                    # end for
+                    print() 
+                # end if
                     
-                    # Generate question pair based on selected sentence
-                    # based on requirement and CFG
-                    questions = Qgenerator(f"{seed1}::{seed2}",list(),
-                                           selected_sent['requirement']).generate_questions(is_input_pair=True)
-                    if any(questions[seed]):
-                        exp_inputs[f"{seed1}::{seed2}"] = {
-                            "cfg_seed1": expander1.cfg_seed,
-                            "cfg_seed2": expander2.cfg_seed,
-                            "label": seed_label,
-                        "questions": questions
-                        }
-                    # end if
-                else:
-                    _id, seed = selected_sent
-                    print(f"\tSELECTED_SENT {index}: {_id}, {seed}")
-                    expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
-                    generator = Generator(expander=expander)
-                    gen_inputs = generator.masked_input_generator()
-                    new_input_results = list()
-                    if any(gen_inputs) and num_seed_for_exp<=n:
-                        # get the word suggesteion at the expended grammar elements
-                        gen_inputs = Suggest.get_new_inputs(
-                            generator.editor,
-                            gen_inputs,
-                            num_target=Macros.num_suggestions_on_exp_grammer_elem
-                        )
-                        for g_i in range(len(gen_inputs)):
-                            eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], selected["requirement"])
-                            if any(eval_results):
-                                del gen_inputs[g_i]["words_suggest"]
-                                new_input_results.extend(eval_results)
-                                num_seed_for_exp += 1
-                                print(".", end="")
-                            # end if
-                        # end for
-                        print() 
-                    # end if
-                    
-                    # Generate question pair based on selected sentence
-                    # based on requirement and CFG
-                    questions = Qgenerator(seed,
-                                           new_input_results,
-                                           selected['requirement']).generate_questions()
-                    if any(questions[seed]):
-                        exp_inputs[seed] = {
-                            'cfg_seed': expander.cfg_seed,
-                            'exp_inputs': new_input_results,
-                            'questions': questions
-                        }
-                        print(exp_inputs[seed]['questions'])
-                    # end if
+                
+                if any(questions[seed]):
+                    exp_inputs[seed_q] = {
+                        'cfg_seed': expander.cfg_seed,
+                        'exp_inputs': new_input_results,
+                        'context': seed_c,
+                        'label': seed_a
+                    }
                 # end if
             # end for
             results.append({

@@ -44,53 +44,45 @@ class Synonyms:
 
     @classmethod
     def get_words_pos(cls, words):
-        trees= BeneparCFG.get_words_pos(words)
         results = list()
-        for tr_i, tree in enumerate(trees):
-            try:
-                parse_string = tree._.parse_string
-                pattern = r"\(([^\:|^\(|^\)]+)\s"+str(tree)+r"\)"
-                search = re.search(pattern, parse_string)
-                if search:
-                    results.append((parse_string, search.group(1)))
-                else:
-                    results.append((None, None))
-                # end if
-            except IndexError:
-                print(f"IndexError: {words[tr_i]}")
-                results.append((None, None))
-            # end try
+        for w in words:
+            doc = nlp(w)
+            results.append((str(doc[0]), doc[0].tag_))
         # end for
+        # trees= BeneparCFG.get_words_pos(words)
+        # for tr_i, tree in enumerate(trees):
+        #     try:
+        #         parse_string = tree._.parse_string
+        #         pattern = r"\(([^\:|^\(|^\)]+)\s"+str(tree)+r"\)"
+        #         search = re.search(pattern, parse_string)
+        #         if search:
+        #             results.append((parse_string, search.group(1)))
+        #         else:
+        #             results.append((None, None))
+        #         # end if
+        #     except IndexError:
+        #         print(f"IndexError: {words[tr_i]}")
+        #         results.append((None, None))
+        #     # end try
+        # # end for
         return results
         
     @classmethod
-    def get_wn_syn_pos(cls, synset):
-        return cls.wordnet_tag_map[synset.pos()]
+    def get_wn_syn_pos(cls, nlp, synonym):
+        doc = nlp(synonym)
+        return doc[0].tag_
         
     @classmethod
     def get_synonyms(cls, nlp, word: str, wpos:str, num_synonyms=Macros.max_num_synonyms):
         synonyms = list()
-        if wpos is None:
-            return synonyms
-        # end if
+        if wpos is None: return synonyms
         for syn in cls.get_synsets(nlp, word):
-            wn_spos = cls.get_wn_syn_pos(syn)
-            syns = [lm.name() for lm in syn.lemmas()]
-            if wpos.startswith(wn_spos):
-                sposs = cls.get_words_pos(syns)
-                for sword, spos in zip(syns,sposs):
-                    if sword.lower().strip()!=word.lower().strip() and wpos==spos[1]:
-                        synonyms.append(sword.lower())
-                    # end if
-                # end for
-            # end if
+            for lm in syn.lemmas():
+                synonym = lm.name()
+                wn_spos = cls.get_wn_syn_pos(nlp, synonym)
+                if wpos==wn_spos and synonym.lower().strip()!=word.lower().strip():
+                    synonyms.append(' '.join(synonym.lower().split('_')))
+                # end if
+            # end for
         # end for
         return list(set(synonyms))[:num_synonyms]
-
-    
-
-# if __name__=="__main__":
-#     word = "traditional"
-#     wpos = "VB"
-#     syns = Synonyms.get_synonyms(word, wpos)
-#     print(f"{word}: {syns}")

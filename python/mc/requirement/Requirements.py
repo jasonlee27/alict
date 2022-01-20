@@ -63,104 +63,52 @@ class Requirements:
         reqs = list()
         for cap, descs in cap_desc.items():
             for d in descs:
-                if d.lower()=="adding an adjective makes questions non-duplicates":
+                if d.lower()=="comparisons":
                     reqs.append({
                         "capability": cap,
                         "description": d,
-                        "search_pairs": False,
                         "search": [{
-                            "length": "<10",
-                            "exclude": {
-                                "POS": ["adj"],
-                                "word": None,
+                            "question": {
+                                "include": {
+                                    "POS": None,
+                                    "word": ["<comparison>"],
+                                },
                             },
+                            "context": None
                         }],
-                        "transform": {
-                            "MFT": "add adj",
-                        }
+                        "transform": None
                     })
-                elif d.lower()=="add modifiers that preserve question semantics (e.g. 'really')":
+                elif d.lower()=="intensifiers to superlative: most/least":
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search_pairs": False,
                         "search": [{
-                            "include": {
-                                "POS": None,
-                                "word": ['really|truly|actually|indeed|in fact'],
-                                "search_pairs": False
+                            "question": {
+                                "include": {
+                                    "POS": None,
+                                    "word": ["<superlative>"],
+                                },
                             },
+                            "context": None
                         }],
-                        "transform":  {
-                            "MFT": "remove really|truly|actually|indeed|in fact",
-                        }
+                        "transform": None
                     })
-                # elif d.lower()=="ask the same question about two different noun, expect prediction to be 0":
-                #     reqs.append({
-                #         "capability": cap,
-                #         "description": d,
-                #         "search_pairs": False,
-                #         "search": [
-                #             {
-                #                 "include": {
-                #                     "POS": ["noun"],
-                #                     "word": None
-                #                 }
-                #             },
-                #         ],
-                #         "transform": {
-                #             "MFT": "replace noun",
-                #         }
-                #     })
-                elif d.lower()=="synonyms in templates":
-                    reqs.append({
-                        "capability": cap,
-                        "description": d,
-                        "search_pairs": False,
-                        "search": [
-                            {
-                                "include": {
-                                    "POS": None,
-                                    "word": ["<synonym>"],
-                                }
-                            },
-                        ],
-                        "transform": {
-                            "MFT": "replace synonyms",
-                        }
-                    })
-                elif d.lower()=="replace words with synonyms in real pairs":
-                    reqs.append({
-                        "capability": cap,
-                        "description": d,
-                        "search_pairs": True,
-                        "search": [
-                            {
-                                "include": {
-                                    "POS": None,
-                                    "word": ["<synonym>"],
-                                }
-                            },
-                        ],
-                        "transform": {
-                            "MFT": "replace synonyms",
-                        }
-                    })
-                elif d.lower()=="more x = less antonym(x)":
+                elif d.lower()=="size, shape, age, color":
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search_pairs": False,
                         "search": [{
+                            "question": {
                                 "include": {
                                     "POS": None,
-                                    "word": ["more|less"],
-                                }
+                                    "word": ["<property>"],
+                                },
                             },
-                        ],
-                        "transform": {
-                            "MFT": "replace more_less",
-                        }
+                            "context": None
+                        }],
+                        "transform": None
                     })
                 # end if
             # end for
