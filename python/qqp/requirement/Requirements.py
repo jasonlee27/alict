@@ -129,23 +129,6 @@ class Requirements:
                             "MFT": "replace synonyms",
                         }
                     })
-                elif d.lower()=="replace words with synonyms in real pairs":
-                    reqs.append({
-                        "capability": cap,
-                        "description": d,
-                        "search_pairs": True,
-                        "search": [
-                            {
-                                "include": {
-                                    "POS": None,
-                                    "word": ["<synonym>"],
-                                }
-                            },
-                        ],
-                        "transform": {
-                            "MFT": "replace synonyms",
-                        }
-                    })
                 elif d.lower()=="more x = less antonym(x)":
                     reqs.append({
                         "capability": cap,

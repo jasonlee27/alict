@@ -118,15 +118,15 @@ class Qgenerator:
             tokens_w_tag1, tokens_w_tag2 = [(str(t),t.tag_) for t in doc1], [(str(t),t.tag_) for t in doc2]
             tokens_w_synonyms1, tokens_w_synonyms2 = list(), list()
             for t_i, (t, p) in enumerate(tokens_w_tag1):
-                synonyms = Synonyms.get_synonyms(self.nlp,t,p, num_synonyms=2)
+                synonyms = Synonyms.get_synonyms(self.nlp, t, p, num_synonyms=2)
                 if any(synonyms):
-                    tokens_w_synonyms1.append((t_i, t, t.tag_, synonyms))
+                    tokens_w_synonyms1.append((t_i, t, p, synonyms))
                 # end if
             # end for
             for t_i, (t, p) in enumerate(tokens_w_tag2):
-                synonyms = Synonyms.get_synonyms(self.nlp,t,p, num_synonyms=2)
+                synonyms = Synonyms.get_synonyms(self.nlp, t, p, num_synonyms=2)
                 if any(synonyms):
-                    tokens_w_synonyms2.append((t_i, t, t.tag_, synonyms))
+                    tokens_w_synonyms2.append((t_i, t, p, synonyms))
                 # end if
             # end for
             random.shuffle(tokens_w_synonyms1)

@@ -1,5 +1,10 @@
 TASKS
 
+  - [JL] use checklist released testcases as seed dataset and generate
+    expanded testcases.
+
+  - [JL]
+
   - [JL] add more Temporal test capabilities.
 
   - [JL] add more Temporal Negation test capabilities.

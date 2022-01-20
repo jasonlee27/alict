@@ -155,81 +155,58 @@ class Template:
             # end for
         # end for
         return
-    
-    @classmethod
-    def get_token_n_pos(cls, nlp, input_pair):
-        q1, q2 = input_pair[0], input_pair[1]
-        doc1, doc2 = nlp(q1), nlp(q2)
-        tokens_indices1, tokens_indices2 = list(), list()
-        skip_synonym_indices1, skip_synonym_indices2 = list(), list()
-        skip_synonyms = False
-        for t_i, t in enumerate(doc1):            
-            if str(t)=='<' and not skip_synonyms:
-                skip_synonyms = True
-            elif str(t)=='>' and skip_synonyms:
-                skip_synonyms = False
-            elif str(t)!='<' and str(t)!='>' and skip_synonyms:
-                skip_synonym_indices1.append(t_i)
-                tokens_indices1.append(t_i)
-            elif str(t)!='<' and str(t)!='>' and not skip_synonyms:
-                tokens_indices1.append(t_i)
-            # end if
-        # end for
-        skip_synonyms = False
-        for t_i, t in enumerate(doc2):
-            if str(t)=='<' and not skip_synonyms:
-                skip_synonyms = True
-            elif str(t)=='>' and skip_synonyms:
-                skip_synonyms = False
-            elif str(t)!='<' and str(t)!='>' and skip_synonyms:
-                skip_synonym_indices2.append(t_i)
-                tokens_indices2.append(t_i)
-            elif str(t)!='<' and str(t)!='>' and not skip_synonyms:
-                tokens_indices2.append(t_i)
-            # end if
-        # end for
 
-        tokens1, tokens2 = list(), list()
-        tokens_pos1, tokens_pos2 = list(), list()
-        for t_i, t in enumerate(doc1):
-            if t_i in tokens_indices1 and t_i not in skip_synonyms_indices1:
-                tokens1.append(str(t))
-                tokens_pos1.append(t.tag_)
-            elif t_i in tokens_indices1 and t_i in skip_synonyms_indices1:
-                tokens1.append(f"{str(t)}_SKIP")
-                tokens_pos1.append(t.tag_)
+    @classmethod
+    def get_pos(cls, mask_input: str, mask_pos: List[str], cfg_seed: Dict, words_sug: List[str], exp_input:str):
+        tokens = Utils.tokenize(mask_input)
+        _tokens = list()
+        tokens_pos = list()
+        tok_i, mask_tok_i = 0, 0
+        while tok_i<len(tokens):
+            if tokens[tok_i:tok_i+3]==['{', 'mask', '}']:
+                _tokens.append('{mask}')
+                tok_i += 3
+            else:
+                _tokens.append(tokens[tok_i])
+                tok_i += 1
             # end if
         # end for
-        for t_i, t in enumerate(doc2):
-            if t_i in tokens_indices2 and t_i not in skip_synonyms_indices2:
-                tokens2.append(str(t))
-                tokens_pos2.append(t.tag_)
-            elif t_i in tokens_indices2 and t_i in skip_synonyms_indices2:
-                tokens2.append(f"{str(t)}_SKIP")
-                tokens_pos2.append(t.tag_)
+        tokens = _tokens
+        
+        for t in tokens:
+            if t=="{mask}":
+                if type(words_sug)==str:
+                    tpos = words_sug
+                elif ((type(words_sug)==list) or (type(words_sug)==tuple)):
+                    tpos = mask_pos[mask_tok_i]
+                    mask_tok_i += 1
+                # end if
+            else:
+                tpos = cls.find_pos_from_cfg_seed(t, cfg_seed)
             # end if
+            tokens_pos.append(tpos)
         # end for
-        return tokens1, tokens_pos1, tokens2, tokens_pos2
+        return Utils.tokenize(exp_input), tokens_pos
         
     @classmethod
-    def get_templates_by_synonyms(cls, nlp, input_pair, prev_synonyms, is_seed_pair=False):
-        template1, template2 = list(), list()
-        tokens1, tokens_pos1, tokens2, tokens_pos2 = cls.get_token_n_pos(nlp, input_pair)
-        
-        for t, p in zip(tokens1, tokens_pos1):
-            key = "{"+f"{t}_{p}"+"}"
-            if t.endswith('_SKIP'):
-                template1.append(t.split('_SKIP')[0])
-            elif key in prev_synonyms.keys():
+    def get_templates_by_synonyms(cls, nlp, tokens: List[str], tokens_pos: List[str], prev_synonyms):
+        template = list()
+        for t, tpos in zip(tokens, tokens_pos):
+            newt = re.sub(r'\..*', '', t)
+            newt = re.sub(r'\[.*\]', '', newt)
+            newt = re.sub(r'.*?:', '', newt)
+            newt = re.sub(r'\d+$', '', newt)
+            key = "{"+f"{newt}_{tpos}"+"}"
+            if key in prev_synonyms.keys():
                 if prev_synonyms[key] is None or len(prev_synonyms[key])==0:
-                    template1.append(t)
+                    template.append(t)
                 else:
-                    template1.append({
+                    template.append({
                         key: prev_synonyms[key]
                     })
                 # end if
             else:
-                syns = Synonyms.get_synonyms(nlp, t, p)
+                syns = Synonyms.get_synonyms(nlp, t, tpos)
                 if len(syns)>1:
                     _syns = list()
                     for s in syns:
@@ -240,49 +217,12 @@ class Template:
                         # end if
                     # end for
                     syns_dict = {key: _syns}
-                    template1.append(syns_dict)
+                    template.append(syns_dict)
                     if key not in prev_synonyms.keys():
                         prev_synonyms[key] = syns_dict[key]
                     # end if
                 else:
-                    template1.append(t)
-                    if key not in prev_synonyms.keys():
-                        prev_synonyms[key] = None
-                    # end if
-                # end if
-            # end if
-        # end for
-
-        for t, p in zip(tokens2, tokens_pos2):
-            key = "{"+f"{t}_{p}"+"}"
-            if t.endswith('_SKIP'):
-                template2.append(t.split('_SKIP')[0])
-            elif key in prev_synonyms.keys():
-                if prev_synonyms[key] is None or len(prev_synonyms[key])==0:
-                    template2.append(t)
-                else:
-                    template2.append({
-                        key: prev_synonyms[key]
-                    })
-                # end if
-            else:
-                syns = Synonyms.get_synonyms(nlp, t, p)
-                if len(syns)>1:
-                    _syns = list()
-                    for s in syns:
-                        if len(s.split("_"))>1:
-                            _syns.append(" ".join(s.split("_")))
-                        else:
-                            _syns.append(s)
-                        # end if
-                    # end for
-                    syns_dict = {key: _syns}
-                    template2.append(syns_dict)
-                    if key not in prev_synonyms.keys():
-                        prev_synonyms[key] = syns_dict[key]
-                    # end if
-                else:
-                    template2.append(t)
+                    template.append(t)
                     if key not in prev_synonyms.keys():
                         prev_synonyms[key] = None
                     # end if
@@ -290,8 +230,8 @@ class Template:
             # end if
         # end for
         return {
-            "input": input_pair,
-            "place_holder": (template1,template2)
+            "input": Utils.detokenize(tokens),
+            "place_holder": template
         }, prev_synonyms
 
     @classmethod
@@ -327,7 +267,7 @@ class Template:
                 _input = seed_input
                 cfg_seed = inputs[seed_input]['cfg_seed']
                 context_seed = inputs[seed_input]['context']
-                answers_seed = inputs[seed_input]['answers']
+                answers_seed = inputs[seed_input]['label']
                 _id_seed = inputs[seed_input]['id']
                 exp_inputs = inputs[seed_input]['exp_inputs']
                 seed_inputs.append({

@@ -39,7 +39,7 @@ class Macros:
     num_synonyms_for_replace = 3 # number of synonyms used for replace_synosyms in Qgenerator
     
     nsamples = 500
-    max_num_seeds = 30 # maximum number of selected sentences
+    max_num_seeds = 100 # maximum number of selected sentences
     max_num_sents = 100000 # number of testcase sentences
     max_num_sents_for_perturb = 1000 # number of sentences for perturbation
     num_synonym_placeholders = 10
