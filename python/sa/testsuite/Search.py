@@ -13,7 +13,7 @@ import numpy as np
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from .Transform import CONTRACTION_MAP
+from .Transform import CONTRACTION_MAP, TransformOperator
 from ..requirement.Requirements import Requirements
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
@@ -585,6 +585,11 @@ class Search:
         func = cls.SEARCH_FUNC[Macros.sa_task][dataset]
         for req in requirements:
             selected = func(req)
+
+            if requirements["transform"] is not None:
+                transform_obj = TransformOperator(requirements)
+                selected = transform_obj.transform(selected)
+            # end if
             yield {
                 "requirement": req,
                 "selected_inputs": selected

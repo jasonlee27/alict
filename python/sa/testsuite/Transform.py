@@ -130,19 +130,20 @@ class TransformOperator:
 
     def __init__(self,
                  editor,
-                 req_capability,
+                 requirements,
                  req_description,
                  transform_reqs
                  ):
         
         self.editor = editor # checklist.editor.Editor()
-        self.capability = req_capability
-        self.description = req_description
+        self.capability = requirements['capability']
+        self.description = requirements['description']
         # self.search_dataset = search_dataset
-        self.transform_reqs = transform_reqs
+        self.transform_reqs = requirements['transform']
         # self.inv_replace_target_words = None
         # self.inv_replace_forbidden_words = None
-        self.transformation_funcs = None
+        self.transform_func = self.transform_reqs.split()[0]
+        self.transform_props = self.transform_reqs.split()[1]
         # self.dir_adding_phrases = None
 
         # # Find INV transformation operations
@@ -153,7 +154,7 @@ class TransformOperator:
         # if transform_reqs["DIR"] is not None:
         #     self.set_dir_env(transform_reqs["DIR"])
         # # end if
-        
+
     # def set_inv_env(self, inv_transform_reqs):
     #     if len(inv_transform_reqs.split())==2:
     #         func = inv_transform_reqs.split()[0]
@@ -296,8 +297,18 @@ class TransformOperator:
     #     rets = ['%s %s' % (x, sentence) for x in irrelevant_before ]
     #     rets += ['%s %s' % (sentence, x) for x in irrelevant_after]
     #     return rets
-    
-    def change_temporalness_template(self, sents):
+
+    def transform(sents):
+        transform_func_map = {
+            'add': self.add,
+            'negate': self.negate,
+            'srl': self.srl,
+            'questionize': self.questionize
+        }
+        new_sents = transform_func_map[self.transform_func](sents, self.transform_props)
+        return new_sents
+
+    def _change_temporalness_template(self, sents):
         # sents: List[(s_i, sentence, label)]
         # convert every generate templates into temporal awareness formated templates
         # each template keys: sent, values, label
@@ -325,7 +336,13 @@ class TransformOperator:
         # end for
         return results
 
-    def get_negationpattern_to_wordproduct(self, negation_pattern, value_dict):
+    def add(self, sents, props):
+        if props=='temporal_awareness':
+            return self._change_temporalness_template(sents)
+        # end if
+        return sents
+    
+    def _get_negationpattern_to_wordproduct(self, negation_pattern, value_dict):
         results = list()
         pos_dict = {
             p: value_dict[p]
@@ -337,7 +354,7 @@ class TransformOperator:
         # end for
         return results
     
-    def negate(self, sents, negation_pattern, all_sents=None):
+    def negate(self, sents, negation_pattern):
         # sents: List[(s_i, sentence, label)]
         from itertools import product
         results = list()
@@ -361,16 +378,14 @@ class TransformOperator:
         elif negation_pattern=='positive':
             # negated of positive with neutral content in the middle
             # first, search neutral sentences
-            search_obj = SearchOperator({
-                "capability": cap,
-                "description": d,
-                "search": [{"label": "neutral"}],
-                "transform": None
-            })
-            neutral_selected = [f"given {s[1]}," for s in search_obj.search(all_sents)]
-            random.shuffle(neutral_selected)
+            positive_sents = [s[1] for s in sents if s[-1]=='positive']
+            random.shuffle(positive_sents)
+            neutral_sents = [s[1] for s in sents if s[-1]=='neutral']
+            random.shuffle(neutral_sents)
+            neutral_selected = [f"given {s[1]}," for s in neutral_sents[:3]]
+            
             word_dict = DISAGREEMENT_PHRASE
-            word_dict['middlefix'] = neutral_selected[:3]
+            word_dict['middlefix'] = neutral_selected
             res_idx = 0
             for sent in sents:
                 word_dict['sent'] = sent[1]
@@ -394,7 +409,7 @@ class TransformOperator:
         # end if
 
         res_idx = 0
-        for pat in self.get_negationpattern_to_wordproduct(negation_pattern, WORD2POS_MAP):
+        for pat in self._get_negationpattern_to_wordproduct(negation_pattern, WORD2POS_MAP):
             _pat = prefix_pat+pat
             for sent in sents:
                 if re.search(_pat, sent[1]):
