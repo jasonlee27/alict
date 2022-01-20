@@ -153,6 +153,26 @@
         }
     },
     {
+        "capability": "Negation",
+        "description": "Negated positive with neutral content in the middle",
+        "search": [
+            {
+                "length": "<20",
+                "label": "positive"
+            },
+            {
+                "length": "<20",
+                "label": "neutral"
+            }
+        ],
+        "expansion": [
+            "neutral"
+        ],
+        "transform": {
+            "MFT": "negate positive"
+        }
+    },
+    {
         "capability": "SRL",
         "description": "Author sentiment is more important than of others",
         "search": [
