@@ -115,7 +115,7 @@ class SearchOperator:
         return selected
 
     def _search_by_comparison_existence(self, sents, search_input_type, isinclude=True):
-        comp_pat = r"^[Which|Who|When|What|Whose| which| who| when| what| whose].+er(.+?)than(.+?)\?"
+        comp_pat = r"^(Which|Who|When|What|Whose| which| who| when| what| whose).+er\s(.+?)than(.+?)\?"
         selected = list()
         for sent in sents:
             s = Utils.detokenize(sent[search_input_type])
@@ -130,11 +130,11 @@ class SearchOperator:
         # end for
         return selected
 
-    def _search_by_property_existence(self, sents, search_input_type, isinclude=True):
-        age_pat = r"[What is the age|How old| what is the age].+\?"
-        size_pat = r"[What is the size|What size|Which sized| what is the size| what size].+\?"
-        shape_pat = r"[What is the shape|What shape| what is the shape| what shape].+\?"
-        color_pat = r"[What is the color|What color|Which color| what is the color| what color].+\?"
+    def _search_by_property_existence(self, sents, search_input_type):
+        age_pat = r"(What is the age|How old| what is the age).+\?"
+        size_pat = r"(What is the size|What size|Which sized| what is the size| what size).+\?"
+        shape_pat = r"(What is the shape|What shape| what is the shape| what shape).+\?"
+        color_pat = r"(What is the color|What color|Which color| what is the color| what color).+\?"
         selected = list()
         for sent in sents:
             s = Utils.detokenize(sent[search_input_type])
@@ -152,8 +152,8 @@ class SearchOperator:
         # end for
         return selected
 
-    def _search_by_superlative_existence(self, sents, search_input_type, isinclude=True):
-        comp_pat = r"^[Which|Who|Whose|Where|When|What|Whose|How many|How much].+[the most|the least](.+?)\?"
+    def _search_by_superlative_existence(self, sents, search_input_type):
+        comp_pat = r"^(Which|Who|Whose|Where|When|What|Whose|How many|How much).+(the most|the least)(.+?)\?"
         selected = list()
         for sent in sents:
             s = Utils.detokenize(sent[search_input_type])
@@ -177,6 +177,10 @@ class SearchOperator:
             word_group = search.group(1)
             if word_group=="comparison":
                 selected = self._search_by_comparison_existence(sents, search_input_type)
+            elif word_group=="superlative":
+                selected = self._search_by_superlative_existence(sents, search_input_type)
+            elif word_group=="property":
+                selected = self._search_by_property_existence(sents, search_input_type)
             if word_group=="synonym":
                 selected = self._search_by_synonym_existence(sents, search_input_type)
             # end if
@@ -358,7 +362,7 @@ class Squad:
                         'id': qa['id'],
                         'context': context,
                         'question': qa['question'],
-                        'answers': set([(x['text'], x['answer_start']) for x in qa['answers']])
+                        'answers': list(set([(x['text'], x['answer_start']) for x in qa['answers']]))
                     }
                     if any(d['answers']):
                         data.append(d)

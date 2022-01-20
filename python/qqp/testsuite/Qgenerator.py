@@ -227,10 +227,7 @@ class Qgenerator:
             }
             return results
         # end if
-        results = {
-            key: new_sent_dict[key]
-            for key in new_sents.keys()
-        }
+        results = new_sents
         results['exp_inputs'] = dict()
         for s in self.new_inputs:
             new_exp_dict = func_map[self.transform_props](s[5])
@@ -239,7 +236,7 @@ class Qgenerator:
             # end for
         # end for
         results['label'] = Macros.qqp_label_map['same']
-        nlp.remove_pipe('spacy_wordnet')
+        self.nlp.remove_pipe('spacy_wordnet')
         return results
 
     def _remove_semantic_preserving_semantics(self, sent, targets):
