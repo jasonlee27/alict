@@ -145,7 +145,10 @@ class TransformOperator:
         # self.inv_replace_target_words = None
         # self.inv_replace_forbidden_words = None
         self.transform_func = self.transform_reqs.split()[0]
-        self.transform_props = self.transform_reqs.split()[1]
+        self.transform_props = None
+        if len(self.transform_reqs.split())>1:
+            self.transform_props = self.transform_reqs.split()[1]
+        # end if
         # self.dir_adding_phrases = None
 
         # # Find INV transformation operations
@@ -385,16 +388,16 @@ class TransformOperator:
         elif negation_pattern=='positive':
             # negated of positive with neutral content in the middle
             # first, search neutral sentences
-            positive_sents = [s[1] for s in sents if s[-1]=='positive']
+            positive_sents = [s for s in sents if s[2]=='positive']
             random.shuffle(positive_sents)
-            neutral_sents = [s[1] for s in sents if s[-1]=='neutral']
+            neutral_sents = [s[1] for s in sents if s[2]=='neutral']
             random.shuffle(neutral_sents)
-            neutral_selected = [f"given {s[1]}," for s in neutral_sents[:3]]
+            neutral_selected = [f"given {s}," for s in neutral_sents[:3]]
             
             word_dict = DISAGREEMENT_PHRASE
             word_dict['middlefix'] = neutral_selected
             res_idx = 0
-            for sent in sents:
+            for sent in positive_sents:
                 word_dict['sent'] = [sent[1]]
                 label = sent[2]
                 word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
@@ -421,6 +424,7 @@ class TransformOperator:
             _pat = prefix_pat+pat
             for sent in sents:
                 if re.search(_pat, sent[1]):
+                    new_sent = re.sub(f"{_pat} n't", f"{pat} not", sent[1])
                     new_sent = re.sub(_pat, f"{pat} not", sent[1])
                     label = sent[2]
                     new_label = None
@@ -437,23 +441,23 @@ class TransformOperator:
         random.shuffle(results)
         return results
 
-    def srl(self, sents, negation_pattern):
-        positive_sents = [s[1] for s in sents if s[-1]=='positive']
+    def srl(self, sents, na_param):
+        positive_sents = [s[1] for s in sents if s[2]=='positive']
         random.shuffle(positive_sents)
-        negative_sents = [s[1] for s in sents if s[-1]=='negative']
+        negative_sents = [s[1] for s in sents if s[2]=='negative']
         random.shuffle(negative_sents)
         
-        word_list = SRL_PHASE_TEMPLATE
+        word_dict = SRL_PHASE_TEMPLATE
         res_idx = 0
         results = list()
         for sent in sents:
             label = sent[2]
             if label=='positive':
-                word_list['sent1'] = [f"\"{s}\"," for s in negative_sents[:3]]
+                word_dict['sent1'] = [f"\"{s}\"," for s in negative_sents[:3]]
             elif label=='negative':
-                word_list['sent1'] = [f"\"{s}\"," for s in positive_sents[:3]]
+                word_dict['sent1'] = [f"\"{s}\"," for s in positive_sents[:3]]
             # end if
-            word_list['sent2'] = [f"\"{sent[1]}\""]
+            word_dict['sent2'] = [f"\"{sent[1]}\""]
             
             word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
             for wp in word_product:
@@ -466,12 +470,12 @@ class TransformOperator:
         return results
 
     def questionize(self, sents, answer):
-        word_list = QUESTIONIZE_PHRASE_TEMPLATE
+        word_dict = QUESTIONIZE_PHRASE_TEMPLATE
         res_idx = 0
         results = list()
         for sent in sents:
-            word_list['sent'] = [f"\"{sent[1]}\"?"]
-            word_list['answer'] = [answer]
+            word_dict['sent'] = [f"\"{sent[1]}\"?"]
+            word_dict['answer'] = [answer]
             label = sent[2]
             if label=='positive' and answer=='yes':
                 new_label = 'positive'

@@ -46,7 +46,7 @@ class Template:
     def generate_inputs(cls, task, dataset, n=None, save_to=None):
         cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
         print("Analyzing CFG ...")
-        reqs = Requirements.get_requirements(task)[:5]
+        reqs = Requirements.get_requirements(task)
         results = list()
         if os.path.exists(save_to):
             results = Utils.read_json(save_to)

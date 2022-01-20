@@ -623,7 +623,7 @@ class Search:
         func = cls.SEARCH_FUNC[Macros.sa_task][dataset]
         for req in requirements:
             selected = func(req)
-
+            
             if req["transform"] is not None:
                 transform_obj = TransformOperator(req)
                 selected = transform_obj.transform(selected)
