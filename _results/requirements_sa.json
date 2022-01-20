@@ -78,163 +78,138 @@
         "transform": null
     },
     {
-        "capability": "Vocab_POS",
-        "description": "Replace neutral words with other neutral words",
+        "capability": "Temporal",
+        "description": "Sentiment change over time, present should prevail",
         "search": [
             {
-                "include": {
-                    "POS": [
-                        "neutral adjs"
-                    ],
-                    "word": null
-                }
+                "label": "positive"
             },
             {
+                "label": "negative"
+            }
+        ],
+        "expansion": [
+            "neutral"
+        ],
+        "transform": {
+            "MFT": "add temporal_awareness"
+        }
+    },
+    {
+        "capability": "Negation",
+        "description": "Negated negative should be positive or neutral",
+        "search": [
+            {
+                "label": "negative",
                 "include": {
                     "POS": [
-                        "neutral verbs"
+                        "<^demonstratives_AUXBE>"
                     ],
                     "word": null
                 }
+            }
+        ],
+        "expansion": [
+            "neutral"
+        ],
+        "transform": {
+            "MFT": "negate ^demonstratives_AUXBE"
+        }
+    },
+    {
+        "capability": "Negation",
+        "description": "Negated neutral should still be neutral",
+        "search": [
+            {
+                "label": "neutral",
+                "include": {
+                    "POS": [
+                        "<^demonstratives_AUXBE>"
+                    ],
+                    "word": null
+                }
+            }
+        ],
+        "expansion": [
+            "neutral"
+        ],
+        "transform": {
+            "MFT": "negate ^demonstratives_AUXBE"
+        }
+    },
+    {
+        "capability": "Negation",
+        "description": "Negation of negative at the end, should be positive or neutral",
+        "search": [
+            {
+                "label": "negative"
+            }
+        ],
+        "expansion": [
+            "neutral"
+        ],
+        "transform": {
+            "MFT": "negate AUXBE$"
+        }
+    },
+    {
+        "capability": "SRL",
+        "description": "Author sentiment is more important than of others",
+        "search": [
+            {
+                "label": "positive"
             },
             {
-                "include": {
-                    "POS": [
-                        "neutral nouns"
-                    ],
-                    "word": null
-                }
+                "label": "negative"
             }
         ],
-        "expansion": null,
+        "expansion": [
+            "neutral"
+        ],
         "transform": {
-            "INV": "replace neutral word",
-            "DIR": null
+            "MFT": [
+                "srl"
+            ]
         }
     },
     {
-        "capability": "Vocab_POS",
-        "description": "Add positive phrases, fails if sent. goes down by > 0.1",
-        "search": null,
-        "expansion": null,
-        "transform": {
-            "INV": null,
-            "DIR": "add positive phrase"
-        }
-    },
-    {
-        "capability": "Vocab_POS",
-        "description": "Add negative phrases, fails if sent. goes up by > 0.1",
-        "search": null,
-        "expansion": null,
-        "transform": {
-            "INV": null,
-            "DIR": "add negative phrase"
-        }
-    },
-    {
-        "capability": "Robustness",
-        "description": "Strip punctuation and/or add \".\"",
+        "capability": "SRL",
+        "description": "parsing sentiment in (question, yes) form",
         "search": [
             {
-                "include": {
-                    "POS": null,
-                    "word": [
-                        "<punctuation>"
-                    ]
-                }
+                "label": "positive"
+            },
+            {
+                "label": "negative"
             }
         ],
-        "expansion": null,
+        "expansion": [
+            "neutral"
+        ],
         "transform": {
-            "INV": "strip punctuation",
-            "DIR": null
+            "MFT": [
+                "questionize yes"
+            ]
         }
     },
     {
-        "capability": "Robustness",
-        "description": "Swap two adjacent characters",
-        "search": null,
-        "expansion": null,
-        "transform": {
-            "INV": "swap one two_adjacent_characters",
-            "DIR": null
-        }
-    },
-    {
-        "capability": "Robustness",
-        "description": "Contract or expand contractions",
+        "capability": "SRL",
+        "description": "Parsing sentiment in (question, no) form",
         "search": [
             {
-                "include": {
-                    "POS": null,
-                    "word": [
-                        "<contraction>"
-                    ]
-                }
-            }
-        ],
-        "expansion": null,
-        "transform": {
-            "INV": "contract/expand contraction",
-            "DIR": null
-        }
-    },
-    {
-        "capability": "NER",
-        "description": "Replace names with other common names",
-        "search": [
+                "label": "positive"
+            },
             {
-                "include": {
-                    "POS": null,
-                    "word": [
-                        "<person_name>"
-                    ]
-                }
+                "label": "negative"
             }
         ],
-        "expansion": null,
-        "transform": {
-            "INV": "replace person_name",
-            "DIR": null
-        }
-    },
-    {
-        "capability": "NER",
-        "description": "Replace city or country names with other cities or countries",
-        "search": [
-            {
-                "include": {
-                    "POS": null,
-                    "word": [
-                        "<location_name>"
-                    ]
-                }
-            }
+        "expansion": [
+            "neutral"
         ],
-        "expansion": null,
         "transform": {
-            "INV": "replace location_name",
-            "DIR": null
-        }
-    },
-    {
-        "capability": "NER",
-        "description": "Replace integers with random integers within a 20% radius of the original",
-        "search": [
-            {
-                "include": {
-                    "POS": null,
-                    "word": [
-                        "<number>"
-                    ]
-                }
-            }
-        ],
-        "expansion": null,
-        "transform": {
-            "INV": "replace number",
-            "DIR": null
+            "MFT": [
+                "questionize no"
+            ]
         }
     }
 ]
