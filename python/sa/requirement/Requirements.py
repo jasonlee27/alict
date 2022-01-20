@@ -217,7 +217,7 @@ class Requirements:
                     reqs.append({
                         "capability": cap,
                         "description": d,
-                        "search": [],
+                        "search": None,
                         "transform": {
                             "INV": "swap two two_adjacent_characters",
                             "DIR": None

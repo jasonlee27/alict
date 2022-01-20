@@ -61,6 +61,9 @@ class SearchOperator:
 
     def search(self, sents):
         selected = list()
+        if self.search_reqs_list is None:
+            return sents
+        # end if
         for search_reqs in self.search_reqs_list:
             _sents = sents.copy()
             for op, param in search_reqs.items():
@@ -413,7 +416,7 @@ class Sst:
     def search(cls, req):
         sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file, Macros.sst_dict_file)
         req_obj = SearchOperator(req)
-        if len(req_obj.search_reqs_list)>0:
+        if req_obj.search_reqs_list is not None:
             if len(sents[0])==4:
                 selected = sorted([(s[0],s[1],s[2],s[3]) for s in req_obj.search(sents)], key=lambda x: x[0])
             else:
@@ -489,7 +492,7 @@ class AirlineTweets:
     def search(cls, req):
         sents = cls.get_sents(Macros.tweet_file)
         req_obj = SearchOperator(req)
-        if len(req_obj.search_reqs_list)>0:
+        if req_obj.search_reqs_list is not None:
             selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         # end if
         random.shuffle(selected)

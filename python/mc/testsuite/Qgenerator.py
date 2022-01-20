@@ -46,8 +46,7 @@ class Qgenerator:
         self.seed = seed
         transform_req = requirement['transform']
         transform_type = list(transform_req.keys())[0]
-        self.transform_action = transform_req[transform_type].split()[0]
-        self.transform_props = " ".join(transform_req[transform_type].split()[1:])
+        self.transform_action, self.transform_props = transform_req[transform_type].split()
     
     def generate_questions(self, is_input_pair=False):
         new_sent_dict = None
@@ -247,28 +246,32 @@ class Qgenerator:
         tokens = [str(t) for t in doc]
         target_indices = [t_i for t_i, t in enumerate(doc) if str(t) in target_list]
         infact_indices = [t_i for t_i, t in enumerate(doc[:-1]) if str(t).lower()=='in' and str(doc[t_i+1]).lower()=='fact']
-        new_sents = {sent: list()}
-        for ind in infact_indices:
-            # new_tokens = tokens[:ind]+['<']+tokens[ind]+tokens[ind+1]+['>']+tokens[ind+2:]
-            # sent_from = Utils.detokenize(new_tokens)
-            new_tokens = [str(t) for t_i, t in enumerate(doc) if t_i!=ind or t_i!=ind+1]
-            new_sents[sent].append(Utils.detokenize(new_tokens))
-        # end for
+        new_sents = dict()
+        if any(infact_indices):
+            for ind in infact_indices:
+                new_tokens = tokens[:ind]+['<']+tokens[ind]+tokens[ind+1]+['>']+tokens[ind+2:]
+                sent_from = Utils.detokenize(new_tokens)
+                new_sents[sent_from] = list()
+                new_tokens = [str(t) for t_i, t in enumerate(doc) if t_i!=ind or t_i!=ind+1]
+                new_sents[sent_from].append(Utils.detokenize(new_tokens))
+            # end for
+        # end if
         
-        for ind in target_indices:
-            # new_tokens = tokens[:ind]+['<',tokens[ind],'>']+tokens[ind+1:]
-            # sent_from = Utils.detokenize(new_tokens)
-            new_tokens = [str(t) for _t_i, t in enumerate(doc) if _t_i!=ind]
-            new_sents[sent].append(Utils.detokenize(new_tokens))
+        for t_i in enumerate(target_indices):
+            new_tokens = tokens[:ind]+['<',tokens[ind],'>']+tokens[ind+1:]
+            sent_from = Utils.detokenize(new_tokens)
+            new_sents[sent_from] = list()
+            new_tokens = [str(t) for _t_i, t in enumerate(doc) if _t_i!=t_i]
+            new_sents[sent_from].append(Utils.detokenize(new_tokens))
         # end for
         return new_sents
     
     def remove(self):
         # generate seed question pair
-        resaults = self._remove_semantic_preserving_semantics(self.seed, self.transform_props)
+        new_sent_dict = self._remove_semantic_preserving_semantics(self.seed, self.transform_props)
         results = {
-            self.seed: new_sent_dict[key]
-            for key in new_sent_dict.items()
+            key: new_sent_dict[key]
+            for key in new_sent_dict.keys()
         }
 
         # exp inputs second

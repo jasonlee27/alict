@@ -7,7 +7,7 @@ import os
 
 class Macros:
 
-    this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__))) # nlptest/python/qqp/utils
+    this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__))) # nlptest/python/mc/utils
     root_dir: Path = this_dir.parent.parent.parent # nlptest/
     
     result_dir: Path = root_dir / "_results" # nlptest/_results
@@ -23,13 +23,13 @@ class Macros:
     MASK = "{mask}"
     ADJ_MASK = "{a:mask}"
 
-    qqp_task = 'qqp'
+    mc_task = 'mc'
     
-    # nlp_tasks = [sa_task, mc_task, qqp_task]
-    qqp_label_map = {'different': 0, 'same': 1}
+    # nlp_tasks = [sa_task, mc_task, mc_task]
+    mc_label_map = {'different': 0, 'same': 1}
 
-    # Quora Question Pairs: https://quoradata.quora.com/First-Quora-Dataset-Release-Question-Pairs
-    datasets = ['qqp', 'checklist']
+    # SQuAD: https://rajpurkar.github.io/SQuAD-explorer/
+    datasets = ['squad', 'checklist']
 
     # Testsuite
     num_seeds = 20
@@ -45,11 +45,11 @@ class Macros:
     num_synonym_placeholders = 10
     max_num_synonyms = 5 # number of synonyms to be used when there are too many placeholders in one sentence
 
-    # QQP
-    qqp_dataset_dir: Path = dataset_dir / "qqp"
-    qqp_train_file: Path = qqp_dataset_dir / "train.tsv"
-    qqp_valid_file: Path = qqp_dataset_dir / "dev.tsv"
-    qqp_test_file: Path = qqp_dataset_dir / "test.tsv"
+    # MC
+    mc_dataset_dir: Path = dataset_dir / "mc"
+    mc_train_file: Path = mc_dataset_dir / "train-v2.0.json"
+    mc_valid_file: Path = mc_dataset_dir / "dev-v2.0.json"
+    mc_test_file: Path = mc_dataset_dir / "test.tsv"
     
     # SentiWordNet
     swn_data_file: Path = download_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"
@@ -57,14 +57,14 @@ class Macros:
     # Checklist Testsuite
     checklist_dir: Path = download_dir / "checklist"
     checklist_data_dir: Path = checklist_dir / "release_suites"
-    checklist_qqp_dataset_file: Path = checklist_data_dir / "qqp_suite.pkl"
+    checklist_mc_dataset_file: Path = checklist_data_dir / "squad_suite.pkl"
     
-    qqp_models_file = download_dir / "models" / "qqp_models.txt"
+    mc_models_file = download_dir / "models" / "mc_models.txt"
     
     
     BASELINES = {
         "checklist": {
-            "testsuite_file": checklist_qqp_dataset_file
+            "testsuite_file": checklist_mc_dataset_file
         }
     }
 
@@ -73,5 +73,5 @@ class Macros:
     retrain_output_dir: Path = result_dir / "retrain"
     retrain_model_dir: Path = retrain_output_dir / "models"
     retrain_dataset_dir: Path = retrain_output_dir / "datasets"
-    checklist_qqp_testcase_file: Path = retrain_dataset_dir / "checklist_qqp_testcase.json"
-    qqp_testcase_file: Path = retrain_dataset_dir / "qqp_testcase.json"
+    checklist_sa_testcase_file: Path = retrain_dataset_dir / "checklist_mc_testcase.json"
+    squad_mc_testcase_file: Path = retrain_dataset_dir / "squad_mc_testcase.json"
