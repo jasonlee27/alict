@@ -11,9 +11,11 @@ import random
 import checklist
 import numpy as np
 
+from itertools import product
+
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from .Transform import CONTRACTION_MAP, TransformOperator
+from .Transform import TransformOperator
 from ..requirement.Requirements import Requirements
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
@@ -33,7 +35,7 @@ SENT_DICT = {
 }
 
 WORD2POS_MAP = {
-    'demonstratives': ['this', 'that', 'these', 'those'],
+    'demonstratives': ['This', 'That', 'These', 'Those'],
     'AUXBE': ['is', 'are']
 }
 
@@ -243,7 +245,7 @@ class SearchOperator:
         results = list()
         pos_dict = {
             p: WORD2POS_MAP[p]
-            for p in pos_pattern.split('_'):
+            for p in pos_pattern.split('_')
         }
         word_product = [dict(zip(d, v)) for v in product(*pos_dict.values())]
         for wp in word_product:
@@ -253,7 +255,7 @@ class SearchOperator:
             
     def _search_by_pos_include(self, sents, cond_key, cond_number):
         # sents: (s_i, tokenized sentence, label)
-        search = re.search(r"\<([^\<\>]+)\>", word_cond)
+        search = re.search(r"\<([^\<\>]+)\>", cond_key)
         selected = list()
         if search:
             selected_ids = list()
@@ -292,6 +294,36 @@ class SearchOperator:
             # end if
         # end for
         return selected
+
+    def _get_pospattern_to_wordproduct(self, pos_pattern, value_dict):
+        results = list()
+        pos_dict = {
+            p: value_dict[p]
+            for p in pos_pattern.split('_')
+        }
+        word_product = [dict(zip(pos_dict, v)) for v in product(*pos_dict.values())]
+        for wp in word_product:
+            results.append(" ".join(list(wp.values())))
+        # end for
+        return results
+
+    def _search_by_pos_pattern_include(self, sents, pos_pattern):
+        prefix_pat, postfix_pas = '',''
+        if pos_pattern.startswith('^'):
+            pos_pattern = pos_pattern[1:]
+            prefix_pat = '^'
+        # end if
+        res_idx = 0
+        selected = list()
+        for pat in self._get_pospattern_to_wordproduct(pos_pattern, WORD2POS_MAP):
+            _pat = prefix_pat+pat
+            for sent in sents:
+                if re.search(_pat, Utils.detokenize(sent[1])):
+                    selected.append(sent)
+                # end if
+            # end if
+        # end for
+        return selected
         
     def search_by_include(self, sents, search_reqs):
         params = search_reqs["include"]
@@ -315,25 +347,31 @@ class SearchOperator:
                 # end for
             # end if
         
-            if tpos_include is not None:
+            if tpos_include is not None:                
                 temp_sents = list()
                 for cond in tpos_include:
-                    match = re.search(r"(\d+)?\s?(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
-                    num, sentiment, pos, is_plural = match.groups()
-                    if pos is None: raise("Tag of POS is not valid!")
-                    num = -1
-                    if num is None and not is_plural:
-                        num = 1
-                    # end if
-                
-                    if sentiment is None:
-                        for _sentiment in ["neutral","positive","negative"]:
-                            temp_sents.extend(self._search_by_pos_include(_sents, f"{_sentiment}_{pos}", num))
-                        # end for
+                    search = re.search(r"\<([^\<\>]+)\>", cond)
+                    if search:
+                        pos_pat = search.group(1)
+                        temp_sents.extend(self._search_by_pos_pattern_include(_sents, pos_pat))
                     else:
-                        temp_sents = self._search_by_pos_include(_sents, f"{sentiment}_{pos}", num)
+                        match = re.search(r"(\d+)?\s?(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
+                        num, sentiment, pos, is_plural = match.groups()
+                        if pos is None: raise("Tag of POS is not valid!")
+                        num = -1
+                        if num is None and not is_plural:
+                            num = 1
+                        # end if
+                
+                        if sentiment is None:
+                            for _sentiment in ["neutral","positive","negative"]:
+                                temp_sents.extend(self._search_by_pos_include(_sents, f"{_sentiment}_{pos}", num))
+                            # end for
+                        else:
+                            temp_sents = self._search_by_pos_include(_sents, f"{sentiment}_{pos}", num)
+                        # end if
+                        _sents = temp_sents
                     # end if
-                    _sents = temp_sents
                 # end for
             # end if
             for sent in _sents:
@@ -586,8 +624,8 @@ class Search:
         for req in requirements:
             selected = func(req)
 
-            if requirements["transform"] is not None:
-                transform_obj = TransformOperator(requirements)
+            if req["transform"] is not None:
+                transform_obj = TransformOperator(req)
                 selected = transform_obj.transform(selected)
             # end if
             yield {

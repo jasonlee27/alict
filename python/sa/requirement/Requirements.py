@@ -119,16 +119,16 @@ class Requirements:
                         "description": d,
                         "search": [
                             {
+                                "length": "<20",
                                 "label": "positive"
                             },
                             {
+                                "length": "<20",
                                 "label": "negative"
                             }
                         ],
                         "expansion": ["neutral"],
-                        "transform": {
-                            "MFT": "add temporal_awareness"
-                        }
+                        "transform": "add temporal_awareness"
                     })
                 elif d.lower()=="negated negative should be positive or neutral":
                     # AUX : auxilary verb
@@ -145,9 +145,7 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": {
-                            "MFT": "negate ^demonstratives_AUXBE"
-                        }
+                        "transform": "negate ^demonstratives_AUXBE"
                     })
                 elif d.lower()=="negated neutral should still be neutral":
                     reqs.append({
@@ -163,9 +161,7 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": {
-                            "MFT": "negate ^demonstratives_AUXBE"
-                        }
+                        "transform": "negate ^demonstratives_AUXBE"
                     })
                 elif d.lower()=="negation of negative at the end, should be positive or neutral":
                     reqs.append({
@@ -177,11 +173,9 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": {
-                            "MFT": "negate AUXBE$"
-                        }
+                        "transform": "negate AUXBE$"
                     })
-                elif d.lower()=="negated of positive with neutral content in the middle":
+                elif d.lower()=="negated positive with neutral content in the middle":
                     reqs.append({
                         "capability": cap,
                         "description": d,
@@ -196,9 +190,7 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": {
-                            "MFT": "negate positive"
-                        }
+                        "transform": "negate positive"
                     })
                 elif d.lower()=="author sentiment is more important than of others":
                     reqs.append({
@@ -213,9 +205,7 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": {
-                            "MFT": ["srl"]
-                        }
+                        "transform": "srl"
                     })
                 elif d.lower()=="parsing sentiment in (question, yes) form":
                     reqs.append({
@@ -230,9 +220,7 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": {
-                            "MFT": ["questionize yes"]
-                        }
+                        "transform": "questionize yes"
                     })
                 elif d.lower()=="parsing sentiment in (question, no) form":
                     reqs.append({
@@ -247,9 +235,7 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": {
-                            "MFT": ["questionize no"]
-                        }
+                        "transform": "questionize no"
                     })
                 # end if
             # end for

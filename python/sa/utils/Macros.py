@@ -42,7 +42,7 @@ class Macros:
     num_cfg_exp_elem = 20
     num_suggestions_on_exp_grammer_elem = 5
     nsamples = 500
-    max_num_seeds = 100 # maximum number of selected sentences
+    max_num_seeds = 5 # maximum number of selected sentences
     max_num_sents = 100000 # number of testcase sentences
     max_num_sents_for_perturb = 1000 # number of sentences for perturbation
     num_synonym_placeholders = 10

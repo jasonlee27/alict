@@ -114,9 +114,9 @@ class Template:
     
     @classmethod
     def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None):
-        if os.path.exists(input_file):
-            return Utils.read_json(input_file)
-        # end if
+        # if os.path.exists(input_file):
+        #     return Utils.read_json(input_file)
+        # # end if
         return cls.generate_inputs(
             task=nlp_task,
             dataset=dataset_name,
