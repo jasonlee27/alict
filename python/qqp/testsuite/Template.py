@@ -121,7 +121,7 @@ class Template:
                     questions = Qgenerator(seed,
                                            new_input_results,
                                            selected['requirement']).generate_questions()
-                    seed_key = [k for k in questions.keys() if k!='exp_inputs'][0]
+                    seed_key = [k for k in questions.keys() if k!='exp_inputs' and k!='label'][0]
                     if any(questions[seed_key]):
                         print(questions)
                         exp_inputs[seed] = {

@@ -132,15 +132,17 @@ class Qgenerator:
             random.shuffle(tokens_w_synonyms1)
             random.shuffle(tokens_w_synonyms2)
             new_sents = list()
-            for t_i, t, t_pos, synonyms in tokens_w_synonyms1[Macros.num_synonyms_for_replace]:
+            for tok in tokens_w_synonyms1[Macros.num_synonyms_for_replace]:
                 # replaced_seed1::seed2
+                t_i, t, t_pos, synonyms = tok
                 for s in synonyms:
                     new_tokens = tokens1[:t_i]+['<', s, '>']+tokens1[t_i+1:]
                     new_sents.append(f"{Utils.detokenize(new_tokens)}::{seed2}")
                 # end for
             # end for
-            for t_i, t, t_pos, synonyms in tokens_w_synonyms2[Macros.num_synonyms_for_replace]:
+            for tok in tokens_w_synonyms2[Macros.num_synonyms_for_replace]:
                 # seed1::replaced_seed2
+                t_i, t, t_pos, synonyms = tok
                 for s in synonyms:
                     new_tokens = tokens2[:t_i]+['<', s, '>']+tokens2[t_i+1:]
                     new_sents.append(f"{seed1}::{Utils.detokenize(new_tokens)}")
@@ -201,7 +203,8 @@ class Qgenerator:
         # end for
         random.shuffle(tokens_w_antonyms)
         new_sents = dict()
-        for t_type, t_i, t, t_pos, antonyms in tokens_w_antonyms[Macros.num_synonyms_for_replace]:
+        for tok in tokens_w_antonyms[:Macros.num_synonyms_for_replace]:
+            t_type, t_i, t, t_pos, antonyms = tok
             new_tokens = tokens[:t_i-1]+['<', t_type, tokens[t_i], '>']+tokens[t_i+1:]
             sent_from = Utils.detokenize(new_tokens)
             new_sents[sent_from] = list()

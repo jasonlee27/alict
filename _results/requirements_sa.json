@@ -91,9 +91,7 @@
         "expansion": [
             "neutral"
         ],
-        "transform": {
-            "MFT": "add temporal_awareness"
-        }
+        "transform": "add temporal_awareness"
     },
     {
         "capability": "Negation",
@@ -112,9 +110,7 @@
         "expansion": [
             "neutral"
         ],
-        "transform": {
-            "MFT": "negate ^demonstratives_AUXBE"
-        }
+        "transform": "negate ^demonstratives_AUXBE"
     },
     {
         "capability": "Negation",
@@ -133,9 +129,7 @@
         "expansion": [
             "neutral"
         ],
-        "transform": {
-            "MFT": "negate ^demonstratives_AUXBE"
-        }
+        "transform": "negate ^demonstratives_AUXBE"
     },
     {
         "capability": "Negation",
@@ -148,9 +142,7 @@
         "expansion": [
             "neutral"
         ],
-        "transform": {
-            "MFT": "negate AUXBE$"
-        }
+        "transform": "negate AUXBE$"
     },
     {
         "capability": "Negation",
@@ -168,9 +160,7 @@
         "expansion": [
             "neutral"
         ],
-        "transform": {
-            "MFT": "negate positive"
-        }
+        "transform": "negate positive"
     },
     {
         "capability": "SRL",
@@ -186,11 +176,7 @@
         "expansion": [
             "neutral"
         ],
-        "transform": {
-            "MFT": [
-                "srl"
-            ]
-        }
+        "transform": "srl"
     },
     {
         "capability": "SRL",
@@ -206,11 +192,7 @@
         "expansion": [
             "neutral"
         ],
-        "transform": {
-            "MFT": [
-                "questionize yes"
-            ]
-        }
+        "transform": "questionize yes"
     },
     {
         "capability": "SRL",
@@ -226,10 +208,6 @@
         "expansion": [
             "neutral"
         ],
-        "transform": {
-            "MFT": [
-                "questionize no"
-            ]
-        }
+        "transform": "questionize no"
     }
 ]
