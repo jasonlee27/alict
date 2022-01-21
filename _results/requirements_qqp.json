@@ -57,24 +57,6 @@
     },
     {
         "capability": "Taxonomy",
-        "description": "Replace words with synonyms in real pairs",
-        "search_pairs": true,
-        "search": [
-            {
-                "include": {
-                    "POS": null,
-                    "word": [
-                        "<synonym>"
-                    ]
-                }
-            }
-        ],
-        "transform": {
-            "MFT": "replace synonyms"
-        }
-    },
-    {
-        "capability": "Taxonomy",
         "description": "More X = Less antonym(X)",
         "search_pairs": false,
         "search": [

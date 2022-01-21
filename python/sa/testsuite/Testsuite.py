@@ -22,7 +22,7 @@ from checklist.perturb import Perturb
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from .Search import Search
-from .Transform import TransformOperator
+# from .Transform import TransformOperator
 from .Template import Template
 
 random.seed(Macros.SEED)
@@ -157,116 +157,116 @@ class Testsuite:
         yield task, seeds_per_task, seed_templates_per_task, exp_templates_per_task, transform_reqs
         return
 
-    @classmethod
-    def suite_add_transform(cls,
-                            editor,
-                            sentences,
-                            transform_req,
-                            templates_per_req,
-                            task, dataset, suite, seed_type):
-        transformer = TransformOperator(editor,
-                                        templates_per_req['capability'],
-                                        templates_per_req['description'],
-                                        transform_req)
-        test_type, func, _property, woi = transformer.transformation_funcs.split(':')
-        if test_type=="INV":
-            if func=="replace":
-                if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-                if woi=="word":
-                    t = Perturb.perturb(sentences, transformer.replace, nsamples=Macros.nsamples)
-                    test = INV(t.data)
-                    suite.add(test,
-                              name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                              capability=templates_per_req["capability"]+f"::{seed_type}",
-                              description=templates_per_req["description"])
-                elif woi=="person_name":
-                    nlp = spacy.load('en_core_web_sm')
-                    parsed_data = list(nlp.pipe(sentences))
-                    t = Perturb.perturb(parsed_data, Perturb.change_names, nsamples=2*Macros.nsamples)
-                    test = INV(t.data)
-                    suite.add(test,
-                              name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                              capability=templates_per_req["capability"]+f"::{seed_type}",
-                              description=templates_per_req["description"])
-                elif woi=="location_name":
-                    nlp = spacy.load('en_core_web_sm')
-                    parsed_data = list(nlp.pipe(sentences))
-                    t = Perturb.perturb(parsed_data, Perturb.change_location, nsamples=2*Macros.nsamples)
-                    test = INV(t.data)
-                    suite.add(test,
-                              name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                              capability=templates_per_req["capability"]+f"::{seed_type}",
-                              description=templates_per_req["description"])
-                elif woi=="number":
-                    nlp = spacy.load('en_core_web_sm')
-                    parsed_data = list(nlp.pipe(sentences))
-                    t = Perturb.perturb(parsed_data, Perturb.change_number, nsamples=2*Macros.nsamples)
-                    test = INV(t.data)
-                    suite.add(test,
-                              name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                              capability=templates_per_req["capability"]+f"::{seed_type}",
-                              description=templates_per_req["description"])
-                # end if
-            elif func=="add" and _property=="random" and woi=="URL_handles":
-                # we set the maximum number of sentences not to kill process during perturbation.
-                if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-                t = Perturb.perturb(sentences, transformer.add_irrelevant, nsamples=Macros.nsamples)
-                test = INV(t.data)
-                suite.add(test,
-                          name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                          capability=templates_per_req["capability"]+f"::{seed_type}",
-                          description=templates_per_req["description"])
-            elif func=="strip" and _property=="None" and woi=="punctuation":
-                if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-                nlp = spacy.load('en_core_web_sm')
-                parsed_data = list(nlp.pipe(sentences))
-                t = Perturb.perturb(parsed_data, Perturb.punctuation, nsamples=Macros.nsamples)
-                test = INV(t.data)
-                suite.add(test,
-                          name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                          capability=templates_per_req["capability"]+f"::{seed_type}",
-                          description=templates_per_req["description"])
-            elif func=="swap" and _property=="one" and woi=="two_adjacent_characters":
-                if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-                t = Perturb.perturb(sentences, Perturb.add_typos, nsamples=Macros.nsamples, typos=1)
-                test = INV(t.data)
-                suite.add(test,
-                          name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                          capability=templates_per_req["capability"]+f"::{seed_type}",
-                          description=templates_per_req["description"])
-            elif func=="swap" and _property=="two" and woi=="two_adjacent_characters":
-                if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-                t = Perturb.perturb(sentences, Perturb.add_typos, nsamples=Macros.nsamples, typos=2)
-                test = INV(t.data)
-                suite.add(test,
-                          name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                          capability=templates_per_req["capability"]+f"::{seed_type}",
-                          description=templates_per_req["description"])
-            elif func=="contract/expand" and _property=="None" and woi=="contraction":
-                if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-                t = Perturb.perturb(sentences, Perturb.contractions, nsamples=2*Macros.nsamples)
-                test = INV(t.data)
-                print(len(sentences), len(t.data))
-                suite.add(test,
-                          name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                          capability=templates_per_req["capability"]+f"::{seed_type}",
-                          description=templates_per_req["description"])
-            # end if
-        elif test_type=="DIR":
-            if func=="add" and woi=="phrase":
-                if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-                nlp = spacy.load('en_core_web_sm')
-                parsed_data = list(nlp.pipe(sentences))
-                t = Perturb.perturb(parsed_data, transformer.add_phrase(), nsamples=Macros.nsamples)
-                test = DIR(t.data, transformer.dir_expect_func)
-                suite.add(test,
-                          name=f"{task}::{seed_type}::"+templates_per_req["description"],
-                          capability=templates_per_req["capability"]+f"::{seed_type}",
-                          description=templates_per_req["description"])
-                # end if
-            # end if
-        # end if
-        return suite
+    # @classmethod
+    # def suite_add_transform(cls,
+    #                         editor,
+    #                         sentences,
+    #                         transform_req,
+    #                         templates_per_req,
+    #                         task, dataset, suite, seed_type):
+    #     transformer = TransformOperator(editor,
+    #                                     templates_per_req['capability'],
+    #                                     templates_per_req['description'],
+    #                                     transform_req)
+    #     test_type, func, _property, woi = transformer.transformation_funcs.split(':')
+    #     if test_type=="INV":
+    #         if func=="replace":
+    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
+    #             if woi=="word":
+    #                 t = Perturb.perturb(sentences, transformer.replace, nsamples=Macros.nsamples)
+    #                 test = INV(t.data)
+    #                 suite.add(test,
+    #                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
+    #                           capability=templates_per_req["capability"]+f"::{seed_type}",
+    #                           description=templates_per_req["description"])
+    #             elif woi=="person_name":
+    #                 nlp = spacy.load('en_core_web_sm')
+    #                 parsed_data = list(nlp.pipe(sentences))
+    #                 t = Perturb.perturb(parsed_data, Perturb.change_names, nsamples=2*Macros.nsamples)
+    #                 test = INV(t.data)
+    #                 suite.add(test,
+    #                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
+    #                           capability=templates_per_req["capability"]+f"::{seed_type}",
+    #                           description=templates_per_req["description"])
+    #             elif woi=="location_name":
+    #                 nlp = spacy.load('en_core_web_sm')
+    #                 parsed_data = list(nlp.pipe(sentences))
+    #                 t = Perturb.perturb(parsed_data, Perturb.change_location, nsamples=2*Macros.nsamples)
+    #                 test = INV(t.data)
+    #                 suite.add(test,
+    #                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
+    #                           capability=templates_per_req["capability"]+f"::{seed_type}",
+    #                           description=templates_per_req["description"])
+    #             elif woi=="number":
+    #                 nlp = spacy.load('en_core_web_sm')
+    #                 parsed_data = list(nlp.pipe(sentences))
+    #                 t = Perturb.perturb(parsed_data, Perturb.change_number, nsamples=2*Macros.nsamples)
+    #                 test = INV(t.data)
+    #                 suite.add(test,
+    #                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
+    #                           capability=templates_per_req["capability"]+f"::{seed_type}",
+    #                           description=templates_per_req["description"])
+    #             # end if
+    #         elif func=="add" and _property=="random" and woi=="URL_handles":
+    #             # we set the maximum number of sentences not to kill process during perturbation.
+    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
+    #             t = Perturb.perturb(sentences, transformer.add_irrelevant, nsamples=Macros.nsamples)
+    #             test = INV(t.data)
+    #             suite.add(test,
+    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
+    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
+    #                       description=templates_per_req["description"])
+    #         elif func=="strip" and _property=="None" and woi=="punctuation":
+    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
+    #             nlp = spacy.load('en_core_web_sm')
+    #             parsed_data = list(nlp.pipe(sentences))
+    #             t = Perturb.perturb(parsed_data, Perturb.punctuation, nsamples=Macros.nsamples)
+    #             test = INV(t.data)
+    #             suite.add(test,
+    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
+    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
+    #                       description=templates_per_req["description"])
+    #         elif func=="swap" and _property=="one" and woi=="two_adjacent_characters":
+    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
+    #             t = Perturb.perturb(sentences, Perturb.add_typos, nsamples=Macros.nsamples, typos=1)
+    #             test = INV(t.data)
+    #             suite.add(test,
+    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
+    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
+    #                       description=templates_per_req["description"])
+    #         elif func=="swap" and _property=="two" and woi=="two_adjacent_characters":
+    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
+    #             t = Perturb.perturb(sentences, Perturb.add_typos, nsamples=Macros.nsamples, typos=2)
+    #             test = INV(t.data)
+    #             suite.add(test,
+    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
+    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
+    #                       description=templates_per_req["description"])
+    #         elif func=="contract/expand" and _property=="None" and woi=="contraction":
+    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
+    #             t = Perturb.perturb(sentences, Perturb.contractions, nsamples=2*Macros.nsamples)
+    #             test = INV(t.data)
+    #             print(len(sentences), len(t.data))
+    #             suite.add(test,
+    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
+    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
+    #                       description=templates_per_req["description"])
+    #         # end if
+    #     elif test_type=="DIR":
+    #         if func=="add" and woi=="phrase":
+    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
+    #             nlp = spacy.load('en_core_web_sm')
+    #             parsed_data = list(nlp.pipe(sentences))
+    #             t = Perturb.perturb(parsed_data, transformer.add_phrase(), nsamples=Macros.nsamples)
+    #             test = DIR(t.data, transformer.dir_expect_func)
+    #             suite.add(test,
+    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
+    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
+    #                       description=templates_per_req["description"])
+    #             # end if
+    #         # end if
+    #     # end if
+    #     return suite
 
     @classmethod
     def write_seed_testsuite(cls,
@@ -284,19 +284,11 @@ class Testsuite:
             for template in templates_per_req["templates"]:
                 t = cls.add_template(t, editor, template)
             # end for
-            if transform_reqs[t_i] is not None:
-                suite = cls.suite_add_transform(editor,
-                                                t.data,
-                                                transform_reqs[t_i],
-                                                templates_per_req,
-                                                task, dataset, suite, "SEED")
-            else:
-                test = MFT(**t)
-                suite.add(test,
-                          name=f"{task}::SEED::"+templates_per_req["description"],
-                          capability=templates_per_req["capability"]+"::SEED",
-                          description=templates_per_req["description"])
-            # end if
+            test = MFT(**t)
+            suite.add(test,
+                      name=f"{task}::SEED::"+templates_per_req["description"],
+                      capability=templates_per_req["capability"]+"::SEED",
+                      description=templates_per_req["description"])
             num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
             if num_data>0:
                 # test_cksum = Utils.get_cksum(
@@ -327,19 +319,11 @@ class Testsuite:
                 editor = cls.add_lexicon(editor, template["values"])
                 t = cls.add_template(t, editor, template)
             # end for
-            if transform_reqs[t_i] is not None:
-                suite = cls.suite_add_transform(editor,
-                                                t.data,
-                                                transform_reqs[t_i],
-                                                templates_per_req,
-                                                task, dataset, suite, "SEED_TEMPS")
-            else:
-                test = MFT(**t)
-                suite.add(test,
-                          name=f"{task}::SEED_TEMPS::"+templates_per_req["description"],
-                          capability=templates_per_req["capability"]+"::SEED_TEMPS",
-                          description=templates_per_req["description"])
-            # end if
+            test = MFT(**t)
+            suite.add(test,
+                      name=f"{task}::SEED_TEMPS::"+templates_per_req["description"],
+                      capability=templates_per_req["capability"]+"::SEED_TEMPS",
+                      description=templates_per_req["description"])
             num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
             if num_data>0:
                 suite.save(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')
@@ -368,20 +352,11 @@ class Testsuite:
                     editor = cls.add_lexicon(editor, template["values"])
                     t = cls.add_template(t, editor, template)
                 # end for
-            
-                if transform_reqs[t_i] is not None:
-                    suite = cls.suite_add_transform(editor,
-                                                    t.data,
-                                                    transform_reqs[t_i],
-                                                    templates_per_req,
-                                                    task, dataset, suite, "EXP_TEMPS")
-                else:
-                    test = MFT(**t)
-                    suite.add(test, 
-                              name=f"{task}::EXP_TEMPS::"+templates_per_req["description"],
-                              capability=templates_per_req["capability"]+"::EXP_TEMPS",
-                              description=templates_per_req["description"])
-                # end if
+                test = MFT(**t)
+                suite.add(test, 
+                          name=f"{task}::EXP_TEMPS::"+templates_per_req["description"],
+                          capability=templates_per_req["capability"]+"::EXP_TEMPS",
+                          description=templates_per_req["description"])
                 num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
                 if num_data>0:
                     suite.save(res_dir / f'{task}_testsuite_exp_templates_{test_cksum}.pkl')

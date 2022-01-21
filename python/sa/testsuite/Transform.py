@@ -20,7 +20,6 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 from .Synonyms import Synonyms
-from .Search import WORD2POS_MAP, SearchOperator
 
 
 # get pos/neg/neu words from SentiWordNet
@@ -68,18 +67,23 @@ SENT_DICT = {
 #     "you'll": "you will", "you're": "you are", "you've": "you have"
 # }
 
-NEG_OF_NEG_AT_THE_END_PHRASE_TEMPLATE = [
+WORD2POS_MAP = {
+    'demonstratives': ['This', 'That', 'These', 'Those'],
+    'AUXBE': ['is', 'are']
+}
+
+NEG_OF_NEG_AT_THE_END_PHRASE_TEMPLATE = {
     "prefix": ["I agreed that", "I thought that"],
     "sent": [],
     "postfix": ["but it wasn't", "but I didn't"]
-]
+}
 
-DISAGREEMENT_PHRASE = [
+DISAGREEMENT_PHRASE = {
     "prefix": ["I wouldn't say,", "I do not think,", "I don't agree with,"],
-    "middlefix": []
+    "middlefix": [],
     # "postfix": ["that"],
     "sent": []
-]
+}
 
 CUR_NEG_TEMPORAL_PHRASE_TEMPLATE = {
     "past": [
@@ -129,20 +133,22 @@ random.seed(27)
 class TransformOperator:
 
     def __init__(self,
-                 editor,
-                 req_capability,
-                 req_description,
-                 transform_reqs
+                 requirements,
+                 editor=None
                  ):
         
         self.editor = editor # checklist.editor.Editor()
-        self.capability = req_capability
-        self.description = req_description
+        self.capability = requirements['capability']
+        self.description = requirements['description']
         # self.search_dataset = search_dataset
-        self.transform_reqs = transform_reqs
+        self.transform_reqs = requirements['transform']
         # self.inv_replace_target_words = None
         # self.inv_replace_forbidden_words = None
-        self.transformation_funcs = None
+        self.transform_func = self.transform_reqs.split()[0]
+        self.transform_props = None
+        if len(self.transform_reqs.split())>1:
+            self.transform_props = self.transform_reqs.split()[1]
+        # end if
         # self.dir_adding_phrases = None
 
         # # Find INV transformation operations
@@ -153,7 +159,7 @@ class TransformOperator:
         # if transform_reqs["DIR"] is not None:
         #     self.set_dir_env(transform_reqs["DIR"])
         # # end if
-        
+
     # def set_inv_env(self, inv_transform_reqs):
     #     if len(inv_transform_reqs.split())==2:
     #         func = inv_transform_reqs.split()[0]
@@ -296,48 +302,68 @@ class TransformOperator:
     #     rets = ['%s %s' % (x, sentence) for x in irrelevant_before ]
     #     rets += ['%s %s' % (sentence, x) for x in irrelevant_after]
     #     return rets
-    
-    def change_temporalness_template(self, sents):
+
+    def transform(self, sents):
+        transform_func_map = {
+            'add': self.add,
+            'negate': self.negate,
+            'srl': self.srl,
+            'questionize': self.questionize
+        }
+        new_sents = transform_func_map[self.transform_func](sents, self.transform_props)
+        return new_sents
+
+    def _change_temporalness_template(self, sents):
         # sents: List[(s_i, sentence, label)]
         # convert every generate templates into temporal awareness formated templates
         # each template keys: sent, values, label
         results = list()
+        res_idx = 0
         for sent in sents:
             new_sents = list()
             word_dict = dict()
+            label = sent[2]
             new_label = None
             if label=='positive': # posive previously, but negative now
                 word_dict = CUR_NEG_TEMPORAL_PHRASE_TEMPLATE
-                word_dict['sent'] = f"\"{sent[1]}\","
+                word_dict['sent'] = [f"\"{sent[1]}\","]
                 new_label = 'negative'
             elif label=='negative':
                 word_dict = CUR_POS_TEMPORAL_PHRASE_TEMPLATE
-                word_dict['sent'] = f"\"{sent[1]}\","
+                word_dict['sent'] = [f"\"{sent[1]}\","]
                 new_label = 'positive'
             else:
                 raise(f"label \"{label}\" is not available")
             # end if
-            word_product = [dict(zip(d, v)) for v in product(*word_dict.values())]
+            word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
             for wp in word_product:
                 new_sent = " ".join(list(wp.values()))
-                results.append((new_sent, new_label))
+                results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label, None))
+                res_idx += 1
             # end for
         # end for
+        random.shuffle(results)
         return results
 
-    def get_negationpattern_to_wordproduct(self, negation_pattern, value_dict):
+    def add(self, sents, props):
+        if props=='temporal_awareness':
+            return self._change_temporalness_template(sents)
+        # end if
+        return sents
+    
+    def _get_negationpattern_to_wordproduct(self, negation_pattern, value_dict):
         results = list()
         pos_dict = {
             p: value_dict[p]
-            for p in pos_pattern.split('_'):
+            for p in negation_pattern.split('_')
         }
-        word_product = [dict(zip(d, v)) for v in product(*pos_dict.values())]
+        word_product = [dict(zip(pos_dict, v)) for v in product(*pos_dict.values())]
         for wp in word_product:
             results.append(" ".join(list(wp.values())))
         # end for
         return results
     
-    def negate(self, sents, negation_pattern, all_sents=None):
+    def negate(self, sents, negation_pattern):
         # sents: List[(s_i, sentence, label)]
         from itertools import product
         results = list()
@@ -347,42 +373,42 @@ class TransformOperator:
             res_idx = 0
             for sent in sents:
                 word_dict = NEG_OF_NEG_AT_THE_END_PHRASE_TEMPLATE
-                word_dict['sent'] = f"\"{sent[1]}\","
+                word_dict['sent'] = [f"\"{sent[1]}\","]
                 label = sent[2]
-                word_product = [dict(zip(d, v)) for v in product(*word_dict.values())]
+                word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
                 for wp in word_product:
                     new_sent = " ".join(list(wp.values()))
                     new_label = ['positive', 'neutral']
-                    results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label))
+                    results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label, None))
                     res_idx += 1
                 # end for
             # end for
+            random.shuffle(results)
             return results
         elif negation_pattern=='positive':
             # negated of positive with neutral content in the middle
             # first, search neutral sentences
-            search_obj = SearchOperator({
-                "capability": cap,
-                "description": d,
-                "search": [{"label": "neutral"}],
-                "transform": None
-            })
-            neutral_selected = [f"given {s[1]}," for s in search_obj.search(all_sents)]
-            random.shuffle(neutral_selected)
+            positive_sents = [s for s in sents if s[2]=='positive']
+            random.shuffle(positive_sents)
+            neutral_sents = [s[1] for s in sents if s[2]=='neutral']
+            random.shuffle(neutral_sents)
+            neutral_selected = [f"given {s}," for s in neutral_sents[:3]]
+            
             word_dict = DISAGREEMENT_PHRASE
-            word_dict['middlefix'] = neutral_selected[:3]
+            word_dict['middlefix'] = neutral_selected
             res_idx = 0
-            for sent in sents:
-                word_dict['sent'] = sent[1]
+            for sent in positive_sents:
+                word_dict['sent'] = [sent[1]]
                 label = sent[2]
-                word_product = [dict(zip(d, v)) for v in product(*word_dict.values())]
+                word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
                 for wp in word_product:
                     new_sent = " ".join(list(wp.values()))
                     new_label = 'negative'
-                    results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label))
+                    results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label, None))
                     res_idx += 1
                 # end for
             # end for
+            random.shuffle(results)
             return results
         # end if
             
@@ -394,10 +420,11 @@ class TransformOperator:
         # end if
 
         res_idx = 0
-        for pat in self.get_negationpattern_to_wordproduct(negation_pattern, WORD2POS_MAP):
+        for pat in self._get_negationpattern_to_wordproduct(negation_pattern, WORD2POS_MAP):
             _pat = prefix_pat+pat
             for sent in sents:
                 if re.search(_pat, sent[1]):
+                    new_sent = re.sub(f"{_pat} n't", f"{pat} not", sent[1])
                     new_sent = re.sub(_pat, f"{pat} not", sent[1])
                     label = sent[2]
                     new_label = None
@@ -406,47 +433,49 @@ class TransformOperator:
                     elif label=='neutral':
                         new_label = 'neutral'
                     # end if
-                    results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label))
+                    results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label, None))
                     res_idx += 1
                 # end if
             # end for
         # end for
+        random.shuffle(results)
         return results
 
-    def srl(self, sents, negation_pattern):
-        positive_sents = [s[1] for s in sents if s[-1]=='positive']
+    def srl(self, sents, na_param):
+        positive_sents = [s[1] for s in sents if s[2]=='positive']
         random.shuffle(positive_sents)
-        negative_sents = [s[1] for s in sents if s[-1]=='negative']
+        negative_sents = [s[1] for s in sents if s[2]=='negative']
         random.shuffle(negative_sents)
         
-        word_list = SRL_PHASE_TEMPLATE
+        word_dict = SRL_PHASE_TEMPLATE
         res_idx = 0
         results = list()
         for sent in sents:
             label = sent[2]
             if label=='positive':
-                word_list['sent1'] = [f"\"{s}\"," for s in negative_sents[:3]]
+                word_dict['sent1'] = [f"\"{s}\"," for s in negative_sents[:3]]
             elif label=='negative':
-                word_list['sent1'] = [f"\"{s}\"," for s in positive_sents[:3]]
+                word_dict['sent1'] = [f"\"{s}\"," for s in positive_sents[:3]]
             # end if
-            word_list['sent2'] = f"\"{sent[1]}\""
+            word_dict['sent2'] = [f"\"{sent[1]}\""]
             
-            word_product = [dict(zip(d, v)) for v in product(*word_dict.values())]
+            word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
             for wp in word_product:
                 new_sent = " ".join(list(wp.values()))
-                results.append((f'new_{sent[0]}_{res_idx}', new_sent, label))
+                results.append((f'new_{sent[0]}_{res_idx}', new_sent, label, None))
                 res_idx += 1
             # end for
         # end for
+        random.shuffle(results)
         return results
 
     def questionize(self, sents, answer):
-        word_list = QUESTIONIZE_PHRASE_TEMPLATE
+        word_dict = QUESTIONIZE_PHRASE_TEMPLATE
         res_idx = 0
         results = list()
         for sent in sents:
-            word_list['sent'] = f"\"{sent[1]}\"?"
-            word_list['answer'] = answer
+            word_dict['sent'] = [f"\"{sent[1]}\"?"]
+            word_dict['answer'] = [answer]
             label = sent[2]
             if label=='positive' and answer=='yes':
                 new_label = 'positive'
@@ -457,11 +486,12 @@ class TransformOperator:
             elif label=='negative' and answer=='no':
                 new_label = ['positive', 'neutral']
             # end if
-            word_product = [dict(zip(d, v)) for v in product(*word_dict.values())]
+            word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
             for wp in word_product:
                 new_sent = " ".join(list(wp.values()))
-                results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label))
+                results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label, None))
                 res_idx += 1
             # end for
         # end for
+        random.shuffle(results)
         return results

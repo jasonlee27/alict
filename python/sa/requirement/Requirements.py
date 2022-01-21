@@ -119,15 +119,16 @@ class Requirements:
                         "description": d,
                         "search": [
                             {
+                                "length": "<20",
                                 "label": "positive"
                             },
                             {
+                                "length": "<20",
                                 "label": "negative"
                             }
                         ],
-                        "transform": {
-                            "MFT": "add temporal_awareness"
-                        }
+                        "expansion": ["neutral"],
+                        "transform": "add temporal_awareness"
                     })
                 elif d.lower()=="negated negative should be positive or neutral":
                     # AUX : auxilary verb
@@ -143,12 +144,10 @@ class Requirements:
                                 }
                             },
                         ],
-                        "transform": {
-                            "MFT": "negate ^demonstratives_AUXBE"
-                        }
+                        "expansion": ["neutral"],
+                        "transform": "negate ^demonstratives_AUXBE"
                     })
                 elif d.lower()=="negated neutral should still be neutral":
-                    # AUX : auxilary verb
                     reqs.append({
                         "capability": cap,
                         "description": d,
@@ -161,12 +160,10 @@ class Requirements:
                                 }
                             },
                         ],
-                        "transform": {
-                            "MFT": "negate ^demonstratives_AUXBE"
-                        }
+                        "expansion": ["neutral"],
+                        "transform": "negate ^demonstratives_AUXBE"
                     })
                 elif d.lower()=="negation of negative at the end, should be positive or neutral":
-                    # AUX : auxilary verb
                     reqs.append({
                         "capability": cap,
                         "description": d,
@@ -175,26 +172,27 @@ class Requirements:
                                 "label": "negative",
                             },
                         ],
-                        "transform": {
-                            "MFT": "negate AUXBE$"
-                        }
+                        "expansion": ["neutral"],
+                        "transform": "negate AUXBE$"
                     })
-                elif d.lower()=="negated of positive with neutral content in the middle":
-                    # AUX : auxilary verb
+                elif d.lower()=="negated positive with neutral content in the middle":
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search": [
                             {
+                                "length": "<20",
                                 "label": "positive",
                             },
+                            {
+                                "length": "<20",
+                                "label": "neutral",
+                            },
                         ],
-                        "transform": {
-                            "MFT": "negate positive"
-                        }
+                        "expansion": ["neutral"],
+                        "transform": "negate positive"
                     })
                 elif d.lower()=="author sentiment is more important than of others":
-                    # AUX : auxilary verb
                     reqs.append({
                         "capability": cap,
                         "description": d,
@@ -206,12 +204,10 @@ class Requirements:
                                 "label": "negative",
                             },
                         ],
-                        "transform": {
-                            "MFT": ["srl"]
-                        }
+                        "expansion": ["neutral"],
+                        "transform": "srl"
                     })
-                elif d.lower()=="parsing sentiment in (question, “yes”) form":
-                    # AUX : auxilary verb
+                elif d.lower()=="parsing sentiment in (question, yes) form":
                     reqs.append({
                         "capability": cap,
                         "description": d,
@@ -223,12 +219,10 @@ class Requirements:
                                 "label": "negative",
                             },
                         ],
-                        "transform": {
-                            "MFT": ["questionize yes"]
-                        }
+                        "expansion": ["neutral"],
+                        "transform": "questionize yes"
                     })
-                elif d.lower()=="parsing sentiment in (question, “no”) form":
-                    # AUX : auxilary verb
+                elif d.lower()=="parsing sentiment in (question, no) form":
                     reqs.append({
                         "capability": cap,
                         "description": d,
@@ -240,9 +234,8 @@ class Requirements:
                                 "label": "negative",
                             },
                         ],
-                        "transform": {
-                            "MFT": ["questionize no"]
-                        }
+                        "expansion": ["neutral"],
+                        "transform": "questionize no"
                     })
                 # end if
             # end for
