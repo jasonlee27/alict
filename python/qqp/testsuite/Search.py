@@ -20,7 +20,7 @@ from .Synonyms import Synonyms
 # get name and location data
 basic = Utils.read_json(Macros.dataset_dir / 'checklist' / 'lexicons' / 'basic.json')
 names = Utils.read_json(Macros.dataset_dir / 'checklist' / 'names.json')
-name_set = { x:set(names[x]) for x in names }
+name_set = { x: set(names[x]) for x in names }
 NAME_LOC_DICT = {
     'name': names,
     'name_set': name_set,
@@ -366,6 +366,12 @@ class Search:
         func = cls.SEARCH_FUNC[dataset]
         for req in requirements:
             selected = func(req)
+
+            if req["transform"] is not None:
+                transform_obj = TransformOperator(req)
+                selected = transform_obj.transform(selected)
+            # end if
+            
             yield {
                 "requirement": req,
                 "selected_inputs": selected

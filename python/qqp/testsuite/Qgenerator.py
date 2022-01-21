@@ -58,6 +58,9 @@ class Qgenerator:
         elif self.transform_action=='remove':
             new_sent_dict = self.remove()
         # end if
+        if not any([k for k in new_sent_dict.keys() if k!='exp_inputs' and k!='label']):
+            new_sent_dict = None
+        # end if
         return new_sent_dict
 
     def _add_adj(self, sent):

@@ -196,11 +196,21 @@
     },
     {
         "capability": "SRL",
-        "description": "Parsing sentiment in (question, no) form",
+        "description": "Parsing positive sentiment in (question, no) form",
         "search": [
             {
                 "label": "positive"
-            },
+            }
+        ],
+        "expansion": [
+            "neutral"
+        ],
+        "transform": "questionize no"
+    },
+    {
+        "capability": "SRL",
+        "description": "Parsing negative sentiment in (question, no) form",
+        "search": [
             {
                 "label": "negative"
             }

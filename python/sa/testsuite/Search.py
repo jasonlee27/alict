@@ -628,6 +628,7 @@ class Search:
                 transform_obj = TransformOperator(req)
                 selected = transform_obj.transform(selected)
             # end if
+            
             yield {
                 "requirement": req,
                 "selected_inputs": selected

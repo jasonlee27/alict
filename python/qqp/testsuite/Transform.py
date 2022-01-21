@@ -26,21 +26,19 @@ random.seed(27)
 class TransformOperator:
 
     def __init__(self,
-                 editor,
-                 req_capability,
-                 req_description,
-                 transform_reqs
+                 requirements,
+                 editor=None
                  ):
         
         self.editor = editor # checklist.editor.Editor()
-        self.capability = req_capability
-        self.description = req_description
-        self.transform_reqs = transform_reqs
-
-        if 'MFT' in transform_reqs.keys() or transform_reqs["MFT"] is not None:
-            self.set_mft_env(transform_reqs['MFT'])
+        self.capability = requirements['capability']
+        self.description = requirements['description']
+        # self.search_dataset = search_dataset
+        self.transform_reqs = requirements['transform']
+        # self.inv_replace_target_words = None
+        # self.inv_replace_forbidden_words = None
+        self.transform_func = self.transform_reqs.split()[0]
+        self.transform_props = None
+        if len(self.transform_reqs.split())>1:
+            self.transform_props = self.transform_reqs.split()[1]
         # end if
-    
-    def set_mft_env(self, mft_transform_reqs):
-        return
-
