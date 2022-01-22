@@ -1,36 +1,41 @@
 TASKS
 
+  - [JL] Read Glade paper and ARVADA paper.
+
+  - [JL] think about CFG active learning. Given a sentence and its
+    grammar CFG, expand the grammar using active learning (e.g. the
+    grammar checker)
+
   - [JL] manual study of generated study: 1. labels of our all
     generated(expanded) test cases.
-    
-
-  - [JL] use checklist released testcases as seed dataset and generate
-    expanded testcases.
-
-  - [JL] add more Temporal test capabilities.
-
-  - [JL] add more Temporal Negation test capabilities.
-
-  - [JL] add more Temporal SRL test capabilities.
-
-  - [JL] send/ask for mapping test type descriptions in CHECKLIST
-    testsuites and test types listed in CHECKLIST paper (sentiment
-    analysis)
-
-  - [JL] test sentiment analysis models with the other dataset than
-    SST (dynasent dataset)
-
-  - [JL] using the seed dataset and its augmented dataset, re-train
-    the models and see the performance on the other dataset.
-    
-  - [JL] expand the requirements defined to other testing linguistic
-    capabilities.
-
-  - [JL] evaluate the sugested words based on defined requirements and
-    their tag of pos extracted from CFG difference
-
   
 ==========
+
+  + [JL] use checklist released testcases as seed dataset and generate
+    expanded testcases.
+
+  + [JL] send/ask for mapping test type descriptions in CHECKLIST
+    testsuites and test types listed in CHECKLIST paper (sentiment
+    analysis)    
+
+  + [JL] add more Temporal test capabilities.
+
+  + [JL] add more Temporal Negation test capabilities.
+
+  + [JL] add more Temporal SRL test capabilities.
+
+  + [JL] test sentiment analysis models with the other dataset than
+    SST (dynasent dataset)
+
+  + [JL] using the seed dataset and its augmented dataset, re-train
+    the models and see the performance on the other dataset.
+
+  + [JL] expand the requirements defined to other testing linguistic
+    capabilities.
+
+  + [JL] evaluate the sugested words based on defined requirements and
+    their tag of pos extracted from CFG difference
+
   + [JL] add more test capabilities (e.g. Robustness and NER)
 
   + [JL] complete writing code for the requirement of "Replace neutral
