@@ -12,6 +12,7 @@ import checklist
 import numpy as np
 
 from itertools import product
+from checklist.test_types import MFT, INV, DIR
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -516,25 +517,32 @@ class ChecklistTestsuite:
 
     @classmethod
     def get_sents(cls, testsuite_file):
-        tsuite, tsuite_dict = read_testsuite(testsuite_file)
+        tsuite, tsuite_dict = Utils.read_testsuite(testsuite_file)
+        test_names = list(set(tsuite_dict['test_name']))
         sents, raw_labels = list(), list()
         for test_name in test_names:
             # sents: List of sent
             # label: 0(neg), 1(neu) and 2(pos)
-            sents.extend(tsuite.tests[test_name].data) 
-            raw_labels.extend(tsuite.tests[test_name].labels)
+            if type(tsuite.tests[test_name])==MFT:
+                if tsuite.tests[test_name].labels is None:
+                    print(test_name)
+                    print(type(tsuite.tests[test_name].data), len(tsuite.tests[test_name].data))
+                # end if
+                sents.extend(tsuite.tests[test_name].data) 
+                raw_labels.extend(tsuite.tests[test_name].labels)
+            # end if
         # end for        
         labels = dict()
         for s_i, s in enumerate(raw_labels):
             if s=='0':
-                labels[s_i] = "negative"
+                labels[s_i] = ["negative", 0.]
             elif s=='1':
-                labels[s_i] = "neutral"
+                labels[s_i] = ["neutral", 1.]
             else:
-                labels[s_i] = "positive"
+                labels[s_i] = ["positive", 2.]
             # end if
         #end for
-        return [(s_i, s, labels[s_i]) for s_i, s in enumerate(sents)]
+        return [(s_i, s, labels[s_i][0], labels[s_i][1]) for s_i, s in enumerate(sents)]
     
     @classmethod
     def search(cls, req):

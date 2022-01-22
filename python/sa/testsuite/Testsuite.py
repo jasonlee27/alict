@@ -117,7 +117,7 @@ class Testsuite:
     def get_templates(cls, nlp_task, dataset, num_seeds):
         task = nlp_task
         new_input_dicts = Template.get_new_inputs(
-            Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+            Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset}.json",
             task,
             dataset,
             n=num_seeds
@@ -128,7 +128,7 @@ class Testsuite:
         transform_reqs = list()
         for t_i in range(len(new_input_dicts)):
             req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
-            res_dir = Macros.result_dir/ f"templates_{task}"
+            res_dir = Macros.result_dir/ f"templates_{task}_{dataset}"
             if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))) or \
                (not os.path.exists(str(res_dir / f"templates_seed_{req_cksum}.json"))) or \
                (not os.path.exists(str(res_dir / f"templates_exp_{req_cksum}.json"))):
@@ -310,7 +310,7 @@ class Testsuite:
                 # end for
                 
                 if callable(templates_per_req["templates"][0]['label']):
-                    test = MFT(t.data, templates_per_req["templates"][0]['label'], templates=t.templates)
+                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
                 else:
                     test = MFT(**t)
                 # end if
@@ -418,7 +418,7 @@ class Testsuite:
                                seed_template_dicts,
                                exp_template_dicts,
                                transform_reqs):
-        res_dir = Macros.result_dir / "test_results"
+        res_dir = Macros.result_dir / f"test_results_{task}_{dataset}"
         res_dir.mkdir(parents=True, exist_ok=True)
         cls.write_seed_testsuite(task,
                                  dataset,

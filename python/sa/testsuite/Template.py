@@ -234,7 +234,7 @@ class Template:
         task = nlp_task
         
         new_input_dicts = cls.get_new_inputs(
-            Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+            Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset_name}.json",
             task,
             dataset_name,
             n=num_seeds
@@ -284,7 +284,7 @@ class Template:
             # end for
 
             # Write the template results
-            res_dir = Macros.result_dir/ f"templates_{task}"
+            res_dir = Macros.result_dir/ f"templates_{task}_{dataset_name}"
             res_dir.mkdir(parents=True, exist_ok=True)
             
             Utils.write_json(seed_inputs,
