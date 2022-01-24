@@ -34,8 +34,8 @@ class Testsuite:
     def map_labels(cls, task: str, label):
         if task==Macros.sa_task:
             if type(label)==list:
-                label_not= [v for k, v in Macros.sa_label_map.items() if k not in label][0]
-                is_not_label = lambda x, pred, *args:pred != label_not
+                label_not= [v for k, v in Macros.sa_label_map.items() if k not in label]
+                is_not_label = lambda x, pred, *args: pred != label_not[0]
                 return is_not_label
             # end if
             return Macros.sa_label_map[label]
@@ -129,9 +129,7 @@ class Testsuite:
         for t_i in range(len(new_input_dicts)):
             req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
             res_dir = Macros.result_dir/ f"templates_{task}_{dataset}"
-            if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))) or \
-               (not os.path.exists(str(res_dir / f"templates_seed_{req_cksum}.json"))) or \
-               (not os.path.exists(str(res_dir / f"templates_exp_{req_cksum}.json"))):
+            if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))):
                 Template.get_templates(
                     nlp_task=nlp_task,
                     dataset=dataset,
@@ -151,6 +149,18 @@ class Testsuite:
                 "capability": new_input_dicts[t_i]["requirement"]["capability"],
                 "description": new_input_dicts[t_i]["requirement"]["description"],
                 "templates": seed_res
+            })
+
+            exps = Utils.read_json(res_dir / f"exps_{req_cksum}.json")
+            exp_res = list()
+            for e in exps:
+                e_res = cls.get_template(e, task)
+                exp_res.append(e_res)
+            # end for
+            exps_per_task.append({
+                "capability": new_input_dicts[t_i]["requirement"]["capability"],
+                "description": new_input_dicts[t_i]["requirement"]["description"],
+                "templates": exp_res
             })
 
             seed_template_res = list()
@@ -177,7 +187,7 @@ class Testsuite:
                 "templates": exp_template_res
             })
         # end for
-        yield task, seeds_per_task, seed_templates_per_task, exp_templates_per_task, transform_reqs
+        yield task, seeds_per_task, exps_per_task, seed_templates_per_task, exp_templates_per_task, transform_reqs
         return
 
     # @classmethod
@@ -296,7 +306,6 @@ class Testsuite:
                              task,
                              dataset,
                              seed_dicts,
-                             transform_reqs,
                              res_dir):
         for t_i, templates_per_req in enumerate(seed_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
@@ -333,11 +342,50 @@ class Testsuite:
         return
 
     @classmethod
+    def write_exp_testsuite(cls,
+                            task,
+                            dataset,
+                            exp_dicts,
+                            res_dir):
+        for t_i, templates_per_req in enumerate(exp_dicts):
+            test_cksum = Utils.get_cksum(templates_per_req["description"])
+            if not os.path.exists(str(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')):
+                print(f"{task}::EXP::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
+                t = None
+                suite = TestSuite()
+                editor = Editor()
+                for template in templates_per_req["templates"]:
+                    t = cls.add_template(t, editor, template)
+                # end for
+                
+                if callable(templates_per_req["templates"][0]['label']):
+                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
+                else:
+                    test = MFT(**t)
+                # end if
+                suite.add(test,
+                          name=f"{task}::EXP::"+templates_per_req["description"],
+                          capability=templates_per_req["capability"]+"::EXP",
+                          description=templates_per_req["description"])
+                num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
+                if num_data>0:
+                    # test_cksum = Utils.get_cksum(
+                    #     task+templates_per_req["capability"]+templates_per_req["description"]
+                    # )
+                    suite.save(res_dir / f'{task}_testsuite_exps_{test_cksum}.pkl')
+                    print("SAVED")
+                else:
+                    print("NO_DATA")
+                # end if
+            # end if
+        # end for
+        return
+
+    @classmethod
     def write_seed_template_testsuite(cls,
                                       task,
                                       dataset,
                                       seed_template_dicts,
-                                      transform_reqs,
                                       res_dir):
         for t_i, templates_per_req in enumerate(seed_template_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
@@ -351,7 +399,7 @@ class Testsuite:
                     t = cls.add_template(t, editor, template)
                 # end for
                 if callable(templates_per_req["templates"][0]['label']):
-                    test = MFT(t.data, templates_per_req["templates"][0]['label'], templates=t.templates)
+                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
                 else:
                     test = MFT(**t)
                 # end if
@@ -376,7 +424,6 @@ class Testsuite:
                                      task,
                                      dataset,
                                      exp_template_dicts,
-                                     transform_reqs,
                                      res_dir):
         for t_i, templates_per_req in enumerate(exp_template_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
@@ -391,7 +438,7 @@ class Testsuite:
                     t = cls.add_template(t, editor, template)
                 # end for
                 if callable(templates_per_req["templates"][0]['label']):
-                    test = MFT(t.data, templates_per_req["templates"][0]['label'], templates=t.templates)
+                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
                 else:
                     test = MFT(**t)
                 # end if
@@ -415,6 +462,7 @@ class Testsuite:
                                task,
                                dataset,
                                seed_dicts,
+                               exp_dicts,
                                seed_template_dicts,
                                exp_template_dicts,
                                transform_reqs):
@@ -423,26 +471,29 @@ class Testsuite:
         cls.write_seed_testsuite(task,
                                  dataset,
                                  seed_dicts,
-                                 transform_reqs,
                                  res_dir)
+        
+        cls.write_exp_testsuite(task,
+                                dataset,
+                                exp_dicts,
+                                res_dir)
+        
         cls.write_seed_template_testsuite(task,
                                           dataset,
                                           seed_template_dicts,
-                                          transform_reqs,
                                           res_dir)
 
         cls.write_exp_template_testsuite(task,
                                          dataset,
                                          exp_template_dicts,
-                                         transform_reqs,
                                          res_dir)
         return
 
     @classmethod
     def write_testsuites(cls, nlp_task, dataset, num_seeds):
         print("Generate Testsuites from Templates ...")
-        for task, seed, seed_temp, exp_temp, transform_reqs in cls.get_templates(nlp_task=nlp_task, dataset=dataset, num_seeds=num_seeds):
-            Testsuite.write_editor_templates(task, dataset, seed, seed_temp, exp_temp, transform_reqs)
+        for task, seed, exp, seed_temp, exp_temp, transform_reqs in cls.get_templates(nlp_task=nlp_task, dataset=dataset, num_seeds=num_seeds):
+            Testsuite.write_editor_templates(task, dataset, seed, exp, seed_temp, exp_temp, transform_reqs)
         # end for
         return
 

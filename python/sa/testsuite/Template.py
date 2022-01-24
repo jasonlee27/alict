@@ -250,7 +250,8 @@ class Template:
             inputs = inputs_per_req["inputs"]
 
             print(f">>>>> REQUIREMENT:", inputs_per_req["requirement"]["description"])
-            seed_inputs, seed_templates, exp_templates = list(), list(), list()
+            seed_inputs, exp_seed_inputs = list(), list()
+            seed_templates, exp_templates = list(), list()
             for s_i, seed_input in enumerate(inputs.keys()):
                 print(f"\tSEED {s_i}: {seed_input}")
                     
@@ -262,6 +263,20 @@ class Template:
                     "place_holder": Utils.tokenize(seed_input),
                     "label": label_seed
                 })
+
+                if any(exp_inputs):
+                    print(exp_inputs)
+                    # expanded inputs
+                    for inp_i, inp in enumerate(exp_inputs):
+                        print(inp_i, inp)
+                        exp_sent = inp[5]
+                        exp_seed_inputs.append({
+                            "input": inp[5],
+                            "place_holder": Utils.tokenize(inp[5]),
+                            "label": inp[6]
+                        })
+                    # end for
+                # end if
                 
                 # make template for seed input
                 tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
@@ -286,16 +301,27 @@ class Template:
             # Write the template results
             res_dir = Macros.result_dir/ f"templates_{task}_{dataset_name}"
             res_dir.mkdir(parents=True, exist_ok=True)
-            
-            Utils.write_json(seed_inputs,
-                             res_dir / f"seeds_{req_cksum}.json",
-                             pretty_format=True)
-            Utils.write_json(seed_templates,
-                             res_dir / f"templates_seed_{req_cksum}.json",
-                             pretty_format=True)
-            Utils.write_json(exp_templates,
-                             res_dir / f"templates_exp_{req_cksum}.json",
-                             pretty_format=True)
+
+            if any(seed_inputs):
+                Utils.write_json(seed_inputs,
+                                 res_dir / f"seeds_{req_cksum}.json",
+                                 pretty_format=True)
+            # end if
+            if any(exp_seed_inputs):
+                Utils.write_json(exp_seed_inputs,
+                                 res_dir / f"exps_{req_cksum}.json",
+                                 pretty_format=True)
+            # end if
+            if any(seed_templates):
+                Utils.write_json(seed_templates,
+                                 res_dir / f"templates_seed_{req_cksum}.json",
+                                 pretty_format=True)
+            # end if
+            if any(exp_templates):
+                Utils.write_json(exp_templates,
+                                 res_dir / f"templates_exp_{req_cksum}.json",
+                                 pretty_format=True)
+            # end if
             print(f"<<<<< REQUIREMENT:", inputs_per_req["requirement"]["description"])
         # end for
         return

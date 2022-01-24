@@ -411,7 +411,9 @@ class TransformOperator:
             random.shuffle(results)
             return results
         # end if
-            
+
+        # negated neutral should still be neutral &
+        # negated negative should be positive or neutral
         # search sents by tag of pos organization
         prefix_pat, postfix_pas = '',''
         if negation_pattern.startswith('^'):
@@ -424,7 +426,6 @@ class TransformOperator:
             _pat = prefix_pat+pat
             for sent in sents:
                 if re.search(_pat, sent[1]):
-                    new_sent = re.sub(f"{_pat} n't", f"{pat} not", sent[1])
                     new_sent = re.sub(_pat, f"{pat} not", sent[1])
                     label = sent[2]
                     new_label = None
@@ -480,7 +481,7 @@ class TransformOperator:
             if label=='positive' and answer=='yes':
                 new_label = 'positive'
             elif label=='positive' and answer=='no':
-                new_label = ['negative', 'neutral']
+                new_label = 'negative'
             elif label=='negative' and answer=='yes':
                 new_label = 'negative'
             elif label=='negative' and answer=='no':
