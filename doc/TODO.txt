@@ -1,15 +1,23 @@
 TASKS
 
-  - [JL] Read Glade paper and ARVADA paper.
+  - [JL] For constructing PCFG probability in reference, multiply the
+    p(non_terminal or terminal) with p(a->b).
 
-  - [JL] think about CFG active learning. Given a sentence and its
-    grammar CFG, expand the grammar using active learning (e.g. the
-    grammar checker)
+  - [JL] think about how to statistically interact selected sentence
+    and grammar checker.
+
+  - [JL] implement my PCFG idea for generating exp sentences.
 
   - [JL] manual study of generated study: 1. labels of our all
     generated(expanded) test cases.
   
 ==========
+
+  + [JL] think about CFG active learning. Given a sentence and its
+    grammar CFG, expand the grammar using active learning (e.g. the
+    grammar checker)
+
+  + [JL] Read Glade paper and ARVADA paper.
 
   + [JL] use checklist released testcases as seed dataset and generate
     expanded testcases.
