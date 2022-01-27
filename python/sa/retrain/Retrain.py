@@ -28,9 +28,9 @@ class SstTestcases:
     @classmethod
     def write_sst_testcase(cls, task, save_file):
         cksum_vals = [
-            os.path.basename(test_file).split("_")[-1].split(".")[0]
-            for testsuite_file in os.listdir(Macros.result_dir / "test_results")
-            if testsuite_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
+            os.path.basename(testsuite_file).split("_")[-1].split(".")[0]
+            for testsuite_file in os.listdir(Macros.result_dir / f"test_results_{task}_sst")
+            if testsuite_file.startswith(f"{task}_testsuite_seeds_") and testsuite_file.endswith(".pkl")
         ]
 
         for cksum_val in cksum_vals:
@@ -39,31 +39,36 @@ class SstTestcases:
                 f"{task}_testsuite_seed_templates_{cksum_val}.pkl",
                 f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
             ]
-            test_name = None
-            for f_i, testsuite_file in enumerate(testsuite_files):
-                tsuite, tsuite_dict = Utils.read_testsuite(testsuite_file)
-                test_name = tsuite.info["sentiment_analysis"]["capability"]+"::"+tsuite.info["sentiment_analysis"]["description"]
-                if f_i==0:
-                    test_data = dict()
-                    test_data[test_name] = {
-                        'sents': tsuite.tests["sentiment_analysis"].data,
-                        'labels': tsuite.tests["sentiment_analysis"].labels
-                    }
-                else:
-                    test_data[test_name]["sents"].extend(tsuite.tests["sentiment_analysis"].data)
-                    test_data[test_name]["labels"].extend(tsuite.tests["sentiment_analysis"].labels)
-                # end if
-            # end for
-            num_data = len(test_data[test_name]['sents'])
-            type_list = ['test']*num_data
-            num_train_data = int(num_data*Macros.TRAIN_RATIO)
-            num_train_data += ((num_data*Macros.TRAIN_RATIO)%num_train_data)>0
-            type_list[:num_train_data] = ['train']*num_train_data
-            random.shuffle(type_list)
-            test_data[test_name]['types'] = type_list
+            testsuite_files = [tf for tf in testsuite_files if os.path.exists(Macros.result_dir / f"test_results_{task}_sst" / tf)]
 
-            # set data labels in a range between 0. and 1. from 0,1,2
-            test_data[test_name]['labels'] = [0.5*float(l) for l in test_data[test_name]['labels']]
+            for f_i, testsuite_file in enumerate(testsuite_files):
+                tsuite, tsuite_dict = Utils.read_testsuite(Macros.result_dir / f"test_results_{task}_sst" / testsuite_file)
+                for test_name in list(set(tsuite_dict['test_name'])):
+                    if f_i==0 and tsuite.tests[test_name].labels is not None:
+                        test_data = dict()
+                        test_data[cksum_val] = {
+                            'sents': tsuite.tests[test_name].data,
+                            'labels': tsuite.tests[test_name].labels
+                        }
+                    elif f_i>0 and tsuite.tests[test_name].labels is not None:
+                        test_data[cksum_val]["sents"].extend(tsuite.tests[test_name].data)
+                        test_data[cksum_val]["labels"].extend(tsuite.tests[test_name].labels)
+                    # end if
+
+                    if tsuite.tests[test_name].labels is not None:
+                        num_data = len(test_data[cksum_val]['sents'])
+                        type_list = ['test']*num_data
+                        num_train_data = int(num_data*Macros.TRAIN_RATIO)
+                        num_train_data += ((num_data*Macros.TRAIN_RATIO)%num_train_data)>0
+                        type_list[:num_train_data] = ['train']*num_train_data
+                        random.shuffle(type_list)
+                        test_data[cksum_val]['types'] = type_list
+                        
+                        # set data labels in a range between 0. and 1. from 0,1,2
+                        test_data[cksum_val]['labels'] = [0.5*float(l) for l in test_data[cksum_val]['labels']]
+                    # end if
+                # end for
+            # end for
         # end for
         dataset = dict()
         for test_name in test_data.keys():

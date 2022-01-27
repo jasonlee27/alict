@@ -16,6 +16,7 @@ from nltk.tokenize import word_tokenize as tokenize
 
 from checklist.editor import Editor
 from checklist.test_types import MFT, INV, DIR
+from checklist.expect import Expect
 from checklist.test_suite import TestSuite
 from checklist.perturb import Perturb
 
@@ -32,6 +33,11 @@ class Testsuite:
     @classmethod
     def map_labels(cls, task: str, label):
         if task==Macros.sa_task:
+            if type(label)==list:
+                label_not= [v for k, v in Macros.sa_label_map.items() if k not in label]
+                is_not_label = lambda x, pred, *args: pred != label_not[0]
+                return is_not_label
+            # end if
             return Macros.sa_label_map[label]
         # end if
         return
@@ -43,10 +49,17 @@ class Testsuite:
             # when there are too many synonyms, it is memory-costly and it kills code running.
             # So, when too many synonyms detected, we shrink the size of synonyms by reducing them.
             # first check which placeholder has too many number of synonyms
-            too_many_synonym_keys = [key for key in placeholder_keys if len(lexicon_dict[key])>Macros.max_num_synonyms]
-            # random.shuffle(too_many_synonym_keys)
-            for key in too_many_synonym_keys:
-                lexicon_dict[key] = lexicon_dict[key][:Macros.max_num_synonyms]
+            random.shuffle(placeholder_keys)
+            for k_i, key in enumerate(placeholder_keys):
+                if k_i>=Macros.num_synonym_placeholders:
+                    lexicon_dict[key] = lexicon_dict[key][0]
+                else:
+                    lexicon_dict[key] = lexicon_dict[key][:Macros.max_num_synonyms//3]
+                # end if
+            # end for
+        else:
+            for key in placeholder_keys:
+                lexicon_dict[key] = lexicon_dict[key][:Macros.max_num_synonyms//3]
             # end for
         # end if
         for key, val in lexicon_dict.items():
@@ -59,13 +72,23 @@ class Testsuite:
     @classmethod
     def add_template(cls, t, editor, template):
         if t is None:
-            t = editor.template(template["sent"],
-                                labels=template["label"],
-                                save=True)
+            if callable(template["label"]):
+                t = editor.template(template["sent"],
+                                    save=True)
+            else:
+                t = editor.template(template["sent"],
+                                    labels=template["label"],
+                                    save=True)
+            # end if
         elif t is not None and len(t.data)<Macros.max_num_sents:
-            t += editor.template(template["sent"],
-                                 labels=template["label"],
-                                 save=True)
+            if callable(template["label"]):
+                t += editor.template(template["sent"],
+                                    save=True)
+            else:
+                t += editor.template(template["sent"],
+                                     labels=template["label"],
+                                     save=True)
+            # end if
         # end if
         return t
     
@@ -94,7 +117,7 @@ class Testsuite:
     def get_templates(cls, nlp_task, dataset, num_seeds):
         task = nlp_task
         new_input_dicts = Template.get_new_inputs(
-            Macros.result_dir/f"cfg_expanded_inputs_{task}.json",
+            Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset}.json",
             task,
             dataset,
             n=num_seeds
@@ -105,10 +128,8 @@ class Testsuite:
         transform_reqs = list()
         for t_i in range(len(new_input_dicts)):
             req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
-            res_dir = Macros.result_dir/ f"templates_{task}"
-            if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))) or \
-               (not os.path.exists(str(res_dir / f"templates_seed_{req_cksum}.json"))) or \
-               (not os.path.exists(str(res_dir / f"templates_exp_{req_cksum}.json"))):
+            res_dir = Macros.result_dir/ f"templates_{task}_{dataset}"
+            if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))):
                 Template.get_templates(
                     nlp_task=nlp_task,
                     dataset=dataset,
@@ -128,6 +149,18 @@ class Testsuite:
                 "capability": new_input_dicts[t_i]["requirement"]["capability"],
                 "description": new_input_dicts[t_i]["requirement"]["description"],
                 "templates": seed_res
+            })
+
+            exps = Utils.read_json(res_dir / f"exps_{req_cksum}.json")
+            exp_res = list()
+            for e in exps:
+                e_res = cls.get_template(e, task)
+                exp_res.append(e_res)
+            # end for
+            exps_per_task.append({
+                "capability": new_input_dicts[t_i]["requirement"]["capability"],
+                "description": new_input_dicts[t_i]["requirement"]["description"],
+                "templates": exp_res
             })
 
             seed_template_res = list()
@@ -154,7 +187,7 @@ class Testsuite:
                 "templates": exp_template_res
             })
         # end for
-        yield task, seeds_per_task, seed_templates_per_task, exp_templates_per_task, transform_reqs
+        yield task, seeds_per_task, exps_per_task, seed_templates_per_task, exp_templates_per_task, transform_reqs
         return
 
     # @classmethod
@@ -273,31 +306,77 @@ class Testsuite:
                              task,
                              dataset,
                              seed_dicts,
-                             transform_reqs,
                              res_dir):
         for t_i, templates_per_req in enumerate(seed_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
-            print(f"{task}::SEED::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
-            t = None
-            suite = TestSuite()
-            editor = Editor()
-            for template in templates_per_req["templates"]:
-                t = cls.add_template(t, editor, template)
-            # end for
-            test = MFT(**t)
-            suite.add(test,
-                      name=f"{task}::SEED::"+templates_per_req["description"],
-                      capability=templates_per_req["capability"]+"::SEED",
-                      description=templates_per_req["description"])
-            num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
-            if num_data>0:
-                # test_cksum = Utils.get_cksum(
-                #     task+templates_per_req["capability"]+templates_per_req["description"]
-                # )
-                suite.save(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')
-                print("SAVED")
-            else:
-                print("NO_DATA")
+            if not os.path.exists(str(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')):
+                print(f"{task}::SEED::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
+                t = None
+                suite = TestSuite()
+                editor = Editor()
+                for template in templates_per_req["templates"]:
+                    t = cls.add_template(t, editor, template)
+                # end for
+                
+                if callable(templates_per_req["templates"][0]['label']):
+                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
+                else:
+                    test = MFT(**t)
+                # end if
+                suite.add(test,
+                          name=f"{task}::SEED::"+templates_per_req["description"],
+                          capability=templates_per_req["capability"]+"::SEED",
+                          description=templates_per_req["description"])
+                num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
+                if num_data>0:
+                    # test_cksum = Utils.get_cksum(
+                    #     task+templates_per_req["capability"]+templates_per_req["description"]
+                    # )
+                    suite.save(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')
+                    print("SAVED")
+                else:
+                    print("NO_DATA")
+                # end if
+            # end if
+        # end for
+        return
+
+    @classmethod
+    def write_exp_testsuite(cls,
+                            task,
+                            dataset,
+                            exp_dicts,
+                            res_dir):
+        for t_i, templates_per_req in enumerate(exp_dicts):
+            test_cksum = Utils.get_cksum(templates_per_req["description"])
+            if not os.path.exists(str(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')):
+                print(f"{task}::EXP::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
+                t = None
+                suite = TestSuite()
+                editor = Editor()
+                for template in templates_per_req["templates"]:
+                    t = cls.add_template(t, editor, template)
+                # end for
+                
+                if callable(templates_per_req["templates"][0]['label']):
+                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
+                else:
+                    test = MFT(**t)
+                # end if
+                suite.add(test,
+                          name=f"{task}::EXP::"+templates_per_req["description"],
+                          capability=templates_per_req["capability"]+"::EXP",
+                          description=templates_per_req["description"])
+                num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
+                if num_data>0:
+                    # test_cksum = Utils.get_cksum(
+                    #     task+templates_per_req["capability"]+templates_per_req["description"]
+                    # )
+                    suite.save(res_dir / f'{task}_testsuite_exps_{test_cksum}.pkl')
+                    print("SAVED")
+                else:
+                    print("NO_DATA")
+                # end if
             # end if
         # end for
         return
@@ -307,29 +386,35 @@ class Testsuite:
                                       task,
                                       dataset,
                                       seed_template_dicts,
-                                      transform_reqs,
                                       res_dir):
         for t_i, templates_per_req in enumerate(seed_template_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
-            print(f"{task}::SEED_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
-            t = None
-            suite = TestSuite()
-            editor = Editor()
-            for template in templates_per_req["templates"]:
-                editor = cls.add_lexicon(editor, template["values"])
-                t = cls.add_template(t, editor, template)
-            # end for
-            test = MFT(**t)
-            suite.add(test,
-                      name=f"{task}::SEED_TEMPS::"+templates_per_req["description"],
-                      capability=templates_per_req["capability"]+"::SEED_TEMPS",
-                      description=templates_per_req["description"])
-            num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
-            if num_data>0:
-                suite.save(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')
-                print("SAVED")
-            else:
-                print("NO_DATA")
+            if not os.path.exists(str(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')):
+                print(f"{task}::SEED_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
+                t = None
+                suite = TestSuite()
+                editor = Editor()
+                for template in templates_per_req["templates"]:
+                    editor = cls.add_lexicon(editor, template["values"])
+                    t = cls.add_template(t, editor, template)
+                # end for
+                if callable(templates_per_req["templates"][0]['label']):
+                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
+                else:
+                    test = MFT(**t)
+                # end if
+                suite.add(test,
+                          name=f"{task}::SEED_TEMPS::"+templates_per_req["description"],
+                          capability=templates_per_req["capability"]+"::SEED_TEMPS",
+                          description=templates_per_req["description"])
+                num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
+                if num_data>0:
+                    suite.save(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')
+                    print("SAVED")
+                else:
+                    print("NO_DATA")
+                # end if
+                del t, test, suite
             # end if
         # end for
         return
@@ -339,11 +424,11 @@ class Testsuite:
                                      task,
                                      dataset,
                                      exp_template_dicts,
-                                     transform_reqs,
                                      res_dir):
-        for t_i, templates_per_req in enumerate(exp_template_dicts):            
-            if any(templates_per_req["templates"]):
-                test_cksum = Utils.get_cksum(templates_per_req["description"])
+        for t_i, templates_per_req in enumerate(exp_template_dicts):
+            test_cksum = Utils.get_cksum(templates_per_req["description"])
+            if not os.path.exists(str(res_dir / f'{task}_testsuite_exp_templates_{test_cksum}.pkl')) and \
+               any(templates_per_req["templates"]):
                 print(f"{task}::EXP_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
                 t = None
                 suite = TestSuite()
@@ -352,7 +437,11 @@ class Testsuite:
                     editor = cls.add_lexicon(editor, template["values"])
                     t = cls.add_template(t, editor, template)
                 # end for
-                test = MFT(**t)
+                if callable(templates_per_req["templates"][0]['label']):
+                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
+                else:
+                    test = MFT(**t)
+                # end if
                 suite.add(test, 
                           name=f"{task}::EXP_TEMPS::"+templates_per_req["description"],
                           capability=templates_per_req["capability"]+"::EXP_TEMPS",
@@ -373,33 +462,38 @@ class Testsuite:
                                task,
                                dataset,
                                seed_dicts,
+                               exp_dicts,
                                seed_template_dicts,
                                exp_template_dicts,
                                transform_reqs):
-        res_dir = Macros.result_dir / "test_results"
+        res_dir = Macros.result_dir / f"test_results_{task}_{dataset}"
         res_dir.mkdir(parents=True, exist_ok=True)
         cls.write_seed_testsuite(task,
                                  dataset,
                                  seed_dicts,
-                                 transform_reqs,
                                  res_dir)
+        
+        cls.write_exp_testsuite(task,
+                                dataset,
+                                exp_dicts,
+                                res_dir)
+        
         cls.write_seed_template_testsuite(task,
                                           dataset,
                                           seed_template_dicts,
-                                          transform_reqs,
                                           res_dir)
+
         cls.write_exp_template_testsuite(task,
                                          dataset,
                                          exp_template_dicts,
-                                         transform_reqs,
                                          res_dir)
         return
 
     @classmethod
     def write_testsuites(cls, nlp_task, dataset, num_seeds):
         print("Generate Testsuites from Templates ...")
-        for task, seed, seed_temp, exp_temp, transform_reqs in cls.get_templates(nlp_task=nlp_task, dataset=dataset, num_seeds=num_seeds):
-            Testsuite.write_editor_templates(task, dataset, seed, seed_temp, exp_temp, transform_reqs)
+        for task, seed, exp, seed_temp, exp_temp, transform_reqs in cls.get_templates(nlp_task=nlp_task, dataset=dataset, num_seeds=num_seeds):
+            Testsuite.write_editor_templates(task, dataset, seed, exp, seed_temp, exp_temp, transform_reqs)
         # end for
         return
 

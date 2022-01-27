@@ -31,7 +31,8 @@ class CFGDiff:
                  diff_file=None,
                  pretty_format=True):
         self.cfg_diff = self.get_cfg_diff(
-            cfg_seed=cfg_seed, cfg_ref=cfg_ref, 
+            cfg_seed=cfg_seed,
+            cfg_ref=cfg_ref, 
             is_ref_pcfg=is_ref_pcfg,
             comp_length = comp_length
         )
@@ -66,41 +67,51 @@ class CFGDiff:
             try:
                 for _sr in seed_rhs:
                     sr = _sr["pos"]
-                    sr = sr[0] if len(sr)==1 else tuple(sr)
+                    sr = tuple([sr]) if type(sr)==str else tuple(sr)
                     if type(sr)==str:
-                        if not is_ref_pcfg:
-                            rule_from_ref = [
-                                rr[-1] for rr in cfg_ref[seed_lhs] \
-                                if self.check_list_inclusion([sr], rr[-1]) and \
-                                [sr]!=rr[-1] and len(rr[-1])<comp_length+len([sr])
-                            ]
-                        else:
-                            rule_from_ref = [
-                                (rr[1],rr[-1]) for rr in cfg_ref[seed_lhs] \
-                                if self.check_list_inclusion([sr], rr[1]) and \
-                                [sr]!=list(rr[1]) and len(rr[1])<comp_length+len([sr])
-                            ]
-                        # end if
-                        if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
-                            cfg_diff[seed_lhs] = {
-                                sr: (rule_from_ref, _sr["word"])
-                            }
-                        elif sr not in cfg_diff[seed_lhs].keys() and any(rule_from_ref):
-                            cfg_diff[seed_lhs][sr] = (rule_from_ref, _sr["word"])
-                        # end if
+                        # if not is_ref_pcfg:
+                        #     rule_from_ref = [
+                        #         rr[-1] for rr in cfg_ref[seed_lhs] \
+                        #         if self.check_list_inclusion([sr], rr[-1]) and \
+                        #         [sr]!=rr[-1] and len(rr[-1])<comp_length+len([sr])
+                        #     ]
+                        # else:
+                        #     rule_from_ref = [
+                        #         (rr[1],rr[-1]) for rr in cfg_ref[seed_lhs] \
+                        #         if self.check_list_inclusion([sr], rr[1]) and \
+                        #         [sr]!=list(rr[1]) and len(rr[1])<comp_length+len([sr])
+                        #     ]
+                        # # end if
+                        # if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
+                        #     cfg_diff[seed_lhs] = {
+                        #         sr: (rule_from_ref, _sr["word"])
+                        #     }
+                        # elif sr not in cfg_diff[seed_lhs].keys() and any(rule_from_ref):
+                        #     cfg_diff[seed_lhs][sr] = (rule_from_ref, _sr["word"])
+                        # # end if
+                        pass
                     else:
+                        rule_from_ref = list()
                         if not is_ref_pcfg:
-                            rule_from_ref = [
-                                rr[-1] for rr in cfg_ref[seed_lhs] \
-                                if self.check_list_inclusion(list(sr), rr[-1]) and \
-                                list(sr)!=rr[-1] and len(rr[-1])<comp_length+len(sr)
-                            ]
+                            for rr in cfg_ref[seed_lhs]:
+                                rr = [[r.split('-')[0] for r in rr[0]], rr[-1]]
+                                if self.check_list_inclusion(list(sr), rr[0]) and \
+                                   len(list(sr))<len(rr[0]) and \
+                                   len(rr[0])<comp_length+len(sr) and \
+                                   rr[0] not in rule_from_ref:
+                                    rule_from_ref.append(rr[0])
+                                # end if
+                            # end for
                         else:
-                            rule_from_ref = [
-                                (rr[1],rr[-1]) for rr in cfg_ref[seed_lhs] \
-                                if self.check_list_inclusion(list(sr), rr[1]) \
-                                and list(sr)!=rr[1] and len(rr[1])<comp_length++len(sr)
-                            ]
+                            for rr in cfg_ref[seed_lhs]:
+                                rr = [[r.split('-')[0] for r in rr[0]], rr[1], rr[2]]
+                                if self.check_list_inclusion(list(sr), rr[0]) and \
+                                   len(list(sr))<len(rr[0]) and \
+                                   len(rr[0])<comp_length+len(sr) and \
+                                   rr[0] not in rule_from_ref:
+                                    rule_from_ref.append((rr[0],rr[-1]))
+                                # end if
+                            # end for
                         # end if
                         if seed_lhs not in cfg_diff.keys() and any(rule_from_ref):
                             cfg_diff[seed_lhs] = {
@@ -115,6 +126,7 @@ class CFGDiff:
                 continue
             # end try
         # end for
+        print(cfg_diff)
         return cfg_diff
     
     def write_cfg_diff(self, cfg_diff_file, pretty_format=False):

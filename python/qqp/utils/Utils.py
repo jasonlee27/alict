@@ -58,7 +58,7 @@ class Utils:
             qpairs, labels = list(), list()
             all_qs = set()
             with open(data_file) as f:
-                for l in f.readlines()[1:1000]:
+                for l in f.readlines()[1:]:
                     try:
                         qid1, qid2, q1, q2, label = l.strip().split('\t')[1:]
                     except:

@@ -30,20 +30,22 @@ class Testmodel:
         return tsuite
 
     @classmethod
-    def _run_testsuite(cls, task: str, local_model_name=None):
+    def _run_testsuite(cls, task: str, dataset_name: str, local_model_name=None):
         print(f"***** TASK: {task} *****")
         cksum_vals = [
             os.path.basename(test_file).split("_")[-1].split(".")[0]
-            for test_file in os.listdir(Macros.result_dir / "test_results")
+            for test_file in os.listdir(Macros.result_dir / f"test_results_{task}_{dataset_name}")
             if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
         ]
+        # cksum_vals = [v for v in cksum_vals if v in ['d3af59d', 'a416a87', '22f987a']]
         for cksum_val in cksum_vals:
             testsuite_files = [
-                Macros.result_dir / "test_results" / f for f in [
+                Macros.result_dir / f"test_results_{task}_{dataset_name}" / f for f in [
                     f"{task}_testsuite_seeds_{cksum_val}.pkl",
+                    f"{task}_testsuite_exps_{cksum_val}.pkl",
                     f"{task}_testsuite_seed_templates_{cksum_val}.pkl",
                     f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
-                ] if os.path.exists(Macros.result_dir / "test_results" / f)
+                ] if os.path.exists(Macros.result_dir / f"test_results_{task}_{dataset_name}" / f)
             ]
             for testsuite_file in testsuite_files:
                 testsuite = cls.load_testsuite(testsuite_file)
@@ -96,18 +98,18 @@ class Testmodel:
         return
 
     @classmethod
-    def run_testsuite(cls, task: str, test_baseline: bool, local_model_name:str = None):
+    def run_testsuite(cls, task: str, dataset_name: str, test_baseline: bool, local_model_name:str = None):
         # run models on checklist introduced testsuite format
         bl_name = None
         if test_baseline:
             cls._run_bl_testsuite(task, "checklist", local_model_name=local_model_name)
         else:
-            cls._run_testsuite(task, local_model_name=local_model_name)
+            cls._run_testsuite(task, dataset_name, local_model_name=local_model_name)
         # end if
         return
 
     @classmethod
-    def run_on_diff_dataset(cls, task: str, test_type: str = None):
+    def run_on_diff_dataset(cls, task: str, dataset_name: str, test_type: str = None):
         # run models on other type of dataset
         def run(model, data):
             preds_all, pp_all = list(), list()
@@ -159,18 +161,18 @@ class Testmodel:
         return
 
     
-def main(task, test_baseline, test_type, local_model_name=None):
+def main(task, dataset_name, test_baseline, test_type, local_model_name=None):
     if local_model_name is None:
         if test_type=="testsuite":
-            Testmodel.run_testsuite(task, test_baseline)
+            Testmodel.run_testsuite(task, dataset_name, test_baseline)
         else:
-            Testmodel.run_on_diff_dataset(task, test_type=test_type)
+            Testmodel.run_on_diff_dataset(task, dataset_name, test_type=test_type)
         # end if
     else:
         if test_type=="testsuite":
-            Testmodel.run_testsuite(task, test_baseline, local_model_name=local_model_name)
+            Testmodel.run_testsuite(task, dataset_name, test_baseline, local_model_name=local_model_name)
         else:
-            Testmodel.run_on_diff_dataset(task, test_type=test_type)
+            Testmodel.run_on_diff_dataset(task, dataset_name, test_type=test_type)
         # end if
     return
 

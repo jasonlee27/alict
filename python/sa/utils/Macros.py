@@ -45,7 +45,7 @@ class Macros:
     max_num_seeds = 50 # maximum number of selected sentences
     max_num_sents = 100000 # number of testcase sentences
     max_num_sents_for_perturb = 1000 # number of sentences for perturbation
-    num_synonym_placeholders = 10
+    num_synonym_placeholders = 5
     max_num_synonyms = 10 # number of synonyms to be used when there are too many placeholders in one sentence
 
     # SST

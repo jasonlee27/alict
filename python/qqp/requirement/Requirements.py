@@ -145,6 +145,16 @@ class Requirements:
                             "MFT": "replace more_less",
                         }
                     })
+                elif d.lower()=="is , used to be, non-duplicate":
+                    pass
+                elif d.lower()=="before is not equal to after, non-duplicate":
+                    pass
+                elif d.lower()=="before becoming is not equal to after becoming":
+                    pass
+                elif d.lower()=="simple negation, non-duplicate":
+                    pass
+                elif d.lower()=="negation of antonym, should be duplicate":
+                    pass
                 # end if
             # end for
         # end for

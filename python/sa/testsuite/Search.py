@@ -12,6 +12,7 @@ import checklist
 import numpy as np
 
 from itertools import product
+from checklist.test_types import MFT, INV, DIR
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -318,7 +319,9 @@ class SearchOperator:
         for pat in self._get_pospattern_to_wordproduct(pos_pattern, WORD2POS_MAP):
             _pat = prefix_pat+pat
             for sent in sents:
-                if re.search(_pat, Utils.detokenize(sent[1])):
+                if re.search(_pat, Utils.detokenize(sent[1])) and \
+                   not re.search(f"{_pat} not ", Utils.detokenize(sent[1])) and \
+                   not re.search(f"{_pat} n't ", Utils.detokenize(sent[1])):
                     selected.append(sent)
                 # end if
             # end if
@@ -516,25 +519,33 @@ class ChecklistTestsuite:
 
     @classmethod
     def get_sents(cls, testsuite_file):
-        tsuite, tsuite_dict = read_testsuite(testsuite_file)
+        tsuite, tsuite_dict = Utils.read_testsuite(testsuite_file)
+        test_names = list(set(tsuite_dict['test_name']))
         sents, raw_labels = list(), list()
         for test_name in test_names:
             # sents: List of sent
             # label: 0(neg), 1(neu) and 2(pos)
-            sents.extend(tsuite.tests[test_name].data) 
-            raw_labels.extend(tsuite.tests[test_name].labels)
-        # end for        
+            if type(tsuite.tests[test_name])==MFT and tsuite.tests[test_name].labels is not None:
+                labels = tsuite.tests[test_name].labels
+                if type(tsuite.tests[test_name].labels)==int:
+                    labels = [labels]*len(tsuite.tests[test_name].data)
+                # end if
+                sents.extend(tsuite.tests[test_name].data) 
+                raw_labels.extend(labels)
+            # end if
+        # end for
         labels = dict()
         for s_i, s in enumerate(raw_labels):
             if s=='0':
-                labels[s_i] = "negative"
+                labels[s_i] = ["negative", 0.]
             elif s=='1':
-                labels[s_i] = "neutral"
+                labels[s_i] = ["neutral", 0.5]
             else:
-                labels[s_i] = "positive"
+                labels[s_i] = ["positive", 1.]
             # end if
-        #end for
-        return [(s_i, s, labels[s_i]) for s_i, s in enumerate(sents)]
+        # end for
+        sents = [(s_i, s, labels[s_i][0], labels[s_i][1]) for s_i, s in enumerate(sents)]
+        return sents
     
     @classmethod
     def search(cls, req):
@@ -542,7 +553,7 @@ class ChecklistTestsuite:
         # label: (index, label score)
         sents = cls.get_sents(Macros.checklist_sa_dataset_file)
         req_obj = SearchOperator(req)
-        selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
+        selected = sorted([(s[0],s[1],s[2],s[3]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
         return selected
 
@@ -628,6 +639,7 @@ class Search:
                 transform_obj = TransformOperator(req)
                 selected = transform_obj.transform(selected)
             # end if
+            
             yield {
                 "requirement": req,
                 "selected_inputs": selected

@@ -75,9 +75,11 @@ def run_testmodel():
     nlp_task = args.nlp_task
     test_baseline = args.test_baseline
     test_type = args.test_type
+    search_dataset_name = args.search_dataset
     local_model_name = args.local_model_name
     Testmodel_main(
         nlp_task,
+        search_dataset_name,
         test_baseline,
         test_type,
         local_model_name=local_model_name

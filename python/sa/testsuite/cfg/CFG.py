@@ -283,7 +283,7 @@ class TreebankCFG:
     @classmethod
     def convert_ruleset_to_dict(cls, ruleset: dict, prob=False):
         cfg_dict = dict()
-        for r_key  in ruleset.keys():
+        for r_key in ruleset.keys():
             for r, trmnls in ruleset[r_key]:
                 lhs = str(r.lhs())
                 r_tuple = tuple([f'\'{r}\'' if type(r) is str else str(r) for r in r.rhs()])

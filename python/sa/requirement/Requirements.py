@@ -217,12 +217,12 @@ class Requirements:
                             },
                             {
                                 "label": "negative",
-                            },
+                            }
                         ],
                         "expansion": ["neutral"],
                         "transform": "questionize yes"
                     })
-                elif d.lower()=="parsing sentiment in (question, no) form":
+                elif d.lower()=="parsing positive sentiment in (question, no) form":
                     reqs.append({
                         "capability": cap,
                         "description": d,
@@ -230,6 +230,15 @@ class Requirements:
                             {
                                 "label": "positive",
                             },
+                        ],
+                        "expansion": ["neutral"],
+                        "transform": "questionize no"
+                    })
+                elif d.lower()=="parsing negative sentiment in (question, no) form":
+                    reqs.append({
+                        "capability": cap,
+                        "description": d,
+                        "search": [
                             {
                                 "label": "negative",
                             },
