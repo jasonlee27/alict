@@ -38,7 +38,7 @@ class RefPCFG:
             return rule_dict
         # end if
 
-    def get_treebank_rules(tree, rule_dict):
+    def get_treebank_rules(self, tree, rule_dict):
         if type(tree)==str:
             return rule_dict
         # end if
@@ -78,4 +78,56 @@ class RefPCFG:
             }
         # end for
         return rule_dict
+
+    def get_target_rule_parents(self, seed_tree, target_rule, parent_rule_list):
+        # traverse seed_tree and search target rule
+        rule_lhs = seed_tree._.labels[0]
+        rule_rhs = tuple([ch._.labels[0] if any(ch._.labels) else str(ch) for ch in seed_tree._.children])
+        rule_key = f"{rule_lhs} -> {rule_rhs}"
+        if rule_key==target_rule:
+            # reverse tree to get parents of target rule
+            parent_rule_list = list()
+            while True:
+                parent = seed_tree._.parent
+                parent_lhs = parent._.labels[0]
+                parent_rhs = tuple([ch._.labels[0] if any(ch._.labels) else str(ch) for ch in parent._.children])
+                parent_key = f"{parent_lhs} -> {parent_rhs}"
+                parent_rule_list.append(parent_key)
+                if parent._.labels[0]=='S':
+                    parent_rule_list.reverse()
+                    return parent_rule_list
+                # end if
+            # end while
+            return
+        else:
+            for ch in seed_tree._.children:
+                self.get_target_rule_parents(ch, target_rule)
+            # end for
+        # end if
+        return
+
+    def get_parent_rules_prb(parent_rules):
+        prob = 1.
+        for r in parent_rules:
+            prob = prob*self.pcfg[r]['prob']
+        # end for
+        return prob
+
+    def get_exp_syntax_probs(self, seed_cfg, rule_candid):
+        # rule_candid: Dict.
+        # key is the rule_from, and values are the list of rule_to to be replaced with.
+        prob_list = list()
+        for rule_from in rule_candid.keys():
+            parent_rules = self.get_target_rule_parents(seed_cfg, rule_from)
+            parents_prob = self.get_parent_rules_prob(parent_rules)
+            rule_to_candids = rule_candid[rule_from]
+            for r in rule_to_candids:
+                prob_list.append({
+                    'parents': parent_rules,
+                    'rule': r
+                    'prob': parents_prob*self.pcfg[r]['prob']
+                })
+            # end for
+        # end for
+        return prob_list
     
