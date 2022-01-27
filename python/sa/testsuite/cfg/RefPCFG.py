@@ -1,0 +1,81 @@
+# This script generates nlp grammar rule set 
+# given sentence input set.
+
+import re, os
+import sys
+import json
+import nltk
+import benepar
+import spacy
+
+from pathlib import Path
+from nltk.corpus import treebank
+from nlpk import Nonterminal
+
+from ...utils.Macros import Macros
+from ...utils.Utils import Utils
+
+class RefPCFG:
+
+    def __init__(self, corpus_name='treebank'):
+        self.corpus_name = corpus_name
+        
+        # self.pcfg = Dict[rule_string, Dict[lhs, rhs, prob]]
+        self.pcfg = None
+        if self.corpus_name!='treebank':
+            rules = self.get_rules()
+            self.pcfg = self.get_pcfg(rule_dict=rules)
+        else:
+            self.pcfg = self.get_pcfg()
+        # end if
+
+    def get_rules(self):
+        if self.corpus_name=='treebank':
+            rule_dict = dict()
+            for tree in treebank.parsed_sents():
+                rule_dict = cls.get_treebank_rules(tree, rule_dict)
+            # end for
+            return rule_dict
+        # end if
+
+    def get_treebank_rules(tree, rule_dict):
+        if type(tree)==str:
+            return rule_dict
+        # end if
+        rule = tree.productions()[0]
+        corr_terminal_pos = [pos[1] for pos in tree.pos()]
+        if str(rule) in rule_dict.keys():
+            if (rule, corr_terminal_pos) in rule_dict[str(rule)]:
+                rule_dict[str(rule)].append((rule,corr_terminal_pos))
+            # end if
+        else:
+            rule_dict[str(rule)] = [(rule,corr_terminal_pos)]
+        # end if
+        for ch in tree:
+            rule_dict = cls.get_treebank_rules(ch, rule_dict)
+        # end for
+        return rule_dict
+        
+    def get_pcfg(self, rule_dict=None):
+        if self.corpus_name=='treebank':
+            return get_treebank_pcfg()
+        # end if
+
+    def get_treebank_pcfg(self):
+        rule_dict = dict()
+        productions = list()
+        for s in treebank.parsed_sents():
+            productions += s.productions()
+        # end for
+        S = Noneterminal('S')
+        grammar = nltk.induce_pcfg(S, productions)
+        for prod in grammar.productions():
+            rule_key = f"{prod._lhs} -> {prod._rhs}"
+            rule_dict[rule_key] = {
+                'lhs': str(prod._lhs)
+                'rhs': [str(r) for r in prod._rhs]
+                'prob': prod.prob()
+            }
+        # end for
+        return rule_dict
+    

@@ -126,7 +126,6 @@ class CFGDiff:
                 continue
             # end try
         # end for
-        print(cfg_diff)
         return cfg_diff
     
     def write_cfg_diff(self, cfg_diff_file, pretty_format=False):
