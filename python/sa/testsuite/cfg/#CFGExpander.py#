@@ -172,6 +172,5 @@ class CFGExpander:
             cfg_seed=self.cfg_seed,
             tree_seed=self.tree_seed
         )
-
         return diff_obj.cfg_diff
         

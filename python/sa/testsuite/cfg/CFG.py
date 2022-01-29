@@ -127,7 +127,7 @@ class BeneparCFG:
     def get_cfg_dict_per_sent(cls, parser, sent, rule_dict):
         tree = cls.get_tree(parser,sent)
         return {
-            "tree": tree._.parse_string,
+            "tree": tree,
             "rule": cls.get_cfg_per_tree(tree, rule_dict)
         }
     
@@ -241,169 +241,134 @@ class BeneparCFG:
         return tree
 
 
-class TreebankCFG:
+# class TreebankCFG:
 
-    @classmethod
-    def get_treebank_rules(cls, pcfg=False):
-        if 'treebank' not in sys.modules:
-            from nltk.corpus import treebank
-        # end if
-        rule_dict = dict()
-        for tree in treebank.parsed_sents():
-            rule_dict = cls._get_treebank_rules(tree, rule_dict)
-        # end for
-        return rule_dict
-
-    @classmethod
-    def _get_treebank_rules(cls, tree, rule_dict):
-        if type(tree)==str:
-            return rule_dict
-        # end if
-        rule = tree.productions()[0]
-        corr_terminal_pos = [pos[1] for pos in tree.pos()]
-        if str(rule) in rule_dict.keys():
-            if (rule,corr_terminal_pos) in rule_dict[str(rule)]:
-                rule_dict[str(rule)].append((rule,corr_terminal_pos))
-            # end if
-        else:
-            rule_dict[str(rule)] = [(rule,corr_terminal_pos)]
-        # end if
-        for ch in tree:
-            rule_dict = cls._get_treebank_rules(ch, rule_dict)
-        # end for
-        return rule_dict
-
-    @classmethod
-    def get_treebank_word_tags(cls):
-        if 'treebank' not in sys.modules:
-            from nltk.corpus import treebank
-        # end if
-        return list(set([pos for _,pos in treebank.tagged_words()]))
-
-    @classmethod
-    def convert_ruleset_to_dict(cls, ruleset: dict, prob=False):
-        cfg_dict = dict()
-        for r_key in ruleset.keys():
-            for r, trmnls in ruleset[r_key]:
-                lhs = str(r.lhs())
-                r_tuple = tuple([f'\'{r}\'' if type(r) is str else str(r) for r in r.rhs()])
-                if lhs not in cfg_dict.keys():
-                    cfg_dict[lhs] = list()
-                # end if
-
-                if prob:
-                    cfg_dict[lhs].append((r_tuple,trmnls))
-                else:
-                    if (r_tuple,trmnls) not in cfg_dict[lhs]:
-                        cfg_dict[lhs].append((r_tuple,trmnls))
-                    # end if
-                # end if
-            # end for
-        # end for
-        if prob:
-            _cfg_dict = dict()
-            tot = sum([True for r_key in ruleset.keys() for _ in ruleset[r_key]])
-            for lhs in cfg_dict.keys():
-                rhs_w_prob = list()
-                for rhs, trmnls in cfg_dict[lhs]:
-                    num_occ = sum([True for _rhs, _trmnls in cfg_dict[lhs] if rhs==_rhs])
-                    rhs_w_prob.append((rhs, trmnls, num_occ*1./tot))
-                # end for
-                _cfg_dict[lhs] = rhs_w_prob
-            # end for
-            return _cfg_dict
-        # end if
-        return cfg_dict
-
-    # @classmethod
-    # def convert_cfg_dict_to_str(cls, cfg_dict):
-    #     cfg_str = ''
-    #     for left, rights in cfg_dict.items():
-    #         cfg_elem = f'{left} -> '
-    #         for r_i, right in enumerate(rights):
-    #             if type(right) is tuple:
-    #                 r_str = ' '.join([f'\'{r}\'' if type(r) is str else str(r) for r in right])
-    #                 cfg_elem += r_str
-    #             else:
-    #                 cfg_elem += f'\'{r_str}\''
-    #             # end if
-    #             if r_i+1<len(rights):
-    #                 cfg_elem += ' | '
-    #             # end if
-    #         # end for
-    #         cfg_str += f'{cfg_elem}\n'
-    #     # end for
-    #     return cfg_str
-
-    # @classmethod
-    # def write_cfg(cls, cfg_str, cfg_file):
-    #     with open(cfg_file, 'w') as f:
-    #         f.write(cfg_str)
-    #     # end with
-
-    # @classmethod
-    # def write_cfg(cls, cfg_dict: dict, cfg_file: Path, pretty_format=False):
-    #     with open(cfg_file, 'w') as f:
-    #         if pretty_format:
-    #             json.dump(cfg_dict, f, indent=4)
-    #         else:
-    #             json.dump(cfg_dict, f)
-    #         # end if
-    #     # end with
-
-    @classmethod
-    def get_cfgs(cls, cfg_file: Path, pretty_format=False):
-        if not os.path.exists(cfg_file):
-            rulesets: dict = cls.get_treebank_rules()
-            cfg_dict = cls.convert_ruleset_to_dict(rulesets)
-            # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
-            Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
-            return cfg_dict
-        # end if
-        return Utils.read_json(cfg_file)
-
-    @classmethod
-    def get_pcfgs(cls, pcfg_file: Path, pretty_format=False):
-        if not os.path.exists(pcfg_file):
-            rulesets = cls.get_treebank_rules(pcfg=True)
-            pcfg_dict = cls.convert_ruleset_to_dict(rulesets, prob=True)
-            Utils.write_json(pcfg_dict, pcfg_file, pretty_format=pretty_format)
-            return pcfg_dict
-        # end if
-        return Utils.read_json(pcfg_file)
-
-
-# def main():
-#     # cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
-#     # input_file = Macros.this_dir / 'ex.txt'
-#     # cfg_ut_file = Macros.result_dir / 'ex_cfg.json'
-#     # cfg_diff_file = Macros.result_dir / 'ex_treebank_cfg_diff.json'
-#     pcfg_ref_file = Macros.result_dir / 'treebank_pcfg.json'
-
-#     # # generate grammars
-#     # if not os.path.exists(cfg_ref_file):
-#     #     TreebankCFG.get_cfgs(cfg_ref_file, pretty_format=True)
-#     # # end if
-#     # if not os.path.exists(pcfg_ref_file):
-#     #     TreebankCFG.get_pcfgs(pcfg_ref_file, pretty_format=True)
-#     # end if
-#     # if not os.path.exists(cfg_ut_file):
-#     #     BeneparCFG.get_cfgs(input_file, cfg_ut_file, pretty_format=True)
-#     # # end if
-
-#     for t_i, tree in enumerate(treebank.parsed_sents()):
-#         for s in tree.subtrees(lambda t: t.label()=='NP'):
-#             # if len(s.leaves())<10:
-#             #     print(f"-> ",' '.join(s.leaves()))
-#             children = [_s.label() for _s in s]
-#             if children==['DT', 'NN', 'SBAR']:
-#                 print(f"-> ",' '.join(s.leaves()))
-#                 print(s)
-#                 print()
-#             # end if
+#     @classmethod
+#     def get_treebank_rules(cls, pcfg=False):
+#         if 'treebank' not in sys.modules:
+#             from nltk.corpus import treebank
+#         # end if
+#         rule_dict = dict()
+#         for tree in treebank.parsed_sents():
+#             rule_dict = cls._get_treebank_rules(tree, rule_dict)
 #         # end for
-#     # end for
-   
+#         return rule_dict
 
-# if __name__=='__main__':
-#     main()
+#     @classmethod
+#     def _get_treebank_rules(cls, tree, rule_dict):
+#         if type(tree)==str:
+#             return rule_dict
+#         # end if
+#         rule = tree.productions()[0]
+#         corr_terminal_pos = [pos[1] for pos in tree.pos()]
+#         if str(rule) in rule_dict.keys():
+#             if (rule,corr_terminal_pos) in rule_dict[str(rule)]:
+#                 rule_dict[str(rule)].append((rule,corr_terminal_pos))
+#             # end if
+#         else:
+#             rule_dict[str(rule)] = [(rule,corr_terminal_pos)]
+#         # end if
+#         for ch in tree:
+#             rule_dict = cls._get_treebank_rules(ch, rule_dict)
+#         # end for
+#         return rule_dict
+
+#     @classmethod
+#     def get_treebank_word_tags(cls):
+#         if 'treebank' not in sys.modules:
+#             from nltk.corpus import treebank
+#         # end if
+#         return list(set([pos for _,pos in treebank.tagged_words()]))
+
+#     @classmethod
+#     def convert_ruleset_to_dict(cls, ruleset: dict, prob=False):
+#         cfg_dict = dict()
+#         for r_key in ruleset.keys():
+#             for r, trmnls in ruleset[r_key]:
+#                 lhs = str(r.lhs())
+#                 r_tuple = tuple([f'\'{r}\'' if type(r) is str else str(r) for r in r.rhs()])
+#                 if lhs not in cfg_dict.keys():
+#                     cfg_dict[lhs] = list()
+#                 # end if
+
+#                 if prob:
+#                     cfg_dict[lhs].append((r_tuple,trmnls))
+#                 else:
+#                     if (r_tuple,trmnls) not in cfg_dict[lhs]:
+#                         cfg_dict[lhs].append((r_tuple,trmnls))
+#                     # end if
+#                 # end if
+#             # end for
+#         # end for
+#         if prob:
+#             _cfg_dict = dict()
+#             tot = sum([True for r_key in ruleset.keys() for _ in ruleset[r_key]])
+#             for lhs in cfg_dict.keys():
+#                 rhs_w_prob = list()
+#                 for rhs, trmnls in cfg_dict[lhs]:
+#                     num_occ = sum([True for _rhs, _trmnls in cfg_dict[lhs] if rhs==_rhs])
+#                     rhs_w_prob.append((rhs, trmnls, num_occ*1./tot))
+#                 # end for
+#                 _cfg_dict[lhs] = rhs_w_prob
+#             # end for
+#             return _cfg_dict
+#         # end if
+#         return cfg_dict
+
+#     # @classmethod
+#     # def convert_cfg_dict_to_str(cls, cfg_dict):
+#     #     cfg_str = ''
+#     #     for left, rights in cfg_dict.items():
+#     #         cfg_elem = f'{left} -> '
+#     #         for r_i, right in enumerate(rights):
+#     #             if type(right) is tuple:
+#     #                 r_str = ' '.join([f'\'{r}\'' if type(r) is str else str(r) for r in right])
+#     #                 cfg_elem += r_str
+#     #             else:
+#     #                 cfg_elem += f'\'{r_str}\''
+#     #             # end if
+#     #             if r_i+1<len(rights):
+#     #                 cfg_elem += ' | '
+#     #             # end if
+#     #         # end for
+#     #         cfg_str += f'{cfg_elem}\n'
+#     #     # end for
+#     #     return cfg_str
+
+#     # @classmethod
+#     # def write_cfg(cls, cfg_str, cfg_file):
+#     #     with open(cfg_file, 'w') as f:
+#     #         f.write(cfg_str)
+#     #     # end with
+
+#     # @classmethod
+#     # def write_cfg(cls, cfg_dict: dict, cfg_file: Path, pretty_format=False):
+#     #     with open(cfg_file, 'w') as f:
+#     #         if pretty_format:
+#     #             json.dump(cfg_dict, f, indent=4)
+#     #         else:
+#     #             json.dump(cfg_dict, f)
+#     #         # end if
+#     #     # end with
+
+#     @classmethod
+#     def get_cfgs(cls, cfg_file: Path, pretty_format=False):
+#         if not os.path.exists(cfg_file):
+#             rulesets: dict = cls.get_treebank_rules()
+#             cfg_dict = cls.convert_ruleset_to_dict(rulesets)
+#             # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
+#             Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
+#             return cfg_dict
+#         # end if
+#         return Utils.read_json(cfg_file)
+
+#     @classmethod
+#     def get_pcfgs(cls, pcfg_file: Path, pretty_format=False):
+#         if not os.path.exists(pcfg_file):
+#             rulesets = cls.get_treebank_rules(pcfg=True)
+#             pcfg_dict = cls.convert_ruleset_to_dict(rulesets, prob=True)
+#             Utils.write_json(pcfg_dict, pcfg_file, pretty_format=pretty_format)
+#             return pcfg_dict
+#         # end if
+#         return Utils.read_json(pcfg_file)
+
