@@ -29,15 +29,6 @@ class RefPCFG:
             self.pcfg = self.get_pcfg()
         # end if
 
-    def get_rules(self):
-        if self.corpus_name=='treebank':
-            rule_dict = dict()
-            for tree in treebank.parsed_sents():
-                rule_dict = cls.get_treebank_rules(tree, rule_dict)
-            # end for
-            return rule_dict
-        # end if
-
     def get_treebank_rules(self, tree, rule_dict):
         if type(tree)==str:
             return rule_dict
@@ -55,11 +46,6 @@ class RefPCFG:
             rule_dict = cls.get_treebank_rules(ch, rule_dict)
         # end for
         return rule_dict
-        
-    def get_pcfg(self, rule_dict=None):
-        if self.corpus_name=='treebank':
-            return get_treebank_pcfg()
-        # end if
 
     def get_treebank_pcfg(self):
         if os.path.exists(str(self.pcfg_file)):
@@ -85,5 +71,19 @@ class RefPCFG:
 
         # relaxing rhs
         Utils.write_json(rule_dict, self.pcfg_file)
-        return rule_dict
+        return grammar, rule_dict
 
+    def get_rules(self):
+        if self.corpus_name=='treebank':
+            rule_dict = dict()
+            for tree in treebank.parsed_sents():
+                rule_dict = cls.get_treebank_rules(tree, rule_dict)
+            # end for
+            return rule_dict
+        # end if
+
+    def get_pcfg(self, rule_dict=None):
+        if self.corpus_name=='treebank':
+            grammar, rule_dict = self.get_treebank_pcfg()
+            return grammar, rule_dict
+        # end if

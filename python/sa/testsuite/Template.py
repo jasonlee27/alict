@@ -21,7 +21,6 @@ from .Generator import Generator
 from .Synonyms import Synonyms
 from .Search import Search
 from .Suggest import Suggest
-from .cfg.CFGExpander import CFGExpander
 
 
 class Template:
@@ -44,7 +43,6 @@ class Template:
     
     @classmethod
     def generate_inputs(cls, task, dataset, n=None, save_to=None):
-        cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
         print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(task)
         results = list()
@@ -59,7 +57,6 @@ class Template:
             reqs = _reqs
         # end if
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
-            
             exp_inputs = dict()
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
             num_selected_inputs = len(selected["selected_inputs"])
@@ -69,7 +66,7 @@ class Template:
             for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
                 print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score}")
                 index += 1
-                expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
+                # expander = CFGExpander(seed_input=seed)
                 generator = Generator(expander=expander)
                 gen_inputs = generator.masked_input_generator()
                 new_input_results = list()

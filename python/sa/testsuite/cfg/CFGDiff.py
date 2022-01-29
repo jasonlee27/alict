@@ -10,7 +10,8 @@ import random
 import numpy
 
 from pathlib import Path
-from nltk.parse.generate import generate, demo_grammar
+from nltk.grammar import Nonterminal
+from nltk.parse import generate
 from nltk import CFG
 
 from ...utils.Macros import Macros
@@ -22,6 +23,22 @@ from RefPCFG import RefPCFG
 random.seed(Macros.SEED)
 COMP_LENGTH = 3
 NUM_TOPK = 3
+PHRASE_LEVEL_WORD_MAX_LEN = 5
+PHRASE_LEVEL_POS = [
+    'ADJP', 'ADVP', 'CONJP', 'FRAG', 'INTJ',
+    'LST', 'NAC', 'NP', 'NX', 'PP', 'PRN',
+    'PRT', 'QP', 'RRC', 'UCP', 'VP',
+    'WHADJP', 'WHAVP', 'WHNP', 'WHPP', 'X'
+]
+
+WORD_LEVEL_POS = [
+    'CC', 'CD', 'DT', 'EX', 'FW', 'IN', 'JJ',
+    'JJR', 'JJS', 'LS', 'MD', 'NN', 'NNS',
+    'NNP', 'NNPS', 'PDT', 'POS', 'PRP', 'PRP$',
+    'RB', 'RBR', 'RBS', 'RP', 'SYM', 'TO',
+    'UH', 'VB', 'VBD', 'VBG', 'VBN', 'VBP',
+    'VBZ', 'WDT', 'WP', 'WP$', 'WRB'
+]
 
 class CFGDiff:
 
@@ -35,6 +52,7 @@ class CFGDiff:
             pcfg_ref=pcfg_ref,
             comp_length = COMP_LENGTH
         )
+        self.grammar_ref, self.rule_dict_ref = pcfg_ref.get_pcfg()
     
     def check_list_inclusion(self, a_list, b_list):
         temp = -1
@@ -101,6 +119,35 @@ class CFGDiff:
         # end for
         return prob
 
+    def get_token_pos(self, token):
+        for key in self.rule_dict_ref.keys():
+            if key.split('-')[0] in WORD_LEVEL_POS:
+                for v in self.rule_dict_ref[key]:
+                    if token in v['rhs']:
+                        return key
+                    # end if
+                # end for
+            # end if
+        # end for
+        return None
+    
+    def get_sent_pos(self, sent):
+        return [self.get_token_pos(t) for t in sent]
+
+    def phrase_to_word_pos(self, pos_list):
+        contained = [(p_i,p) if p.split('-')[0] in PHRASE_LEVEL_POS for p_i, p in enumerate(pos_list)]
+        if any(contained):
+            for c_i, c in contained:
+                nonterminal = Nonterminal(c)
+                for s in generate.generate(self.grammar_ref, start=nonterminal, n=20):
+                    sent_pos = self.get_sent_pos(s)
+                    if all(sent_pos) and len(sent_pos)<PHRASE_LEVEL_WORD_MAX_LEN:
+                        pos_list = pos_list[:c_i]+sent_pos+pos_list[c_i+1:]
+                    # end if
+            return contained
+        # end if
+        return pop_list
+
     def get_exp_syntax_probs(self, seed_cfg, lhs_seed, rhs_seed, rhs_to_candid):
         # rule_candid: Dict.
         # key is the rule_from, and values are the list of rule_to to be replaced with.
@@ -109,6 +156,7 @@ class CFGDiff:
         parent_rules = self.get_target_rule_parents(seed_cfg, rule_key, list())
         parents_prob = self.get_parent_rules_prob(parent_rules)
         for rhs_to, rhs_to_prob in rule_to_candid:
+            rhs_to = self.phrase_to_word_pos(rhs_to)
             prob_list.append({
                 'parents': parent_rules,
                 'rule': rule_to,
@@ -132,37 +180,38 @@ class CFGDiff:
                     sr = [sr] if type(sr)==str else list(sr)
                     rule_from_ref = list()
                     for rhs_dict in pcfg_ref[seed_lhs]:
-                        if self.check_list_inclusion(sr, rr) and len(sr)<len(rr):
+                        rr = rhs_dict['rhs']
+                        rr_prob = rhs_dict['prob']
+                        if self.check_list_inclusion(sr, rr) and \
+                           (rr, rr_prob) not in rule_from_ref[str(rr)] and \
+                           len(sr)<len(rr):
                             # len(rr)<comp_length+len(sr)
-                            if (rhs_dict['rhs'], rhs_dict['prob']) not in rule_from_ref[str(rr)]:
-                                rule_from_ref.append((rhs_dict['rhs'], rhs_dict['prob']))
-                            # end if
+                            rule_from_ref.append((rr, rr_prob))
                         # end if
                     # end for
-
-                    rhs_syntax_probs = list()
+                    
+                    # rhs_syntax_probs = list()
                     if any(rule_from_ref):
                         # Get syntax prob
-                        rhs_syntax_probs = get_exp_syntax_probs(
+                        rhs_syntax_probs = self.get_exp_syntax_probs(
                             tree_seed, seed_lhs, sr, rule_from_ref
                         )
                         
                         # Get top-k prob elements
                         rhs_syntax_probs = rhs_syntax_probs[:NUM_TOPK]
-                    # end if
-                    
-                    if seed_lhs not in cfg_diff.keys() and any(rhs_syntax_probs):
-                        cfg_diff[seed_lhs] = {
-                            sr: ([
+                        if seed_lhs not in cfg_diff.keys():
+                            cfg_diff[seed_lhs] = {
+                                sr: ([
+                                    (r['rule'], r['prob'])
+                                    for r in rhs_syntax_probs
+                                ], _sr["word"])
+                            }
+                        elif sr not in cfg_diff[seed_lhs].keys():
+                            cfg_diff[seed_lhs][sr] = ([
                                 (r['rule'], r['prob'])
                                 for r in rhs_syntax_probs
                             ], _sr["word"])
-                        }
-                    elif sr not in cfg_diff[seed_lhs].keys() and any(rule_from_ref):
-                        cfg_diff[seed_lhs][sr] = ([
-                            (r['rule'], r['prob'])
-                            for r in rhs_syntax_probs
-                        ], _sr["word"])
+                        # end if
                     # end if
                 # end for
             except KeyError:
