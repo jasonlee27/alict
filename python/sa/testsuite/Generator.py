@@ -31,10 +31,6 @@ class Generator:
         self.seed = seed_input
         self.expander = CFGExpander(seed_input=seed)
         self.editor = Editor()
-        # self.expander_input: str = expander.seed_input
-        # self.cfg_seed: dict = expander.cfg_seed
-        # # self.cfg_ref: dict = expander.cfg_ref
-        # self.cfg_diff: dict = expander.cfg_diff
         
     def masked_input_generator(self):
         seed_input = self.expander.seed_input

@@ -66,27 +66,15 @@ class Template:
             for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
                 print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score}")
                 index += 1
-                # expander = CFGExpander(seed_input=seed)
-                generator = Generator(expander=expander)
+                generator = Generator(seed)
                 gen_inputs = generator.masked_input_generator()
                 new_input_results = list()
                 if any(gen_inputs) and num_seed_for_exp<=n:
-                    # get the word suggesteion at the expended grammar elements
-                    gen_inputs = Suggest.get_new_inputs(
-                        generator.editor,
+                    new_input_results = Suggest.get_exp_inputs(
+                        generator
                         gen_inputs,
                         num_target=Macros.num_suggestions_on_exp_grammer_elem
                     )
-                    for g_i in range(len(gen_inputs)):
-                        eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], seed_label, selected["requirement"])
-                        if any(eval_results):
-                            del gen_inputs[g_i]["words_suggest"]
-                            new_input_results.extend(eval_results)
-                            num_seed_for_exp += 1
-                            print(".", end="")
-                        # end if
-                    # end for
-                    print()
                 # end if
                 exp_inputs[seed] = {
                     "cfg_seed": expander.cfg_seed,
