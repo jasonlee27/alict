@@ -44,14 +44,13 @@ class CFGExpander:
         )
     
     def get_ref_pcfg(self):
-        grammar, rule_dict = pcfg_ref.get_pcfg()
-        return grammar, rule_dict
+        return self.pcfg_ref.pcfg
     
     def get_cfg_diff(self):
         # get the cfg components that can be expanded 
         # compared with ref grammer
         return CFGDiff(
-            pcfg_ref=self.pcfg_ref,
+            pcfg_ref=self.pcfg_ref.pcfg,
             cfg_seed=self.cfg_seed,
             tree_seed=self.tree_seed
         ).cfg_diff

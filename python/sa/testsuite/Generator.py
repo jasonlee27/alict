@@ -28,7 +28,7 @@ random.seed(Macros.SEED)
 class Generator:
 
     def __init__(self, seed: str):
-        self.seed = seed_input
+        self.seed = seed
         self.expander = CFGExpander(seed_input=seed)
         self.editor = Editor()
         

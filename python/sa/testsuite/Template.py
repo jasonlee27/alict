@@ -71,7 +71,7 @@ class Template:
                 new_input_results = list()
                 if any(gen_inputs) and num_seed_for_exp<=n:
                     new_input_results = Suggest.get_exp_inputs(
-                        generator
+                        generator,
                         gen_inputs,
                         num_target=Macros.num_suggestions_on_exp_grammer_elem
                     )

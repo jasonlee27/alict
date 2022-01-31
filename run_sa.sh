@@ -39,7 +39,7 @@ function eval_models(){
 function retrain_models(){
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         CUDA_VISIBLE_DEVICES=1,2,3,4 python -m python.sa.main --run retrain --search_dataset checklist --model_name textattack/bert-base-uncased-SST-2
+         CUDA_VISIBLE_DEVICES=1,2,3,4 python -m python.sa.main --run retrain --search_dataset sst --model_name textattack/bert-base-uncased-SST-2
         )
 }
 
@@ -52,9 +52,9 @@ function eval_retrained_models(){
 
 function main() {
         # gen_requirements # to generate test_type_sa.json and requirement_sa.json
-        # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
+        gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
-        eval_models
+        # eval_models
         # retrain_models
         # eval_retrained_models
 }

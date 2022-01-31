@@ -17,7 +17,7 @@ from nltk import CFG
 from ...utils.Macros import Macros
 from ...utils.Utils import Utils
 from .CFG import BeneparCFG # , TreebankCFG
-from RefPCFG import RefPCFG
+from .RefPCFG import RefPCFG
 
 
 random.seed(Macros.SEED)
@@ -76,6 +76,7 @@ class CFGDiff:
         return False
 
     def get_target_rule_parents(self,
+                                pcfg_ref,
                                 seed_tree,
                                 target_rule,
                                 target_words,
@@ -86,6 +87,7 @@ class CFGDiff:
         # end if
         
         # traverse seed_tree and search target rule
+        print(seed_tree._.labels, target_rule, target_words)
         rule_lhs = seed_tree._.labels[0]
         rule_rhs = tuple([ch._.labels[0] if any(ch._.labels) else str(ch) for ch in seed_tree._.children])
         rule_key = f"{rule_lhs} -> {rule_rhs}"
@@ -105,19 +107,19 @@ class CFGDiff:
                     # end if
                 # end while
             else:
-                sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(rule_lhs, rule_rhs)
+                sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, rule_rhs)
             # end if
         else:
-            sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(rule_lhs, rule_rhs)
+            sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, rule_rhs)
             for ch in seed_tree._.children:
-                parent_rule_list, sent_prob_wo_target = self.get_target_rule_parents(ch, target_rule, str(ch), sent_prob_wo_target, parent_rule_list)
+                parent_rule_list, sent_prob_wo_target = self.get_target_rule_parents(pcfg_ref,ch, target_rule, str(ch), sent_prob_wo_target, parent_rule_list)
             # end for
         # end if
         return parent_rule_list, sent_prob_wo_target
 
-    def get_rule_prob(self, lhs:str, rhs:str):
-        for r in self.pcfg[lhs]:
-            if rhs==str(tuple(_r['rhs'])):
+    def get_rule_prob(self, pcfg_ref, lhs:str, rhs:str):
+        for r in pcfg_ref[lhs]:
+            if rhs==str(tuple(r['rhs'])):
                 return r['prob']
             # end if
         # end for
@@ -147,7 +149,7 @@ class CFGDiff:
         return [self.get_token_pos(t) for t in sent]
 
     def phrase_to_word_pos(self, pos_list):
-        contained = [(p_i,p) if p.split('-')[0] in PHRASE_LEVEL_POS for p_i, p in enumerate(pos_list)]
+        contained = [(p_i,p) for p_i, p in enumerate(pos_list) if p.split('-')[0] in PHRASE_LEVEL_POS]
         if any(contained):
             for c_i, c in contained:
                 nonterminal = Nonterminal(c)
@@ -160,16 +162,18 @@ class CFGDiff:
         # end if
         return pop_list
 
-    def get_exp_syntax_probs(self, seed_cfg, lhs_seed, rhs_seed, rhs_to_candid):
+    def get_exp_syntax_probs(self, pcfg_ref, seed_cfg, lhs_seed, rhs_seed, target_words, rhs_to_candid):
         # rule_candid: Dict.
         # key is the rule_from, and values are the list of rule_to to be replaced with.
         prob_list = list()
-        rule_key = f"{lhs_seed} -> {rhs_seed}"
-        parent_rules, sent_prob_wo_target = self.get_target_rule_parents(seed_cfg, rule_key, list())
+        rule_key = f"{lhs_seed} -> {tuple(rhs_seed)}"
+        parent_rules, sent_prob_wo_target = self.get_target_rule_parents(
+            pcfg_ref, seed_cfg, rule_key, target_words, 1., list()
+        )
+
         parents_prob = self.get_parent_rules_prob(parent_rules)
         for rhs_to, rhs_to_prob in rule_to_candid:
             rhs_to = self.phrase_to_word_pos(rhs_to)
-            prob_exp_sent = self.get_exp_sent_prob(rhs_to, rhs_to_prob, seed_cfg, rule_key)
             prob_list.append({
                 'parents': parent_rules,
                 'rule': rule_to,
@@ -197,7 +201,7 @@ class CFGDiff:
                         rr = rhs_dict['rhs']
                         rr_prob = rhs_dict['prob']
                         if self.check_list_inclusion(sr, rr) and \
-                           (rr, rr_prob) not in rule_from_ref[str(rr)] and \
+                           (rr, rr_prob) not in rule_from_ref and \
                            len(sr)<len(rr):
                             # len(rr)<comp_length+len(sr)
                             rule_from_ref.append((rr, rr_prob))
@@ -208,7 +212,7 @@ class CFGDiff:
                     if any(rule_from_ref):
                         # Get syntax prob
                         rhs_syntax_probs = self.get_exp_syntax_probs(
-                            tree_seed, seed_lhs, sr, rule_from_ref
+                            pcfg_ref, tree_seed, seed_lhs, sr, _sr['word'], rule_from_ref
                         )
                         
                         # Get top-k prob elements
@@ -217,13 +221,13 @@ class CFGDiff:
                                 sr: ([
                                     (r['rule'], r['prob'], r['sent_prob_wo_target'])
                                     for r in rhs_syntax_probs
-                                ], _sr["word"])
+                                ], _sr['word'])
                             }
                         elif sr not in cfg_diff[seed_lhs].keys():
                             cfg_diff[seed_lhs][sr] = ([
                                 (r['rule'], r['prob'], r['sent_prob_wo_target'])
                                 for r in rhs_syntax_probs
-                            ], _sr["word"])
+                            ], _sr['word'])
                         # end if
                     # end if
                 # end for
