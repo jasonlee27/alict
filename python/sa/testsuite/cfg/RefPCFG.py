@@ -49,6 +49,7 @@ class RefPCFG:
         return rule_dict
 
     def get_treebank_pcfg(self):
+        raw_rule_dict = dict()
         rule_dict = dict()
         productions = list()
         for s in treebank.parsed_sents():
@@ -56,22 +57,80 @@ class RefPCFG:
         # end for
         S = Nonterminal('S')
         grammar = nltk.induce_pcfg(S, productions)
-        if os.path.exists(str(self.pcfg_file)):
-            rule_dict = Utils.read_json(self.pcfg_file)
-            return grammar, rule_dict
-        # end if
+        # if os.path.exists(str(self.pcfg_file)):
+        #     rule_dict = Utils.read_json(self.pcfg_file)
+        #     return grammar, rule_dict
+        # # end if
+
+        # first count the lhs function tag 
+        # for applying lhs tag prob distribution
+        lhs_func_cnt_dict = dict()
         for prod in grammar.productions():
-            lhs_key = str(prod._lhs)
-            if lhs_key not in rule_dict:
-                rule_dict[lhs_key] = list()
+            lhs_key = str(prod._lhs).split('-')
+            lhs_func = "<empty>"
+            if len(lhs_key)>1:
+                lhs_func = '-'.join(lhs_key[1:])
             # end if
-            rule_dict[lhs_key].append({
-                'rhs': [str(r) for r in prod._rhs],
-                'prob': prod.prob()
-            })
+            lhs_key = lhs_key[0]
+            if lhs_key not in lhs_func_cnt_dict.keys():
+                lhs_func_cnt_dict[lhs_key] = { lhs_func: 1 }
+            elif lhs_key in lhs_func_cnt_dict.keys() and \
+                 lhs_func not in lhs_func_cnt_dict[lhs_key].keys():
+                lhs_func_cnt_dict[lhs_key][lhs_func] = 1
+            else:
+                lhs_func_cnt_dict[lhs_key][lhs_func] += 1
+            # end if
         # end for
 
-        # relaxing rhs
+        # second get the prob of production rule
+        for prod in grammar.productions():
+            lhs_key = str(prod._lhs).split('-')
+            lhs_func = "<empty>"
+            if len(lhs_key)>1:
+                lhs_func = '-'.join(lhs_key[1:])
+            # end if
+            lhs_key = lhs_key[0]
+
+            # compute lhs_key prob
+            lhs_tot_cnt = sum([
+                lhs_func_cnt_dict[lhs_key][key]
+                for key in lhs_func_cnt_dict[lhs_key].keys()
+            ])
+            lhs_key_cnt = lhs_func_cnt_dict[lhs_key][lhs_func]
+            lhs_key_prob = lhs_key_cnt*1./lhs_tot_cnt
+
+            if lhs_key not in rule_dict.keys():
+                rule_dict[lhs_key] = [{
+                    'rhs': [str(r).split('-')[0] for r in prod._rhs],
+                    'prob': lhs_key_prob*prod.prob()
+                }]
+            else:
+                rhs_query = [str(r).split('-')[0] for r in prod._rhs]
+                is_query_found = False
+                for rhs_i in range(len(rule_dict[lhs_key])):
+                    if rhs_query==rule_dict[lhs_key][rhs_i]['rhs']:
+                        is_query_found = True
+                        rule_dict[lhs_key][rhs_i]['prob'] += lhs_key_prob*prod.prob()
+                        break
+                    # end if
+                # end for
+                if not is_query_found:
+                    rule_dict[lhs_key].append({
+                        'rhs': rhs_query,
+                        'prob': lhs_key_prob*prod.prob()
+                    })
+                # end if
+            # end if
+        # end for
+
+        # check the rule of pcfg distribution
+        # for lhs_key in rule_dict.keys():
+        #     print(lhs_key)
+        #     print(sum([rhs['prob'] for rhs in rule_dict[lhs_key]]))
+        #     print()
+        #     assert sum([rhs['prob'] for rhs in rule_dict[lhs_key]])==1.
+        # # end for
+        
         self.pcfg_dir.mkdir(parents=True, exist_ok=True)
         Utils.write_json(rule_dict, self.pcfg_file)
         return grammar, rule_dict

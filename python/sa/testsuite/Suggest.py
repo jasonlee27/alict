@@ -22,7 +22,7 @@ from checklist.perturb import Perturb
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from .cfg.CFG import BeneparCFG
+# from .cfg.CFG import BeneparCFG
 from .Search import SearchOperator, SENT_DICT
 
 random.seed(Macros.SEED)
@@ -103,28 +103,31 @@ class Suggest:
         return _masked_input
 
     @classmethod
-    def get_word_pos(cls, word):
-        try:
-            tree = BeneparCFG.get_word_pos(word)
-            parse_string = tree._.parse_string
-            pattern = r"\(([^\:|^\(|^\)]+)\s"+word+r"\)"
-            search = re.search(pattern, parse_string)
-            if search:
-                return parse_string, search.group(1)
-            # end if
-            return None, None
-        except IndexError:
-            print(f"IndexError: {word}")
-            return None, None
+    def get_word_pos(cls, nlp, word):
+        doc = nlp(w)
+        return str(doc[0]), doc[0].tag_
+        # try:
+        #     tree = BeneparCFG.get_word_pos(word)
+        #     parse_string = tree._.parse_string
+        #     pattern = r"\(([^\:|^\(|^\)]+)\s"+word+r"\)"
+        #     search = re.search(pattern, parse_string)
+        #     if search:
+        #         return parse_string, search.group(1)
+        #     # end if
+        #     return None, None
+        # except IndexError:
+        #     print(f"IndexError: {word}")
+        #     return None, None
 
     @classmethod
     def get_sug_words_pos(cls, word_suggest):
+        nlp = spacy.load('en_core_web_md')
         prs_str, pos = list(), list()
         if type(word_suggest)==str:
             word_suggest = [word_suggest]
         # end if
         for ws in word_suggest:
-            parse_string, w_pos = cls.get_word_pos(ws)
+            parse_string, w_pos = cls.get_word_pos(nlp, ws)
             if parse_string is None or w_pos is None:
                 return None, None
             # end if

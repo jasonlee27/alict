@@ -28,22 +28,24 @@ class Synonyms:
         return token._.wordnet.synsets()
 
     @classmethod
-    def get_word_pos(cls, word: str):
-        try:
-            tree = BeneparCFG.get_word_pos(word)
-            parse_string = tree._.parse_string
-            pattern = r"\(([^\:|^\(|^\)]+)\s"+word+r"\)"
-            search = re.search(pattern, parse_string)
-            if search:
-                return parse_string, search.group(1)
-            # end if
-            return None, None
-        except IndexError:
-            print(f"IndexError: {word}")
-            return None, None
+    def get_word_pos(cls, nlp, word: str):
+        doc = nlp(w)
+        return str(doc[0]), doc[0].tag_
+        # try:
+        #     tree = BeneparCFG.get_word_pos(word)
+        #     parse_string = tree._.parse_string
+        #     pattern = r"\(([^\:|^\(|^\)]+)\s"+word+r"\)"
+        #     search = re.search(pattern, parse_string)
+        #     if search:
+        #         return parse_string, search.group(1)
+        #     # end if
+        #     return None, None
+        # except IndexError:
+        #     print(f"IndexError: {word}")
+        #     return None, None
 
     @classmethod
-    def get_words_pos(cls, words):
+    def get_words_pos(cls, nlp, words):
         results = list()
         for w in words:
             doc = nlp(w)

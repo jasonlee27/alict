@@ -4,10 +4,11 @@
 from typing import *
 
 import re, os
+import sys
 import nltk
 import copy
+import spacy
 import random
-import numpy
 
 from pathlib import Path
 from nltk.grammar import Nonterminal
@@ -21,14 +22,20 @@ from .RefPCFG import RefPCFG
 
 
 random.seed(Macros.SEED)
+
 COMP_LENGTH = 3
 NUM_TOPK = 5
 PHRASE_LEVEL_WORD_MAX_LEN = 5
+
+CLAUSE_LEVEL_POS = [
+    'S', 'SBAR', 'SBARQ', 'SINV', 'SQ'
+]
+
 PHRASE_LEVEL_POS = [
     'ADJP', 'ADVP', 'CONJP', 'FRAG', 'INTJ',
     'LST', 'NAC', 'NP', 'NX', 'PP', 'PRN',
     'PRT', 'QP', 'RRC', 'UCP', 'VP',
-    'WHADJP', 'WHAVP', 'WHNP', 'WHPP', 'X'
+    'WHADJP', 'WHAVP', 'WHNP', 'WHPP', 'X',
 ]
 
 WORD_LEVEL_POS = [
@@ -52,7 +59,7 @@ class CFGDiff:
             pcfg_ref=pcfg_ref,
             comp_length = COMP_LENGTH
         )
-        self.grammar_ref, self.rule_dict_ref = pcfg_ref.get_pcfg()
+
     
     def check_list_inclusion(self, a_list, b_list):
         temp = -1
@@ -118,7 +125,6 @@ class CFGDiff:
         if seed_tree is None:
             return parent_rule_list, sent_prob_wo_target
         # end if
-        
         # traverse seed_tree and search target rule
         rule_lhs, rule_rhs, rule_words = self.get_rule_key(seed_tree)
         # rule_key = f"{rule_lhs} -> {rule_rhs}"
@@ -127,11 +133,14 @@ class CFGDiff:
             # reverse tree to get parents of target rule
             if not any(parent_rule_list):
                 parent = seed_tree._.parent
+                if parent is None:
+                    return parent_rule_list, sent_prob_wo_target
+                # end if
                 while True:
                     parent_lhs, parent_rhs, _ = self.get_rule_key(parent)
                     parent_key = f"{parent_lhs} -> {parent_rhs}"
                     parent_rule_list.append(parent_key)
-                    if parent._.labels[0]=='S':
+                    if parent._.labels[0]=='S' or parent is None:
                         parent_rule_list.reverse()
                         break
                     # end if
@@ -167,61 +176,116 @@ class CFGDiff:
         # end for
         return prob
 
-    def get_token_pos(self, token):
-        for key in self.rule_dict_ref.keys():
-            if key.split('-')[0] in WORD_LEVEL_POS:
-                for v in self.rule_dict_ref[key]:
-                    if token in v['rhs']:
-                        return key
-                    # end if
-                # end for
-            # end if
-        # end for
-        return None
+    def get_token_pos(self, nlp, token):
+        doc = nlp(token)
+        # for key in self.rule_dict_ref.keys():
+        #     if key.split('-')[0] in WORD_LEVEL_POS:
+        #         for v in self.rule_dict_ref[key]:
+        #             if token in v['rhs']:
+        #                 return key
+        #             # end if
+        #         # end for
+        #     # end if
+        # # end for
+        return doc[0].tag_
     
-    def get_sent_pos(self, sent):
-        return [self.get_token_pos(t) for t in sent]
+    def get_sent_pos(self, nlp, sent):
+        return [self.get_token_pos(nlp, t) for t in sent]
 
-    def phrase_to_word_pos(self, pos_list):
-        contained = [(p_i,p) for p_i, p in enumerate(pos_list) if p.split('-')[0] in PHRASE_LEVEL_POS]
+    def generate_phrase(self, grammar, start_symbol):
+        nonterminal = Nonterminal(start_symbol)
+        sents = list()
+        sys.setrecursionlimit(100)
+        print("######")
+        try:
+            for s in generate.generate(grammar, start=nonterminal, depth=5):
+                sents.append(s)
+            # end for
+            random.shuffle(sents)
+            print("######")
+            return sents[0]
+        except Exception:
+            print("@@@@@@@@@@@@@@")
+            if any(sents):
+                random.shuffle(sents)
+                return sents[0]
+            else:
+                return sents
+            # end if
+        # end try
+        
+    def phrase_to_word_pos(self, pcfg_ref, pos_from, pos_list):
+        contained = [
+            (p_i,p)
+            for p_i, p in enumerate(pos_list)
+            if (p.split('-')[0] in PHRASE_LEVEL_POS+CLAUSE_LEVEL_POS) and
+            (p.split('-')[0] not in pos_from)
+        ]
+        # nlp = spacy.load('en_core_web_md')
         if any(contained):
-            for c_i, c in contained:
-                nonterminal = Nonterminal(c)
-                for s in generate.generate(self.grammar_ref, start=nonterminal, n=20):
-                    sent_pos = self.get_sent_pos(s)
-                    if all(sent_pos) and len(sent_pos)<PHRASE_LEVEL_WORD_MAX_LEN:
-                        pos_list = pos_list[:c_i]+sent_pos+pos_list[c_i+1:]
-                    # end if
-            return contained
+            return None
+            # for c_i, c in contained:
+            #     sent = self.generate_phrase(pcfg_ref.grammar, c)
+            #     if any(sent):
+            #         sent_pos = self.get_sent_pos(nlp, sent)
+            #         if all(sent_pos) and len(sent_pos)<PHRASE_LEVEL_WORD_MAX_LEN:
+            #             pos_list = pos_list[:c_i]+sent_pos+pos_list[c_i+1:]
+            #         # end if
+            #     else:
+            #         return None
+            #     # end if
+            # # end for
         # end if
         return pos_list
+
+    def check_rhs_availability(self, pos_from, pos_to):
+        # for now, we only take pos expansion
+        recursion_pos_contained = [
+            (p_i,p)
+            for p_i, p in enumerate(pos_to)
+            if (p.split('-')[0] in PHRASE_LEVEL_POS+CLAUSE_LEVEL_POS) and
+            (p.split('-')[0] not in pos_from)
+        ]
+        non_maskable_pos_contained = [
+            (p_i,p)
+            for p_i, p in enumerate(pos_to)
+            if (p.split('-')[0] not in PHRASE_LEVEL_POS+CLAUSE_LEVEL_POS+WORD_LEVEL_POS) and
+            (p.split('-')[0] not in pos_from)
+        ]
+        if any(recursion_pos_contained) or any(non_maskable_pos_contained):
+            return False
+        # end if
+        return True
 
     def get_exp_syntax_probs(self, pcfg_ref, seed_cfg, lhs_seed, rhs_seed, target_words, rhs_to_candid):
         # rule_candid: Dict.
         # key is the rule_from, and values are the list of rule_to to be replaced with.
         prob_list = list()
         # rule_key = f"{lhs_seed} -> {tuple(rhs_seed)}"
-        print(lhs_seed, rhs_seed, seed_cfg, target_words)
         parent_rules, sent_prob_wo_target = self.get_target_rule_parents(
-            pcfg_ref, seed_cfg,
+            pcfg_ref.pcfg, seed_cfg,
             lhs_seed, tuple(rhs_seed), target_words,
             1., list()
         )
-        print(parent_rules, sent_prob_wo_target)
-        parents_prob = self.get_parent_rules_prob(pcfg_ref, parent_rules)
+        parents_prob = self.get_parent_rules_prob(pcfg_ref.pcfg, parent_rules)
         for rhs_to, rhs_to_prob in rhs_to_candid:
-            rhs_to = self.phrase_to_word_pos(rhs_to)
-            prob_list.append({
-                'parents': parent_rules,
-                'rule': rhs_to,
-                'prob': rhs_to_prob,
-                'sent_prob_wo_target': sent_prob_wo_target
-            })
-            print(prob_list[-1])
+            if self.check_rhs_availability(rhs_seed, rhs_to):
+                rhs_to = self.phrase_to_word_pos(pcfg_ref, rhs_seed, rhs_to)
+                prob_list.append({
+                    'parents': parent_rules,
+                    'rule': rhs_to,
+                    'prob': rhs_to_prob,
+                    'sent_prob_wo_target': sent_prob_wo_target
+                })
+                print(prob_list)
+            # end if
         # end for
-        prob_list = sorted(prob_list, key=lambda x: x['prob_w_parents'])
-        prob_list.reverse()
-        return prob_list[:NUM_TOPK]
+        if any(prob_list):
+            prob_list = sorted(prob_list, key=lambda x: x['prob_w_parents'])
+            prob_list.reverse()
+            prob_list = prob_list[:NUM_TOPK]
+        # end if
+        return prob_list
     
     def get_cfg_diff(self,
                      cfg_seed,
@@ -235,7 +299,7 @@ class CFGDiff:
                     sr = _sr['pos']
                     sr = [sr] if type(sr)==str else list(sr)
                     rule_from_ref = list()
-                    for rhs_dict in pcfg_ref[seed_lhs]:
+                    for rhs_dict in pcfg_ref.pcfg[seed_lhs]:
                         rr = rhs_dict['rhs']
                         rr_prob = rhs_dict['prob']
                         if self.check_list_inclusion(sr, rr) and \
@@ -252,20 +316,21 @@ class CFGDiff:
                         rhs_syntax_probs = self.get_exp_syntax_probs(
                             pcfg_ref, tree_seed, seed_lhs, sr, _sr['word'], rule_from_ref
                         )
-                        
-                        # Get top-k prob elements
-                        if seed_lhs not in cfg_diff.keys():
-                            cfg_diff[seed_lhs] = {
-                                sr: ([
+                        if any(rhs_syntax_probs):
+                            # Get top-k prob elements
+                            if seed_lhs not in cfg_diff.keys():
+                                cfg_diff[seed_lhs] = {
+                                    sr: ([
+                                        (r['rule'], r['prob'], r['sent_prob_wo_target'])
+                                        for r in rhs_syntax_probs
+                                    ], _sr['word'])
+                                }
+                            elif sr not in cfg_diff[seed_lhs].keys():
+                                cfg_diff[seed_lhs][sr] = ([
                                     (r['rule'], r['prob'], r['sent_prob_wo_target'])
                                     for r in rhs_syntax_probs
                                 ], _sr['word'])
-                            }
-                        elif sr not in cfg_diff[seed_lhs].keys():
-                            cfg_diff[seed_lhs][sr] = ([
-                                (r['rule'], r['prob'], r['sent_prob_wo_target'])
-                                for r in rhs_syntax_probs
-                            ], _sr['word'])
+                            # end if
                         # end if
                     # end if
                 # end for

@@ -50,7 +50,7 @@ class CFGExpander:
         # get the cfg components that can be expanded 
         # compared with ref grammer
         return CFGDiff(
-            pcfg_ref=self.pcfg_ref.pcfg,
+            pcfg_ref=self.pcfg_ref,
             cfg_seed=self.cfg_seed,
             tree_seed=self.tree_seed
         ).cfg_diff
