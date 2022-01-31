@@ -75,10 +75,43 @@ class CFGDiff:
         # end if
         return False
 
+    def get_rule_key(self, seed_tree):
+        lhs = None
+        rhs = None
+        words = None
+        if any(seed_tree._.labels):
+            lhs = seed_tree._.labels[0]
+            rhs = list()
+            words = list()
+            if any(list(seed_tree._.children)):
+                for ch in seed_tree._.children:
+                    if any(ch._.labels):
+                        rhs.append(ch._.labels[0])
+                    else:
+                        search = re.search(r'\((\S+)\s(\S+)\)', ch._.parse_string)
+                        if search:
+                            rhs.append(search.group(1))
+                        # end if
+                    # end if
+                    words.append(str(ch))
+                # end for
+                return lhs, tuple(rhs), tuple(words)
+            else:
+                search = re.search(f"\(([^\s\(]+)\s([^\s\)]+)\)", seed_tree._.parse_string)
+                rhs.append(search.group(1))
+                return lhs, tuple(rhs), str(seed_tree)
+            # end if            
+        else:
+            search = re.search(r'\((\S+)\s(\S+)\)', seed_tree._.parse_string)
+            # return f"{search.group(1)} -> {tuple([search.group(2)])}"
+            return search.group(1), tuple([search.group(2)]), str(seed_tree)
+        # end if
+
     def get_target_rule_parents(self,
                                 pcfg_ref,
                                 seed_tree,
-                                target_rule,
+                                target_lhs,
+                                target_rhs,
                                 target_words,
                                 sent_prob_wo_target,
                                 parent_rule_list):
@@ -87,49 +120,50 @@ class CFGDiff:
         # end if
         
         # traverse seed_tree and search target rule
-        print(seed_tree._.labels, target_rule, target_words)
-        rule_lhs = seed_tree._.labels[0]
-        rule_rhs = tuple([ch._.labels[0] if any(ch._.labels) else str(ch) for ch in seed_tree._.children])
-        rule_key = f"{rule_lhs} -> {rule_rhs}"
-        if rule_key==target_rule and str(seed_tree)==target_words:
+        rule_lhs, rule_rhs, rule_words = self.get_rule_key(seed_tree)
+        # rule_key = f"{rule_lhs} -> {rule_rhs}"
+        if rule_lhs==target_lhs and rule_rhs==target_rhs and rule_words==target_words:
             # when we find the target rule in seed tree,
             # reverse tree to get parents of target rule
             if not any(parent_rule_list):
+                parent = seed_tree._.parent
                 while True:
-                    parent = seed_tree._.parent
-                    parent_lhs = parent._.labels[0]
-                    parent_rhs = tuple([ch._.labels[0] if any(ch._.labels) else str(ch) for ch in parent._.children])
+                    parent_lhs, parent_rhs, _ = self.get_rule_key(parent)
                     parent_key = f"{parent_lhs} -> {parent_rhs}"
                     parent_rule_list.append(parent_key)
                     if parent._.labels[0]=='S':
                         parent_rule_list.reverse()
                         break
                     # end if
+                    parent = parent._.parent
                 # end while
-            else:
-                sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, rule_rhs)
             # end if
+            # sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, rule_rhs)
         else:
             sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, rule_rhs)
             for ch in seed_tree._.children:
-                parent_rule_list, sent_prob_wo_target = self.get_target_rule_parents(pcfg_ref,ch, target_rule, str(ch), sent_prob_wo_target, parent_rule_list)
+                parent_rule_list, sent_prob_wo_target = self.get_target_rule_parents(
+                    pcfg_ref, ch,
+                    target_lhs, target_rhs, target_words,
+                    sent_prob_wo_target, parent_rule_list
+                )
             # end for
         # end if
         return parent_rule_list, sent_prob_wo_target
 
-    def get_rule_prob(self, pcfg_ref, lhs:str, rhs:str):
+    def get_rule_prob(self, pcfg_ref, lhs:str, rhs:tuple):
         for r in pcfg_ref[lhs]:
-            if rhs==str(tuple(r['rhs'])):
+            if rhs==tuple(r['rhs']):
                 return r['prob']
             # end if
         # end for
-        return 0.
+        return 1.
     
-    def get_parent_rules_prob(self, parent_rules):
+    def get_parent_rules_prob(self, pcfg_ref, parent_rules):
         prob = 1.
         for r in parent_rules:
             lhs, rhs = r.split(' -> ')
-            prob = prob*self.get_rule_prob(lhs, rhs)
+            prob = prob*self.get_rule_prob(pcfg_ref, lhs, rhs)
         # end for
         return prob
 
@@ -160,26 +194,30 @@ class CFGDiff:
                     # end if
             return contained
         # end if
-        return pop_list
+        return pos_list
 
     def get_exp_syntax_probs(self, pcfg_ref, seed_cfg, lhs_seed, rhs_seed, target_words, rhs_to_candid):
         # rule_candid: Dict.
         # key is the rule_from, and values are the list of rule_to to be replaced with.
         prob_list = list()
-        rule_key = f"{lhs_seed} -> {tuple(rhs_seed)}"
+        # rule_key = f"{lhs_seed} -> {tuple(rhs_seed)}"
+        print(lhs_seed, rhs_seed, seed_cfg, target_words)
         parent_rules, sent_prob_wo_target = self.get_target_rule_parents(
-            pcfg_ref, seed_cfg, rule_key, target_words, 1., list()
+            pcfg_ref, seed_cfg,
+            lhs_seed, tuple(rhs_seed), target_words,
+            1., list()
         )
-
-        parents_prob = self.get_parent_rules_prob(parent_rules)
-        for rhs_to, rhs_to_prob in rule_to_candid:
+        print(parent_rules, sent_prob_wo_target)
+        parents_prob = self.get_parent_rules_prob(pcfg_ref, parent_rules)
+        for rhs_to, rhs_to_prob in rhs_to_candid:
             rhs_to = self.phrase_to_word_pos(rhs_to)
             prob_list.append({
                 'parents': parent_rules,
-                'rule': rule_to,
+                'rule': rhs_to,
                 'prob': rhs_to_prob,
                 'sent_prob_wo_target': sent_prob_wo_target
             })
+            print(prob_list[-1])
         # end for
         prob_list = sorted(prob_list, key=lambda x: x['prob_w_parents'])
         prob_list.reverse()
