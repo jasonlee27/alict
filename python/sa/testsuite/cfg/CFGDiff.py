@@ -136,16 +136,13 @@ class CFGDiff:
                 if parent is None:
                     return parent_rule_list, sent_prob_wo_target
                 # end if
-                while True:
+                while parent is not None:
                     parent_lhs, parent_rhs, _ = self.get_rule_key(parent)
                     parent_key = f"{parent_lhs} -> {parent_rhs}"
                     parent_rule_list.append(parent_key)
-                    if parent._.labels[0]=='S' or parent is None:
-                        parent_rule_list.reverse()
-                        break
-                    # end if
                     parent = parent._.parent
                 # end while
+                parent_rule_list.reverse()
             # end if
             # sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, rule_rhs)
         else:
@@ -196,16 +193,13 @@ class CFGDiff:
         nonterminal = Nonterminal(start_symbol)
         sents = list()
         sys.setrecursionlimit(100)
-        print("######")
         try:
             for s in generate.generate(grammar, start=nonterminal, depth=5):
                 sents.append(s)
             # end for
             random.shuffle(sents)
-            print("######")
             return sents[0]
         except Exception:
-            print("@@@@@@@@@@@@@@")
             if any(sents):
                 random.shuffle(sents)
                 return sents[0]
@@ -277,7 +271,6 @@ class CFGDiff:
                     'prob': rhs_to_prob,
                     'sent_prob_wo_target': sent_prob_wo_target
                 })
-                print(prob_list)
             # end if
         # end for
         if any(prob_list):

@@ -77,7 +77,7 @@ class Template:
                     )
                 # end if
                 exp_inputs[seed] = {
-                    "cfg_seed": expander.cfg_seed,
+                    "cfg_seed": generator.expander.cfg_seed,
                     "exp_inputs": new_input_results,
                     "label": seed_label,
                     "label_score": seed_score
@@ -91,7 +91,7 @@ class Template:
             Utils.write_json(results, save_to, pretty_format=True)
             print(f"<<<<< REQUIREMENT:", selected["requirement"]["description"])
         # end for
-            
+        
         # # write raw new inputs
         # Utils.write_json(results, save_to, pretty_format=True)
         print(f"**********")        
