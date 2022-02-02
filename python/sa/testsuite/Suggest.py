@@ -74,9 +74,13 @@ class Suggest:
                 suggest_res.append((ws_sug, score))
             # end if
         # end for
-        probs = softmax([s[1] for s in suggest_res])
-        suggest_res = [(s[0],p) for s, p in zip(suggest_res, probs)]
-        return suggest_res[:num_target]
+        print(suggest_res)
+        if any(suggest_res):
+            probs = softmax([s[1] for s in suggest_res])
+            suggest_res = [(s[0],p) for s, p in zip(suggest_res, probs)]
+            return suggest_res[:num_target]
+        # end if
+        return suggest_res
 
     @classmethod
     def find_all_mask_placeholder(cls, masked_input, target_pattern):
@@ -104,7 +108,7 @@ class Suggest:
 
     @classmethod
     def get_word_pos(cls, nlp, word):
-        doc = nlp(w)
+        doc = nlp(word)
         return str(doc[0]), doc[0].tag_
         # try:
         #     tree = BeneparCFG.get_word_pos(word)
@@ -187,40 +191,48 @@ class Suggest:
         return all(all_reqs_met)
 
     @classmethod
-    def get_words_by_prob(words_sugget, gen_input, masked_input):
+    def get_words_by_prob(cls, words_suggest, gen_input, masked_input):
+        if not any(words_suggest):
+            return None
+        # end if
         lhs = gen_input['lhs']
         cfg_rhs_from = gen_input['cfg_from'].split(f"{lhs} -> ")[-1]
         cfg_rhs_to = gen_input['cfg_to'].split(f"{lhs} -> ")[-1]
-        cfg_diff = generator.expander.cfg_diff[lhs][cfg_rhs_from]
-        prob, sent_prob_wo_target = -1.,-1.
-        for diff in cfg_diff:
-            if diff[0]==cfg_rhs_to:
-                prob, sent_prob_wo_target = diff[1], diff[2]
-                break
-            # end if
-        # end for
+        prob = gen_input['prob']
+        sent_prob_wo_target = gen_input['sent_prob_wo_target']
+        # cfg_diff = generator.expander.cfg_diff[lhs][cfg_rhs_from]
+        # prob, sent_prob_wo_target = -1.,-1.
+        # for diff in cfg_diff:
+        #     if diff[0]==cfg_rhs_to:
+        #         prob, sent_prob_wo_target = diff[1], diff[2]
+        #         break
+        #     # end if
+        # # end for
 
         sent_probs = list()
         for ws_sug, prob_ws in words_suggest:
             sent = cls.replace_mask_w_suggestion(masked_input, ws_sug)
-            sent_probs.append((ws_sug,sent_prob_wo_target*prob*prob_ws))
+            sent_probs.append((
+                ws_sug,
+                sent_prob_wo_target*prob*prob_ws
+            ))
         # end for
-        sent_probs = sorted(sent_probs, key=lambda x: x[-1])
-        sent_probs.reverse()
-        sent_probs = sent_probs[:NUM_TOPK]
-        return [s[0] for s in sent_probs]
+        sent_probs = sorted(sent_probs, key=lambda x: x[-1], reverse=True)
+        sent_probs = [s[0] for s in sent_probs[:NUM_TOPK]]
+        return sent_probs
 
-            
     @classmethod
     def get_new_inputs(cls, generator, gen_inputs, num_target=10):
         editor = generator.editor
         for g_i in range(len(gen_inputs)):
             gen_input = gen_inputs[g_i]
+            # print(gen_input)
             masked_input, mask_pos = gen_input['masked_input']
             words_suggest = cls.get_word_suggestion(editor, masked_input, mask_pos, num_target=num_target)
-            gen_input['words_suggest'] = cls.get_words_by_prob(words_suggest, gen_input, generator)
+            gen_input['words_suggest'] = cls.get_words_by_prob(words_suggest, gen_input, masked_input)
             gen_inputs[g_i] = gen_input
         # end for
+        gen_inputs = [g for g in gen_inputs if g['words_suggest'] is not None]
         return gen_inputs
 
     @classmethod

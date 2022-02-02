@@ -255,7 +255,6 @@ class CFGDiff:
         # rule_candid: Dict.
         # key is the rule_from, and values are the list of rule_to to be replaced with.
         prob_list = list()
-        # rule_key = f"{lhs_seed} -> {tuple(rhs_seed)}"
         parent_rules, sent_prob_wo_target = self.get_target_rule_parents(
             pcfg_ref.pcfg, seed_cfg,
             lhs_seed, tuple(rhs_seed), target_words,
@@ -269,13 +268,13 @@ class CFGDiff:
                     'parents': parent_rules,
                     'rule': rhs_to,
                     'prob': rhs_to_prob,
+                    'prob_w_parents': parents_prob*rhs_to_prob,
                     'sent_prob_wo_target': sent_prob_wo_target
                 })
             # end if
         # end for
         if any(prob_list):
-            prob_list = sorted(prob_list, key=lambda x: x['prob_w_parents'])
-            prob_list.reverse()
+            prob_list = sorted(prob_list, key=lambda x: x['prob_w_parents'], reverse=True)
             prob_list = prob_list[:NUM_TOPK]
         # end if
         return prob_list
@@ -302,8 +301,7 @@ class CFGDiff:
                             rule_from_ref.append((rr, rr_prob))
                         # end if
                     # end for
-                    
-                    # rhs_syntax_probs = list()
+
                     if any(rule_from_ref):
                         # Get syntax prob
                         rhs_syntax_probs = self.get_exp_syntax_probs(
@@ -313,13 +311,13 @@ class CFGDiff:
                             # Get top-k prob elements
                             if seed_lhs not in cfg_diff.keys():
                                 cfg_diff[seed_lhs] = {
-                                    sr: ([
+                                    str(sr): ([
                                         (r['rule'], r['prob'], r['sent_prob_wo_target'])
                                         for r in rhs_syntax_probs
                                     ], _sr['word'])
                                 }
                             elif sr not in cfg_diff[seed_lhs].keys():
-                                cfg_diff[seed_lhs][sr] = ([
+                                cfg_diff[seed_lhs][str(sr)] = ([
                                     (r['rule'], r['prob'], r['sent_prob_wo_target'])
                                     for r in rhs_syntax_probs
                                 ], _sr['word'])

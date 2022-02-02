@@ -52,9 +52,13 @@ class RefPCFG:
         raw_rule_dict = dict()
         rule_dict = dict()
         productions = list()
+        pos_of_sent_start = list()
         for s in treebank.parsed_sents():
             productions += s.productions()
+            pos_of_sent_start.append(s.label())
         # end for
+        
+        
         S = Nonterminal('S')
         grammar = nltk.induce_pcfg(S, productions)
         # if os.path.exists(str(self.pcfg_file)):

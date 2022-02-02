@@ -38,10 +38,11 @@ class Generator:
         result = list()
         for lhs, rhs_values in self.expander.cfg_diff.items():
             for rhs_from, value in rhs_values.items():
+                rhs_from = eval(rhs_from)
                 rhs_to_ref = value[0]
                 words = value[1]
                 old_phrase = Utils.detokenize(list(words))
-                for rhs_to, rhs_to_prob in rhs_to_ref:
+                for rhs_to, rhs_to_prob, sent_prob_wo_target in rhs_to_ref:
                     word_ids, pos_ids = dict(), dict()
                     for pos, word in zip(rhs_from, words):
                         for r_i, r in enumerate(rhs_to):
@@ -74,7 +75,7 @@ class Generator:
                     for w_i,pos in enumerate(rhs_to):
                         if w_i in word_ids.keys() and w_i==pos_ids[pos]:
                             new_phrase.append(word_ids[w_i])
-                        elif w_i not in word_ids.keys() and pos not in self.expander.cfg_ref.keys():
+                        elif w_i not in word_ids.keys() and pos not in self.expander.pcfg_ref.pcfg.keys():
                             new_phrase.append(pos)
                         else:
                             new_phrase.append("{mask:"+pos+"}")
@@ -92,7 +93,8 @@ class Generator:
                             "target_phrase": old_phrase,
                             "masked_phrase": new_phrase,
                             "masked_input": (_masked_input, mask_pos),
-                            "prob": rhs_to_prob
+                            "prob": rhs_to_prob,
+                            "sent_prob_wo_target": sent_prob_wo_target
                         })
                     # end if
                 # end for
