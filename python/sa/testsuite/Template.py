@@ -21,7 +21,6 @@ from .Generator import Generator
 from .Synonyms import Synonyms
 from .Search import Search
 from .Suggest import Suggest
-from .cfg.CFGExpander import CFGExpander
 
 
 class Template:
@@ -44,7 +43,6 @@ class Template:
     
     @classmethod
     def generate_inputs(cls, task, dataset, n=None, save_to=None):
-        cfg_ref_file = Macros.result_dir / 'treebank_cfg.json'
         print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(task)
         results = list()
@@ -59,7 +57,6 @@ class Template:
             reqs = _reqs
         # end if
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
-            
             exp_inputs = dict()
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
             num_selected_inputs = len(selected["selected_inputs"])
@@ -69,30 +66,18 @@ class Template:
             for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
                 print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score}")
                 index += 1
-                expander = CFGExpander(seed_input=seed, cfg_ref_file=cfg_ref_file)
-                generator = Generator(expander=expander)
+                generator = Generator(seed)
                 gen_inputs = generator.masked_input_generator()
                 new_input_results = list()
                 if any(gen_inputs) and num_seed_for_exp<=n:
-                    # get the word suggesteion at the expended grammar elements
-                    gen_inputs = Suggest.get_new_inputs(
-                        generator.editor,
+                    new_input_results = Suggest.get_exp_inputs(
+                        generator,
                         gen_inputs,
                         num_target=Macros.num_suggestions_on_exp_grammer_elem
                     )
-                    for g_i in range(len(gen_inputs)):
-                        eval_results = Suggest.eval_word_suggest(gen_inputs[g_i], seed_label, selected["requirement"])
-                        if any(eval_results):
-                            del gen_inputs[g_i]["words_suggest"]
-                            new_input_results.extend(eval_results)
-                            num_seed_for_exp += 1
-                            print(".", end="")
-                        # end if
-                    # end for
-                    print()
                 # end if
                 exp_inputs[seed] = {
-                    "cfg_seed": expander.cfg_seed,
+                    "cfg_seed": generator.expander.cfg_seed,
                     "exp_inputs": new_input_results,
                     "label": seed_label,
                     "label_score": seed_score
@@ -106,7 +91,7 @@ class Template:
             Utils.write_json(results, save_to, pretty_format=True)
             print(f"<<<<< REQUIREMENT:", selected["requirement"]["description"])
         # end for
-            
+        
         # # write raw new inputs
         # Utils.write_json(results, save_to, pretty_format=True)
         print(f"**********")        
