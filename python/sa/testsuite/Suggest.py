@@ -58,12 +58,28 @@ class Suggest:
             # end if
         # end for
         return results
+
+    @classmethod
+    def get_masked_inputs(cls, gen_inputs):
+        return set([inp['masked_input'][0] for inp in gen_inputs])
+
+    @classmethod
+    def get_word_suggestion(cls, editor: Editor, gen_inputs):
+        results = dict()
+        masked_inputs = cls.get_masked_inputs(gen_inputs)
+        for m_inp in masked_inputs:
+            word_suggest = editor.suggest(m_inp, return_score=True, remove_duplicates=True)
+            word_suggest = [ws for ws in word_suggest if cls.is_word_suggestion_avail(ws[0])]
+            word_suggest = cls.remove_duplicates(word_suggest)
+            results[m_inp] = word_suggest
+        # end for
+        return results
     
     @classmethod
-    def get_word_suggestion(cls, editor: Editor, masked_input: str, mask_pos: List, num_target=10):
-        word_suggest = editor.suggest(masked_input, return_score=True, remove_duplicates=True)
-        word_suggest = [ws for ws in word_suggest if cls.is_word_suggestion_avail(ws[0])]
-        word_suggest = cls.remove_duplicates(word_suggest)
+    def match_word_n_pos(cls, word_suggest, masked_input: str, mask_pos: List, num_target=10):
+        # word_suggest = editor.suggest(masked_input, return_score=True, remove_duplicates=True)
+        # word_suggest = [ws for ws in word_suggest if cls.is_word_suggestion_avail(ws[0])]
+        # word_suggest = cls.remove_duplicates(word_suggest)
         
         # find suggested words with the same pos as we want.
         # and normalizing scores of selected word suggestion
@@ -74,7 +90,6 @@ class Suggest:
                 suggest_res.append((ws_sug, score))
             # end if
         # end for
-        print(suggest_res)
         if any(suggest_res):
             probs = softmax([s[1] for s in suggest_res])
             suggest_res = [(s[0],p) for s, p in zip(suggest_res, probs)]
@@ -220,15 +235,21 @@ class Suggest:
         sent_probs = sorted(sent_probs, key=lambda x: x[-1], reverse=True)
         sent_probs = [s[0] for s in sent_probs[:NUM_TOPK]]
         return sent_probs
-
+    
     @classmethod
     def get_new_inputs(cls, generator, gen_inputs, num_target=10):
         editor = generator.editor
+        word_suggestions = cls.get_word_suggestion(editor, gen_inputs)
         for g_i in range(len(gen_inputs)):
+            print(f"gen_new_inputs: {g_i} out of {len(gen_inputs)}")
             gen_input = gen_inputs[g_i]
-            # print(gen_input)
             masked_input, mask_pos = gen_input['masked_input']
-            words_suggest = cls.get_word_suggestion(editor, masked_input, mask_pos, num_target=num_target)
+            words_suggest = cls.match_word_n_pos(
+                word_suggestions[masked_input],
+                masked_input,
+                mask_pos,
+                num_target=num_target
+            )
             gen_input['words_suggest'] = cls.get_words_by_prob(words_suggest, gen_input, masked_input)
             gen_inputs[g_i] = gen_input
         # end for
@@ -256,18 +277,19 @@ class Suggest:
         return results
 
     @classmethod
-    def get_exp_inputs(cls, generator, gen_inputs, num_target=10):
+    def get_exp_inputs(cls, generator, gen_inputs, seed_label, requirement,  num_target=10):
         # get the word suggesteion at the expended grammar elements
         new_input_results = list()              
         gen_inputs = cls.get_new_inputs(
             generator, gen_inputs, num_target=num_target
         )
         for g_i in range(len(gen_inputs)):
-            eval_results = cls.eval_word_suggest(gen_inputs[g_i], seed_label, selected["requirement"])
+            eval_results = cls.eval_word_suggest(gen_inputs[g_i], seed_label, requirement)
             if any(eval_results):
                 del gen_inputs[g_i]["words_suggest"]
                 new_input_results.extend(eval_results)
                 num_seed_for_exp += 1
+                print(f"eval: {g_i} out of {len(gen_inputs)}", end="")
                 print(".", end="")
             # end if
         # end for

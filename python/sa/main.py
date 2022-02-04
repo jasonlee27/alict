@@ -20,7 +20,7 @@ parser.add_argument('--nlp_task', type=str, default="sa",
                     help='nlp task of focus')
 parser.add_argument('--search_dataset', type=str, default="sst",
                     help='name of dataset for searching testcases that meets the requirement')
-parser.add_argument('--num_seeds', type=int, default=Macros.num_seeds,
+parser.add_argument('--num_seeds', type=int, default=Macros.max_num_seeds,
                     help='number of seed inputs found in search dataset')
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')

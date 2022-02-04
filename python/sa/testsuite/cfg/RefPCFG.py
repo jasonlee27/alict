@@ -48,18 +48,8 @@ class RefPCFG:
         # end for
         return rule_dict
 
-    def get_treebank_pcfg(self):
-        raw_rule_dict = dict()
-        rule_dict = dict()
-        productions = list()
-        pos_of_sent_start = list()
-        for s in treebank.parsed_sents():
-            productions += s.productions()
-            pos_of_sent_start.append(s.label())
-        # end for
-        
-        
-        S = Nonterminal('S')
+    def _get_treebank_pcfg(self, pos_of_sent_start, sent_start_prob, productions, rule_dict):
+        S = Nonterminal(pos_of_sent_start)
         grammar = nltk.induce_pcfg(S, productions)
         # if os.path.exists(str(self.pcfg_file)):
         #     rule_dict = Utils.read_json(self.pcfg_file)
@@ -106,7 +96,7 @@ class RefPCFG:
             if lhs_key not in rule_dict.keys():
                 rule_dict[lhs_key] = [{
                     'rhs': [str(r).split('-')[0] for r in prod._rhs],
-                    'prob': lhs_key_prob*prod.prob()
+                    'prob': sent_start_prob*lhs_key_prob*prod.prob()
                 }]
             else:
                 rhs_query = [str(r).split('-')[0] for r in prod._rhs]
@@ -114,19 +104,42 @@ class RefPCFG:
                 for rhs_i in range(len(rule_dict[lhs_key])):
                     if rhs_query==rule_dict[lhs_key][rhs_i]['rhs']:
                         is_query_found = True
-                        rule_dict[lhs_key][rhs_i]['prob'] += lhs_key_prob*prod.prob()
+                        rule_dict[lhs_key][rhs_i]['prob'] += sent_start_prob*lhs_key_prob*prod.prob()
                         break
                     # end if
                 # end for
                 if not is_query_found:
                     rule_dict[lhs_key].append({
                         'rhs': rhs_query,
-                        'prob': lhs_key_prob*prod.prob()
+                        'prob': sent_start_prob*lhs_key_prob*prod.prob()
                     })
                 # end if
             # end if
         # end for
+        return grammar, rule_dict
 
+    def get_treebank_pcfg(self):
+        raw_rule_dict = dict()
+        rule_dict = dict()
+        grammars = dict()
+        productions = list()
+        pos_of_sent_start = list()
+        for s in treebank.parsed_sents():
+            productions += s.productions()
+            pos_of_sent_start.append(s.label())
+        # end for
+
+        rule_dict['<SOS>'] = list()
+        for s in set(pos_of_sent_start):
+            start_prob = pos_of_sent_start.count(s)*1./len(pos_of_sent_start)
+            rule_dict['<SOS>'].append({
+                'rhs': [s],
+                'prob': start_prob
+            })
+            grammar, rule_dict = self._get_treebank_pcfg(s, start_prob, productions, rule_dict)
+            grammars[s] = grammar
+        # end if
+        
         # check the rule of pcfg distribution
         # for lhs_key in rule_dict.keys():
         #     print(lhs_key)
@@ -137,7 +150,7 @@ class RefPCFG:
         
         self.pcfg_dir.mkdir(parents=True, exist_ok=True)
         Utils.write_json(rule_dict, self.pcfg_file)
-        return grammar, rule_dict
+        return grammars, rule_dict
 
     def get_rules(self):
         if self.corpus_name=='treebank':

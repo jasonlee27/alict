@@ -100,7 +100,7 @@ class Generator:
                 # end for
             # end for
         # end for
-        if len(result)>Macros.num_cfg_exp_elem:
+        if len(result)>Macros.num_cfg_exp_elem and Macros.num_cfg_exp_elem>0:
             # random sampling N cfg diffs
             idxs = np.random.choice(len(result), Macros.num_cfg_exp_elem, replace=False)
             result = [result[i] for i in idxs]

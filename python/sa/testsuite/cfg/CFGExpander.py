@@ -36,12 +36,8 @@ class CFGExpander:
         # self.cfg_ref: dict = self.get_tb_ref_cfg(ref_corpus=ref_corpus)
         del tree_dict
     
-    def get_seed_cfg(self, cfg_file=None, pretty_format=False):
-        return BeneparCFG.get_seed_cfg(
-            self.seed_input,
-            cfg_file=cfg_file,
-            pretty_format=pretty_format
-        )
+    def get_seed_cfg(self):
+        return BeneparCFG.get_seed_cfg(self.seed_input)
     
     def get_ref_pcfg(self):
         return self.pcfg_ref.pcfg
