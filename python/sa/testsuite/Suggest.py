@@ -64,11 +64,12 @@ class Suggest:
         return set([inp['masked_input'][0] for inp in gen_inputs])
 
     @classmethod
-    def get_word_suggestion(cls, editor: Editor, gen_inputs):
+    def get_word_suggestion(cls, editor: Editor, gen_inputs, num_target=10):
         results = dict()
         masked_inputs = cls.get_masked_inputs(gen_inputs)
         for m_inp in masked_inputs:
             word_suggest = editor.suggest(m_inp, return_score=True, remove_duplicates=True)
+            word_suggest = sorted(word_suggest, key=lambda x: x[-1], reverse=True)[:num_target]
             word_suggest = [ws for ws in word_suggest if cls.is_word_suggestion_avail(ws[0])]
             word_suggest = cls.remove_duplicates(word_suggest)
             results[m_inp] = word_suggest
@@ -76,7 +77,7 @@ class Suggest:
         return results
     
     @classmethod
-    def match_word_n_pos(cls, word_suggest, masked_input: str, mask_pos: List, num_target=10):
+    def match_word_n_pos(cls, nlp, word_suggest, masked_input: str, mask_pos: List, num_target=10):
         # word_suggest = editor.suggest(masked_input, return_score=True, remove_duplicates=True)
         # word_suggest = [ws for ws in word_suggest if cls.is_word_suggestion_avail(ws[0])]
         # word_suggest = cls.remove_duplicates(word_suggest)
@@ -85,7 +86,7 @@ class Suggest:
         # and normalizing scores of selected word suggestion
         suggest_res = list()
         for ws_sug, score in word_suggest:
-            words_sug_pos, word_sug_prs_string = cls.get_sug_words_pos(ws_sug)
+            words_sug_pos, word_sug_prs_string = cls.get_sug_words_pos(nlp, ws_sug)
             if cls.eval_sug_words_by_pos(words_sug_pos, mask_pos):
                 suggest_res.append((ws_sug, score))
             # end if
@@ -131,7 +132,7 @@ class Suggest:
         #     pattern = r"\(([^\:|^\(|^\)]+)\s"+word+r"\)"
         #     search = re.search(pattern, parse_string)
         #     if search:
-        #         return parse_string, search.group(1)
+        #         return word, search.group(1)
         #     # end if
         #     return None, None
         # except IndexError:
@@ -139,8 +140,7 @@ class Suggest:
         #     return None, None
 
     @classmethod
-    def get_sug_words_pos(cls, word_suggest):
-        nlp = spacy.load('en_core_web_md')
+    def get_sug_words_pos(cls, nlp, word_suggest):
         prs_str, pos = list(), list()
         if type(word_suggest)==str:
             word_suggest = [word_suggest]
@@ -226,7 +226,7 @@ class Suggest:
 
         sent_probs = list()
         for ws_sug, prob_ws in words_suggest:
-            sent = cls.replace_mask_w_suggestion(masked_input, ws_sug)
+            # sent = cls.replace_mask_w_suggestion(masked_input, ws_sug)
             sent_probs.append((
                 ws_sug,
                 sent_prob_wo_target*prob*prob_ws
@@ -237,20 +237,26 @@ class Suggest:
         return sent_probs
     
     @classmethod
-    def get_new_inputs(cls, generator, gen_inputs, num_target=10):
+    def get_new_inputs(cls, generator, gen_inputs, num_target=10, is_random_select=False):
         editor = generator.editor
-        word_suggestions = cls.get_word_suggestion(editor, gen_inputs)
+        nlp = spacy.load('en_core_web_md')
+        word_suggestions = cls.get_word_suggestion(editor, gen_inputs, num_target=num_target)
         for g_i in range(len(gen_inputs)):
-            print(f"gen_new_inputs: {g_i} out of {len(gen_inputs)}")
+            # print(f"gen_new_inputs: {g_i} out of {len(gen_inputs)}")
             gen_input = gen_inputs[g_i]
             masked_input, mask_pos = gen_input['masked_input']
             words_suggest = cls.match_word_n_pos(
+                nlp,
                 word_suggestions[masked_input],
                 masked_input,
                 mask_pos,
                 num_target=num_target
             )
-            gen_input['words_suggest'] = cls.get_words_by_prob(words_suggest, gen_input, masked_input)
+            if not is_random_select:
+                gen_input['words_suggest'] = cls.get_words_by_prob(words_suggest, gen_input, masked_input)
+            else:
+                gen_input['words_suggest'] = [ws[0] for ws in words_suggest]
+            # end if
             gen_inputs[g_i] = gen_input
         # end for
         gen_inputs = [g for g in gen_inputs if g['words_suggest'] is not None]
@@ -277,19 +283,19 @@ class Suggest:
         return results
 
     @classmethod
-    def get_exp_inputs(cls, generator, gen_inputs, seed_label, requirement,  num_target=10):
+    def get_exp_inputs(cls, generator, gen_inputs, seed_label, requirement, num_target=10, is_random_select=False):
         # get the word suggesteion at the expended grammar elements
         new_input_results = list()              
         gen_inputs = cls.get_new_inputs(
-            generator, gen_inputs, num_target=num_target
+            generator, gen_inputs, num_target=num_target, is_random_select=is_random_select
         )
         for g_i in range(len(gen_inputs)):
             eval_results = cls.eval_word_suggest(gen_inputs[g_i], seed_label, requirement)
             if any(eval_results):
                 del gen_inputs[g_i]["words_suggest"]
                 new_input_results.extend(eval_results)
-                num_seed_for_exp += 1
-                print(f"eval: {g_i} out of {len(gen_inputs)}", end="")
+                # num_seed_for_exp += 1
+                # print(f"eval: {g_i} out of {len(gen_inputs)}", end="")
                 print(".", end="")
             # end if
         # end for

@@ -24,13 +24,15 @@ random.seed(Macros.SEED)
 
 class CFGExpander:
 
-    def __init__(self, seed_input, ref_corpus='treebank'):
+    def __init__(self, seed_input, pcfg_ref, is_random_select=False, ref_corpus='treebank'):
         self.corpus_name = ref_corpus
         self.seed_input: str = seed_input
+        self.is_random_select = is_random_select
         tree_dict = self.get_seed_cfg()
         self.tree_seed = tree_dict['tree']
         self.cfg_seed: dict = tree_dict['rule']
-        self.pcfg_ref = RefPCFG(corpus_name=self.corpus_name)
+        # self.pcfg_ref = RefPCFG(corpus_name=self.corpus_name)
+        self.pcfg_ref = pcfg_ref
         self.cfg_diff: dict = self.get_cfg_diff()
         # self.is_ref_pcfg: bool = is_ref_pcfg
         # self.cfg_ref: dict = self.get_tb_ref_cfg(ref_corpus=ref_corpus)
@@ -48,6 +50,7 @@ class CFGExpander:
         return CFGDiff(
             pcfg_ref=self.pcfg_ref,
             cfg_seed=self.cfg_seed,
-            tree_seed=self.tree_seed
+            tree_seed=self.tree_seed,
+            is_random_select=self.is_random_select
         ).cfg_diff
     

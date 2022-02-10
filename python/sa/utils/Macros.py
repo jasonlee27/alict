@@ -38,8 +38,8 @@ class Macros:
     }
 
     # Testsuite
-    num_cfg_exp_elem = 20
-    num_suggestions_on_exp_grammer_elem = 20
+    num_cfg_exp_elem = 10 # number of syntax suggestions used in Generator
+    num_suggestions_on_exp_grammer_elem = 20 # number of word suggestions used in Suggest
     nsamples = 500
     max_num_seeds = 50 # maximum number of selected sentences
     max_num_sents = 100000 # number of testcase sentences

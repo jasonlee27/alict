@@ -51,10 +51,10 @@ class RefPCFG:
     def _get_treebank_pcfg(self, pos_of_sent_start, sent_start_prob, productions, rule_dict):
         S = Nonterminal(pos_of_sent_start)
         grammar = nltk.induce_pcfg(S, productions)
-        # if os.path.exists(str(self.pcfg_file)):
-        #     rule_dict = Utils.read_json(self.pcfg_file)
-        #     return grammar, rule_dict
-        # # end if
+        if os.path.exists(str(self.pcfg_file)):
+            rule_dict = Utils.read_json(self.pcfg_file)
+            return grammar, rule_dict
+        # end if
 
         # first count the lhs function tag 
         # for applying lhs tag prob distribution

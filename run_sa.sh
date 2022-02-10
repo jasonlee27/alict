@@ -17,14 +17,14 @@ function gen_requirements() {
 function gen_templates() {
         # write templates in json
         (cd ${_DIR}
-         CUDA_VISIBLE_DEVICES=1,2,3,4 python -m python.sa.main --run template --search_dataset sst
+         CUDA_VISIBLE_DEVICES=1,2,3,4 python -m python.sa.main --run template --search_dataset sst --syntax_selection random
         )
 }
 
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
         (cd ${_DIR}
-         python -m python.sa.main --run testsuite --search_dataset sst
+         python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection prob
         )
 }
 
@@ -32,7 +32,7 @@ function eval_models(){
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
          # time python -m python.sa.main --run testmodel --test_baseline # evaluating models on checklist testcases
-         time python -m python.sa.main --run testmodel # evaluating models on our generated testcases
+         CUDA_VISIBLE_DEVICES=1,2,3,4 time python -m python.sa.main --run testmodel # evaluating models on our generated testcases
         )
 }
 
@@ -52,9 +52,9 @@ function eval_retrained_models(){
 
 function main() {
         # gen_requirements # to generate test_type_sa.json and requirement_sa.json
-        gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
+        # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
-        # eval_models
+        eval_models
         # retrain_models
         # eval_retrained_models
 }
