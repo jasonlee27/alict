@@ -1,5 +1,8 @@
 TASKS
 
+  - [JL] for AST differation, we check if we have enough syntax
+    expansions (do seperate experiment)
+
   - [JL] For constructing PCFG probability in reference, multiply the
     p(non_terminal or terminal) with p(a->b).
 

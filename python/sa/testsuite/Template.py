@@ -17,6 +17,7 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..requirement.Requirements import Requirements
 
+from .cfg.RefPCFG import RefPCFG
 from .Generator import Generator
 from .Synonyms import Synonyms
 from .Search import Search
@@ -42,7 +43,7 @@ class Template:
     }
     
     @classmethod
-    def generate_inputs(cls, task, dataset, n=None, save_to=None):
+    def generate_inputs(cls, task, dataset, n=None, save_to=None, is_random_select=None):
         print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(task)
         results = list()
@@ -56,6 +57,9 @@ class Template:
             # end for
             reqs = _reqs
         # end if
+
+        pcfg_ref = RefPCFG()
+
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
             exp_inputs = dict()
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
@@ -63,17 +67,23 @@ class Template:
             print(f"\t{num_selected_inputs} inputs are selected.")
             index = 1
             num_seed_for_exp = 0
+            tot_num_exp = 0
             for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
-                print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score}")
+                print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score}", end=" :: ")
                 index += 1
-                generator = Generator(seed)
+                generator = Generator(seed,pcfg_ref,is_random_select=is_random_select)
                 gen_inputs = generator.masked_input_generator()
+                print(f"{len(gen_inputs)} syntax expansions identified.")
                 new_input_results = list()
-                if any(gen_inputs) and num_seed_for_exp<=n:
+                tot_num_exp += len(gen_inputs)
+                if any(gen_inputs):
                     new_input_results = Suggest.get_exp_inputs(
                         generator,
                         gen_inputs,
-                        num_target=Macros.num_suggestions_on_exp_grammer_elem
+                        seed_label,
+                        selected["requirement"],
+                        num_target=Macros.num_suggestions_on_exp_grammer_elem,
+                        is_random_select=is_random_select
                     )
                 # end if
                 exp_inputs[seed] = {
@@ -83,6 +93,7 @@ class Template:
                     "label_score": seed_score
                 }
             # end for
+            print(f"Total {tot_num_exp} syntactical expansion identified in the requirement out of {num_selected_inputs} seeds")
             results.append({
                 "requirement": selected["requirement"],
                 "inputs": exp_inputs
@@ -93,12 +104,12 @@ class Template:
         # end for
         
         # # write raw new inputs
-        # Utils.write_json(results, save_to, pretty_format=True)
-        print(f"**********")        
+        Utils.write_json(results, save_to, pretty_format=True)
+        print(f"**********")
         return results
     
     @classmethod
-    def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None):
+    def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None, is_random_select=False):
         # if os.path.exists(input_file):
         #     return Utils.read_json(input_file)
         # # end if
@@ -106,7 +117,8 @@ class Template:
             task=nlp_task,
             dataset=dataset_name,
             n=n,
-            save_to=input_file
+            save_to=input_file,
+            is_random_select=is_random_select
         )
 
     @classmethod
@@ -209,20 +221,22 @@ class Template:
         }, prev_synonyms
 
     @classmethod
-    def get_templates(cls, num_seeds, nlp_task, dataset_name):
+    def get_templates(cls, num_seeds, nlp_task, dataset_name, is_random_select):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
-        print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name} *****")
+        selection_method = 'RANDOM' if is_random_select else 'PROB'
+        print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         task = nlp_task
         
         new_input_dicts = cls.get_new_inputs(
-            Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset_name}.json",
+            Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json",
             task,
             dataset_name,
-            n=num_seeds
+            n=num_seeds,
+            is_random_select=is_random_select
         )
 
         # Make templates by synonyms
@@ -238,7 +252,7 @@ class Template:
             seed_inputs, exp_seed_inputs = list(), list()
             seed_templates, exp_templates = list(), list()
             for s_i, seed_input in enumerate(inputs.keys()):
-                print(f"\tSEED {s_i}: {seed_input}")
+                # print(f"\tSEED {s_i}: {seed_input}")
                     
                 cfg_seed = inputs[seed_input]["cfg_seed"]
                 label_seed = inputs[seed_input]["label"]
@@ -250,10 +264,8 @@ class Template:
                 })
 
                 if any(exp_inputs):
-                    print(exp_inputs)
                     # expanded inputs
                     for inp_i, inp in enumerate(exp_inputs):
-                        print(inp_i, inp)
                         exp_sent = inp[5]
                         exp_seed_inputs.append({
                             "input": inp[5],
@@ -263,28 +275,28 @@ class Template:
                     # end for
                 # end if
                 
-                # make template for seed input
-                tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
-                _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
-                _templates["label"] = label_seed
-                seed_templates.append(_templates)
+                # # make template for seed input
+                # tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
+                # _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
+                # _templates["label"] = label_seed
+                # seed_templates.append(_templates)
 
-                if any(exp_inputs):
-                    # Make template for expanded inputs
-                    for inp_i, inp in enumerate(exp_inputs):
-                        (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
-                        tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
-                        _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
-                        _templates["label"] = exp_input_label
-                        exp_templates.append(_templates)
-                        print(".", end="")
-                    # end for
-                    print()
-                # end if
+                # if any(exp_inputs):
+                #     # Make template for expanded inputs
+                #     for inp_i, inp in enumerate(exp_inputs):
+                #         (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
+                #         tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
+                #         _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
+                #         _templates["label"] = exp_input_label
+                #         exp_templates.append(_templates)
+                #         print(".", end="")
+                #     # end for
+                #     print()
+                # # end if
             # end for
 
             # Write the template results
-            res_dir = Macros.result_dir/ f"templates_{task}_{dataset_name}"
+            res_dir = Macros.result_dir/ f"templates_{task}_{dataset_name}_{selection_method}"
             res_dir.mkdir(parents=True, exist_ok=True)
 
             if any(seed_inputs):
@@ -297,16 +309,16 @@ class Template:
                                  res_dir / f"exps_{req_cksum}.json",
                                  pretty_format=True)
             # end if
-            if any(seed_templates):
-                Utils.write_json(seed_templates,
-                                 res_dir / f"templates_seed_{req_cksum}.json",
-                                 pretty_format=True)
-            # end if
-            if any(exp_templates):
-                Utils.write_json(exp_templates,
-                                 res_dir / f"templates_exp_{req_cksum}.json",
-                                 pretty_format=True)
-            # end if
+            # if any(seed_templates):
+            #     Utils.write_json(seed_templates,
+            #                      res_dir / f"templates_seed_{req_cksum}.json",
+            #                      pretty_format=True)
+            # # end if
+            # if any(exp_templates):
+            #     Utils.write_json(exp_templates,
+            #                      res_dir / f"templates_exp_{req_cksum}.json",
+            #                      pretty_format=True)
+            # # end if
             print(f"<<<<< REQUIREMENT:", inputs_per_req["requirement"]["description"])
         # end for
         return

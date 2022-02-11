@@ -20,8 +20,11 @@ parser.add_argument('--nlp_task', type=str, default="sa",
                     help='nlp task of focus')
 parser.add_argument('--search_dataset', type=str, default="sst",
                     help='name of dataset for searching testcases that meets the requirement')
-parser.add_argument('--num_seeds', type=int, default=Macros.num_seeds,
+parser.add_argument('--num_seeds', type=int, default=Macros.max_num_seeds,
                     help='number of seed inputs found in search dataset')
+parser.add_argument('--syntax_selection', type=str, default='prob',
+                    choices=['prob', 'random'],
+                    help='method for selection of syntax suggestions')
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
 
@@ -51,10 +54,15 @@ def run_templates():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
+    is_random_select = False
+    if args.syntax_selection=='random':
+        is_random_select = True
+    # end if
     Template.get_templates(
         num_seeds=num_seeds,
         nlp_task=nlp_task,
-        dataset_name=search_dataset_name
+        dataset_name=search_dataset_name,
+        is_random_select=is_random_select
     )
     return
 
@@ -63,9 +71,14 @@ def run_testsuites():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
+    is_random_select = False
+    if args.syntax_selection=='random':
+        is_random_select = True
+    # end if
     Testsuite.write_testsuites(
         nlp_task=nlp_task,
         dataset=search_dataset_name,
+        is_random_select=is_random_select,
         num_seeds=num_seeds
     )
     return
@@ -73,6 +86,10 @@ def run_testsuites():
 def run_testmodel():
     from .model.Testmodel import main as Testmodel_main
     nlp_task = args.nlp_task
+    is_random_select = False
+    if args.syntax_selection=='random':
+        is_random_select = True
+    # end if
     test_baseline = args.test_baseline
     test_type = args.test_type
     search_dataset_name = args.search_dataset
@@ -80,6 +97,7 @@ def run_testmodel():
     Testmodel_main(
         nlp_task,
         search_dataset_name,
+        is_random_select,
         test_baseline,
         test_type,
         local_model_name=local_model_name

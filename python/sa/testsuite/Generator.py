@@ -27,9 +27,13 @@ random.seed(Macros.SEED)
 
 class Generator:
 
-    def __init__(self, seed: str):
+    def __init__(self, seed: str, pcfg_ref, is_random_select: bool):
         self.seed = seed
-        self.expander = CFGExpander(seed_input=seed)
+        self.expander = CFGExpander(
+            seed_input=seed,
+            pcfg_ref=pcfg_ref,
+            is_random_select=is_random_select
+        )
         self.editor = Editor()
         
     def masked_input_generator(self):
@@ -85,22 +89,34 @@ class Generator:
                     new_input = seed_input.replace(old_phrase, new_phrase)
                     if new_input not in masked_inputs:
                         _masked_input, mask_pos = self.get_pos_from_mask(new_input)
-                        result.append({
-                            "input": seed_input,
-                            "lhs": lhs,
-                            "cfg_from": f"{lhs} -> {rhs_from}",
-                            "cfg_to": f"{lhs} -> {rhs_to}",
-                            "target_phrase": old_phrase,
-                            "masked_phrase": new_phrase,
-                            "masked_input": (_masked_input, mask_pos),
-                            "prob": rhs_to_prob,
-                            "sent_prob_wo_target": sent_prob_wo_target
-                        })
+                        if rhs_to_prob is None and sent_prob_wo_target is None:
+                            result.append({
+                                "input": seed_input,
+                                "lhs": lhs,
+                                "cfg_from": f"{lhs} -> {rhs_from}",
+                                "cfg_to": f"{lhs} -> {rhs_to}",
+                                "target_phrase": old_phrase,
+                                "masked_phrase": new_phrase,
+                                "masked_input": (_masked_input, mask_pos),
+                            })
+                        else:    
+                            result.append({
+                                "input": seed_input,
+                                "lhs": lhs,
+                                "cfg_from": f"{lhs} -> {rhs_from}",
+                                "cfg_to": f"{lhs} -> {rhs_to}",
+                                "target_phrase": old_phrase,
+                                "masked_phrase": new_phrase,
+                                "masked_input": (_masked_input, mask_pos),
+                                "prob": rhs_to_prob,
+                                "sent_prob_wo_target": sent_prob_wo_target
+                            })
+                        # end if
                     # end if
                 # end for
             # end for
         # end for
-        if len(result)>Macros.num_cfg_exp_elem:
+        if len(result)>Macros.num_cfg_exp_elem and Macros.num_cfg_exp_elem>0:
             # random sampling N cfg diffs
             idxs = np.random.choice(len(result), Macros.num_cfg_exp_elem, replace=False)
             result = [result[i] for i in idxs]

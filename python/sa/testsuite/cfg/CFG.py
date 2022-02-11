@@ -45,7 +45,7 @@ class BeneparCFG:
 
             comp = {
                 "pos": f'{rword}',
-                "word": str(tree)
+                "word": tuple([str(tree)])
             }
             if rlabel not in rule_dict.keys():
                 rule_dict[rlabel] = [comp]
@@ -60,12 +60,12 @@ class BeneparCFG:
                 if llabel not in rule_dict.keys():
                     rule_dict[llabel] = [{
                         "pos": rlabel,
-                        "word": str(tree)
+                        "word": tuple([str(tree)])
                     }]
                 else:
                     rule_dict[llabel].append({
                         "pos": rlabel,
-                        "word": str(tree)
+                        "word": tuple([str(tree)])
                     })
                 # end if
                 llabel = left[1]
@@ -106,13 +106,13 @@ class BeneparCFG:
                 if (rlabel) not in rule_dict[llabel]:
                     rule_dict[llabel].append({
                         "pos": (rlabel),
-                        "word": str(tree)
+                        "word": tuple([str(tree)])
                     })
                 # end if
 
                 comp = {
                     "pos": f'{rword}',
-                    "word": str(tree)
+                    "word": tuple([str(tree)])
                 }
                 if rlabel not in rule_dict.keys():
                     rule_dict[rlabel] = [comp]
@@ -130,100 +130,12 @@ class BeneparCFG:
             "tree": tree,
             "rule": cls.get_cfg_per_tree(tree, rule_dict)
         }
-    
-    # @classmethod
-    # def get_cfg_dict(cls, parser, sents, rule_dict):
-    #     for s in sents:
-    #         # tree = cls.get_tree(parser,s.strip())
-    #         # rule_dict = cls.get_cfg_per_tree(tree, rule_dict)
-    #         rule_dict = cls.get_cfg_dict_per_sent(parser, s, rule_dict)
-    #     # end for
-    #     return rule_dict
-
-    # @classmethod
-    # def convert_cfg_dict_to_str(cls, cfg_dict):
-    #     cfg_str = ''
-    #     for left, rights in cfg_dict.items():
-    #         cfg_elem = f'{left} -> '
-    #         for r_i, right in enumerate(rights):
-    #             if type(right) is tuple:
-    #                 r_str = ' '.join(right)
-    #                 cfg_elem += f'{r_str}'
-    #             elif right.startswith('terminal::'):
-    #                 r_str = right.split('terminal::')[-1]
-    #                 cfg_elem += f'\'{r_str}\''
-    #             else:
-    #                 cfg_elem += right
-    #             # end if
-    #             if r_i+1<len(rights):
-    #                 cfg_elem += ' | '
-    #             # end if
-    #         # end for
-    #         cfg_str += f'{cfg_elem}\n'
-    #     # end for
-    #     return cfg_str
-    
-    # @classmethod
-    # def write_cfg(cls, cfg_str, cfg_file):
-    #     with open(cfg_file, 'w') as f:
-    #         f.write(cfg_str)
-    #     # end with
-
-    # @classmethod
-    # def trim_cfg_dict(cls, cfg_dict):
-    #     _cfg_dict = dict()
-    #     for lhs, rhs in cfg_dict["rule"].copy().items():
-    #         _rhs = list()
-    #         for r in rhs:
-    #             _r = list()
-    #             if type(r) is tuple:
-    #                 for x in r:
-    #                     if x.startswith('terminal::'):
-    #                         _r.append(f"\'{x.split('terminal::')[-1]}\'")
-    #                     else:
-    #                         _r.append(x)
-    #                     # end if
-    #                 # end for
-    #                 _rhs.append(tuple(_r))
-    #             else:
-    #                 if r.startswith('terminal::'):
-    #                     _r.append(f"\'{r.split('terminal::')[-1]}\'")
-    #                 else:
-    #                     _r.append(r)
-    #                 # end if
-    #             # end if
-    #             if tuple(_r) not in _rhs:
-    #                 _rhs.append(tuple(_r))
-    #             # end if
-    #         # end for
-    #         _cfg_dict[lhs] = _rhs
-    #     # end for
-    #     return {
-    #         "tree": cfg_dict["tree"],
-    #         "rule": _cfg_dict
-    #     }
-
-    # @classmethod
-    # def get_cfgs(cls, data_file, cfg_file, pretty_format=False):
-    #     parser = cls.load_parser()
-    #     sents: List = Utils.read_txt(data_file)
-    #     cfg_dict = cls.get_cfg_dict(parser,sents,{})
-    #     # cfg_str = cls.convert_cfg_dict_to_str(cfg_dict)
-    #     Utils.write_json(cls.trim_cfg_dict(cfg_dict), cfg_file, pretty_format=pretty_format)
-
+ 
     @classmethod
-    def get_seed_cfg(cls, seed_input, cfg_file=None, pretty_format=False):
+    def get_seed_cfg(cls, seed_input):
         cfg_dict = None
-        if cfg_file:
-            cfg_dict = Utils.read_json(cfg_file)
-            return cfg_dict
-        # end if
         parser = cls.load_parser()
         cfg_dict = cls.get_cfg_dict_per_sent(parser,seed_input,{})
-        # cfg_dict = cls.trim_cfg_dict(cfg_dict)
-        # if cfg_file:
-        #     Utils.write_json(cfg_dict, cfg_file, pretty_format=pretty_format)
-        # # end if
         return cfg_dict
 
     @classmethod

@@ -114,26 +114,29 @@ class Testsuite:
         }
     
     @classmethod
-    def get_templates(cls, nlp_task, dataset, num_seeds):
+    def get_templates(cls, nlp_task, dataset, is_random_select, num_seeds):
         task = nlp_task
+        selection_method = 'RANDOM' if is_random_select else 'PROB'
         new_input_dicts = Template.get_new_inputs(
-            Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset}.json",
+            Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset}_{selection_method}.json",
             task,
             dataset,
             n=num_seeds
         )
         seeds_per_task = list()
+        exps_per_task = list()
         seed_templates_per_task = list()
         exp_templates_per_task = list()
         transform_reqs = list()
         for t_i in range(len(new_input_dicts)):
             req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
-            res_dir = Macros.result_dir/ f"templates_{task}_{dataset}"
+            res_dir = Macros.result_dir/ f"templates_{task}_{dataset}_{selection_method}"
             if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))):
                 Template.get_templates(
+                    num_seeds=num_seeds,
                     nlp_task=nlp_task,
                     dataset=dataset,
-                    num_seeds=num_seeds
+                    is_random_select=is_random_select
                 )
             # end if
 
@@ -150,156 +153,51 @@ class Testsuite:
                 "description": new_input_dicts[t_i]["requirement"]["description"],
                 "templates": seed_res
             })
-
+            
             exps = Utils.read_json(res_dir / f"exps_{req_cksum}.json")
-            exp_res = list()
-            for e in exps:
-                e_res = cls.get_template(e, task)
-                exp_res.append(e_res)
-            # end for
-            exps_per_task.append({
-                "capability": new_input_dicts[t_i]["requirement"]["capability"],
-                "description": new_input_dicts[t_i]["requirement"]["description"],
-                "templates": exp_res
-            })
+            if exps is not None:
+                exp_res = list()
+                for e in exps:
+                    e_res = cls.get_template(e, task)
+                    exp_res.append(e_res)
+                # end for
+                exps_per_task.append({
+                    "capability": new_input_dicts[t_i]["requirement"]["capability"],
+                    "description": new_input_dicts[t_i]["requirement"]["description"],
+                    "templates": exp_res
+                })
+            # end if
+            
+            # seed_templates = Utils.read_json(res_dir / f"templates_seed_{req_cksum}.json")
+            # if seed_templates is not None:
+            #     seed_template_res = list()
+            #     for tp in seed_templates:
+            #         tp_res = cls.get_template(tp, task)
+            #         seed_template_res.append(tp_res)
+            #     # end for
+            #     seed_templates_per_task.append({
+            #         "capability": new_input_dicts[t_i]["requirement"]["capability"],
+            #         "description": new_input_dicts[t_i]["requirement"]["description"],
+            #         "templates": seed_template_res
+            #     })
+            # # end if
 
-            seed_template_res = list()
-            seed_templates = Utils.read_json(res_dir / f"templates_seed_{req_cksum}.json")
-            for tp in seed_templates:
-                tp_res = cls.get_template(tp, task)
-                seed_template_res.append(tp_res)
-            # end for
-            seed_templates_per_task.append({
-                "capability": new_input_dicts[t_i]["requirement"]["capability"],
-                "description": new_input_dicts[t_i]["requirement"]["description"],
-                "templates": seed_template_res
-            })
-
-            exp_template_res = list()
-            exp_templates = Utils.read_json(res_dir / f"templates_exp_{req_cksum}.json")
-            for tp in exp_templates:
-                tp_res = cls.get_template(tp, task)
-                exp_template_res.append(tp_res)
-            # end for
-            exp_templates_per_task.append({
-                "capability": new_input_dicts[t_i]["requirement"]["capability"],
-                "description": new_input_dicts[t_i]["requirement"]["description"],
-                "templates": exp_template_res
-            })
+            # exp_templates = Utils.read_json(res_dir / f"templates_exp_{req_cksum}.json")
+            # if exp_templates is not None:
+            #     exp_template_res = list()
+            #     for tp in exp_templates:
+            #         tp_res = cls.get_template(tp, task)
+            #         exp_template_res.append(tp_res)
+            #     # end for
+            #     exp_templates_per_task.append({
+            #         "capability": new_input_dicts[t_i]["requirement"]["capability"],
+            #         "description": new_input_dicts[t_i]["requirement"]["description"],
+            #         "templates": exp_template_res
+            #     })
+            # # end if
         # end for
         yield task, seeds_per_task, exps_per_task, seed_templates_per_task, exp_templates_per_task, transform_reqs
         return
-
-    # @classmethod
-    # def suite_add_transform(cls,
-    #                         editor,
-    #                         sentences,
-    #                         transform_req,
-    #                         templates_per_req,
-    #                         task, dataset, suite, seed_type):
-    #     transformer = TransformOperator(editor,
-    #                                     templates_per_req['capability'],
-    #                                     templates_per_req['description'],
-    #                                     transform_req)
-    #     test_type, func, _property, woi = transformer.transformation_funcs.split(':')
-    #     if test_type=="INV":
-    #         if func=="replace":
-    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-    #             if woi=="word":
-    #                 t = Perturb.perturb(sentences, transformer.replace, nsamples=Macros.nsamples)
-    #                 test = INV(t.data)
-    #                 suite.add(test,
-    #                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
-    #                           capability=templates_per_req["capability"]+f"::{seed_type}",
-    #                           description=templates_per_req["description"])
-    #             elif woi=="person_name":
-    #                 nlp = spacy.load('en_core_web_sm')
-    #                 parsed_data = list(nlp.pipe(sentences))
-    #                 t = Perturb.perturb(parsed_data, Perturb.change_names, nsamples=2*Macros.nsamples)
-    #                 test = INV(t.data)
-    #                 suite.add(test,
-    #                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
-    #                           capability=templates_per_req["capability"]+f"::{seed_type}",
-    #                           description=templates_per_req["description"])
-    #             elif woi=="location_name":
-    #                 nlp = spacy.load('en_core_web_sm')
-    #                 parsed_data = list(nlp.pipe(sentences))
-    #                 t = Perturb.perturb(parsed_data, Perturb.change_location, nsamples=2*Macros.nsamples)
-    #                 test = INV(t.data)
-    #                 suite.add(test,
-    #                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
-    #                           capability=templates_per_req["capability"]+f"::{seed_type}",
-    #                           description=templates_per_req["description"])
-    #             elif woi=="number":
-    #                 nlp = spacy.load('en_core_web_sm')
-    #                 parsed_data = list(nlp.pipe(sentences))
-    #                 t = Perturb.perturb(parsed_data, Perturb.change_number, nsamples=2*Macros.nsamples)
-    #                 test = INV(t.data)
-    #                 suite.add(test,
-    #                           name=f"{task}::{seed_type}::"+templates_per_req["description"],
-    #                           capability=templates_per_req["capability"]+f"::{seed_type}",
-    #                           description=templates_per_req["description"])
-    #             # end if
-    #         elif func=="add" and _property=="random" and woi=="URL_handles":
-    #             # we set the maximum number of sentences not to kill process during perturbation.
-    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-    #             t = Perturb.perturb(sentences, transformer.add_irrelevant, nsamples=Macros.nsamples)
-    #             test = INV(t.data)
-    #             suite.add(test,
-    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
-    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
-    #                       description=templates_per_req["description"])
-    #         elif func=="strip" and _property=="None" and woi=="punctuation":
-    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-    #             nlp = spacy.load('en_core_web_sm')
-    #             parsed_data = list(nlp.pipe(sentences))
-    #             t = Perturb.perturb(parsed_data, Perturb.punctuation, nsamples=Macros.nsamples)
-    #             test = INV(t.data)
-    #             suite.add(test,
-    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
-    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
-    #                       description=templates_per_req["description"])
-    #         elif func=="swap" and _property=="one" and woi=="two_adjacent_characters":
-    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-    #             t = Perturb.perturb(sentences, Perturb.add_typos, nsamples=Macros.nsamples, typos=1)
-    #             test = INV(t.data)
-    #             suite.add(test,
-    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
-    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
-    #                       description=templates_per_req["description"])
-    #         elif func=="swap" and _property=="two" and woi=="two_adjacent_characters":
-    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-    #             t = Perturb.perturb(sentences, Perturb.add_typos, nsamples=Macros.nsamples, typos=2)
-    #             test = INV(t.data)
-    #             suite.add(test,
-    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
-    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
-    #                       description=templates_per_req["description"])
-    #         elif func=="contract/expand" and _property=="None" and woi=="contraction":
-    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-    #             t = Perturb.perturb(sentences, Perturb.contractions, nsamples=2*Macros.nsamples)
-    #             test = INV(t.data)
-    #             print(len(sentences), len(t.data))
-    #             suite.add(test,
-    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
-    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
-    #                       description=templates_per_req["description"])
-    #         # end if
-    #     elif test_type=="DIR":
-    #         if func=="add" and woi=="phrase":
-    #             if len(sentences)>Macros.max_num_sents_for_perturb: sentences = sentences[:Macros.max_num_sents_for_perturb]
-    #             nlp = spacy.load('en_core_web_sm')
-    #             parsed_data = list(nlp.pipe(sentences))
-    #             t = Perturb.perturb(parsed_data, transformer.add_phrase(), nsamples=Macros.nsamples)
-    #             test = DIR(t.data, transformer.dir_expect_func)
-    #             suite.add(test,
-    #                       name=f"{task}::{seed_type}::"+templates_per_req["description"],
-    #                       capability=templates_per_req["capability"]+f"::{seed_type}",
-    #                       description=templates_per_req["description"])
-    #             # end if
-    #         # end if
-    #     # end if
-    #     return suite
 
     @classmethod
     def write_seed_testsuite(cls,
@@ -349,7 +247,7 @@ class Testsuite:
                             res_dir):
         for t_i, templates_per_req in enumerate(exp_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
-            if not os.path.exists(str(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')):
+            if not os.path.exists(str(res_dir / f'{task}_testsuite_exps_{test_cksum}.pkl')):
                 print(f"{task}::EXP::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
                 t = None
                 suite = TestSuite()
@@ -461,12 +359,14 @@ class Testsuite:
     def write_editor_templates(cls,
                                task,
                                dataset,
+                               is_random_select,
                                seed_dicts,
                                exp_dicts,
                                seed_template_dicts,
                                exp_template_dicts,
                                transform_reqs):
-        res_dir = Macros.result_dir / f"test_results_{task}_{dataset}"
+        selection_method = 'RANDOM' if is_random_select else 'PROB'
+        res_dir = Macros.result_dir / f"test_results_{task}_{dataset}_{selection_method}"
         res_dir.mkdir(parents=True, exist_ok=True)
         cls.write_seed_testsuite(task,
                                  dataset,
@@ -477,23 +377,27 @@ class Testsuite:
                                 dataset,
                                 exp_dicts,
                                 res_dir)
-        
-        cls.write_seed_template_testsuite(task,
-                                          dataset,
-                                          seed_template_dicts,
-                                          res_dir)
 
-        cls.write_exp_template_testsuite(task,
-                                         dataset,
-                                         exp_template_dicts,
-                                         res_dir)
+        if any(seed_template_dicts):
+            cls.write_seed_template_testsuite(task,
+                                              dataset,
+                                              seed_template_dicts,
+                                              res_dir)
+        # end if
+        if any(exp_template_dicts):
+            cls.write_exp_template_testsuite(task,
+                                             dataset,
+                                             exp_template_dicts,
+                                             res_dir)
+        # end if
         return
 
     @classmethod
-    def write_testsuites(cls, nlp_task, dataset, num_seeds):
+    def write_testsuites(cls, nlp_task, dataset, is_random_select, num_seeds):
         print("Generate Testsuites from Templates ...")
-        for task, seed, exp, seed_temp, exp_temp, transform_reqs in cls.get_templates(nlp_task=nlp_task, dataset=dataset, num_seeds=num_seeds):
-            Testsuite.write_editor_templates(task, dataset, seed, exp, seed_temp, exp_temp, transform_reqs)
+        for task, seed, exp, seed_temp, exp_temp, transform_reqs \
+            in cls.get_templates(nlp_task=nlp_task, dataset=dataset, is_random_select=is_random_select, num_seeds=num_seeds):
+            Testsuite.write_editor_templates(task, dataset, is_random_select, seed, exp, seed_temp, exp_temp, transform_reqs)
         # end for
         return
 
