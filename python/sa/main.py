@@ -137,7 +137,7 @@ def run_analyze():
     from .model.Result import Result
     nlp_task = args.nlp_task
     selection_method = 'RANDOM'
-    if args.syntax_selection=='random':
+    if args.syntax_selection=='prob':
         selection_method = 'PROB'
     # end if
     search_dataset_name = args.search_dataset

@@ -62,7 +62,7 @@ function main() {
         # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
         # eval_models
-        analuze_eval_models
+        analyze_eval_models
         # retrain_models
         # eval_retrained_models
 }

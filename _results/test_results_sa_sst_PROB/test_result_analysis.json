@@ -1,0 +1,736 @@
+{
+    "textattack/bert-base-uncased-SST-2": [
+        {
+            "req": "parsing sentiment in (question, yes) form",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Do I think that \" A documentary to make the stones weep -- as shameful as it is scary . \"? yes",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" A great documentary to make the stones weep -- as shameful as it is scary . \"? yes",
+                            "2",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [],
+            "num_pass2fail": 1,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Short sentences with neutral adjectives and nouns",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Or both.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "Or both things.",
+                            "2",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "The next generation of mob movie.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "The next generation version of mob movie.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_pass2fail": 1,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Negated negative should be positive or neutral",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Sentiment change over time, present should prevail",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "I hated it much as to say that \" Even by dumb action-movie standards, Ballistic: Ecks vs . Sever is a dumb action movie . \", although now I like it.",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "I hated it much as someone to say that \" Even by dumb action-movie standards, Ballistic: Ecks vs . Sever is a dumb action movie . \", although now I like it.",
+                            "1",
+                            "2"
+                        ],
+                        [
+                            "I hated it much as somebody to say that \" Even by dumb action-movie standards, Ballistic: Ecks vs . Sever is a dumb action movie . \", although now I like it.",
+                            "1",
+                            "2"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "I liked it much as to say that \" Thanks to Scott's charismatic Roger and Eisenberg's sweet nephew, Roger Dodger is one of the most compelling variations on In the Company of Men . \", on the other hand now I don't like it.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I liked it much as to say that \" Thanks to Scott's charismatic Roger and Eisenberg's sweet nephew, Roger Dodger is one of the most compelling movie variations on In the Company of Men . \", on the other hand now I don't like it.",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "I liked it much as to say that \" Thanks to Scott's charismatic Roger and Eisenberg's sweet nephew, Roger Dodger is one of the most compelling comedy variations on In the Company of Men . \", on the other hand now I don't like it.",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "I liked it much as to say that \" The kooky yet shadowy vision Clooney sustains throughout is daring, inventive and impressive . \", on the other hand now I hate it.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I liked it much as to say that \" The kooky yet shadowy vision Clooney sustains throughout is daring, inventive and impressive . \", on the other funny hand now I hate it.",
+                            "2",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Last time, I agreed with saying that \" It's at once laughable and compulsively watchable, in its committed dumbness . \", although now I hate it.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Last time, I agreed with saying that \" It's at once laughable and compulsively watchable, in its committed comic dumbness . \", although now I hate it.",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "I liked it much as to say that \" Demonstrates the unusual power of thoughtful, subjective filmmaking . \", on the other hand now I don't like it.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I liked it much as to say that \" Demonstrates the unusual power potential of thoughtful, subjective filmmaking . \", on the other hand now I don't like it.",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "I hated it much as to say that \" The rest of the film ... is dudsville . \", on the other hand now I like it.",
+                        "1",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "I hated it much as to say that \" The rest of the film ... is dudsville . \", on the other funny hand now I like it.",
+                            "2",
+                            "2"
+                        ]
+                    ]
+                }
+            ],
+            "num_pass2fail": 7,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Negation of negative at the end, should be positive or neutral",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Author sentiment is more important than of others",
+            "is_exps_exist": true,
+            "pass->fail": [],
+            "fail->pass": [
+                {
+                    "from": [
+                        "You agree with that \" Its spirit of iconoclastic abandon--however canned -- makes for unexpectedly giddy viewing . \", but I think that \" With its hints of a greater intelligence lurking somewhere, The Ring makes its stupidity more than obvious . \"",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "You agree with that \" Its spirit of iconoclastic abandon--however canned -- makes for unexpectedly giddy viewing . \", but I think that \" With its few hints of a greater intelligence lurking somewhere, The Ring makes its stupidity more than obvious . \"",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Many people agree with that \" The genius of the work speaks volumes, offering up a hallucinatory dreamscape that frustrates and captivates . \", but I think that \" There's no point in extracting the bare bones of Byatt's plot for purposes of bland Hollywood romance . \"",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Many people agree with that \" The genius of the work speaks two volumes, offering up a hallucinatory dreamscape that frustrates and captivates . \", but I think that \" There's no point in extracting the bare bones of Byatt's plot for purposes of bland Hollywood romance . \"",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Many people agree with that \" The genius of the work speaks three volumes, offering up a hallucinatory dreamscape that frustrates and captivates . \", but I think that \" There's no point in extracting the bare bones of Byatt's plot for purposes of bland Hollywood romance . \"",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Many people agree with that \" The genius of the work speaks four volumes, offering up a hallucinatory dreamscape that frustrates and captivates . \", but I think that \" There's no point in extracting the bare bones of Byatt's plot for purposes of bland Hollywood romance . \"",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Many people agree with that \" at The genius of the work speaks volumes, offering up a hallucinatory dreamscape that frustrates and captivates . \", but I think that \" There's no point in extracting the bare bones of Byatt's plot for purposes of bland Hollywood romance . \"",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "num_pass2fail": 0,
+            "num_fail2pass": 5
+        },
+        {
+            "req": "Parsing positive sentiment in (question, no) form",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Parsing negative sentiment in (question, no) form",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Negated neutral should still be neutral",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This video is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "0",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "This is not SO De Palma.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This president is not SO De Palma.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_pass2fail": 1,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Short sentences with sentiment-laden adjectives",
+            "is_exps_exist": true,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Negated positive with neutral content in the middle",
+            "is_exps_exist": false
+        }
+    ],
+    "textattack/roberta-base-SST-2": [
+        {
+            "req": "parsing sentiment in (question, yes) form",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Do I think that \" A documentary to make the stones weep -- as shameful as it is scary . \"? yes",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" A great documentary to make the stones weep -- as shameful as it is scary . \"? yes",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [],
+            "num_pass2fail": 1,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Short sentences with neutral adjectives and nouns",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "It's been 20 years since 48 Hrs.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "It official's been 20 years since 48 Hrs.",
+                            "0",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "Or both.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "Or both things.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "The next generation of mob movie.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "The next generation concept of mob movie.",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "The entire next generation of mob movie.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_pass2fail": 1,
+            "num_fail2pass": 3
+        },
+        {
+            "req": "Negated negative should be positive or neutral",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Sentiment change over time, present should prevail",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "I liked it much as to say that \" Demonstrates the unusual power of thoughtful, subjective filmmaking . \", on the other hand now I don't like it.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I liked it much as to say that \" Demonstrates the unusual power potential of thoughtful, subjective filmmaking . \", on the other hand now I don't like it.",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "I liked it much as to say that \" Thanks to Scott's charismatic Roger and Eisenberg's sweet nephew, Roger Dodger is one of the most compelling variations on In the Company of Men . \", on the other hand now I don't like it.",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I liked it much as to say that \" Thanks to Scott's charismatic Roger and Eisenberg's sweet nephew, Roger Dodger is one year of the most compelling variations on In the Company of Men . \", on the other hand now I don't like it.",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "num_pass2fail": 1,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Negation of negative at the end, should be positive or neutral",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Author sentiment is more important than of others",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Many people agree with that \" The genius of the work speaks volumes, offering up a hallucinatory dreamscape that frustrates and captivates . \", but I think that \" There's no point in extracting the bare bones of Byatt's plot for purposes of bland Hollywood romance . \"",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Many people agree with that \" at The genius of the work speaks volumes, offering up a hallucinatory dreamscape that frustrates and captivates . \", but I think that \" There's no point in extracting the bare bones of Byatt's plot for purposes of bland Hollywood romance . \"",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "You agree with that \" Its spirit of iconoclastic abandon--however canned -- makes for unexpectedly giddy viewing . \", but I think that \" With its hints of a greater intelligence lurking somewhere, The Ring makes its stupidity more than obvious . \"",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "You agree with that \" Its spirit of iconoclastic abandon--however canned -- makes for unexpectedly giddy viewing . \", but I think that \" With its few hints of a greater intelligence lurking somewhere, The Ring makes its stupidity more than obvious . \"",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "You agree with that \" Its spirit of iconoclastic abandon--however canned -- makes for unexpectedly giddy viewing . \", but I think that \" Several uninteresting, unlikeable people do bad things to and with each other in \" Unfaithful . \" \"",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "You agree with that \" Its spirit atmosphere of iconoclastic abandon--however canned -- makes for unexpectedly giddy viewing . \", but I think that \" Several uninteresting, unlikeable people do bad things to and with each other in \" Unfaithful . \" \"",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "num_pass2fail": 1,
+            "num_fail2pass": 2
+        },
+        {
+            "req": "Parsing positive sentiment in (question, no) form",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Parsing negative sentiment in (question, no) form",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Negated neutral should still be neutral",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This video is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "0",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "That is not made almost impossible by events that set the plot in motion.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "or That is not made almost impossible by events that set the plot in motion.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not really just another genre picture.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "n This is not really just another genre picture.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not an hour and a half of daydreaming.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This series is not an hour and a half of daydreaming.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not nothing but familiar territory.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This is not nothing but familiar territory folks.",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "n This is not nothing but familiar territory.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_pass2fail": 1,
+            "num_fail2pass": 5
+        },
+        {
+            "req": "Short sentences with sentiment-laden adjectives",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "I'll go out on a limb.",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "or I'll go out on a limb.",
+                            "1",
+                            "2"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [],
+            "num_pass2fail": 1,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Negated positive with neutral content in the middle",
+            "is_exps_exist": false
+        }
+    ],
+    "distilbert-base-uncased-finetuned-sst-2-english": [
+        {
+            "req": "parsing sentiment in (question, yes) form",
+            "is_exps_exist": true,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Short sentences with neutral adjectives and nouns",
+            "is_exps_exist": true,
+            "pass->fail": [],
+            "fail->pass": [
+                {
+                    "from": [
+                        "The next generation of mob movie.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "The entire next generation of mob movie.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_pass2fail": 0,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Negated negative should be positive or neutral",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Sentiment change over time, present should prevail",
+            "is_exps_exist": true,
+            "pass->fail": [],
+            "fail->pass": [
+                {
+                    "from": [
+                        "I hated it much as to say that \" The rest of the film ... is dudsville . \", on the other hand now I like it.",
+                        "0",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "I hated it much as to say that \" The rest of the film ... is dudsville . \", on the other funny hand now I like it.",
+                            "2",
+                            "2"
+                        ]
+                    ]
+                }
+            ],
+            "num_pass2fail": 0,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Negation of negative at the end, should be positive or neutral",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Author sentiment is more important than of others",
+            "is_exps_exist": true,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Parsing positive sentiment in (question, no) form",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Parsing negative sentiment in (question, no) form",
+            "is_exps_exist": false
+        },
+        {
+            "req": "Negated neutral should still be neutral",
+            "is_exps_exist": true,
+            "pass->fail": [
+                {
+                    "from": [
+                        "This is not not Chabrol's best, but even his lesser works outshine the best some directors can offer.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This series is not not Chabrol's best, but even his lesser works outshine the best some directors can offer.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "This movie is not not Chabrol's best, but even his lesser works outshine the best some directors can offer.",
+                            "2",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not nothing but familiar territory.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This is not nothing but old familiar territory.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "This island is not nothing but familiar territory.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "This is not nothing but familiar territory folks.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "n This is not nothing but familiar territory.",
+                            "0",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [],
+            "num_pass2fail": 6,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Short sentences with sentiment-laden adjectives",
+            "is_exps_exist": true,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Negated positive with neutral content in the middle",
+            "is_exps_exist": false
+        }
+    ]
+}
