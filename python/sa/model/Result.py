@@ -132,20 +132,20 @@ class Result:
         reqs = set([r['req'] for r in model_results])
         results = list()
         for r in reqs:
-            result = {
-                'req': r,
-                'is_exps_exist': False
-            }
             seeds = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='SEED']
             exps = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='EXP']
+            result = {'req': r, 'is_exps_exist': False}
             num_pass2fail = 0
             num_fail2pass = 0
+            seeds_pass = seeds[0]['pass']
+            seeds_fail = seeds[0]['fail']
+            result['num_seeds'] = len(seeds_pass)+len(seeds_fail)
+            result['num_seed_fail'] = len(seeds_fail)
             if any(exps):
                 result['is_exps_exist'] = True
                 result['pass->fail'] = list()
                 result['fail->pass'] = list()
-                seeds_pass = seeds[0]['pass']
-                seeds_fail = seeds[0]['fail']
+
                 exps_pass = exps[0]['pass']
                 exps_fail = exps[0]['fail']
                 for p in seeds_pass:
@@ -180,6 +180,8 @@ class Result:
                     # end if
                 # end for
                 if result['is_exps_exist']:
+                    result['num_exps'] = len(exps_pass)+len(exps_fail)
+                    result['num_exp_fail'] = len(exps_fail)
                     result['num_pass2fail'] = num_pass2fail
                     result['num_fail2pass'] = num_fail2pass
                 # end if
