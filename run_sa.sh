@@ -50,11 +50,19 @@ function eval_retrained_models(){
         )
 }
 
+function analyze_eval_models(){
+        # evaluate NLP models with generated testsuites
+        (cd ${_DIR}
+         python -m python.sa.main --run analyze --search_dataset sst --syntax_selection prob
+        )
+}
+
 function main() {
         # gen_requirements # to generate test_type_sa.json and requirement_sa.json
         # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
-        eval_models
+        # eval_models
+        analuze_eval_models
         # retrain_models
         # eval_retrained_models
 }
