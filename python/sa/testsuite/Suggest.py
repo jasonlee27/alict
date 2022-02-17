@@ -289,15 +289,16 @@ class Suggest:
             for w_sug in gen_input['words_suggest']:
                 input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
                 # check sentence and expansion requirements
-                if cls.eval_sug_words_by_req(input_candid, requirement, label) and \
-                   cls.eval_sug_words_by_exp_req(w_sug, requirement):
-                    results.append((masked_input,
-                                    gen_input['cfg_from'],
-                                    gen_input['cfg_to'],
-                                    mask_pos,
-                                    w_sug,
-                                    input_candid,
-                                    label))
+                if cls.eval_sug_words_by_req(input_candid, requirement, label):
+                    if cls.eval_sug_words_by_exp_req(w_sug, requirement):
+                        results.append((masked_input,
+                                        gen_input['cfg_from'],
+                                        gen_input['cfg_to'],
+                                        mask_pos,
+                                        w_sug,
+                                        input_candid,
+                                        label))
+                    # end if
                 # end if
             # end for
         # end if

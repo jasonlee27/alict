@@ -79,9 +79,13 @@ class SearchOperator:
                     _sents = self.search_method[op](_sents, search_reqs)
                 # end if
             # end for
-            selected.extend(_sents)
+            for s in _sents:
+                if s not in selected:
+                    selected.append(s)
+                # end if
+            # end for
         # end for
-        return list(set(selected))
+        return selected
 
     def search_by_len(self, sents, search_reqs):
         param = search_reqs["length"]
@@ -205,6 +209,15 @@ class SearchOperator:
             else:
                 _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
                 _sents = [(s_i,Utils.detokenize(s),l) for s_i, s, l in sents if l==label]
+            # end if
+            return _sents
+        elif type(label)==list and ("neutral" in label or "positive" in label or "negative" in label):
+            if len(sents[0])==4:
+                _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
+                _sents = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in _sents if l==label]
+            else:
+                _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
+                _sents = [(s_i,Utils.detokenize(s),l) for s_i, s, l in _sents if l==label]
             # end if
             return _sents
         else:

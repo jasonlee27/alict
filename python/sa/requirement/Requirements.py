@@ -151,10 +151,7 @@ class Requirements:
                         "transform": "negate ^demonstratives_AUXBE",
                         "transform_req": [
                             {
-                                "label": "neutral"
-                            },
-                            {
-                                "label": "positive"
+                                "label": ["positive", "neutral"]
                             }
                         ]
                     })
@@ -186,7 +183,11 @@ class Requirements:
                         ],
                         "expansion": ["neutral"],
                         "transform": "negate AUXBE$",
-                        "transform_req": None
+                        "transform_req": [
+                            {
+                                "label": ["positive", "neutral"]
+                            }
+                        ]
                     })
                 elif d.lower()=="negated positive with neutral content in the middle":
                     reqs.append({
@@ -268,7 +269,7 @@ class Requirements:
                         "transform": "questionize no",
                         "transform_req": [
                             {
-                                "label": "neutral"
+                                "label": ['positive', 'neutral']
                             }
                         ]
                     })
