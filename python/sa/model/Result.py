@@ -16,55 +16,47 @@ class Result:
 
     @classmethod
     def get_model_results_from_string(cls, result_str, model_name):
-        p = re.compile(
-            f">>>>> MODEL: {model_name}(.*?)?<<<<< MODEL\: {model_name}",
-            re.DOTALL
+        model_results = re.findall(
+            f"\>\>\>\>\> MODEL\: {model_name}\n\_.*\<\<\<\<\<  MODEL\: {model_name}",
+            result_str
         )
-        model_results = [m.strip() for m in p.findall(result_str)]
         return model_results
 
     @classmethod
     def get_requirement_from_string(cls, model_result_str, task):
-        req_search = re.search(f"Running {task}::([A-Z]+)::(.*)", model_result_str)
+        req_search = re.search(f"Running {task}\:\:([A-Z]+)\:\:(.*)$", model_result_str)
         if req_search:
-            sent_type = req_search.group(1).strip()
-            req = req_search.group(2).strip()
+            sent_type = req_search.group(1)
+            req =req_search.group(2)
             return sent_type, req
         # end if
         return None, None
         
     @classmethod
-    def get_pass_sents_from_model_string(cls, model_result_str):
+    def get_pass_sents_from_model_string(cls, model_result_str_list):
         result = list()
-        for l in model_result_str.splitlines():
-            sent_search = re.search(r"DATA::PASS::(\d)::(\d)::(.*)", l)
+        for l in model_result_str_list:
+            sent_search = re.searvch(r"DATA\:\:PASS\:\:(\d)\:\:(\d)\:\:(.*)$", l)
             if sent_search:
-                sent = sent_search.group(3)
-                tokens = Utils.tokenize(sent)
-                sent = Utils.detokenize(tokens)
                 result.append({
                     'pred': sent_search.group(1),
                     'label': sent_search.group(2),
-                    'sent': sent,
-                    'key': sent.replace(' ', '')
+                    'sent': sent_search.group(3)
                 })
             # end if
         # end for
         return result
 
     @classmethod
-    def get_fail_sents_from_model_string(cls, model_result_str):
+    def get_fail_sents_from_model_string(cls, model_result_str_list):
         result = list()
-        for l in model_result_str.splitlines():
-            sent_search = re.search(r"DATA::FAIL::(\d)::(\d)::(.*)", l)
+        for l in model_result_str_list:
+            sent_search = re.searvch(r"DATA\:\:FAIL\:\:(\d)\:\:(\d)\:\:(.*)$", l)
             if sent_search:
-                sent = sent_search.group(3)
-                tokens = Utils.tokenize(sent)
                 result.append({
                     'pred': sent_search.group(1),
                     'label': sent_search.group(2),
-                    'sent': Utils.detokenize(tokens),
-                    'key': sent.replace(' ', '')
+                    'sent': sent_search.group(3)
                 })
             # end if
         # end for
@@ -72,11 +64,12 @@ class Result:
 
     @classmethod
     def get_task_from_result_str(cls, result_str):
-        task_search = re.search(
+        task_results = re.search(
             f"\*\*\*\*\* TASK\: (.*) \*\*\*\*\*",
             result_str.splitlines()[0]
         )
-        return task_search.group(1).strip()
+        return task_results.group(1)
+
             
     @classmethod
     def parse_model_results(cls, result_str, model_name, task):
@@ -97,33 +90,25 @@ class Result:
     def parse_results(cls, result_file, model_name_file):
         with open(result_file, "r") as f:
             line = f.read()
-            task = cls.get_task_from_result_str(line)
-            return {
-                model.strip(): cls.parse_model_results(
-                    line, model.strip(), task
-                )
-                for model in Utils.read_txt(model_name_file)
-            }
+            task = get_task_from_result_str(line)
+            results = dict()
+            for model in Utils.read_txt(model_name_file):
+                results[model] = cls.parse_model_results(line, model, task)
+            # end for
+            return results
         # end with
 
     @classmethod
     def get_seed_to_exp_map(cls, template_file):
-        templates = Utils.read_json(template_file)
+        templates = Utils.read_json(json_file)
         seed_exp_map = dict()
         for t in templates:
-            seed_exp_map[t['requirement']['description']] = dict()
-            for seed in t['inputs'].keys():
-                exp_list = list()
-                for exp in t['inputs'][seed]['exp_inputs']:
-                    tokens = Utils.tokenize(exp[5])
-                    sent = Utils.detokenize(tokens)
-                    exp_list.append(sent.replace(' ',''))
-                # end for
-                tokens = Utils.tokenize(seed)
-                _seed = Utils.detokenize(tokens)
-                _seed = _seed.replace(' ','')
-                seed_exp_map[t['requirement']['description']][_seed] = exp_list
-            # end for
+            seed_exp_map[t['description']] = {
+                seed: [
+                    exp[5] for exp in t['inputs'][seed]['exp_inputs']
+                ]
+                for seed in t['inputs'].keys()
+            }
         # end for
         return seed_exp_map
 
@@ -132,59 +117,34 @@ class Result:
         reqs = set([r['req'] for r in model_results])
         results = list()
         for r in reqs:
+            result = {
+                'req': r,
+                'pass->fail': dict(),
+                'fail->pass': dict()
+            }
             seeds = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='SEED']
             exps = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='EXP']
-            result = {'req': r, 'is_exps_exist': False}
-            num_pass2fail = 0
-            num_fail2pass = 0
-            seeds_pass = seeds[0]['pass']
-            seeds_fail = seeds[0]['fail']
-            result['num_seeds'] = len(seeds_pass)+len(seeds_fail)
-            result['num_seed_fail'] = len(seeds_fail)
             if any(exps):
-                result['is_exps_exist'] = True
-                result['pass->fail'] = list()
-                result['fail->pass'] = list()
-
+                seeds_pass = seeds[0]['pass']
+                seeds_fail = seeds[0]['fail']
                 exps_pass = exps[0]['pass']
                 exps_fail = exps[0]['fail']
                 for p in seeds_pass:
-                    pass2fail_dict = {'from': list(), 'to': list()}
-                    for exp in seed_exp_map[r][p['key']]:
-                        for ef in exps_fail:
-                            if exp==ef['key']:
-                                pass2fail_dict['to'].append((ef['sent'], ef['pred'], ef['label']))
-                                num_pass2fail += 1
-                            # end if
-                        # end for
+                    result['pass->fail'][p] = list()
+                    for exp in seed_exp_map[r][p]:
+                        if exp in exps_fail:
+                            result['pass->fail'][p].append(exp)
+                        # end if
                     # end for
-                    if any(pass2fail_dict['to']):
-                        pass2fail_dict['from'] = (p['sent'], p['pred'], p['label'])
-                        result['pass->fail'].append(pass2fail_dict)
-                    # end if
                 # end for
-                
                 for f in seeds_fail:
-                    fail2pass_dict = {'from': list(), 'to': list()}
-                    for exp in seed_exp_map[r][f['key']]:
-                        for ep in exps_pass:
-                            if exp==ep['key']:
-                                fail2pass_dict['to'].append((ep['sent'], ep['pred'], ep['label']))
-                                num_fail2pass += 1
-                            # end if
-                        # end for
+                    result['fail->pass'][f] = list()
+                    for exp in seed_exp_map[r][f]:
+                        if exp in exps_pass:
+                            result['fail->pass'][f].append(exp)
+                        # end if
                     # end for
-                    if any(fail2pass_dict['to']):
-                        fail2pass_dict['from'] = (f['sent'], f['pred'], f['label'])
-                        result['fail->pass'].append(fail2pass_dict)
-                    # end if
                 # end for
-                if result['is_exps_exist']:
-                    result['num_exps'] = len(exps_pass)+len(exps_fail)
-                    result['num_exp_fail'] = len(exps_fail)
-                    result['num_pass2fail'] = num_pass2fail
-                    result['num_fail2pass'] = num_fail2pass
-                # end if
             # end if
             results.append(result)
         # end for
@@ -199,5 +159,7 @@ class Result:
             model_result = result_dict[model]
             results[model] = cls.analyze_model(model_result, seed_exp_map)
         # end for
-        Utils.write_json(results, saveto, pretty_format=True)
+        Utils.write_json(results, saveto)
         return results
+
+    

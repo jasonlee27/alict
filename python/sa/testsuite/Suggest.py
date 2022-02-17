@@ -175,7 +175,16 @@ class Suggest:
     
     @classmethod
     def eval_sug_words_by_req(cls, new_input, requirement, label):
-        search_obj = SearchOperator(requirement)
+        if requirement['transform_req'] is not None:
+            _requirement = {
+                'capability': requirement['capability'],
+                'description': requirement['description'],
+                'search': requirement['transform_req']
+            }
+        else:
+            _requirement = requirement
+        # end if
+        search_obj = SearchOperator(_requirement)
         search_res = search_obj.search([('1', new_input, label)])
         if len(search_res)>0:
             return True
@@ -240,7 +249,7 @@ class Suggest:
     def get_new_inputs(cls, generator, gen_inputs, num_target=10, is_random_select=False):
         editor = generator.editor
         nlp = spacy.load('en_core_web_md')
-        word_suggestions = cls.get_word_suggestion(editor, gen_inputs, num_target=num_target)
+        word_suggestions = cls.get_word_suggestion(editor, gen_inputs, num_target=3*num_target)
         for g_i in range(len(gen_inputs)):
             # print(f"gen_new_inputs: {g_i} out of {len(gen_inputs)}")
             gen_input = gen_inputs[g_i]
@@ -260,32 +269,44 @@ class Suggest:
             gen_inputs[g_i] = gen_input
         # end for
         gen_inputs = [g for g in gen_inputs if g['words_suggest'] is not None]
+        num_words_suggest = sum([len(g['words_suggest']) for g in gen_inputs])
+        print(f"{num_words_suggest} words suggestions", end=" :: ")
         return gen_inputs
 
     @classmethod
     def eval_word_suggest(cls, gen_input, label: str, requirement):
         results = list()
         masked_input, mask_pos = gen_input['masked_input']
-        for w_sug in gen_input['words_suggest']:
-            input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
-            # check sentence and expansion requirements
-            if cls.eval_sug_words_by_req(input_candid, requirement, label) and \
-               cls.eval_sug_words_by_exp_req(w_sug, requirement):
-                results.append((masked_input,
-                                gen_input['cfg_from'],
-                                gen_input['cfg_to'],
-                                mask_pos,
-                                w_sug,
-                                input_candid,
-                                label))
-            # end if
-        # end for
+        if not gen_input['words_suggest']:
+            results.append((masked_input,
+                            gen_input['cfg_from'],
+                            gen_input['cfg_to'],
+                            mask_pos,
+                            None,
+                            None,
+                            label))
+        else:
+            for w_sug in gen_input['words_suggest']:
+                input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
+                # check sentence and expansion requirements
+                if cls.eval_sug_words_by_req(input_candid, requirement, label) and \
+                   cls.eval_sug_words_by_exp_req(w_sug, requirement):
+                    results.append((masked_input,
+                                    gen_input['cfg_from'],
+                                    gen_input['cfg_to'],
+                                    mask_pos,
+                                    w_sug,
+                                    input_candid,
+                                    label))
+                # end if
+            # end for
+        # end if
         return results
 
     @classmethod
     def get_exp_inputs(cls, generator, gen_inputs, seed_label, requirement, num_target=10, is_random_select=False):
         # get the word suggesteion at the expended grammar elements
-        new_input_results = list()              
+        new_input_results = list()
         gen_inputs = cls.get_new_inputs(
             generator, gen_inputs, num_target=num_target, is_random_select=is_random_select
         )
@@ -296,10 +317,10 @@ class Suggest:
                 new_input_results.extend(eval_results)
                 # num_seed_for_exp += 1
                 # print(f"eval: {g_i} out of {len(gen_inputs)}", end="")
-                print(".", end="")
+                # print(".", end="")
             # end if
         # end for
-        print()
+        # print()
         return new_input_results
 
         

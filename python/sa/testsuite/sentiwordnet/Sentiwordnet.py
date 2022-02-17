@@ -135,7 +135,8 @@ class Sentiwordnet:
             # end if
             word = d.split("::")[0]
             pos = d.split("::")[-1]
-            result[word] = {
+            result[d] = {
+                "word": word,
                 "POS": get_pos(pos),
                 "label": label
             }

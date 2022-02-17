@@ -38,7 +38,7 @@ class Macros:
     }
 
     # Testsuite
-    num_cfg_exp_elem = 10 # number of syntax suggestions used in Generator
+    num_cfg_exp_elem = -1 # number of syntax suggestions used in Generator
     num_suggestions_on_exp_grammer_elem = 20 # number of word suggestions used in Suggest
     nsamples = 500
     max_num_seeds = 50 # maximum number of selected sentences
@@ -58,7 +58,7 @@ class Macros:
     dyna_r1_test_src_file: Path = dataset_dir / "dynasent" / "dynasent-v1.1" / "dynasent-v1.1-round01-yelp-test.jsonl"
 
     # SentiWordNet
-    swn_data_file: Path = download_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"
+    swn_data_file: Path = dataset_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"
     
     # Checklist Testsuite
     checklist_dir: Path = download_dir / "checklist"

@@ -81,7 +81,8 @@ class Requirements:
                             "label": "neutral"
                         }],
                         "expansion": ["neutral"],
-                        "transform": None
+                        "transform": None,
+                        "transform_req": None
                     })
                 elif d.lower()=="short sentences with sentiment-laden adjectives":
                     reqs.append({
@@ -111,7 +112,8 @@ class Requirements:
                             "label": "negative"
                         }],
                         "expansion": ["neutral"],
-                        "transform": None
+                        "transform": None,
+                        "transform_req": None
                     })
                 elif d.lower()=="sentiment change over time, present should prevail":
                     reqs.append({
@@ -128,7 +130,8 @@ class Requirements:
                             }
                         ],
                         "expansion": ["neutral"],
-                        "transform": "add temporal_awareness"
+                        "transform": "add temporal_awareness",
+                        "transform_req": None
                     })
                 elif d.lower()=="negated negative should be positive or neutral":
                     # AUX : auxilary verb
@@ -145,7 +148,15 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": "negate ^demonstratives_AUXBE"
+                        "transform": "negate ^demonstratives_AUXBE",
+                        "transform_req": [
+                            {
+                                "label": "neutral"
+                            },
+                            {
+                                "label": "positive"
+                            }
+                        ]
                     })
                 elif d.lower()=="negated neutral should still be neutral":
                     reqs.append({
@@ -161,7 +172,8 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": "negate ^demonstratives_AUXBE"
+                        "transform": "negate ^demonstratives_AUXBE",
+                        "transform_req": None
                     })
                 elif d.lower()=="negation of negative at the end, should be positive or neutral":
                     reqs.append({
@@ -173,7 +185,8 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": "negate AUXBE$"
+                        "transform": "negate AUXBE$",
+                        "transform_req": None
                     })
                 elif d.lower()=="negated positive with neutral content in the middle":
                     reqs.append({
@@ -190,7 +203,8 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": "negate positive"
+                        "transform": "negate positive",
+                        "transform_req": None
                     })
                 elif d.lower()=="author sentiment is more important than of others":
                     reqs.append({
@@ -205,7 +219,8 @@ class Requirements:
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": "srl"
+                        "transform": "srl",
+                        "transform_req": None
                     })
                 elif d.lower()=="parsing sentiment in (question, yes) form":
                     reqs.append({
@@ -220,7 +235,8 @@ class Requirements:
                             }
                         ],
                         "expansion": ["neutral"],
-                        "transform": "questionize yes"
+                        "transform": "questionize yes",
+                        "transform_req": None
                     })
                 elif d.lower()=="parsing positive sentiment in (question, no) form":
                     reqs.append({
@@ -228,11 +244,16 @@ class Requirements:
                         "description": d,
                         "search": [
                             {
-                                "label": "positive",
+                                "label": "positive"
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": "questionize no"
+                        "transform": "questionize no",
+                        "transform_req": [
+                            {
+                                "label": "negative"
+                            }
+                        ]
                     })
                 elif d.lower()=="parsing negative sentiment in (question, no) form":
                     reqs.append({
@@ -240,11 +261,16 @@ class Requirements:
                         "description": d,
                         "search": [
                             {
-                                "label": "negative",
+                                "label": "negative"
                             },
                         ],
                         "expansion": ["neutral"],
-                        "transform": "questionize no"
+                        "transform": "questionize no",
+                        "transform_req": [
+                            {
+                                "label": "neutral"
+                            }
+                        ]
                     })
                 # end if
             # end for

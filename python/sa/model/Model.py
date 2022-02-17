@@ -106,6 +106,7 @@ class Model:
 
     @classmethod
     def print_result(cls, x, pred, conf, expect_result, label=None, meta=None, format_example_fn=None, nsamples=3):
+        print(pred, label, expect_result)
         isfailed = False if pred==label else True
         print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
 
