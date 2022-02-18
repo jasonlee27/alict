@@ -3,6 +3,7 @@
 
 from typing import *
 from pathlib import Path
+from scipy.stats import entropy
 
 # from checklist.test_suite import TestSuite as suite
 
@@ -46,6 +47,7 @@ class Result:
                     'conf': sent_search.group(1),
                     'pred': sent_search.group(2),
                     'label': sent_search.group(3),
+                    'ent': str(round(entropy([float(p) for p in sent_search.group(1).split()], base=2), 5)),
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
@@ -66,6 +68,7 @@ class Result:
                     'conf': sent_search.group(1),
                     'pred': sent_search.group(2),
                     'label': sent_search.group(3),
+                    'ent': str(round(entropy([float(p) for p in sent_search.group(1).split()], base=2), 5)),
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
@@ -91,7 +94,7 @@ class Result:
                 'sent_type': sent_type,
                 'req': req,
                 'pass': cls.get_pass_sents_from_model_string(r),
-                'fail': cls.get_fail_sents_from_model_string(r)                
+                'fail': cls.get_fail_sents_from_model_string(r)
             })
         # end for
         return results
@@ -132,13 +135,19 @@ class Result:
 
     @classmethod
     def analyze_model(cls, model_results, seed_exp_map):
-        reqs = set([r['req'] for r in model_results])
+        reqs = sorted(set([r['req'] for r in model_results]))
         results = list()
         for r in reqs:
             seeds = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='SEED']
             exps = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='EXP']
             result = {'req': r, 'is_exps_exist': False}
             num_pass2fail, num_fail2pass = 0, 0
+            num_pass2pass, num_fail2fail = 0, 0
+            num_pass2pass_ent_inc, num_pass2pass_ent_dec, num_pass2pass_ent_same = 0,0,0
+            num_fail2fail_ent_inc, num_fail2fail_ent_dec, num_fail2fail_ent_same = 0,0,0
+            num_pass2fail_ent_inc, num_pass2fail_ent_dec, num_pass2fail_ent_same = 0,0,0
+            num_fail2pass_ent_inc, num_fail2pass_ent_dec, num_fail2pass_ent_same = 0,0,0
+            
             seeds_pass = seeds[0]['pass']
             seeds_fail = seeds[0]['fail']
             result['num_seeds'] = len(seeds_pass)+len(seeds_fail)
@@ -147,11 +156,14 @@ class Result:
                 result['is_exps_exist'] = True
                 result['pass->fail'] = list()
                 result['fail->pass'] = list()
+                result['pass->pass'] = list()
+                result['fail->fail'] = list()
                 
                 exps_pass = exps[0]['pass']
                 exps_fail = exps[0]['fail']
                 for p in seeds_pass:
                     pass2fail_dict = {'from': list(), 'to': list()}
+                    pass2pass_dict = {'from': list(), 'to': list()}
                     for exp in seed_exp_map[r][p['key']]:
                         for ef in exps_fail:
                             if exp==ef['key']:
@@ -159,9 +171,37 @@ class Result:
                                     'sent': ef['sent'],
                                     'pred': ef['pred'],
                                     'label': ef['label'],
-                                    'conf': ef['conf']
+                                    'conf': ef['conf'],
+                                    'ent': ef['ent']
                                 })
                                 num_pass2fail += 1
+                                if p['ent']<ef['ent']:
+                                    num_pass2fail_ent_inc += 1
+                                elif p['ent']>ef['ent']:
+                                    num_pass2fail_ent_dec += 1
+                                else:
+                                    num_pass2fail_ent_same += 1
+                                # end if
+                            # end if
+                        # end for
+
+                        for ep in exps_pass:
+                            if exp==ep['key'] and p['ent']!=ep['ent']:
+                                pass2pass_dict['to'].append({
+                                    'sent': ep['sent'],
+                                    'pred': ep['pred'],
+                                    'label': ep['label'],
+                                    'conf': ep['conf'],
+                                    'ent': ep['ent']
+                                })
+                                num_pass2pass += 1
+                                if p['ent']<ep['ent']:
+                                    num_pass2pass_ent_inc += 1
+                                elif p['ent']>ep['ent']:
+                                    num_pass2pass_ent_dec += 1
+                                # end if
+                            elif exp==ep['key'] and p['ent']==ep['ent']:
+                                num_pass2pass_ent_same += 1
                             # end if
                         # end for
                     # end for
@@ -170,14 +210,27 @@ class Result:
                             'sent': p['sent'],
                             'pred': p['pred'],
                             'label': p['label'],
-                            'conf': p['conf']
+                            'conf': p['conf'],
+                            'ent': p['ent']
                         }
                         result['pass->fail'].append(pass2fail_dict)
+                    # end if
+
+                    if any(pass2pass_dict['to']):
+                        pass2pass_dict['from'] = {
+                            'sent': p['sent'],
+                            'pred': p['pred'],
+                            'label': p['label'],
+                            'conf': p['conf'],
+                            'ent': p['ent']
+                        }
+                        result['pass->pass'].append(pass2pass_dict)
                     # end if
                 # end for
                     
                 for f in seeds_fail:
                     fail2pass_dict = {'from': list(), 'to': list()}
+                    fail2fail_dict = {'from': list(), 'to': list()}
                     for exp in seed_exp_map[r][f['key']]:
                         for ep in exps_pass:
                             if exp==ep['key']:
@@ -185,9 +238,37 @@ class Result:
                                     'sent': ep['sent'],
                                     'pred': ep['pred'],
                                     'label': ep['label'],
-                                    'conf': ep['conf']
+                                    'conf': ep['conf'],
+                                    'ent': ep['ent']
                                 })
                                 num_fail2pass += 1
+                                if f['ent']<ep['ent']:
+                                    num_fail2pass_ent_inc += 1
+                                elif f['ent']>ep['ent']:
+                                    num_fail2pass_ent_dec += 1
+                                else:
+                                    num_fail2pass_ent_same += 1
+                                # end if
+                            # end if
+                        # end for
+
+                        for ef in exps_fail:
+                            if exp==ef['key'] and f['ent']!=ef['ent']:
+                                fail2fail_dict['to'].append({
+                                    'sent': ef['sent'],
+                                    'pred': ef['pred'],
+                                    'label': ef['label'],
+                                    'conf': ef['conf'],
+                                    'ent': ef['ent']
+                                })
+                                num_fail2fail += 1
+                                if f['ent']<ef['ent']:
+                                    num_fail2fail_ent_inc += 1
+                                elif f['ent']>ef['ent']:
+                                    num_fail2fail_ent_dec += 1
+                                # end if
+                            elif exp==ef['key'] and f['ent']==ef['ent']:
+                                num_fail2fail_ent_same += 1
                             # end if
                         # end for
                     # end for
@@ -196,16 +277,40 @@ class Result:
                             'sent': f['sent'],
                             'pred': f['pred'],
                             'label': f['label'],
-                            'conf': f['conf']
+                            'conf': f['conf'],
+                            'ent': f['ent']
                         }
                         result['fail->pass'].append(fail2pass_dict)
                     # end if
+
+                    if any(fail2fail_dict['to']):
+                        fail2fail_dict['from'] = {
+                            'sent': f['sent'],
+                            'pred': f['pred'],
+                            'label': f['label'],
+                            'conf': f['conf'],
+                            'ent': f['ent']
+                        }
+                        result['fail->fail'].append(fail2fail_dict)
+                    # end if
                 # end for
+                result['num_pass2pass_ent_inc'] = num_pass2pass_ent_inc
+                result['num_pass2pass_ent_dec'] = num_pass2pass_ent_dec
+                result['num_pass2pass_ent_same'] = num_pass2pass_ent_same
+                result['num_fail2fail_ent_inc'] = num_fail2fail_ent_inc
+                result['num_fail2fail_ent_dec'] = num_fail2fail_ent_dec
+                result['num_fail2fail_ent_same'] = num_fail2fail_ent_same
                 if result['is_exps_exist']:
                     result['num_exps'] = len(exps_pass)+len(exps_fail)
                     result['num_exp_fail'] = len(exps_fail)
                     result['num_pass2fail'] = num_pass2fail
                     result['num_fail2pass'] = num_fail2pass
+                    result['num_pass2fail_ent_inc'] = num_pass2fail_ent_inc
+                    result['num_pass2fail_ent_dec'] = num_pass2fail_ent_dec
+                    result['num_pass2fail_ent_same'] = num_pass2fail_ent_same
+                    result['num_fail2pass_ent_inc'] = num_fail2pass_ent_inc
+                    result['num_fail2pass_ent_dec'] = num_fail2pass_ent_dec
+                    result['num_fail2pass_ent_same'] = num_fail2pass_ent_same
                 # end if
             # end if
             results.append(result)

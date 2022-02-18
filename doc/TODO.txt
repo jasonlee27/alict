@@ -1,21 +1,26 @@
 TASKS
 
-  - [JL] for AST differation, we check if we have enough syntax
-    expansions (do seperate experiment)
+  - [JL] make slides for structure of paper (overview, what how we would
+    like to say from our approach/experiment).
 
-  - [JL] For constructing PCFG probability in reference, multiply the
-    p(non_terminal or terminal) with p(a->b).
+  - [JL] search related works (mutation based nn work fuzzing)
 
-  - [JL] think about how to statistically interact selected sentence
-    and grammar checker.
-
-  - [JL] implement my PCFG idea for generating exp sentences.
-
-  - [JL] manual study of generated study: 1. labels of our all
-    generated(expanded) test cases.
-  
 ==========
 
+  + [JL] think about how to statistically interact selected sentence
+    and grammar checker.
+
+  + [JL] implement my PCFG idea for generating exp sentences.
+
+  + [JL] manual study of generated study: 1. labels of our all
+    generated(expanded) test cases.
+
+  + [JL] for AST differation, we check if we have enough syntax
+    expansions (do seperate experiment)
+
+  + [JL] For constructing PCFG probability in reference, multiply the
+    p(non_terminal or terminal) with p(a->b).
+    
   + [JL] think about CFG active learning. Given a sentence and its
     grammar CFG, expand the grammar using active learning (e.g. the
     grammar checker)
