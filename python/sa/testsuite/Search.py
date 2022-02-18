@@ -24,15 +24,15 @@ from .sentiwordnet.Sentiwordnet import Sentiwordnet
 # get pos/neg/neu words from SentiWordNet
 SENT_WORDS = Sentiwordnet.get_sent_words()
 SENT_DICT = {
-    "positive_adj": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="adj" and SENT_WORDS[w]["label"]=="positive"],
-    "negative_adj": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="adj" and SENT_WORDS[w]["label"]=="negative"],
-    "neutral_adj": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="adj" and SENT_WORDS[w]["label"]=="pure neutral"],
-    "positive_verb": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="verb" and SENT_WORDS[w]["label"]=="positive"],
-    "negative_verb": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="verb" and SENT_WORDS[w]["label"]=="negative"],
-    "neutral_verb": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="verb" and SENT_WORDS[w]["label"]=="pure neutral"],
-    "positive_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="positive"],
-    "negative_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="negative"],
-    "neutral_noun": [w for w in SENT_WORDS.keys() if SENT_WORDS[w]["POS"]=="noun" and SENT_WORDS[w]["label"]=="pure neutral"]
+    'positive_adj': [w['word'] for w in SENT_WORDS.values() if w['POS']=='adj' and w['label']=='positive'],
+    'negative_adj': [w['word'] for w in SENT_WORDS.values() if w['POS']=='adj' and w['label']=='negative'],
+    'neutral_adj': [w['word'] for w in SENT_WORDS.values() if w['POS']=='adj' and w['label']=='pure neutral'],
+    'positive_verb': [w['word'] for w in SENT_WORDS.values() if w['POS']=='verb' and w['label']=='positive'],
+    'negative_verb': [w['word'] for w in SENT_WORDS.values() if w['POS']=='verb' and w['label']=='negative'],
+    'neutral_verb': [w['word'] for w in SENT_WORDS.values() if w['POS']=='verb' and w['label']=='pure neutral'],
+    'positive_noun': [w['word'] for w in SENT_WORDS.values() if w['POS']=='noun' and w['label']=='positive'],
+    'negative_noun': [w['word'] for w in SENT_WORDS.values() if w['POS']=='noun' and w['label']=='negative'],
+    'neutral_noun': [w['word'] for w in SENT_WORDS.values() if w['POS']=='noun' and w['label']=='pure neutral']
 }
 
 WORD2POS_MAP = {
@@ -79,9 +79,13 @@ class SearchOperator:
                     _sents = self.search_method[op](_sents, search_reqs)
                 # end if
             # end for
-            selected.extend(_sents)
+            for s in _sents:
+                if s not in selected:
+                    selected.append(s)
+                # end if
+            # end for
         # end for
-        return list(set(selected))
+        return selected
 
     def search_by_len(self, sents, search_reqs):
         param = search_reqs["length"]
@@ -205,6 +209,15 @@ class SearchOperator:
             else:
                 _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
                 _sents = [(s_i,Utils.detokenize(s),l) for s_i, s, l in sents if l==label]
+            # end if
+            return _sents
+        elif type(label)==list and ("neutral" in label or "positive" in label or "negative" in label):
+            if len(sents[0])==4:
+                _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
+                _sents = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in _sents if l==label]
+            else:
+                _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
+                _sents = [(s_i,Utils.detokenize(s),l) for s_i, s, l in _sents if l==label]
             # end if
             return _sents
         else:

@@ -1,0 +1,1847 @@
+{
+    "textattack/bert-base-uncased-SST-2": [
+        {
+            "req": "Negated positive with neutral content in the middle",
+            "is_exps_exist": false,
+            "num_seeds": 50,
+            "num_seed_fail": 41
+        },
+        {
+            "req": "Sentiment change over time, present should prevail",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 16,
+            "pass->fail": [
+                {
+                    "from": [
+                        "I liked it much as to say that \" A taut, sobering film . \", on the other hand now I don't like it.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I liked it much as to say that \" A taut, sobering film . \", on the other arm hand now I don't like it.",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "I liked it much as to say that \" The screenplay never lets us forget that Bourne was once an amoral assassin just like the ones who are pursuing him ... There is never really a true \" us \" versus \" them \" . \", although now I hate it.",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I liked it so much as to say that \" The screenplay never lets us forget that Bourne was once an amoral assassin just like the ones who are pursuing him ... There is never really a true \" us \" versus \" them \" . \", although now I hate it.",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "I liked it much as to say that \" The screenplay never lets us forget enough that Bourne was once an amoral assassin just like the ones who are pursuing him ... There is never really a true \" us \" versus \" them \" . \", although now I hate it.",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "I liked it much as to say that \" Even if the Naipaul original remains the real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                        "2",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I even liked it much as to say that \" Even if the Naipaul original remains the real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 1,
+            "num_fail2pass": 3
+        },
+        {
+            "req": "Negated negative should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 0,
+            "num_seed_fail": 0,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 0,
+            "num_exp_fail": 0,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Author sentiment is more important than of others",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 16,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Many people agree with that \" Without September 11, Collateral Damage would have been just another bad movie . \", but I think that \" It never quite makes it to the boiling point, but manages to sustain a good simmer for most of its running time . \"",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Many people agree with that \" Without September 11, Collateral Damage would have been just another bad movie . \", but I think that \" It never quite makes it to the boiling point, but manages to sustain even a good simmer for most of its running time . \"",
+                            "0",
+                            "2"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [],
+            "num_exps": 162,
+            "num_exp_fail": 62,
+            "num_pass2fail": 1,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Parsing positive sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 29,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Do I think that \" The film's sharp, often mischievous sense of humor will catch some off guard ... \"? no",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" The film's sharp, often mischievous sense of humor will catch some folk off guard ... \"? no",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "Do I think that \" Everyone's insecure in Lovely and Amazing, a poignant and wryly amusing film about mothers, daughters and their relationships . \"? no",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" Everyone's insecure in Lovely and Amazing, a poignant and wryly amusing film anthology about mothers, daughters and their relationships . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" Everyone's more insecure in Lovely and Amazing, a poignant and wryly amusing film about mothers, daughters and their relationships . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" Though in some ways similar to Catherine Breillat's Fat Girl, Rain is the far superior film . \"? no",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" Though in some ways similar to Catherine Breillat's Fat Girl, Rain is the far longer superior film . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" The cast is uniformly excellent and relaxed . \"? no",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" at The cast is uniformly excellent and relaxed . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" The trick when watching Godard is to catch the pitch of his poetics, savor the pleasure of his sounds and images, and ponder the historical, philosophical, and ethical issues that intersect with them . \"? no",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" The trick factor when watching Godard is to catch the pitch of his poetics, savor the pleasure of his sounds and images, and ponder the historical, philosophical, and ethical issues that intersect with them . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The trick factor when watching Godard is to catch the pitch of his poetics, savor the pleasure of his sounds and images, and ponder the historical, philosophical, and ethical issues that intersect with them . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The trick factor when watching Godard is to catch the pitch of his poetics, savor the pleasure of his sounds and images, and ponder the historical, philosophical, and ethical issues that intersect with them . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The trick factor when watching Godard is to catch the pitch of his poetics, savor the pleasure of his sounds and images, and ponder the historical, philosophical, and ethical issues that intersect with them . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" This deeply spiritual film taps into the meaning and consolation in afterlife communications . \"? no",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" This deeply spiritual film taps into the meaning and consolation in afterlife phone communications . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" This deeply spiritual film taps into the meaning and consolation in afterlife radio communications . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" This deeply spiritual film taps back into the meaning and consolation in afterlife communications . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" Try as you might to scrutinize the ethics of Kaufman's approach, somehow it all comes together to create a very compelling, sensitive, intelligent and almost cohesive piece of film entertainment . \"? no",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" Try as you might to scrutinize the ethics of Kaufman's approach, somehow it all comes together to create a single very compelling, sensitive, intelligent and almost cohesive piece of film entertainment . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 1,
+            "num_fail2pass": 12
+        },
+        {
+            "req": "Negation of negative at the end, should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 0,
+            "num_seed_fail": 0,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 0,
+            "num_exp_fail": 0,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Parsing negative sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 0,
+            "num_seed_fail": 0,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 0,
+            "num_exp_fail": 0,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Short sentences with neutral adjectives and nouns",
+            "is_exps_exist": true,
+            "num_seeds": 20,
+            "num_seed_fail": 16,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Pumpkin wants to have it both ways.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "Pumpkin wants to have it snow both ways.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "Pumpkin wants to have it swing both ways.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "Pumpkin wants to have it rain both ways.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "Pumpkin wants to have it both ways tonight.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "Pumpkin wants to have it both two ways.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "Pumpkin wants to have it both three ways.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "Pumpkin wants to have it both four ways.",
+                            "2",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "` Snow Dogs' has both.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "n ` Snow Dogs' has both.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "or ` Snow Dogs' has both.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "` Snow Dogs' has both hands.",
+                            "2",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Or both.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "Or both things.",
+                            "2",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "Here's my advice, Kev.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "Here in's my advice, Kev.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 58,
+            "num_exp_fail": 56,
+            "num_pass2fail": 11,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Negated neutral should still be neutral",
+            "is_exps_exist": true,
+            "num_seeds": 24,
+            "num_seed_fail": 22,
+            "pass->fail": [
+                {
+                    "from": [
+                        "This is not a nervy, risky film, and Villeneuve has inspired Croze to give herself over completely to the tormented persona of Bibi.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This is not a nervy, risky film, and Villeneuve has inspired Croze to give herself half over completely to the tormented persona of Bibi.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "This is not a nervy, risky film, and Villeneuve has inspired Croze to give herself over completely to the tormented female persona of Bibi.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "This is not a nervy, risky film, and Villeneuve has inspired Croze to give herself over completely in to the tormented persona of Bibi.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "This is not a nervy, risky film, and Villeneuve has inspired Croze to give herself over completely to the tormented persona outside of Bibi.",
+                            "2",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This graphic is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of populist revolution and turns it into a sales tool.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat outside of revolution and turns it into a sales tool.",
+                            "2",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "This is not SO De Palma.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This guy is not SO De Palma.",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "This president is not SO De Palma.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not an hour and a half of daydreaming.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This is not an hour and a half of idle daydreaming.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 117,
+            "num_exp_fail": 100,
+            "num_pass2fail": 7,
+            "num_fail2pass": 3
+        },
+        {
+            "req": "parsing sentiment in (question, yes) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 5,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers winning performances and some effecting moments . \"? yes",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers few winning performances and some effecting moments . \"? yes",
+                            "0",
+                            "2"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I agree that \" Opera on film is never satisfactory . \"? yes",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I agree that \" Opera on film is never more satisfactory . \"? yes",
+                            "2",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" Everybody loves a David and Goliath story, and this one is told almost entirely from David's point of view . \"? yes",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" Everybody loves even a David and Goliath story, and this one is told almost entirely from David's point of view . \"? yes",
+                            "0",
+                            "2"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" Behind the snow games and lovable Siberian huskies (plus one sheep dog), the picture hosts a parka-wrapped dose of heart . \"? yes",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that in \" Behind the snow games and lovable Siberian huskies (plus one sheep dog), the picture hosts a parka-wrapped dose of heart . \"? yes",
+                            "0",
+                            "2"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "Do I agree that \" Rarely has so much money delivered so little entertainment . \"? yes",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I agree that \" Rarely has so damned much money delivered so little entertainment . \"? yes",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" Maybe it's asking too much, but if a movie is truly going to inspire me, I want a little more than this . \"? yes",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" Maybe it's asking too much, but if a movie script is truly going to inspire me, I want a little more than this . \"? yes",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" A sad, superior human comedy played out on the back roads of life . \"? yes",
+                        "1",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" A sad, superior human comedy played out on the back roads of modern life . \"? yes",
+                            "2",
+                            "2"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 181,
+            "num_exp_fail": 81,
+            "num_pass2fail": 4,
+            "num_fail2pass": 3
+        },
+        {
+            "req": "Short sentences with sentiment-laden adjectives",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 1,
+            "pass->fail": [
+                {
+                    "from": [
+                        "This movie is maddening.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "This movie is maddening funny.",
+                            "2",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [],
+            "num_exps": 104,
+            "num_exp_fail": 4,
+            "num_pass2fail": 1,
+            "num_fail2pass": 0
+        }
+    ],
+    "textattack/roberta-base-SST-2": [
+        {
+            "req": "Negated positive with neutral content in the middle",
+            "is_exps_exist": false,
+            "num_seeds": 50,
+            "num_seed_fail": 26
+        },
+        {
+            "req": "Sentiment change over time, present should prevail",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 27,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Last time, I didn't like it saying that \" Why \" they \" were here and what \" they \" wanted and quite honestly, I didn't care . \", but now I like it.",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Last time, I didn't like it even saying that \" Why \" they \" were here and what \" they \" wanted and quite honestly, I didn't care . \", but now I like it.",
+                            "1",
+                            "2"
+                        ],
+                        [
+                            "Last time, I didn't like it saying that \" Why \" they \" were even here and what \" they \" wanted and quite honestly, I didn't care . \", but now I like it.",
+                            "1",
+                            "2"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Last time, I agreed with saying that \" It's predictable, but it jumps through the expected hoops with style and even some depth . \", although now I hate it.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Last full time, I agreed with saying that \" It's predictable, but it jumps through the expected hoops with style and even some depth . \", although now I hate it.",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Last time, I agreed with saying that \" It's predictable, but it jumps through the expected hoops with nice style and even some depth . \", although now I hate it.",
+                            "2",
+                            "0"
+                        ],
+                        [
+                            "Last time, I agreed with saying that \" It's predictable, but it jumps through over the expected hoops with style and even some depth . \", although now I hate it.",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Last time, I agreed with saying that \" It's predictable, but it jumps through the expected hoops with style and even some depth . \", even although now I hate it.",
+                            "2",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Last time, I agreed with saying that \" With We Were Soldiers, Hollywood makes a valiant attempt to tell a story about the Vietnam War before the pathology set in . \", although now I don't like it.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Last time, I agreed with saying that \" With We Were Soldiers, Hollywood makes forth a valiant attempt to tell a story about the Vietnam War before the pathology set in . \", although now I don't like it.",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "I liked it much as to say that \" Even if the Naipaul original remains the real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I liked it much as to say that \" Even if the Naipaul original screenplay remains the real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "I liked it much as to say that \" Even if the Naipaul original remains the real masterpiece, the movie possesses its own languorous charm . \", although now I hate even it.",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 7,
+            "num_fail2pass": 2
+        },
+        {
+            "req": "Negated negative should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 0,
+            "num_seed_fail": 0,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 0,
+            "num_exp_fail": 0,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Author sentiment is more important than of others",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 14,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 169,
+            "num_exp_fail": 69,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Parsing positive sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 36,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Do I think that \" And in this regard, On Guard delivers . \"? no",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" And in this regard tonight, On Guard delivers . \"? no",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" And so in this regard, On Guard delivers . \"? no",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama that tries to tell of the unspeakable . \"? no",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama film that tries to tell of the unspeakable . \"? no",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama movie that tries to tell of the unspeakable . \"? no",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama movie that tries to tell of the unspeakable . \"? no",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama film that tries to tell of the unspeakable . \"? no",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama movie that tries to tell of the unspeakable . \"? no",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama movie that tries to tell of the unspeakable . \"? no",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Do I agree now that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama that tries to tell of the unspeakable . \"? no",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "Do I think that \" ... could easily be called the best Korean film of 2002 . \"? no",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" ... could easily be called the best Korean film single of 2002 . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I agree that \" Thumbs up to Paxton for not falling into the Hollywood trap and making a vanity project with nothing new to offer . \"? no",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I agree that \" Thumbs up here to Paxton for not falling into the Hollywood trap and making a vanity project with nothing new to offer . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I agree that \" Thumbs up to Paxton now for not falling into the Hollywood trap and making a vanity project with nothing new to offer . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" The overall effect is awe and affection -- and a strange urge to get on a board and, uh, shred, dude . \"? no",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" The overall end effect is awe and affection -- and a strange urge to get on a board and, uh, shred, dude . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The overall movie effect is awe and affection -- and a strange urge to get on a board and, uh, shred, dude . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The overall effect is awe and affection -- and a strange urge to get on a clip board and, uh, shred, dude . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The overall effect is awe and affection -- and a strange urge to get on a bulletin board and, uh, shred, dude . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The overall effect is awe and affection -- and a strange urge to get on a message board and, uh, shred, dude . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The overall effect is awe and affection -- and a strange urge to get on a pirate board and, uh, shred, dude . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The overall effect here is awe and affection -- and a strange urge to get on a board and, uh, shred, dude . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The overall effect is awe and affection -- and a strange urge to get over on a board and, uh, shred, dude . \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" The overall effect is awe and affection -- and a strange urge to get behind on a board and, uh, shred, dude . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I agree that \" But it could be, by its art and heart, a necessary one . \"? no",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I agree that \" But it could be, by its art and heart, a mere necessary one . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 9,
+            "num_fail2pass": 13
+        },
+        {
+            "req": "Negation of negative at the end, should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 0,
+            "num_seed_fail": 0,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 0,
+            "num_exp_fail": 0,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Parsing negative sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 0,
+            "num_seed_fail": 0,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 0,
+            "num_exp_fail": 0,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Short sentences with neutral adjectives and nouns",
+            "is_exps_exist": true,
+            "num_seeds": 20,
+            "num_seed_fail": 18,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Pumpkin wants to have it both ways.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "Pumpkin wants to have it rain both ways.",
+                            "0",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "Or both.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "Or both things.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "` Snow Dogs' has both.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "or ` Snow Dogs' has both.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 58,
+            "num_exp_fail": 43,
+            "num_pass2fail": 1,
+            "num_fail2pass": 2
+        },
+        {
+            "req": "Negated neutral should still be neutral",
+            "is_exps_exist": true,
+            "num_seeds": 24,
+            "num_seed_fail": 22,
+            "pass->fail": [
+                {
+                    "from": [
+                        "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This video is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "This is not a perfect picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "This is not a revolutionary picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a perfect sales tool.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat potential of revolution and turns it into a sales tool.",
+                            "0",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "This is not really just another genre picture.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "n This is not really just another genre picture.",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "This is not really in just another genre picture.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not nothing but familiar territory.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "n This is not nothing but familiar territory.",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "This is not nothing but familiar territory folks.",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "This is not nothing but familiar familiar territory.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not an hour and a half of daydreaming.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This book is not an hour and a half of daydreaming.",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "This chapter is not an hour and a half of daydreaming.",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "This series is not an hour and a half of daydreaming.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "That is not made almost impossible by events that set the plot in motion.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "or That is not made almost impossible by events that set the plot in motion.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not NOT a retread of \" Dead Poets' Society . \"",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This book is not NOT a retread of \" Dead Poets' Society . \"",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "This is not NOT a retread version of \" Dead Poets' Society . \"",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "This is not NOT a retread post of \" Dead Poets' Society . \"",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is notn't a retooled genre piece, the tale of a guy and his gun, but an amiably idiosyncratic work.",
+                        "2",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This is notn't a retooled genre piece, the tale of a guy and his gun, but an old amiably idiosyncratic work.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not a good movie in spurts, but when it doesn't work, it's at important times.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This is not a good movie in spurts, but when it doesn't work, it's there at important times.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 125,
+            "num_exp_fail": 100,
+            "num_pass2fail": 5,
+            "num_fail2pass": 14
+        },
+        {
+            "req": "parsing sentiment in (question, yes) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 1,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Do I think that \" Maybe it's asking too much, but if a movie is truly going to inspire me, I want a little more than this . \"? yes",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" Maybe it's asking too much, but if a great movie is truly going to inspire me, I want a little more than this . \"? yes",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" Maybe it's asking too much, but if a movie is truly going to inspire me, I want even a little more than this . \"? yes",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" A sad, superior human comedy played out on the back roads of life . \"? yes",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" A sad, superior human comedy played out on the back roads end of life . \"? yes",
+                            "1",
+                            "2"
+                        ],
+                        [
+                            "Do I think that \" A sad, superior human comedy played out on the back roads of public life . \"? yes",
+                            "1",
+                            "2"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I agree that \" Opera on film is never satisfactory . \"? yes",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I agree that \" Opera on film is never more satisfactory . \"? yes",
+                            "2",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers winning performances and some effecting moments . \"? yes",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers few winning performances and some effecting moments . \"? yes",
+                            "0",
+                            "2"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "Do I think that \" A perverse little truffle, dainty psychological terror on the outside with a creamy filling of familial jealousy and unrepentant domestic psychopathy . \"? yes",
+                        "0",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" A perverse little truffle, dainty psychological terror on the outside with a creamy sweet filling of familial jealousy and unrepentant domestic psychopathy . \"? yes",
+                            "2",
+                            "2"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 116,
+            "num_exp_fail": 16,
+            "num_pass2fail": 6,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Short sentences with sentiment-laden adjectives",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 2,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Undoubtedly the scariest movie ever made about tattoos.",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Undoubtedly in the scariest movie ever made about tattoos.",
+                            "1",
+                            "2"
+                        ],
+                        [
+                            "Undoubtedly the scariest movie people ever made about tattoos.",
+                            "1",
+                            "2"
+                        ],
+                        [
+                            "Undoubtedly the scariest movie poster ever made about tattoos.",
+                            "0",
+                            "2"
+                        ],
+                        [
+                            "Undoubtedly the scariest movie trailer ever made about tattoos.",
+                            "0",
+                            "2"
+                        ],
+                        [
+                            "Undoubtedly the scariest movie franchise ever made about tattoos.",
+                            "1",
+                            "2"
+                        ],
+                        [
+                            "Undoubtedly the seventh scariest movie ever made about tattoos.",
+                            "1",
+                            "2"
+                        ],
+                        [
+                            "Undoubtedly the scariest movie ever made about facial tattoos.",
+                            "1",
+                            "2"
+                        ],
+                        [
+                            "Undoubtedly the scariest movie ever made about racist tattoos.",
+                            "0",
+                            "2"
+                        ],
+                        [
+                            "Undoubtedly the scariest movie ever made about vampire tattoos.",
+                            "1",
+                            "2"
+                        ],
+                        [
+                            "Undoubtedly the scariest movie ever made about gorilla tattoos.",
+                            "0",
+                            "2"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This movie is maddening.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "This movie is maddening funny.",
+                            "2",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "Sushi for the connoisseurs of the macabre.",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Sushi for the connoisseurs of the word macabre.",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 114,
+            "num_exp_fail": 14,
+            "num_pass2fail": 11,
+            "num_fail2pass": 1
+        }
+    ],
+    "distilbert-base-uncased-finetuned-sst-2-english": [
+        {
+            "req": "Negated positive with neutral content in the middle",
+            "is_exps_exist": false,
+            "num_seeds": 50,
+            "num_seed_fail": 31
+        },
+        {
+            "req": "Sentiment change over time, present should prevail",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 37,
+            "pass->fail": [
+                {
+                    "from": [
+                        "I liked it much as to say that \" What it lacks in substance it makes up for in heart . \", but now I hate it.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I liked it much as to say that \" What it lacks here in substance it makes up for in heart . \", but now I hate it.",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "I liked it much as to say that \" What it lacks here in substance it makes up for in heart . \", but now I hate it.",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "I liked it much as to say that \" Still, the updated Dickensian sensibility of writer Craig Bartlett's story is appealing . \", but now I don't like it.",
+                        "1",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "I liked it much as to say that \" Still, the updated Dickensian sensibility outside of writer Craig Bartlett's story is appealing . \", but now I don't like it.",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "I liked it much as to say that \" Still, the updated Dickensian sensibility of writer Craig Bartlett's story is more appealing . \", but now I don't like it.",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 188,
+            "num_exp_fail": 100,
+            "num_pass2fail": 2,
+            "num_fail2pass": 2
+        },
+        {
+            "req": "Negated negative should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 0,
+            "num_seed_fail": 0,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 0,
+            "num_exp_fail": 0,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Author sentiment is more important than of others",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 20,
+            "pass->fail": [],
+            "fail->pass": [
+                {
+                    "from": [
+                        "They think that \" Weird . \", but I think that \" A bodice-ripper for intellectuals . \"",
+                        "1",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "They think that \" Weird . \", but inside I think that \" A bodice-ripper for intellectuals . \"",
+                            "2",
+                            "2"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 0,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Parsing positive sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 45,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama that tries to tell of the unspeakable . \"? no",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I agree in that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama that tries to tell of the unspeakable . \"? no",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "Do I think that \" Though in some ways similar to Catherine Breillat's Fat Girl, Rain is the far superior film . \"? no",
+                        "2",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" Though in some ways similar to Catherine Breillat's Fat Girl, Rain is the far longer superior film . \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" The film's sharp, often mischievous sense of humor will catch some off guard ... \"? no",
+                        "2",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" or The film's sharp, often mischievous sense of humor will catch some off guard ... \"? no",
+                            "0",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" as The film's sharp, often mischievous sense of humor will catch some off guard ... \"? no",
+                            "0",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 166,
+            "num_exp_fail": 100,
+            "num_pass2fail": 1,
+            "num_fail2pass": 3
+        },
+        {
+            "req": "Negation of negative at the end, should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 0,
+            "num_seed_fail": 0,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 0,
+            "num_exp_fail": 0,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Parsing negative sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 0,
+            "num_seed_fail": 0,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 0,
+            "num_exp_fail": 0,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Short sentences with neutral adjectives and nouns",
+            "is_exps_exist": true,
+            "num_seeds": 20,
+            "num_seed_fail": 20,
+            "pass->fail": [],
+            "fail->pass": [
+                {
+                    "from": [
+                        "This is SO De Palma.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This song is SO De Palma.",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "This house is SO De Palma.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 58,
+            "num_exp_fail": 56,
+            "num_pass2fail": 0,
+            "num_fail2pass": 2
+        },
+        {
+            "req": "Negated neutral should still be neutral",
+            "is_exps_exist": true,
+            "num_seeds": 24,
+            "num_seed_fail": 22,
+            "pass->fail": [
+                {
+                    "from": [
+                        "This is not nothing but familiar territory.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "n This is not nothing but familiar territory.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "This is not nothing but familiar territory folks.",
+                            "0",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not not Chabrol's best, but even his lesser works outshine the best some directors can offer.",
+                        "1",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This movie is not not Chabrol's best, but even his lesser works outshine the best some directors can offer.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "This series is not not Chabrol's best, but even his lesser works outshine the best some directors can offer.",
+                            "0",
+                            "1"
+                        ],
+                        [
+                            "This is not not Chabrol's best, but even his lesser works outshine the best things some directors can offer.",
+                            "2",
+                            "1"
+                        ],
+                        [
+                            "This is not not Chabrol's best, but even his lesser works outshine the best things some directors can offer.",
+                            "2",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "This is not really just another genre picture.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This series is not really just another genre picture.",
+                            "1",
+                            "1"
+                        ],
+                        [
+                            "This is not really in just another genre picture.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This is not a picture that Maik, the firebrand turned savvy ad man, would be more envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This is not a harrowing movie about how parents know where all the buttons are, and how to push them.",
+                        "0",
+                        "1"
+                    ],
+                    "to": [
+                        [
+                            "This is not a harrowing movie about how teen parents know where all the buttons are, and how to push them.",
+                            "1",
+                            "1"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 111,
+            "num_exp_fail": 100,
+            "num_pass2fail": 6,
+            "num_fail2pass": 4
+        },
+        {
+            "req": "parsing sentiment in (question, yes) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 3,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers winning performances and some effecting moments . \"? yes",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers few winning performances and some effecting moments . \"? yes",
+                            "1",
+                            "2"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Do I think that \" Maybe it's asking too much, but if a movie is truly going to inspire me, I want a little more than this . \"? yes",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" Maybe it's asking too much, but if a great movie is truly going to inspire me, I want a little more than this . \"? yes",
+                            "2",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" Maybe it's asking too much, but if a movie is truly going to inspire me, I want a little more than this experience . \"? yes",
+                            "1",
+                            "0"
+                        ],
+                        [
+                            "Do I think that \" Maybe it's asking so much too, but if a movie is truly going to inspire me, I want a little more than this . \"? yes",
+                            "1",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": [
+                        "Do I think that \" A perverse little truffle, dainty psychological terror on the outside with a creamy filling of familial jealousy and unrepentant domestic psychopathy . \"? yes",
+                        "0",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Do I think that \" A perverse little truffle, dainty psychological terror on the outside world with a creamy filling of familial jealousy and unrepentant domestic psychopathy . \"? yes",
+                            "2",
+                            "2"
+                        ],
+                        [
+                            "Do I think that \" A perverse little truffle, dainty psychological terror on the outside with a creamy sweet filling of familial jealousy and unrepentant domestic psychopathy . \"? yes",
+                            "2",
+                            "2"
+                        ],
+                        [
+                            "Do I think that \" A perverse little truffle, dainty psychological terror sweet on the outside with a creamy filling of familial jealousy and unrepentant domestic psychopathy . \"? yes",
+                            "2",
+                            "2"
+                        ]
+                    ]
+                }
+            ],
+            "num_exps": 148,
+            "num_exp_fail": 48,
+            "num_pass2fail": 4,
+            "num_fail2pass": 3
+        },
+        {
+            "req": "Short sentences with sentiment-laden adjectives",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 0,
+            "pass->fail": [
+                {
+                    "from": [
+                        "Sushi for the connoisseurs of the macabre.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "Sushi for the future connoisseurs of the macabre.",
+                            "2",
+                            "0"
+                        ],
+                        [
+                            "Sushi for the connoisseurs of the cuisine macabre.",
+                            "2",
+                            "0"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "Pray has really done his subject justice.",
+                        "2",
+                        "2"
+                    ],
+                    "to": [
+                        [
+                            "Pray has really over done his subject justice.",
+                            "0",
+                            "2"
+                        ]
+                    ]
+                },
+                {
+                    "from": [
+                        "This movie is maddening.",
+                        "0",
+                        "0"
+                    ],
+                    "to": [
+                        [
+                            "This movie is maddening funny.",
+                            "2",
+                            "0"
+                        ]
+                    ]
+                }
+            ],
+            "fail->pass": [],
+            "num_exps": 104,
+            "num_exp_fail": 4,
+            "num_pass2fail": 4,
+            "num_fail2pass": 0
+        }
+    ]
+}

@@ -59,7 +59,6 @@ class Template:
         # end if
 
         pcfg_ref = RefPCFG()
-
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
             exp_inputs = dict()
             print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
@@ -73,7 +72,7 @@ class Template:
                 index += 1
                 generator = Generator(seed,pcfg_ref,is_random_select=is_random_select)
                 gen_inputs = generator.masked_input_generator()
-                print(f"{len(gen_inputs)} syntax expansions identified.")
+                print(f"{len(gen_inputs)} syntax expansions", end=" :: ")
                 new_input_results = list()
                 tot_num_exp += len(gen_inputs)
                 if any(gen_inputs):
@@ -86,6 +85,7 @@ class Template:
                         is_random_select=is_random_select
                     )
                 # end if
+                print(f"{len(new_input_results)} word suggestion by req")
                 exp_inputs[seed] = {
                     "cfg_seed": generator.expander.cfg_seed,
                     "exp_inputs": new_input_results,

@@ -83,8 +83,37 @@ class Model:
         return preds, pp
 
     @classmethod
+    def format_example(cls, x, pred, conf, *args, **kwargs):
+        softmax = type(conf) in [np.array, np.ndarray]
+        binary = False
+        pred_res = "FAIL" if kwargs["isfailed"] else "PASS"
+        expect_result, label = args[0], args[1]
+        if softmax:
+            if conf.shape[0] == 2:
+                conf = conf[1]
+                # return f"{pred_res}::{conf:%.1f}::{str(x)}"
+                return f"DATA::{pred_res}::{conf:%.1f}::{pred}::{label}::{str(x)}"
+            elif conf.shape[0] <= 4:
+                confs = ' '.join(['%.1f' % c for c in conf])
+                # return f"{pred_res}::{conf}::{str(x)}"
+                return f"DATA::{pred_res}::{confs}::{pred}::{label}::{str(x)}"
+            else:
+                conf = conf[pred]
+                # return f"{pred_res}::{pred}:({conf:%.1f})::{str(x)}"
+                return f"DATA::{pred_res}::{conf:%.1f}::{pred}::{label}::{str(x)}"
+        else:
+            return f"DATA::{pred_res}::[]::{pred}::{label}::{str(x)}"
+
+    @classmethod
+    def print_result(cls, x, pred, conf, expect_result, label=None, meta=None, format_example_fn=None, nsamples=3):
+        isfailed = expect_result[0] is not True
+        print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
+
+    @classmethod
     def run(cls, testsuite, model, pred_and_conf_fn, n=Macros.nsamples):
         cls.model = model
         testsuite.run(pred_and_conf_fn, n=n, overwrite=True)
-        testsuite.summary(n=100)
+        testsuite.summary(n=100,
+                          print_fn=cls.print_result,
+                          format_example_fn=cls.format_example)
         return

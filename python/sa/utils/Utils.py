@@ -120,3 +120,7 @@ class Utils:
         _sent = _sent.replace("Ã ", "à")
         _sent = _sent.replace("Ã", "à")
         return _sent
+
+    @classmethod
+    def replace_abbreviation(cls, sent):
+        pass

@@ -27,7 +27,8 @@
         "expansion": [
             "neutral"
         ],
-        "transform": null
+        "transform": null,
+        "transform_req": null
     },
     {
         "capability": "Vocab_POS",
@@ -75,23 +76,27 @@
         "expansion": [
             "neutral"
         ],
-        "transform": null
+        "transform": null,
+        "transform_req": null
     },
     {
         "capability": "Temporal",
         "description": "Sentiment change over time, present should prevail",
         "search": [
             {
+                "length": "<20",
                 "label": "positive"
             },
             {
+                "length": "<20",
                 "label": "negative"
             }
         ],
         "expansion": [
             "neutral"
         ],
-        "transform": "add temporal_awareness"
+        "transform": "add temporal_awareness",
+        "transform_req": null
     },
     {
         "capability": "Negation",
@@ -110,7 +115,15 @@
         "expansion": [
             "neutral"
         ],
-        "transform": "negate ^demonstratives_AUXBE"
+        "transform": "negate ^demonstratives_AUXBE",
+        "transform_req": [
+            {
+                "label": [
+                    "positive",
+                    "neutral"
+                ]
+            }
+        ]
     },
     {
         "capability": "Negation",
@@ -129,7 +142,8 @@
         "expansion": [
             "neutral"
         ],
-        "transform": "negate ^demonstratives_AUXBE"
+        "transform": "negate ^demonstratives_AUXBE",
+        "transform_req": null
     },
     {
         "capability": "Negation",
@@ -142,7 +156,15 @@
         "expansion": [
             "neutral"
         ],
-        "transform": "negate AUXBE$"
+        "transform": "negate AUXBE$",
+        "transform_req": [
+            {
+                "label": [
+                    "positive",
+                    "neutral"
+                ]
+            }
+        ]
     },
     {
         "capability": "Negation",
@@ -160,7 +182,12 @@
         "expansion": [
             "neutral"
         ],
-        "transform": "negate positive"
+        "transform": "negate positive",
+        "transform_req": [
+            {
+                "label": "negative"
+            }
+        ]
     },
     {
         "capability": "SRL",
@@ -176,7 +203,8 @@
         "expansion": [
             "neutral"
         ],
-        "transform": "srl"
+        "transform": "srl",
+        "transform_req": null
     },
     {
         "capability": "SRL",
@@ -192,7 +220,8 @@
         "expansion": [
             "neutral"
         ],
-        "transform": "questionize yes"
+        "transform": "questionize yes",
+        "transform_req": null
     },
     {
         "capability": "SRL",
@@ -205,7 +234,12 @@
         "expansion": [
             "neutral"
         ],
-        "transform": "questionize no"
+        "transform": "questionize no",
+        "transform_req": [
+            {
+                "label": "negative"
+            }
+        ]
     },
     {
         "capability": "SRL",
@@ -218,6 +252,14 @@
         "expansion": [
             "neutral"
         ],
-        "transform": "questionize no"
+        "transform": "questionize no",
+        "transform_req": [
+            {
+                "label": [
+                    "positive",
+                    "neutral"
+                ]
+            }
+        ]
     }
 ]
