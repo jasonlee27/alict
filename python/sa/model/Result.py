@@ -37,14 +37,15 @@ class Result:
     def get_pass_sents_from_model_string(cls, model_result_str):
         result = list()
         for l in model_result_str.splitlines():
-            sent_search = re.search(r"DATA::PASS::(\d)::(\d)::(.*)", l)
+            sent_search = re.search(r"DATA::PASS::(\d*\.?\d* \d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
             if sent_search:
-                sent = sent_search.group(3)
+                sent = sent_search.group(4)
                 tokens = Utils.tokenize(sent)
                 sent = Utils.detokenize(tokens)
                 result.append({
-                    'pred': sent_search.group(1),
-                    'label': sent_search.group(2),
+                    'conf': sent_search.group(1),
+                    'pred': sent_search.group(2),
+                    'label': sent_search.group(3),
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
@@ -56,14 +57,15 @@ class Result:
     def get_fail_sents_from_model_string(cls, model_result_str):
         result = list()
         for l in model_result_str.splitlines():
-            sent_search = re.search(r"DATA::FAIL::(\d)::(\d)::(.*)", l)
+            sent_search = re.search(r"DATA::FAIL::(\d*\.?\d* \d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
             if sent_search:
-                sent = sent_search.group(3)
+                sent = sent_search.group(4)
                 tokens = Utils.tokenize(sent)
                 sent = Utils.detokenize(tokens)
                 result.append({
-                    'pred': sent_search.group(1),
-                    'label': sent_search.group(2),
+                    'conf': sent_search.group(1),
+                    'pred': sent_search.group(2),
+                    'label': sent_search.group(3),
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
@@ -153,13 +155,23 @@ class Result:
                     for exp in seed_exp_map[r][p['key']]:
                         for ef in exps_fail:
                             if exp==ef['key']:
-                                pass2fail_dict['to'].append((ef['sent'], ef['pred'], ef['label']))
+                                pass2fail_dict['to'].append({
+                                    'sent': ef['sent'],
+                                    'pred': ef['pred'],
+                                    'label': ef['label'],
+                                    'conf': ef['conf']
+                                })
                                 num_pass2fail += 1
                             # end if
                         # end for
                     # end for
                     if any(pass2fail_dict['to']):
-                        pass2fail_dict['from'] = (p['sent'], p['pred'], p['label'])
+                        pass2fail_dict['from'] = {
+                            'sent': p['sent'],
+                            'pred': p['pred'],
+                            'label': p['label'],
+                            'conf': p['conf']
+                        }
                         result['pass->fail'].append(pass2fail_dict)
                     # end if
                 # end for
@@ -169,13 +181,23 @@ class Result:
                     for exp in seed_exp_map[r][f['key']]:
                         for ep in exps_pass:
                             if exp==ep['key']:
-                                fail2pass_dict['to'].append((ep['sent'], ep['pred'], ep['label']))
+                                fail2pass_dict['to'].append({
+                                    'sent': ep['sent'],
+                                    'pred': ep['pred'],
+                                    'label': ep['label'],
+                                    'conf': ep['conf']
+                                })
                                 num_fail2pass += 1
                             # end if
                         # end for
                     # end for
                     if any(fail2pass_dict['to']):
-                        fail2pass_dict['from'] = (f['sent'], f['pred'], f['label'])
+                        fail2pass_dict['from'] = {
+                            'sent': f['sent'],
+                            'pred': f['pred'],
+                            'label': f['label'],
+                            'conf': f['conf']
+                        }
                         result['fail->pass'].append(fail2pass_dict)
                     # end if
                 # end for
