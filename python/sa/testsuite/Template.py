@@ -106,7 +106,6 @@ class Template:
         # # write raw new inputs
         Utils.write_json(results, save_to, pretty_format=True)
         print(f"**********")
-        exit()
         return results
     
     @classmethod

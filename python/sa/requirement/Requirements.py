@@ -205,7 +205,11 @@ class Requirements:
                         ],
                         "expansion": ["neutral"],
                         "transform": "negate positive",
-                        "transform_req": None
+                        "transform_req":  [
+                            {
+                                "label": "negative"
+                            }
+                        ]
                     })
                 elif d.lower()=="author sentiment is more important than of others":
                     reqs.append({
