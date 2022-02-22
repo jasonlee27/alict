@@ -107,18 +107,24 @@ def run_testmodel():
 def run_retrain():
     from.retrain.Retrain import retrain
     nlp_task = args.nlp_task
+    selection_method = 'RANDOM'
+    if args.syntax_selection=='prob':
+        selection_method = 'PROB'
+    # end if
     search_dataset_name = args.search_dataset
     model_name = args.model_name
     label_vec_len = args.label_vec_len
-    testcase_file = None
+    testcase_file, eval_testcase_file = None, None
     if search_dataset_name==Macros.datasets[nlp_task][0]:
-        testcase_file = Macros.sst_sa_testcase_file
+        testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_testcase.json"
+        eval_testcase_file = Macros.checklist_sa_testcase_file
         if not os.path.exists(str(testcase_file)):
             from .retrain.Retrain import Retrain
-            Retrain.get_sst_testcase_for_retrain(nlp_task)
+            Retrain.get_sst_testcase_for_retrain(nlp_task, selection_method)
         # end if
     elif search_dataset_name==Macros.datasets[nlp_task][1]:
         testcase_file = Macros.checklist_sa_testcase_file
+        eval_testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_testcase.json"
         if not os.path.exists(str(testcase_file)):
             from .retrain.Retrain import Retrain
             Retrain.get_checklist_testcase_for_retrain(nlp_task)
@@ -129,6 +135,7 @@ def run_retrain():
         model_name=model_name,
         label_vec_len=label_vec_len,
         dataset_file=testcase_file,
+        eval_dataset_file=eval_testcase_file,
         test_by_types=True
     )
     return

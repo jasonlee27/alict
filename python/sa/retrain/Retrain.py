@@ -26,23 +26,22 @@ import numpy as np
 class SstTestcases:
 
     @classmethod
-    def write_sst_testcase(cls, task, save_file):
+    def write_sst_testcase(cls, task, selection_method, save_file):
+        test_results_dir = Macros.result_dir / f"test_results_{task}_sst_{selection_method}"
         cksum_vals = [
             os.path.basename(testsuite_file).split("_")[-1].split(".")[0]
-            for testsuite_file in os.listdir(Macros.result_dir / f"test_results_{task}_sst")
+            for testsuite_file in os.listdir(test_results_dir)
             if testsuite_file.startswith(f"{task}_testsuite_seeds_") and testsuite_file.endswith(".pkl")
         ]
 
         for cksum_val in cksum_vals:
             testsuite_files = [
                 f"{task}_testsuite_seeds_{cksum_val}.pkl",
-                f"{task}_testsuite_seed_templates_{cksum_val}.pkl",
-                f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
+                f"{task}_testsuite_exps_{cksum_val}.pkl"
             ]
-            testsuite_files = [tf for tf in testsuite_files if os.path.exists(Macros.result_dir / f"test_results_{task}_sst" / tf)]
-
+            testsuite_files = [tf for tf in testsuite_files if os.path.exists(test_results_dir / tf)]
             for f_i, testsuite_file in enumerate(testsuite_files):
-                tsuite, tsuite_dict = Utils.read_testsuite(Macros.result_dir / f"test_results_{task}_sst" / testsuite_file)
+                tsuite, tsuite_dict = Utils.read_testsuite(test_results_dir / testsuite_file)
                 for test_name in list(set(tsuite_dict['test_name'])):
                     if f_i==0 and tsuite.tests[test_name].labels is not None:
                         test_data = dict()
@@ -105,19 +104,29 @@ class SstTestcases:
         return dataset
 
     @classmethod
-    def get_testcase_for_retrain(cls, task):
-        if not os.path.exists(Macros.sst_sa_testcase_file):
+    def get_testcase_for_retrain(cls, task, selection_method):
+        testcase_file = Macros.retrain_dataset_dir / f"{task}_sst_{selection_method}_testcase.json"
+        if not os.path.exists(testcase_file):
             Macros.retrain_dataset_dir.mkdir(parents=True, exist_ok=True)
-            return cls.write_sst_testcase(
-                task, Macros.sst_sa_testcase_file
-            )
+            return cls.write_sst_testcase(task, selection_method, testcase_file)
         # end if
-        return Utils.read_json(
-            Macros.sst_sa_testcase_file
-        )
+        return Utils.read_json(testcase_file)
 
     
 class ChecklistTestcases:
+
+    LC_LIST = [
+        'Sentiment-laden words in context',
+        'neutral words in context',
+        '"used to" should reduce',
+        'used to, but now',
+        'simple negations: not neutral is still neutral',
+        'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
+        'my opinion is what matters',
+        'Q & A: yes',
+        'Q & A: yes (neutral)',
+        'Q & A: no',
+    ]
     
     @classmethod
     def write_checklist_testcase(cls, save_file):
@@ -125,54 +134,59 @@ class ChecklistTestcases:
         test_names = list(set(tsuite_dict['test_name']))
         test_data = dict()
         for test_name in test_names:
-            test_data[test_name] = {
-                'sents': tsuite.tests[test_name].data,
-                'labels': tsuite.tests[test_name].labels
-            }
-            num_data = len(test_data[test_name]['sents'])
-            if type(test_data[test_name]['labels'])!=list:
-                test_data[test_name]['labels'] = [test_data[test_name]['labels']]*num_data
+            if test_name in cls.LC_LIST and tsuite.tests[test_name].labels is not None:
+                print(test_name)
+                test_data[test_name] = {
+                    'sents': tsuite.tests[test_name].data,
+                    'labels': tsuite.tests[test_name].labels
+                }
+                num_data = len(test_data[test_name]['sents'])
+                if type(test_data[test_name]['labels'])!=list:
+                    test_data[test_name]['labels'] = [test_data[test_name]['labels']]*num_data
+                # end if
+                type_list = ['test']*num_data
+                num_train_data = int(num_data*Macros.TRAIN_RATIO)
+                num_train_data += ((num_data*Macros.TRAIN_RATIO)%num_train_data)>0
+                type_list[:num_train_data] = ['train']*num_train_data
+                random.shuffle(type_list)
+                test_data[test_name]['types'] = type_list
+                
+                # set data labels in a range between 0. and 1. from 0,1,2
+                test_data[test_name]['labels'] = [0.5*float(l) for l in test_data[test_name]['labels']]
             # end if
-            type_list = ['test']*num_data
-            num_train_data = int(num_data*Macros.TRAIN_RATIO)
-            num_train_data += ((num_data*Macros.TRAIN_RATIO)%num_train_data)>0
-            type_list[:num_train_data] = ['train']*num_train_data
-            random.shuffle(type_list)
-            test_data[test_name]['types'] = type_list
-
-            # set data labels in a range between 0. and 1. from 0,1,2
-            test_data[test_name]['labels'] = [0.5*float(l) for l in test_data[test_name]['labels']]
         # end for
-
+        
         dataset = dict()
         for idx in range(len(tsuite_dict['text'])):
             test_sent = tsuite_dict['text'][idx]
             test_name = tsuite_dict['test_name'][idx]
-            test_case = tsuite_dict['test_case'][idx]
-            sent_idx = test_data[test_name]['sents'].index(test_sent)
-            label = test_data[test_name]['labels'][sent_idx]
-            _type = test_data[test_name]['types'][sent_idx]
-            if _type=='train':
-                if 'train' not in dataset.keys():
-                    dataset['train'] = dict()
-                    dataset['train']['text'] = [test_sent]
-                    dataset['train']['label'] = [label]
-                    dataset['train']['test_name'] = [test_name]
+            if test_name in test_data.keys():
+                test_case = tsuite_dict['test_case'][idx]
+                sent_idx = test_data[test_name]['sents'].index(test_sent)
+                label = test_data[test_name]['labels'][sent_idx]
+                _type = test_data[test_name]['types'][sent_idx]
+                if _type=='train':
+                    if 'train' not in dataset.keys():
+                        dataset['train'] = dict()
+                        dataset['train']['text'] = [test_sent]
+                        dataset['train']['label'] = [label]
+                        dataset['train']['test_name'] = [test_name]
+                    else:
+                        dataset['train']['text'].append(test_sent)
+                        dataset['train']['label'].append(label)
+                        dataset['train']['test_name'].append(test_name)
+                    # end if
                 else:
-                    dataset['train']['text'].append(test_sent)
-                    dataset['train']['label'].append(label)
-                    dataset['train']['test_name'].append(test_name)
-                # end if
-            else:
-                if 'test' not in dataset.keys():
-                    dataset['test'] = dict()
-                    dataset['test']['text'] = [test_sent]
-                    dataset['test']['label'] = [label]
-                    dataset['test']['test_name'] = [test_name]
-                else:
-                    dataset['test']['text'].append(test_sent)
-                    dataset['test']['label'].append(label)
-                    dataset['test']['test_name'].append(test_name)
+                    if 'test' not in dataset.keys():
+                        dataset['test'] = dict()
+                        dataset['test']['text'] = [test_sent]
+                        dataset['test']['label'] = [label]
+                        dataset['test']['test_name'] = [test_name]
+                    else:
+                        dataset['test']['text'].append(test_sent)
+                        dataset['test']['label'].append(label)
+                        dataset['test']['test_name'].append(test_name)
+                    # end if
                 # end if
             # end if
         # end for
@@ -194,13 +208,13 @@ class ChecklistTestcases:
 
 class Retrain:
 
-    def __init__(self, task, model_name, label_vec_len, dataset_file, output_dir):
+    def __init__(self, task, model_name, label_vec_len, dataset_file, eval_dataset_file, output_dir):
         self.task = task
         self.model = self.load_model(model_name)
         self.dataset_file = dataset_file
         self.label_vec_len = label_vec_len
         self.tokenizer = self.load_tokenizer(model_name)
-        self.train_dataset, self.eval_dataset = self.get_tokenized_dataset(dataset_file)
+        self.train_dataset, self.eval_dataset = self.get_tokenized_dataset(dataset_file, eval_dataset_file)
         model_dir_name = model_name.replace("/", "-")
         self.output_dir = output_dir
         
@@ -210,12 +224,15 @@ class Retrain:
     def load_model(self, model_name):
         return AutoModelForSequenceClassification.from_pretrained(model_name)
 
-    def get_tokenized_dataset(self, dataset_file):
+    def get_tokenized_dataset(self, dataset_file, eval_dataset_file):
         raw_dataset = Utils.read_json(dataset_file)
         train_texts = self.tokenizer(raw_dataset['train']['text'], truncation=True, padding=True)
         train_labels = raw_dataset['train']['label']
-        eval_texts = self.tokenizer(raw_dataset['test']['text'], truncation=True, padding=True)
-        eval_labels = raw_dataset['test']['label']
+        
+        raw_eval_dataset = Utils.read_json(eval_dataset_file)
+        eval_texts = self.tokenizer(raw_eval_dataset['train']['text'], truncation=True, padding=True)
+        eval_labels = raw_eval_dataset['train']['label']
+        
         train_dataset = Dataset(train_texts, labels=train_labels, label_vec_len=self.label_vec_len)
         eval_dataset = Dataset(eval_texts, labels=eval_labels, label_vec_len=self.label_vec_len)
         return train_dataset, eval_dataset
@@ -340,26 +357,21 @@ class Retrain:
         pass
 
     @classmethod
-    def get_sst_testcase_for_retrain(cls, task):
-        return SstTestcases.get_testcase_for_retrain(task)
+    def get_sst_testcase_for_retrain(cls, task, selection_method):
+        return SstTestcases.get_testcase_for_retrain(task, selection_method)
     
     @classmethod
     def get_checklist_testcase_for_retrain(cls, task):
         return ChecklistTestcases.get_testcase_for_retrain(task)
 
     
-def retrain(task, model_name, label_vec_len, dataset_file, test_by_types=False):
-    dataset_name = os.path.basename(str(dataset_file)).split('_')[0]
-    model_dir_name = dataset_name+"-"+model_name.replace("/", "-")
+def retrain(task, model_name, label_vec_len, dataset_file, eval_dataset_file, test_by_types=False):
+    dataset_name = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
+    model_dir_name = dataset_name+"_"+model_name.replace("/", "_")
     output_dir = Macros.retrain_model_dir / task / model_dir_name
-    retrainer = Retrain(task, model_name, label_vec_len, dataset_file, output_dir)
-    eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
+    retrainer = Retrain(task, model_name, label_vec_len, dataset_file, eval_dataset_file, output_dir)
+    # eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
     retrainer.train()
-    eval_result_after = retrainer.evaluate(test_by_types=test_by_types)
-    eval_result = {
-        "before_retraining": eval_result_before,
-        "after_retraining": eval_result_after
-    }
-    output_file = output_dir / "eval_results.json"
-    Utils.write_json(eval_result, output_file, pretty_format=True)
+    eval_result = retrainer.evaluate(test_by_types=test_by_types)
+    Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
     return eval_result

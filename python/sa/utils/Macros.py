@@ -75,7 +75,7 @@ class Macros:
     }
 
     # Retrain
-    TRAIN_RATIO = 0.8
+    TRAIN_RATIO = 1.0
     retrain_output_dir: Path = result_dir / "retrain"
     retrain_model_dir: Path = retrain_output_dir / "models"
     retrain_dataset_dir: Path = retrain_output_dir / "datasets"
