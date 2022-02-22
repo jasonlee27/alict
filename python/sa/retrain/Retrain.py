@@ -33,7 +33,7 @@ class SstTestcases:
             for testsuite_file in os.listdir(test_results_dir)
             if testsuite_file.startswith(f"{task}_testsuite_seeds_") and testsuite_file.endswith(".pkl")
         ]
-
+        test_data = dict()
         for cksum_val in cksum_vals:
             testsuite_files = [
                 f"{task}_testsuite_seeds_{cksum_val}.pkl",
@@ -43,32 +43,33 @@ class SstTestcases:
             for f_i, testsuite_file in enumerate(testsuite_files):
                 tsuite, tsuite_dict = Utils.read_testsuite(test_results_dir / testsuite_file)
                 for test_name in list(set(tsuite_dict['test_name'])):
-                    if f_i==0 and tsuite.tests[test_name].labels is not None:
-                        test_data = dict()
-                        test_data[cksum_val] = {
-                            'sents': tsuite.tests[test_name].data,
-                            'labels': tsuite.tests[test_name].labels
-                        }
-                    elif f_i>0 and tsuite.tests[test_name].labels is not None:
-                        test_data[cksum_val]["sents"].extend(tsuite.tests[test_name].data)
-                        test_data[cksum_val]["labels"].extend(tsuite.tests[test_name].labels)
-                    # end if
-
                     if tsuite.tests[test_name].labels is not None:
-                        num_data = len(test_data[cksum_val]['sents'])
-                        type_list = ['test']*num_data
-                        num_train_data = int(num_data*Macros.TRAIN_RATIO)
-                        num_train_data += ((num_data*Macros.TRAIN_RATIO)%num_train_data)>0
-                        type_list[:num_train_data] = ['train']*num_train_data
-                        random.shuffle(type_list)
-                        test_data[cksum_val]['types'] = type_list
-                        
-                        # set data labels in a range between 0. and 1. from 0,1,2
-                        test_data[cksum_val]['labels'] = [0.5*float(l) for l in test_data[cksum_val]['labels']]
+                        if f_i==0:
+                            test_data[cksum_val] = {
+                                'sents': tsuite.tests[test_name].data,
+                                'labels': tsuite.tests[test_name].labels
+                            }
+                        else:
+                            test_data[cksum_val]["sents"].extend(tsuite.tests[test_name].data)
+                            test_data[cksum_val]["labels"].extend(tsuite.tests[test_name].labels)
+                        # end if
                     # end if
                 # end for
             # end for
+            if cksum_val in test_data.keys():
+                num_data = len(test_data[cksum_val]['sents'])
+                type_list = ['test']*num_data
+                num_train_data = int(num_data*Macros.TRAIN_RATIO)
+                num_train_data += ((num_data*Macros.TRAIN_RATIO)%num_train_data)>0
+                type_list[:num_train_data] = ['train']*num_train_data
+                random.shuffle(type_list)
+                test_data[cksum_val]['types'] = type_list
+                
+                # set data labels in a range between 0. and 1. from 0,1,2
+                test_data[cksum_val]['labels'] = [0.5*float(l) for l in test_data[cksum_val]['labels']]
+            # end if
         # end for
+        
         dataset = dict()
         for test_name in test_data.keys():
             for idx in range(len(test_data[test_name]['sents'])):
@@ -100,6 +101,8 @@ class SstTestcases:
                 # end if
             # end for
         # end for
+        num_train_data = len(dataset['train']['text'])
+        print(f"Num examples in {save_file}: {num_train_data}")
         Utils.write_json(dataset, save_file, pretty_format=True)
         return dataset
 
@@ -133,9 +136,9 @@ class ChecklistTestcases:
         tsuite, tsuite_dict = Utils.read_testsuite(Macros.checklist_sa_dataset_file)
         test_names = list(set(tsuite_dict['test_name']))
         test_data = dict()
+        num_data = 0
         for test_name in test_names:
             if test_name in cls.LC_LIST and tsuite.tests[test_name].labels is not None:
-                print(test_name)
                 test_data[test_name] = {
                     'sents': tsuite.tests[test_name].data,
                     'labels': tsuite.tests[test_name].labels
@@ -190,6 +193,7 @@ class ChecklistTestcases:
                 # end if
             # end if
         # end for
+        print(f"Num examples in {save_file}: {num_data}")
         Utils.write_json(dataset, save_file, pretty_format=True)
         return dataset
     
