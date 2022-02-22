@@ -293,13 +293,14 @@ class Retrain:
             "recall": recall,
             "f1": f1
         }
+    
     def get_eval_data_by_testtypes(self):
         eval_dataset = dict()
-        raw_dataset = Utils.read_json(self.dataset_file)
-        for test_name in list(set(raw_dataset['test']["test_name"])):
-            eval_texts =[raw_dataset['test']['text'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==test_name]
+        raw_dataset = Utils.read_json(self.eval_dataset_file)
+        for test_name in list(set(raw_dataset['train']["test_name"])):
+            eval_texts =[raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==test_name]
             eval_texts = self.tokenizer(eval_texts, truncation=True, padding=True)
-            eval_labels =[raw_dataset['test']['label'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==test_name]
+            eval_labels =[raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==test_name]
             eval_dataset[test_name] = Dataset(eval_texts, labels=eval_labels, label_vec_len=self.label_vec_len)
         # end for
         return eval_dataset
@@ -373,5 +374,6 @@ def retrain(task, model_name, label_vec_len, dataset_file, eval_dataset_file, te
     # eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
     retrainer.train()
     eval_result = retrainer.evaluate(test_by_types=test_by_types)
+    print(eval_result)
     Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
     return eval_result
