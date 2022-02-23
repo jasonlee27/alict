@@ -92,17 +92,17 @@ class Model:
             if conf.shape[0] == 2:
                 conf = conf[1]
                 # return f"{pred_res}::{conf:%.1f}::{str(x)}"
-                return f"DATA::{pred_res}::{conf:%.1f}::{pred}::{label}::{str(x)}"
+                return f"DATA::{str(pred_res)}::{conf:%.1f}::{str(pred)}::{str(label)}::{str(x)}"
             elif conf.shape[0] <= 4:
                 confs = ' '.join(['%.1f' % c for c in conf])
                 # return f"{pred_res}::{conf}::{str(x)}"
-                return f"DATA::{pred_res}::{confs}::{pred}::{label}::{str(x)}"
+                return f"DATA::{pred_res}::{str(confs)}::{str(pred)}::{str(label)}::{str(x)}"
             else:
                 conf = conf[pred]
                 # return f"{pred_res}::{pred}:({conf:%.1f})::{str(x)}"
-                return f"DATA::{pred_res}::{conf:%.1f}::{pred}::{label}::{str(x)}"
+                return f"DATA::{pred_res}::{conf:%.1f}::{str(pred)}::{str(label)}::{str(x)}"
         else:
-            return f"DATA::{pred_res}::[]::{pred}::{label}::{str(x)}"
+            return f"DATA::{pred_res}::[]::{str(pred)}::{str(label)}::{str(x)}"
 
     @classmethod
     def print_result(cls, x, pred, conf, expect_result, label=None, meta=None, format_example_fn=None, nsamples=3):
