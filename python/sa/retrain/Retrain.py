@@ -14,6 +14,7 @@ from sklearn.metrics import recall_score, accuracy_score, precision_score, f1_sc
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 # from Testsuite import Testsuite
+from ..model.Testmodel import Testmodel
 from ..model.Model import Model
 from .Dataset import Dataset
 
@@ -212,15 +213,31 @@ class ChecklistTestcases:
 
 class Retrain:
 
-    def __init__(self, task, model_name, label_vec_len, dataset_file, eval_dataset_file, output_dir):
+    model_func_map = {
+        "sa": Model.sentiment_pred_and_conf
+    }
+
+    def __init__(self,
+                 task,
+                 model_name,
+                 selection_method,
+                 label_vec_len,
+                 dataset_file,
+                 eval_dataset_file,
+                 output_dir):
         self.task = task
+        self.model_name = model_name
+        self.selection_method = selection_method
         self.model = self.load_model(model_name)
-        self.dataset_file = dataset_file
+        self.dataset_file = dataset_file # dataset for train
+        self.eval_dataset_file = eval_dataset_file # dataset_for val
+        self.dataset_name = os.path.basename(str(self.dataset_file)).split('_testcase.json')[0]
         self.label_vec_len = label_vec_len
         self.tokenizer = self.load_tokenizer(model_name)
         self.train_dataset, self.eval_dataset = self.get_tokenized_dataset(dataset_file, eval_dataset_file)
         model_dir_name = model_name.replace("/", "-")
         self.output_dir = output_dir
+        self.num_epochs = 2.0
         
     def load_tokenizer(self, model_name):
         return AutoTokenizer.from_pretrained(model_name)
@@ -232,12 +249,11 @@ class Retrain:
         raw_dataset = Utils.read_json(dataset_file)
         train_texts = self.tokenizer(raw_dataset['train']['text'], truncation=True, padding=True)
         train_labels = raw_dataset['train']['label']
+        train_dataset = Dataset(train_texts, labels=train_labels, label_vec_len=self.label_vec_len)
         
         raw_eval_dataset = Utils.read_json(eval_dataset_file)
         eval_texts = self.tokenizer(raw_eval_dataset['train']['text'], truncation=True, padding=True)
         eval_labels = raw_eval_dataset['train']['label']
-        
-        train_dataset = Dataset(train_texts, labels=train_labels, label_vec_len=self.label_vec_len)
         eval_dataset = Dataset(eval_texts, labels=eval_labels, label_vec_len=self.label_vec_len)
         return train_dataset, eval_dataset
 
@@ -312,7 +328,7 @@ class Retrain:
     def train(self):
         training_args = TrainingArguments(
             output_dir=self.output_dir,
-            num_train_epochs=1.0,
+            num_train_epochs=self.num_epochs,
             per_device_train_batch_size=4,
             do_train=True
         )
@@ -357,9 +373,54 @@ class Retrain:
             results = trainer.evaluate()
         # end if
         return results
-        
-    def test(cls):
-        pass
+
+    def load_retrained_model(self, task, model_name):
+        # model_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
+        model_dir = Macros.retrain_model_dir / task / model_name
+        checkpoints = sorted([d for d in os.listdir(model_dir) if os.path.isdir(os.path.join(model_dir,d)) and d.startswith("checkpoint-")])
+        checkpoint_dir = model_dir / checkpoints[-1]
+        tokenizer = AutoTokenizer.from_pretrained(model_dir)
+        return pipeline(_task, model=str(checkpoint_dir), tokenizer=tokenizer, framework="pt", device=0)
+
+    def run_model_on_testsuite(self, testsuite, model, pred_and_conf_fn, n=Macros.nsamples):
+        Model.run(testsuite, model, Model.sentiment_pred_and_conf, n=n)
+
+    def test_on_our_testsuite(cls, testsuite_file):
+        print(f"***** TASK: {task} *****")
+        model = self.load_retrained_model(self.task, self.model_name)
+        testsuite = Testmodel.load_testsuite(testsuite_file)
+        cksum_vals = [
+            os.path.basename(test_file).split("_")[-1].split(".")[0]
+            for test_file in os.listdir(Macros.result_dir / f"test_results_{self.task}_{self.dataset_name}_{self.selection_method}")
+            if test_file.startswith(f"{self.task}_testsuite_seeds_") and test_file.endswith(".pkl")
+        ]
+        for cksum_val in cksum_vals:
+            testsuite_files = [
+                Macros.result_dir / f"test_results_{self.task}_{self.dataset_name}_{self.selection_method}" / f for f in [
+                    f"{self.task}_testsuite_seeds_{cksum_val}.pkl",
+                    f"{self.task}_testsuite_exps_{cksum_val}.pkl",
+                ] if os.path.exists(Macros.result_dir / f"test_results_{self.task}_{self.dataset_name}_{self.selection_method}" / f)
+            ]
+            for testsuite_file in testsuite_files:
+                testsuite = cls.load_testsuite(testsuite_file)
+                print(f">>>>> RETRAINED MODEL: {self.model_name}")
+                self.run_model_on_testsuite(testsuite, model, cls.model_func_map[self.task], n=Macros.nsamples)
+                print(f"<<<<< RETRAINED MODEL: LOCAL_{self.model_name}")
+            # end for
+        # end for
+        print("**********")
+        return
+
+    def test_on_checklist_testsuite(cls, testsuite_file):
+        print(f"***** TASK: {task} *****")
+        print(f"***** Baseline: checklist *****")
+        print(f">>>>> RETRAINED MODEL: {self.model_name}")
+        model = self.load_retrained_model(self.task, self.model_name)
+        testsuite = Testmodel.load_testsuite(testsuite_file)
+        self.run_model_on_testsuite(testsuite, model, cls.model_func_map[self.task], n=Macros.nsamples)
+        print(f"<<<<< RETRAINED MODEL: LOCAL_{self.model_name}")
+        return
+
 
     @classmethod
     def get_sst_testcase_for_retrain(cls, task, selection_method):
@@ -370,14 +431,25 @@ class Retrain:
         return ChecklistTestcases.get_testcase_for_retrain(task)
 
     
-def retrain(task, model_name, label_vec_len, dataset_file, eval_dataset_file, test_by_types=False):
+def retrain(
+        task,
+        model_name,
+        selection_method,
+        label_vec_len,
+        dataset_file,
+        eval_dataset_file,
+        test_by_types=False):
     dataset_name = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
-    model_dir_name = dataset_name+"_"+model_name.replace("/", "_")
+    model_dir_name = dataset_name+"_"+model_name.replace("/", "-")
     output_dir = Macros.retrain_model_dir / task / model_dir_name
-    retrainer = Retrain(task, model_name, label_vec_len, dataset_file, eval_dataset_file, output_dir)
-    # eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
+    retrainer = Retrain(task, model_name, selection_method, label_vec_len, dataset_file, eval_dataset_file, output_dir)
+    eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
     retrainer.train()
-    eval_result = retrainer.evaluate(test_by_types=test_by_types)
+    eval_result_after = retrainer.evaluate(test_by_types=test_by_types)
+    eval_result = {
+        'before': eval_result_before,
+        'after': eval_result_after
+    }
     print(eval_result)
     Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
     return eval_result
