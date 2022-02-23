@@ -378,8 +378,8 @@ class Retrain:
         _task, _ = Model.model_map[self.task]
         return pipeline(_task, model=str(checkpoint_dir), tokenizer=tokenizer, framework="pt", device=0)
 
-    def run_model_on_testsuite(self, testsuite, model, pred_and_conf_fn, n=Macros.nsamples):
-        Model.run(testsuite, model, Model.sentiment_pred_and_conf, n=n)
+    def run_model_on_testsuite(self, testsuite, model, pred_and_conf_fn=None, n=Macros.nsamples):
+        Model.run(testsuite, model, pred_and_conf_fn, print_fn=None, format_example_fn=None, n=n)
 
     def test_on_our_testsuites(self):
         print(f"***** TASK: {self.task} *****")
@@ -440,15 +440,14 @@ def retrain(
     model_dir_name = tags+"_"+model_name.replace("/", "-")
     output_dir = Macros.retrain_model_dir / task / model_dir_name
     retrainer = Retrain(task, model_name, selection_method, label_vec_len, dataset_file, eval_dataset_file, output_dir)
-    # eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
-    # retrainer.train()
-    # eval_result_after = retrainer.evaluate(test_by_types=test_by_types)
-    # eval_result = {
-    #     'before': eval_result_before,
-    #     'after': eval_result_after
-    # }
-    # print(eval_result)
-    # Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
+    eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
+    retrainer.train()
+    eval_result_after = retrainer.evaluate(test_by_types=test_by_types)
+    eval_result = {
+        'before': eval_result_before,
+        'after': eval_result_after
+    }
+    Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
     if dataset_name.lower()=='sst':
         retrainer.test_on_checklist_testsuite()
     elif dataset_name=='checklist':
