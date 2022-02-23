@@ -4,6 +4,7 @@
 from typing import *
 from pathlib import Path
 
+from transformers import pipeline
 from transformers import AutoTokenizer
 from transformers import AutoModelForSequenceClassification
 from transformers import TrainingArguments, Trainer
@@ -212,11 +213,7 @@ class ChecklistTestcases:
 
 
 class Retrain:
-
-    model_func_map = {
-        "sa": Model.sentiment_pred_and_conf
-    }
-
+    
     def __init__(self,
                  task,
                  model_name,
@@ -374,53 +371,51 @@ class Retrain:
         # end if
         return results
 
-    def load_retrained_model(self, task, model_name):
-        # model_dir = Macros.retrain_output_dir / model_name.replace("/", "-")
-        model_dir = Macros.retrain_model_dir / task / model_name
-        checkpoints = sorted([d for d in os.listdir(model_dir) if os.path.isdir(os.path.join(model_dir,d)) and d.startswith("checkpoint-")])
-        checkpoint_dir = model_dir / checkpoints[-1]
-        tokenizer = AutoTokenizer.from_pretrained(model_dir)
+    def load_retrained_model(self):
+        checkpoints = sorted([d for d in os.listdir(self.output_dir) if os.path.isdir(os.path.join(self.output_dir,d)) and d.startswith("checkpoint-")])
+        checkpoint_dir = self.output_dir / checkpoints[-1]
+        tokenizer = AutoTokenizer.from_pretrained(self.output_dir)
+        _task, _ = Model.model_map[self.task]
         return pipeline(_task, model=str(checkpoint_dir), tokenizer=tokenizer, framework="pt", device=0)
 
     def run_model_on_testsuite(self, testsuite, model, pred_and_conf_fn, n=Macros.nsamples):
         Model.run(testsuite, model, Model.sentiment_pred_and_conf, n=n)
 
-    def test_on_our_testsuite(cls, testsuite_file):
-        print(f"***** TASK: {task} *****")
-        model = self.load_retrained_model(self.task, self.model_name)
-        testsuite = Testmodel.load_testsuite(testsuite_file)
+    def test_on_our_testsuites(self):
+        print(f"***** TASK: {self.task} *****")
+        model = self.load_retrained_model()
         cksum_vals = [
-            os.path.basename(test_file).split("_")[-1].split(".")[0]
-            for test_file in os.listdir(Macros.result_dir / f"test_results_{self.task}_{self.dataset_name}_{self.selection_method}")
-            if test_file.startswith(f"{self.task}_testsuite_seeds_") and test_file.endswith(".pkl")
+            os.path.basename(test_file).split('_')[-1].split('.')[0]
+            for test_file in os.listdir(Macros.result_dir / f"test_results_{self.dataset_name}")
+            if test_file.startswith(f"{self.task}_testsuite_seeds_") and test_file.endswith('.pkl')
         ]
         for cksum_val in cksum_vals:
             testsuite_files = [
-                Macros.result_dir / f"test_results_{self.task}_{self.dataset_name}_{self.selection_method}" / f for f in [
+                Macros.result_dir / f"test_results_{self.dataset_name}" / f for f in [
                     f"{self.task}_testsuite_seeds_{cksum_val}.pkl",
                     f"{self.task}_testsuite_exps_{cksum_val}.pkl",
-                ] if os.path.exists(Macros.result_dir / f"test_results_{self.task}_{self.dataset_name}_{self.selection_method}" / f)
+                ] if os.path.exists(Macros.result_dir / f"test_results_{self.dataset_name}" / f)
             ]
             for testsuite_file in testsuite_files:
-                testsuite = cls.load_testsuite(testsuite_file)
+                testsuite = Testmodel.load_testsuite(testsuite_file)
                 print(f">>>>> RETRAINED MODEL: {self.model_name}")
-                self.run_model_on_testsuite(testsuite, model, cls.model_func_map[self.task], n=Macros.nsamples)
+                self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples)
                 print(f"<<<<< RETRAINED MODEL: LOCAL_{self.model_name}")
             # end for
         # end for
-        print("**********")
+        print('**********')
         return
 
-    def test_on_checklist_testsuite(cls, testsuite_file):
-        print(f"***** TASK: {task} *****")
+    def test_on_checklist_testsuite(self):
+        print(f"***** TASK: {self.task} *****")
         print(f"***** Baseline: checklist *****")
         print(f">>>>> RETRAINED MODEL: {self.model_name}")
-        model = self.load_retrained_model(self.task, self.model_name)
-        testsuite = Testmodel.load_testsuite(testsuite_file)
-        self.run_model_on_testsuite(testsuite, model, cls.model_func_map[self.task], n=Macros.nsamples)
+        model = self.load_retrained_model()
+        testsuite = Testmodel.load_testsuite(Macros.BASELINES['checklist']['testsuite_file'])
+        self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples)
         print(f"<<<<< RETRAINED MODEL: LOCAL_{self.model_name}")
+        print('**********')
         return
-
 
     @classmethod
     def get_sst_testcase_for_retrain(cls, task, selection_method):
@@ -439,8 +434,9 @@ def retrain(
         dataset_file,
         eval_dataset_file,
         test_by_types=False):
-    dataset_name = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
-    model_dir_name = dataset_name+"_"+model_name.replace("/", "-")
+    tags = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
+    dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
+    model_dir_name = tags+"_"+model_name.replace("/", "-")
     output_dir = Macros.retrain_model_dir / task / model_dir_name
     retrainer = Retrain(task, model_name, selection_method, label_vec_len, dataset_file, eval_dataset_file, output_dir)
     eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
@@ -452,4 +448,9 @@ def retrain(
     }
     print(eval_result)
     Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
+    if dataset_name.lower()=='sst':
+        retrainer.test_on_checklist_testsuite()
+    elif dataset_name=='checklist':
+        retrainer.test_on_our_testsuites()
+    # end if
     return eval_result
