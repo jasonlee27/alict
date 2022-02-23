@@ -128,7 +128,7 @@ def run_retrain():
         # end if
     elif search_dataset_name==Macros.datasets[nlp_task][1]:
         testcase_file = Macros.checklist_sa_testcase_file
-        eval_testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_testcase.json"
+        eval_testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_sst_{selection_method}_testcase.json"
         if not os.path.exists(str(testcase_file)):
             from .retrain.Retrain import Retrain
             Retrain.get_checklist_testcase_for_retrain(nlp_task)
@@ -141,6 +141,7 @@ def run_retrain():
     _ = retrain(
         task=nlp_task,
         model_name=model_name,
+        selection_method=selection_method,
         label_vec_len=label_vec_len,
         dataset_file=testcase_file,
         eval_dataset_file=eval_testcase_file,

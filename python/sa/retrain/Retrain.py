@@ -384,23 +384,24 @@ class Retrain:
     def test_on_our_testsuites(self):
         print(f"***** TASK: {self.task} *****")
         model = self.load_retrained_model()
+        eval_dataset_name = os.path.basename(str(self.eval_dataset_file)).split('_testcase.json')[0]
         cksum_vals = [
             os.path.basename(test_file).split('_')[-1].split('.')[0]
-            for test_file in os.listdir(Macros.result_dir / f"test_results_{self.dataset_name}")
+            for test_file in os.listdir(Macros.result_dir / f"test_results_{eval_dataset_name}")
             if test_file.startswith(f"{self.task}_testsuite_seeds_") and test_file.endswith('.pkl')
         ]
         for cksum_val in cksum_vals:
             testsuite_files = [
-                Macros.result_dir / f"test_results_{self.dataset_name}" / f for f in [
+                Macros.result_dir / f"test_results_{eval_dataset_name}" / f for f in [
                     f"{self.task}_testsuite_seeds_{cksum_val}.pkl",
                     f"{self.task}_testsuite_exps_{cksum_val}.pkl",
-                ] if os.path.exists(Macros.result_dir / f"test_results_{self.dataset_name}" / f)
+                ] if os.path.exists(Macros.result_dir / f"test_results_{eval_dataset_name}" / f)
             ]
             for testsuite_file in testsuite_files:
                 testsuite = Testmodel.load_testsuite(testsuite_file)
                 print(f">>>>> RETRAINED MODEL: {self.model_name}")
                 self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples)
-                print(f"<<<<< RETRAINED MODEL: LOCAL_{self.model_name}")
+                print(f"<<<<< RETRAINED MODEL: {self.model_name}")
             # end for
         # end for
         print('**********')
@@ -439,15 +440,15 @@ def retrain(
     model_dir_name = tags+"_"+model_name.replace("/", "-")
     output_dir = Macros.retrain_model_dir / task / model_dir_name
     retrainer = Retrain(task, model_name, selection_method, label_vec_len, dataset_file, eval_dataset_file, output_dir)
-    eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
-    retrainer.train()
-    eval_result_after = retrainer.evaluate(test_by_types=test_by_types)
-    eval_result = {
-        'before': eval_result_before,
-        'after': eval_result_after
-    }
-    print(eval_result)
-    Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
+    # eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
+    # retrainer.train()
+    # eval_result_after = retrainer.evaluate(test_by_types=test_by_types)
+    # eval_result = {
+    #     'before': eval_result_before,
+    #     'after': eval_result_after
+    # }
+    # print(eval_result)
+    # Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
     if dataset_name.lower()=='sst':
         retrainer.test_on_checklist_testsuite()
     elif dataset_name=='checklist':

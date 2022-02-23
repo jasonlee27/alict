@@ -79,5 +79,5 @@ class Macros:
     retrain_output_dir: Path = result_dir / "retrain"
     retrain_model_dir: Path = retrain_output_dir / "models"
     retrain_dataset_dir: Path = retrain_output_dir / "datasets"
-    checklist_sa_testcase_file: Path = retrain_dataset_dir / "checklist_sa_testcase.json"
+    checklist_sa_testcase_file: Path = retrain_dataset_dir / "sa_checklist_testcase.json"
     sst_sa_testcase_file: Path = retrain_dataset_dir / "sst_sa_testcase.json"
