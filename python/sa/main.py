@@ -13,7 +13,7 @@ from .utils.Utils import Utils
 
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
-                    choices=['requirement', 'template', 'testsuite', 'testmodel', 'retrain', 'analyze'],
+                    choices=['requirement', 'template', 'testsuite', 'testmodel', 'retrain', 'analyze', 'retrain_analyze'],
                     help='task to be run')
 parser.add_argument('--nlp_task', type=str, default="sa",
                     choices=['sa'],
@@ -168,14 +168,32 @@ def run_analyze():
     )
     return
 
+def run_retrain_analyze():
+    from .retrain.RetrainResult import RetrainResult
+    nlp_task = args.nlp_task
+    selection_method = 'RANDOM'
+    if args.syntax_selection=='prob':
+        selection_method = 'PROB'
+    # end if
+    search_dataset_name = args.search_dataset
+    model_name = args.model_name
+    RetrainResult.analyze(
+        nlp_task,
+        search_dataset_name,
+        selection_method,
+        model_name
+    )
+    return
+    
 func_map = {
     "sa": {
-        "requirement": run_requirements,
-        "template": run_templates,
-        "testsuite": run_testsuites,
-        "testmodel": run_testmodel,
-        "retrain": run_retrain,
-        "analyze": run_analyze
+        'requirement': run_requirements,
+        'template': run_templates,
+        'testsuite': run_testsuites,
+        'testmodel': run_testmodel,
+        'retrain': run_retrain,
+        'analyze': run_analyze,
+        'retrain_analyze': run_retrain_analyze,
     }
 }
 
