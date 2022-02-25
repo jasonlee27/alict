@@ -414,7 +414,7 @@ class Retrain:
         model = self.load_retrained_model()
         testsuite = Testmodel.load_testsuite(Macros.BASELINES['checklist']['testsuite_file'])
         self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples)
-        print(f"<<<<< RETRAINED MODEL: LOCAL_{self.model_name}")
+        print(f"<<<<< RETRAINED MODEL: {self.model_name}")
         print('**********')
         return
 

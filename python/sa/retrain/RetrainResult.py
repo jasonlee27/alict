@@ -231,7 +231,11 @@ class RetrainResult:
             req = orig_r['req']
             result[model_name][req] = {
                 'fail2pass': list(),
-                'num_fail2pass': -1
+                'num_fail2pass': -1,
+                'num_fail_orig': -1,
+                'num_pass_orig': -1,
+                'num_fail_retrained': -1,
+                'num_pass_retrained': -1
             }
             ret_r = [r for r in retrained_testsuite_result[model_name] if r['req']==req][0]
 
@@ -249,6 +253,10 @@ class RetrainResult:
                 # end for
             # end for
             result[model_name][req]['num_fail2pass'] = len(result[model_name][req]['fail2pass'])
+            result[model_name][req]['num_fail_orig'] = len(orig_r['fail'])
+            result[model_name][req]['num_pass_orig'] = len(orig_r['pass'])
+            result[model_name][req]['num_fail_retrained'] = len(ret_r['fail'])
+            result[model_name][req]['num_pass_retrained'] = len(ret_r['pass'])
         # end for
         return result
 
@@ -258,27 +266,32 @@ class RetrainResult:
         for orig_r in orig_testsuite_result[model_name]:
             req = orig_r['req']
             sent_type = orig_r['sent_type']
-            result[model_name][req] = {
+            result[model_name][f"{req}::{sent_type}"] = {
                 'fail2pass': list(),
                 'num_fail2pass': -1
             }
-            print(req, sent_type, len(orig_testsuite_result[model_name]), len(retrained_testsuite_result[model_name]))
             ret_r = [r for r in retrained_testsuite_result[model_name] if r['req']==req and r['sent_type']==sent_type][0]
 
             for f in orig_r['fail']:
+                found = False
                 for p in ret_r['pass']:
-                    if f['sent']==p['sent'] and f['label']==p['label']:
-                        result[model_name][req]['fail2pass'].append({
+                    if f['sent']==p['sent'] and f['label']==p['label'] and not found:
+                        result[model_name][f"{req}::{sent_type}"]['fail2pass'].append({
                             'sent': f['sent'],
                             'label': f['label'],
                             'pred': (f['pred'], p['pred']),
                             'ent': (f['ent'], p['ent']),
                             'conf': (f['conf'], p['conf'])
                         })
+                        found = True
                     # end if
                 # end for
             # end for
-            result[model_name][req]['num_fail2pass'] = len(result[model_name][req]['fail2pass'])
+            result[model_name][f"{req}::{sent_type}"]['num_fail2pass'] = len(result[model_name][f"{req}::{sent_type}"]['fail2pass'])
+            result[model_name][f"{req}::{sent_type}"]['num_fail_orig'] = len(orig_r['fail'])
+            result[model_name][f"{req}::{sent_type}"]['num_pass_orig'] = len(orig_r['pass'])
+            result[model_name][f"{req}::{sent_type}"]['num_fail_retrained'] = len(ret_r['fail'])
+            result[model_name][f"{req}::{sent_type}"]['num_pass_retrained'] = len(ret_r['pass'])
         # end for
         return result
     

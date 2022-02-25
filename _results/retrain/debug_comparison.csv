@@ -14,14 +14,14 @@ Short sentences with neutral adjectives and nouns::EXP,22,56,2,34,24
 Short sentences with sentiment-laden adjectives::SEED,1,1,49,3,47
 Short sentences with sentiment-laden adjectives::EXP,1,4,151,23,132
 Sentiment change over time present should prevail::SEED,12,16,34,5,45
-Sentiment change over time present should prevail::EXP,200,243,325,51,517
+Sentiment change over time present should prevail::EXP,192,243,325,51,517
 Negated neutral should still be neutral::SEED,15,22,2,7,17
-Negated neutral should still be neutral::EXP,191,304,17,119,202
+Negated neutral should still be neutral::EXP,185,304,17,119,202
 Author sentiment is more important than of others::SEED,4,16,34,17,33
-Author sentiment is more important than of others::EXP,14,62,249,152,159
+Author sentiment is more important than of others::EXP,8,62,249,152,159
 parsing sentiment in (question yes) form::SEED,1,5,45,9,41
 parsing sentiment in (question yes) form::EXP,12,81,405,115,371
 Parsing positive sentiment in (question no) form::SEED,27,29,21,5,45
-Parsing positive sentiment in (question no) form::EXP,330,312,188,48,452
+Parsing positive sentiment in (question no) form::EXP,310,312,188,48,452
 Negated positive with neutral content in the middle::SEED,45,45,5,0,50
-Negated positive with neutral content in the middle::EXP,608,569,59,3,625
+Negated positive with neutral content in the middle::EXP,566,569,59,3,625
