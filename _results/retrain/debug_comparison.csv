@@ -21,7 +21,7 @@ Author sentiment is more important than of others::SEED,4,16,34,17,33
 Author sentiment is more important than of others::EXP,14,62,249,152,159
 parsing sentiment in (question yes) form::SEED,1,5,45,9,41
 parsing sentiment in (question yes) form::EXP,12,81,405,115,371
-Parsing positive sentiment in (question, no) form::SEED,27,29,21,5,45
-Parsing positive sentiment in (question, no) form::EXP,330,312,188,48,452
+Parsing positive sentiment in (question no) form::SEED,27,29,21,5,45
+Parsing positive sentiment in (question no) form::EXP,330,312,188,48,452
 Negated positive with neutral content in the middle::SEED,45,45,5,0,50
 Negated positive with neutral content in the middle::EXP,608,569,59,3,625
