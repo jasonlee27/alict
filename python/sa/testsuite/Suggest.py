@@ -7,7 +7,7 @@ from typing import *
 
 import re, os
 import nltk
-import spacy
+# import spacy
 import copy
 import random
 import numpy
@@ -192,22 +192,34 @@ class Suggest:
         return False
 
     @classmethod
-    def eval_sug_words_by_exp_req(cls, word_suggest, requirement):
+    def eval_sug_words_by_exp_req(cls, nlp, word_suggest, requirement):
         if requirement['expansion'] is None:
             return True
         # end if
         all_reqs_met = list()
+        
         for r in requirement['expansion']:
             is_req_met = False
             if len(r.split())>1:
                 is_req_met = word_suggest in SENT_DICT[r]
             else:
                 if r in list(Macros.sa_label_map.keys()):
-                    for key in SENT_DICT.keys():
-                        if key.startswith(r):
-                            is_req_met = word_suggest in SENT_DICT[key]
+                    sentiment_list = [key for key in SENT_DICT.keys() if word_suggest in SENT_DICT[key]]
+                    if not any(sentiment_list):
+                        is_req_met = False
+                    elif len(sentiment_list)==1:
+                        if sentiment_list[0].startswith(r):
+                            is_req_met = True
                         # end if
-                    # end for
+                    elif len(sentiment_list)>1:
+                        w_tag = nlp(word_suggest)[0].pos_.lower()
+                        for key in sentiment_list:
+                            if key.endswith(w_tag) and key.startswith(r):
+                                is_req_met = True
+                                break
+                            # end if
+                        # end for
+                    # end if
                 # end if
             # end if
             all_reqs_met.append(is_req_met)
@@ -246,9 +258,8 @@ class Suggest:
         return sent_probs
     
     @classmethod
-    def get_new_inputs(cls, generator, gen_inputs, num_target=10, is_random_select=False):
+    def get_new_inputs(cls, nlp, generator, gen_inputs, num_target=10, is_random_select=False):
         editor = generator.editor
-        nlp = spacy.load('en_core_web_md')
         word_suggestions = cls.get_word_suggestion(editor, gen_inputs, num_target=3*num_target)
         for g_i in range(len(gen_inputs)):
             # print(f"gen_new_inputs: {g_i} out of {len(gen_inputs)}")
@@ -274,7 +285,7 @@ class Suggest:
         return gen_inputs
 
     @classmethod
-    def eval_word_suggest(cls, gen_input, label: str, requirement):
+    def eval_word_suggest(cls, nlp, gen_input, label: str, requirement):
         results = list()
         masked_input, mask_pos = gen_input['masked_input']
         if not gen_input['words_suggest']:
@@ -290,7 +301,7 @@ class Suggest:
                 input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
                 # check sentence and expansion requirements
                 if cls.eval_sug_words_by_req(input_candid, requirement, label):
-                    if cls.eval_sug_words_by_exp_req(w_sug, requirement):
+                    if cls.eval_sug_words_by_exp_req(nlp, w_sug, requirement):
                         results.append((masked_input,
                                         gen_input['cfg_from'],
                                         gen_input['cfg_to'],
@@ -305,14 +316,15 @@ class Suggest:
         return results
 
     @classmethod
-    def get_exp_inputs(cls, generator, gen_inputs, seed_label, requirement, num_target=10, is_random_select=False):
+    def get_exp_inputs(cls, nlp, generator, gen_inputs, seed_label, requirement, num_target=10, is_random_select=False):
         # get the word suggesteion at the expended grammar elements
         new_input_results = list()
+        
         gen_inputs = cls.get_new_inputs(
-            generator, gen_inputs, num_target=num_target, is_random_select=is_random_select
+            nlp, generator, gen_inputs, num_target=num_target, is_random_select=is_random_select
         )
         for g_i in range(len(gen_inputs)):
-            eval_results = cls.eval_word_suggest(gen_inputs[g_i], seed_label, requirement)
+            eval_results = cls.eval_word_suggest(nlp, gen_inputs[g_i], seed_label, requirement)
             if any(eval_results):
                 del gen_inputs[g_i]["words_suggest"]
                 new_input_results.extend(eval_results)

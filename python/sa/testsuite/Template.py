@@ -46,6 +46,7 @@ class Template:
     def generate_inputs(cls, task, dataset, n=None, save_to=None, is_random_select=None):
         print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(task)
+        nlp = spacy.load('en_core_web_md')
         results = list()
         if os.path.exists(save_to):
             results = Utils.read_json(save_to)
@@ -77,6 +78,7 @@ class Template:
                 tot_num_exp += len(gen_inputs)
                 if any(gen_inputs):
                     new_input_results = Suggest.get_exp_inputs(
+                        nlp,
                         generator,
                         gen_inputs,
                         seed_label,
