@@ -1,27 +1,28 @@
 req,num_fail2pass,num_fail_orig,num_pass_orig,num_fail_retrained,num_pass_retrained
-Sentiment-laden words in context,5,26,8632,473,8185
-neutral words in context,1285,1330,386,45,1671
-used to but now,1280,1680,6320,3185,4815
-used to should reduce,5,19,57,3,263
-simple negations: not neutral is still neutral,2158,2427,69,276,2220
-Hard: Negation of positive with neutral stuff in the middle (should be negative),858,860,140,2,998
-my opinion is what matters,662,3741,4787,3679,4849
-Q & A: yes,176,253,7391,676,6968
-Q & A: yes (neutral),1430,1540,20,110,1450
+Sentiment-laden words in context,4,26,8632,201,8457
+neutral words in context,1226,1330,386,109,1607
+used to but now,1342,1680,6320,2000,6000
+used to should reduce,6,19,57,0,242
+simple negations: not neutral is still neutral,4342,2427,69,147,2349
+Hard: Negation of positive with neutral stuff in the middle (should be negative),344,860,140,539,461
+my opinion is what matters,1570,3741,4787,2411,6117
+Q & A: yes,253,253,7391,150,7494
+Q & A: yes (neutral),1239,1540,20,311,1249
 Q & A: no,0,4056,3588,4056,3588
-Short sentences with neutral adjectives and nouns::SEED,5,16,4,11,9
-Short sentences with neutral adjectives and nouns::EXP,22,56,2,34,24
-Short sentences with sentiment-laden adjectives::SEED,1,1,49,3,47
-Short sentences with sentiment-laden adjectives::EXP,1,4,151,23,132
-Sentiment change over time present should prevail::SEED,12,16,34,5,45
-Sentiment change over time present should prevail::EXP,192,243,325,51,517
-Negated neutral should still be neutral::SEED,15,22,2,7,17
-Negated neutral should still be neutral::EXP,185,304,17,119,202
-Author sentiment is more important than of others::SEED,4,16,34,17,33
-Author sentiment is more important than of others::EXP,8,62,249,152,159
-parsing sentiment in (question yes) form::SEED,1,5,45,9,41
-parsing sentiment in (question yes) form::EXP,12,81,405,115,371
-Parsing positive sentiment in (question no) form::SEED,27,29,21,5,45
-Parsing positive sentiment in (question no) form::EXP,310,312,188,48,452
-Negated positive with neutral content in the middle::SEED,45,45,5,0,50
-Negated positive with neutral content in the middle::EXP,566,569,59,3,625
+
+Short sentences with neutral adjectives and nouns::SEED,6,15,4,9,10
+Short sentences with neutral adjectives and nouns::EXP,34,74,6,41,39
+Short sentences with sentiment-laden adjectives::SEED,0,2,48,7,43
+Short sentences with sentiment-laden adjectives::EXP,0,5,142,33,114
+Sentiment change over time present should prevail::SEED,7,12,38,6,44
+Sentiment change over time present should prevail::EXP,0,0,0,0,0
+Negated neutral should still be neutral::SEED,15,24,2,9,17
+Negated neutral should still be neutral::EXP,179,331,26,155,202
+Author sentiment is more important than of others::SEED,7,22,28,19,31
+Author sentiment is more important than of others::EXP,134,398,346,323,421
+parsing sentiment in (question yes) form::SEED,2,2,48,4,46
+parsing sentiment in (question yes) form::EXP,9,12,475,38,449
+Parsing positive sentiment in (question no) form::SEED,21,21,29,3,47
+Parsing positive sentiment in (question no) form::EXP,207,207,212,24,395
+Negated positive with neutral content in the middle::SEED,42,42,8,0,50
+Negated positive with neutral content in the middle::EXP,429,429,62,0,491
