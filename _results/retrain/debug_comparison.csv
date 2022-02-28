@@ -1,9 +1,9 @@
 req,num_fail2pass,num_fail_orig,num_pass_orig,num_fail_retrained,num_pass_retrained
 Sentiment-laden words in context,4,26,8632,201,8457
 neutral words in context,1226,1330,386,109,1607
-used to but now,1342,1680,6320,2000,6000
+used to but now,454,1680,6320,2000,6000
 used to should reduce,6,19,57,0,242
-simple negations: not neutral is still neutral,4342,2427,69,147,2349
+simple negations: not neutral is still neutral,2283,2427,69,147,2349
 Hard: Negation of positive with neutral stuff in the middle (should be negative),344,860,140,539,461
 my opinion is what matters,1570,3741,4787,2411,6117
 Q & A: yes,253,253,7391,150,7494
