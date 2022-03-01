@@ -254,7 +254,7 @@ class Template:
             seed_inputs, exp_seed_inputs = list(), list()
             seed_templates, exp_templates = list(), list()
             for s_i, seed_input in enumerate(inputs.keys()):
-                # print(f"\tSEED {s_i}: {seed_input}")
+                print(f"\tSEED {s_i}: {seed_input}")
                     
                 cfg_seed = inputs[seed_input]["cfg_seed"]
                 label_seed = inputs[seed_input]["label"]

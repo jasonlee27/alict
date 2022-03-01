@@ -28,13 +28,14 @@ import numpy as np
 class SstTestcases:
 
     @classmethod
-    def write_sst_testcase(cls, task, selection_method, save_file):
+    def write_sst_testcase(cls, task, selection_method, save_file, upscale_by_baseline=True, baseline='checklist'):
         test_results_dir = Macros.result_dir / f"test_results_{task}_sst_{selection_method}"
         cksum_vals = [
             os.path.basename(testsuite_file).split("_")[-1].split(".")[0]
             for testsuite_file in os.listdir(test_results_dir)
             if testsuite_file.startswith(f"{task}_testsuite_seeds_") and testsuite_file.endswith(".pkl")
         ]
+        
         test_data = dict()
         for cksum_val in cksum_vals:
             testsuite_files = [
@@ -104,16 +105,57 @@ class SstTestcases:
             # end for
         # end for
         num_train_data = len(dataset['train']['text'])
-        print(f"Num examples in {save_file}: {num_train_data}")
+
+        # for balancing number of data for retraining with baseline,
+        # we compute number of baseline dataset (checklist) and upscale
+        # the number of our dataset with the ratio of # dataset between baseline and ours
+        upscale_rate = 1
+        if upscale_by_baseline:
+            if baseline=='checklist':
+                baseline_dataset = ChecklistTestcases.get_testcase_for_retrain(
+                    Macros.checklist_sa_testcase_file
+                )
+                num_baseline_train_data = len(baseline_dataset['train']['text'])
+                upscale_rate = num_baseline_train_data // num_train_data
+                if upscale_rate > 1:
+                    texts, labels, test_names = list(), list(), list()
+                    for d_i in range(num_train_data):
+                        t = dataset['train']['text'][d_i]
+                        l = dataset['train']['label'][d_i]
+                        tn = dataset['train']['test_name'][d_i]
+                        texts.extend([t]*upscale_rate)
+                        labels.extend([l]*upscale_rate)
+                        test_names.extend([tn]*upscale_rate)
+                    # end for
+                    num_balanced_train_data = list(range(len(texts)))
+                    random.shuffle(num_balanced_train_data)
+                    dataset['train'] = {
+                        'text': [texts[d_i] for d_i in num_balanced_train_data],
+                        'label': [labels[d_i] for d_i in num_balanced_train_data],
+                        'test_name': [test_names[d_i] for d_i in num_balanced_train_data]
+                    }
+                # end if
+            # end if
+        # end if
         Utils.write_json(dataset, save_file, pretty_format=True)
         return dataset
 
     @classmethod
-    def get_testcase_for_retrain(cls, task, selection_method):
+    def get_testcase_for_retrain(cls,
+                                 task,
+                                 selection_method,
+                                 upscale_by_baseline=True,
+                                 baseline='checklist'):
         testcase_file = Macros.retrain_dataset_dir / f"{task}_sst_{selection_method}_testcase.json"
         if not os.path.exists(testcase_file):
             Macros.retrain_dataset_dir.mkdir(parents=True, exist_ok=True)
-            return cls.write_sst_testcase(task, selection_method, testcase_file)
+            return cls.write_sst_testcase(
+                task,
+                selection_method,
+                testcase_file,
+                upscale_by_baseline=upscale_by_baseline,
+                baseline=baseline
+            )
         # end if
         return Utils.read_json(testcase_file)
 
@@ -195,7 +237,6 @@ class ChecklistTestcases:
                 # end if
             # end if
         # end for
-        print(f"Num examples in {save_file}: {num_data}")
         Utils.write_json(dataset, save_file, pretty_format=True)
         return dataset
     
@@ -452,5 +493,25 @@ def retrain(
         retrainer.test_on_checklist_testsuite()
     elif dataset_name=='checklist':
         retrainer.test_on_our_testsuites()
+    # end if
+    return eval_result
+
+def eval_on_train_testsuite(
+        task,
+        model_name,
+        selection_method,
+        label_vec_len,
+        dataset_file,
+        eval_dataset_file,
+        test_by_types=False):
+    tags = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
+    dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
+    model_dir_name = tags+"_"+model_name.replace("/", "-")
+    output_dir = Macros.retrain_model_dir / task / model_dir_name
+    retrainer = Retrain(task, model_name, selection_method, label_vec_len, dataset_file, eval_dataset_file, output_dir)
+    if dataset_name.lower()=='sst':
+        retrainer.test_on_our_testsuites()
+    elif dataset_name=='checklist':
+        retrainer.test_on_checklist_testsuite()
     # end if
     return eval_result

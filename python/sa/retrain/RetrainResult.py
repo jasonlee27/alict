@@ -238,10 +238,11 @@ class RetrainResult:
                 'num_pass_retrained': -1
             }
             ret_r = [r for r in retrained_testsuite_result[model_name] if r['req']==req][0]
-
+            
             for f in orig_r['fail']:
+                found = False
                 for p in ret_r['pass']:
-                    if f['sent']==p['sent'] and f['label']==p['label']:
+                    if f['sent']==p['sent'] and f['label']==p['label'] and not found:
                         result[model_name][req]['fail2pass'].append({
                             'sent': f['sent'],
                             'label': f['label'],
@@ -249,6 +250,7 @@ class RetrainResult:
                             'ent': (f['ent'], p['ent']),
                             'conf': (f['conf'], p['conf'])
                         })
+                        found = True
                     # end if
                 # end for
             # end for

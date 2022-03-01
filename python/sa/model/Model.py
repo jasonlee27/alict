@@ -112,7 +112,7 @@ class Model:
     def run(cls, testsuite, model, pred_and_conf_fn, print_fn=None, format_example_fn=None, n=Macros.nsamples):
         cls.model = model
         testsuite.run(pred_and_conf_fn, n=n, overwrite=True)
-        testsuite.summary(n=100,
+        testsuite.summary(n=Macros.nsamples,
                           print_fn=cls.print_result if print_fn is not None else None,
                           format_example_fn=cls.format_example if format_example_fn is not None else None)
         return

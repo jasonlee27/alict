@@ -4,6 +4,7 @@ import sys
 import json
 import string
 import hashlib
+import contractions
 
 from pathlib import Path
 from nltk.corpus import treebank
@@ -34,6 +35,12 @@ class Utils:
         return
 
     @classmethod
+    def fix_contractions(cls, sent):
+        _sent = contractions.fix(sent)
+        _sent = re.sub(r" is been ", r" has been ", _sent)
+        return _sent
+        
+    @classmethod
     def tokenize(cls, sent: str)->list:
         return word_tokenize(sent)
 
@@ -43,6 +50,7 @@ class Utils:
         sent = TreebankWordDetokenizer().detokenize(tokens)
         sent = re.sub(r"(.+)\-\-(.+)", r"\1 -- \2", sent)
         sent = re.sub(r"(.+)\.\.\.(.+)", r"\1 ... \2", sent)
+        sent = cls.fix_contractions(sent)
         return sent
 
     @classmethod
