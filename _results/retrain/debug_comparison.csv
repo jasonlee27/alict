@@ -1,28 +1,28 @@
 req,num_fail2pass,num_fail_orig,num_pass_orig,num_fail_retrained,num_pass_retrained
-Sentiment-laden words in context,4,26,8632,201,8457
-neutral words in context,1226,1330,386,109,1607
-used to but now,454,1680,6320,2000,6000
-used to should reduce,6,19,57,0,242
-simple negations: not neutral is still neutral,2283,2427,69,147,2349
-Hard: Negation of positive with neutral stuff in the middle (should be negative),344,860,140,539,461
-my opinion is what matters,1570,3741,4787,2411,6117
-Q & A: yes,253,253,7391,150,7494
-Q & A: yes (neutral),1239,1540,20,311,1249
+Sentiment-laden words in context,4,26,8632,335,8323
+neutral words in context,1233,1330,386,97,1619
+used to but now,211,1680,6320,2462,5538
+used to should reduce,2,19,57,3,391
+simple negations: not neutral is still neutral,2377,2427,69,51,2445
+Hard: Negation of positive with neutral stuff in the middle (should be negative),78,860,140,890,110
+my opinion is what matters,839,3741,4787,3076,5452
+Q & A: yes,229,253,7391,103,7541
+Q & A: yes (neutral),1383,1540,20,163,1397
 Q & A: no,0,4056,3588,4056,3588
 
-Short sentences with neutral adjectives and nouns::SEED,6,15,4,9,10
-Short sentences with neutral adjectives and nouns::EXP,34,74,6,41,39
-Short sentences with sentiment-laden adjectives::SEED,0,2,48,7,43
-Short sentences with sentiment-laden adjectives::EXP,0,5,142,33,114
-Sentiment change over time present should prevail::SEED,7,12,38,6,44
+Short sentences with neutral adjectives and nouns::SEED,2,15,4,15,4
+Short sentences with neutral adjectives and nouns::EXP,20,74,6,56,24
+Short sentences with sentiment-laden adjectives::SEED,0,2,48,3,47
+Short sentences with sentiment-laden adjectives::EXP,0,5,142,15,132
+Sentiment change over time present should prevail::SEED,10,12,38,3,47
 Sentiment change over time present should prevail::EXP,0,0,0,0,0
-Negated neutral should still be neutral::SEED,15,24,2,9,17
-Negated neutral should still be neutral::EXP,179,331,26,155,202
-Author sentiment is more important than of others::SEED,7,22,28,19,31
-Author sentiment is more important than of others::EXP,134,398,346,323,421
-parsing sentiment in (question yes) form::SEED,2,2,48,4,46
-parsing sentiment in (question yes) form::EXP,9,12,475,38,449
+Negated neutral should still be neutral::SEED,8,24,2,17,9
+Negated neutral should still be neutral::EXP,74,331,26,277,80
+Author sentiment is more important than of others::SEED,11,22,28,12,38
+Author sentiment is more important than of others::EXP,232,398,177,567
+parsing sentiment in (question yes) form::SEED,2,2,48,3,47
+parsing sentiment in (question yes) form::EXP,10,12,475,23,464
 Parsing positive sentiment in (question no) form::SEED,21,21,29,3,47
-Parsing positive sentiment in (question no) form::EXP,207,207,212,24,395
-Negated positive with neutral content in the middle::SEED,42,42,8,0,50
-Negated positive with neutral content in the middle::EXP,429,429,62,0,491
+Parsing positive sentiment in (question no) form::EXP,207,207,212,33,386
+Negated positive with neutral content in the middle::SEED,39,42,8,3,47
+Negated positive with neutral content in the middle::EXP,402,429,62,27,464
