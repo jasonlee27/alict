@@ -1,0 +1,16 @@
+req,num_fail2pass,num_fail_orig,num_pass_orig,num_fail_retrained,num_pass_retrained
+Sentiment-laden words in context,0,26,8632,612,8046
+neutral words in context,1282,1330,386,48,1668
+used to, but now,309,1680,6320,2923,5077
+simple negations: not neutral is still neutral,2335,2427,69,92,2404
+Hard: Negation of positive with neutral stuff in the middle (should be negative),39,860,140,917,83
+my opinion is what matters,665,3741,4787,3561,4967
+Q & A: yes,1778,1793,7411,443,8761
+,,,,,
+Short sentences with neutral adjectives and nouns,23,89,10,73,26
+Short sentences with sentiment-laden adjectives,0,7,190,23,174
+Sentiment change over time, present should prevail,9,12,38,14,36
+Negated neutral should still be neutral,55,355,28,326,57
+Negated positive with neutral content in the middle,377,471,70,94,447
+Author sentiment is more important than of others,60,420,374,492,302
+parsing sentiment in (question, yes) form,9,14,523,78,459

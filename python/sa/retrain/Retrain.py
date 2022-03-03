@@ -27,6 +27,11 @@ import numpy as np
 
 class SstTestcases:
 
+    LC_NOT_INCLUDED_LIST = [
+        'Parsing positive sentiment in (question, no) form',
+        'Parsing positive sentiment in (question, no) form'
+    ]
+
     @classmethod
     def write_sst_testcase(cls, task, selection_method, save_file, upscale_by_baseline=True, baseline='checklist'):
         test_results_dir = Macros.result_dir / f"test_results_{task}_sst_{selection_method}"
@@ -42,34 +47,36 @@ class SstTestcases:
                 f"{task}_testsuite_seeds_{cksum_val}.pkl",
                 f"{task}_testsuite_exps_{cksum_val}.pkl"
             ]
+            test_name = ''
             testsuite_files = [tf for tf in testsuite_files if os.path.exists(test_results_dir / tf)]
             for f_i, testsuite_file in enumerate(testsuite_files):
                 tsuite, tsuite_dict = Utils.read_testsuite(test_results_dir / testsuite_file)
-                for test_name in list(set(tsuite_dict['test_name'])):
-                    if tsuite.tests[test_name].labels is not None:
-                        if f_i==0:
-                            test_data[cksum_val] = {
-                                'sents': tsuite.tests[test_name].data,
-                                'labels': tsuite.tests[test_name].labels
+                for tn in list(set(tsuite_dict['test_name'])):
+                    test_name = tn.split('::')[-1]
+                    if tsuite.tests[tn].labels is not None and test_name not in cls.LC_NOT_INCLUDED_LIST:
+                        if test_name not in test_data.keys():
+                            test_data[test_name] = {
+                                'sents': tsuite.tests[tn].data,
+                                'labels': tsuite.tests[tn].labels
                             }
                         else:
-                            test_data[cksum_val]["sents"].extend(tsuite.tests[test_name].data)
-                            test_data[cksum_val]["labels"].extend(tsuite.tests[test_name].labels)
+                            test_data[test_name]['sents'].extend(tsuite.tests[tn].data)
+                            test_data[test_name]['labels'].extend(tsuite.tests[tn].labels)
                         # end if
                     # end if
                 # end for
             # end for
-            if cksum_val in test_data.keys():
-                num_data = len(test_data[cksum_val]['sents'])
+            if test_name in test_data.keys():
+                num_data = len(test_data[test_name]['sents'])
                 type_list = ['test']*num_data
                 num_train_data = int(num_data*Macros.TRAIN_RATIO)
                 num_train_data += ((num_data*Macros.TRAIN_RATIO)%num_train_data)>0
                 type_list[:num_train_data] = ['train']*num_train_data
                 random.shuffle(type_list)
-                test_data[cksum_val]['types'] = type_list
+                test_data[test_name]['types'] = type_list
                 
                 # set data labels in a range between 0. and 1. from 0,1,2
-                test_data[cksum_val]['labels'] = [0.5*float(l) for l in test_data[cksum_val]['labels']]
+                test_data[test_name]['labels'] = [0.5*float(l) for l in test_data[test_name]['labels']]
             # end if
         # end for
         
@@ -117,6 +124,7 @@ class SstTestcases:
                 )
                 num_baseline_train_data = len(baseline_dataset['train']['text'])
                 upscale_rate = num_baseline_train_data // num_train_data
+                print(num_baseline_train_data, num_train_data, upscale_rate)
                 if upscale_rate > 1:
                     texts, labels, test_names = list(), list(), list()
                     for d_i in range(num_train_data):
@@ -165,14 +173,12 @@ class ChecklistTestcases:
     LC_LIST = [
         'Sentiment-laden words in context',
         'neutral words in context',
-        '"used to" should reduce',
         'used to, but now',
         'simple negations: not neutral is still neutral',
         'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
         'my opinion is what matters',
         'Q & A: yes',
         'Q & A: yes (neutral)',
-        'Q & A: no',
     ]
     
     @classmethod
@@ -204,38 +210,35 @@ class ChecklistTestcases:
         # end for
         
         dataset = dict()
-        for idx in range(len(tsuite_dict['text'])):
-            test_sent = tsuite_dict['text'][idx]
-            test_name = tsuite_dict['test_name'][idx]
-            if test_name in test_data.keys():
-                test_case = tsuite_dict['test_case'][idx]
-                sent_idx = test_data[test_name]['sents'].index(test_sent)
-                label = test_data[test_name]['labels'][sent_idx]
-                _type = test_data[test_name]['types'][sent_idx]
-                if _type=='train':
+        for test_name in test_data.keys():
+            test_sents = test_data[test_name]['sents']
+            labels = test_data[test_name]['labels']
+            _types = test_data[test_name]['types']
+            for d_i in range(len(test_sents)):
+                if _types[d_i]=='train':
                     if 'train' not in dataset.keys():
                         dataset['train'] = dict()
-                        dataset['train']['text'] = [test_sent]
-                        dataset['train']['label'] = [label]
+                        dataset['train']['text'] = [test_sents[d_i]]
+                        dataset['train']['label'] = [labels[d_i]]
                         dataset['train']['test_name'] = [test_name]
                     else:
-                        dataset['train']['text'].append(test_sent)
-                        dataset['train']['label'].append(label)
+                        dataset['train']['text'].append(test_sents[d_i])
+                        dataset['train']['label'].append(labels[d_i])
                         dataset['train']['test_name'].append(test_name)
                     # end if
                 else:
                     if 'test' not in dataset.keys():
                         dataset['test'] = dict()
-                        dataset['test']['text'] = [test_sent]
-                        dataset['test']['label'] = [label]
+                        dataset['test']['text'] = [test_sents[d_i]]
+                        dataset['test']['label'] = [labels[d_i]]
                         dataset['test']['test_name'] = [test_name]
                     else:
-                        dataset['test']['text'].append(test_sent)
-                        dataset['test']['label'].append(label)
+                        dataset['test']['text'].append(test_sents[d_i])
+                        dataset['test']['label'].append(labels[d_i])
                         dataset['test']['test_name'].append(test_name)
                     # end if
                 # end if
-            # end if
+            # end for
         # end for
         Utils.write_json(dataset, save_file, pretty_format=True)
         return dataset
@@ -275,7 +278,8 @@ class Retrain:
         self.train_dataset, self.eval_dataset = self.get_tokenized_dataset(dataset_file, eval_dataset_file)
         model_dir_name = model_name.replace("/", "-")
         self.output_dir = output_dir
-        self.num_epochs = 2.0
+        self.batch_size = 16
+        self.num_epochs = 5.0
         
     def load_tokenizer(self, model_name):
         return AutoTokenizer.from_pretrained(model_name)
@@ -367,7 +371,7 @@ class Retrain:
         training_args = TrainingArguments(
             output_dir=self.output_dir,
             num_train_epochs=self.num_epochs,
-            per_device_train_batch_size=4,
+            per_device_train_batch_size=self.batch_size,
             do_train=True
         )
         trainer = Trainer(
@@ -383,7 +387,7 @@ class Retrain:
     def evaluate(self, test_by_types=False):
         training_args = TrainingArguments(
             output_dir=self.output_dir,
-            per_device_eval_batch_size=4,
+            per_device_eval_batch_size=self.batch_size,
             do_eval=True
         )
         if test_by_types:
@@ -413,7 +417,7 @@ class Retrain:
         return results
 
     def load_retrained_model(self):
-        checkpoints = sorted([d for d in os.listdir(self.output_dir) if os.path.isdir(os.path.join(self.output_dir,d)) and d.startswith("checkpoint-")])
+        checkpoints = sorted([d for d in os.listdir(self.output_dir) if os.path.isdir(os.path.join(self.output_dir,d)) and d.startswith('checkpoint-')], key=lambda x: int(x.split('checkpoint-')[-1]))
         checkpoint_dir = self.output_dir / checkpoints[-1]
         tokenizer = AutoTokenizer.from_pretrained(self.output_dir)
         _task, _ = Model.model_map[self.task]
@@ -502,8 +506,7 @@ def eval_on_train_testsuite(
         selection_method,
         label_vec_len,
         dataset_file,
-        eval_dataset_file,
-        test_by_types=False):
+        eval_dataset_file):
     tags = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
     dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
     model_dir_name = tags+"_"+model_name.replace("/", "-")
@@ -514,4 +517,4 @@ def eval_on_train_testsuite(
     elif dataset_name=='checklist':
         retrainer.test_on_checklist_testsuite()
     # end if
-    return eval_result
+    return

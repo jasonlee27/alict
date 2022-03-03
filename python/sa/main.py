@@ -39,6 +39,8 @@ parser.add_argument('--test_baseline', action='store_true',
 # arguments for retraining
 parser.add_argument('--label_vec_len', type=int, default=2,
                     help='label vector length for the model to be evaluated or retrained')
+parser.add_argument('--testing_on_trainset', action='store_true',
+                    help='flag for testing the model with train set')
 
 args = parser.parse_args()
 
@@ -138,15 +140,33 @@ def run_retrain():
             Retrain.get_sst_testcase_for_retrain(nlp_task, selection_method)
         # end if
     # end if
-    _ = retrain(
-        task=nlp_task,
-        model_name=model_name,
-        selection_method=selection_method,
-        label_vec_len=label_vec_len,
-        dataset_file=testcase_file,
-        eval_dataset_file=eval_testcase_file,
-        test_by_types=False
-    )
+
+    if not args.testing_on_trainset:
+        _ = retrain(
+            task=nlp_task,
+            model_name=model_name,
+            selection_method=selection_method,
+            label_vec_len=label_vec_len,
+            dataset_file=testcase_file,
+            eval_dataset_file=eval_testcase_file,
+            test_by_types=False
+        )
+    else:
+        if search_dataset_name==Macros.datasets[nlp_task][0]:
+            eval_testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_sst_{selection_method}_testcase.json"
+        elif search_dataset_name==Macros.datasets[nlp_task][1]:
+            eval_testcase_file = Macros.checklist_sa_testcase_file
+        # end if
+        from.retrain.Retrain import eval_on_train_testsuite
+        eval_on_train_testsuite(
+            task=nlp_task,
+            model_name=model_name,
+            selection_method=selection_method,
+            label_vec_len=label_vec_len,
+            dataset_file=testcase_file,
+            eval_dataset_file=eval_testcase_file,
+        )
+    # end if
     return
 
 def run_analyze():

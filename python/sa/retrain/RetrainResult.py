@@ -340,12 +340,111 @@ class RetrainResult:
         return fail_to_pass_cases
 
     @classmethod
+    def fail2pass_summary(cls, fail2pass_ours, fail2pass_checklist, savedir):
+        checklist_req_for_retrain = [
+            'Sentiment-laden words in context',
+            'neutral words in context',
+            'used to, but now',
+            'simple negations: not neutral is still neutral',
+            'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
+            'my opinion is what matters',
+            'Q & A: yes',
+            'Q & A: yes (neutral)',
+        ]
+
+        our_req_for_retrain = [
+            'Short sentences with neutral adjectives and nouns',
+            'Short sentences with sentiment-laden adjectives',
+            'Sentiment change over time, present should prevail',
+            'Negated neutral should still be neutral',
+            'Author sentiment is more important than of others',
+            'parsing sentiment in (question, yes) form',
+            'Negated positive with neutral content in the middle',
+        ]
+        
+        for model_name in fail2pass_ours.keys():
+            result = 'req,num_fail2pass,num_fail_orig,num_pass_orig,num_fail_retrained,num_pass_retrained\n'
+            res_ours = fail2pass_ours[model_name]
+            summary_ours = list()
+            for req in res_ours.keys():
+                if req in checklist_req_for_retrain:
+                    num_fail2pass = res_ours[req]['num_fail2pass']
+                    num_fail_orig = res_ours[req]['num_fail_orig']
+                    num_pass_orig = res_ours[req]['num_pass_orig']
+                    num_fail_retrained = res_ours[req]['num_fail_retrained']
+                    num_pass_retrained = res_ours[req]['num_pass_retrained']
+                    if req != checklist_req_for_retrain[-1]:
+                        summary_ours.append([
+                            req,
+                            num_fail2pass,
+                            num_fail_orig,
+                            num_pass_orig,
+                            num_fail_retrained,
+                            num_pass_retrained
+                        ])
+                    else:
+                        summary_ours[-1][1] += num_fail2pass
+                        summary_ours[-1][2] += num_fail_orig
+                        summary_ours[-1][3] += num_pass_orig
+                        summary_ours[-1][4] += num_fail_retrained
+                        summary_ours[-1][5] += num_pass_retrained
+                    # end if
+                # end if
+            # end for
+            for summary in summary_ours:
+                result += ','.join([str(s) for s in summary])
+                result += '\n'
+            # end for
+            
+            res_checklist = fail2pass_checklist[model_name]
+            summary_checklist = list()
+            seed_req_descs = list()
+            for req in res_checklist.keys():
+                req_desc = req.split('::')[0]
+                if req_desc in our_req_for_retrain:
+                    num_fail2pass = res_checklist[req]['num_fail2pass']
+                    num_fail_orig = res_checklist[req]['num_fail_orig']
+                    num_pass_orig = res_checklist[req]['num_pass_orig']
+                    num_fail_retrained = res_checklist[req]['num_fail_retrained']
+                    num_pass_retrained = res_checklist[req]['num_pass_retrained']
+                    if req.endswith('::SEED'):
+                        seed_req_descs.append(req_desc)
+                        summary_checklist.append([
+                            req_desc,
+                            num_fail2pass,
+                            num_fail_orig,
+                            num_pass_orig,
+                            num_fail_retrained,
+                            num_pass_retrained
+                        ])
+                    elif req.endswith('::EXP') and seed_req_descs[-1]==req_desc:
+                        summary_checklist[-1][1] += num_fail2pass
+                        summary_checklist[-1][2] += num_fail_orig
+                        summary_checklist[-1][3] += num_pass_orig
+                        summary_checklist[-1][4] += num_fail_retrained
+                        summary_checklist[-1][5] += num_pass_retrained
+                    # end if
+                # end if
+            # end for
+            result += ',,,,,\n'
+            for summary in summary_checklist:
+                result += ','.join([str(s) for s in summary])
+                result += '\n'
+            # end for
+            _model_name = model_name.replace('/', '_')
+            saveto = savedir / f"debug_comparison_{_model_name}.csv"
+            Utils.write_txt(result, saveto)
+        # end for
+        return
+    
+    @classmethod
     def analyze(cls, task, dataset_name, selection_method, retrained_model_name):
         model_name = retrained_model_name.replace('/', '-')
         _retrained_model_name = f"{task}_{dataset_name}_{selection_method}_{model_name}"
         _retrained_checklist_name = f"{task}_checklist_{model_name}"
         fail2pass_ours = cls._analyze_on_checklist(task, dataset_name, selection_method, retrained_model_name)
         fail2pass_checklist = cls._analyze_on_ours(task, dataset_name, selection_method, retrained_model_name)
+        cls.fail2pass_summary(fail2pass_ours, fail2pass_checklist, Macros.retrain_output_dir)
         Utils.write_json(fail2pass_ours,
                          Macros.retrain_model_dir / task / _retrained_model_name / "debug_result.json",
                          pretty_format=True

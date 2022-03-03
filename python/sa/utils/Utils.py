@@ -61,6 +61,13 @@ class Utils:
         return lines
 
     @classmethod
+    def write_txt(cls, input_str, data_file):
+        with open(data_file, 'w') as f:
+            lines = f.write(input_str)
+        #end with
+        return lines
+
+    @classmethod
     def read_json(cls, json_file):
         # read cfg json file
         if os.path.exists(str(json_file)):
@@ -68,7 +75,7 @@ class Utils:
                 return json.load(f)
             # end with
         # end if
-        return None
+        return
 
     @classmethod
     def read_testsuite(cls, testsuite_file):
