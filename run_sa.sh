@@ -41,8 +41,13 @@ function retrain_models() {
         (cd ${_DIR}
          echo "***** TRAIN: ours, EVAL: checklist *****"
          CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run retrain --search_dataset sst --syntax_selection prob --model_name textattack/bert-base-uncased-SST-2 > ./_results/retrain/models/sa/sa_sst_PROB_textattack-bert-base-uncased-SST-2/eval_testsuite_results.txt
+
+         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run retrain --testing_on_trainset --search_dataset sst --syntax_selection prob --model_name textattack/bert-base-uncased-SST-2 > ./_results/retrain/models/sa/sa_sst_PROB_textattack-bert-base-uncased-SST-2/eval_testsuite_results_on_trainset.txt
+
          echo "***** TRAIN: checklist, EVAL: ours *****"
          CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run retrain --search_dataset checklist --model_name textattack/bert-base-uncased-SST-2 > ./_results/retrain/models/sa/sa_checklist_textattack-bert-base-uncased-SST-2/eval_testsuite_results.txt
+
+         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run retrain --testing_on_trainset --search_dataset checklist --model_name textattack/bert-base-uncased-SST-2 > ./_results/retrain/models/sa/sa_checklist_textattack-bert-base-uncased-SST-2/eval_testsuite_results_on_trainset.txt
         )
 }
 
@@ -68,7 +73,7 @@ function analyze_retrained_models() {
 }
 
 function explain_nlp() {
-        python -m python.sa.main --run explain_nlp --search_dataset sst --syntax_selection prob --model_name textattack/bert-base-uncased-SST-2
+        CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run explain_nlp --search_dataset sst --syntax_selection prob --model_name textattack/bert-base-uncased-SST-2
 }
 
 function main() {
@@ -80,7 +85,7 @@ function main() {
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # eval_retrained_models # to ...
         # analyze_retrained_models # to generate debug_results.json and debug_comparision file
-        # explain_nlp # to run the explainNLP
+        explain_nlp # to run the explainNLP
 }
 
 # please make sure you actiavte nlptest conda environment
