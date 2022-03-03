@@ -368,7 +368,6 @@ class RetrainResult:
             summary_ours = list()
             for req in res_ours.keys():
                 if req in checklist_req_for_retrain:
-                    req = req.replace(',', '')
                     num_fail2pass = res_ours[req]['num_fail2pass']
                     num_fail_orig = res_ours[req]['num_fail_orig']
                     num_pass_orig = res_ours[req]['num_pass_orig']
@@ -376,7 +375,7 @@ class RetrainResult:
                     num_pass_retrained = res_ours[req]['num_pass_retrained']
                     if req != checklist_req_for_retrain[-1]:
                         summary_ours.append([
-                            req,
+                            req.replace(',', ''),
                             num_fail2pass,
                             num_fail_orig,
                             num_pass_orig,
@@ -403,7 +402,6 @@ class RetrainResult:
             for req in res_checklist.keys():
                 req_desc = req.split('::')[0]
                 if req_desc in our_req_for_retrain:
-                    req_desc = req_desc.replace(',', '')
                     num_fail2pass = res_checklist[req]['num_fail2pass']
                     num_fail_orig = res_checklist[req]['num_fail_orig']
                     num_pass_orig = res_checklist[req]['num_pass_orig']
@@ -412,7 +410,7 @@ class RetrainResult:
                     if req.endswith('::SEED'):
                         seed_req_descs.append(req_desc)
                         summary_checklist.append([
-                            req_desc,
+                            req_desc.replace(',', ''),
                             num_fail2pass,
                             num_fail_orig,
                             num_pass_orig,
