@@ -13,7 +13,7 @@ from .utils.Utils import Utils
 
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
-                    choices=['requirement', 'template', 'testsuite', 'testmodel', 'retrain', 'analyze', 'retrain_analyze'],
+                    choices=['requirement', 'template', 'testsuite', 'testmodel', 'retrain', 'analyze', 'retrain_analyze', 'explain_nlp'],
                     help='task to be run')
 parser.add_argument('--nlp_task', type=str, default="sa",
                     choices=['sa'],
@@ -204,6 +204,23 @@ def run_retrain_analyze():
         model_name
     )
     return
+
+def run_explainNLP():
+    from .explainNLP.main import explain_nlp_main
+    nlp_task = args.nlp_task
+    selection_method = 'RANDOM'
+    if args.syntax_selection=='prob':
+        selection_method = 'PROB'
+    # end if
+    search_dataset_name = args.search_dataset
+    model_name = args.model_name
+    explain_nlp_main(
+        nlp_task,
+        search_dataset_name,
+        selection_method,
+        model_name
+    )
+    return
     
 func_map = {
     "sa": {
@@ -214,6 +231,7 @@ func_map = {
         'retrain': run_retrain,
         'analyze': run_analyze,
         'retrain_analyze': run_retrain_analyze,
+        'explain_nlp': run_explainNLP
     }
 }
 
