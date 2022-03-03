@@ -37,7 +37,7 @@ class CasualInferenceExplain:
         return mutated_x, mask
 
     def compute_weights(self, mask, mutated_y):
-        m = LogisticRegression(fit_intercept=True)
+        m = LogisticRegression(fit_intercept=True, max_iter=1000)
         m.fit(mask.detach().cpu().numpy(), mutated_y.reshape(-1).detach().cpu().numpy())
         weight = m.coef_
         return weight.reshape([-1])
