@@ -17,22 +17,18 @@ corpus, 4. syntax expansion identification, and 5.sentence expansion
 and generation. In this section, we provide more details on each phase.
 
 \subsection{Search phase}
-The search phase in \Model searches and samples subset of sentences in
-the dataset that meets the requirement extracted from each linguistic
-capability. The idea behind this phase 
-
-In order to evaluate NLP models on \lc precisely, there
-are two conditions in our interest.
-
-First, inputs in the distrbution
-characterized by each \lc is of importance. Each \lc represents
-performance of NLP model on specific input distribution. Therefore,
-the \lc introduces the constraints of the input distribution, and
-input sentences from the constrained distribution are only qualified
-to be used for evaluating the NLP model on the \lc.
-
-In addition,
+The search phase in \Model searches inputs in dataset and selects
+subset of input sentences in the dataset that meets the \lc
+requirement. The idea behind this phase is that input distribution of
+\lc is important to generate inputs relevant to \lc. \Lc describes
+expected behaviors of NLP model on specific types of input and
+output. The NLP model is evaluated on how much it performs on the
+input and output. Thus, \lc introduces the constraints of the input
+data. Input data from the constrained distribution are only qualified
+to be used for evaluating the NLP model on the \lc.  In addition,
 diversity in inputs is important to evaluate NLP models on the
-\lc. The idea is that inputs that differ are more likely to cover the
-NLP model behavior, and more coverage increases trustworthiness of the
-evaluation. To achieve, we approach
+\lc. Inputs that differ are more likely to cover the NLP model
+behavior, and more coverage increases trustworthiness of the
+evaluation. To satisfy the same distribution and high
+diversity among inputs, we estabilish requirement of input and output
+for each \lc, and find inputs that fulfil the requirements.
