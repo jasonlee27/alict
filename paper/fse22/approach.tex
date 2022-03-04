@@ -1,5 +1,5 @@
-\section{\Model}
-\label{sec:approach}
+\section{Technique and implementation}
+%% \label{sec:approach}
 
 \begin{figure*}
   \centering
@@ -9,10 +9,18 @@
   \vspace{-10pt}
 \end{figure*}
 
-This section presents our architecture of \Model for generating input
-sentences. The high level of \Model is illustrated in
-\ref{fig:OverallModel}. \Model first searches seed sentences that
-meets each requirement for a linguistic capability. The seed sentences
-are parsed into their \cfg. Meanwhile, \Model builds the reference
-\pcfg from a large natural language corpus. Each \cfg of seed
-sentences are 
+\Model generates input sentences with the following phases illustrated
+in \ref{fig:OverallModel}: 1. search phase searches seed sentences according to
+its requirement of \lc, 2. seed parsing phase parses the found seed
+sentences and extract their \cfg, 3. reference phase collects large
+corpus, 4. syntax expansion identification, and 5.sentence expansion
+and generation. In this section, we provide more details on each phase.
+
+\subsection{Search phase}
+The search phase in \Model searches and samples subset of sentences in the
+dataset that meets the requirement extracted from each linguistic
+capability. Each linguistic capability represents performance of \nlp
+task on specific input domain
+
+requires certain format of sentences
+
