@@ -9,13 +9,13 @@
   \vspace{-10pt}
 \end{figure*}
 
-\Model generates input \sents with the following phases illustrated
-in \ref{fig:OverallModel}: 1. search phase searches seed \sents
-according to its \req of \lc, 2. seed parsing phase parses the
-found seed \sents and extract their \cfg, 3. reference phase
-collects large corpus, 4. syntax expansion identification, and
-5.\sent expansion and generation. In this section, we provide more
-details on each phase.
+\Model generates input \sents with the following phases illustrated in
+\ref{fig:OverallModel}: 1. search phase searches seed \sents according
+to its \req of \lc, 2. seed parsing phase parses the found seed \sents
+and extract their \cfg, 3. reference phase collects large corpus,
+4. syntax expansion phase identifies structure for input augmentation,
+and 5.\sent expansion phase generates natural expanded \sent. In this
+section, we provide more details on each phase.
 
 \subsection{Search phase}
 The search phase in \Model searches inputs in dataset and selects
@@ -72,3 +72,12 @@ and \neu inputs and combine them into negated \pstv \sents. The
 transformation of inputs produce the transformed inputs in
 distribution on \lc and high diversity in the inputs because of that
 from initially found inputs.
+
+\subsection{Seed parsing phase}
+In the seed parsing phase, 
+
+\subsection{Reference phase}
+
+\subsection{Syntax expansionphase}
+
+\subsection{\Sent expansion phase}

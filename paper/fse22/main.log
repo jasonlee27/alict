@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  5 MAR 2022 01:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  5 MAR 2022 01:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1563,7 +1563,7 @@ File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ) (./intro.tex)
 (./background.tex) (./related.tex) (./approach.tex
-<figs/overall.pdf, id=73, 677.53125pt x 352.31625pt>
+<figs/overall.pdf, id=89, 677.53125pt x 352.31625pt>
 File: figs/overall.pdf Graphic file (type pdf)
 <use figs/overall.pdf>
 Package pdftex.def Info: figs/overall.pdf  used on input line 6.
@@ -1608,11 +1608,10 @@ Class acmart Warning: A possible image without description on input line 46.
 
 Class acmart Warning: A possible image without description on input line 53.
 
-) (./rq.tex
+
 Underfull \vbox (badness 5802) has occurred while \output is active []
 
-)
-(./experiment.tex
+) (./rq.tex) (./experiment.tex
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 36.
@@ -1631,6 +1630,11 @@ Overfull \hbox (1.75647pt too wide) in paragraph at lines 51--67
 neT-TLF/m/n/9 (-20) . We build a ref-er-ence Context-
  []
 
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 9.0pt on input line 67.
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 67.
+[2.2]
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 68.
@@ -1640,13 +1644,6 @@ Class acmart Warning: \vspace should only be used to provide space above/below
 surrounding objects on input line 73.
 
 
-Underfull \vbox (badness 6396) has occurred while \output is active []
-
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 73.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 7.0pt on input line 73.
- [2.2]
 Overfull \hbox (3.91063pt too wide) in paragraph at lines 73--79
 \T1/LinuxLibertineT-TLF/m/n/9 (-20) Auto-CHECKLIST: BERT-base [[]], RoBERTa-bas
 e [[]] and DistilBERT-
@@ -1656,11 +1653,7 @@ e [[]] and DistilBERT-
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 80.
 
-
-Underfull \vbox (badness 2418) has occurred while \output is active []
-
-)
-(./result.tex) (./main.bbl [3.3 <./figs/overall.pdf>]
+) (./result.tex) (./main.bbl [3.3 <./figs/overall.pdf>]
 LaTeX Info: Redefining \tempurl on input line 70.
 LaTeX Info: Redefining \tempurl on input line 88.
 LaTeX Info: Redefining \tempurl on input line 105.
@@ -1675,10 +1668,10 @@ LaTeX Info: Redefining \tempurl on input line 263.
 LaTeX Info: Redefining \tempurl on input line 282.
 LaTeX Info: Redefining \tempurl on input line 312.
 LaTeX Info: Redefining \tempurl on input line 370.
-LaTeX Info: Redefining \tempurl on input line 388.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
+LaTeX Info: Redefining \tempurl on input line 388.
 )
 
 Class acmart Warning: Some images may lack descriptions.
@@ -1701,16 +1694,16 @@ Package atveryend Info: Executing hook `AfterLastShipout' on input line 217.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 217.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 217.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 145F1419E00CD37CF4ABE502187C7D0E;1451.
+(rerunfilecheck)             Checksum: 17B4E432D2F22B1E133D061FA5BEA19C;2183.
  ) 
 Here is how much of TeX's memory you used:
- 32233 strings out of 492982
- 565685 string characters out of 6134896
- 780216 words of memory out of 5000000
- 34547 multiletter control sequences out of 15000+600000
+ 32242 strings out of 492982
+ 565809 string characters out of 6134896
+ 780889 words of memory out of 5000000
+ 34552 multiletter control sequences out of 15000+600000
  132738 words of font info for 264 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 60i,17n,94p,997b,1162s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,16n,94p,997b,1162s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc}{/usr/
 share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/usr/share/
 texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_naooyc.enc}{/usr/share/texliv
@@ -1723,10 +1716,10 @@ ts/type1/public/libertine/LinBiolinumTB.pfb></usr/share/texlive/texmf-dist/font
 s/type1/public/libertine/LinLibertineT.pfb></usr/share/texlive/texmf-dist/fonts
 /type1/public/libertine/LinLibertineTB.pfb></usr/share/texlive/texmf-dist/fonts
 /type1/public/libertine/LinLibertineTI.pfb>
-Output written on main.pdf (4 pages, 464293 bytes).
+Output written on main.pdf (4 pages, 464804 bytes).
 PDF statistics:
- 283 PDF objects out of 1000 (max. 8388607)
- 255 compressed objects within 3 object streams
- 94 named destinations out of 1000 (max. 500000)
- 37498 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 300 PDF objects out of 1000 (max. 8388607)
+ 272 compressed objects within 3 object streams
+ 98 named destinations out of 1000 (max. 500000)
+ 37530 words of extra memory for PDF output out of 42996 (max. 10000000)
 
