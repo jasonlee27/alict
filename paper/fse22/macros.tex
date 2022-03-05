@@ -50,6 +50,9 @@
 %\usepackage{flushend} % balance the end of double column document
 \usepackage{datetime} % for getting current date time
 
+\input{defs-logic} % for logic symbols
+\input{defs-code} % for code listings
+
 %%%----------
 %%% Utility Commands
 \newcommand{\XSpace}[1]{}
@@ -127,6 +130,30 @@
 \newcommand{\ie}{i.e.\xspace}
 \newcommand{\etal}{et al.\xspace}
 
+\newcommand{\Req}{Requirement\xspace}
+\newcommand{\req}{requirement\xspace}
+\newcommand{\SareqExOne}{``Short sentences with neutral and nouns''\xspace}
+\newcommand{\SareqExTwo}{``Negated positive with neutral content in the middle''\xspace}
+\newcommand{\sent}{sentence\xspace}
+\newcommand{\sents}{sentences\xspace}
+\newcommand{\reqs}{requirements\xspace}
+\newcommand{\Pstv}{Positive\xspace}
+\newcommand{\pstv}{positive\xspace}
+\newcommand{\Neu}{Neutral\xspace}
+\newcommand{\neu}{neutral\xspace}
+\newcommand{\Ngtv}{Negative\xspace}
+\newcommand{\ngtv}{negative\xspace}
+\newcommand{\Noun}{Noun\xspace}
+\newcommand{\noun}{noun\xspace}
+\newcommand{\nns}{nouns\xspace}
+\newcommand{\Vb}{Verb\xspace}
+\newcommand{\vb}{verb\xspace}
+\newcommand{\vbs}{verbs\xspace}
+\newcommand{\Adj}{Adjective\xspace}
+\newcommand{\adj}{adjective\xspace}
+\newcommand{\adjs}{adjectives\xspace}
+
+\newcommand{\Nn}{neural network\xspace}
 \newcommand{\nn}{neural network\xspace}
 \newcommand{\Bert}{BERT-base\xspace}
 \newcommand{\BertAcc}{92.43\%\xspace}
@@ -153,6 +180,10 @@
 
 %% Fig Caption
 \newcommand{\OverallModelFigCaption}{Overall diagram of \Model.\label{fig:OverallModel}}
+\newcommand{\SearchRequirementExampleFigCaption}{Search requirement
+on the linguistic capability of \SareqExOne.\label{fig:SearchReqEx}}
+\newcommand{\TransformRequirementExampleFigCaption}{Transform requirement
+on the linguistic capability of \SareqExTwo.\label{fig:TransformReqEx}}
 
 %% Table Caption
 \newcommand{\CfgStmtTableCaption}{List of statement used for building \Cfg.\label{table:CfgStmt}\vspace{-5pt}}

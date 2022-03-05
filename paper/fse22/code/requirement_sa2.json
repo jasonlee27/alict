@@ -1,0 +1,19 @@
+{
+    "description": "Negated positive with neutral content in the middle",
+    "search": [
+        {
+            "length": "<20",
+            "label": "positive"
+        },
+        {
+            "length": "<20",
+            "label": "neutral"
+        }
+    ],
+    "transform": "negate positive",
+    "transform_req": [
+        {
+            "label": "negative"
+        }
+    ]
+}
