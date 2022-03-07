@@ -12,10 +12,11 @@
 \Model generates input \sents with the following phases illustrated in
 \ref{fig:OverallModel}: 1. search phase searches seed \sents according
 to its \req of \lc, 2. seed parsing phase parses the found seed \sents
-and extract their \cfg, 3. reference phase collects large corpus,
-4. syntax expansion phase identifies structure for input augmentation,
-and 5.\sent expansion phase generates natural expanded \sent. In this
-section, we provide more details on each phase.
+and extract their \cfg, 3. reference parsing phase collects \pcfg from
+large corpus, 4. production differentiation phase identifies
+structural expansion candidates for input expansion, and 5.\sent
+selection phase generates natural expanded \sent. In this section, we
+provide more details on each phase.
 
 \subsection{Search phase}
 The search phase in \Model searches inputs in dataset and selects
@@ -91,15 +92,21 @@ input, and the parse tree of the seed input is output.  In this phase,
 \Model implements the Berkeley Neural
 Parser~\cite{kitaev2018seedparser,kitaev2019seedparser}.
 
-\subsection{Reference phase}
-In this phase, we take a large scale corpus as reference. We assume
-that large corpus represents data distribution of real world,
-the descripancy comparing seed sentence with the reference 
+\subsection{Reference parsing phase}
+We take a large scale corpus as reference for seed expansion. It is
+motivated by that large corpus represents data distribution of real
+world, and the discrepancy between seed and reference leads to
+determine how the seed can be expanded within real world data
+distribution. This phase builds \pcfg from the reference corpus. \cfg
+is constructed by parsing sentences in the corpus and extracting
+production rules. In addition, the probability of \cfg is estimated by
+its frequency over corpus. The outpus of this phase is the constructed
+\pcfg, and it is compared with seed parse trees. For our
+implementation, we build the \pcfg from the Penn Treebank corpus dataset.
+
+\subsection{production differentiation phase}
+Given the seed parse tree and reference \pcfg, \Model suggests
+structural expansion candidates.
 
 
-structural information reference corpus is also parsed into \cfg.
-
-
-\subsection{Syntax expansion phase}
-
-\subsection{\Sent expansion phase}
+\subsection{\Sent selection phase}
