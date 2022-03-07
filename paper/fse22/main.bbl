@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{21}
+\begin{thebibliography}{23}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -126,10 +126,10 @@
 
 
 \bibitem[\protect\citeauthoryear{Kitaev, Cao, and Klein}{Kitaev
-  et~al\mbox{.}}{2019}]%
-        {kitaev2019multilingual}
+  et~al\mbox{.}}{2019a}]%
+        {kitaev2019seedparser}
 \bibfield{author}{\bibinfo{person}{Nikita Kitaev}, \bibinfo{person}{Steven
-  Cao}, {and} \bibinfo{person}{Dan Klein}.} \bibinfo{year}{2019}\natexlab{}.
+  Cao}, {and} \bibinfo{person}{Dan Klein}.} \bibinfo{year}{2019}\natexlab{a}.
 \newblock \showarticletitle{Multilingual Constituency Parsing with
   Self-Attention and Pre-Training}. In \bibinfo{booktitle}{\emph{Proceedings of
   the 57th Annual Meeting of the Association for Computational Linguistics}}.
@@ -141,10 +141,41 @@
 \showDOI{\tempurl}
 
 
-\bibitem[\protect\citeauthoryear{Kitaev and Klein}{Kitaev and Klein}{2018}]%
+\bibitem[\protect\citeauthoryear{Kitaev, Cao, and Klein}{Kitaev
+  et~al\mbox{.}}{2019b}]%
+        {kitaev2019multilingual}
+\bibfield{author}{\bibinfo{person}{Nikita Kitaev}, \bibinfo{person}{Steven
+  Cao}, {and} \bibinfo{person}{Dan Klein}.} \bibinfo{year}{2019}\natexlab{b}.
+\newblock \showarticletitle{Multilingual Constituency Parsing with
+  Self-Attention and Pre-Training}. In \bibinfo{booktitle}{\emph{Proceedings of
+  the 57th Annual Meeting of the Association for Computational Linguistics}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Florence, Italy}, \bibinfo{pages}{3499--3505}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/P19-1340}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Kitaev and Klein}{Kitaev and Klein}{2018a}]%
+        {kitaev2018seedparser}
+\bibfield{author}{\bibinfo{person}{Nikita Kitaev} {and} \bibinfo{person}{Dan
+  Klein}.} \bibinfo{year}{2018}\natexlab{a}.
+\newblock \showarticletitle{Constituency Parsing with a Self-Attentive
+  Encoder}. In \bibinfo{booktitle}{\emph{Proceedings of the 56th Annual Meeting
+  of the Association for Computational Linguistics (Volume 1: Long Papers)}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Melbourne, Australia}, \bibinfo{pages}{2676--2686}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/P18-1249}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Kitaev and Klein}{Kitaev and Klein}{2018b}]%
         {kitaev2018constituency}
 \bibfield{author}{\bibinfo{person}{Nikita Kitaev} {and} \bibinfo{person}{Dan
-  Klein}.} \bibinfo{year}{2018}\natexlab{}.
+  Klein}.} \bibinfo{year}{2018}\natexlab{b}.
 \newblock \showarticletitle{Constituency Parsing with a Self-Attentive
   Encoder}. In \bibinfo{booktitle}{\emph{Proceedings of the 56th Annual Meeting
   of the Association for Computational Linguistics (Volume 1: Long Papers)}}.

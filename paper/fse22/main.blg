@@ -30,45 +30,45 @@ Warning--page numbers missing in both pages and numpages fields in rottger2020ha
 Warning--page numbers missing in both pages and numpages fields in sanh2019distilbert
 Warning--empty organization in nltkTreebankCorporaWebPage
 Warning--page numbers missing in both pages and numpages fields in wang2018glue
-You've used 21 entries,
+You've used 23 entries,
             5959 wiz_defined-function locations,
-            1716 strings with 26272 characters,
-and the built_in function-call counts, 26371 in all, are:
-= -- 3271
-> -- 1091
+            1718 strings with 26312 characters,
+and the built_in function-call counts, 28917 in all, are:
+= -- 3552
+> -- 1166
 < -- 0
-+ -- 358
-- -- 349
-* -- 2066
-:= -- 2642
-add.period$ -- 104
-call.type$ -- 21
-change.case$ -- 164
++ -- 385
+- -- 375
+* -- 2240
+:= -- 2888
+add.period$ -- 114
+call.type$ -- 23
+change.case$ -- 177
 chr.to.int$ -- 21
-cite$ -- 36
-duplicate$ -- 2248
-empty$ -- 1587
-format.name$ -- 433
-if$ -- 6377
-int.to.chr$ -- 2
+cite$ -- 38
+duplicate$ -- 2500
+empty$ -- 1761
+format.name$ -- 465
+if$ -- 6981
+int.to.chr$ -- 4
 int.to.str$ -- 1
-missing$ -- 90
-newline$ -- 266
-num.names$ -- 172
-pop$ -- 892
+missing$ -- 100
+newline$ -- 286
+num.names$ -- 186
+pop$ -- 987
 preamble$ -- 1
-purify$ -- 353
+purify$ -- 380
 quote$ -- 0
-skip$ -- 770
+skip$ -- 863
 stack$ -- 0
-substring$ -- 1741
-swap$ -- 226
+substring$ -- 1965
+swap$ -- 262
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 490
+type$ -- 538
 warning$ -- 15
-while$ -- 123
+while$ -- 140
 width$ -- 0
-write$ -- 461
+write$ -- 503
 (There was 1 error message)

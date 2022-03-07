@@ -3,7 +3,7 @@
 
 \begin{figure*}
   \centering
-  \includegraphics[scale=0.5]{figs/overall.pdf}
+  \includegraphics[scale=0.5]{figs/overview.pdf}
   \vspace{-5pt}
   \caption{\OverallModelFigCaption}
   \vspace{-10pt}
@@ -39,6 +39,7 @@ describes features and functionalities that we seek to have in
 inputs. \Model check each input if it satisfy the \req.
 
 \begin{figure}[t]
+  \centering
   \lstinputlisting[language=json-pretty]{code/requirement_sa1.json}
   \vspace{-10pt}
   \caption{\SearchRequirementExampleFigCaption}
@@ -46,8 +47,11 @@ inputs. \Model check each input if it satisfy the \req.
 \end{figure}
 
 \begin{figure}[t]
-  \lstinputlisting[language=json-pretty]{code/requirement_sa2.json}
-  \vspace{-10pt}
+  \centering
+  \subfloat[][\TransformRequirementExampleSubFigCaption]{\lstinputlisting[language=json-pretty]{code/requirement_sa2.json}}
+  \\
+  \subfloat[][\TransformTemplateExampleSubFigCaption]{\lstinputlisting[language=python-pretty]{code/requirement_sa2.py}}
+  \\
   \caption{\TransformRequirementExampleFigCaption}
   \vspace{-10pt}
 \end{figure}
@@ -59,25 +63,43 @@ short natural \sents with only \neu \adjs and \neu \nns are available
 to evaluate NLP models. Next, transform \req explains how the input
 and output needs to be tranfromed. Some \lc only accepts heavily
 limited input distribution, and it is unlikely to be included in
-searching dataset because of its high structural diversity. Therefore,
-our approach is to find inputs by relaxing search requirement and
-transform the input to match the target requirement of the \lc. In
-this work, the inputs are transformed by word addition or perturbing
-the found inputs with \lc dependent templates. \Lc of \SareqExTwo in
-the figure~\ref{fig:TransformReqEx}, for instance, requires inputs to
-be the negated \pstv \sents and be the neutral expression in the
-middle. Finding such \sents is costly because such sentneces are
-diverse in terms of their structure. Rather, the \Model search \pstv s
-and \neu inputs and combine them into negated \pstv \sents. The
-transformation of inputs produce the transformed inputs in
-distribution on \lc and high diversity in the inputs because of that
-from initially found inputs.
+searching dataset because of its high structural diversity, thus,
+finding such \sents is costly. Therefore, our approach is to find
+inputs by relaxing search requirement and transform the input to match
+the target requirement of the \lc. In this work, the inputs are
+transformed by word addition or perturbing the found inputs with \lc
+dependent templates. The figure~\ref{fig:TransformReqEx} shows the
+example of use of the template requirement. The \lc of \SareqExTwo in
+the figure~\ref{fig:TransformReqSubEx} requires inputs to be the
+negated \pstv \sents and the neutral expression in the middle. Rather
+than searching \sents that match the input distribution of the \lc,
+the \Model search \pstv and \neu inputs and combine them into negated
+\pstv \sents. Figure~\ref{fig:TransformTempSubEx} illustrates template
+for the \lc. According to the \lc, The value of ``sent1'' and
+``sent2'' become each searched \neu and \pstv inputs respectively, and
+the template completion generates new inputs that matches the target
+\lc. In addition, the transformation of inputs also produce high
+diversity in the inputs because of that from initially found
+inputs. In this paper, we will denote the searched inputs in this
+phase as seed inputs.
 
 \subsection{Seed parsing phase}
-In the seed parsing phase, 
+To expands seed sentence and generate fluent and faithful sentence
+used for evaluation, \Model studies structure of each seed input for
+its expansion. To extract the structure, this phase takes each seed as
+input, and the parse tree of the seed input is output.  In this phase,
+\Model implements the Berkeley Neural
+Parser~\cite{kitaev2018seedparser,kitaev2019seedparser}.
 
 \subsection{Reference phase}
+In this phase, we take a large scale corpus as reference. We assume
+that large corpus represents data distribution of real world,
+the descripancy comparing seed sentence with the reference 
 
-\subsection{Syntax expansionphase}
+
+structural information reference corpus is also parsed into \cfg.
+
+
+\subsection{Syntax expansion phase}
 
 \subsection{\Sent expansion phase}
