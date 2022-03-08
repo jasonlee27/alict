@@ -1,0 +1,30 @@
+\begin{algorithm}
+  \caption{production differentiation}
+  \begin{algorithmic}[1]
+    \State \textbf{Input:} Parse trees of seed sentences $\textbf{S}$,
+    reference \pcfg$\textbf{R}$
+    \State \textbf{Output:} Set of expanded production rule $\textbf{P}$
+    \For {seed from $S$}
+      \For {each production rule $seed\_prod$ from seed}
+        \State $seed\_lhs = seed\_prod.lhs$
+        \State $seed\_rhs = seed\_prod.rhs$
+        \For {$ref\_rhs$, $ref\_prob$ from $R[seed\_lhs]$}
+          \If {$seed\_rhs$ is superset of $ref\_rhs$}
+            \State $parent = seed\_prod.parent$
+            \State $prob = ref\_prob$
+            \While {$parent$ is not empty}
+              \For {$par\_rhs$, $par\_prob$ from $R[parent.lhs]$}
+                \If {$parent.rhs == par\_rhs$}
+                  \State $prob = prob \cdot par\_prob$
+                  \State $parent = parent.parent$
+                  \State break
+                \EndIf
+              \EndFor  
+            \EndWhile
+            \State $P.add([ref\_prod, prob])$
+          \EndIf
+        \EndFor
+      \EndFor
+    \EndFor
+  \end{algorithmic} 
+\end{algorithm}

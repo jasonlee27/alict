@@ -43,9 +43,9 @@
 \@writefile{toc}{\contentsline {section}{\numberline {4}Technique and implementation}{2}{section.4}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Search phase}{2}{subsection.4.1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Seed parsing phase}{2}{subsection.4.2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Reference phase}{2}{subsection.4.3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Syntax expansion phase}{2}{subsection.4.4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Sentence\xspace  expansion phase}{2}{subsection.4.5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Reference parsing phase}{2}{subsection.4.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}production differentiation phase}{2}{subsection.4.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Sentence\xspace  selection phase}{2}{subsection.4.5}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Research questions for evaluation}{2}{section.5}}
 \newlabel{sec:rq}{{5}{2}{Research questions for evaluation}{section.5}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {6}Experiment}{2}{section.6}}
@@ -54,6 +54,13 @@
 \newlabel{rq:two}{{{{\textbf  {RQ2}}}}{2}{Experiment}{Item.2}{}}
 \newlabel{rq:three}{{{{\textbf  {RQ3}}}}{2}{Experiment}{Item.3}{}}
 \newlabel{rq:four}{{{{\textbf  {RQ4}}}}{2}{Experiment}{Item.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Overall diagram of Auto-CHECKLIST\xspace  .\relax }}{3}{figure.caption.3}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:OverallModel}{{1}{3}{\OverallModelFigCaption \relax }{figure.caption.3}{}}
+\@writefile{lol}{\contentsline {lstlisting}{code/requirement\textunderscore sa1.json}{3}{lstlisting.-1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Search requirement on the linguistic capability of ``Short sentences with neutral and nouns''\xspace  .\relax }}{3}{figure.caption.4}}
+\newlabel{fig:SearchReqEx}{{2}{3}{\SearchRequirementExampleFigCaption \relax }{figure.caption.4}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces production differentiation\relax }}{3}{algorithm.1}}
 \citation{baccianella2010sentiwordnet}
 \citation{mihaela2017sentiwordnetlabel}
 \citation{mitchell1993treebank,nltkTreebankCorporaWebPage}
@@ -63,13 +70,6 @@
 \citation{sanh2019distilbert}
 \bibdata{bib}
 \bibcite{baccianella2010sentiwordnet}{{1}{2010}{{Baccianella et~al\unhbox \voidb@x \hbox {.}}}{{Baccianella, Esuli, and Sebastiani}}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Overall diagram of Auto-CHECKLIST\xspace  .\relax }}{3}{figure.caption.3}}
-\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:OverallModel}{{1}{3}{\OverallModelFigCaption \relax }{figure.caption.3}{}}
-\@writefile{lol}{\contentsline {lstlisting}{code/requirement\textunderscore sa1.json}{3}{lstlisting.-1}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Search requirement on the linguistic capability of ``Short sentences with neutral and nouns''\xspace  .\relax }}{3}{figure.caption.4}}
-\newlabel{fig:SearchReqEx}{{2}{3}{\SearchRequirementExampleFigCaption \relax }{figure.caption.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Experiment Setup}{3}{subsection.6.1}}
 \bibcite{belinkov2018breaknmt}{{2}{2017}{{Belinkov and Bisk}}{{Belinkov and Bisk}}}
 \bibcite{mihaela2017sentiwordnetlabel}{{3}{2017}{{Colhon et~al\unhbox \voidb@x \hbox {.}}}{{Colhon, Vlăduţescu, and Negrea}}}
 \bibcite{devlin2019bert}{{4}{2018}{{Devlin et~al\unhbox \voidb@x \hbox {.}}}{{Devlin, Chang, Lee, and Toutanova}}}
@@ -81,6 +81,18 @@
 \bibcite{liu2019roberta}{{10}{2019}{{Liu et~al\unhbox \voidb@x \hbox {.}}}{{Liu, Ott, Goyal, Du, Joshi, Chen, Levy, Lewis, Zettlemoyer, and Stoyanov}}}
 \bibcite{mitchell1993treebank}{{11}{1993}{{Marcus et~al\unhbox \voidb@x \hbox {.}}}{{Marcus, Marcinkiewicz, and Santorini}}}
 \bibcite{prabhakaran2019fairness}{{12}{2019}{{Prabhakaran et~al\unhbox \voidb@x \hbox {.}}}{{Prabhakaran, Hutchinson, and Mitchell}}}
+\@writefile{lol}{\contentsline {lstlisting}{code/requirement\textunderscore sa2.json}{4}{lstlisting.-2}}
+\newlabel{fig:TransformReqSubEx}{{3a}{4}{Subfigure 3a}{lstnumber.-2.19}{}}
+\newlabel{sub@fig:TransformReqSubEx}{{(a)}{a}{Subfigure 3a\relax }{lstnumber.-2.19}{}}
+\@writefile{lol}{\contentsline {lstlisting}{code/requirement\textunderscore sa2.py}{4}{lstlisting.-3}}
+\newlabel{fig:TransformTempSubEx}{{3b}{4}{Subfigure 3b}{lstnumber.-3.11}{}}
+\newlabel{sub@fig:TransformTempSubEx}{{(b)}{b}{Subfigure 3b\relax }{lstnumber.-3.11}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Transform requirement (\ref  {fig:TransformReqSubEx}) and its template (\ref  {fig:TransformTempSubEx}) on the linguistic capability of ``Negated positive with neutral content in the middle''\xspace  .\relax }}{4}{figure.caption.5}}
+\newlabel{fig:TransformReqEx}{{3}{4}{\TransformRequirementExampleFigCaption \relax }{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Experiment Setup}{4}{subsection.6.1}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Result}{4}{section.7}}
+\newlabel{sec:result}{{7}{4}{Result}{section.7}{}}
+\@writefile{toc}{\contentsline {section}{References}{4}{section*.7}}
 \bibcite{recht2019imagenetbias}{{13}{2019}{{Recht et~al\unhbox \voidb@x \hbox {.}}}{{Recht, Roelofs, Schmidt, and Shankar}}}
 \bibcite{ribeiro2019consistencyeval}{{14}{2019}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Guestrin, and Singh}}}
 \bibcite{ribeiroSG16lime}{{15}{2016}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Singh, and Guestrin}}}
@@ -97,16 +109,5 @@
 \newlabel{tocindent1}{4.185pt}
 \newlabel{tocindent2}{10.34999pt}
 \newlabel{tocindent3}{0pt}
-\@writefile{lol}{\contentsline {lstlisting}{code/requirement\textunderscore sa2.json}{4}{lstlisting.-2}}
-\newlabel{fig:TransformReqSubEx}{{3a}{4}{Subfigure 3a}{lstnumber.-2.19}{}}
-\newlabel{sub@fig:TransformReqSubEx}{{(a)}{a}{Subfigure 3a\relax }{lstnumber.-2.19}{}}
-\@writefile{lol}{\contentsline {lstlisting}{code/requirement\textunderscore sa2.py}{4}{lstlisting.-3}}
-\newlabel{fig:TransformTempSubEx}{{3b}{4}{Subfigure 3b}{lstnumber.-3.11}{}}
-\newlabel{sub@fig:TransformTempSubEx}{{(b)}{b}{Subfigure 3b\relax }{lstnumber.-3.11}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Transform requirement (\ref  {fig:TransformReqSubEx}) and its template (\ref  {fig:TransformTempSubEx}) on the linguistic capability of ``Negated positive with neutral content in the middle''\xspace  .\relax }}{4}{figure.caption.5}}
-\newlabel{fig:TransformReqEx}{{3}{4}{\TransformRequirementExampleFigCaption \relax }{figure.caption.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Result}{4}{section.7}}
-\newlabel{sec:result}{{7}{4}{Result}{section.7}{}}
-\@writefile{toc}{\contentsline {section}{References}{4}{section*.7}}
-\newlabel{TotPages}{{4}{4}{}{page.4}{}}
-\zref@newlabel{LastPage}{\default{7}\page{4}\abspage{4}}
+\newlabel{TotPages}{{5}{5}{}{page.5}{}}
+\zref@newlabel{LastPage}{\default{7}\page{5}\abspage{5}}
