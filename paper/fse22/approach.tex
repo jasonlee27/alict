@@ -107,9 +107,32 @@ implementation, we build the \pcfg from the Penn Treebank corpus dataset.
 \subsection{production differentiation phase}
 \input{code/prod_diff_pseudocode}
 
-Given the seed parse tree and reference \pcfg, \Model suggests
-structural expansion candidates.
-
+Given the seed parse tree and reference \pcfg, production
+differentiation phase suggests structural expansion candidates on the
+seed input. this phase aims to analyze which structural components and
+where they can be added into the seed structure for its expansion. To
+do so, we explore reference production rules comparing it with each
+production rule used in seed input. This results in the phase
+described in Algorithm~\ref{code:ProdDiffAlg}. For each production
+rule in seed inputs ($seed\_prod$), it searches production rules in
+reference ($ref\_prod$) which it has same non-terminal on the
+left-hand side ($seed\_prod.lhs==ref\_prod.lhs$) and superset of
+right-hand side of the seed production rule ($seed\_prod.rhs \subset
+ref\_prod.rhs$).  As we assume that the reference \cfg is built from
+real world data distribution, the elements in the complement set
+($ref\_prod.rhs - seed\_prod.rhs$) become an expansion candidate which
+can be expanded from the $seed\_prod.rhs$ found in real world. In
+addition, the measure of how consistent the production rule is with
+the given seed structure is given in its probability of the reference
+production rule ($ref\_prob$) multiplied by that of parents of
+$seed\_prod$. The expansion candidate consists of terminal or
+nonterminal symbols. When there is a phrase-level or clause-level
+nonterminal symbol, \eg noun phrase, it needs to be expanded and
+replaced with word-level nonterminal or terminal symbols to generate
+the expansion candidate. The number of feasible replacement is
+unbounded because of its high degree of freedom. Therefore, in this
+work, we focus on the expansion candidate with only the word-level
+nonterminal or terminal symbols for the effectiveness of \Model.
 
 \subsection{\Sent selection phase}
 
