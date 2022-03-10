@@ -27,12 +27,12 @@ random.seed(Macros.SEED)
 
 class Generator:
 
-    def __init__(self, seed: str, pcfg_ref, is_random_select: bool):
+    def __init__(self, seed: str, pcfg_ref, selection_method: str):
         self.seed = seed
         self.expander = CFGExpander(
             seed_input=seed,
             pcfg_ref=pcfg_ref,
-            is_random_select=is_random_select
+            selection_method=selection_method
         )
         self.editor = Editor()
         

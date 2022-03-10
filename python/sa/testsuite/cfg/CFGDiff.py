@@ -145,13 +145,14 @@ class CFGDiff:
                     parent_key = f"{parent_lhs} -> {parent_rhs}"
                     parent_rule_list.append(parent_key)
                     parent = parent._.parent
+                    sent_prob_wo_target = sent_prob_wo_target/self.get_rule_prob(pcfg_ref, parent_lhs, parent_rhs)
                 # end while
                 parent_rule_list.append(f"<SOS> -> {parent_lhs}")
                 parent_rule_list.reverse()
             # end if
             # sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, rule_rhs)
         else:
-            sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, rule_rhs)
+            sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, srule_rhs)
             for ch in seed_tree._.children:
                 parent_rule_list, sent_prob_wo_target = self.get_target_rule_parents(
                     pcfg_ref, ch,

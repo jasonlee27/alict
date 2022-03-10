@@ -43,7 +43,7 @@ class Template:
     }
     
     @classmethod
-    def generate_inputs(cls, task, dataset, n=None, save_to=None, is_random_select=None):
+    def generate_inputs(cls, task, dataset, n=None, save_to=None, selection_method=None):
         print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(task)
         nlp = spacy.load('en_core_web_md')
@@ -71,7 +71,7 @@ class Template:
             for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
                 print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score}", end=" :: ")
                 index += 1
-                generator = Generator(seed,pcfg_ref,is_random_select=is_random_select)
+                generator = Generator(seed,pcfg_ref,selection_method=selection_method)
                 gen_inputs = generator.masked_input_generator()
                 print(f"{len(gen_inputs)} syntax expansions", end=" :: ")
                 new_input_results = list()
@@ -84,7 +84,7 @@ class Template:
                         seed_label,
                         selected["requirement"],
                         num_target=Macros.num_suggestions_on_exp_grammer_elem,
-                        is_random_select=is_random_select
+                        selection_method=selection_method
                     )
                 # end if
                 print(f"{len(new_input_results)} word suggestion by req")
@@ -111,7 +111,7 @@ class Template:
         return results
     
     @classmethod
-    def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None, is_random_select=False):
+    def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None, selection_method=None):
         # if os.path.exists(input_file):
         #     return Utils.read_json(input_file)
         # # end if
@@ -120,7 +120,7 @@ class Template:
             dataset=dataset_name,
             n=n,
             save_to=input_file,
-            is_random_select=is_random_select
+            selection_method=selection_method
         )
 
     @classmethod
@@ -223,10 +223,10 @@ class Template:
         }, prev_synonyms
 
     @classmethod
-    def get_templates(cls, num_seeds, nlp_task, dataset_name, is_random_select):
+    def get_templates(cls, num_seeds, nlp_task, dataset_name, selection_method):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
-        selection_method = 'RANDOM' if is_random_select else 'PROB'
+        # selection_method = 'RANDOM' if is_random_select else 'PROB'
         print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg
         nlp = spacy.load('en_core_web_md')
@@ -238,7 +238,7 @@ class Template:
             task,
             dataset_name,
             n=num_seeds,
-            is_random_select=is_random_select
+            selection_method=selection_method
         )
 
         # Make templates by synonyms

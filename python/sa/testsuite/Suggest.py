@@ -248,17 +248,18 @@ class Suggest:
         sent_probs = list()
         for ws_sug, prob_ws in words_suggest:
             # sent = cls.replace_mask_w_suggestion(masked_input, ws_sug)
-            sent_probs.append((
-                ws_sug,
-                sent_prob_wo_target*prob*prob_ws
-            ))
+            # sent_probs.append((
+            #     ws_sug,
+            #     sent_prob_wo_target*prob*prob_ws
+            # ))
+            sent_probs.append((ws_sug, prob_ws))
         # end for
         sent_probs = sorted(sent_probs, key=lambda x: x[-1], reverse=True)
         sent_probs = [s[0] for s in sent_probs[:NUM_TOPK]]
         return sent_probs
     
     @classmethod
-    def get_new_inputs(cls, nlp, generator, gen_inputs, num_target=10, is_random_select=False):
+    def get_new_inputs(cls, nlp, generator, gen_inputs, num_target=10, selection_method=False):
         editor = generator.editor
         word_suggestions = cls.get_word_suggestion(editor, gen_inputs, num_target=3*num_target)
         for g_i in range(len(gen_inputs)):
@@ -272,10 +273,13 @@ class Suggest:
                 mask_pos,
                 num_target=num_target
             )
-            if not is_random_select:
+            if selection_method.lower()=="prob":
                 gen_input['words_suggest'] = cls.get_words_by_prob(words_suggest, gen_input, masked_input)
-            else:
+            elif selection_method.lower()=="random":
                 gen_input['words_suggest'] = [ws[0] for ws in words_suggest]
+            elif selection_method.lower()=="bert":
+            elif selection_method.lower()=="noselection":
+                
             # end if
             gen_inputs[g_i] = gen_input
         # end for
@@ -316,12 +320,12 @@ class Suggest:
         return results
 
     @classmethod
-    def get_exp_inputs(cls, nlp, generator, gen_inputs, seed_label, requirement, num_target=10, is_random_select=False):
+    def get_exp_inputs(cls, nlp, generator, gen_inputs, seed_label, requirement, num_target=10, selection_method=None):
         # get the word suggesteion at the expended grammar elements
         new_input_results = list()
         
         gen_inputs = cls.get_new_inputs(
-            nlp, generator, gen_inputs, num_target=num_target, is_random_select=is_random_select
+            nlp, generator, gen_inputs, num_target=num_target, selection_method=selection_method
         )
         for g_i in range(len(gen_inputs)):
             eval_results = cls.eval_word_suggest(nlp, gen_inputs[g_i], seed_label, requirement)
