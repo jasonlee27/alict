@@ -37,7 +37,7 @@ class CasualInferenceExplain:
         return mutated_x, mask
 
     def compute_weights(self, mask, mutated_y):
-        m = LogisticRegression(fit_intercept=True, max_iter=1000)
+        m = LogisticRegression(fit_intercept=True)
         m.fit(mask.detach().cpu().numpy(), mutated_y.reshape(-1).detach().cpu().numpy())
         weight = m.coef_
         return weight.reshape([-1])
@@ -45,10 +45,10 @@ class CasualInferenceExplain:
     def visualization(self, input_token, important_score):
         res = []
         input_token = input_token.reshape([-1])
-        for tk, s in zip(input_token, important_score):
+        for i, (tk, s) in enumerate(zip(input_token, important_score)):
             tk_str = self.tokenizer.decode(tk)
-            res.append([tk_str, s])
-        res = sorted(res, key=lambda t: t[1], reverse=True)
+            res.append([i, int(tk), tk_str, s])
+        res = sorted(res, key=lambda t: t[3], reverse=True)
         return res
 
     def explain(self, input_sentence):
@@ -69,10 +69,39 @@ class CasualInferenceExplain:
         mutated_y = (mutated_y == ori_predict)
         important_score = self.compute_weights(mask, mutated_y)
         res = self.visualization(input_token, important_score)
-        return res
+        mask = self.create_maek(res, input_sentence, ori_predict)
+        mask_str = self.tokenizer.decode([m for m in mask[0]])
+        mask_str = mask_str.replace(self.tokenizer.unk_token, '[MASK]')
+        return mask_str
 
+    def evaluate(self, mask: torch.tensor, ori_pred, mask_pos):
+        new_tensor = mask.repeat(500, 1).to(self.device)
+        rand_tensor = (torch.rand(new_tensor[:, mask_pos].shape, device=self.device) * 10000).int()
+        rand_tensor = rand_tensor.to(torch.long)
+        new_tensor[:, mask_pos] = rand_tensor
 
+        new_pred = self.predict_sentence(new_tensor)
+        return new_pred.eq(ori_pred).sum() / 500
 
+    def create_maek(self, res, input_sentence, orig_pred):
+        reverse_res = list(reversed(res))
+        input_token = self.tokenizer(input_sentence, return_tensors="pt", padding=True).input_ids
+        pad_id = self.tokenizer.pad_token_id
+        unk_id = self.tokenizer.unk_token_id
 
-
+        mask = input_token.clone()
+        negative = [r for r in res if r[-1] < 0 and r[1] not in self.tokenizer.all_special_ids]
+        mask_pos = []
+        for i in range(len(negative)):
+            pos, tk = negative[i][0], negative[i][1]
+            mask[:, pos] = unk_id
+            mask_pos.append(pos)
+        for i in range(len(negative)):
+            pos, tk = negative[i][0], negative[i][1]
+            score = self.evaluate(mask, orig_pred, mask_pos)
+            if score > 0.9:
+                break
+            else:
+                mask[:, pos] = tk
+        return mask
 
