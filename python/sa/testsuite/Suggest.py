@@ -77,7 +77,7 @@ class Suggest:
         return results
     
     @classmethod
-    def match_word_n_pos(cls, nlp, word_suggest, masked_input: str, mask_pos: List, num_target=10):
+    def match_word_n_pos(cls, nlp, word_suggest, masked_input: str, mask_pos: List):
         # word_suggest = editor.suggest(masked_input, return_score=True, remove_duplicates=True)
         # word_suggest = [ws for ws in word_suggest if cls.is_word_suggestion_avail(ws[0])]
         # word_suggest = cls.remove_duplicates(word_suggest)
@@ -94,7 +94,7 @@ class Suggest:
         if any(suggest_res):
             probs = softmax([s[1] for s in suggest_res])
             suggest_res = [(s[0],p) for s, p in zip(suggest_res, probs)]
-            return suggest_res[:num_target]
+            return suggest_res
         # end if
         return suggest_res
 
@@ -247,12 +247,11 @@ class Suggest:
 
         sent_probs = list()
         for ws_sug, prob_ws in words_suggest:
-            # sent = cls.replace_mask_w_suggestion(masked_input, ws_sug)
-            # sent_probs.append((
-            #     ws_sug,
-            #     sent_prob_wo_target*prob*prob_ws
-            # ))
-            sent_probs.append((ws_sug, prob_ws))
+            sent = cls.replace_mask_w_suggestion(masked_input, ws_sug)
+            sent_probs.append((
+                ws_sug,
+                sent_prob_wo_target*prob*prob_ws
+            ))
         # end for
         sent_probs = sorted(sent_probs, key=lambda x: x[-1], reverse=True)
         sent_probs = [s[0] for s in sent_probs[:NUM_TOPK]]
@@ -271,15 +270,27 @@ class Suggest:
                 word_suggestions[masked_input],
                 masked_input,
                 mask_pos,
-                num_target=num_target
             )
-            if selection_method.lower()=="prob":
+            if selection_method.lower()=='prob':
+                # TODO: fix the probability issue with lower prob when deep tree
                 gen_input['words_suggest'] = cls.get_words_by_prob(words_suggest, gen_input, masked_input)
-            elif selection_method.lower()=="random":
-                gen_input['words_suggest'] = [ws[0] for ws in words_suggest]
-            elif selection_method.lower()=="bert":
-            elif selection_method.lower()=="noselection":
-                
+            elif selection_method.lower()=='random':
+                if len(words_suggest)>num_target:
+                    idxs = np.random.choice(len(words_suggest), num_target, replace=False)
+                    gen_input['words_suggest'] = [words_suggest[i] for i in idxs]
+                else:
+                    gen_input['words_suggest'] = words_suggest
+                # end if
+            elif selection_method.lower()=='bertscore':
+                if len(words_suggest)>num_target:
+                    gen_input['words_suggest'] = sorted(
+                        words_suggest, key=lambda x: x[-1], reverse=True
+                    )[:num_target]
+                else:
+                    gen_input['words_suggest'] = words_suggest
+                # end if
+            elif selection_method.lower()=='noselect':
+                gen_input['words_suggest'] = words_suggest
             # end if
             gen_inputs[g_i] = gen_input
         # end for

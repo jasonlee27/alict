@@ -279,7 +279,7 @@ class Retrain:
         model_dir_name = model_name.replace("/", "-")
         self.output_dir = output_dir
         self.batch_size = 16
-        self.num_epochs = 5.0
+        self.num_epochs = 5.
         
     def load_tokenizer(self, model_name):
         return AutoTokenizer.from_pretrained(model_name)

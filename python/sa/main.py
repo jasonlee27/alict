@@ -23,7 +23,7 @@ parser.add_argument('--search_dataset', type=str, default="sst",
 parser.add_argument('--num_seeds', type=int, default=Macros.max_num_seeds,
                     help='number of seed inputs found in search dataset')
 parser.add_argument('--syntax_selection', type=str, default='prob',
-                    choices=['prob', 'random'],
+                    choices=['prob', 'random', 'bertscore', 'noselect'],
                     help='method for selection of syntax suggestions')
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
@@ -56,15 +56,12 @@ def run_templates():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
-    is_random_select = False
-    if args.syntax_selection=='random':
-        is_random_select = True
-    # end if
+    selection_method = args.syntax_selection
     Template.get_templates(
         num_seeds=num_seeds,
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
-        is_random_select=is_random_select
+        selection_method=selection_method
     )
     return
 

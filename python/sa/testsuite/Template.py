@@ -226,7 +226,6 @@ class Template:
     def get_templates(cls, num_seeds, nlp_task, dataset_name, selection_method):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
-        # selection_method = 'RANDOM' if is_random_select else 'PROB'
         print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg
         nlp = spacy.load('en_core_web_md')
