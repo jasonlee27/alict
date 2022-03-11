@@ -53,14 +53,14 @@ class CFGDiff:
                  pcfg_ref: dict, 
                  cfg_seed: dict,
                  tree_seed,
-                 is_random_select
+                 selection_method
     ):
         self.cfg_diff = self.get_cfg_diff(
             cfg_seed=cfg_seed,
             tree_seed=tree_seed,
             pcfg_ref=pcfg_ref,
             comp_length=COMP_LENGTH,
-            is_random_select=is_random_select
+            selection_method=selection_method
         )
 
     
@@ -298,7 +298,7 @@ class CFGDiff:
                      pcfg_ref,
                      tree_seed,
                      comp_length,
-                     is_random_select):
+                     selection_method):
         cfg_diff = dict()
         for seed_lhs, seed_rhs in cfg_seed.items():
             try:
@@ -317,7 +317,7 @@ class CFGDiff:
                         # end if
                     # end for
 
-                    if any(rule_from_ref) and not is_random_select:
+                    if any(rule_from_ref) and selection_method=='prob':
                         # Get syntax prob
                         rhs_syntax_probs = self.get_exp_syntax_probs(
                             pcfg_ref, tree_seed, seed_lhs, sr, _sr['word'], rule_from_ref
@@ -338,7 +338,7 @@ class CFGDiff:
                                 ], _sr['word'])
                             # end if
                         # end if
-                    elif any(rule_from_ref) and is_random_select:
+                    elif any(rule_from_ref) and selection_method=='prob':
                         # randomly select the syntax expansion suggestion
                         random.shuffle(rule_from_ref)
                         if seed_lhs not in cfg_diff.keys():
