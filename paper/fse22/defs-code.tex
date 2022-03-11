@@ -5,7 +5,7 @@
 %%%==========
 %%% COPIED FROM vkuncak/doc/vmcai09/defs.tex
 \definecolor{gray}{RGB}{211,211,211}
-\newcommand{\jbasicstyle}{\small\sffamily} % Style of code
+\newcommand{\jbasicstyle}{\normalfont\sffamily} % Style of code
 \newcommand{\textcode}[1]{{#1}}
 \newcommand{\jnumberstyle}{\scriptsize}
 \newcommand{\Hilight}{\makebox[0pt][l]{\color{gray}\rule[-3pt]{0.80\linewidth}{9pt}}}
@@ -127,8 +127,24 @@
      {]}{{{\color{delim}{]}}}}{1},
 }
 
+\lstdefinelanguage{python-pretty}
+{
+  language=python,
+  numbers=none,
+  basicstyle=\jbasicstyle,
+  numberstyle=\jnumberstyle,
+  breaklines=true,
+  columns=fullflexible,
+  xleftmargin=16pt,
+  showstringspaces=false,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue}
+}
+
 \lstset{escapeinside={(*@}{@*)}}
 
 \newcommand{\JsonIn}[1]{{\lstinline[language=json-pretty, basicstyle=\small\ttfamily]@#1@}}
+\newcommand{\PythonIn}[1]{{\lstinline[language=python-pretty, basicstyle=\small\ttfamily]@#1@}}
 
 %%%==========

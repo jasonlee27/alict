@@ -35,6 +35,8 @@
 \usepackage{subfig}
 
 % Code
+\usepackage{algorithm}
+\usepackage{algpseudocode} 
 \usepackage{listings}
 
 % Tikz Figs
@@ -70,6 +72,8 @@
 \newcommand{\AblationResultTableCaptionVSpace}{-5pt}
 
 \newcommand{\jl}[1]{\textcolor{magenta}{JL: #1}}
+\newcommand{\shiyi}[1]{\textcolor{purple}{SW: #1}}
+\newcommand{\wy}[1]{\textcolor{blue}{WY: #1}}
 
 \newcommand{\MyPara}[1]{\vspace{0pt}\noindent\textbf{#1}.}
 \newcommand{\MyParaOnly}[1]{\noindent\textbf{#1}}
@@ -113,7 +117,6 @@
 \newcommand{\Dl}{Deep Learning\xspace}
 \newcommand{\ml}{machine learning\xspace}
 \newcommand{\ML}{Machine Learning\xspace}
-\newcommand{\Trsfm}{Transformer\xspace}
 \newcommand{\nl}{natural language\xspace}
 \newcommand{\Nl}{Natural language\xspace}
 \newcommand{\nlp}{natural language processing\xspace}
@@ -128,12 +131,19 @@
 \newcommand{\pos}{part-of-speech\xspace}
 \newcommand{\ho}{hold-out\xspace}
 \newcommand{\ie}{i.e.\xspace}
+\newcommand{\eg}{e.g.\xspace}
 \newcommand{\etal}{et al.\xspace}
 
 \newcommand{\Req}{Requirement\xspace}
 \newcommand{\req}{requirement\xspace}
+\newcommand{\Prodr}{Production rule\xspace}
+\newcommand{\prodr}{production rule\xspace}
+\newcommand{\prodrs}{production rules\xspace}
+\newcommand{\lhs}{left-hand side\xspace}
+\newcommand{\rhs}{right-hand side\xspace}
 \newcommand{\SareqExOne}{``Short sentences with neutral and nouns''\xspace}
 \newcommand{\SareqExTwo}{``Negated positive with neutral content in the middle''\xspace}
+\newcommand{\Sent}{Sentence\xspace}
 \newcommand{\sent}{sentence\xspace}
 \newcommand{\sents}{sentences\xspace}
 \newcommand{\reqs}{requirements\xspace}
@@ -182,8 +192,17 @@
 \newcommand{\OverallModelFigCaption}{Overall diagram of \Model.\label{fig:OverallModel}}
 \newcommand{\SearchRequirementExampleFigCaption}{Search requirement
 on the linguistic capability of \SareqExOne.\label{fig:SearchReqEx}}
-\newcommand{\TransformRequirementExampleFigCaption}{Transform requirement
-on the linguistic capability of \SareqExTwo.\label{fig:TransformReqEx}}
+\newcommand{\TransformRequirementExampleSubFigCaption}{Transform requirement\label{fig:TransformReqSubEx}}
+\newcommand{\TransformTemplateExampleSubFigCaption}{Transform template\label{fig:TransformTempSubEx}}
+\newcommand{\TransformRequirementExampleFigCaption}{Transform
+requirement (\ref{fig:TransformReqSubEx}) and its template
+(\ref{fig:TransformTempSubEx}) on the linguistic capability of \SareqExTwo.\label{fig:TransformReqEx}}
+\newcommand{\ProdDiffAlgCaption}{Pseudocode of Production differentiation\label{code:ProdDiffAlg}}
+\newcommand{\ExpansionExCaption}{Expansion of the seed sentence ``Or
+both.''. For a \prodr in seed ``NP->[DT]'' on the left, the \prodr of
+``NP->[DT, NNS]'' is found in reference. Thus, the component NNS can be expanded in the
+seed and ``NP->[DT]'' is replaced with ``NP->[DT, NNS]'' and it generates new
+expanded sentence on the right.\label{fig:ExpEx}}
 
 %% Table Caption
 \newcommand{\CfgStmtTableCaption}{List of statement used for building \Cfg.\label{table:CfgStmt}\vspace{-5pt}}
