@@ -1,11 +1,22 @@
 TASKS
 
-  - [JL] make slides for structure of paper (overview, what how we would
-    like to say from our approach/experiment).
+  - [JL] get the self-bleu score number for checklist testcases and
+    our testcases
 
-  - [JL] search related works (mutation based nn work fuzzing)
+  - [JL] implementing logging for logging all printing into file
+
+  - [JL] retraining models with original dataset(SST-2) + original
+    failed cases
+
+  - [JL] understand DENAS for our implementation
+
 
 ==========
+
+  + [JL] make slides for structure of paper (overview, what how we would
+    like to say from our approach/experiment).
+
+  + [JL] search related works (mutation based nn work fuzzing)
 
   + [JL] think about how to statistically interact selected sentence
     and grammar checker.
