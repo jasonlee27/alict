@@ -24,10 +24,9 @@ random.seed(Macros.SEED)
 
 class CFGExpander:
 
-    def __init__(self, seed_input, pcfg_ref, selection_method, ref_corpus='treebank'):
+    def __init__(self, seed_input, pcfg_ref, ref_corpus='treebank'):
         self.corpus_name = ref_corpus
         self.seed_input: str = seed_input
-        self.selection_method = selection_method
         tree_dict = self.get_seed_cfg()
         self.tree_seed = tree_dict['tree']
         self.cfg_seed: dict = tree_dict['rule']
@@ -51,6 +50,5 @@ class CFGExpander:
             pcfg_ref=self.pcfg_ref,
             cfg_seed=self.cfg_seed,
             tree_seed=self.tree_seed,
-            selection_method=self.selection_method
         ).cfg_diff
     

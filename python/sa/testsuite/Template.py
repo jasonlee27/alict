@@ -71,7 +71,7 @@ class Template:
             for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
                 print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score}", end=" :: ")
                 index += 1
-                generator = Generator(seed,pcfg_ref,selection_method=selection_method)
+                generator = Generator(seed, pcfg_ref)
                 gen_inputs = generator.masked_input_generator()
                 print(f"{len(gen_inputs)} syntax expansions", end=" :: ")
                 new_input_results = list()

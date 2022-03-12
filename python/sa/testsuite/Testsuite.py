@@ -114,9 +114,9 @@ class Testsuite:
         }
     
     @classmethod
-    def get_templates(cls, nlp_task, dataset, is_random_select, num_seeds):
+    def get_templates(cls, nlp_task, dataset, selection_method, num_seeds):
         task = nlp_task
-        selection_method = 'RANDOM' if is_random_select else 'PROB'
+        # selection_method = 'RANDOM' if is_random_select else 'PROB'
         new_input_dicts = Template.get_new_inputs(
             Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset}_{selection_method}.json",
             task,
@@ -136,7 +136,7 @@ class Testsuite:
                     num_seeds=num_seeds,
                     nlp_task=nlp_task,
                     dataset=dataset,
-                    is_random_select=is_random_select
+                    selection_method=selection_method
                 )
             # end if
 
@@ -359,13 +359,13 @@ class Testsuite:
     def write_editor_templates(cls,
                                task,
                                dataset,
-                               is_random_select,
+                               selection_method,
                                seed_dicts,
                                exp_dicts,
                                seed_template_dicts,
                                exp_template_dicts,
                                transform_reqs):
-        selection_method = 'RANDOM' if is_random_select else 'PROB'
+        # selection_method = 'RANDOM' if is_random_select else 'PROB'
         res_dir = Macros.result_dir / f"test_results_{task}_{dataset}_{selection_method}"
         res_dir.mkdir(parents=True, exist_ok=True)
         cls.write_seed_testsuite(task,
@@ -393,11 +393,11 @@ class Testsuite:
         return
 
     @classmethod
-    def write_testsuites(cls, nlp_task, dataset, is_random_select, num_seeds):
+    def write_testsuites(cls, nlp_task, dataset, selection_method, num_seeds):
         print("Generate Testsuites from Templates ...")
         for task, seed, exp, seed_temp, exp_temp, transform_reqs \
-            in cls.get_templates(nlp_task=nlp_task, dataset=dataset, is_random_select=is_random_select, num_seeds=num_seeds):
-            Testsuite.write_editor_templates(task, dataset, is_random_select, seed, exp, seed_temp, exp_temp, transform_reqs)
+            in cls.get_templates(nlp_task=nlp_task, dataset=dataset, selection_method=selection_method, num_seeds=num_seeds):
+            Testsuite.write_editor_templates(task, dataset, selection_method, seed, exp, seed_temp, exp_temp, transform_reqs)
         # end for
         return
 

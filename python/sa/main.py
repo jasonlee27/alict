@@ -23,7 +23,7 @@ parser.add_argument('--search_dataset', type=str, default="sst",
 parser.add_argument('--num_seeds', type=int, default=Macros.max_num_seeds,
                     help='number of seed inputs found in search dataset')
 parser.add_argument('--syntax_selection', type=str, default='prob',
-                    choices=['prob', 'random', 'bertscore', 'noselect'],
+                    choices=['PROB', 'prob', 'random', 'bertscore', 'noselect'],
                     help='method for selection of syntax suggestions')
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
@@ -43,7 +43,6 @@ parser.add_argument('--testing_on_trainset', action='store_true',
                     help='flag for testing the model with train set')
 
 args = parser.parse_args()
-
 def run_requirements():
     from .requirement.Requirements import Requirements
     nlp_task = args.nlp_task
@@ -70,14 +69,11 @@ def run_testsuites():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
-    is_random_select = False
-    if args.syntax_selection=='random':
-        is_random_select = True
-    # end if
+    selection_method = args.syntax_selection
     Testsuite.write_testsuites(
         nlp_task=nlp_task,
         dataset=search_dataset_name,
-        is_random_select=is_random_select,
+        selection_method=selection_method,
         num_seeds=num_seeds
     )
     return
@@ -85,10 +81,7 @@ def run_testsuites():
 def run_testmodel():
     from .model.Testmodel import main as Testmodel_main
     nlp_task = args.nlp_task
-    is_random_select = False
-    if args.syntax_selection=='random':
-        is_random_select = True
-    # end if
+    selection_method = args.syntax_selection
     test_baseline = args.test_baseline
     test_type = args.test_type
     search_dataset_name = args.search_dataset
@@ -96,7 +89,7 @@ def run_testmodel():
     Testmodel_main(
         nlp_task,
         search_dataset_name,
-        is_random_select,
+        selection_method,
         test_baseline,
         test_type,
         local_model_name=local_model_name
@@ -106,10 +99,7 @@ def run_testmodel():
 def run_retrain():
     from.retrain.Retrain import retrain
     nlp_task = args.nlp_task
-    selection_method = 'RANDOM'
-    if args.syntax_selection=='prob':
-        selection_method = 'PROB'
-    # end if
+    selection_method = args.syntax_selection
     search_dataset_name = args.search_dataset
     model_name = args.model_name
     label_vec_len = args.label_vec_len
@@ -169,10 +159,11 @@ def run_retrain():
 def run_analyze():
     from .model.Result import Result
     nlp_task = args.nlp_task
-    selection_method = 'RANDOM'
-    if args.syntax_selection=='prob':
-        selection_method = 'PROB'
-    # end if
+    selection_method = args.syntax_selection
+    # selection_method = 'RANDOM'
+    # if args.syntax_selection=='prob':
+    #     selection_method = 'PROB'
+    # # end if
     search_dataset_name = args.search_dataset
     result_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results.txt'
     template_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
@@ -188,10 +179,11 @@ def run_analyze():
 def run_retrain_analyze():
     from .retrain.RetrainResult import RetrainResult
     nlp_task = args.nlp_task
-    selection_method = 'RANDOM'
-    if args.syntax_selection=='prob':
-        selection_method = 'PROB'
-    # end if
+    selection_method = args.syntax_selection
+    # selection_method = 'RANDOM'
+    # if args.syntax_selection=='prob':
+    #     selection_method = 'PROB'
+    # # end if
     search_dataset_name = args.search_dataset
     model_name = args.model_name
     RetrainResult.analyze(
@@ -205,10 +197,11 @@ def run_retrain_analyze():
 def run_explainNLP():
     from .explainNLP.main import explain_nlp_main
     nlp_task = args.nlp_task
-    selection_method = 'RANDOM'
-    if args.syntax_selection=='prob':
-        selection_method = 'PROB'
-    # end if
+    selection_method = args.syntax_selection
+    # selection_method = 'RANDOM'
+    # if args.syntax_selection=='prob':
+    #     selection_method = 'PROB'
+    # # end if
     search_dataset_name = args.search_dataset
     model_name = args.model_name
     explain_nlp_main(

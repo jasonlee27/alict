@@ -14,8 +14,8 @@ def get_word_importance(sentence, tokenizer, model, device, config):
     input_token = input_token.to(device)
     
     exp = CasualInferenceExplain(model, tokenizer, device, config)
-    res = exp.explain(sentence)
-    return res
+    res, importance_scores = exp.explain(sentence)
+    return res, importance_scores
 
 def explain_nlp_main(task, dataset_name, selection_method, model_name):
     test_results_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}"
@@ -25,8 +25,8 @@ def explain_nlp_main(task, dataset_name, selection_method, model_name):
     
     original_sent_list = list()
     for d in _data:
-        if len(d['pass->fail']) != 0:
-            for s in d['pass->fail']:
+        if len(d['fail->pass']) != 0:
+            for s in d['fail->pass']:
                 original_sent_list.append({
                     'req': d['req'],
                     'from_sent': s['from'],
@@ -63,26 +63,30 @@ def explain_nlp_main(task, dataset_name, selection_method, model_name):
         to_sent_list = sent_dict['to_sent']
 
         # from_sent
-        res_from_sent = get_word_importance(from_sent, tokenizer, model, device, config)
+        res_from_sent, imp_score_from_sent = get_word_importance(from_sent, tokenizer, model, device, config)
 
         # to_sents
         for to_sent_dict in to_sent_list:
             print('>>>>>>>>>>')
             print(f"LC:{req}\nFROM_SENT:{from_sent}\nFROM_PRED:{from_pred}\nFROM_LABEL:{from_label}\nFROM_CONF:{from_conf}")
-            for fs in res_from_sent:
-                print(fs)
-            # end for
+            print(res_from_sent)
+            print(imp_score_from_sent)
+            # for fs in res_from_sent:
+            #     print(fs)
+            # # end for
             print('----------')
 
             to_sent = to_sent_dict['sent']
             to_pred = to_sent_dict['pred']
             to_label = to_sent_dict['label']
             to_conf = to_sent_dict['conf']
-            res_to_sent = get_word_importance(to_sent, tokenizer, model, device, config)
+            res_to_sent, imp_score_to_sent = get_word_importance(to_sent, tokenizer, model, device, config)
             print(f"TO_SENT:{to_sent}\nTO_PRED:{to_pred}\nTO_LABEL:{to_label}\nTO_CONF:{to_conf}")
-            for ts in res_to_sent:
-                print(ts)
-            # end for
+            print(res_to_sent)
+            print(imp_score_to_sent)
+            # for ts in res_to_sent:
+            #     print(ts)
+            # # end for
             print('<<<<<<<<<<')
         # end for
     # end for

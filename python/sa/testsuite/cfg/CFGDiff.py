@@ -52,15 +52,13 @@ class CFGDiff:
     def __init__(self, 
                  pcfg_ref: dict, 
                  cfg_seed: dict,
-                 tree_seed,
-                 selection_method
+                 tree_seed
     ):
         self.cfg_diff = self.get_cfg_diff(
             cfg_seed=cfg_seed,
             tree_seed=tree_seed,
             pcfg_ref=pcfg_ref,
             comp_length=COMP_LENGTH,
-            selection_method=selection_method
         )
 
     
@@ -152,7 +150,7 @@ class CFGDiff:
             # end if
             # sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, rule_rhs)
         else:
-            sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, srule_rhs)
+            sent_prob_wo_target = sent_prob_wo_target*self.get_rule_prob(pcfg_ref, rule_lhs, rule_rhs)
             for ch in seed_tree._.children:
                 parent_rule_list, sent_prob_wo_target = self.get_target_rule_parents(
                     pcfg_ref, ch,
@@ -297,8 +295,7 @@ class CFGDiff:
                      cfg_seed,
                      pcfg_ref,
                      tree_seed,
-                     comp_length,
-                     selection_method):
+                     comp_length):
         cfg_diff = dict()
         for seed_lhs, seed_rhs in cfg_seed.items():
             try:
@@ -317,7 +314,7 @@ class CFGDiff:
                         # end if
                     # end for
 
-                    if any(rule_from_ref) and selection_method=='prob':
+                    if any(rule_from_ref):
                         # Get syntax prob
                         rhs_syntax_probs = self.get_exp_syntax_probs(
                             pcfg_ref, tree_seed, seed_lhs, sr, _sr['word'], rule_from_ref
@@ -338,7 +335,7 @@ class CFGDiff:
                                 ], _sr['word'])
                             # end if
                         # end if
-                    elif any(rule_from_ref) and selection_method=='prob':
+                    elif any(rule_from_ref):
                         # randomly select the syntax expansion suggestion
                         random.shuffle(rule_from_ref)
                         if seed_lhs not in cfg_diff.keys():

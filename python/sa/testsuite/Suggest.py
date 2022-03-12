@@ -10,7 +10,7 @@ import nltk
 # import spacy
 import copy
 import random
-import numpy
+import numpy as np
 
 from pathlib import Path
 from scipy.special import softmax
@@ -227,7 +227,7 @@ class Suggest:
         return all(all_reqs_met)
 
     @classmethod
-    def get_words_by_prob(cls, words_suggest, gen_input, masked_input):
+    def get_words_by_prob(cls, words_suggest, gen_input, masked_input, num_target):
         if not any(words_suggest):
             return None
         # end if
@@ -254,7 +254,7 @@ class Suggest:
             ))
         # end for
         sent_probs = sorted(sent_probs, key=lambda x: x[-1], reverse=True)
-        sent_probs = [s[0] for s in sent_probs[:NUM_TOPK]]
+        sent_probs = [s[0] for s in sent_probs[:num_target]]
         return sent_probs
     
     @classmethod
@@ -273,24 +273,30 @@ class Suggest:
             )
             if selection_method.lower()=='prob':
                 # TODO: fix the probability issue with lower prob when deep tree
-                gen_input['words_suggest'] = cls.get_words_by_prob(words_suggest, gen_input, masked_input)
+                gen_input['words_suggest'] = cls.get_words_by_prob(
+                    words_suggest,
+                    gen_input,
+                    masked_input,
+                    num_target=num_target
+                )
             elif selection_method.lower()=='random':
                 if len(words_suggest)>num_target:
                     idxs = np.random.choice(len(words_suggest), num_target, replace=False)
-                    gen_input['words_suggest'] = [words_suggest[i] for i in idxs]
+                    gen_input['words_suggest'] = [words_suggest[i][0] for i in idxs]
                 else:
-                    gen_input['words_suggest'] = words_suggest
+                    gen_input['words_suggest'] = [ws[0] for ws in words_suggest]
                 # end if
             elif selection_method.lower()=='bertscore':
                 if len(words_suggest)>num_target:
-                    gen_input['words_suggest'] = sorted(
+                    word_suggest_sort_by_bertscore = sorted(
                         words_suggest, key=lambda x: x[-1], reverse=True
                     )[:num_target]
+                    gen_input['words_suggest'] = [ws[0] for ws in word_suggest_sort_by_bertscore]
                 else:
-                    gen_input['words_suggest'] = words_suggest
+                    gen_input['words_suggest'] = [ws[0] for ws in words_suggest]
                 # end if
             elif selection_method.lower()=='noselect':
-                gen_input['words_suggest'] = words_suggest
+                gen_input['words_suggest'] = [ws[0] for i in words_suggest]
             # end if
             gen_inputs[g_i] = gen_input
         # end for

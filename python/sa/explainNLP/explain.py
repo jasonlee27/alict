@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
 
@@ -37,7 +38,7 @@ class CasualInferenceExplain:
         return mutated_x, mask
 
     def compute_weights(self, mask, mutated_y):
-        m = LogisticRegression(fit_intercept=True)
+        m = LogisticRegression(fit_intercept=True, max_iter=200)
         m.fit(mask.detach().cpu().numpy(), mutated_y.reshape(-1).detach().cpu().numpy())
         weight = m.coef_
         return weight.reshape([-1])
@@ -50,6 +51,9 @@ class CasualInferenceExplain:
             res.append([i, int(tk), tk_str, s])
         res = sorted(res, key=lambda t: t[3], reverse=True)
         return res
+
+    def softmax(self, importance_score):
+        return np.exp(importance_score)/np.sum(np.exp(importance_score))
 
     def explain(self, input_sentence):
         input_token = self.tokenizer(input_sentence, return_tensors="pt", padding=True).input_ids
@@ -68,11 +72,12 @@ class CasualInferenceExplain:
         mutated_y = torch.cat(mutated_y)
         mutated_y = (mutated_y == ori_predict)
         important_score = self.compute_weights(mask, mutated_y)
+        norm_important_score = self.softmax(important_score)
         res = self.visualization(input_token, important_score)
         mask = self.create_maek(res, input_sentence, ori_predict)
         mask_str = self.tokenizer.decode([m for m in mask[0]])
         mask_str = mask_str.replace(self.tokenizer.unk_token, '[MASK]')
-        return mask_str
+        return mask_str, norm_important_score
 
     def evaluate(self, mask: torch.tensor, ori_pred, mask_pos):
         new_tensor = mask.repeat(500, 1).to(self.device)
