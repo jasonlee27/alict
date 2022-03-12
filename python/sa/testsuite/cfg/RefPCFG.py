@@ -139,15 +139,7 @@ class RefPCFG:
             grammar, rule_dict = self._get_treebank_pcfg(s, start_prob, productions, rule_dict)
             grammars[s] = grammar
         # end if
-        
-        # check the rule of pcfg distribution
-        # for lhs_key in rule_dict.keys():
-        #     print(lhs_key)
-        #     print(sum([rhs['prob'] for rhs in rule_dict[lhs_key]]))
-        #     print()
-        #     assert sum([rhs['prob'] for rhs in rule_dict[lhs_key]])==1.
-        # # end for
-        
+                
         self.pcfg_dir.mkdir(parents=True, exist_ok=True)
         Utils.write_json(rule_dict, self.pcfg_file)
         return grammars, rule_dict

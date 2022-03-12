@@ -56,11 +56,15 @@ def run_templates():
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
     selection_method = args.syntax_selection
+    log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    log_dir.mkdir(parents=Ttue, exist_ok=True)
+    log_file = log_dir / "template_generation.log"
     Template.get_templates(
         num_seeds=num_seeds,
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
         selection_method=selection_method
+        log_file=log_file
     )
     return
 
@@ -70,22 +74,29 @@ def run_testsuites():
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
     selection_method = args.syntax_selection
+    log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    log_dir.mkdir(parents=Ttue, exist_ok=True)
+    log_file = log_dir / "testsuite_generation.log"
     Testsuite.write_testsuites(
         nlp_task=nlp_task,
         dataset=search_dataset_name,
         selection_method=selection_method,
         num_seeds=num_seeds
+        log_file=log_file
     )
     return
 
 def run_testmodel():
     from .model.Testmodel import main as Testmodel_main
     nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     test_baseline = args.test_baseline
     test_type = args.test_type
-    search_dataset_name = args.search_dataset
     local_model_name = args.local_model_name
+    log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    log_dir.mkdir(parents=Ttue, exist_ok=True)
+    log_file = log_dir / "testsuite_generation.log"
     Testmodel_main(
         nlp_task,
         search_dataset_name,

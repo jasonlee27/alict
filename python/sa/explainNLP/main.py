@@ -17,7 +17,7 @@ def get_word_importance(sentence, tokenizer, model, device, config):
     res, importance_scores = exp.explain(sentence)
     return res, importance_scores
 
-def explain_nlp_main(task, dataset_name, selection_method, model_name):
+def explain_nlp_main(task, dataset_name, selection_method, model_name, _type='pass->fail'):
     test_results_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}"
     test_results_analysis_file = test_results_dir / 'test_result_analysis.json'
     data = Utils.read_json(test_results_analysis_file)
@@ -25,8 +25,8 @@ def explain_nlp_main(task, dataset_name, selection_method, model_name):
     
     original_sent_list = list()
     for d in _data:
-        if len(d['fail->pass']) != 0:
-            for s in d['fail->pass']:
+        if len(d[_type]) != 0:
+            for s in d[_type]:
                 original_sent_list.append({
                     'req': d['req'],
                     'from_sent': s['from'],
