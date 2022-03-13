@@ -102,17 +102,22 @@ class Model:
                 return f"DATA::{pred_res}::{conf:%.1f}::{str(pred)}::{str(label)}::{str(x)}"
         else:
             return f"DATA::{pred_res}::[]::{str(pred)}::{str(label)}::{str(x)}"
-
+        
     @classmethod
-    def print_result(cls, x, pred, conf, expect_result, label=None, meta=None, format_example_fn=None, nsamples=3):
+    def print_result(cls, x, pred, conf, expect_result, label=None, meta=None, format_example_fn=None, nsamples=3, logger=None):
         isfailed = expect_result[0]!=True
-        print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
+        if logger is None:
+            print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
+        else:
+            logger.print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
+        # end if
 
     @classmethod
-    def run(cls, testsuite, model, pred_and_conf_fn, print_fn=None, format_example_fn=None, n=Macros.nsamples):
+    def run(cls, testsuite, model, pred_and_conf_fn, print_fn=None, format_example_fn=None, n=Macros.nsamples, logger=None):
         cls.model = model
-        testsuite.run(pred_and_conf_fn, n=n, overwrite=True)
+        testsuite.run(pred_and_conf_fn, n=n, overwrite=True, logger=logger)
         testsuite.summary(n=Macros.nsamples,
+                          logger=logger,
                           print_fn=cls.print_result if print_fn is not None else None,
                           format_example_fn=cls.format_example if format_example_fn is not None else None)
         return

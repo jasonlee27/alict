@@ -63,18 +63,18 @@ class Template:
         pcfg_ref = RefPCFG()
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
             exp_inputs = dict()
-            logger.print(f">>>>> REQUIREMENT:", selected["requirement"]["description"])
+            print_str = '>>>>> REQUIREMENT:'+selected["requirement"]["description"]
             num_selected_inputs = len(selected["selected_inputs"])
-            logger.print(f"\t{num_selected_inputs} inputs are selected.")
+            logger.print(f"{print_str}\n\t{num_selected_inputs} inputs are selected.")
             index = 1
             num_seed_for_exp = 0
             tot_num_exp = 0
             for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
-                logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score}", end=" :: ")
+                logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score} :: ", end='')
                 index += 1
                 generator = Generator(seed, pcfg_ref)
                 gen_inputs = generator.masked_input_generator()
-                logger.print(f"{len(gen_inputs)} syntax expansions", end=" :: ")
+                logger.print(f"{len(gen_inputs)} syntax expansions :: ", end='')
                 new_input_results = list()
                 tot_num_exp += len(gen_inputs)
                 if any(gen_inputs):
@@ -85,7 +85,8 @@ class Template:
                         seed_label,
                         selected["requirement"],
                         num_target=Macros.num_suggestions_on_exp_grammer_elem,
-                        selection_method=selection_method
+                        selection_method=selection_method,
+                        logger=logger
                     )
                 # end if
                 logger.print(f"{len(new_input_results)} word suggestion by req")
@@ -103,12 +104,13 @@ class Template:
             })
             # write raw new inputs for each requirement
             Utils.write_json(results, save_to, pretty_format=True)
-            logger.print(f"<<<<< REQUIREMENT:", selected["requirement"]["description"])
+            print_str = '<<<<< REQUIREMENT:'+selected["requirement"]["description"]
+            logger.print(print_str)
         # end for
         
         # # write raw new inputs
         Utils.write_json(results, save_to, pretty_format=True)
-        logger.print(f"**********")
+        logger.print('**********')
         return results
     
     @classmethod
@@ -254,8 +256,8 @@ class Template:
             inputs_per_req = new_input_dicts[t_i]
             req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])
             inputs = inputs_per_req["inputs"]
-
-            logger.print(f">>>>> REQUIREMENT:", inputs_per_req["requirement"]["description"])
+            print_str = '>>>>> REQUIREMENT:'+inputs_per_req["requirement"]["description"]
+            logger.print(print_str)
             seed_inputs, exp_seed_inputs = list(), list()
             seed_templates, exp_templates = list(), list()
             for s_i, seed_input in enumerate(inputs.keys()):
@@ -328,7 +330,8 @@ class Template:
             #                      res_dir / f"templates_exp_{req_cksum}.json",
             #                      pretty_format=True)
             # # end if
-            logger.print(f"<<<<< REQUIREMENT:", inputs_per_req["requirement"]["description"])
+            print_str = '<<<<< REQUIREMENT:'+inputs_per_req["requirement"]["description"]
+            logger.print(print_str)
         # end for
         return
 

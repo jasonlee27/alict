@@ -1,6 +1,7 @@
 # This script is to test models
 # using written testsuites
 
+import shutil
 from typing import *
 from pathlib import Path
 
@@ -8,6 +9,7 @@ from checklist.test_suite import TestSuite as suite
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from ..utils.Logger import Logger
 from ..testsuite.Testsuite import Testsuite
 from ..testsuite.Search import DynasentRoundOne
 
@@ -30,9 +32,8 @@ class Testmodel:
         return tsuite
 
     @classmethod
-    def _run_testsuite(cls, task: str, dataset_name: str, is_random_select: bool, local_model_name=None):
-        print(f"***** TASK: {task} *****")
-        selection_method = 'RANDOM' if is_random_select else 'PROB'
+    def _run_testsuite(cls, task: str, dataset_name: str, selection_method: str, logger, local_model_name=None):
+        logger.print(f"***** TASK: {task} *****")
         cksum_vals = [
             os.path.basename(test_file).split("_")[-1].split(".")[0]
             for test_file in os.listdir(Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}")
@@ -63,25 +64,25 @@ class Testmodel:
                     # print(f"<<<<< MODEL: Google NLP model")
                     
                     for mname, model in Model.load_models(task):
-                        print(f">>>>> MODEL: {mname}")
-                        Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples)
-                        print(f"<<<<< MODEL: {mname}")
+                        logger.print(f">>>>> MODEL: {mname}")
+                        Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples, logger=logger)
+                        logger.print(f"<<<<< MODEL: {mname}")
                     # end for
                 else:
-                    print(f">>>>> RETRAINED MODEL: {local_model_name}")
+                    logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
                     model = Model.load_local_model(task, local_model_name)
-                    Model.run(testsuite, model, cls.model_func_map[task])
-                    print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+                    Model.run(testsuite, model, cls.model_func_map[task], logger=logger)
+                    logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                 # end if
             # end for
         # end for
-        print("**********")
+        logger.print('**********')
         return
     
     @classmethod
-    def _run_bl_testsuite(cls, task, bl_name, local_model_name=None):
-        print(f"***** TASK: {task} *****")
-        print(f"***** Baseline: {bl_name} *****")
+    def _run_bl_testsuite(cls, task, bl_name, logger, local_model_name=None):
+        logger.print(f"***** TASK: {task} *****")
+        logger.print(f"***** Baseline: {bl_name} *****")
         testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
 
         if local_model_name is None:
@@ -91,32 +92,32 @@ class Testmodel:
             # print(f"<<<<< MODEL: Google NLP model")
             
             for mname, model in Model.load_models(task):
-                print(f">>>>> MODEL: {mname}")
-                Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples)
-                print(f"<<<<< MODEL: {mname}")
+                logger.print(f">>>>> MODEL: {mname}")
+                Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples, logger=logger)
+                logger.print(f"<<<<< MODEL: {mname}")
             # end for
-            print("**********")
+            logger.print("**********")
         else:
-            print(f">>>>> RETRAINED MODEL: {local_model_name}")
+            logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
             model = Model.load_local_model(task, local_model_name)
-            Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples)
-            print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+            Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples, logger=logger)
+            logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
         # end if
         return
 
     @classmethod
-    def run_testsuite(cls, task: str, dataset_name: str, is_random_select: bool, test_baseline: bool, local_model_name:str = None):
+    def run_testsuite(cls, task: str, dataset_name: str, selection_method: str, test_baseline: bool, logger, local_model_name: str = None):
         # run models on checklist introduced testsuite format
         bl_name = None
         if test_baseline:
-            cls._run_bl_testsuite(task, "checklist", local_model_name=local_model_name)
+            cls._run_bl_testsuite(task, "checklist", logger, local_model_name=local_model_name)
         else:
-            cls._run_testsuite(task, dataset_name, is_random_select, local_model_name=local_model_name)
+            cls._run_testsuite(task, dataset_name, selection_method, logger, local_model_name=local_model_name)
         # end if
         return
 
     @classmethod
-    def run_on_diff_dataset(cls, task: str, dataset_name: str, test_type: str = None):
+    def run_on_diff_dataset(cls, task: str, dataset_name: str, test_type: str, logger):
         # run models on other type of dataset
         def run(model, data):
             preds_all, pp_all = list(), list()
@@ -148,19 +149,19 @@ class Testmodel:
         if test_type is not None:
             dataset_name = test_type
             assert(dataset_name in Macros.datasets[task])
-            print(f"***** TASK: {task} *****")
-            print(f"***** DATASET: {dataset_name} *****")
+            logger.print(f"***** TASK: {task} *****")
+            logger.print(f"***** DATASET: {dataset_name} *****")
             if dataset_name=="dynasent":
                 srcs = DynasentRoundOne.get_data(Macros.dyna_r1_test_src_file)
                 sents = [s[1] for s in srcs]
                 labels = [s[-1] for s in srcs]
                 for mname, model in Model.load_models(task):
-                    print(f">>>>> MODEL: {mname}")
+                    logger.print(f">>>>> MODEL: {mname}")
                     preds, pp = run(model, sents)
                     fail_cnt, fail_rate = Utils.compute_failure_rate(task, preds, labels)
-                    print(f"Test cases run:\t{len(preds)}")
-                    print(f"Fails (rate):\t{fail_cnt} \({fail_rate}\)")
-                    print(f"<<<<< MODEL: {mname}")
+                    logger.print(f"Test cases run:\t{len(preds)}")
+                    logger.print(f"Fails (rate):\t{fail_cnt} \({fail_rate}\)")
+                    logger.print(f"<<<<< MODEL: {mname}")
                 # end for
     
             # end if
@@ -168,19 +169,40 @@ class Testmodel:
         return
 
     
-def main(task, dataset_name, is_random_select, test_baseline, test_type, local_model_name=None):
+def main(task, dataset_name, selection_method, test_baseline, test_type, log_file, local_model_name=None):
+    logger = Logger(logger_file=log_file,
+                    logger_name='testmodel')
+    test_result_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}")
     if local_model_name is None:
-        if test_type=="testsuite":
-            Testmodel.run_testsuite(task, dataset_name, is_random_select, test_baseline)
+        Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, logger)
+        if test_baseline:
+            test_result_file = test_result_dir / 'test_results_checklist.txt'
         else:
-            Testmodel.run_on_diff_dataset(task, dataset_name, is_random_select, test_type=test_type)
+            test_result_file = test_result_dir / 'test_results.txt'
         # end if
+        shutil.copyfile(log_file, test_result_file)
+        # if test_type=="testsuite":
+        #     Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, logger)
+        #     shutil.copyfile(log_file, 'file2.txt')
+        # else:
+        #     Testmodel.run_on_diff_dataset(task, dataset_name, selection_method, test_type=test_type, logger=logger)
+        # # end if
     else:
-        if test_type=="testsuite":
-            Testmodel.run_testsuite(task, dataset_name, is_random_select, test_baseline, local_model_name=local_model_name)
+        Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, local_model_name=local_model_name, logger)
+        if test_baseline:
+            test_result_file = test_result_dir / 'test_results_checklist.txt'
         else:
-            Testmodel.run_on_diff_dataset(task, dataset_name, is_random_select, test_type=test_type)
+            test_result_file = test_result_dir / 'test_results.txt'
         # end if
+        shutil.copyfile(log_file, test_result_file)
+        # if test_type=="testsuite":
+        #     Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, local_model_name=local_model_name, logger)
+        #     shutil.copyfile(log_file, 'file2.txt')
+        # else:
+        #     Testmodel.run_on_diff_dataset(task, dataset_name, test_type, logger)
+        # # end if
+    # end if
+    
     return
 
 

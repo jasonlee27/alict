@@ -258,11 +258,10 @@ class Suggest:
         return sent_probs
     
     @classmethod
-    def get_new_inputs(cls, nlp, generator, gen_inputs, num_target=10, selection_method=False):
+    def get_new_inputs(cls, nlp, generator, gen_inputs, selection_method, num_target=10, logger=None):
         editor = generator.editor
         word_suggestions = cls.get_word_suggestion(editor, gen_inputs, num_target=3*num_target)
         for g_i in range(len(gen_inputs)):
-            # print(f"gen_new_inputs: {g_i} out of {len(gen_inputs)}")
             gen_input = gen_inputs[g_i]
             masked_input, mask_pos = gen_input['masked_input']
             words_suggest = cls.match_word_n_pos(
@@ -302,7 +301,7 @@ class Suggest:
         # end for
         gen_inputs = [g for g in gen_inputs if g['words_suggest'] is not None]
         num_words_suggest = sum([len(g['words_suggest']) for g in gen_inputs])
-        print(f"{num_words_suggest} words suggestions", end=" :: ")
+        logger.print(f"{num_words_suggest} words suggestions :: ", end='')
         return gen_inputs
 
     @classmethod
@@ -337,7 +336,7 @@ class Suggest:
         return results
 
     @classmethod
-    def get_exp_inputs(cls, nlp, generator, gen_inputs, seed_label, requirement, num_target=10, selection_method=None):
+    def get_exp_inputs(cls, nlp, generator, gen_inputs, seed_label, requirement, selection_method, num_target=10, logger=None):
         # get the word suggesteion at the expended grammar elements
         new_input_results = list()
         

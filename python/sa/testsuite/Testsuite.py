@@ -22,6 +22,7 @@ from checklist.perturb import Perturb
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from ..utils.Logger import Logger
 from .Search import Search
 # from .Transform import TransformOperator
 from .Template import Template
@@ -208,7 +209,7 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(seed_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')):
-                logger.print(f"{task}::SEED::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
+                logger.print(f"{task}::SEED::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -231,9 +232,9 @@ class Testsuite:
                     #     task+templates_per_req["capability"]+templates_per_req["description"]
                     # )
                     suite.save(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')
-                    logger.print("SAVED")
+                    logger.print('SAVED')
                 else:
-                    logger.print("NO_DATA")
+                    logger.print('NO_DATA')
                 # end if
             # end if
         # end for
@@ -248,7 +249,7 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(exp_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_exps_{test_cksum}.pkl')):
-                logger.print(f"{task}::EXP::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
+                logger.print(f"{task}::EXP::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -271,9 +272,9 @@ class Testsuite:
                     #     task+templates_per_req["capability"]+templates_per_req["description"]
                     # )
                     suite.save(res_dir / f'{task}_testsuite_exps_{test_cksum}.pkl')
-                    logger.print("SAVED")
+                    logger.print('SAVED')
                 else:
-                    logger.print("NO_DATA")
+                    logger.print('NO_DATA')
                 # end if
             # end if
         # end for
@@ -288,7 +289,7 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(seed_template_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')):
-                logger.print(f"{task}::SEED_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
+                logger.print(f"{task}::SEED_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -308,9 +309,9 @@ class Testsuite:
                 num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
                 if num_data>0:
                     suite.save(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')
-                    logger.print("SAVED")
+                    logger.print('SAVED')
                 else:
-                    logger.print("NO_DATA")
+                    logger.print('NO_DATA')
                 # end if
                 del t, test, suite
             # end if
@@ -327,7 +328,7 @@ class Testsuite:
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_exp_templates_{test_cksum}.pkl')) and \
                any(templates_per_req["templates"]):
-                logger.print(f"{task}::EXP_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end="")
+                logger.print(f"{task}::EXP_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -347,9 +348,9 @@ class Testsuite:
                 num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
                 if num_data>0:
                     suite.save(res_dir / f'{task}_testsuite_exp_templates_{test_cksum}.pkl')
-                    logger.print("SAVED")
+                    logger.print('SAVED')
                 else:
-                    logger.print("NO_DATA")
+                    logger.print('NO_DATA')
                 # end if
             # end for
         # end for
@@ -372,24 +373,28 @@ class Testsuite:
         cls.write_seed_testsuite(task,
                                  dataset,
                                  seed_dicts,
-                                 res_dir)
+                                 res_dir,
+                                 logger)
         
         cls.write_exp_testsuite(task,
                                 dataset,
                                 exp_dicts,
-                                res_dir)
+                                res_dir,
+                                logger)
 
         if any(seed_template_dicts):
             cls.write_seed_template_testsuite(task,
                                               dataset,
                                               seed_template_dicts,
-                                              res_dir)
+                                              res_dir,
+                                              logger)
         # end if
         if any(exp_template_dicts):
             cls.write_exp_template_testsuite(task,
                                              dataset,
                                              exp_template_dicts,
-                                             res_dir)
+                                             res_dir,
+                                             logger)
         # end if
         return
 
@@ -397,7 +402,7 @@ class Testsuite:
     def write_testsuites(cls, nlp_task, dataset, selection_method, num_seeds, log_file):
         logger = Logger(logger_file=log_file,
                         logger_name='testsuite')
-        logger.print("Generate Testsuites from Templates ...")
+        logger.print('Generate Testsuites from Templates ...')
         for task, seed, exp, seed_temp, exp_temp, transform_reqs \
             in cls.get_templates(nlp_task=nlp_task, dataset=dataset, selection_method=selection_method, num_seeds=num_seeds):
             Testsuite.write_editor_templates(task, dataset, selection_method, seed, exp, seed_temp, exp_temp, transform_reqs, logger)

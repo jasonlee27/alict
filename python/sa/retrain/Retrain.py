@@ -14,6 +14,7 @@ from sklearn.metrics import recall_score, accuracy_score, precision_score, f1_sc
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from ..utils.Logger import Logger
 # from Testsuite import Testsuite
 from ..model.Testmodel import Testmodel
 from ..model.Model import Model
@@ -124,7 +125,6 @@ class SstTestcases:
                 )
                 num_baseline_train_data = len(baseline_dataset['train']['text'])
                 upscale_rate = num_baseline_train_data // num_train_data
-                print(num_baseline_train_data, num_train_data, upscale_rate)
                 if upscale_rate > 1:
                     texts, labels, test_names = list(), list(), list()
                     for d_i in range(num_train_data):
@@ -265,7 +265,8 @@ class Retrain:
                  label_vec_len,
                  dataset_file,
                  eval_dataset_file,
-                 output_dir):
+                 output_dir,
+                 log_file=None):
         self.task = task
         self.model_name = model_name
         self.selection_method = selection_method
@@ -280,6 +281,7 @@ class Retrain:
         self.output_dir = output_dir
         self.batch_size = 16
         self.num_epochs = 5.
+        self.log_file = log_file
         
     def load_tokenizer(self, model_name):
         return AutoTokenizer.from_pretrained(model_name)
@@ -394,7 +396,6 @@ class Retrain:
             results = dict()
             eval_dataset = self.get_eval_data_by_testtypes()
             for test_name in eval_dataset.keys():
-                print(test_name)
                 trainer = Trainer(
                     model=self.model,
                     args=training_args,
@@ -426,8 +427,12 @@ class Retrain:
     def run_model_on_testsuite(self, testsuite, model, pred_and_conf_fn=None, n=Macros.nsamples):
         Model.run(testsuite, model, pred_and_conf_fn, print_fn=None, format_example_fn=None, n=n)
 
-    def test_on_our_testsuites(self):
-        print(f"***** TASK: {self.task} *****")
+    def test_on_our_testsuites(self, logger=None):
+        _print = print
+        if logger is not None:
+            _print = logger.print
+        # end if
+        _print(f"***** TASK: {self.task} *****")
         model = self.load_retrained_model()
         eval_dataset_name = os.path.basename(str(self.eval_dataset_file)).split('_testcase.json')[0]
         cksum_vals = [
@@ -444,23 +449,27 @@ class Retrain:
             ]
             for testsuite_file in testsuite_files:
                 testsuite = Testmodel.load_testsuite(testsuite_file)
-                print(f">>>>> RETRAINED MODEL: {self.model_name}")
+                _print(f">>>>> RETRAINED MODEL: {self.model_name}")
                 self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples)
-                print(f"<<<<< RETRAINED MODEL: {self.model_name}")
+                _print(f"<<<<< RETRAINED MODEL: {self.model_name}")
             # end for
         # end for
-        print('**********')
+        _print('**********')
         return
 
-    def test_on_checklist_testsuite(self):
-        print(f"***** TASK: {self.task} *****")
-        print(f"***** Baseline: checklist *****")
-        print(f">>>>> RETRAINED MODEL: {self.model_name}")
+    def test_on_checklist_testsuite(self, logger=None):
+        _print = print
+        if logger is not None:
+            _print = logger.print
+        # end if
+        _print(f"***** TASK: {self.task} *****")
+        _print(f"***** Baseline: checklist *****")
+        _print(f">>>>> RETRAINED MODEL: {self.model_name}")
         model = self.load_retrained_model()
         testsuite = Testmodel.load_testsuite(Macros.BASELINES['checklist']['testsuite_file'])
         self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples)
-        print(f"<<<<< RETRAINED MODEL: {self.model_name}")
-        print('**********')
+        _print(f"<<<<< RETRAINED MODEL: {self.model_name}")
+        _print('**********')
         return
 
     @classmethod
@@ -484,7 +493,15 @@ def retrain(
     dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
     model_dir_name = tags+"_"+model_name.replace("/", "-")
     output_dir = Macros.retrain_model_dir / task / model_dir_name
-    retrainer = Retrain(task, model_name, selection_method, label_vec_len, dataset_file, eval_dataset_file, output_dir)
+    retrainer = Retrain(
+        task,
+        model_name,
+        selection_method,
+        label_vec_len,
+        dataset_file,
+        eval_dataset_file,
+        output_dir,
+    )
     eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
     retrainer.train()
     eval_result_after = retrainer.evaluate(test_by_types=test_by_types)
@@ -506,15 +523,30 @@ def eval_on_train_testsuite(
         selection_method,
         label_vec_len,
         dataset_file,
-        eval_dataset_file):
+        eval_dataset_file,
+        log_file=None):
     tags = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
     dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
     model_dir_name = tags+"_"+model_name.replace("/", "-")
     output_dir = Macros.retrain_model_dir / task / model_dir_name
-    retrainer = Retrain(task, model_name, selection_method, label_vec_len, dataset_file, eval_dataset_file, output_dir)
+    retrainer = Retrain(
+        task,
+        model_name,
+        selection_method,
+        label_vec_len,
+        dataset_file,
+        eval_dataset_file,
+        output_dir,
+    )
+    if log_file is None:
+        logger = None
+    else:
+        logger = Logger(logger_file=log_file,
+                        logger_name='eval_on_train_testsuite')
+    # end if
     if dataset_name.lower()=='sst':
-        retrainer.test_on_our_testsuites()
+        retrainer.test_on_our_testsuites(logger)
     elif dataset_name=='checklist':
-        retrainer.test_on_checklist_testsuite()
+        retrainer.test_on_checklist_testsuite(logger)
     # end if
     return

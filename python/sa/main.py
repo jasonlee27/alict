@@ -96,13 +96,14 @@ def run_testmodel():
     local_model_name = args.local_model_name
     log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
     log_dir.mkdir(parents=Ttue, exist_ok=True)
-    log_file = log_dir / "testsuite_generation.log"
+    log_file = log_dir / "test_orig_model.log"
     Testmodel_main(
         nlp_task,
         search_dataset_name,
         selection_method,
         test_baseline,
         test_type,
+        log_file,
         local_model_name=local_model_name
     )
     return
@@ -110,8 +111,8 @@ def run_testmodel():
 def run_retrain():
     from.retrain.Retrain import retrain
     nlp_task = args.nlp_task
-    selection_method = args.syntax_selection
     search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
     model_name = args.model_name
     label_vec_len = args.label_vec_len
     testcase_file, eval_testcase_file = None, None
@@ -147,9 +148,12 @@ def run_retrain():
             label_vec_len=label_vec_len,
             dataset_file=testcase_file,
             eval_dataset_file=eval_testcase_file,
-            test_by_types=False
+            test_by_types=False,
         )
     else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+        log_dir.mkdir(parents=Ttue, exist_ok=True)
+        log_file = log_dir / "test_orig_model.log"
         if search_dataset_name==Macros.datasets[nlp_task][0]:
             eval_testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_sst_{selection_method}_testcase.json"
         elif search_dataset_name==Macros.datasets[nlp_task][1]:
@@ -163,6 +167,7 @@ def run_retrain():
             label_vec_len=label_vec_len,
             dataset_file=testcase_file,
             eval_dataset_file=eval_testcase_file,
+            log_file=log_file
         )
     # end if
     return
