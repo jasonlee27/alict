@@ -22,8 +22,8 @@ parser.add_argument('--search_dataset', type=str, default="sst",
                     help='name of dataset for searching testcases that meets the requirement')
 parser.add_argument('--num_seeds', type=int, default=Macros.max_num_seeds,
                     help='number of seed inputs found in search dataset')
-parser.add_argument('--syntax_selection', type=str, default='prob',
-                    choices=['PROB', 'prob', 'random', 'bertscore', 'noselect'],
+parser.add_argument('--syntax_selection', type=str, default='random',
+                    choices=['prob', 'random', 'bertscore', 'noselect'],
                     help='method for selection of syntax suggestions')
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
@@ -57,13 +57,13 @@ def run_templates():
     num_seeds = args.num_seeds
     selection_method = args.syntax_selection
     log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
-    log_dir.mkdir(parents=Ttue, exist_ok=True)
+    log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "template_generation.log"
     Template.get_templates(
         num_seeds=num_seeds,
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
-        selection_method=selection_method
+        selection_method=selection_method,
         log_file=log_file
     )
     return
@@ -75,13 +75,13 @@ def run_testsuites():
     num_seeds = args.num_seeds
     selection_method = args.syntax_selection
     log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
-    log_dir.mkdir(parents=Ttue, exist_ok=True)
+    log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "testsuite_generation.log"
     Testsuite.write_testsuites(
         nlp_task=nlp_task,
         dataset=search_dataset_name,
         selection_method=selection_method,
-        num_seeds=num_seeds
+        num_seeds=num_seeds,
         log_file=log_file
     )
     return
@@ -92,10 +92,13 @@ def run_testmodel():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     test_baseline = args.test_baseline
+    if test_baseline:
+        selection_method = 'checklist'
+    # end if
     test_type = args.test_type
     local_model_name = args.local_model_name
     log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
-    log_dir.mkdir(parents=Ttue, exist_ok=True)
+    log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "test_orig_model.log"
     Testmodel_main(
         nlp_task,
@@ -152,7 +155,7 @@ def run_retrain():
         )
     else:
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
-        log_dir.mkdir(parents=Ttue, exist_ok=True)
+        log_dir.mkdir(parents=True, exist_ok=True)
         log_file = log_dir / "test_orig_model.log"
         if search_dataset_name==Macros.datasets[nlp_task][0]:
             eval_testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_sst_{selection_method}_testcase.json"

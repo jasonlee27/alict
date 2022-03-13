@@ -122,7 +122,8 @@ class Testsuite:
             Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset}_{selection_method}.json",
             task,
             dataset,
-            n=num_seeds
+            n=num_seeds,
+            logger=logger
         )
         seeds_per_task = list()
         exps_per_task = list()
@@ -132,14 +133,14 @@ class Testsuite:
         for t_i in range(len(new_input_dicts)):
             req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
             res_dir = Macros.result_dir/ f"templates_{task}_{dataset}_{selection_method}"
-            if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))):
-                Template.get_templates(
-                    num_seeds=num_seeds,
-                    nlp_task=nlp_task,
-                    dataset=dataset,
-                    selection_method=selection_method
-                )
-            # end if
+            # if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))):
+            #     Template.get_templates(
+            #         num_seeds=num_seeds,
+            #         nlp_task=nlp_task,
+            #         dataset=dataset,
+            #         selection_method=selection_method
+            #     )
+            # # end if
 
             transform_reqs.append(new_input_dicts[t_i]["requirement"]["transform"])
 
@@ -205,7 +206,8 @@ class Testsuite:
                              task,
                              dataset,
                              seed_dicts,
-                             res_dir):
+                             res_dir,
+                             logger):
         for t_i, templates_per_req in enumerate(seed_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')):
@@ -245,7 +247,8 @@ class Testsuite:
                             task,
                             dataset,
                             exp_dicts,
-                            res_dir):
+                            res_dir,
+                            logger):
         for t_i, templates_per_req in enumerate(exp_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_exps_{test_cksum}.pkl')):
@@ -285,7 +288,8 @@ class Testsuite:
                                       task,
                                       dataset,
                                       seed_template_dicts,
-                                      res_dir):
+                                      res_dir,
+                                      logger):
         for t_i, templates_per_req in enumerate(seed_template_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')):
@@ -323,7 +327,8 @@ class Testsuite:
                                      task,
                                      dataset,
                                      exp_template_dicts,
-                                     res_dir):
+                                     res_dir,
+                                     logger):
         for t_i, templates_per_req in enumerate(exp_template_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_exp_templates_{test_cksum}.pkl')) and \
@@ -404,7 +409,7 @@ class Testsuite:
                         logger_name='testsuite')
         logger.print('Generate Testsuites from Templates ...')
         for task, seed, exp, seed_temp, exp_temp, transform_reqs \
-            in cls.get_templates(nlp_task=nlp_task, dataset=dataset, selection_method=selection_method, num_seeds=num_seeds):
+            in cls.get_templates(nlp_task, dataset, selection_method, num_seeds, logger):
             Testsuite.write_editor_templates(task, dataset, selection_method, seed, exp, seed_temp, exp_temp, transform_reqs, logger)
         # end for
         return

@@ -104,7 +104,7 @@ class Model:
             return f"DATA::{pred_res}::[]::{str(pred)}::{str(label)}::{str(x)}"
         
     @classmethod
-    def print_result(cls, x, pred, conf, expect_result, label=None, meta=None, format_example_fn=None, nsamples=3, logger=None):
+    def print_result(cls, x, pred, conf, expect_result, label=None, meta=None, format_example_fn=None, logger=None):
         isfailed = expect_result[0]!=True
         if logger is None:
             print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))

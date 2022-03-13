@@ -172,7 +172,7 @@ class Testmodel:
 def main(task, dataset_name, selection_method, test_baseline, test_type, log_file, local_model_name=None):
     logger = Logger(logger_file=log_file,
                     logger_name='testmodel')
-    test_result_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}")
+    test_result_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}"
     if local_model_name is None:
         Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, logger)
         if test_baseline:
@@ -188,7 +188,7 @@ def main(task, dataset_name, selection_method, test_baseline, test_type, log_fil
         #     Testmodel.run_on_diff_dataset(task, dataset_name, selection_method, test_type=test_type, logger=logger)
         # # end if
     else:
-        Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, local_model_name=local_model_name, logger)
+        Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, logger, local_model_name=local_model_name)
         if test_baseline:
             test_result_file = test_result_dir / 'test_results_checklist.txt'
         else:
