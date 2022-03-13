@@ -179,10 +179,6 @@ def run_analyze():
     from .model.Result import Result
     nlp_task = args.nlp_task
     selection_method = args.syntax_selection
-    # selection_method = 'RANDOM'
-    # if args.syntax_selection=='prob':
-    #     selection_method = 'PROB'
-    # # end if
     search_dataset_name = args.search_dataset
     result_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results.txt'
     template_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
@@ -199,10 +195,6 @@ def run_retrain_analyze():
     from .retrain.RetrainResult import RetrainResult
     nlp_task = args.nlp_task
     selection_method = args.syntax_selection
-    # selection_method = 'RANDOM'
-    # if args.syntax_selection=='prob':
-    #     selection_method = 'PROB'
-    # # end if
     search_dataset_name = args.search_dataset
     model_name = args.model_name
     RetrainResult.analyze(

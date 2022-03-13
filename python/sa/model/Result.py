@@ -121,9 +121,11 @@ class Result:
             for seed in t['inputs'].keys():
                 exp_list = list()
                 for exp in t['inputs'][seed]['exp_inputs']:
-                    tokens = Utils.tokenize(exp[5])
-                    sent = Utils.detokenize(tokens)
-                    exp_list.append(sent.replace(' ', ''))
+                    if exp[5] is not None:
+                        tokens = Utils.tokenize(exp[5])
+                        sent = Utils.detokenize(tokens)
+                        exp_list.append(sent.replace(' ', ''))
+                    # end if
                 # end for
                 tokens = Utils.tokenize(seed)
                 _seed = Utils.detokenize(tokens)

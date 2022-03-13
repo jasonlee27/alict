@@ -1,0 +1,45 @@
+Generate Testsuites from Templates ...
+Analyzing CFG ...
+**********
+sa::SEED::<Short sentences with neutral adjectives and nouns>::1221d33:
+SAVED
+sa::SEED::<Short sentences with sentiment-laden adjectives>::b462c67:
+SAVED
+sa::SEED::<Sentiment change over time, present should prevail>::671581d:
+SAVED
+sa::SEED::<Negated negative should be positive or neutral>::a416a87:
+SAVED
+sa::SEED::<Negated neutral should still be neutral>::23765e1:
+SAVED
+sa::SEED::<Negation of negative at the end, should be positive or neutral>::22f987a:
+SAVED
+sa::SEED::<Negated positive with neutral content in the middle>::9d5829f:
+SAVED
+sa::SEED::<Author sentiment is more important than of others>::14047e9:
+SAVED
+sa::SEED::<parsing sentiment in (question, yes) form>::1834cb2:
+SAVED
+sa::SEED::<Parsing positive sentiment in (question, no) form>::082dc36:
+SAVED
+sa::SEED::<Parsing negative sentiment in (question, no) form>::d3af59d:
+SAVED
+sa::EXP::<Short sentences with neutral adjectives and nouns>::1221d33:
+SAVED
+sa::EXP::<Short sentences with sentiment-laden adjectives>::b462c67:
+SAVED
+sa::EXP::<Negated negative should be positive or neutral>::a416a87:
+SAVED
+sa::EXP::<Negated neutral should still be neutral>::23765e1:
+SAVED
+sa::EXP::<Negation of negative at the end, should be positive or neutral>::22f987a:
+SAVED
+sa::EXP::<Negated positive with neutral content in the middle>::9d5829f:
+SAVED
+sa::EXP::<Author sentiment is more important than of others>::14047e9:
+SAVED
+sa::EXP::<parsing sentiment in (question, yes) form>::1834cb2:
+SAVED
+sa::EXP::<Parsing positive sentiment in (question, no) form>::082dc36:
+SAVED
+sa::EXP::<Parsing negative sentiment in (question, no) form>::d3af59d:
+SAVED
