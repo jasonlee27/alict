@@ -295,7 +295,7 @@ class Suggest:
                     gen_input['words_suggest'] = [ws[0] for ws in words_suggest]
                 # end if
             elif selection_method.lower()=='noselect':
-                gen_input['words_suggest'] = [ws[0] for i in words_suggest]
+                gen_input['words_suggest'] = [ws[0] for ws in words_suggest]
             # end if
             gen_inputs[g_i] = gen_input
         # end for
@@ -341,7 +341,7 @@ class Suggest:
         new_input_results = list()
         
         gen_inputs = cls.get_new_inputs(
-            nlp, generator, gen_inputs, num_target=num_target, selection_method=selection_method
+            nlp, generator, gen_inputs, num_target=num_target, selection_method=selection_method, logger=logger
         )
         for g_i in range(len(gen_inputs)):
             eval_results = cls.eval_word_suggest(nlp, gen_inputs[g_i], seed_label, requirement)
