@@ -81,13 +81,20 @@ function analyze_eval_models() {
 function analyze_retrained_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         python -m python.sa.main --run retrain_analyze --search_dataset sst --syntax_selection prob --model_name textattack/bert-base-uncased-SST-2
+         python -m python.sa.main --run retrain_analyze --search_dataset sst --syntax_selection random --model_name textattack/bert-base-uncased-SST-2
         )
 }
 
 function explain_nlp() {
         mkdir -p ./_results/retrain/explain_nlp
-        CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run explain_nlp --search_dataset sst --syntax_selection PROB --model_name textattack/bert-base-uncased-SST-2 > ./_results/retrain/explain_nlp/explain_nlp_result_sst_PROB_textattack_bert-base-uncased-SST-2.txt
+        CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run explain_nlp --search_dataset sst --syntax_selection random --model_name textattack/bert-base-uncased-SST-2 > ./_results/retrain/explain_nlp/explain_nlp_result_sst_PROB_textattack_bert-base-uncased-SST-2.txt
+}
+
+function explain_nlp() {
+        (cd ${_DIR}
+         python -m python.sa.main --run selfbleu --search_dataset sst --syntax_selection random
+        )
+}
 }
 
 function main() {
