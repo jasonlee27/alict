@@ -9,13 +9,13 @@ from .Utils import Utils
 
 class SelfBleu:
     def __init__(self, test_file, gram=3):
-        super().__init__()
         # the json file used for retraining sa models
         self.test_file = test_file
         self.gram = gram
         self.sample_size = 500
         self.reference = None
         self.is_first = True
+        self.num_data = -1
 
     def get_score(self):
         self.get_reference()
@@ -34,6 +34,7 @@ class SelfBleu:
                 reference.append(text)
             # end for
             self.reference = reference
+            self.num_data = len(reference)
             return reference
         else:
             return self.reference
@@ -56,3 +57,25 @@ class SelfBleu:
             bleu.append(self.calc_bleu(reference, hypothesis, weight))
         # end for
         return sum(bleu) / len(bleu)
+
+@classmethod
+def main(task, search_dataset_name, selection_method):
+    testcase_file = Macros.retrain_dataset_dir / f"{task}_{search_dataset_name}_{selection_method}_testcase.json"
+    sbleu = SelfBleu(test_file=testcase_file)
+    sbleu_score = sbleu.get_score()
+
+    checklist_testcase_file = Macros.checklist_sa_testcase_file
+    sbleu_baseline = SelfBleu(test_file=checklist_testcase_file)
+    sbleu_baseline_score = sbleu.get_score()
+        
+    result_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
+    result = {
+        'num_data': sbleu.num_data,
+        'score': sbleu_score,
+        'baseline_name': 'checklist',
+        'baseline_num_data': sbleu_baseline.num_data,
+        'baseline_score': sbleu_baseline_score
+    }
+    Utils.write_json(result, result_file, pretty_format=True)
+    return
+
