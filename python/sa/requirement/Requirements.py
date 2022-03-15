@@ -18,11 +18,13 @@ from ..utils.Utils import Utils
 datasets = Macros.datasets
 
 class Requirements:
+
+    cls.req_dir = Macros.result_dir / 'reqs'
     
     @classmethod
     def convert_test_type_txt_to_json(cls):
         for task, dataset_name in datasets.items():
-            dataset_path = Macros.result_dir / f"test_type_{task}.txt"
+            dataset_path = cls.req_dir / f"test_type_{task}.txt"
             result = None
             if os.path.exists(dataset_path):
                 with open(dataset_path, 'r') as f:
@@ -36,7 +38,7 @@ class Requirements:
                 # end with
                 if result is not None:
                     Utils.write_json(result,
-                                     Macros.result_dir / f"test_type_{task}.json",
+                                     cls.req_dir / f"test_type_{task}.json",
                                      pretty_format=True)
                 # end if
             # end if
@@ -46,14 +48,13 @@ class Requirements:
     @classmethod
     def get_requirements(cls, task):
         # dataset_name = datasets[task]
-        req_dir = Macros.result_dir / 'reqs'
-        req_file = req_dir / f"requirements_{task}.json"
+        req_file = cls.req_dir / f"requirements_{task}.json"
         if os.path.exists(req_file):
             return Utils.read_json(req_file)
         # end if
         reqs = None
-        test_type_file = req_dir / f"test_type_{task}.json"
-        req_dir.mkdir(parents=True, exist_ok=True)
+        test_type_file = cls.req_dir / f"test_type_{task}.json"
+        cls.req_dir.mkdir(parents=True, exist_ok=True)
 
         # cap_decp:
         # key: liguistic capability to be evaluated
@@ -143,7 +144,7 @@ class Requirements:
                         "search": [
                             {
                                 "label": "negative",
-                                "include": {
+convert_test_type_txt_to_json                                "include": {
                                     "POS": ["<^demonstratives_AUXBE>"],
                                     "word": None
                                 }

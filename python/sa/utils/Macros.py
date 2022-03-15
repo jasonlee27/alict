@@ -13,7 +13,7 @@ class Macros:
     result_dir: Path = root_dir / "_results" # nlptest/_results
     download_dir: Path = root_dir / "_downloads" # nlptest/_downloads
     log_dir: Path = root_dir / "_logs" # nlptest/_downloads
-    paper_dir = result_dir / "papers"
+    paper_dir = root_dir / "paper" / "ase22"
     dataset_dir = download_dir / "datasets"
 
     FMT_INT = "{:,d}"

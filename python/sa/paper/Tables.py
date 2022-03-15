@@ -27,10 +27,13 @@ class Tables:
     FMT_PER = "{:.1%}"
     FMT_FLOAT = "{:,.2f}"
 
+    LATEX_SYMBOL_MAP = {
+        '&': '\&', '{': '\{', '}': '\}'
+    }
+
     @classmethod
-    def make_tables(cls, **options):
-        which: Union[str, List[str]] = options.pop("which", [])
-        paper_dir: Path = Path(options.pop("paper_dir", Macros.paper_dir))
+    def make_tables(cls, which):
+        paper_dir: Path = Macros.paper_dir
         tables_dir: Path = paper_dir / "tables"
         tables_dir.mkdir(parents=True, exist_ok=True)
 
@@ -38,10 +41,10 @@ class Tables:
             which = [which]
         # end if
 
-        for item in which:
+        for item in which: 
             if item == "lc-req":
-                cls.make_numbers_lc_requirement(Macros.results_dir, Macros.data_dir, tables_dir)
-                cls.make_table_lc_requirement(tables_dir)
+                cls.make_numbers_lc_requirement(Macros.result_dir, tables_dir)
+                cls.make_table_lc_requirement(Macros.result_dir, tables_dir)
             else:
                 cls.logger.warning(f"Unknown table {item}")
             # end if
@@ -49,60 +52,80 @@ class Tables:
         return
 
     @classmethod
-    def make_numbers_lc_requirement(cls, results_dir: Path, data_dir: Path, tables_dir: Path):
-        output_file = latex.File(tables_dir / 'lc-requirement-numbers.tex')
-        
-        for lang in Macros.all_lang:
-            # number of repos
-            url_file = data_dir / lang / "repositories.txt"
-            num_repos = len(IOUtils.load(url_file, IOUtils.Format.txt).splitlines())
-            output_file.append_macro(latex.Macro(f"dataset-{lang}-num-repos", cls.FMT_INT.format(num_repos)))
-
-            # number of files, parsable, unparsable, parsable-unique
-            fc_output_file = results_dir / lang / "ALL" / "fc.txt"
-            fc_output = IOUtils.load(fc_output_file, IOUtils.Format.txt)
-            files_parsable = [l.split(":") for l in fc_output.splitlines()]
-            num_files = len(files_parsable)
-            output_file.append_macro(latex.Macro(f"dataset-{lang}-num-all-files", cls.FMT_INT.format(num_files)))
-
-            num_files_parsable = len([f for f, p in files_parsable if p == "true"])
-            output_file.append_macro(latex.Macro(f"dataset-{lang}-num-files-parsable", cls.FMT_INT.format(num_files_parsable)))
-            percent_parsable = num_files_parsable / num_files
-            output_file.append_macro(latex.Macro(f"dataset-{lang}-percent-files-parsable", cls.FMT_PER.format(percent_parsable).replace('%', r'\%')))
-
-            num_files_unparsable = len([f for f, p in files_parsable if p == "false"])
-            output_file.append_macro(latex.Macro(f"dataset-{lang}-num-files-unparsable", cls.FMT_INT.format(num_files_unparsable)))
-            percent_unparsable = num_files_unparsable / num_files
-            output_file.append_macro(latex.Macro(f"dataset-{lang}-percent-files-unparsable", cls.FMT_PER.format(percent_unparsable).replace('%', r'\%')))
-
-            num_files_metrics_file = results_dir / lang / "ALL" / "metrics" / "num-files.json"
-            num_files_metrics = IOUtils.load(num_files_metrics_file, IOUtils.Format.json)
-            for k, v in num_files_metrics.items():
-                output_file.append_macro(latex.Macro(f"dataset-{lang}-{k}", (cls.FMT_INT if isinstance(v, int) else cls.FMT_FLOAT).format(v)))
-                if k == "frac-duplicate-files":
-                    output_file.append_macro(latex.Macro(f"dataset-{lang}-percent-duplicate-files", cls.FMT_PER.format(v).replace('%', r'\%')))
-                # end if
-            # end for
-
-            # LOC
-            loc_metrics_file = results_dir / lang / "ALL" / "metrics" / "loc-per-file.json"
-            loc_metrics = IOUtils.load(loc_metrics_file, IOUtils.Format.json)
-            for s, func in Utils.SUMMARIES_FUNCS.items():
-                output_file.append_macro(latex.Macro(f"dataset-{lang}-loc-{s}", (cls.FMT_INT if Utils.SUMMARIES_PRESERVE_INT[s] else cls.FMT_FLOAT).format(loc_metrics[f"loc-per-file-{s}"])))
-            # end for
-
-            # vocab size
-            vocab_size_file = results_dir / lang / "ALL" / "metrics" / "vocab-size.txt"
-            vocab_size = int(IOUtils.load(vocab_size_file, IOUtils.Format.txt))
-            output_file.append_macro(latex.Macro(f"dataset-{lang}-vocab-size", cls.FMT_INT.format(vocab_size)))
-
-            # num tokens
-            num_tokens_file = results_dir / lang / "ALL" / "metrics" / "num-tokens-per-file.txt"
-            num_tokens_list = [int(l) for l in IOUtils.load(num_tokens_file, IOUtils.Format.txt).splitlines() if l != ""]
-            for s, func in Utils.SUMMARIES_FUNCS.items():
-                output_file.append_macro(latex.Macro(f"dataset-{lang}-num-tokens-{s}", (cls.FMT_INT if Utils.SUMMARIES_PRESERVE_INT[s] else cls.FMT_FLOAT).format(func(num_tokens_list))))
-            # end for
+    def replace_latex_symbol(cls, string):
+        for symbol in cls.LATEX_SYMBOL_MAP.keys():
+            string = string.replace(symbol, cls.LATEX_SYMBOL_MAP[symbol])
         # end for
+        return string
+    
+    @classmethod
+    def make_numbers_lc_requirement(cls, results_dir: Path, tables_dir: Path):
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        output_file = latex.File(tables_dir / 'lc-requirement-numbers.tex')
+        for l_i, l in enumerate(Utils.read_txt(req_file)):
+            l_split = l.strip().split('::')
+            if len(l_split)>3:
+                desc, search, exclude, transform = l_split[0], l_split[1], l_split[2], l_split[3]
+                desc = cls.replace_latex_symbol(desc)
+                search = cls.replace_latex_symbol(search)
+                exclude = cls.replace_latex_symbol(exclude)
+                transform = cls.replace_latex_symbol(transform)
+            else:
+                desc, search, exclude, transform = l_split[0], l_split[1], None, l_split[2]
+                desc = cls.replace_latex_symbol(desc)
+                search = cls.replace_latex_symbol(search)
+                transform = cls.replace_latex_symbol(transform)
+            # end if
+            output_file.append_macro(latex.Macro(f"lc_{l_i+1}_desc", desc))
+            output_file.append_macro(latex.Macro(f"lc_{l_i+1}_search", search))
+            if exclude is not None:
+                output_file.append_macro(latex.Macro(f"lc_{l_i+1}_exclude", exclude))
+            # end if
+            output_file.append_macro(latex.Macro(f"lc_{l_i+1}_transform", transform))
+        # end for
+        output_file.save()
+        return
+
+    @classmethod
+    def make_table_lc_requirement(cls, results_dir: Path, tables_dir: Path):
+        output_file = latex.File(tables_dir / "lc-requirement-table.tex")
+
+        # Header
+        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{small}")
+        output_file.append(r"\begin{center}")
+        output_file.append(r"\caption{\ReqTableCaption}")
+        output_file.append(r"\begin{tabular}{p{5cm}||p{9cm}}")
+        output_file.append(r"\toprule")
+
+        # Content
+        output_file.append(r"\tLc & \tRules \\")
+        output_file.append(r"\midrule")
+
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        for l_i, l in enumerate(Utils.read_txt(req_file)):
+            l_split = l.split('::')
+            len_l = len(l_split) # 3 or 4
+            output_file.append("\multirow{" + str(len_l-1) + "}{*}{\parbox{5cm}{" + \
+                               f"LC{l_i+1}: " + latex.Macro(f"lc_{l_i+1}_desc").use() + "}}")
+            output_file.append(" & " + latex.Macro(f"lc_{l_i+1}_search").use() + r"\\")
+            if len_l>3:
+                output_file.append(" & " + latex.Macro(f"lc_{l_i+1}_exclude").use() + r"\\")
+            # end if
+            output_file.append(" & " + latex.Macro(f"lc_{l_i+1}_transform").use() + r"\\")
+            output_file.append(r"\\")
+            output_file.append(r"\hline")
+        # end for
+
+        # Footer
+        output_file.append(r"\bottomrule")
+        output_file.append(r"\end{tabular}")
+        output_file.append(r"\end{center}")
+        output_file.append(r"\end{small}")
+        output_file.append(r"\vspace{\ReqTableVSpace}")
+        output_file.append(r"\end{table*}")
 
         output_file.save()
         return

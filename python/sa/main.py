@@ -16,7 +16,8 @@ parser.add_argument('--run', type=str, required=True,
                     choices=[
                         'requirement', 'template', 'testsuite',
                         'testmodel', 'retrain', 'analyze',
-                        'retrain_analyze', 'explain_nlp', 'selfbleu'
+                        'retrain_analyze', 'explain_nlp', 'selfbleu',
+                        'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default="sa",
                     choices=['sa'],
@@ -44,6 +45,10 @@ parser.add_argument('--label_vec_len', type=int, default=2,
                     help='label vector length for the model to be evaluated or retrained')
 parser.add_argument('--testing_on_trainset', action='store_true',
                     help='flag for testing the model with train set')
+
+# arguments for tables and plots
+parser.add_argument('--which', type=str, default=None, nargs='+',
+                    help='tables/plots that you are interested in making')
 
 args = parser.parse_args()
 def run_requirements():
@@ -244,7 +249,17 @@ def run_selfbleu():
     # end if
     selfbleu_main(nlp_task, search_dataset_name, selection_method)
     return
+
+# ==========
+# Tables & Plots
+
+def run_make_tables():
+    from .paper.Tables import Tables
+    options = args.which
+    Tables.make_tables(options)
+    return
     
+
 func_map = {
     "sa": {
         'requirement': run_requirements,
@@ -255,7 +270,8 @@ func_map = {
         'analyze': run_analyze,
         'retrain_analyze': run_retrain_analyze,
         'explain_nlp': run_explainNLP,
-        'selfbleu': run_selfbleu
+        'selfbleu': run_selfbleu,
+        'tables': run_make_tables
     }
 }
 
