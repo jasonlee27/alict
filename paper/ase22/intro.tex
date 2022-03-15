@@ -1,7 +1,7 @@
 \section{Introduction}
 \label{sec:intro}
 
-Software testing is the cruicial process when developing software.  It
+Software testing is the crucial process when developing software.  It
 evaluates an attribute or capability of the software and determines
 that it meets the requirements by examining the behavior of the
 software under test. Software testing in the early stage of the
@@ -15,21 +15,21 @@ also becomes important process as well.
 The prevalent models of NLP are evaluated via train-validation-test
 splits. train and validation set is used to train the NLP model and
 the \ho set is used for testing by measuring accuracy. The accuracy is
-a indicator of the performance of the models. Despite its usefulness,
-the main limitation of the testing paradigm is that the \ho set often
-overestimates the performances. Each dataset comes with specific
-biases, and the biases increase the discrepancy of distribution
-between dataset and real-world~\cite{recht2019imagenetbias}. The
-aforementioned accuracy on \ho set does not consider the discrepancy
-and it is limited to achieve comprehensive performrance of the NLP
-model. As a consequence, it is difficult to analyze weekness of the
-model~\cite{wu2019errudite}.
+a indicator of the performance of the models.
 
-% this paragraph goes to related, and saying behavioral testing and
-% its limitation based on our model's novelty
-On the subject of the limitation of traditional testing paradaigm, a
+Despite its usefulness, the main limitation of the testing paradigm
+is that the \ho set often overestimates the performances. Each dataset
+comes with specific biases, and the biases increase the discrepancy of
+distribution between dataset and
+real-world~\cite{recht2019imagenetbias}. The aforementioned accuracy
+on \ho set does not consider the discrepancy and it is limited to
+achieve comprehensive performrance of the NLP model. As a consequence,
+it is difficult to analyze where the errors comes
+from~\cite{wu2019errudite}.
+
+On the subject of the limitation of traditional testing paradigm, a
 number of methods have been proposed. First, multiple diagnostic
-datasets for evaluating NLP model were introduced for obtaning
+datasets for evaluating NLP model were introduced for obtaining
 generalized evaluation of the NLP model~\cite{wang2018glue}. Not only
 that, model is evaluated on different aspects such as robustness of
 the model on adversarial
@@ -71,6 +71,3 @@ We demonstrate its generality and utility as a NLP model evaluation
 tool by evaluating well-known \sa models: \Bert~\cite{devlin2019bert},
 \Roberta~\cite{liu2019roberta} and \Dbert~\cite{sanh2019distilbert}.
 We show that
-
-
-% our paper's contribution

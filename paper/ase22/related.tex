@@ -1,0 +1,42 @@
+\section{Related Work}
+\label{sec:related}
+
+\textbf{NLP Testing.} With the increasing use of NLP models,
+evaluation of NLP models is becoming more important. Wang \textit{et
+  al.}~\cite{wang2018glue} propose multiple diagnostic datasets to
+evaluate NLP models. Few recent works have also considered model
+robustness as an aspect for model evaluation. Different methods like
+adversarial set generation~\cite{ribeiro2018sear,belinkov2018breaknmt,
+  rychalska2019wildnlp,iyyer2018adversarial}, fairness
+evaluation~\cite{prabhakaran2019fairness,rottger2020hatecheck},
+logical consistency evaluation~\cite{ribeiro2019consistencyeval},
+prediction interpretations~\cite{ribeiroSG16lime} and interactive
+error analysis~\cite{wu2019errudite} have been proposed to evaluate
+model robustness. More recently, \Chlst introduces input-output
+behaviors of linguistic capabilities and generates behavior-guided
+inputs for validating the behaviors.~\cite{marcoACL2020checklist}
+However, the approach only relies on manually generated input
+templates, thus the template generation becomes expensive and time
+consuming. Also, it does not guarantee the comprehensive evaluation.
+
+\begin{comment}
+Not only that, model is evaluated on different aspects such as
+robustness of the model on adversarial
+sets~\cite{ribeiro2018sear,belinkov2018breaknmt,
+  rychalska2019wildnlp,iyyer2018adversarial},
+fairness~\cite{prabhakaran2019fairness,rottger2020hatecheck}, logical
+consistancy~\cite{ribeiro2019consistencyeval}, prediction
+interpretations~\cite{ribeiroSG16lime} and interactive error
+analysis~\cite{wu2019errudite}. Especially, \Chlst implements
+behavioral testing methodolgy for evaluating multiple linguistic
+capabilities of NLP model~\cite{marcoACL2020checklist}. \Chlst
+introduces input-output behaviors of linguistic capabilities and
+generates behavior-guided inputs for validating the behaviors. It
+provides comprehensive behavioral testing of NLP models through a
+number of generated inputs. However, the approach only relies on
+manually generated input templates, thus the template generation
+becomes expensive and time consuming. In addition, the generated
+templates are selective and often too simple, and it is limited to
+provide restricted evaluation of linguistic capabilities. Thus, it
+does not garauntee the comprehensive evaluation.
+\end{comment}
