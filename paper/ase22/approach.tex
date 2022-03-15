@@ -4,15 +4,14 @@
 \begin{figure*}
   \centering
   \includegraphics[width=\linewidth]{figs/overview.pdf}
-  \caption{Overview of \tool{}.}
-  \label{fig:overview}
+  \caption{\OverviewFigCaption}
 \end{figure*}
 
 \sw{Some paragraphs in this overview part should go earlier in the
   paper. I am just writing them here for now as I don't think we have
   them in the intro/background yet.}  We design and implement
 \emph{Specification- and Syntax-based Linguistic Capability Testing
-  (\tool{})} to automatically generate test cases to test the
+  (\tool)} to automatically generate test cases to test the
 robustness of sentiment analysis models. We identify four goals for a
 large and effective test suite:
 
@@ -38,17 +37,17 @@ We present \tool{}, a new linguistic capability test case generation
 tool, that satisfies all of these criteria.  \sw{I could not summarize
   a cohesive idea that drives our design. Leaving it here to fill in.
   Also, I felt my writing below still lacks justification for some
-  design choices (e.g., why we do the differentiation).}  Figure
-\ref{fig:overview} shows the overview of \tool{}, which consists of
-two phases.  The \emph{specification-based seed generation} phase
-performs rule-based searches from a real-world dataset ({\bf G1}) and
-template-based transformation to obtain the initial seed sentences.
-The search rules (e.g., search for neutral sentences that do not
-include any positive or negative words) and transformation templates
-(e.g., \sw{add an example}) are defined in the \emph{linguistic
-  capability specifications}, which guarantee that each resulting seed
-conforms to a specific linguistic capability ({\bf G3}) and is
-labelled correctly ({\bf G4}).
+  design choices (e.g., why we do the differentiation).}
+Figure~\ref{fig:overview} shows the overview of \tool{}, which
+consists of two phases.  The \emph{specification-based seed
+  generation} phase performs rule-based searches from a real-world
+dataset ({\bf G1}) and template-based transformation to obtain the
+initial seed sentences.  The search rules (e.g., search for neutral
+sentences that do not include any positive or negative words) and
+transformation templates (e.g., \sw{add an example}) are defined in
+the \emph{linguistic capability specifications}, which guarantee that
+each resulting seed conforms to a specific linguistic capability ({\bf
+  G3}) and is labelled correctly ({\bf G4}).
 
 The \emph{syntax-based sentence expansion} phase expands the seed
 sentences with additional syntactic elements (i.e., words \sw{more?})
@@ -123,52 +122,7 @@ transformation templates of all 11 linguistic capabilities we
 implemented in \tool{}. \sw{will revise the rest of 3.1 after talking
   to Jaeseong... I think we can show all the specifications.}
 
-\begin{table*}[t]
-\small
-\centering
-\begin{tabular}{l|l}
-  {\bf Linguistic capability}	 & {\bf Search rule and transformation template}\\
-  \hline
-  LC1: Short sentences with neutral & search: \{length: <10; include: neutral adjs \& neutral nouns; \\
-  adjectives and nouns & exclude: pos adjs \& neg adjs \& pos nouns \& neg nouns; label: neutral\}  \\
-  & transform: - \\
-  \hline
-  LC2: Short sentences with  & search: \{length: <10; include: pos adjs; exclude: neg adjs \& neg verbs \& neg nouns; label: pos\} \\
-  sentiment-laden adjectives  & | \{length: <10; include: neg adjs; exclude: pos adjs \& pos verbs \& pos nouns \& neg verbs \& neg nouns; label: neg\}  \\
-  & transform: - \\
-  \hline
-  LC3: Sentiment change over time, & search: \{label: pos\} | \{label: neg\} \\
-  present should prevail & transform: \\
-  \hline
-  LC4: Negated negative should be & search: \{start: [This, That, These, Those] X [is, are]; label: neg\} \\
-  positive or neutral & transform:  \\
-  \hline
-  LC5: Negated neutral should & search: \{start: [This, That, These, Those] X [is, are]; label: neutral\} \\
-  still be neutral & transform: \\
-  \hline
-  LC6: Negation of negative at the & search: \{label: neg\} \\
-  end, should be positive or neutral & transform: \\
-  \hline
-  LC7: Negated positive with neutral & search: \{length: <20; label: pos\} | \{length: <20; label: neutral\} \sw{Not sure about this rule.} \\
-  content in the middle & transform: \\
-  \hline
-  LC8: Author sentiment is more & search: \{label: pos\} | \{label: neg\} \\
-  important than of others & transform: \\
-  \hline
-  LC9: parsing sentiment in & search: \{label: pos\} | \{label: neg\} \\
-  (question, yes) form & transform: \\
-  \hline
-  LC10: Parsing positive sentiment & search: \{label: pos\} \\
-  in (question, no) form & transform: \\
-  \hline
-  LC11: Parsing negative sentiment & search: \{label: neg\} \\
-  in (question, no) form & transform: \\
-  \hline
-\end{tabular}
-\caption{Search rules and transformation templates for linguistic capabilities. \sw{Add transformation templates. May need to find a better specification language.}}
-\label{tab:specification}
-\end{table*}
-
+\InputWithSpace{tables/lc-requirement-table}
 
 \begin{figure}[t]
   \centering

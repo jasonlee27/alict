@@ -10,6 +10,7 @@ Repeated entry---line 244 of file bib.bib
  : @inproceedings{wu2019errudite
  :                              ,
 I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for ""
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=20001) to 20 items from 10.

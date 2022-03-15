@@ -69,6 +69,7 @@
 \newcommand{\UseMacro}[1]{\csname rmk-#1\endcsname}
 \newcommand{\CfgStmtTableCaptionVSpace}{-5pt}
 \newcommand{\ResultTableCaptionVSpace}{-5pt}
+\newcommand{\ReqTableVSpace}{-5pt}
 \newcommand{\AblationResultTableCaptionVSpace}{-5pt}
 
 \newcommand{\jl}[1]{\textcolor{magenta}{JL: #1}}
@@ -188,10 +189,11 @@
 \newcommand{\tStatement}{\textbf{Statement Types}}
 \newcommand{\tModel}{\textbf{Models}}
 \newcommand{\tMetric}{\textbf{Metrics}}
-
+\newcommand{\tLc}{\textbf{Linguistic capability}}
+\newcommand{\tRules}{\textbf{Search rule and transformation template}}
 
 %% Fig Caption
-\newcommand{\OverallModelFigCaption}{Overall diagram of \Model.\label{fig:OverallModel}}
+\newcommand{\OverviewFigCaption}{Overview of \tool.\label{fig:overview}}
 \newcommand{\SearchRequirementExampleFigCaption}{Search requirement
 on the linguistic capability of \SareqExOne.\label{fig:SearchReqEx}}
 \newcommand{\TransformRequirementExampleSubFigCaption}{Transform requirement\label{fig:TransformReqSubEx}}
@@ -202,7 +204,7 @@ requirement (\ref{fig:TransformReqSubEx}) and its template
 \newcommand{\ProdDiffAlgCaption}{Pseudocode of Production differentiation\label{code:ProdDiffAlg}}
 
 %% Table Caption
-\newcommand{\CfgStmtTableCaption}{List of statement used for building \Cfg.\label{table:CfgStmt}\vspace{-5pt}}
+\newcommand{\ReqTableCaption}{Search rules and transformation templates for linguistic capabilities. \sw{Add transformation templates. May need to find a better specification language.}.\label{tab:specification}\vspace{\ReqTableVSpace}}
 \newcommand{\ResultTableCaption}{Results on \Nlp tasks
 of \Ccd, \Ctr, \Cref repectively.\label{table:Result}\vspace{-5pt}}
 \newcommand{\AblationResultTableCaption}{Results of ablation study
@@ -210,5 +212,5 @@ of \Cfg node type embedding on \Nlp tasks of \Ccd, \Ctr, \Cref repectively.\labe
 
 
 %%% NUMBRERS
-%% \input{tables/cfg-stmt-numbers}
+\input{tables/lc-requirement-numbers}
 %% \input{tables/results-numbers}
