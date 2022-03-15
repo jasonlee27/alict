@@ -1,0 +1,36 @@
+Short sentences with neutral adjectives and nouns::search: {length: <10; include: neutral adjs & neutral nouns;::exclude: pos adjs & neg adjs & pos nouns & neg nouns; label: neutral}::transform: -
+Short sentences with sentiment-laden adjectives::search: {length: <10; include: pos adjs;::exclude: neg adjs & neg verbs & neg nouns; label: pos} | {length: <10; include: neg adjs;exclude: pos adjs & pos verbs & pos nouns & neg verbs & neg nouns; label: neg}::transform: -
+Sentiment change over time, present should prevail::search: {label: pos} | {label: neg}::transform:{["Previously, I used to like it saying that","Last time, I agreed with saying that","I liked it much as to say that"]+[neg sent]+['but', 'although', 'on the other hand']+["now I don't like it.", "now I hate it."]} | {["I used to disagree with saying that","Last time, I didn't like it saying that","I hated it much as to say that"]+[neg sent]+['but', 'although', 'on the other hand']+["now I like it."]}
+Negated negative should be positive or neutral::search: {start: [This, That, These, Those] X [is, are]; label: neg}::transform: negation of demonstratives
+Negated neutral should still be neutral::search: {start: [This, That, These, Those] X [is, are]; label: neutral}::transform: negation of demonstratives
+Negation of negative at the end, should be positive or neutral::search: {label: neg}::transform:{["I agreed that", "I thought that"]+[neg sent]+["but it wasn't", "but I didn't"]}
+Negated positive with neutral content in the middle::search: {length: <20; label: pos} | {length: <20; label: neutral}::transform:{["I wouldn't say,", "I do not think,", "I don't agree with,"]+[neutral sent]+[pos sent]}
+Author sentiment is more important than others::search: {label:pos} | {label: neg}::transform:{["Some people think that", "Many people agree with that", "They think that", "You agree with that"]+[pos sent | neg sent]+["but I think that"]+[neg sent | pos sent]}
+Parsing sentiment in (question, yes) form::search: {label: pos} | {label: neg}::transform:{["Do I think that", "Do I agree that"]+[pos sent | neg sent]+["? yes"]}
+Parsing positive sentiment in (question, no) form::search: \{label: pos\}::transform:{["Do I think that", "Do I agree that"]+[pos sent]+["? no"]}
+Parsing negative sentiment in (question, no) form::search: \{label: neg\}::transform:{["Do I think that", "Do I agree that"]+[neg sent]+["? no"]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
