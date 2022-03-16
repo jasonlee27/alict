@@ -26,6 +26,53 @@ import random
 import numpy as np
 
 
+class Sst2:
+    
+    # SST2 dataset is used for retraining with our generated testcases.
+    # For retraining, we only use train.tsv file.
+
+    @classmethod
+    def get_sents(cls, sent_file: Path):
+        # sent_file: train.tsv.
+        # Each line in the file consists of (sentence, label)
+        sents = read_sv(sent_file, delimeter=r'\t', is_first_attributes=True)
+        sents = sents['lines']
+        result = list()
+        for s_i, s in sents:
+            result.append((s_i,s[0],s[1]))
+        # end for
+        return result
+    
+    @classmethod
+    def write_sst2_train_sents(cls, save_file):
+        sst2_train_file = Macros.sst2_dir / 'train.tsv'
+        sents = cls.get_sents(sst2_train_file)
+        dataset = {
+            'train': {
+                'text': list(),
+                'label': list()
+            }
+        }
+        for s in sents:
+            dataset['train']['text'].append(s[1])
+            dataset['train']['label'].append(s[2])
+        # end for
+        Utils.write_json(dataset, save_file, pretty_format=True)
+        return dataset
+    
+    @classmethod
+    def get_trainset_for_retrain(cls):
+        if not os.path.exists(Macros.sst2_sa_trainset_file):
+            Macros.retrain_dataset_dir.mkdir(parents=True, exist_ok=True)
+            return cls.write_checklist_testcase(
+                Macros.sst2_sa_trainset_file,
+            )
+        # end if
+        return Utils.read_json(
+            Macros.sst2_sa_trainset_file
+        )
+
+    
 class SstTestcases:
 
     LC_NOT_INCLUDED_LIST = [
@@ -289,10 +336,21 @@ class Retrain:
     def load_model(self, model_name):
         return AutoModelForSequenceClassification.from_pretrained(model_name)
 
+    def merge_train_data(self, sst_train_data, testcases):
+        # TODO
+        pass
+    
     def get_tokenized_dataset(self, dataset_file, eval_dataset_file):
+        
+        sst2_train_dataset = Utils.read_json(Macros.sst2_sa_trainset_file)
+        
         raw_dataset = Utils.read_json(dataset_file)
         train_texts = self.tokenizer(raw_dataset['train']['text'], truncation=True, padding=True)
         train_labels = raw_dataset['train']['label']
+
+        train_texts, train_labels = self.merge_train_data(
+            sst2_train_dataset, train_texts, train_labels
+        )
         train_dataset = Dataset(train_texts, labels=train_labels, label_vec_len=self.label_vec_len)
         
         raw_eval_dataset = Utils.read_json(eval_dataset_file)
@@ -472,6 +530,10 @@ class Retrain:
         _print('**********')
         return
 
+    @classmethod
+    def get_sst2_testcase_for_retrain(cls, task):
+        return Sst2.get_trainset_for_retrain(task)
+    
     @classmethod
     def get_sst_testcase_for_retrain(cls, task, selection_method):
         return SstTestcases.get_testcase_for_retrain(task, selection_method)
