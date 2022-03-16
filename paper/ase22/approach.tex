@@ -239,9 +239,9 @@ masked sentences for the next sentence expansion and validation phase.
 \sw{Add justification: why we need to select k masked sentences
   (performance?) and why random makes sense.}
 
-\begin{figure}
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=\linewidth]{figs/expansion.pdf}
+  \includegraphics[scale=0.7]{figs/running_example.pdf}
   \caption{Example of masked sentence generation. \sw{Expansion: Or both {MASK}. -> Masked sentence: Or both {MASK.}}}
 %  Expansion of the seed sentence ``Or
 %both.''. For a \prodr in seed ``NP->[DT]'' on the left, the \prodr of
@@ -249,7 +249,7 @@ masked sentences for the next sentence expansion and validation phase.
 %seed and ``NP->[DT]'' is replaced with ``NP->[DT, NNS]'' and it generates new
 %expanded sentence on the right.
 \label{fig:ExpEx}
-\end{figure}
+\end{figure*}
 
 Figure \ref{fig:ExpEx} shows an example using Algorithm \ref{alg:diff}
 to generate a masked sentence. The sentence ``Or both." is a seed of

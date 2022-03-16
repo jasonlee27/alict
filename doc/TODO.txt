@@ -13,6 +13,10 @@ TASKS
 
 ==========
 
+  + [JL] make requirement description table in the paper.
+
+  + [JL] extend/generate running_example.pdf figure in the paper.
+
   + [JL] make slides for structure of paper (overview, what how we would
     like to say from our approach/experiment).
 
