@@ -312,8 +312,8 @@ class Retrain:
                  dataset_file,
                  eval_dataset_file,
                  output_dir,
-                 lc_desc = None,
-                 log_file=None):
+                 lc_desc=None,
+                 logger=None):
         self.task = task
         self.model_name = model_name
         self.selection_method = selection_method
@@ -329,7 +329,7 @@ class Retrain:
         self.batch_size = 16
         self.num_epochs = 5.
         self.lc_desc = lc_desc
-        self.log_file = log_file
+        self.logger = logger
         
     def load_tokenizer(self, model_name):
         return AutoTokenizer.from_pretrained(model_name)
@@ -345,7 +345,7 @@ class Retrain:
         labels =[raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==self.lc_desc]
         return texts, labels
     
-    def get_testcases(self, dataset_file):
+    def get_testcases(self, dataset_file, lc_desc=None):
         raw_testcases = Utils.read_json(dataset_file)
         if self.train_by_lcs and lc_desc is not None:
             return self.get_train_data_by_lc_types()
@@ -537,7 +537,7 @@ class Retrain:
         _print(f"***** Baseline: checklist *****")
         _print(f">>>>> RETRAINED MODEL: {self.model_name}")
         model = self.load_retrained_model()
-        testsuite = Testmodel.load_testsuite(Macros.BASELINES['checklist']['testsuite_file'])
+        testsuite = Testmodel.load_testsuite(Macros.BASELINES[Macros.datasets[Macros.sa_task][1]]['testsuite_file'])
         self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples)
         _print(f"<<<<< RETRAINED MODEL: {self.model_name}")
         _print('**********')
@@ -561,10 +561,16 @@ def _retrain_by_lc_types(task,
                          label_vec_len,
                          dataset_file,
                          eval_dataset_file,
-                         train_by_lcs=True,
-                         test_by_lcs=True):
+                         log_file=None):
+    if log_file is None:
+        logger = None
+    else:
+        logger = Logger(logger_file=log_file,
+                        logger_name='retrain_over_lcs')
+    # end if
     raw_dataset = Utils.read_json(dataset_file)
     for lc_desc in list(set(raw_dataset['train']["test_name"])):
+        logger.print(f"***** Retrain: {lc_desc}+SST2 *****")
         retrainer = Retrain(task,
                             model_name,
                             selection_method,
@@ -572,7 +578,8 @@ def _retrain_by_lc_types(task,
                             dataset_file,
                             eval_dataset_file,
                             output_dir,
-                            lc_desc=lc_desc)
+                            lc_desc=lc_desc,
+                            logger=logger)
         eval_result_before = retrainer.evaluate(lc_desc=lc_desc)
         retrainer.train()
         eval_result_after = retrainer.evaluate(lc_desc=lc_desc)
@@ -582,23 +589,60 @@ def _retrain_by_lc_types(task,
         }
         lc_desc = lc_desc.replace(' ', '_')
         Utils.write_json(eval_result, output_dir / f"eval_results_{lc_desc}.json", pretty_format=True)
-        if dataset_name.lower()=='sst':
-            retrainer.test_on_checklist_testsuite()
-        elif dataset_name=='checklist':
-            retrainer.test_on_our_testsuites()
+        if dataset_name.lower()==Macros.datasets[Macros.sa_task][0]:
+            retrainer.test_on_checklist_testsuite(logger=logger)
+        elif dataset_name==Macros.datasets[Macros.sa_task][1]:
+            retrainer.test_on_our_testsuites(logger=logger)
         # end if
     # end for
     return eval_result
+
+def _retrain_all(task,
+                 model_name,
+                 selection_method,
+                 label_vec_len,
+                 dataset_file,
+                 eval_dataset_file,
+                 log_file=None):
+    if log_file is None:
+        logger = None
+    else:
+        logger = Logger(logger_file=log_file,
+                        logger_name='retrain_all')
+    # end if
+    retrainer = Retrain(task,
+                        model_name,
+                        selection_method,
+                        label_vec_len,
+                        dataset_file,
+                        eval_dataset_file,
+                        output_dir,
+                        lc_desc=None,
+                        logger=logger)
+    eval_result_before = retrainer.evaluate()
+    retrainer.train()
+    eval_result_after = retrainer.evaluate()
+    eval_result = {
+        'before': eval_result_before,
+        'after': eval_result_after
+    }
+    Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
+    if dataset_name.lower()==Macros.datasets[Macros.sa_task][0]:
+        retrainer.test_on_checklist_testsuite(logger=logger)
+    elif dataset_name==Macros.datasets[Macros.sa_task][1]:
+        retrainer.test_on_our_testsuites(logger=logger)
+    # end if
+    return eval_result
     
-def retrain(
-        task,
-        model_name,
-        selection_method,
-        label_vec_len,
-        dataset_file,
-        eval_dataset_file,
-        train_by_lcs=True,
-        test_by_lcs=True):
+def retrain(task,
+            model_name,
+            selection_method,
+            label_vec_len,
+            dataset_file,
+            eval_dataset_file,
+            train_by_lcs=True,
+            test_by_lcs=True,
+            log_file=None):
     tags = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
     dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
     model_dir_name = tags+"_"+model_name.replace("/", "-")
@@ -610,63 +654,46 @@ def retrain(
                                            label_vec_len,
                                            dataset_file,
                                            eval_dataset_file,
-                                           train_by_lcs=train_by_lcs,
-                                           test_by_lcs=test_by_lcs):
+                                           log_file=log_file):
     else:
-        retrainer = Retrain(task,
+        eval_result = _retrain_all(task,
+                                   model_name,
+                                   selection_method,
+                                   label_vec_len,
+                                   dataset_file,
+                                   eval_dataset_file,
+                                   log_file=log_file):
+    # end if
+    return eval_result
+
+def eval_on_train_testsuite(task,
                             model_name,
                             selection_method,
                             label_vec_len,
                             dataset_file,
                             eval_dataset_file,
-                            output_dir,
-                            lc_desc=None)
-        eval_result_before = retrainer.evaluate()
-        retrainer.train()
-        eval_result_after = retrainer.evaluate()
-        eval_result = {
-            'before': eval_result_before,
-            'after': eval_result_after
-        }
-        Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
-        if dataset_name.lower()=='sst':
-            retrainer.test_on_checklist_testsuite()
-        elif dataset_name=='checklist':
-            retrainer.test_on_our_testsuites()
-        # end if
-    # end if
-    return eval_result
-
-def eval_on_train_testsuite(
-        task,
-        model_name,
-        selection_method,
-        label_vec_len,
-        dataset_file,
-        eval_dataset_file,
-        log_file=None):
-    tags = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
-    dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
-    model_dir_name = tags+"_"+model_name.replace("/", "-")
-    output_dir = Macros.retrain_model_dir / task / model_dir_name
-    retrainer = Retrain(
-        task,
-        model_name,
-        selection_method,
-        label_vec_len,
-        dataset_file,
-        eval_dataset_file,
-        output_dir,
-    )
+                            log_file=None):
     if log_file is None:
         logger = None
     else:
         logger = Logger(logger_file=log_file,
                         logger_name='eval_on_train_testsuite')
     # end if
-    if dataset_name.lower()=='sst':
-        retrainer.test_on_our_testsuites(logger)
-    elif dataset_name=='checklist':
-        retrainer.test_on_checklist_testsuite(logger)
+    tags = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
+    dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
+    model_dir_name = tags+"_"+model_name.replace("/", "-")
+    output_dir = Macros.retrain_model_dir / task / model_dir_name
+    retrainer = Retrain(task,
+                        model_name,
+                        selection_method,
+                        label_vec_len,
+                        dataset_file,
+                        eval_dataset_file,
+                        output_dir,
+                        logger=logger)
+    if dataset_name.lower()==Macros.datasets[Macros.sa_task][0]:
+        retrainer.test_on_our_testsuites(logger=logger)
+    elif dataset_name==Macros.datasets[Macros.sa_task][1]:
+        retrainer.test_on_checklist_testsuite(logger=logger)
     # end if
     return
