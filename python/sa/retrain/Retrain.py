@@ -703,6 +703,7 @@ def main_retrain(nlp_task,
                  model_name, 
                  label_vec_len, 
                  retrain_by_lcs,
+                 testing_on_trainset
                  log_file):
     testcase_file, eval_testcase_file = None, None
     if search_dataset_name==Macros.datasets[nlp_task][0]:
@@ -729,7 +730,7 @@ def main_retrain(nlp_task,
         # end if
     # end if
 
-    if not args.testing_on_trainset:
+    if not testing_on_trainset:
         _ = retrain(
             task=nlp_task,
             model_name=model_name,
@@ -741,9 +742,6 @@ def main_retrain(nlp_task,
             log_file=log_file
         )
     else:
-        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
-        log_dir.mkdir(parents=True, exist_ok=True)
-        log_file = log_dir / "test_orig_model.log"
         if search_dataset_name==Macros.datasets[nlp_task][0]:
             eval_testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_sst_{selection_method}_testcase.json"
         elif search_dataset_name==Macros.datasets[nlp_task][1]:

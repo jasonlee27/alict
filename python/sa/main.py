@@ -128,13 +128,22 @@ def run_retrain():
     selection_method = args.syntax_selection
     model_name = args.model_name
     label_vec_len = args.label_vec_len
+    testing_on_trainset = args.testing_on_trainset
     retrain_by_lcs = args.lcs
+    log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / "retrain_over_lcs.log" if retrain_by_lcs else log_dir / "retrain_all.log"
+    if testing_on_trainset:
+        log_file = log_dir / "test_orig_model.log"
+    # end if
     main_retrain(nlp_task, 
                  search_dataset_name, 
                  selection_method, 
                  model_name, 
                  label_vec_len, 
-                 retrain_by_lcs)
+                 retrain_by_lcs,
+                 testing_on_trainset,
+                 log_file)
     return
 
 def run_analyze():
