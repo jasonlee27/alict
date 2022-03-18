@@ -3,15 +3,15 @@ TASKS
   - [JL] get the self-bleu score number for checklist testcases and
     our testcases
 
-  - [JL] implementing logging for logging all printing into file
-
-  - [JL] retraining models with original dataset(SST-2) + original
+  + [JL] retraining models with original dataset(SST-2) + original
     failed cases
 
   - [JL] understand DENAS for our implementation
 
 
 ==========
+
+  + [JL] implementing logging for logging all printing into file
 
   + [JL] make requirement description table in the paper.
 
