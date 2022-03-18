@@ -49,11 +49,10 @@ function retrain_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
          echo "***** TRAIN: ours, EVAL: checklist *****"
-         mkdir -p ./_results/retrain/models/sa/sa_sst_PROB_textattack-bert-base-uncased-SST-2
          CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
                              --run retrain \
                              --search_dataset sst \
-                             --syntax_selection prob \
+                             --syntax_selection random \
                              --lcs \
                              --model_name textattack/bert-base-uncased-SST-2 
 
@@ -61,11 +60,10 @@ function retrain_models() {
                              --run retrain \
                              --testing_on_trainset \
                              --search_dataset sst \
-                             --syntax_selection prob \
+                             --syntax_selection random \
                              --model_name textattack/bert-base-uncased-SST-2
 
          echo "***** TRAIN: checklist, EVAL: ours *****"
-         mkdir -p ./_results/retrain/models/sa/sa_checklist_textattack-bert-base-uncased-SST-2
          CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
                              --run retrain \
                              --search_dataset checklist \
@@ -109,14 +107,13 @@ function explain_nlp() {
                                         --run explain_nlp \
                                         --search_dataset sst \
                                         --syntax_selection random \
-                                        --model_name textattack/bert-base-uncased-SST-2 > ./_results/retrain/explain_nlp/explain_nlp_result_sst_PROB_textattack_bert-base-uncased-SST-2.txt
+                                        --model_name textattack/bert-base-uncased-SST-2 > ./_results/retrain/explain_nlp/explain_nlp_result_sst_random_textattack_bert-base-uncased-SST-2.txt
 }
 
 function selfbleu() {
         (cd ${_DIR}
          python -m python.sa.main --run selfbleu --search_dataset sst --syntax_selection random
         )
-}
 }
 
 function main() {

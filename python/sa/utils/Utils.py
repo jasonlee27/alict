@@ -96,7 +96,7 @@ class Utils:
                     lines = f.readlines()
                     return {
                         'attributes': lines[0].split(delimeter),
-                        'lines': [l.split(delimeter) for l in lines[1:]]
+                        'lines': [l.strip().split(delimeter) for l in lines[1:]]
                     }
                 # end if
                 return [l.split(delimeter) for l in f.readlines()]

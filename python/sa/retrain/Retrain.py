@@ -35,10 +35,10 @@ class Sst2:
     def get_sents(cls, sent_file: Path):
         # sent_file: train.tsv.
         # Each line in the file consists of (sentence, label)
-        sents = read_sv(sent_file, delimeter=r'\t', is_first_attributes=True)
+        sents = Utils.read_sv(sent_file, delimeter='\t', is_first_attributes=True)
         sents = sents['lines']
         result = list()
-        for s_i, s in sents:
+        for s_i, s in enumerate(sents):
             result.append((s_i,s[0],s[1]))
         # end for
         return result
@@ -64,7 +64,7 @@ class Sst2:
     def get_trainset_for_retrain(cls):
         if not os.path.exists(Macros.sst2_sa_trainset_file):
             Macros.retrain_dataset_dir.mkdir(parents=True, exist_ok=True)
-            return cls.write_checklist_testcase(
+            return cls.write_sst2_train_sents(
                 Macros.sst2_sa_trainset_file,
             )
         # end if
@@ -327,7 +327,7 @@ class Retrain:
         model_dir_name = model_name.replace("/", "-")
         self.output_dir = output_dir
         self.batch_size = 16
-        self.num_epochs = 5.
+        self.num_epochs = 2.
         self.lc_desc = lc_desc
         self.logger = logger
         
@@ -337,30 +337,34 @@ class Retrain:
     def load_model(self, model_name):
         return AutoModelForSequenceClassification.from_pretrained(model_name)
 
-    def get_train_data_by_lc_types(self):
+    def get_train_data_by_lc_types(self, lc_desc):
         eval_dataset = dict()
         raw_dataset = Utils.read_json(self.dataset_file)
         texts, labels = None, None
-        texts =[raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==self.lc_desc]
-        labels =[raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==self.lc_desc]
-        return texts, labels
+        return {
+            'train': {
+                'text': [raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc_desc],
+                'label': [raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc_desc]
+            }
+        }
     
     def get_testcases(self, dataset_file, lc_desc=None):
         raw_testcases = Utils.read_json(dataset_file)
-        if self.train_by_lcs and lc_desc is not None:
-            return self.get_train_data_by_lc_types()
+        if lc_desc is not None:
+            return self.get_train_data_by_lc_types(lc_desc)
         # end if
         return raw_testcases
     
     def merge_train_data(self, sst_train_data, testcases):
-        for s, l in zip(testcases['train']['text'], testcases['test']['label']):
-            sst_train_data['train']['text'].append(s)
+        for t_i, t in enumerate(testcases['train']['text']):
+            l = testcases['train']['label'][t_i]
+            sst_train_data['train']['text'].append(t)
             sst_train_data['train']['label'].append(l)
         # end for
         return sst_train_data
         
     def get_tokenized_dataset(self, dataset_file, eval_dataset_file, lc_desc=None):        
-        sst2_train_dataset = Utils.read_json(Macros.sst2_sa_trainset_file)
+        sst2_train_dataset = Sst2.get_trainset_for_retrain()
         
         raw_testcases = self.get_testcases(dataset_file, lc_desc=lc_desc)
         raw_dataset = self.merge_train_data(sst2_train_dataset, raw_testcases)
@@ -433,12 +437,17 @@ class Retrain:
             "f1": f1
         }
     
-    def get_eval_data_by_lc_types(self):
+    def get_eval_data_by_lc_types(self, lc_desc=None):
         eval_dataset = dict()
         raw_dataset = Utils.read_json(self.eval_dataset_file)
-        eval_texts =[raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==self.lc_desc]
+        if lc_desc is not None:
+            eval_texts =[raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc_desc]
+            eval_labels =[raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc_desc]
+        else:
+            eval_texts =[raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"])]
+            eval_labels =[raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"])]
+        # end if
         eval_texts = self.tokenizer(eval_texts, truncation=True, padding=True)
-        eval_labels =[raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==self.lc_desc]
         eval_dataset = Dataset(eval_texts, labels=eval_labels, label_vec_len=self.label_vec_len)
         return eval_dataset
     
@@ -459,7 +468,7 @@ class Retrain:
         self.tokenizer.save_pretrained(self.output_dir)
         return
     
-    def evaluate(self, lc_desc=False):
+    def evaluate(self, lc_desc=None):
         training_args = TrainingArguments(
             output_dir=self.output_dir,
             per_device_eval_batch_size=self.batch_size,
@@ -475,7 +484,7 @@ class Retrain:
                 eval_dataset=eval_dataset,
                 compute_metrics=self.compute_metrics,
             )
-            results[test_name] = trainer.evaluate()
+            results[lc_desc] = trainer.evaluate()
         else:
             trainer = Trainer(
                 model=self.model,
@@ -545,7 +554,7 @@ class Retrain:
 
     @classmethod
     def get_sst2_testcase_for_retrain(cls, task):
-        return Sst2.get_trainset_for_retrain(task)
+        return Sst2.get_trainset_for_retrain()
     
     @classmethod
     def get_sst_testcase_for_retrain(cls, task, selection_method):
