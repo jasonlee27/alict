@@ -72,7 +72,7 @@ class Sst2:
             Macros.sst2_sa_trainset_file
         )
 
-    
+
 class SstTestcases:
 
     LC_NOT_INCLUDED_LIST = [
@@ -338,19 +338,24 @@ class Retrain:
 
     def merge_train_data(self, sst_train_data, testcases):
         # TODO
-        pass
-    
+        for s, l in zip(testcases['train']['text'], testcases['test']['label']):
+            sst_train_data['train']['text'].append(s)
+            sst_train_data['train']['label'].append(l)
+        # end for
+        return sst_train_data
+            
+        
     def get_tokenized_dataset(self, dataset_file, eval_dataset_file):
         
         sst2_train_dataset = Utils.read_json(Macros.sst2_sa_trainset_file)
         
-        raw_dataset = Utils.read_json(dataset_file)
+        raw_testcases = Utils.read_json(dataset_file)
+        raw_dataset = self.merge_train_data(
+            sst2_train_dataset, taw_testcases
+        )
         train_texts = self.tokenizer(raw_dataset['train']['text'], truncation=True, padding=True)
         train_labels = raw_dataset['train']['label']
 
-        train_texts, train_labels = self.merge_train_data(
-            sst2_train_dataset, train_texts, train_labels
-        )
         train_dataset = Dataset(train_texts, labels=train_labels, label_vec_len=self.label_vec_len)
         
         raw_eval_dataset = Utils.read_json(eval_dataset_file)
