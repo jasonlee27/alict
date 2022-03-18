@@ -1,2 +1,1724 @@
 ***** TASK: sa, SEARCH_DATASET: sst, SELECTION: noselect *****
 Analyzing CFG ...
+>>>>> REQUIREMENT:Short sentences with neutral adjectives and nouns
+	19 inputs are selected.
+	SELECTED_SEED 1: 9392, They should have found Orson Welles' great-grandson., neutral, 0.5 ::
+10 syntax expansions ::
+155 words suggestions ::
+49 word suggestion by req
+	SELECTED_SEED 2: 11730, Calculated swill., neutral, 0.43056 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 3: 10062, It has been 20 years since 48 Hrs., neutral, 0.48611 ::
+26 syntax expansions ::
+170 words suggestions ::
+52 word suggestion by req
+	SELECTED_SEED 4: 1646, Part Three Stooges., neutral, 0.5 ::
+5 syntax expansions ::
+4 words suggestions ::
+4 word suggestion by req
+	SELECTED_SEED 5: 7282, but ` Why? ', neutral, 0.5 ::
+2 syntax expansions ::
+16 words suggestions ::
+2 word suggestion by req
+	SELECTED_SEED 6: 3510, This is SO De Palma., neutral, 0.51389 ::
+13 syntax expansions ::
+98 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 7: 7988, For the most part, the ingredients are there., neutral, 0.56944 ::
+26 syntax expansions ::
+198 words suggestions ::
+12 word suggestion by req
+	SELECTED_SEED 8: 9859, This Scarlet's letter is A. . ., neutral, 0.58333 ::
+23 syntax expansions ::
+73 words suggestions ::
+21 word suggestion by req
+	SELECTED_SEED 9: 5943, Here is my advice, Kev., neutral, 0.5 ::
+17 syntax expansions ::
+137 words suggestions ::
+43 word suggestion by req
+	SELECTED_SEED 10: 7658, Pumpkin wants to have it both ways., neutral, 0.48611 ::
+22 syntax expansions ::
+61 words suggestions ::
+19 word suggestion by req
+	SELECTED_SEED 11: 2875, The movie should be credited with remembering his victims., neutral, 0.59722 ::
+25 syntax expansions ::
+266 words suggestions ::
+11 word suggestion by req
+	SELECTED_SEED 12: 9818, ` Snow Dogs' has both., neutral, 0.5 ::
+13 syntax expansions ::
+55 words suggestions ::
+24 word suggestion by req
+	SELECTED_SEED 13: 2855, Has its share of arresting images., neutral, 0.55556 ::
+23 syntax expansions ::
+118 words suggestions ::
+42 word suggestion by req
+	SELECTED_SEED 14: 8157, It tells more than it shows., neutral, 0.5 ::
+32 syntax expansions ::
+261 words suggestions ::
+72 word suggestion by req
+	SELECTED_SEED 15: 11024, Ninety minutes of Viva Castro!, neutral, 0.5 ::
+12 syntax expansions ::
+33 words suggestions ::
+10 word suggestion by req
+	SELECTED_SEED 16: 339, Here, thankfully, they are., neutral, 0.58333 ::
+10 syntax expansions ::
+15 words suggestions ::
+11 word suggestion by req
+	SELECTED_SEED 17: 5224, Or both., neutral, 0.5 ::
+5 syntax expansions ::
+27 words suggestions ::
+7 word suggestion by req
+	SELECTED_SEED 18: 4850, But this is Lohman's film., neutral, 0.5 ::
+18 syntax expansions ::
+79 words suggestions ::
+36 word suggestion by req
+	SELECTED_SEED 19: 8446, Melanie eventually slugs the Yankee., neutral, 0.5 ::
+19 syntax expansions ::
+168 words suggestions ::
+29 word suggestion by req
+Total 301 syntactical expansion identified in the requirement out of 19 seeds
+<<<<< REQUIREMENT:Short sentences with neutral adjectives and nouns
+>>>>> REQUIREMENT:Short sentences with sentiment-laden adjectives
+	384 inputs are selected.
+	SELECTED_SEED 1: 4582, A perceptive, good-natured movie., positive, 0.79167 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 2: 5556, A lovably old-school Hollywood confection., positive, 0.73611 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 3: 7, Offers that rare combination of entertainment and education., positive, 0.83333 ::
+18 syntax expansions ::
+58 words suggestions ::
+25 word suggestion by req
+	SELECTED_SEED 4: 3457, A pleasing, often-funny comedy., positive, 0.70833 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 5: 10291, David Spade as Citizen Kane?, negative, 0.375 ::
+15 syntax expansions ::
+41 words suggestions ::
+11 word suggestion by req
+	SELECTED_SEED 6: 2820, A tremendous piece of work., positive, 0.93056 ::
+17 syntax expansions ::
+96 words suggestions ::
+24 word suggestion by req
+	SELECTED_SEED 7: 772, A clever blend of fact and fiction., positive, 0.77778 ::
+12 syntax expansions ::
+69 words suggestions ::
+27 word suggestion by req
+	SELECTED_SEED 8: 9837, The art demands live viewing., positive, 0.73611 ::
+18 syntax expansions ::
+174 words suggestions ::
+42 word suggestion by req
+	SELECTED_SEED 9: 11832, Meandering and confusing., negative, 0.23611 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 10: 5257, finely crafted, finely written, exquisitely performed, positive, 0.875 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 11: 11723, Great character interaction., positive, 0.88889 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 12: 1723, Familiar but utterly delightful., positive, 0.63889 ::
+9 syntax expansions ::
+91 words suggestions ::
+13 word suggestion by req
+	SELECTED_SEED 13: 712, Binoche and Magimel are perfect in these roles., positive, 0.93056 ::
+21 syntax expansions ::
+194 words suggestions ::
+51 word suggestion by req
+	SELECTED_SEED 14: 1826, Cho's timing is priceless., positive, 0.86111 ::
+21 syntax expansions ::
+246 words suggestions ::
+47 word suggestion by req
+	SELECTED_SEED 15: 9023, It is painful., negative, 0.097222 ::
+16 syntax expansions ::
+195 words suggestions ::
+42 word suggestion by req
+	SELECTED_SEED 16: 4540, Bielinsky is a filmmaker of impressive talent., positive, 0.77778 ::
+33 syntax expansions ::
+209 words suggestions ::
+54 word suggestion by req
+	SELECTED_SEED 17: 3088, A triumph of pure craft and passionate heart., positive, 0.90278 ::
+17 syntax expansions ::
+130 words suggestions ::
+28 word suggestion by req
+	SELECTED_SEED 18: 4100, Witty, contemplative, and sublimely beautiful., positive, 0.83333 ::
+9 syntax expansions ::
+93 words suggestions ::
+21 word suggestion by req
+	SELECTED_SEED 19: 2333, Pray has really done his subject justice., positive, 0.76389 ::
+21 syntax expansions ::
+162 words suggestions ::
+44 word suggestion by req
+	SELECTED_SEED 20: 10662, For dance completists only., negative, 0.18056 ::
+10 syntax expansions ::
+73 words suggestions ::
+23 word suggestion by req
+	SELECTED_SEED 21: 3646, Jackson is always watchable., positive, 0.61111 ::
+21 syntax expansions ::
+203 words suggestions ::
+27 word suggestion by req
+	SELECTED_SEED 22: 3784, Delivers more than its fair share of saucy hilarity., positive, 0.73611 ::
+28 syntax expansions ::
+171 words suggestions ::
+15 word suggestion by req
+	SELECTED_SEED 23: 11009, Slap her - she is not funny!, negative, 0.20833 ::
+17 syntax expansions ::
+105 words suggestions ::
+28 word suggestion by req
+	SELECTED_SEED 24: 2390, Amazing!, positive, 0.91667 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 25: 11689, Moving and vibrant., positive, 0.88889 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 26: 4691, Even better than the first one!, positive, 0.80556 ::
+11 syntax expansions ::
+11 words suggestions ::
+11 word suggestion by req
+	SELECTED_SEED 27: 11808, Predictably soulless techno-tripe., negative, 0.125 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 28: 717, It is astonishing., positive, 0.76389 ::
+16 syntax expansions ::
+171 words suggestions ::
+33 word suggestion by req
+	SELECTED_SEED 29: 11769, Sluggish, tonally uneven., negative, 0.15278 ::
+9 syntax expansions ::
+95 words suggestions ::
+12 word suggestion by req
+	SELECTED_SEED 30: 4619, ... a great, participatory spectator sport . ', positive, 0.69444 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 31: 11697, A true-blue delight., positive, 0.88889 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 32: 6720, The movie is so thoughtlessly assembled., positive, 0.63889 ::
+11 syntax expansions ::
+97 words suggestions ::
+22 word suggestion by req
+	SELECTED_SEED 33: 2803, Adaptation is simply brilliant., positive, 0.97222 ::
+21 syntax expansions ::
+208 words suggestions ::
+20 word suggestion by req
+	SELECTED_SEED 34: 11838, Ill-considered, unholy hokum., negative, 0.26389 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 35: 3559, This is one of the year's best films., positive, 0.90278 ::
+36 syntax expansions ::
+244 words suggestions ::
+20 word suggestion by req
+	SELECTED_SEED 36: 11775, Woefully pretentious., negative, 0.20833 ::
+4 syntax expansions ::
+65 words suggestions ::
+4 word suggestion by req
+	SELECTED_SEED 37: 2947, The movie is well crafted, and well executed., positive, 0.88889 ::
+11 syntax expansions ::
+133 words suggestions ::
+4 word suggestion by req
+	SELECTED_SEED 38: 4600, classic cinema served up with heart and humor, positive, 0.875 ::
+16 syntax expansions ::
+90 words suggestions ::
+16 word suggestion by req
+	SELECTED_SEED 39: 9204, A serious movie with serious ideas., positive, 0.83333 ::
+17 syntax expansions ::
+86 words suggestions ::
+40 word suggestion by req
+	SELECTED_SEED 40: 2323, It is technically sumptuous but also almost wildly alive., positive, 0.88889 ::
+15 syntax expansions ::
+178 words suggestions ::
+5 word suggestion by req
+	SELECTED_SEED 41: 5385, And educational!, positive, 0.66667 ::
+5 syntax expansions ::
+57 words suggestions ::
+10 word suggestion by req
+	SELECTED_SEED 42: 8871, Creepy but ultimately unsatisfying thriller., negative, 0.27778 ::
+9 syntax expansions ::
+97 words suggestions ::
+15 word suggestion by req
+	SELECTED_SEED 43: 5586, A wry, affectionate delight., positive, 0.81944 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 44: 857, Thoughtful, provocative and entertaining., positive, 0.88889 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 45: 8895, For Caine Lovers only., negative, 0.34722 ::
+15 syntax expansions ::
+85 words suggestions ::
+11 word suggestion by req
+	SELECTED_SEED 46: 4336, Except it is much, much better., positive, 0.81944 ::
+6 syntax expansions ::
+40 words suggestions ::
+14 word suggestion by req
+	SELECTED_SEED 47: 5516, One of the funnier movies in town., positive, 0.88889 ::
+22 syntax expansions ::
+81 words suggestions ::
+33 word suggestion by req
+	SELECTED_SEED 48: 11623, ( A) rare, beautiful film., positive, 0.91667 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 49: 809, A marvellous journey from childhood idealism to adolescent self-absorption., positive, 0.94444 ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 50: 958, a compelling portrait of moral emptiness, positive, 0.625 ::
+20 syntax expansions ::
+97 words suggestions ::
+33 word suggestion by req
+Total 547 syntactical expansion identified in the requirement out of 384 seeds
+<<<<< REQUIREMENT:Short sentences with sentiment-laden adjectives
+>>>>> REQUIREMENT:Sentiment change over time, present should prevail
+	75294 inputs are selected.
+	SELECTED_SEED 1: new_6989_59313, Last time, I didn't like it saying that "It gets old quickly.", but now I like it., positive, None ::
+29 syntax expansions ::
+132 words suggestions ::
+17 word suggestion by req
+	SELECTED_SEED 2: new_5484_14590, Last time, I agreed with saying that "Old-fashioned but thoroughly satisfying entertainment.", on the other hand now I don't like it., negative, None ::
+2 syntax expansions ::
+38 words suggestions ::
+1 word suggestion by req
+	SELECTED_SEED 3: new_201_45113, I liked it much as to say that "Those outside show business will enjoy a close look at people they do not really want to know.", although now I don't like it., negative, None ::
+60 syntax expansions ::
+314 words suggestions ::
+35 word suggestion by req
+	SELECTED_SEED 4: new_10756_73623, Last time, I didn't like it saying that "essentially " Fatal Attraction " remade for viewers who were in diapers when the original was released in 1987.", but now I like it., positive, None ::
+65 syntax expansions ::
+425 words suggestions ::
+28 word suggestion by req
+	SELECTED_SEED 5: new_4041_20458, Last time, I agreed with saying that "An energetic, violent movie with a momentum that never let us up.", on the other hand now I don't like it., negative, None ::
+46 syntax expansions ::
+193 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 6: new_2784_55685, Previously, I used to like it saying that "Maybe not a classic, but a movie the kids will want to see over and over again.", although now I don't like it., negative, None ::
+50 syntax expansions ::
+310 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 7: new_3159_30991, I liked it much as to say that "What is most refreshing about Real Women Have Curves is its unforced comedy-drama and its relaxed, natural-seeming actors.", but now I hate it., negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 8: new_5316_64439, I liked it much as to say that "Shiner can certainly go the distance, but is not world championship material", on the other hand now I hate it., negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 9: new_5736_35213, Last time, I didn't like it saying that "Imagine the CleanFlicks version of ` Love Story ,' with Ali MacGraw's profanities replaced by romance-novel platitudes.", on the other hand now I like it., positive, None ::
+6 syntax expansions ::
+38 words suggestions ::
+3 word suggestion by req
+	SELECTED_SEED 10: new_2903_57355, Last time, I agreed with saying that "The film is impressive for the sights and sounds of the wondrous beats the world has to offer.", but now I hate it., negative, None ::
+66 syntax expansions ::
+474 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 11: new_5791_42039, I used to disagree with saying that "The gags, and the script, are a mixed bag.", but now I like it., positive, None ::
+39 syntax expansions ::
+353 words suggestions ::
+19 word suggestion by req
+	SELECTED_SEED 12: new_5560_9307, Previously, I used to like it saying that "Wonder of wonders -- a teen movie with a humanistic message.", but now I hate it., negative, None ::
+43 syntax expansions ::
+246 words suggestions ::
+21 word suggestion by req
+	SELECTED_SEED 13: new_5185_11705, I liked it much as to say that "It is always enthralling.", although now I don't like it., negative, None ::
+34 syntax expansions ::
+174 words suggestions ::
+24 word suggestion by req
+	SELECTED_SEED 14: new_2942_45282, I liked it much as to say that "A lively and engaging examination of how similar obsessions can dominate a family.", but now I don't like it., negative, None ::
+48 syntax expansions ::
+424 words suggestions ::
+25 word suggestion by req
+	SELECTED_SEED 15: new_8433_61410, Previously, I used to like it saying that "Excellent acting and direction.", although now I hate it., negative, None ::
+23 syntax expansions ::
+42 words suggestions ::
+17 word suggestion by req
+	SELECTED_SEED 16: new_2811_40900, Previously, I used to like it saying that "One of the best rock documentaries ever.", on the other hand now I don't like it., negative, None ::
+41 syntax expansions ::
+109 words suggestions ::
+26 word suggestion by req
+	SELECTED_SEED 17: new_6890_8101, I used to disagree with saying that "Its salient points are simultaneously buried, drowned and smothered in the excesses of writer-director Roger Avary.", although now I like it., positive, None ::
+8 syntax expansions ::
+86 words suggestions ::
+3 word suggestion by req
+	SELECTED_SEED 18: new_4729_59941, Previously, I used to like it saying that "Y Tu Mamá También is hilariously, gloriously alive, and quite often hotter than Georgia asphalt.", but now I hate it., negative, None ::
+46 syntax expansions ::
+291 words suggestions ::
+24 word suggestion by req
+	SELECTED_SEED 19: new_6787_17499, Last time, I didn't like it saying that "This Bond film goes off the beaten path, not necessarily for the better.", but now I like it., positive, None ::
+45 syntax expansions ::
+315 words suggestions ::
+22 word suggestion by req
+	SELECTED_SEED 20: new_5561_8025, I liked it much as to say that "A quirky comedy set in Newfoundland that cleverly captures the dry wit that is so prevalent on The Rock.", although now I hate it., negative, None ::
+65 syntax expansions ::
+497 words suggestions ::
+34 word suggestion by req
+	SELECTED_SEED 21: new_11192_30536, I hated it much as to say that "Festers in just such a dungpile that you would swear you were watching monkeys flinging their feces at you.", on the other hand now I like it., positive, None ::
+63 syntax expansions ::
+433 words suggestions ::
+30 word suggestion by req
+	SELECTED_SEED 22: new_885_43552, Previously, I used to like it saying that "But it offers plenty to ponder and chew on as its unusual relationship slowly unfolds.", but now I hate it., negative, None ::
+44 syntax expansions ::
+191 words suggestions ::
+23 word suggestion by req
+	SELECTED_SEED 23: new_10844_49013, I hated it much as to say that "It goes on for too long and bogs down in a surfeit of characters and unnecessary subplots.", on the other hand now I like it., positive, None ::
+56 syntax expansions ::
+373 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 24: new_9231_74343, Last time, I didn't like it saying that "The troubling thing about Clockstoppers is that it does not make any sense.", but now I like it., positive, None ::
+56 syntax expansions ::
+296 words suggestions ::
+32 word suggestion by req
+	SELECTED_SEED 25: new_7972_36875, I used to disagree with saying that "This overproduced and generally disappointing effort is not likely to rouse the Rush Hour crowd.", on the other hand now I like it., positive, None ::
+4 syntax expansions ::
+36 words suggestions ::
+1 word suggestion by req
+	SELECTED_SEED 26: new_3996_25706, Last time, I agreed with saying that "See it.", on the other hand now I hate it., negative, None ::
+34 syntax expansions ::
+123 words suggestions ::
+20 word suggestion by req
+	SELECTED_SEED 27: new_10334_10771, I hated it much as to say that "The explosion essentially ruined--or, rather, overpowered -- the fiction of the movie for me.", although now I like it., positive, None ::
+43 syntax expansions ::
+208 words suggestions ::
+28 word suggestion by req
+	SELECTED_SEED 28: new_11306_44062, I hated it much as to say that "A so-so, made-for-TV something posing as a real movie.", although now I like it., positive, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 29: new_6094_46268, Last time, I agreed with saying that "Gets better after Foster leaves that little room.", although now I don't like it., negative, None ::
+41 syntax expansions ::
+278 words suggestions ::
+19 word suggestion by req
+	SELECTED_SEED 30: new_6477_57683, I used to disagree with saying that "Those of you who are not an eighth grade girl will most likely doze off during this one.", on the other hand now I like it., positive, None ::
+1 syntax expansions ::
+0 words suggestions ::
+1 word suggestion by req
+	SELECTED_SEED 31: new_4900_44455, Previously, I used to like it saying that "And, thanks to the presence of ` the King ,' it also rocks.", on the other hand now I don't like it., negative, None ::
+46 syntax expansions ::
+197 words suggestions ::
+27 word suggestion by req
+	SELECTED_SEED 32: new_1440_48254, Previously, I used to like it saying that "Vera's three actors--Mollà, Gil and Bardem -- excel in insightful, empathetic performances.", on the other hand now I hate it., negative, None ::
+47 syntax expansions ::
+243 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 33: new_600_5683, I liked it much as to say that "The filmmakers skillfully evoke the sense of menace that nature holds for many urban dwellers.", but now I hate it., negative, None ::
+61 syntax expansions ::
+360 words suggestions ::
+37 word suggestion by req
+	SELECTED_SEED 34: new_1579_24609, Previously, I used to like it saying that "Zhang ... has done an amazing job of getting realistic performances from his mainly nonprofessional cast.", although now I hate it., negative, None ::
+68 syntax expansions ::
+460 words suggestions ::
+40 word suggestion by req
+	SELECTED_SEED 35: new_2606_45906, Last time, I agreed with saying that "( Fincher's) camera sense and assured pacing make it an above-average thriller.", but now I don't like it., negative, None ::
+2 syntax expansions ::
+34 words suggestions ::
+1 word suggestion by req
+	SELECTED_SEED 36: new_317_24509, Last time, I agreed with saying that "A savvy exploration of paranoia and insecurity in America's culture of fear.", on the other hand now I hate it., negative, None ::
+52 syntax expansions ::
+216 words suggestions ::
+34 word suggestion by req
+	SELECTED_SEED 37: new_11413_3355, I hated it much as to say that "The very simple story seems too simple and the working out of the plot almost arbitrary.", although now I like it., positive, None ::
+52 syntax expansions ::
+379 words suggestions ::
+28 word suggestion by req
+	SELECTED_SEED 38: new_855_3399, I liked it much as to say that "A work of intricate elegance, literary lyricism and profound common sense.", although now I hate it., negative, None ::
+45 syntax expansions ::
+250 words suggestions ::
+29 word suggestion by req
+	SELECTED_SEED 39: new_4790_64069, I liked it much as to say that "Robinson's web of suspense matches the page-turning frenzy that Clancy creates.", on the other hand now I don't like it., negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 40: new_7446_63200, I used to disagree with saying that "Too much of it feels unfocused and underdeveloped.", on the other hand now I like it., positive, None ::
+49 syntax expansions ::
+312 words suggestions ::
+27 word suggestion by req
+	SELECTED_SEED 41: new_2624_74850, I liked it much as to say that "Contrived as this may sound, Mr. Rose's updating works surprisingly well.", although now I hate it., negative, None ::
+47 syntax expansions ::
+413 words suggestions ::
+26 word suggestion by req
+	SELECTED_SEED 42: new_3442_42946, I liked it much as to say that "A must-see for fans of thoughtful war films and those interested in the sights and sounds of battle.", on the other hand now I don't like it., negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 43: new_4493_14605, Last time, I agreed with saying that "Lovely and Amazing is Holofcener's deep, uncompromising curtsy to women she knows, and very likely is.", but now I hate it., negative, None ::
+66 syntax expansions ::
+236 words suggestions ::
+46 word suggestion by req
+	SELECTED_SEED 44: new_3483_45118, Previously, I used to like it saying that "Highly recommended viewing for its courage, ideas, technical proficiency and great acting.", but now I hate it., negative, None ::
+5 syntax expansions ::
+7 words suggestions ::
+3 word suggestion by req
+	SELECTED_SEED 45: new_7766_21527, I hated it much as to say that "There is not nearly enough fun here, despite the presence of some appealing ingredients.", on the other hand now I like it., positive, None ::
+53 syntax expansions ::
+328 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 46: new_2063_3094, I liked it much as to say that "A real winner -- smart, funny, subtle, and resonant.", on the other hand now I don't like it., negative, None ::
+29 syntax expansions ::
+108 words suggestions ::
+20 word suggestion by req
+	SELECTED_SEED 47: new_6074_12466, Last time, I agreed with saying that "A movie just for Friday fans, critics be damned.", on the other hand now I don't like it., negative, None ::
+53 syntax expansions ::
+281 words suggestions ::
+27 word suggestion by req
+	SELECTED_SEED 48: new_190_67432, I liked it much as to say that "Engagingly captures the maddening and magnetic ebb and flow of friendship.", but now I hate it., negative, None ::
+3 syntax expansions ::
+48 words suggestions ::
+2 word suggestion by req
+	SELECTED_SEED 49: new_9167_17191, I used to disagree with saying that "Originality is sorely lacking.", although now I like it., positive, None ::
+38 syntax expansions ::
+284 words suggestions ::
+23 word suggestion by req
+	SELECTED_SEED 50: new_2857_411, I liked it much as to say that "Reign of Fire just might go down as one of the all-time great apocalypse movies.", although now I hate it., negative, None ::
+5 syntax expansions ::
+97 words suggestions ::
+1 word suggestion by req
+Total 1779 syntactical expansion identified in the requirement out of 75294 seeds
+<<<<< REQUIREMENT:Sentiment change over time, present should prevail
+>>>>> REQUIREMENT:Negated negative should be positive or neutral
+	67 inputs are selected.
+	SELECTED_SEED 1: new_10535_11, This is not just lazy writing., ['positive', 'neutral'], None ::
+15 syntax expansions ::
+85 words suggestions ::
+33 word suggestion by req
+	SELECTED_SEED 2: new_10130_66, These are not textbook lives of quiet desperation., ['positive', 'neutral'], None ::
+30 syntax expansions ::
+150 words suggestions ::
+34 word suggestion by req
+	SELECTED_SEED 3: new_7877_56, This is not a train wreck of an action film -- a stupefying attempt by the filmmakers to force-feed James Bond into the mindless XXX mold and throw 40 years of cinematic history down the toilet in favor of bright flashes and loud bangs., ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 4: new_10826_49, This is not a movie filled with unlikable, spiteful idiots; whether or not their friendship is salvaged makes no difference in the least., ['positive', 'neutral'], None ::
+36 syntax expansions ::
+365 words suggestions ::
+114 word suggestion by req
+	SELECTED_SEED 5: new_9709_5, This is not a poster movie, a mediocre tribute to films like Them!, ['positive', 'neutral'], None ::
+35 syntax expansions ::
+229 words suggestions ::
+73 word suggestion by req
+	SELECTED_SEED 6: new_9774_36, This is not the kind of movie where people who have never picked a lock do so easily after a few tries and become expert fighters after a few weeks., ['positive', 'neutral'], None ::
+77 syntax expansions ::
+553 words suggestions ::
+174 word suggestion by req
+	SELECTED_SEED 7: new_487_54, This is not not a new idea., ['positive', 'neutral'], None ::
+15 syntax expansions ::
+168 words suggestions ::
+56 word suggestion by req
+	SELECTED_SEED 8: new_9138_50, This is not rote drivel aimed at Mom and Dad's wallet., ['positive', 'neutral'], None ::
+27 syntax expansions ::
+266 words suggestions ::
+86 word suggestion by req
+	SELECTED_SEED 9: new_7117_23, This is not the case of a pregnant premise being wasted by a script that takes few chances and manages to insult the intelligence of everyone in the audience., ['positive', 'neutral'], None ::
+66 syntax expansions ::
+512 words suggestions ::
+166 word suggestion by req
+	SELECTED_SEED 10: new_6310_53, This is not an ungainly movie, ill-fitting, with its elbows sticking out where the knees should be., ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 11: new_10985_35, This is not surely one of the most frantic, virulent and foul-natured Christmas season pics ever delivered by a Hollywood studio., ['positive', 'neutral'], None ::
+5 syntax expansions ::
+32 words suggestions ::
+6 word suggestion by req
+	SELECTED_SEED 12: new_11335_33, This is not a monumental achievement in practically every facet of inept filmmaking: joyless, idiotic, annoying, heavy-handed, visually atrocious, and often downright creepy., ['positive', 'neutral'], None ::
+5 syntax expansions ::
+11 words suggestions ::
+5 word suggestion by req
+	SELECTED_SEED 13: new_9316_24, This is not not one of the movies you would want to watch if you only had a week to live., ['positive', 'neutral'], None ::
+71 syntax expansions ::
+483 words suggestions ::
+194 word suggestion by req
+	SELECTED_SEED 14: new_7454_6, This is not not the undisputed worst boxing movie ever, but it is certainly not a champion - the big loser is the audience., ['positive', 'neutral'], None ::
+35 syntax expansions ::
+276 words suggestions ::
+102 word suggestion by req
+	SELECTED_SEED 15: new_11607_27, This is not not a movie; it is a symptom., ['positive', 'neutral'], None ::
+23 syntax expansions ::
+221 words suggestions ::
+58 word suggestion by req
+	SELECTED_SEED 16: new_11312_52, This is not as lax and limp a comedy as I have seen in a while, a meander through worn-out material., ['positive', 'neutral'], None ::
+4 syntax expansions ::
+13 words suggestions ::
+7 word suggestion by req
+	SELECTED_SEED 17: new_598_8, This is not pretty dicey material., ['positive', 'neutral'], None ::
+19 syntax expansions ::
+161 words suggestions ::
+43 word suggestion by req
+	SELECTED_SEED 18: new_9825_4, This is not absolutely and completely ridiculous and an insult to every family whose mother has suffered through the horrible pains of a death by cancer., ['positive', 'neutral'], None ::
+46 syntax expansions ::
+400 words suggestions ::
+112 word suggestion by req
+	SELECTED_SEED 19: new_9581_44, This is not a third-person story now, told by Hollywood, and much more ordinary for it., ['positive', 'neutral'], None ::
+5 syntax expansions ::
+23 words suggestions ::
+6 word suggestion by req
+	SELECTED_SEED 20: new_8965_9, This is not the type of movie best enjoyed by frat boys and college kids while sucking on the bong and downing one alcoholic beverage after another., ['positive', 'neutral'], None ::
+58 syntax expansions ::
+368 words suggestions ::
+110 word suggestion by req
+	SELECTED_SEED 21: new_7995_15, This is not a throwaway, junk-food movie whose rap soundtrack was better tended to than the film itself., ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 22: new_6363_41, This is not a remake by the numbers, linking a halfwit plot to a series of standup routines in which Wilson and Murphy show how funny they could have been in a more ambitious movie., ['positive', 'neutral'], None ::
+73 syntax expansions ::
+789 words suggestions ::
+234 word suggestion by req
+	SELECTED_SEED 23: new_7149_55, This is not a truly, truly bad movie., ['positive', 'neutral'], None ::
+15 syntax expansions ::
+175 words suggestions ::
+41 word suggestion by req
+	SELECTED_SEED 24: new_6834_59, This is not a film tailor-made for those who when they were in high school would choose the Cliff-Notes over reading a full-length classic., ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 25: new_11587_29, This is not no " Waterboy! ", ['positive', 'neutral'], None ::
+8 syntax expansions ::
+50 words suggestions ::
+32 word suggestion by req
+	SELECTED_SEED 26: new_10313_28, This is not a heartfelt story ... it just is not a very involving one., ['positive', 'neutral'], None ::
+10 syntax expansions ::
+117 words suggestions ::
+35 word suggestion by req
+	SELECTED_SEED 27: new_8289_16, This is not a particularly toxic little bonbon, palatable to only a chosen and very jaundiced few., ['positive', 'neutral'], None ::
+37 syntax expansions ::
+441 words suggestions ::
+129 word suggestion by req
+	SELECTED_SEED 28: new_3583_7, This is not not an easy film., ['positive', 'neutral'], None ::
+15 syntax expansions ::
+140 words suggestions ::
+52 word suggestion by req
+	SELECTED_SEED 29: new_9381_12, This is not a film about the irksome, tiresome nature of complacency that remains utterly satisfied to remain the same throughout., ['positive', 'neutral'], None ::
+55 syntax expansions ::
+384 words suggestions ::
+103 word suggestion by req
+	SELECTED_SEED 30: new_10606_17, This is not one baaaaaaaaad movie., ['positive', 'neutral'], None ::
+10 syntax expansions ::
+71 words suggestions ::
+32 word suggestion by req
+	SELECTED_SEED 31: new_9460_30, This is not cruel, misanthropic stuff with only weak claims to surrealism and black comedy., ['positive', 'neutral'], None ::
+30 syntax expansions ::
+214 words suggestions ::
+59 word suggestion by req
+	SELECTED_SEED 32: new_5278_34, This is not not a classical dramatic animated feature, nor a hip, contemporary, in-jokey one., ['positive', 'neutral'], None ::
+5 syntax expansions ::
+10 words suggestions ::
+4 word suggestion by req
+	SELECTED_SEED 33: new_4133_61, That is not its first sign of trouble., ['positive', 'neutral'], None ::
+30 syntax expansions ::
+191 words suggestions ::
+65 word suggestion by req
+	SELECTED_SEED 34: new_10092_39, This is not rote spookiness, with nary an original idea (or role, or edit, or score, or anything, really) in sight, and the whole of the proceedings beg the question ` Why? ', ['positive', 'neutral'], None ::
+5 syntax expansions ::
+11 words suggestions ::
+5 word suggestion by req
+	SELECTED_SEED 35: new_7716_46, This is not a shameless sham, calculated to cash in on the popularity of its stars., ['positive', 'neutral'], None ::
+37 syntax expansions ::
+272 words suggestions ::
+115 word suggestion by req
+	SELECTED_SEED 36: new_9703_20, This is not one of the biggest disappointments of the year., ['positive', 'neutral'], None ::
+35 syntax expansions ::
+213 words suggestions ::
+103 word suggestion by req
+	SELECTED_SEED 37: new_7632_63, That is not pure PR hype., ['positive', 'neutral'], None ::
+10 syntax expansions ::
+62 words suggestions ::
+20 word suggestion by req
+	SELECTED_SEED 38: new_6858_26, This is not the kind of movie that gets a quick release before real contenders arrive in September., ['positive', 'neutral'], None ::
+67 syntax expansions ::
+348 words suggestions ::
+144 word suggestion by req
+	SELECTED_SEED 39: new_8012_58, This is not junk food cinema at its greasiest., ['positive', 'neutral'], None ::
+5 syntax expansions ::
+23 words suggestions ::
+6 word suggestion by req
+	SELECTED_SEED 40: new_6570_57, This is not a film living far too much in its own head., ['positive', 'neutral'], None ::
+25 syntax expansions ::
+195 words suggestions ::
+60 word suggestion by req
+	SELECTED_SEED 41: new_9335_1, This is not a fragmented film, once a good idea that was followed by the bad idea to turn it into a movie., ['positive', 'neutral'], None ::
+54 syntax expansions ::
+403 words suggestions ::
+139 word suggestion by req
+	SELECTED_SEED 42: new_6881_62, That is not because relatively nothing happens., ['positive', 'neutral'], None ::
+25 syntax expansions ::
+152 words suggestions ::
+47 word suggestion by req
+	SELECTED_SEED 43: new_9134_43, This is not a movie that starts out like Heathers, then becomes Bring it On, then becomes unwatchable., ['positive', 'neutral'], None ::
+53 syntax expansions ::
+401 words suggestions ::
+116 word suggestion by req
+	SELECTED_SEED 44: new_7564_60, That is not a cheat., ['positive', 'neutral'], None ::
+15 syntax expansions ::
+181 words suggestions ::
+40 word suggestion by req
+	SELECTED_SEED 45: new_6009_2, This is not the sort of low-grade dreck that usually goes straight to video -- with a lousy script, inept direction, pathetic acting, poorly dubbed dialogue and murky cinematography, complete with visible boom mikes., ['positive', 'neutral'], None ::
+5 syntax expansions ::
+5 words suggestions ::
+4 word suggestion by req
+	SELECTED_SEED 46: new_7033_32, This is not a movie where the most notable observation is how long you have been sitting still., ['positive', 'neutral'], None ::
+50 syntax expansions ::
+549 words suggestions ::
+199 word suggestion by req
+	SELECTED_SEED 47: new_9290_18, This is not an action movie with an action icon who has been all but decommissioned., ['positive', 'neutral'], None ::
+28 syntax expansions ::
+193 words suggestions ::
+87 word suggestion by req
+	SELECTED_SEED 48: new_9402_51, This is not not a Jackie Chan movie., ['positive', 'neutral'], None ::
+5 syntax expansions ::
+28 words suggestions ::
+9 word suggestion by req
+	SELECTED_SEED 49: new_11221_19, This is not very much of a mixed bag, with enough negatives to outweigh the positives., ['positive', 'neutral'], None ::
+37 syntax expansions ::
+268 words suggestions ::
+85 word suggestion by req
+	SELECTED_SEED 50: new_8822_25, This is not a great subject for a movie, but Hollywood has squandered the opportunity, using it as a prop for warmed-over melodrama and the kind of choreographed mayhem that director John Woo has built his career on., ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+Total 1316 syntactical expansion identified in the requirement out of 67 seeds
+<<<<< REQUIREMENT:Negated negative should be positive or neutral
+>>>>> REQUIREMENT:Negated neutral should still be neutral
+	26 inputs are selected.
+	SELECTED_SEED 1: new_8089_23, That is not essentially what is missing from Blackboards -- the sense of something bigger, some ultimate point., neutral, None ::
+62 syntax expansions ::
+494 words suggestions ::
+122 word suggestion by req
+	SELECTED_SEED 2: new_8143_24, That is not the only sane rationale I can think of for Swimfan's existence., neutral, None ::
+45 syntax expansions ::
+287 words suggestions ::
+99 word suggestion by req
+	SELECTED_SEED 3: new_3077_20, This is not mostly well-constructed fluff, which is all it seems intended to be., neutral, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 4: new_2723_9, This is not a harrowing movie about how parents know where all the buttons are, and how to push them., neutral, None ::
+47 syntax expansions ::
+360 words suggestions ::
+106 word suggestion by req
+	SELECTED_SEED 5: new_10628_8, This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool., neutral, None ::
+70 syntax expansions ::
+648 words suggestions ::
+165 word suggestion by req
+	SELECTED_SEED 6: new_5214_13, This is not a nervy, risky film, and Villeneuve has inspired Croze to give herself over completely to the tormented persona of Bibi., neutral, None ::
+42 syntax expansions ::
+263 words suggestions ::
+78 word suggestion by req
+	SELECTED_SEED 7: new_8571_3, This is not an hour and a half of daydreaming., neutral, None ::
+25 syntax expansions ::
+147 words suggestions ::
+54 word suggestion by req
+	SELECTED_SEED 8: new_9361_22, That is not made almost impossible by events that set the plot in motion., neutral, None ::
+47 syntax expansions ::
+322 words suggestions ::
+92 word suggestion by req
+	SELECTED_SEED 9: new_6006_19, This is not amusing for about three minutes., neutral, None ::
+30 syntax expansions ::
+230 words suggestions ::
+63 word suggestion by req
+	SELECTED_SEED 10: new_10837_1, This is not the first film I have ever seen that had no obvious directing involved., neutral, None ::
+48 syntax expansions ::
+387 words suggestions ::
+148 word suggestion by req
+	SELECTED_SEED 11: new_8165_5, This is not really just another genre picture., neutral, None ::
+15 syntax expansions ::
+108 words suggestions ::
+36 word suggestion by req
+	SELECTED_SEED 12: new_5575_25, That is not because - damn it!, neutral, None ::
+15 syntax expansions ::
+48 words suggestions ::
+16 word suggestion by req
+	SELECTED_SEED 13: new_6029_21, That is not not vintage Spielberg and that, finally, is minimally satisfying., neutral, None ::
+25 syntax expansions ::
+223 words suggestions ::
+53 word suggestion by req
+	SELECTED_SEED 14: new_9141_6, This is not more a case of ` Sacre bleu! ', neutral, None ::
+21 syntax expansions ::
+157 words suggestions ::
+40 word suggestion by req
+	SELECTED_SEED 15: new_10282_4, This is not not a terrible film by any means, but it is also far from being a realized work., neutral, None ::
+48 syntax expansions ::
+430 words suggestions ::
+106 word suggestion by req
+	SELECTED_SEED 16: new_2164_12, This is not NOT a retread of " Dead Poets' Society . ", neutral, None ::
+27 syntax expansions ::
+161 words suggestions ::
+64 word suggestion by req
+	SELECTED_SEED 17: new_7175_0, This is not the first full scale WWII flick from Hong Kong's John Woo., neutral, None ::
+5 syntax expansions ::
+34 words suggestions ::
+10 word suggestion by req
+	SELECTED_SEED 18: new_1182_16, This is not as respectful a film as Byatt fans could hope for, though lovers of the book may wonder why it is necessary., neutral, None ::
+67 syntax expansions ::
+624 words suggestions ::
+201 word suggestion by req
+	SELECTED_SEED 19: new_9566_10, This is not mild-mannered, been-there material given a pedestrian spin by a director who needed a touch of the flamboyant, the outrageous., neutral, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 20: new_2891_15, This is not not a retooled genre piece, the tale of a guy and his gun, but an amiably idiosyncratic work., neutral, None ::
+39 syntax expansions ::
+345 words suggestions ::
+109 word suggestion by req
+	SELECTED_SEED 21: new_8988_7, This is not a good movie in spurts, but when it does not work, it is at important times., neutral, None ::
+45 syntax expansions ::
+347 words suggestions ::
+122 word suggestion by req
+	SELECTED_SEED 22: new_3383_17, This is not not Chabrol's best, but even his lesser works outshine the best some directors can offer., neutral, None ::
+44 syntax expansions ::
+346 words suggestions ::
+146 word suggestion by req
+	SELECTED_SEED 23: new_7496_2, This is not nothing but familiar territory., neutral, None ::
+20 syntax expansions ::
+104 words suggestions ::
+43 word suggestion by req
+	SELECTED_SEED 24: new_1340_14, This is not it., neutral, None ::
+15 syntax expansions ::
+69 words suggestions ::
+36 word suggestion by req
+	SELECTED_SEED 25: new_3510_18, This is not SO De Palma., neutral, None ::
+10 syntax expansions ::
+71 words suggestions ::
+27 word suggestion by req
+	SELECTED_SEED 26: new_7675_11, This is not her Blue Lagoon., neutral, None ::
+10 syntax expansions ::
+76 words suggestions ::
+27 word suggestion by req
+Total 822 syntactical expansion identified in the requirement out of 26 seeds
+<<<<< REQUIREMENT:Negated neutral should still be neutral
+>>>>> REQUIREMENT:Negation of negative at the end, should be positive or neutral
+	18600 inputs are selected.
+	SELECTED_SEED 1: new_9315_11821, I agreed that "Make like the title and dodge this one.", but I didn't, ['positive', 'neutral'], None ::
+28 syntax expansions ::
+74 words suggestions ::
+39 word suggestion by req
+	SELECTED_SEED 2: new_10975_933, I agreed that "A wishy-washy melodramatic movie that shows us plenty of sturm und drung, but explains its characters' decisions only unsatisfactorily.", but I didn't, ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 3: new_5867_5084, I agreed that "This 10th film in the series looks and feels tired.", but it wasn't, ['positive', 'neutral'], None ::
+35 syntax expansions ::
+278 words suggestions ::
+81 word suggestion by req
+	SELECTED_SEED 4: new_11837_7673, I agreed that "Insufferably naive.", but I didn't, ['positive', 'neutral'], None ::
+19 syntax expansions ::
+34 words suggestions ::
+19 word suggestion by req
+	SELECTED_SEED 5: new_7907_11611, I thought that "The story drifts so inexorably into cliches about tortured (and torturing) artists and consuming but impossible love that you cannot help but become more disappointed as each overwrought new sequence plods on.", but I didn't, ['positive', 'neutral'], None ::
+5 syntax expansions ::
+4 words suggestions ::
+3 word suggestion by req
+	SELECTED_SEED 6: new_7546_14911, I thought that "The words, ` Frankly, my dear, I do not give a damn ,' have never been more appropriate.", but I didn't, ['positive', 'neutral'], None ::
+34 syntax expansions ::
+245 words suggestions ::
+69 word suggestion by req
+	SELECTED_SEED 7: new_11609_7801, I agreed that "If only it were, well, funnier.", but I didn't, ['positive', 'neutral'], None ::
+21 syntax expansions ::
+83 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 8: new_8103_13146, I thought that "For all its surface frenzy, High Crimes should be charged with loitering -- so much on view, so little to offer.", but it wasn't, ['positive', 'neutral'], None ::
+54 syntax expansions ::
+406 words suggestions ::
+106 word suggestion by req
+	SELECTED_SEED 9: new_10351_12333, I agreed that "The star who helped give a spark to " Chasing Amy " and " Changing Lanes " falls flat as thinking man CIA agent Jack Ryan in this summer's new action film, " The Sum of All Fears . "", but I didn't, ['positive', 'neutral'], None ::
+5 syntax expansions ::
+44 words suggestions ::
+16 word suggestion by req
+	SELECTED_SEED 10: new_7025_13420, I agreed that "The script has less spice than a rat burger and The Rock's fighting skills are more in line with Steven Seagal.", but it wasn't, ['positive', 'neutral'], None ::
+56 syntax expansions ::
+387 words suggestions ::
+110 word suggestion by req
+	SELECTED_SEED 11: new_2046_9406, I thought that "Watching a Brian DePalma movie is like watching an Alfred Hitchcock movie after drinking twelve beers.", but it wasn't, ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 12: new_10585_11756, I agreed that "Seriously, rent the Disney version.", but it wasn't, ['positive', 'neutral'], None ::
+22 syntax expansions ::
+42 words suggestions ::
+17 word suggestion by req
+	SELECTED_SEED 13: new_10316_18413, I agreed that "Richard Pryor mined his personal horrors and came up with a treasure chest of material, but Lawrence gives us mostly fool's gold.", but I didn't, ['positive', 'neutral'], None ::
+54 syntax expansions ::
+314 words suggestions ::
+95 word suggestion by req
+	SELECTED_SEED 14: new_6999_1425, I agreed that "Uzumaki's interesting social parallel and defiant aesthetic seems a prostituted muse ...", but I didn't, ['positive', 'neutral'], None ::
+28 syntax expansions ::
+196 words suggestions ::
+67 word suggestion by req
+	SELECTED_SEED 15: new_10563_5807, I thought that "Fans of Plympton's shorts may marginally enjoy the film, but it is doubtful this listless feature will win him any new viewers.", but I didn't, ['positive', 'neutral'], None ::
+77 syntax expansions ::
+609 words suggestions ::
+217 word suggestion by req
+	SELECTED_SEED 16: new_5058_2099, I thought that "Grant is certainly amusing, but the very hollowness of the character he plays keeps him at arms length", but I didn't, ['positive', 'neutral'], None ::
+64 syntax expansions ::
+566 words suggestions ::
+135 word suggestion by req
+	SELECTED_SEED 17: new_9559_14553, I agreed that "The film is like sitting in a downtown café, overhearing a bunch of typical late-twenty-something is natter on about nothing, and desperately wishing you could change tables.", but I didn't, ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 18: new_9552_4141, I agreed that "None of Birthday Girl's calculated events take us by surprise ...", but I didn't, ['positive', 'neutral'], None ::
+28 syntax expansions ::
+81 words suggestions ::
+38 word suggestion by req
+	SELECTED_SEED 19: new_7102_14004, I agreed that "With jump cuts, fast editing and lots of pyrotechnics, Yu clearly hopes to camouflage how bad his movie is.", but it wasn't, ['positive', 'neutral'], None ::
+53 syntax expansions ::
+393 words suggestions ::
+83 word suggestion by req
+	SELECTED_SEED 20: new_10951_14968, I agreed that "A dark comedy that goes for sick and demented humor simply to do so.", but it wasn't, ['positive', 'neutral'], None ::
+41 syntax expansions ::
+201 words suggestions ::
+64 word suggestion by req
+	SELECTED_SEED 21: new_6346_12955, I thought that "Guy gets girl, guy loses girl, audience falls asleep.", but I didn't, ['positive', 'neutral'], None ::
+29 syntax expansions ::
+160 words suggestions ::
+57 word suggestion by req
+	SELECTED_SEED 22: new_7441_592, I agreed that "How do you spell cliché?", but it wasn't, ['positive', 'neutral'], None ::
+24 syntax expansions ::
+241 words suggestions ::
+61 word suggestion by req
+	SELECTED_SEED 23: new_9775_551, I thought that "The problem with the mayhem in Formula 51 is not that it is offensive, but that it is boring.", but I didn't, ['positive', 'neutral'], None ::
+40 syntax expansions ::
+377 words suggestions ::
+63 word suggestion by req
+	SELECTED_SEED 24: new_8592_3389, I agreed that "High Crimes miscasts nearly every leading character.", but I didn't, ['positive', 'neutral'], None ::
+28 syntax expansions ::
+149 words suggestions ::
+58 word suggestion by req
+	SELECTED_SEED 25: new_7818_11026, I thought that "Though Perry and Hurley make inspiring efforts to breathe life into the disjointed, haphazard script by Jay Scherick and David Ronn, neither the actors nor director Reginald Hudlin can make it more than fitfully entertaining.", but it wasn't, ['positive', 'neutral'], None ::
+50 syntax expansions ::
+372 words suggestions ::
+97 word suggestion by req
+	SELECTED_SEED 26: new_5591_11254, I thought that "And adults will at least have a dream image of the West to savor whenever the film's lamer instincts are in the saddle.", but it wasn't, ['positive', 'neutral'], None ::
+58 syntax expansions ::
+328 words suggestions ::
+130 word suggestion by req
+	SELECTED_SEED 27: new_7640_18319, I thought that "And when you are talking about a slapstick comedy, that is a pretty big problem.", but I didn't, ['positive', 'neutral'], None ::
+43 syntax expansions ::
+395 words suggestions ::
+131 word suggestion by req
+	SELECTED_SEED 28: new_10653_17071, I thought that "What happens when something goes bump in the night and nobody cares?", but I didn't, ['positive', 'neutral'], None ::
+38 syntax expansions ::
+314 words suggestions ::
+98 word suggestion by req
+	SELECTED_SEED 29: new_10847_11032, I agreed that "You ... get a sense of good intentions derailed by a failure to seek and strike just the right tone.", but it wasn't, ['positive', 'neutral'], None ::
+44 syntax expansions ::
+221 words suggestions ::
+85 word suggestion by req
+	SELECTED_SEED 30: new_11531_17886, I thought that "It is tough to be startled when you are almost dozing.", but it wasn't, ['positive', 'neutral'], None ::
+33 syntax expansions ::
+302 words suggestions ::
+96 word suggestion by req
+	SELECTED_SEED 31: new_8816_2488, I agreed that "A graceless, witless attempt at mating Some Like It Hot with the WWII espionage thriller.", but it wasn't, ['positive', 'neutral'], None ::
+34 syntax expansions ::
+118 words suggestions ::
+50 word suggestion by req
+	SELECTED_SEED 32: new_7817_13306, I thought that "Complete lack of originality, cleverness or even visible effort", but it wasn't, ['positive', 'neutral'], None ::
+45 syntax expansions ::
+92 words suggestions ::
+48 word suggestion by req
+	SELECTED_SEED 33: new_10754_2627, I thought that "( Toback's) fondness for fancy split-screen, stuttering editing and pompous references to Wittgenstein and Kirkegaard ... blends uneasily with the titillating material.", but I didn't, ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 34: new_3739_6388, I agreed that "We do get the distinct impression that this franchise is drawing to a close.", but it wasn't, ['positive', 'neutral'], None ::
+33 syntax expansions ::
+338 words suggestions ::
+142 word suggestion by req
+	SELECTED_SEED 35: new_8213_9180, I agreed that "Began life as a computer game, then morphed into a movie -- a bad one, of course.", but it wasn't, ['positive', 'neutral'], None ::
+45 syntax expansions ::
+232 words suggestions ::
+102 word suggestion by req
+	SELECTED_SEED 36: new_6626_18430, I thought that "But it has an ambition to say something about its subjects, but not a willingness.", but it wasn't, ['positive', 'neutral'], None ::
+43 syntax expansions ::
+300 words suggestions ::
+64 word suggestion by req
+	SELECTED_SEED 37: new_6377_7808, I agreed that "If you have got a house full of tots -- do not worry, this will be on video long before they grow up and you can wait till then.", but it wasn't, ['positive', 'neutral'], None ::
+62 syntax expansions ::
+430 words suggestions ::
+135 word suggestion by req
+	SELECTED_SEED 38: new_11144_3531, I thought that "The threat implied in the title Pokémon 4ever is terrifying -- like locusts in a horde these things will keep coming.", but I didn't, ['positive', 'neutral'], None ::
+43 syntax expansions ::
+346 words suggestions ::
+92 word suggestion by req
+	SELECTED_SEED 39: new_6560_15316, I agreed that "Hmmm ... might I suggest that the wayward wooden one end it all by stuffing himself into an electric pencil sharpener?", but it wasn't, ['positive', 'neutral'], None ::
+34 syntax expansions ::
+174 words suggestions ::
+65 word suggestion by req
+	SELECTED_SEED 40: new_11112_15098, I thought that "It dabbles all around, never gaining much momentum.", but it wasn't, ['positive', 'neutral'], None ::
+24 syntax expansions ::
+202 words suggestions ::
+69 word suggestion by req
+	SELECTED_SEED 41: new_10850_13268, I agreed that "The film's final hour, where nearly all the previous unseen material resides, is unconvincing soap opera that Tornatore was right to cut.", but it wasn't, ['positive', 'neutral'], None ::
+46 syntax expansions ::
+357 words suggestions ::
+112 word suggestion by req
+	SELECTED_SEED 42: new_8427_1128, I agreed that "A bravura exercise in emptiness.", but it wasn't, ['positive', 'neutral'], None ::
+25 syntax expansions ::
+42 words suggestions ::
+24 word suggestion by req
+	SELECTED_SEED 43: new_7682_1066, I thought that "The so-inept - it is - surreal dubbing (featuring the voices of Glenn Close, Regis Philbin and Breckin Meyer) brings back memories of cheesy old Godzilla flicks.", but it wasn't, ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 44: new_9667_15645, I agreed that "Where Tom Green stages his gags as assaults on America's knee-jerk moral sanctimony, Jackass lacks aspirations of social upheaval.", but I didn't, ['positive', 'neutral'], None ::
+18 syntax expansions ::
+113 words suggestions ::
+35 word suggestion by req
+	SELECTED_SEED 45: new_11230_10918, I thought that "Not exaggerated enough to be a parody of gross-out flicks, college flicks, or even flicks in general.", but it wasn't, ['positive', 'neutral'], None ::
+2 syntax expansions ::
+2 words suggestions ::
+1 word suggestion by req
+	SELECTED_SEED 46: new_7404_13017, I agreed that "Involves two mysteries -- one it gives away and the other featuring such badly drawn characters that its outcome hardly matters.", but I didn't, ['positive', 'neutral'], None ::
+63 syntax expansions ::
+285 words suggestions ::
+97 word suggestion by req
+	SELECTED_SEED 47: new_6450_14360, I agreed that "All the movie's narrative gymnastics cannot disguise the fact that it is inauthentic at its core and that its story just is not worth telling.", but it wasn't, ['positive', 'neutral'], None ::
+54 syntax expansions ::
+445 words suggestions ::
+107 word suggestion by req
+	SELECTED_SEED 48: new_10248_6058, I thought that "Director Elie Chouraqui, who co-wrote the script, catches the chaotic horror of war, but why bother if you are going to subjugate truth to the tear-jerking demands of soap opera?", but it wasn't, ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 49: new_6608_15345, I agreed that "Reggio and Glass so rhapsodize cynicism, with repetition and languorous slo-mo sequences, that Glass's dirgelike score becomes a fang-baring lullaby.", but I didn't, ['positive', 'neutral'], None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 50: new_11192_10886, I thought that "Festers in just such a dungpile that you would swear you were watching monkeys flinging their feces at you.", but it wasn't, ['positive', 'neutral'], None ::
+48 syntax expansions ::
+330 words suggestions ::
+84 word suggestion by req
+Total 1630 syntactical expansion identified in the requirement out of 18600 seeds
+<<<<< REQUIREMENT:Negation of negative at the end, should be positive or neutral
+>>>>> REQUIREMENT:Negated positive with neutral content in the middle
+	25569 inputs are selected.
+	SELECTED_SEED 1: new_2695_13582, I wouldn't say, given There are a few modest laughs, but certainly no thrills., Slight but enjoyable documentary., negative, None ::
+28 syntax expansions ::
+187 words suggestions ::
+56 word suggestion by req
+	SELECTED_SEED 2: new_7_13147, I don't agree with, given There are a few modest laughs, but certainly no thrills., Offers that rare combination of entertainment and education., negative, None ::
+33 syntax expansions ::
+199 words suggestions ::
+59 word suggestion by req
+	SELECTED_SEED 3: new_3312_15786, I wouldn't say, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., It is rare for any movie to be as subtle and touching as The Son's Room., negative, None ::
+42 syntax expansions ::
+283 words suggestions ::
+93 word suggestion by req
+	SELECTED_SEED 4: new_4587_12610, I wouldn't say, given There are a few modest laughs, but certainly no thrills., Tells a fascinating, compelling story., negative, None ::
+36 syntax expansions ::
+207 words suggestions ::
+63 word suggestion by req
+	SELECTED_SEED 5: new_1947_22978, I wouldn't say, given There are a few modest laughs, but certainly no thrills., Paul Bettany is cool., negative, None ::
+28 syntax expansions ::
+188 words suggestions ::
+63 word suggestion by req
+	SELECTED_SEED 6: new_422_22765, I do not think, given There are a few modest laughs, but certainly no thrills., Bullock does a good job here of working against her natural likability., negative, None ::
+28 syntax expansions ::
+263 words suggestions ::
+70 word suggestion by req
+	SELECTED_SEED 7: new_5497_10470, I do not think, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., This seductive tease of a thriller gets the job done., negative, None ::
+42 syntax expansions ::
+246 words suggestions ::
+76 word suggestion by req
+	SELECTED_SEED 8: new_4478_11441, I wouldn't say, given A movie that falls victim to frazzled wackiness and frayed satire., The best part about " Gangs " was Daniel Day-Lewis., negative, None ::
+47 syntax expansions ::
+437 words suggestions ::
+152 word suggestion by req
+	SELECTED_SEED 9: new_828_6699, I do not think, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., A highly intriguing thriller, coupled with some ingenious plot devices and some lavishly built settings . ., negative, None ::
+42 syntax expansions ::
+286 words suggestions ::
+77 word suggestion by req
+	SELECTED_SEED 10: new_1553_3942, I wouldn't say, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., There are some wonderfully fresh moments that smooth the moral stiffness with human kindness and hopefulness., negative, None ::
+42 syntax expansions ::
+261 words suggestions ::
+75 word suggestion by req
+	SELECTED_SEED 11: new_2804_6307, I don't agree with, given There are a few modest laughs, but certainly no thrills., Smart and alert, Thirteen Conversations About One Thing is a small gem., negative, None ::
+33 syntax expansions ::
+198 words suggestions ::
+62 word suggestion by req
+	SELECTED_SEED 12: new_3663_7253, I don't agree with, given A movie that falls victim to frazzled wackiness and frayed satire., The difference between Cho and most comics is that her confidence in her material is merited., negative, None ::
+49 syntax expansions ::
+323 words suggestions ::
+113 word suggestion by req
+	SELECTED_SEED 13: new_5191_4033, I wouldn't say, given There are a few modest laughs, but certainly no thrills., Michel Piccoli's moving performance is this films reason for being., negative, None ::
+28 syntax expansions ::
+190 words suggestions ::
+63 word suggestion by req
+	SELECTED_SEED 14: new_2403_20951, I don't agree with, given A movie that falls victim to frazzled wackiness and frayed satire., A beautiful, timeless and universal tale of heated passions -- jealousy, betrayal, forgiveness and murder., negative, None ::
+49 syntax expansions ::
+380 words suggestions ::
+128 word suggestion by req
+	SELECTED_SEED 15: new_3525_22810, I do not think, given There are a few modest laughs, but certainly no thrills., Mr . Deeds is, as comedy goes, very silly -- and in the best way., negative, None ::
+28 syntax expansions ::
+203 words suggestions ::
+64 word suggestion by req
+	SELECTED_SEED 16: new_2297_24217, I don't agree with, given There are a few modest laughs, but certainly no thrills., The huskies are beautiful, the border collie is funny and the overall feeling is genial and decent., negative, None ::
+33 syntax expansions ::
+196 words suggestions ::
+61 word suggestion by req
+	SELECTED_SEED 17: new_2801_9997, I don't agree with, given There are a few modest laughs, but certainly no thrills., A surprisingly charming and even witty match for the best of Hollywood's comic-book adaptations., negative, None ::
+33 syntax expansions ::
+201 words suggestions ::
+62 word suggestion by req
+	SELECTED_SEED 18: new_2724_21919, I do not think, given There are a few modest laughs, but certainly no thrills., A stirring road movie., negative, None ::
+28 syntax expansions ::
+198 words suggestions ::
+58 word suggestion by req
+	SELECTED_SEED 19: new_357_14719, I do not think, given There are a few modest laughs, but certainly no thrills., It is a terrific American sports movie and Dennis Quaid is its athletic heart., negative, None ::
+28 syntax expansions ::
+247 words suggestions ::
+68 word suggestion by req
+	SELECTED_SEED 20: new_3976_24252, I don't agree with, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., ( A) smarter and much funnier version of the old Police Academy flicks., negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 21: new_2320_3074, I do not think, given A movie that falls victim to frazzled wackiness and frayed satire., Morvern Callar confirms Lynne Ramsay as an important, original talent in international cinema., negative, None ::
+47 syntax expansions ::
+507 words suggestions ::
+149 word suggestion by req
+	SELECTED_SEED 22: new_9957_9983, I wouldn't say, given A movie that falls victim to frazzled wackiness and frayed satire., City by the Sea is a gritty police thriller with all the dysfunctional family dynamics one could wish for., negative, None ::
+47 syntax expansions ::
+442 words suggestions ::
+150 word suggestion by req
+	SELECTED_SEED 23: new_307_4011, I don't agree with, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., The principals in this cast are all fine, but Bishop and Stevenson are standouts., negative, None ::
+42 syntax expansions ::
+283 words suggestions ::
+83 word suggestion by req
+	SELECTED_SEED 24: new_1919_22788, I wouldn't say, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., Its sheer dynamism is infectious., negative, None ::
+42 syntax expansions ::
+272 words suggestions ::
+83 word suggestion by req
+	SELECTED_SEED 25: new_3098_10365, I don't agree with, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., One of the very best movies ever made about the life of moviemaking., negative, None ::
+69 syntax expansions ::
+444 words suggestions ::
+125 word suggestion by req
+	SELECTED_SEED 26: new_3627_5298, I don't agree with, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., It is funny, touching, dramatically forceful, and beautifully shot., negative, None ::
+42 syntax expansions ::
+294 words suggestions ::
+84 word suggestion by req
+	SELECTED_SEED 27: new_2876_16306, I don't agree with, given There are a few modest laughs, but certainly no thrills., Fast-paced and wonderfully edited, the film is extremely thorough., negative, None ::
+33 syntax expansions ::
+201 words suggestions ::
+60 word suggestion by req
+	SELECTED_SEED 28: new_5380_4999, I do not think, given There are a few modest laughs, but certainly no thrills., As action-adventure, this space-based homage to Robert Louis Stevenson's Treasure Island fires on all plasma conduits., negative, None ::
+28 syntax expansions ::
+178 words suggestions ::
+55 word suggestion by req
+	SELECTED_SEED 29: new_3394_18035, I don't agree with, given A movie that falls victim to frazzled wackiness and frayed satire., Quitting offers piercing domestic drama with spikes of sly humor., negative, None ::
+49 syntax expansions ::
+326 words suggestions ::
+131 word suggestion by req
+	SELECTED_SEED 30: new_3297_16393, I do not think, given There are a few modest laughs, but certainly no thrills., Bound to appeal to women looking for a howlingly trashy time., negative, None ::
+28 syntax expansions ::
+248 words suggestions ::
+66 word suggestion by req
+	SELECTED_SEED 31: new_2527_12971, I wouldn't say, given A movie that falls victim to frazzled wackiness and frayed satire., A special kind of movie, this melancholic film noir reminded me a lot of Memento ..., negative, None ::
+47 syntax expansions ::
+323 words suggestions ::
+102 word suggestion by req
+	SELECTED_SEED 32: new_2803_6851, I wouldn't say, given A movie that falls victim to frazzled wackiness and frayed satire., Adaptation is simply brilliant., negative, None ::
+47 syntax expansions ::
+424 words suggestions ::
+132 word suggestion by req
+	SELECTED_SEED 33: new_1544_22647, I do not think, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., The socio-histo-political treatise is told in earnest strides ... (and) personal illusion is deconstructed with poignancy., negative, None ::
+42 syntax expansions ::
+275 words suggestions ::
+72 word suggestion by req
+	SELECTED_SEED 34: new_2039_7524, I wouldn't say, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., Boomers and their kids will have a Barrie good time., negative, None ::
+60 syntax expansions ::
+414 words suggestions ::
+117 word suggestion by req
+	SELECTED_SEED 35: new_1029_13171, I do not think, given There are a few modest laughs, but certainly no thrills., Genuinely touching because it is realistic about all kinds of love., negative, None ::
+56 syntax expansions ::
+523 words suggestions ::
+120 word suggestion by req
+	SELECTED_SEED 36: new_11661_21169, I wouldn't say, given There are a few modest laughs, but certainly no thrills., Reassuring, retro uplifter., negative, None ::
+28 syntax expansions ::
+186 words suggestions ::
+62 word suggestion by req
+	SELECTED_SEED 37: new_5502_5593, I do not think, given There are a few modest laughs, but certainly no thrills., A realistically terrifying movie that puts another notch in the belt of the long list of renegade-cop tales., negative, None ::
+28 syntax expansions ::
+191 words suggestions ::
+55 word suggestion by req
+	SELECTED_SEED 38: new_2802_9295, I don't agree with, given There are a few modest laughs, but certainly no thrills., This is a superior horror flick., negative, None ::
+33 syntax expansions ::
+194 words suggestions ::
+59 word suggestion by req
+	SELECTED_SEED 39: new_4094_13769, I don't agree with, given A movie that falls victim to frazzled wackiness and frayed satire., The characters are more deeply thought through than in most ` right-thinking' films., negative, None ::
+49 syntax expansions ::
+333 words suggestions ::
+101 word suggestion by req
+	SELECTED_SEED 40: new_1093_22408, I don't agree with, given There are a few modest laughs, but certainly no thrills., It is like a poem., negative, None ::
+33 syntax expansions ::
+201 words suggestions ::
+59 word suggestion by req
+	SELECTED_SEED 41: new_2433_18772, I don't agree with, given There are a few modest laughs, but certainly no thrills., A mix of gritty realism, crisp storytelling and radiant compassion that effortlessly draws you in., negative, None ::
+64 syntax expansions ::
+348 words suggestions ::
+96 word suggestion by req
+	SELECTED_SEED 42: new_4999_15768, I wouldn't say, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., It is touching and tender and proves that even in sorrow you can find humor., negative, None ::
+42 syntax expansions ::
+284 words suggestions ::
+78 word suggestion by req
+	SELECTED_SEED 43: new_1260_16270, I don't agree with, given There are a few modest laughs, but certainly no thrills., If you can stomach the rough content, it is worth checking out for the performances alone., negative, None ::
+33 syntax expansions ::
+189 words suggestions ::
+57 word suggestion by req
+	SELECTED_SEED 44: new_2015_17337, I do not think, given The bland outweighs the nifty, and Cletis Tout never becomes the clever crime comedy it thinks it is., What a great way to spend 4 units of your day., negative, None ::
+42 syntax expansions ::
+296 words suggestions ::
+83 word suggestion by req
+	SELECTED_SEED 45: new_677_3715, I don't agree with, given There are a few modest laughs, but certainly no thrills., Ford deserves to be remembered at Oscar time for crafting this wonderful portrait of a conflicted soldier., negative, None ::
+33 syntax expansions ::
+221 words suggestions ::
+68 word suggestion by req
+	SELECTED_SEED 46: new_5243_1420, I don't agree with, given There are a few modest laughs, but certainly no thrills., This gorgeous epic is guaranteed to lift the spirits of the whole family., negative, None ::
+33 syntax expansions ::
+200 words suggestions ::
+56 word suggestion by req
+	SELECTED_SEED 47: new_7268_5671, I wouldn't say, given There are a few modest laughs, but certainly no thrills., Essentially a collection of bits -- and they are all naughty., negative, None ::
+49 syntax expansions ::
+398 words suggestions ::
+97 word suggestion by req
+	SELECTED_SEED 48: new_5646_18053, I don't agree with, given A movie that falls victim to frazzled wackiness and frayed satire., But the performances of Pacino, Williams, and Swank keep the viewer wide-awake all the way through., negative, None ::
+49 syntax expansions ::
+375 words suggestions ::
+104 word suggestion by req
+	SELECTED_SEED 49: new_95_317, I wouldn't say, given A movie that falls victim to frazzled wackiness and frayed satire., A sports movie with action that is exciting on the field and a story you care about off it., negative, None ::
+71 syntax expansions ::
+515 words suggestions ::
+156 word suggestion by req
+	SELECTED_SEED 50: new_1747_20623, I do not think, given There are a few modest laughs, but certainly no thrills., Miller tells this very compelling tale with little fuss or noise, expertly plucking tension from quiet., negative, None ::
+28 syntax expansions ::
+272 words suggestions ::
+74 word suggestion by req
+Total 1971 syntactical expansion identified in the requirement out of 25569 seeds
+<<<<< REQUIREMENT:Negated positive with neutral content in the middle
+>>>>> REQUIREMENT:Author sentiment is more important than of others
+	115356 inputs are selected.
+	SELECTED_SEED 1: new_10557_101499, Many people agree with that "Drumline ably captures the complicated relationships in a marching band.", but I think that "This Tuxedo ... should have been sent back to the tailor for some major alterations.", negative, None ::
+48 syntax expansions ::
+311 words suggestions ::
+92 word suggestion by req
+	SELECTED_SEED 2: new_5623_89823, Many people agree with that "Drumline ably captures the complicated relationships in a marching band.", but I think that "Stripped almost entirely of such tools as nudity, profanity and violence, LaBute does manage to make a few points about modern man and his problematic quest for human connection.", negative, None ::
+48 syntax expansions ::
+294 words suggestions ::
+94 word suggestion by req
+	SELECTED_SEED 3: new_10913_30064, Many people agree with that "Rodriguez does a splendid job of racial profiling Hollywood style--casting excellent Latin actors of all ages -- a trend long overdue.", but I think that "A distinctly mixed bag, the occasional bursts of sharp writing alternating with lots of sloppiness and the obligatory moments of sentimental ooze.", negative, None ::
+108 syntax expansions ::
+733 words suggestions ::
+210 word suggestion by req
+	SELECTED_SEED 4: new_10099_62715, Many people agree with that "Drumline ably captures the complicated relationships in a marching band.", but I think that "Plays like a bad blend of an overripe episode of TV's Dawson's Creek and a recycled and dumbed-down version of Love Story.", negative, None ::
+48 syntax expansions ::
+304 words suggestions ::
+96 word suggestion by req
+	SELECTED_SEED 5: new_3533_78256, Many people agree with that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "But once the falcon arrives in the skies above Manhattan, the adventure is on red alert.", positive, None ::
+74 syntax expansions ::
+514 words suggestions ::
+163 word suggestion by req
+	SELECTED_SEED 6: new_8260_44705, Many people agree with that "A photographic marvel of sorts, and it is certainly an invaluable record of that special fishy community.", but I think that "It is all pretty cynical and condescending, too.", negative, None ::
+50 syntax expansions ::
+276 words suggestions ::
+79 word suggestion by req
+	SELECTED_SEED 7: new_721_26512, Many people agree with that "Rodriguez does a splendid job of racial profiling Hollywood style--casting excellent Latin actors of all ages -- a trend long overdue.", but I think that "It is fairly self-aware in its dumbness.", negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 8: new_7501_16746, They think that "Drumline ably captures the complicated relationships in a marching band.", but I think that "The film's few ideas are stretched to the point of evaporation; the whole central section is one big chase that seems to have no goal and no urgency.", negative, None ::
+89 syntax expansions ::
+632 words suggestions ::
+201 word suggestion by req
+	SELECTED_SEED 9: new_2913_87349, Some people think that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "In his debut as a director, Washington has a sure hand.", positive, None ::
+65 syntax expansions ::
+505 words suggestions ::
+146 word suggestion by req
+	SELECTED_SEED 10: new_5960_68968, Many people agree with that "Rodriguez does a splendid job of racial profiling Hollywood style--casting excellent Latin actors of all ages -- a trend long overdue.", but I think that "With the cheesiest monsters this side of a horror spoof, which They is not, it is more likely to induce sleep than fright.", negative, None ::
+99 syntax expansions ::
+571 words suggestions ::
+173 word suggestion by req
+	SELECTED_SEED 11: new_9596_61510, You agree with that "Rodriguez does a splendid job of racial profiling Hollywood style--casting excellent Latin actors of all ages -- a trend long overdue.", but I think that "Maybe you will be lucky, and there will be a power outage during your screening so you can get your money back.", negative, None ::
+88 syntax expansions ::
+557 words suggestions ::
+179 word suggestion by req
+	SELECTED_SEED 12: new_4195_47308, Many people agree with that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "The rare movie that is as crisp and to the point as the novel on which it is based.", positive, None ::
+69 syntax expansions ::
+528 words suggestions ::
+188 word suggestion by req
+	SELECTED_SEED 13: new_10352_19221, You agree with that "Drumline ably captures the complicated relationships in a marching band.", but I think that "A summary of the plot does not quite do justice to the awfulness of the movie, for that comes through all too painfully in the execution.", negative, None ::
+48 syntax expansions ::
+273 words suggestions ::
+84 word suggestion by req
+	SELECTED_SEED 14: new_5396_10191, Many people agree with that "But in its child-centered, claustrophobic context, it can be just as frightening and disturbing -- even punishing.", but I think that "The film occasionally tries the viewer's patience with slow pacing and a main character who sometimes defies sympathy, but it ultimately satisfies with its moving story.", positive, None ::
+5 syntax expansions ::
+27 words suggestions ::
+8 word suggestion by req
+	SELECTED_SEED 15: new_413_69214, You agree with that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "As green-guts monster movies go, it is a beaut.", positive, None ::
+4 syntax expansions ::
+25 words suggestions ::
+3 word suggestion by req
+	SELECTED_SEED 16: new_7739_4192, Many people agree with that "Rodriguez does a splendid job of racial profiling Hollywood style--casting excellent Latin actors of all ages -- a trend long overdue.", but I think that "just not campy enough", negative, None ::
+85 syntax expansions ::
+477 words suggestions ::
+165 word suggestion by req
+	SELECTED_SEED 17: new_7001_42145, Some people think that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "Large budget notwithstanding, the movie is such a blip on the year's radar screen that it is tempting just to go with it for the ride.", positive, None ::
+89 syntax expansions ::
+687 words suggestions ::
+193 word suggestion by req
+	SELECTED_SEED 18: new_9860_92827, They think that "Rodriguez does a splendid job of racial profiling Hollywood style--casting excellent Latin actors of all ages -- a trend long overdue.", but I think that "as in aimless, arduous, and arbitrary.", negative, None ::
+77 syntax expansions ::
+446 words suggestions ::
+152 word suggestion by req
+	SELECTED_SEED 19: new_1245_16525, Some people think that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "Reign of Fire looks as if it was made without much thought -- and is best watched that way.", positive, None ::
+73 syntax expansions ::
+570 words suggestions ::
+151 word suggestion by req
+	SELECTED_SEED 20: new_1488_45352, Many people agree with that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "It is hard to imagine Alan Arkin being better than he is in this performance.", positive, None ::
+75 syntax expansions ::
+544 words suggestions ::
+166 word suggestion by req
+	SELECTED_SEED 21: new_10482_41777, Many people agree with that "A photographic marvel of sorts, and it is certainly an invaluable record of that special fishy community.", but I think that "In the end, Tuck Everlasting falls victim to that everlasting conundrum experienced by every human who ever lived: too much to do, too little time to do it in.", negative, None ::
+84 syntax expansions ::
+551 words suggestions ::
+162 word suggestion by req
+	SELECTED_SEED 22: new_8249_37484, They think that "A photographic marvel of sorts, and it is certainly an invaluable record of that special fishy community.", but I think that "Every bit as bogus as most Disney live action family movies are -- no real plot, no real conflict, no real point.", negative, None ::
+9 syntax expansions ::
+67 words suggestions ::
+23 word suggestion by req
+	SELECTED_SEED 23: new_5768_48841, Some people think that "Rodriguez does a splendid job of racial profiling Hollywood style--casting excellent Latin actors of all ages -- a trend long overdue.", but I think that "The things this movie tries to get the audience to buy just will not fly with most intelligent viewers.", negative, None ::
+93 syntax expansions ::
+663 words suggestions ::
+178 word suggestion by req
+	SELECTED_SEED 24: new_8825_39815, You agree with that "A photographic marvel of sorts, and it is certainly an invaluable record of that special fishy community.", but I think that "It settles for being merely grim.", negative, None ::
+50 syntax expansions ::
+350 words suggestions ::
+88 word suggestion by req
+	SELECTED_SEED 25: new_1708_56558, Some people think that "A cartoon?", but I think that "A literary detective story is still a detective story and aficionados of the whodunit will not be disappointed.", positive, None ::
+41 syntax expansions ::
+351 words suggestions ::
+85 word suggestion by req
+	SELECTED_SEED 26: new_10589_48101, Many people agree with that "A photographic marvel of sorts, and it is certainly an invaluable record of that special fishy community.", but I think that "" Abandon " will leave you wanting to abandon the theater.", negative, None ::
+71 syntax expansions ::
+417 words suggestions ::
+133 word suggestion by req
+	SELECTED_SEED 27: new_3634_257, Many people agree with that "A cartoon?", but I think that "The Hours, a delicately crafted film, is an impressive achievement in spite of a river of sadness that pours into every frame.", positive, None ::
+72 syntax expansions ::
+496 words suggestions ::
+165 word suggestion by req
+	SELECTED_SEED 28: new_8424_26928, Some people think that "Drumline ably captures the complicated relationships in a marching band.", but I think that "The picture is a primer on what happens when lack of know-how mixes with lack of give-a-damn.", negative, None ::
+5 syntax expansions ::
+46 words suggestions ::
+22 word suggestion by req
+	SELECTED_SEED 29: new_9861_61270, You agree with that "Rodriguez does a splendid job of racial profiling Hollywood style--casting excellent Latin actors of all ages -- a trend long overdue.", but I think that "Plays like a glossy melodrama that occasionally verges on camp.", negative, None ::
+92 syntax expansions ::
+531 words suggestions ::
+185 word suggestion by req
+	SELECTED_SEED 30: new_2822_22084, Many people agree with that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "While obviously aimed at kids, The Country Bears ... should keep parents amused with its low groan-to-guffaw ratio.", positive, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 31: new_6183_98589, You agree with that "Drumline ably captures the complicated relationships in a marching band.", but I think that "McKay seems embarrassed by his own invention and tries to rush through the intermediary passages, apparently hoping that the audience will not notice the glaring triteness of the plot device he has put in service.", negative, None ::
+48 syntax expansions ::
+268 words suggestions ::
+84 word suggestion by req
+	SELECTED_SEED 32: new_10701_103270, You agree with that "Rodriguez does a splendid job of racial profiling Hollywood style--casting excellent Latin actors of all ages -- a trend long overdue.", but I think that "An empty she will of an epic rather than the real deal.", negative, None ::
+75 syntax expansions ::
+483 words suggestions ::
+141 word suggestion by req
+	SELECTED_SEED 33: new_430_8908, Many people agree with that "Rodriguez does a splendid job of racial profiling Hollywood style--casting excellent Latin actors of all ages -- a trend long overdue.", but I think that "One Hour Photo is an intriguing snapshot of one man and his delusions; it is just too bad it does not have more flashes of insight.", negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 34: new_4085_86611, They think that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "I know that I will never listen to Marvin Gaye or the Supremes the same way again", positive, None ::
+66 syntax expansions ::
+576 words suggestions ::
+168 word suggestion by req
+	SELECTED_SEED 35: new_10034_38409, You agree with that "But in its child-centered, claustrophobic context, it can be just as frightening and disturbing -- even punishing.", but I think that "Enthusiastically taking up the current teen movie concern with bodily functions, Walt Becker's film pushes all the demographically appropriate comic buttons.", positive, None ::
+5 syntax expansions ::
+35 words suggestions ::
+8 word suggestion by req
+	SELECTED_SEED 36: new_2173_56932, Many people agree with that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "" Red Dragon " is entertaining.", positive, None ::
+60 syntax expansions ::
+508 words suggestions ::
+133 word suggestion by req
+	SELECTED_SEED 37: new_4050_53929, Some people think that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "There are not many conclusive answers in the film, but there is an interesting story of pointed personalities, courage, tragedy and the little guys vs. the big guys.", positive, None ::
+68 syntax expansions ::
+578 words suggestions ::
+156 word suggestion by req
+	SELECTED_SEED 38: new_11062_47174, Some people think that "A photographic marvel of sorts, and it is certainly an invaluable record of that special fishy community.", but I think that "But the movie that does not really deliver for country music fans or for family audiences", negative, None ::
+1 syntax expansions ::
+1 words suggestions ::
+0 word suggestion by req
+	SELECTED_SEED 39: new_1874_84929, Many people agree with that "A cartoon?", but I think that "It is a quirky, off-beat project.", positive, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 40: new_5586_39370, You agree with that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "A wry, affectionate delight.", positive, None ::
+57 syntax expansions ::
+348 words suggestions ::
+107 word suggestion by req
+	SELECTED_SEED 41: new_2674_18593, Many people agree with that "A cartoon?", but I think that "Rife with the rueful, wry humor springing out of Yiddish culture and language.", positive, None ::
+36 syntax expansions ::
+175 words suggestions ::
+78 word suggestion by req
+	SELECTED_SEED 42: new_1186_89066, Some people think that "A cartoon?", but I think that "Broomfield turns his distinctive ` blundering' style into something that could really help clear up the case.", positive, None ::
+61 syntax expansions ::
+437 words suggestions ::
+117 word suggestion by req
+	SELECTED_SEED 43: new_7436_76137, You agree with that "But in its child-centered, claustrophobic context, it can be just as frightening and disturbing -- even punishing.", but I think that "So much facile technique, such cute ideas, so little movie.", positive, None ::
+5 syntax expansions ::
+26 words suggestions ::
+11 word suggestion by req
+	SELECTED_SEED 44: new_323_79850, Some people think that "A cartoon?", but I think that "Even with all those rough edges safely sanded down, the American Insomnia is still pretty darned good.", positive, None ::
+33 syntax expansions ::
+232 words suggestions ::
+41 word suggestion by req
+	SELECTED_SEED 45: new_6055_42480, Some people think that "But in its child-centered, claustrophobic context, it can be just as frightening and disturbing -- even punishing.", but I think that "Bigelow offers some flashy twists and turns that occasionally fortify this turgid fable.", positive, None ::
+5 syntax expansions ::
+40 words suggestions ::
+8 word suggestion by req
+	SELECTED_SEED 46: new_1498_97661, Many people agree with that "A cartoon?", but I think that "A simple, but gritty and well-acted ensemble drama that encompasses a potent metaphor for a country still dealing with its fascist past.", positive, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 47: new_1814_27056, They think that "A cartoon?", but I think that "It is a day at the beach -- with air conditioning and popcorn.", positive, None ::
+33 syntax expansions ::
+258 words suggestions ::
+67 word suggestion by req
+	SELECTED_SEED 48: new_11293_55478, Some people think that "A cartoon?", but I think that "Those eternally devoted to the insanity of Black will have an intermittently good time.", positive, None ::
+57 syntax expansions ::
+459 words suggestions ::
+101 word suggestion by req
+	SELECTED_SEED 49: new_2024_50046, They think that "But in its child-centered, claustrophobic context, it can be just as frightening and disturbing -- even punishing.", but I think that "A compelling yarn, but not quite a ripping one.", positive, None ::
+5 syntax expansions ::
+26 words suggestions ::
+10 word suggestion by req
+	SELECTED_SEED 50: new_2325_49096, Many people agree with that "Chelsea Walls is a case of too many chefs fussing over too weak a recipe.", but I think that "it is refreshing to see a movie that embraces its old-fashioned themes and in the process comes out looking like something wholly original.", positive, None ::
+0 syntax expansions ::
+0 word suggestion by req
+Total 2374 syntactical expansion identified in the requirement out of 115356 seeds
+<<<<< REQUIREMENT:Author sentiment is more important than of others
+>>>>> REQUIREMENT:parsing sentiment in (question, yes) form
+	19226 inputs are selected.
+	SELECTED_SEED 1: new_6212_13546, Do I think that "When a movie asks you to feel sorry for Mick Jagger's sex life, it already has one strike against it."? yes, negative, None ::
+49 syntax expansions ::
+317 words suggestions ::
+124 word suggestion by req
+	SELECTED_SEED 2: new_7548_6257, Do I agree that "All the amped-up Tony Hawk-style stunts and thrashing rap-metal cannot disguise the fact that, really, we have been here, done that."? yes, negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 3: new_530_14460, Do I think that "Few films this year have been as resolute in their emotional nakedness."? yes, positive, None ::
+32 syntax expansions ::
+341 words suggestions ::
+90 word suggestion by req
+	SELECTED_SEED 4: new_6787_19079, Do I agree that "This Bond film goes off the beaten path, not necessarily for the better."? yes, negative, None ::
+32 syntax expansions ::
+239 words suggestions ::
+64 word suggestion by req
+	SELECTED_SEED 5: new_641_5320, Do I think that "A quietly reflective and melancholy New Zealand film about an eventful summer in a 13-year-old girl's life."? yes, positive, None ::
+2 syntax expansions ::
+0 words suggestions ::
+2 word suggestion by req
+	SELECTED_SEED 6: new_7498_13228, Do I think that "One of the more irritating cartoons you will see this, or any, year."? yes, negative, None ::
+48 syntax expansions ::
+259 words suggestions ::
+101 word suggestion by req
+	SELECTED_SEED 7: new_927_691, Do I agree that "No . ."? yes, negative, None ::
+5 syntax expansions ::
+4 words suggestions ::
+4 word suggestion by req
+	SELECTED_SEED 8: new_2768_8508, Do I think that "Deserves a place of honor next to Nanook as a landmark in film history."? yes, positive, None ::
+34 syntax expansions ::
+252 words suggestions ::
+49 word suggestion by req
+	SELECTED_SEED 9: new_10126_7175, Do I agree that "A supernatural mystery that does not know whether it wants to be a suspenseful horror movie or a weepy melodrama."? yes, negative, None ::
+33 syntax expansions ::
+232 words suggestions ::
+72 word suggestion by req
+	SELECTED_SEED 10: new_4015_4216, Do I think that "A lovely film for the holiday season."? yes, positive, None ::
+27 syntax expansions ::
+76 words suggestions ::
+38 word suggestion by req
+	SELECTED_SEED 11: new_2358_16964, Do I think that "The direction has a fluid, no-nonsense authority, and the performances by Harris, Phifer and Cam ` ron seal the deal."? yes, positive, None ::
+8 syntax expansions ::
+25 words suggestions ::
+12 word suggestion by req
+	SELECTED_SEED 12: new_5592_4232, Do I think that "Paid in Full is remarkably engaging despite being noticeably derivative of Goodfellas and at least a half dozen other trouble-in-the-ghetto flicks."? yes, positive, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 13: new_10825_3274, Do I think that "To the filmmakers, Ivan is a prince of a fellow, but he comes across as shallow and glib though not mean-spirited, and there is no indication that he has been responsible for putting together any movies of particular value or merit."? yes, negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 14: new_8392_13090, Do I think that "Falters when it takes itself too seriously and when it depends too heavily on its otherwise talented cast to clown in situations that are not funny."? yes, negative, None ::
+61 syntax expansions ::
+476 words suggestions ::
+117 word suggestion by req
+	SELECTED_SEED 15: new_8480_16766, Do I think that "Too much of this well-acted but dangerously slow thriller feels like a preamble to a bigger, more complicated story, one that never materializes."? yes, negative, None ::
+5 syntax expansions ::
+5 words suggestions ::
+3 word suggestion by req
+	SELECTED_SEED 16: new_4315_5814, Do I think that "While centered on the life experiences of a particular theatrical family, this marvelous documentary touches--ever so gracefully -- on the entire history of the Yiddish theater, both in America and Israel."? yes, positive, None ::
+37 syntax expansions ::
+275 words suggestions ::
+115 word suggestion by req
+	SELECTED_SEED 17: new_9981_14597, Do I agree that "Derailed by bad writing and possibly also by some of that extensive post-production reworking to aim the film at young males in the throes of their first full flush of testosterone."? yes, negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 18: new_8365_2317, Do I agree that "One minute, you think you are watching a serious actioner; the next, it is as though clips from The Pink Panther Strikes Again and\/or Sailor Moon have been spliced in."? yes, negative, None ::
+58 syntax expansions ::
+439 words suggestions ::
+141 word suggestion by req
+	SELECTED_SEED 19: new_2214_2543, Do I agree that "Birthday Girl lucks out with Chaplin and Kidman, who are capable of anteing up some movie star charisma when they need it to sell us on this twisted love story, but who can also negotiate the movie's darker turns."? yes, positive, None ::
+5 syntax expansions ::
+77 words suggestions ::
+9 word suggestion by req
+	SELECTED_SEED 20: new_988_8319, Do I agree that "We can see the wheels turning, and we might resent it sometimes, but this is still a nice little picture, made by bright and friendly souls with a lot of good cheer."? yes, positive, None ::
+59 syntax expansions ::
+429 words suggestions ::
+137 word suggestion by req
+	SELECTED_SEED 21: new_8040_4289, Do I agree that "It is getting harder and harder to ignore the fact that Hollywood is not laughing with us, folks."? yes, negative, None ::
+42 syntax expansions ::
+231 words suggestions ::
+76 word suggestion by req
+	SELECTED_SEED 22: new_4948_17995, Do I agree that "The action sequences are fun and reminiscent of combat scenes from the Star Wars series."? yes, positive, None ::
+11 syntax expansions ::
+96 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 23: new_4191_14313, Do I agree that "An eloquent, reflective and beautifully acted meditation on both the profoundly devastating events of one year ago and the slow, painful healing process that has followed in their wake."? yes, positive, None ::
+57 syntax expansions ::
+366 words suggestions ::
+110 word suggestion by req
+	SELECTED_SEED 24: new_7500_11888, Do I think that "Too slow, too long and too little happens."? yes, negative, None ::
+10 syntax expansions ::
+84 words suggestions ::
+21 word suggestion by req
+	SELECTED_SEED 25: new_2467_7316, Do I think that "These three films form a remarkably cohesive whole, both visually and thematically, through their consistently sensitive and often exciting treatment of an ignored people."? yes, positive, None ::
+43 syntax expansions ::
+355 words suggestions ::
+108 word suggestion by req
+	SELECTED_SEED 26: new_297_10131, Do I agree that "The film has just enough of everything--re-enactments, archival footage, talking-head interviews -- and the music is simply sublime."? yes, positive, None ::
+8 syntax expansions ::
+0 words suggestions ::
+8 word suggestion by req
+	SELECTED_SEED 27: new_766_14236, Do I think that "As a belated nod to some neglected all-stars, Standing in the Shadows of Motown is cultural history of the best kind: informative, revealing and richly entertaining."? yes, positive, None ::
+9 syntax expansions ::
+83 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 28: new_5065_18754, Do I think that "Still rapturous after all these years, Cinema Paradiso stands as one of the great films about movie love."? yes, positive, None ::
+33 syntax expansions ::
+244 words suggestions ::
+59 word suggestion by req
+	SELECTED_SEED 29: new_9811_5056, Do I think that "In other words, about as bad a film you are likely to see all year."? yes, negative, None ::
+27 syntax expansions ::
+148 words suggestions ::
+51 word suggestion by req
+	SELECTED_SEED 30: new_693_11100, Do I think that "Pray's film works well and will appeal even to those who are not too familiar with turntablism."? yes, positive, None ::
+52 syntax expansions ::
+534 words suggestions ::
+152 word suggestion by req
+	SELECTED_SEED 31: new_4909_17422, Do I think that "While the frequent allusions to gurus and doshas will strike some Westerners as verging on mumbo-jumbo ... broad streaks of common sense emerge with unimpeachable clarity."? yes, positive, None ::
+4 syntax expansions ::
+9 words suggestions ::
+2 word suggestion by req
+	SELECTED_SEED 32: new_3646_3893, Do I agree that "Jackson is always watchable."? yes, positive, None ::
+26 syntax expansions ::
+186 words suggestions ::
+30 word suggestion by req
+	SELECTED_SEED 33: new_9759_8766, Do I think that "Unambitious writing emerges in the movie, using a plot that could have come from an animated-movie screenwriting textbook."? yes, negative, None ::
+4 syntax expansions ::
+52 words suggestions ::
+16 word suggestion by req
+	SELECTED_SEED 34: new_3114_8795, Do I agree that "You feel good, you feel sad, you feel pissed off, but in the end, you feel alive - which is what they did."? yes, positive, None ::
+39 syntax expansions ::
+305 words suggestions ::
+98 word suggestion by req
+	SELECTED_SEED 35: new_1995_12036, Do I think that "This masterfully calibrated psychological thriller thrives on its taut performances and creepy atmosphere even if the screenplay falls somewhat short."? yes, positive, None ::
+5 syntax expansions ::
+61 words suggestions ::
+15 word suggestion by req
+	SELECTED_SEED 36: new_9500_1962, Do I think that "Loud, chaotic and largely unfunny."? yes, negative, None ::
+25 syntax expansions ::
+169 words suggestions ::
+52 word suggestion by req
+	SELECTED_SEED 37: new_125_13149, Do I agree that "s personal revelations regarding what the shop means in the big picture, iconic characters gambol fluidly through the story, with charming results."? yes, positive, None ::
+45 syntax expansions ::
+308 words suggestions ::
+89 word suggestion by req
+	SELECTED_SEED 38: new_10509_16407, Do I agree that "For every articulate player, such as skateboarder Tony Hawk or BMX rider Mat Hoffman, are about a half dozen young Turks angling to see how many times they can work the words " radical " or " suck " into a sentence."? yes, negative, None ::
+5 syntax expansions ::
+15 words suggestions ::
+5 word suggestion by req
+	SELECTED_SEED 39: new_11735_2761, Do I agree that "Aan opportunity wasted."? yes, negative, None ::
+15 syntax expansions ::
+58 words suggestions ::
+20 word suggestion by req
+	SELECTED_SEED 40: new_8469_9399, Do I agree that "What kids will discover is a new collectible."? yes, positive, None ::
+28 syntax expansions ::
+294 words suggestions ::
+100 word suggestion by req
+	SELECTED_SEED 41: new_2729_16754, Do I think that "These people are really going to love The Piano Teacher."? yes, positive, None ::
+25 syntax expansions ::
+182 words suggestions ::
+56 word suggestion by req
+	SELECTED_SEED 42: new_6559_2271, Do I agree that "This overproduced piece of dreck is shockingly bad and absolutely unnecessary."? yes, negative, None ::
+35 syntax expansions ::
+192 words suggestions ::
+50 word suggestion by req
+	SELECTED_SEED 43: new_6755_18767, Do I agree that "Downright transparent is the script's endless assault of embarrassingly ham-fisted sex jokes that reek of a script rewrite designed to garner the film a " cooler " PG-13 rating."? yes, negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 44: new_4418_1101, Do I agree that "A film that will enthrall the whole family."? yes, positive, None ::
+28 syntax expansions ::
+224 words suggestions ::
+84 word suggestion by req
+	SELECTED_SEED 45: new_8915_2307, Do I agree that "It is so full of wrong choices that all you can do is shake your head in disbelief -- and worry about what classic Oliver Parker intends to mangle next time."? yes, negative, None ::
+73 syntax expansions ::
+567 words suggestions ::
+158 word suggestion by req
+	SELECTED_SEED 46: new_10491_2848, Do I think that "Whenever you think you have seen the end of the movie, we cut to a new scene, which also appears to be the end."? yes, negative, None ::
+69 syntax expansions ::
+478 words suggestions ::
+149 word suggestion by req
+	SELECTED_SEED 47: new_8932_11686, Do I think that "Safe Conduct, however ambitious and well-intentioned, fails to hit the entertainment bull's - eye."? yes, negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 48: new_3804_13633, Do I agree that "Its engaging simplicity is driven by appealing leads."? yes, positive, None ::
+25 syntax expansions ::
+168 words suggestions ::
+69 word suggestion by req
+	SELECTED_SEED 49: new_1407_3190, Do I think that "Overall very good for what it is trying to do."? yes, positive, None ::
+26 syntax expansions ::
+212 words suggestions ::
+63 word suggestion by req
+	SELECTED_SEED 50: new_4280_16361, Do I agree that "Not only does Spider-Man deliver, but I suspect it might deliver again and again."? yes, positive, None ::
+0 syntax expansions ::
+0 word suggestion by req
+Total 1264 syntactical expansion identified in the requirement out of 19226 seeds
+<<<<< REQUIREMENT:parsing sentiment in (question, yes) form
+>>>>> REQUIREMENT:Parsing positive sentiment in (question, no) form
+	9926 inputs are selected.
+	SELECTED_SEED 1: new_4383_468, Do I think that "It is consistently funny, in an irresistible junior-high way, and consistently free of any gag that would force you to give it a millisecond of thought."? no, negative, None ::
+5 syntax expansions ::
+40 words suggestions ::
+10 word suggestion by req
+	SELECTED_SEED 2: new_1213_868, Do I think that "Crackerjack entertainment -- nonstop romance, music, suspense and action."? no, negative, None ::
+15 syntax expansions ::
+57 words suggestions ::
+12 word suggestion by req
+	SELECTED_SEED 3: new_4176_2760, Do I think that "The film is enriched by an imaginatively mixed cast of antic spirits, headed by Christopher Plummer as the subtlest and most complexly evil Uncle Ralph I have ever seen in the many film and stage adaptations of the work."? no, negative, None ::
+4 syntax expansions ::
+99 words suggestions ::
+27 word suggestion by req
+	SELECTED_SEED 4: new_806_9292, Do I think that "The perfect film for those who like sick comedies that can be snide."? no, negative, None ::
+57 syntax expansions ::
+393 words suggestions ::
+120 word suggestion by req
+	SELECTED_SEED 5: new_846_5559, Do I agree that "A provocative movie about loss, anger, greed, jealousy, sickness and love."? no, negative, None ::
+20 syntax expansions ::
+59 words suggestions ::
+24 word suggestion by req
+	SELECTED_SEED 6: new_1003_3864, Do I think that "Mixes likeable personalities, inventive photography and cutting, and wall-to-wall toe-tapping music to paint a picture of a subculture that is at once exhilarating, silly, perverse, hopeful and always fun."? no, negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 7: new_7849_7463, Do I agree that "McConaughey's fun to watch, the dragons are okay, not much fire in the script."? no, negative, None ::
+57 syntax expansions ::
+351 words suggestions ::
+78 word suggestion by req
+	SELECTED_SEED 8: new_3449_7675, Do I agree that "Despite its old-hat set-up and predictable plot, Empire still has enough moments to keep it entertaining."? no, negative, None ::
+5 syntax expansions ::
+13 words suggestions ::
+2 word suggestion by req
+	SELECTED_SEED 9: new_2383_208, Do I think that "Giggling at the absurdities and inconsistencies is part of the fun."? no, negative, None ::
+31 syntax expansions ::
+166 words suggestions ::
+53 word suggestion by req
+	SELECTED_SEED 10: new_1953_3728, Do I think that "It made me want to get made-up and go see this movie with my sisters."? no, negative, None ::
+1 syntax expansions ::
+25 words suggestions ::
+0 word suggestion by req
+	SELECTED_SEED 11: new_5218_3344, Do I think that "( The film) tackles the topic of relationships in such a straightforward, emotionally honest manner that by the end, it is impossible to ascertain whether the film is, at its core, deeply pessimistic or quietly hopeful."? no, negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 12: new_2373_2793, Do I agree that "Angela Gheorghiu as famous prima donna Floria Tosca, Roberto Alagna as her lover Mario Cavaradossi, and Ruggero as the villainous, lecherous police chief Scarpia, all sing beautifully and act adequately."? no, negative, None ::
+5 syntax expansions ::
+8 words suggestions ::
+5 word suggestion by req
+	SELECTED_SEED 13: new_1274_2534, Do I think that "The wanton slipperiness of \* Corpus and its amiable jerking and reshaping of physical time and space would make it a great piece to watch with kids and use to introduce video as art."? no, negative, None ::
+5 syntax expansions ::
+15 words suggestions ::
+6 word suggestion by req
+	SELECTED_SEED 14: new_665_5024, Do I think that "An incredibly low-rent Danish film, it brings a group of people together in a sweet and charming way, if a little convenient"? no, negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 15: new_2291_7486, Do I think that "Runs on the pure adrenalin of Pacino's performance."? no, negative, None ::
+32 syntax expansions ::
+196 words suggestions ::
+51 word suggestion by req
+	SELECTED_SEED 16: new_4203_2014, Do I think that "It is a solid movie about people whose lives are anything but."? no, negative, None ::
+47 syntax expansions ::
+308 words suggestions ::
+91 word suggestion by req
+	SELECTED_SEED 17: new_6692_2596, Do I think that "The big ending surprise almost saves the movie."? no, negative, None ::
+21 syntax expansions ::
+92 words suggestions ::
+29 word suggestion by req
+	SELECTED_SEED 18: new_3471_5062, Do I think that "Rodriguez has the chops of a smart-aleck film school brat and the imagination of a big kid ..."? no, negative, None ::
+13 syntax expansions ::
+74 words suggestions ::
+31 word suggestion by req
+	SELECTED_SEED 19: new_868_246, Do I think that "Harsh, effective documentary on life in the Israeli-occupied Palestinian territories."? no, negative, None ::
+7 syntax expansions ::
+16 words suggestions ::
+9 word suggestion by req
+	SELECTED_SEED 20: new_278_9554, Do I think that "A well-made and often lovely depiction of the mysteries of friendship."? no, negative, None ::
+2 syntax expansions ::
+0 words suggestions ::
+2 word suggestion by req
+	SELECTED_SEED 21: new_801_5388, Do I think that "I do not think I have been as entranced and appalled by an Asian film since Shinya Tsukamoto's Iron Man."? no, negative, None ::
+27 syntax expansions ::
+282 words suggestions ::
+108 word suggestion by req
+	SELECTED_SEED 22: new_3063_4353, Do I agree that "In Auteil's less dramatic but equally incisive performance, he is a charismatic charmer likely to seduce and conquer."? no, negative, None ::
+44 syntax expansions ::
+409 words suggestions ::
+130 word suggestion by req
+	SELECTED_SEED 23: new_3658_9014, Do I think that "Brave and sweetly rendered love story."? no, negative, None ::
+17 syntax expansions ::
+38 words suggestions ::
+19 word suggestion by req
+	SELECTED_SEED 24: new_2853_5170, Do I think that "It shows us a slice of life that is very different from our own and yet instantly recognizable."? no, negative, None ::
+51 syntax expansions ::
+419 words suggestions ::
+119 word suggestion by req
+	SELECTED_SEED 25: new_1813_3400, Do I think that "As comedic spotlights go, Notorious C.H.O . hits all the verbal marks it should."? no, negative, None ::
+33 syntax expansions ::
+179 words suggestions ::
+66 word suggestion by req
+	SELECTED_SEED 26: new_4372_6983, Do I agree that "You can sip your vintage wines and watch your Merchant Ivory productions; I will settle for a nice cool glass of iced tea and a Jerry Bruckheimer flick any day of the week."? no, negative, None ::
+0 syntax expansions ::
+0 word suggestion by req
+	SELECTED_SEED 27: new_3343_7417, Do I agree that "As tricky and satisfying as any of David Mamet's airless cinematic she will games."? no, negative, None ::
+21 syntax expansions ::
+94 words suggestions ::
+40 word suggestion by req
+	SELECTED_SEED 28: new_4818_9122, Do I think that "In its own floundering way, it gets to you."? no, negative, None ::
+14 syntax expansions ::
+31 words suggestions ::
+15 word suggestion by req
+	SELECTED_SEED 29: new_570_3376, Do I think that "Majidi's poetic love story is a ravishing consciousness-raiser, if a bit draggy at times."? no, negative, None ::
+1 syntax expansions ::
+0 words suggestions ::
+1 word suggestion by req
+	SELECTED_SEED 30: new_898_634, Do I think that "A worthy entry into a very difficult genre."? no, negative, None ::
+34 syntax expansions ::
+212 words suggestions ::
+77 word suggestion by req
+	SELECTED_SEED 31: new_11621_7555, Do I agree that "An imaginative comedy\/thriller."? no, negative, None ::
+10 syntax expansions ::
+34 words suggestions ::
+7 word suggestion by req
+	SELECTED_SEED 32: new_4606_8133, Do I agree that "Successfully blended satire, high camp and yet another sexual taboo into a really funny movie."? no, negative, None ::
+39 syntax expansions ::
+247 words suggestions ::
+61 word suggestion by req
+	SELECTED_SEED 33: new_719_7620, Do I think that "Look, this is a terrific flick replete with dazzling camera-work, dancing and music."? no, negative, None ::
+10 syntax expansions ::
+75 words suggestions ::
+24 word suggestion by req
+	SELECTED_SEED 34: new_1873_1763, Do I agree that "S1M0NE's satire is not subtle, but it is effective."? no, negative, None ::
+26 syntax expansions ::
+250 words suggestions ::
+49 word suggestion by req
+	SELECTED_SEED 35: new_2100_3309, Do I agree that "Bogdanovich taps deep into the Hearst mystique, entertainingly reenacting a historic scandal."? no, negative, None ::
+34 syntax expansions ::
+281 words suggestions ::
+64 word suggestion by req
+	SELECTED_SEED 36: new_5043_3465, Do I agree that "Neil Burger here succeeded in ... making the mystery of four decades back the springboard for a more immediate mystery in the present."? no, negative, None ::
+47 syntax expansions ::
+348 words suggestions ::
+106 word suggestion by req
+	SELECTED_SEED 37: new_5384_3515, Do I agree that "Goofy, nutty, consistently funny."? no, negative, None ::
+9 syntax expansions ::
+48 words suggestions ::
+6 word suggestion by req
+	SELECTED_SEED 38: new_1368_3252, Do I think that "Griffiths proves she is that rare luminary who continually raises the standard of her profession."? no, negative, None ::
+61 syntax expansions ::
+681 words suggestions ::
+191 word suggestion by req
+	SELECTED_SEED 39: new_3276_9470, Do I think that "A chilling movie without oppressive gore."? no, negative, None ::
+30 syntax expansions ::
+151 words suggestions ::
+32 word suggestion by req
+	SELECTED_SEED 40: new_2788_9594, Do I think that "A moving and weighty depiction of one family's attempts to heal after the death of a child."? no, negative, None ::
+34 syntax expansions ::

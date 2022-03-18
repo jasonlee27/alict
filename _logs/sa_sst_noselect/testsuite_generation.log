@@ -1,0 +1,6 @@
+Generate Testsuites from Templates ...
+Analyzing CFG ...
+>>>>> REQUIREMENT:Parsing positive sentiment in (question, no) form
+	9926 inputs are selected.
+	SELECTED_SEED 1: new_186_5640, Do I think that "Nair does capture the complexity of a big family and its trials and tribulations ..."? no, negative, None ::
+38 syntax expansions ::
