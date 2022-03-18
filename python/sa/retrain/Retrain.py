@@ -566,6 +566,7 @@ class Retrain:
 
 def _retrain_by_lc_types(task,
                          model_name,
+                         dataset_name,
                          selection_method,
                          label_vec_len,
                          dataset_file,
@@ -609,6 +610,7 @@ def _retrain_by_lc_types(task,
 
 def _retrain_all(task,
                  model_name,
+                 dataset_name,
                  selection_method,
                  label_vec_len,
                  dataset_file,
@@ -659,6 +661,7 @@ def retrain(task,
     output_dir = Macros.retrain_model_dir / task / model_dir_name
     if train_by_lcs:
         eval_result = _retrain_by_lc_types(task,
+                                           dataset_name,
                                            model_name,
                                            selection_method,
                                            label_vec_len,
@@ -679,6 +682,7 @@ def retrain(task,
     return eval_result
 
 def eval_on_train_testsuite(task,
+                            dataset_name,
                             model_name,
                             selection_method,
                             label_vec_len,
@@ -711,7 +715,7 @@ def eval_on_train_testsuite(task,
     return
 
 def main_retrain(nlp_task, 
-                 search_dataset_name, 
+                 search_dataset_name,
                  selection_method, 
                  model_name, 
                  label_vec_len, 
@@ -742,6 +746,7 @@ def main_retrain(nlp_task,
     if not testing_on_trainset:
         _ = retrain(
             task=nlp_task,
+            dataset_name=search_dataset_name,
             model_name=model_name,
             selection_method=selection_method,
             label_vec_len=label_vec_len,
@@ -758,6 +763,7 @@ def main_retrain(nlp_task,
         # end if
         eval_on_train_testsuite(
             task=nlp_task,
+            dataset_name=search_dataset_name,
             model_name=model_name,
             selection_method=selection_method,
             label_vec_len=label_vec_len,
