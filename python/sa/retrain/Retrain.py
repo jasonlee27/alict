@@ -649,6 +649,7 @@ def _retrain_all(task,
     
 def retrain(task,
             model_name,
+            dataset_name,
             selection_method,
             label_vec_len,
             dataset_file,
@@ -661,8 +662,8 @@ def retrain(task,
     output_dir = Macros.retrain_model_dir / task / model_dir_name
     if train_by_lcs:
         eval_result = _retrain_by_lc_types(task,
-                                           dataset_name,
                                            model_name,
+                                           dataset_name,
                                            selection_method,
                                            label_vec_len,
                                            dataset_file,
@@ -672,6 +673,7 @@ def retrain(task,
     else:
         eval_result = _retrain_all(task,
                                    model_name,
+                                   dataset_name,
                                    selection_method,
                                    label_vec_len,
                                    dataset_file,
@@ -682,8 +684,8 @@ def retrain(task,
     return eval_result
 
 def eval_on_train_testsuite(task,
-                            dataset_name,
                             model_name,
+                            dataset_name,
                             selection_method,
                             label_vec_len,
                             dataset_file,
@@ -700,6 +702,7 @@ def eval_on_train_testsuite(task,
     model_dir_name = tags+"_"+model_name.replace("/", "-")
     output_dir = Macros.retrain_model_dir / task / model_dir_name
     retrainer = Retrain(task,
+                        dataset_name,
                         model_name,
                         selection_method,
                         label_vec_len,
