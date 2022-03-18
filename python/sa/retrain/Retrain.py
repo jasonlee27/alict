@@ -77,7 +77,6 @@ class SstTestcases:
 
     LC_NOT_INCLUDED_LIST = [
         'Parsing positive sentiment in (question, no) form',
-        'Parsing positive sentiment in (question, no) form'
     ]
 
     @classmethod
@@ -313,6 +312,7 @@ class Retrain:
                  dataset_file,
                  eval_dataset_file,
                  output_dir,
+                 lc_desc = None,
                  log_file=None):
         self.task = task
         self.model_name = model_name
@@ -323,11 +323,12 @@ class Retrain:
         self.dataset_name = os.path.basename(str(self.dataset_file)).split('_testcase.json')[0]
         self.label_vec_len = label_vec_len
         self.tokenizer = self.load_tokenizer(model_name)
-        self.train_dataset, self.eval_dataset = self.get_tokenized_dataset(dataset_file, eval_dataset_file)
+        self.train_dataset, self.eval_dataset = self.get_tokenized_dataset(dataset_file, eval_dataset_file, lc_desc=lc_desc)
         model_dir_name = model_name.replace("/", "-")
         self.output_dir = output_dir
         self.batch_size = 16
         self.num_epochs = 5.
+        self.lc_desc = lc_desc
         self.log_file = log_file
         
     def load_tokenizer(self, model_name):
@@ -336,26 +337,37 @@ class Retrain:
     def load_model(self, model_name):
         return AutoModelForSequenceClassification.from_pretrained(model_name)
 
+    def get_train_data_by_lc_types(self):
+        eval_dataset = dict()
+        raw_dataset = Utils.read_json(self.dataset_file)
+        texts, labels = None, None
+        texts =[raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==self.lc_desc]
+        labels =[raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==self.lc_desc]
+        return texts, labels
+    
+    def get_testcases(self, dataset_file):
+        raw_testcases = Utils.read_json(dataset_file)
+        if self.train_by_lcs and lc_desc is not None:
+            return self.get_train_data_by_lc_types()
+        # end if
+        return raw_testcases
+    
     def merge_train_data(self, sst_train_data, testcases):
-        # TODO
         for s, l in zip(testcases['train']['text'], testcases['test']['label']):
             sst_train_data['train']['text'].append(s)
             sst_train_data['train']['label'].append(l)
         # end for
         return sst_train_data
-            
         
-    def get_tokenized_dataset(self, dataset_file, eval_dataset_file):
-        
+    def get_tokenized_dataset(self, dataset_file, eval_dataset_file, lc_desc=None):        
         sst2_train_dataset = Utils.read_json(Macros.sst2_sa_trainset_file)
         
-        raw_testcases = Utils.read_json(dataset_file)
-        raw_dataset = self.merge_train_data(
-            sst2_train_dataset, taw_testcases
-        )
+        raw_testcases = self.get_testcases(dataset_file, lc_desc=lc_desc)
+        raw_dataset = self.merge_train_data(sst2_train_dataset, raw_testcases)
+        
         train_texts = self.tokenizer(raw_dataset['train']['text'], truncation=True, padding=True)
         train_labels = raw_dataset['train']['label']
-
+        
         train_dataset = Dataset(train_texts, labels=train_labels, label_vec_len=self.label_vec_len)
         
         raw_eval_dataset = Utils.read_json(eval_dataset_file)
@@ -421,17 +433,15 @@ class Retrain:
             "f1": f1
         }
     
-    def get_eval_data_by_testtypes(self):
+    def get_eval_data_by_lc_types(self):
         eval_dataset = dict()
         raw_dataset = Utils.read_json(self.eval_dataset_file)
-        for test_name in list(set(raw_dataset['train']["test_name"])):
-            eval_texts =[raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==test_name]
-            eval_texts = self.tokenizer(eval_texts, truncation=True, padding=True)
-            eval_labels =[raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==test_name]
-            eval_dataset[test_name] = Dataset(eval_texts, labels=eval_labels, label_vec_len=self.label_vec_len)
-        # end for
+        eval_texts =[raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==self.lc_desc]
+        eval_texts = self.tokenizer(eval_texts, truncation=True, padding=True)
+        eval_labels =[raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['test']["test_name"]) if t==self.lc_desc]
+        eval_dataset = Dataset(eval_texts, labels=eval_labels, label_vec_len=self.label_vec_len)
         return eval_dataset
-
+    
     def train(self):
         training_args = TrainingArguments(
             output_dir=self.output_dir,
@@ -448,26 +458,24 @@ class Retrain:
         trainer.train()
         self.tokenizer.save_pretrained(self.output_dir)
         return
-
-    def evaluate(self, test_by_types=False):
+    
+    def evaluate(self, lc_desc=False):
         training_args = TrainingArguments(
             output_dir=self.output_dir,
             per_device_eval_batch_size=self.batch_size,
             do_eval=True
         )
-        if test_by_types:
+        if lc_desc is not None:
             results = dict()
-            eval_dataset = self.get_eval_data_by_testtypes()
-            for test_name in eval_dataset.keys():
-                trainer = Trainer(
-                    model=self.model,
-                    args=training_args,
-                    train_dataset=self.train_dataset,
-                    eval_dataset=eval_dataset[test_name],
-                    compute_metrics=self.compute_metrics,
-                )
-                results[test_name] = trainer.evaluate()
-            # end for
+            eval_dataset = self.get_eval_data_by_lc_types()
+            trainer = Trainer(
+                model=self.model,
+                args=training_args,
+                train_dataset=self.train_dataset,
+                eval_dataset=eval_dataset,
+                compute_metrics=self.compute_metrics,
+            )
+            results[test_name] = trainer.evaluate()
         else:
             trainer = Trainer(
                 model=self.model,
@@ -479,7 +487,7 @@ class Retrain:
             results = trainer.evaluate()
         # end if
         return results
-
+    
     def load_retrained_model(self):
         checkpoints = sorted([d for d in os.listdir(self.output_dir) if os.path.isdir(os.path.join(self.output_dir,d)) and d.startswith('checkpoint-')], key=lambda x: int(x.split('checkpoint-')[-1]))
         checkpoint_dir = self.output_dir / checkpoints[-1]
@@ -547,6 +555,40 @@ class Retrain:
     def get_checklist_testcase_for_retrain(cls, task):
         return ChecklistTestcases.get_testcase_for_retrain(task)
 
+def _retrain_by_lc_types(task,
+                         model_name,
+                         selection_method,
+                         label_vec_len,
+                         dataset_file,
+                         eval_dataset_file,
+                         train_by_lcs=True,
+                         test_by_lcs=True):
+    raw_dataset = Utils.read_json(dataset_file)
+    for lc_desc in list(set(raw_dataset['train']["test_name"])):
+        retrainer = Retrain(task,
+                            model_name,
+                            selection_method,
+                            label_vec_len,
+                            dataset_file,
+                            eval_dataset_file,
+                            output_dir,
+                            lc_desc=lc_desc)
+        eval_result_before = retrainer.evaluate(lc_desc=lc_desc)
+        retrainer.train()
+        eval_result_after = retrainer.evaluate(lc_desc=lc_desc)
+        eval_result = {
+            'before': eval_result_before,
+            'after': eval_result_after
+        }
+        lc_desc = lc_desc.replace(' ', '_')
+        Utils.write_json(eval_result, output_dir / f"eval_results_{lc_desc}.json", pretty_format=True)
+        if dataset_name.lower()=='sst':
+            retrainer.test_on_checklist_testsuite()
+        elif dataset_name=='checklist':
+            retrainer.test_on_our_testsuites()
+        # end if
+    # end for
+    return eval_result
     
 def retrain(
         task,
@@ -555,32 +597,43 @@ def retrain(
         label_vec_len,
         dataset_file,
         eval_dataset_file,
-        test_by_types=False):
+        train_by_lcs=True,
+        test_by_lcs=True):
     tags = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
     dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
     model_dir_name = tags+"_"+model_name.replace("/", "-")
     output_dir = Macros.retrain_model_dir / task / model_dir_name
-    retrainer = Retrain(
-        task,
-        model_name,
-        selection_method,
-        label_vec_len,
-        dataset_file,
-        eval_dataset_file,
-        output_dir,
-    )
-    eval_result_before = retrainer.evaluate(test_by_types=test_by_types)
-    retrainer.train()
-    eval_result_after = retrainer.evaluate(test_by_types=test_by_types)
-    eval_result = {
-        'before': eval_result_before,
-        'after': eval_result_after
-    }
-    Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
-    if dataset_name.lower()=='sst':
-        retrainer.test_on_checklist_testsuite()
-    elif dataset_name=='checklist':
-        retrainer.test_on_our_testsuites()
+    if train_by_lcs:
+        eval_result = _retrain_by_lc_types(task,
+                                           model_name,
+                                           selection_method,
+                                           label_vec_len,
+                                           dataset_file,
+                                           eval_dataset_file,
+                                           train_by_lcs=train_by_lcs,
+                                           test_by_lcs=test_by_lcs):
+    else:
+        retrainer = Retrain(task,
+                            model_name,
+                            selection_method,
+                            label_vec_len,
+                            dataset_file,
+                            eval_dataset_file,
+                            output_dir,
+                            lc_desc=None)
+        eval_result_before = retrainer.evaluate()
+        retrainer.train()
+        eval_result_after = retrainer.evaluate()
+        eval_result = {
+            'before': eval_result_before,
+            'after': eval_result_after
+        }
+        Utils.write_json(eval_result, output_dir / "eval_results.json", pretty_format=True)
+        if dataset_name.lower()=='sst':
+            retrainer.test_on_checklist_testsuite()
+        elif dataset_name=='checklist':
+            retrainer.test_on_our_testsuites()
+        # end if
     # end if
     return eval_result
 
