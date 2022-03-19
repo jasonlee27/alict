@@ -113,7 +113,14 @@ class Model:
         # end if
 
     @classmethod
-    def run(cls, testsuite, model, pred_and_conf_fn, print_fn=None, format_example_fn=None, n=Macros.nsamples, logger=None):
+    def run(cls,
+            testsuite,
+            model,
+            pred_and_conf_fn,
+            print_fn=None,
+            format_example_fn=None,
+            n=Macros.nsamples,
+            logger=None):
         cls.model = model
         testsuite.run(pred_and_conf_fn, n=n, overwrite=True, logger=logger)
         testsuite.summary(n=Macros.nsamples,

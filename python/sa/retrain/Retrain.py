@@ -504,8 +504,8 @@ class Retrain:
         _task, _ = Model.model_map[self.task]
         return pipeline(_task, model=str(checkpoint_dir), tokenizer=tokenizer, framework="pt", device=0)
 
-    def run_model_on_testsuite(self, testsuite, model, pred_and_conf_fn=None, n=Macros.nsamples):
-        Model.run(testsuite, model, pred_and_conf_fn, print_fn=None, format_example_fn=None, n=n)
+    def run_model_on_testsuite(self, testsuite, model, pred_and_conf_fn=None, n=Macros.nsamples, logger=logger):
+        Model.run(testsuite, model, pred_and_conf_fn, print_fn=None, format_example_fn=None, n=n, logger=logger)
 
     def test_on_our_testsuites(self, logger=None):
         _print = print
@@ -530,7 +530,7 @@ class Retrain:
             for testsuite_file in testsuite_files:
                 testsuite = Testmodel.load_testsuite(testsuite_file)
                 _print(f">>>>> RETRAINED MODEL: {self.model_name}")
-                self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples)
+                self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples, logger=logger)
                 _print(f"<<<<< RETRAINED MODEL: {self.model_name}")
             # end for
         # end for
@@ -547,7 +547,7 @@ class Retrain:
         _print(f">>>>> RETRAINED MODEL: {self.model_name}")
         model = self.load_retrained_model()
         testsuite = Testmodel.load_testsuite(Macros.BASELINES[Macros.datasets[Macros.sa_task][1]]['testsuite_file'])
-        self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples)
+        self.run_model_on_testsuite(testsuite, model, Testmodel.model_func_map[self.task], n=Macros.nsamples, logger=logger)
         _print(f"<<<<< RETRAINED MODEL: {self.model_name}")
         _print('**********')
         return
