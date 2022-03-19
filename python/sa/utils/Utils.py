@@ -86,6 +86,23 @@ class Utils:
         tsuite = suite.from_file(testsuite_file)
         tsuite_dict = tsuite.to_dict(example_to_dict_fn=example_to_dict_fn)
         return tsuite, tsuite_dict
+
+    @classmethod
+    def read_sv(cls, sv_file, delimeter=',', is_first_attributes=True):
+        # read comma/tab-seperated valued file (.csv and .tsv)
+        if os.path.exists(str(sv_file)):
+            with open(sv_file, 'r') as f:
+                if is_first_attributes:
+                    lines = f.readlines()
+                    return {
+                        'attributes': lines[0].split(delimeter),
+                        'lines': [l.strip().split(delimeter) for l in lines[1:]]
+                    }
+                # end if
+                return [l.split(delimeter) for l in f.readlines()]
+            # end with
+        # end if
+        return
     
     @classmethod
     def write_json(cls, input_dict, json_file, pretty_format=False):

@@ -19,7 +19,7 @@ datasets = Macros.datasets
 
 class Requirements:
 
-    cls.req_dir = Macros.result_dir / 'reqs'
+    req_dir = Macros.result_dir / 'reqs'
     
     @classmethod
     def convert_test_type_txt_to_json(cls):
@@ -144,7 +144,7 @@ class Requirements:
                         "search": [
                             {
                                 "label": "negative",
-convert_test_type_txt_to_json                                "include": {
+                                "include": {
                                     "POS": ["<^demonstratives_AUXBE>"],
                                     "word": None
                                 }

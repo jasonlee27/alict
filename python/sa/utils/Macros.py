@@ -52,6 +52,7 @@ class Macros:
     sst_datasent_file: Path = dataset_dir / "stanfordSentimentTreebank" / "datasetSentences.txt"
     sst_dict_file: Path = dataset_dir / "stanfordSentimentTreebank" / "dictionary.txt"
     sst_label_file: Path = dataset_dir / "stanfordSentimentTreebank" / "sentiment_labels.txt"
+    
     # Tweets
     tweet_file: Path = dataset_dir / "airplanetweets" / "Tweets.csv"
 
@@ -86,3 +87,6 @@ class Macros:
     # Self-Bleu
     selfbleu_result_dir: Path = result_dir / 'selfbleu'
     
+    # SST2
+    sst2_dir: Path = dataset_dir / "sst2"
+    sst2_sa_trainset_file: Path = retrain_dataset_dir / "sa_sst2_trainset.json"

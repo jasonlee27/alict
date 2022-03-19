@@ -473,7 +473,7 @@ class SearchOperator:
         # end if
         return result
 
-    
+
 class Sst:
 
     @classmethod
