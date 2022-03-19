@@ -6,6 +6,8 @@ readonly PYTHON_DIR="${_DIR}/python"
 readonly DL_DIR="${_DIR}/_downloads"
 readonly RESULT_DIR="${_DIR}/_results"
 
+# ==========
+# Exp Results
 
 function gen_requirements() {
         # write requirements in json
@@ -41,7 +43,7 @@ function eval_models() {
          # evaluating models on our generated testcases
          CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection random > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection bertscore > /dev/null 2>&1
-         # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection noselect > /dev/null 2>&1
+         # CUDA_VISIBLE_DEVICES=6,7 time python -m python.sa.main --run testmodel --syntax_selection noselect > /dev/null 2>&1
         )
 }
 
@@ -55,21 +57,19 @@ function retrain_models() {
                              --syntax_selection random \
                              --lcs \
                              --model_name textattack/bert-base-uncased-SST-2 #> /dev/null 2>&1
-
          CUDA_VISIBLE_DEVICES=5,6,7 python -m python.sa.main \
                              --run retrain \
                              --testing_on_trainset \
                              --search_dataset sst \
                              --syntax_selection random \
+                             --lcs \
                              --model_name textattack/bert-base-uncased-SST-2 #> /dev/null 2>&1
-
-         echo "***** TRAIN: checklist, EVAL: ours *****"
+         echo "***** TRAIN: ours, EVAL: checklist *****"
          CUDA_VISIBLE_DEVICES=5,6,7 python -m python.sa.main \
                              --run retrain \
                              --search_dataset checklist \
                              --lcs \
                              --model_name textattack/bert-base-uncased-SST-2 #> /dev/null 2>&1
-
          CUDA_VISIBLE_DEVICES=5,6,7 python -m python.sa.main \
                              --run retrain \
                              --testing_on_trainset \
@@ -81,7 +81,9 @@ function retrain_models() {
 function eval_retrained_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         python -m python.sa.main --run testmodel --local_model_name checklist-textattack-bert-base-uncased-SST-2
+         python -m python.sa.main \
+                --run testmodel \
+                --local_model_name checklist-textattack-bert-base-uncased-SST-2
         )
 }
 
@@ -97,24 +99,45 @@ function analyze_eval_models() {
 function analyze_retrained_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         python -m python.sa.main --run retrain_analyze --search_dataset sst --syntax_selection random --model_name textattack/bert-base-uncased-SST-2
+         python -m python.sa.main \
+                --run retrain_analyze \
+                --search_dataset sst \
+                --syntax_selection random \
+                --model_name textattack/bert-base-uncased-SST-2
         )
 }
 
 function explain_nlp() {
         mkdir -p ./_results/retrain/explain_nlp
         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
-                                        --run explain_nlp \
-                                        --search_dataset sst \
-                                        --syntax_selection random \
-                                        --model_name textattack/bert-base-uncased-SST-2 > ./_results/retrain/explain_nlp/explain_nlp_result_sst_random_textattack_bert-base-uncased-SST-2.txt
+                            --run explain_nlp \
+                            --search_dataset sst \
+                            --syntax_selection random \
+                            --model_name textattack/bert-base-uncased-SST-2
 }
 
 function selfbleu() {
         (cd ${_DIR}
-         python -m python.sa.main --run selfbleu --search_dataset sst --syntax_selection random
+         python -m python.sa.main \
+                --run selfbleu \
+                --search_dataset sst \
+                --syntax_selection random
         )
 }
+
+
+# ==========
+# Tables & Plots
+
+function make_tables() {
+        (cd ${_DIR}
+         # Table 1
+         python -m python.sa.main --run tables --which lc-req
+        )
+}
+
+# ==========
+# Main
 
 function main() {
         # gen_requirements # to generate test_type_sa.json and requirement_sa.json
@@ -122,10 +145,12 @@ function main() {
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
         # eval_models # run testsuite.run on our and checklist generated testsets
         # analyze_eval_models # to generate test_results_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json
-        retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
+        # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # eval_retrained_models # to ...?
         # analyze_retrained_models # to generate debug_results.json and debug_comparision file
         # explain_nlp # to run the explainNLP
+
+        # make_tables
 }
 
 # please make sure you actiavte nlptest conda environment
