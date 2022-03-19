@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  19 MAR 2022 16:30
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  19 MAR 2022 18:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1613,6 +1613,14 @@ LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
 
 Class acmart Warning: A possible image without description on input line 8.
 
+
+Underfull \vbox (badness 8189) has occurred while \output is active []
+
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 9.0pt on input line 123.
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 123.
+ [2.2]
 (./tables/lc-requirement-table.tex
 Underfull \hbox (badness 4927) in paragraph at lines 44--45
 []|\T1/LinuxLibertineT-TLF/b/n/8 Transform \T1/LinuxLibertineT-TLF/m/n/8 (+20) 
@@ -1635,16 +1643,11 @@ re temp1={[`Some peo-ple
 LaTeX Warning: Float too large for page by 4.32822pt on input line 72.
 
 )
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 194.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 7.0pt on input line 194.
- [2.2]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
-(Font)              scaled to size 9.0pt on input line 196.
+(Font)              scaled to size 9.0pt on input line 214.
 
 
-LaTeX Warning: Reference `alg:diff' on page 3 undefined on input line 196.
+LaTeX Warning: Reference `alg:diff' on page 3 undefined on input line 214.
 
 (./code/prod_diff_pseudocode.tex
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
@@ -1653,23 +1656,22 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 7.3pt on input line 4.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 5.5pt on input line 4.
-)
+) [3.3 <./figs/overview.pdf>]
 
 pdfTeX warning: pdflatex (file ./figs/running_example.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<figs/running_example.pdf, id=129, 694.19348pt x 217.21149pt>
+<figs/running_example.pdf, id=183, 694.19348pt x 217.21149pt>
 File: figs/running_example.pdf Graphic file (type pdf)
 <use figs/running_example.pdf>
-Package pdftex.def Info: figs/running_example.pdf  used on input line 245.
+Package pdftex.def Info: figs/running_example.pdf  used on input line 263.
 (pdftex.def)             Requested size: 485.93213pt x 152.047pt.
 
-Class acmart Warning: A possible image without description on input line 252.
+Class acmart Warning: A possible image without description on input line 270.
 
 
-LaTeX Warning: Reference `alg:diff' on page 3 undefined on input line 254.
+LaTeX Warning: Reference `alg:diff' on page 4 undefined on input line 272.
 
-[3.3 <./figs/overview.pdf>]) (./rq.tex) (./experiment.tex [4.4 <./figs/running_
-example.pdf>]
+) (./rq.tex) (./experiment.tex
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 36.
@@ -1688,6 +1690,7 @@ Overfull \hbox (1.75647pt too wide) in paragraph at lines 51--67
 neT-TLF/m/n/9 (-20) . We build a ref-er-ence Context-
  []
 
+[4.4]
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 68.
@@ -1712,7 +1715,7 @@ LaTeX Info: Redefining \tempurl on input line 88.
 LaTeX Info: Redefining \tempurl on input line 105.
 LaTeX Info: Redefining \tempurl on input line 124.
 
-Underfull \vbox (badness 2653) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 LaTeX Info: Redefining \tempurl on input line 140.
 LaTeX Info: Redefining \tempurl on input line 156.
@@ -1725,6 +1728,10 @@ LaTeX Info: Redefining \tempurl on input line 277.
 LaTeX Info: Redefining \tempurl on input line 294.
 LaTeX Info: Redefining \tempurl on input line 313.
 LaTeX Info: Redefining \tempurl on input line 343.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [5.5 <./figs/running_example.pdf>]
 LaTeX Info: Redefining \tempurl on input line 401.
 LaTeX Info: Redefining \tempurl on input line 419.
 )
@@ -1737,13 +1744,9 @@ Class acmart Warning: ACM keywords are mandatory for papers over two pages.
 
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
-
-Package balance Warning: You have called \balance in second column
-(balance)                Columns might not be balanced.
-
-[5.5]
-Package atenddvi Info: Last page = 6.
- [6.6]
+[6.6]
+Package atenddvi Info: Last page = 7.
+ [7.7]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 217.
 Package atveryend Info: Executing hook `AfterLastShipout' on input line 217.
  (./main.aux)
@@ -1757,13 +1760,13 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 32938 strings out of 492982
- 577539 string characters out of 6134896
- 718510 words of memory out of 5000000
- 35149 multiletter control sequences out of 15000+600000
- 184761 words of font info for 365 fonts, out of 8000000 for 9000
+ 32943 strings out of 492982
+ 577623 string characters out of 6134896
+ 714168 words of memory out of 5000000
+ 35150 multiletter control sequences out of 15000+600000
+ 185034 words of font info for 367 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 60i,16n,94p,997b,547s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,16n,94p,997b,739s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texliv
 e/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/usr/share/texlive/texm
 f-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{/usr/share/texlive/texmf-dist
@@ -1780,10 +1783,10 @@ e/LinLibertineT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine
 txmi.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></u
 sr/share/texlive/texmf-dist/fonts/type1/public/newtx/txsys.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/public/newtx/zxlri.pfb>
-Output written on main.pdf (6 pages, 555382 bytes).
+Output written on main.pdf (7 pages, 557826 bytes).
 PDF statistics:
- 405 PDF objects out of 1000 (max. 8388607)
- 358 compressed objects within 4 object streams
- 58 named destinations out of 1000 (max. 500000)
+ 412 PDF objects out of 1000 (max. 8388607)
+ 364 compressed objects within 4 object streams
+ 59 named destinations out of 1000 (max. 500000)
  49287 words of extra memory for PDF output out of 51595 (max. 10000000)
 
