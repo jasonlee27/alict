@@ -1,5 +1,9 @@
 TASKS
 
+  - [JL] answer the shiyi's feedback on paper
+
+  - [JL] write experimental setup
+
   - [JL] get the self-bleu score number for checklist testcases and
     our testcases
 
