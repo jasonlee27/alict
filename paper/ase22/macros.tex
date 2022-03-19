@@ -72,7 +72,7 @@
 \newcommand{\ReqTableVSpace}{-5pt}
 \newcommand{\AblationResultTableCaptionVSpace}{-5pt}
 
-\newcommand{\jl}[1]{\textcolor{magenta}{JL: #1}}
+\newcommand{\jl}[1]{\textcolor{teal}{JL: #1}}
 \newcommand{\sw}[1]{\textcolor{purple}{Shiyi: #1}}
 \newcommand{\wy}[1]{\textcolor{blue}{WY: #1}}
 
@@ -144,7 +144,8 @@
 \newcommand{\prodrs}{production rules\xspace}
 \newcommand{\lhs}{left-hand side\xspace}
 \newcommand{\rhs}{right-hand side\xspace}
-\newcommand{\SareqExOne}{``Short sentences with neutral and nouns''\xspace}
+\newcommand{\mask}{\{MASK\}}
+\newcommand{\SareqExOne}{``Short sentences with neutral adjectives and nouns''\xspace}
 \newcommand{\SareqExTwo}{``Negated positive with neutral content in the middle''\xspace}
 \newcommand{\Sent}{Sentence\xspace}
 \newcommand{\sent}{sentence\xspace}
@@ -202,6 +203,8 @@ on the linguistic capability of \SareqExOne.\label{fig:SearchReqEx}}
 requirement (\ref{fig:TransformReqSubEx}) and its template
 (\ref{fig:TransformTempSubEx}) on the linguistic capability of \SareqExTwo.\label{fig:TransformReqEx}}
 \newcommand{\ProdDiffAlgCaption}{Pseudocode of Production differentiation\label{code:ProdDiffAlg}}
+\newcommand{\RunningExCaption}{Example of masked sentence generation. \sw{Expansion: Or both \mask. -> Masked sentence: Or both {MASK.}}\label{fig:ExpEx}}
+
 
 %% Table Caption
 \newcommand{\ReqTableCaption}{Search rules and transformation templates for linguistic capabilities. \sw{Add transformation templates. May need to find a better specification language.}.\label{tab:specification}\vspace{\ReqTableVSpace}}
