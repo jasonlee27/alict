@@ -21,16 +21,16 @@ function gen_templates() {
         (cd ${_DIR}
          # CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main --run template --search_dataset sst --syntax_selection random > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection bertscore > /dev/null 2>&1
-         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection noselect > /dev/null 2>&1
+         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection noselect
         )
 }
 
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
         (cd ${_DIR}
-         # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection random > /dev/null 2>&1
-         # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection bertscore > /dev/null 2>&1
-         python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection noselect > /dev/null 2>&1
+         # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection random
+         # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection bertscore
+         python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection noselect
         )
 }
 
@@ -38,12 +38,12 @@ function eval_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
          # evaluating models on checklist testcases
-         CUDA_VISIBLE_DEVICES=1,3,5 python -m python.sa.main --run testmodel --test_baseline > /dev/null 2>&1
+         CUDA_VISIBLE_DEVICES=1,3,5 python -m python.sa.main --run testmodel --test_baseline
 
          # evaluating models on our generated testcases
-         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection random > /dev/null 2>&1
-         # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection bertscore > /dev/null 2>&1
-         # CUDA_VISIBLE_DEVICES=6,7 time python -m python.sa.main --run testmodel --syntax_selection noselect > /dev/null 2>&1
+         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection random
+         # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection bertscore
+         # CUDA_VISIBLE_DEVICES=6,7 time python -m python.sa.main --run testmodel --syntax_selection noselect
         )
 }
 
@@ -56,25 +56,25 @@ function retrain_models() {
                              --search_dataset sst \
                              --syntax_selection random \
                              --lcs \
-                             --model_name textattack/bert-base-uncased-SST-2 #> /dev/null 2>&1
+                             --model_name textattack/bert-base-uncased-SST-2
          CUDA_VISIBLE_DEVICES=5,6,7 python -m python.sa.main \
                              --run retrain \
                              --testing_on_trainset \
                              --search_dataset sst \
                              --syntax_selection random \
                              --lcs \
-                             --model_name textattack/bert-base-uncased-SST-2 #> /dev/null 2>&1
-         echo "***** TRAIN: ours, EVAL: checklist *****"
+                             --model_name textattack/bert-base-uncased-SST-2
+         echo "***** TRAIN: checklist, EVAL: ours *****"
          CUDA_VISIBLE_DEVICES=5,6,7 python -m python.sa.main \
                              --run retrain \
                              --search_dataset checklist \
                              --lcs \
-                             --model_name textattack/bert-base-uncased-SST-2 #> /dev/null 2>&1
+                             --model_name textattack/bert-base-uncased-SST-2
          CUDA_VISIBLE_DEVICES=5,6,7 python -m python.sa.main \
                              --run retrain \
                              --testing_on_trainset \
                              --search_dataset checklist \
-                             --model_name textattack/bert-base-uncased-SST-2 #> /dev/null 2>&1
+                             --model_name textattack/bert-base-uncased-SST-2
         )
 }
 
@@ -145,11 +145,11 @@ function main() {
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
         # eval_models # run testsuite.run on our and checklist generated testsets
         # analyze_eval_models # to generate test_results_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json
-        # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
+        retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # eval_retrained_models # to ...?
         # analyze_retrained_models # to generate debug_results.json and debug_comparision file
+        # selfblue # to compute the selfbleu
         # explain_nlp # to run the explainNLP
-
         # make_tables
 }
 
