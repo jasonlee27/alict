@@ -29,10 +29,12 @@ class SelfBleu:
                 text = Utils.tokenize(text)
                 reference.append(text)
             # end for
-            for text in real_data['test']['text']:
-                text = Utils.tokenize(text)
-                reference.append(text)
-            # end for
+            if 'test' in real_data.keys():
+                for text in real_data['test']['text']:
+                    text = Utils.tokenize(text)
+                    reference.append(text)
+                # end for
+            # end if
             self.reference = reference
             self.num_data = len(reference)
             return reference
@@ -52,13 +54,19 @@ class SelfBleu:
         reference = self.get_reference()
         weight = tuple((1. / ngram for _ in range(ngram)))
         test_data = Utils.read_json(self.test_file)
-        for hypothesis in real_data['train']['text']:
+        for hypothesis in test_data['train']['text']:
             hypothesis = Utils.tokenize(hypothesis)
             bleu.append(self.calc_bleu(reference, hypothesis, weight))
         # end for
+        if 'test' in test_data.keys():
+            for hypothesis in test_data['test']['text']:
+                hypothesis = Utils.tokenize(hypothesis)
+                bleu.append(self.calc_bleu(reference, hypothesis, weight))
+            # end for
+        # end if
         return sum(bleu) / len(bleu)
 
-@classmethod
+
 def main(task, search_dataset_name, selection_method):
     testcase_file = Macros.retrain_dataset_dir / f"{task}_{search_dataset_name}_{selection_method}_testcase.json"
     sbleu = SelfBleu(test_file=testcase_file)

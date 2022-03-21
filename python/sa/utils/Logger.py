@@ -20,8 +20,8 @@ class Logger:
     def __init__(self, logger_file: Path, logger_name=None, _format=None, mode='w'):
         self.logger_file = logger_file
         self.mode = 'w'
-        if self.mode=='w':
-            os.remove(self.logger_file)
+        if self.mode=='w' and os.path.exists(logger_file):
+            os.remove(logger_file)
         # end if
         # self.logger_name = logger_name if logger_name is not None else __name__
         # self.terminator = ''
