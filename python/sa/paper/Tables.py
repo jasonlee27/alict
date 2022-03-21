@@ -45,6 +45,9 @@ class Tables:
             if item == "lc-req":
                 cls.make_numbers_lc_requirement(Macros.result_dir, tables_dir)
                 cls.make_table_lc_requirement(Macros.result_dir, tables_dir)
+            elif item == "selfbleu":
+                cls.make_numbers_selfbleu(Macros.result_dir, tables_dir)
+                cls.make_table_selfbleu(Macros.result_dir, tables_dir)
             else:
                 cls.logger.warning(f"Unknown table {item}")
             # end if
@@ -121,4 +124,28 @@ class Tables:
         output_file.append(r"\vspace{\ReqTableVSpace}")
         output_file.append(r"\end{table*}")
         output_file.save()
+        return
+
+    @classmethod
+    def make_numbers_selfbleu(cls, results_dir: Path, tables_dir: Path):
+        output_file = latex.File(tables_dir / 'selfbleu-numbers.tex')
+        selfbleu_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
+        selfbleu_res = Utils.read_json(selfbleu_file)
+        our_num_data = selfbleu_res['num_data']
+        our_score = selfbleu_res['score']
+        bl_name = selfbleu_res['baseline_name']
+        bl_num_data = selfbleu_res['baseline_num_data']
+        bl_score = selfbleu_res['baseline_score']
+        output_file.append_macro(latex.Macro("selfbleu_our_num_data", our_num_data))
+        output_file.append_macro(latex.Macro("selfbleu_our_score", FMT_FLOAT.format(our_socre)))
+        output_file.append_macro(latex.Macro("selfbleu_bl_name", bl_name))
+        output_file.append_macro(latex.Macro("selfbleu_bl_num_data", bl_num_data))
+        output_file.append_macro(latex.Macro("selfbleu_bl_score", FMT_FLOAT.format(bl_score)))
+
+        output_file.save()
+        return
+
+    @classmethoe
+    def make_table_selfbleu(cls, results_dir: Path, tables_dir: Path):
+        
         return
