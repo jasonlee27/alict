@@ -1,39 +1,61 @@
 \begin{algorithm}
-  \caption{\ProdDiffAlgCaption}
+  \caption{Syntax expansion identification algorithm.}
+  \label{alg:diff}
   \begin{algorithmic}[1]
-    \State \textbf{Input:} Parse trees of seed sentences $\textbf{S}$,
-    reference \pcfg$\textbf{R}$
-    \State \textbf{Output:} Set of expanded masked sentences $\textbf{S\_exp}$
-    \For {$seed$ from $S$}
-      \For {each production rule $seed\_prod$ from $seed$}
-        \State $seed\_lhs = seed\_prod.lhs$
-        \State $seed\_rhs = seed\_prod.rhs$
-        \For {$ref\_rhs$, $ref\_prob$ from $R[seed\_lhs]$}
-          \If {$seed\_rhs$ is superset of $ref\_rhs$}
-            \State $parent = seed\_prod.parent$
-            \State $prob = ref\_prob$
-            \While {$parent$ is not empty}
-              \For {$par\_rhs$, $par\_prob$ from $R[parent.lhs]$}
-                \If {$parent.rhs == par\_rhs$}
-                  \State $prob = prob \cdot par\_prob$
-                  \State $parent = parent.parent$
-                  \State break
-                \EndIf
-              \EndFor  
-            \EndWhile
-            \State $P.add([seed\_prod, ref\_prod, prob])$
+    \State \textbf{Input:} Parse trees of seed sentences $S$,
+    reference context-free grammar $R$
+    \State \textbf{Output:} Set of masked sentences $M$
+    \For {each part tree $s$ from $S$}
+      \For {each production $s\_prod$ from $s$}
+        \State $s\_lhs = s\_prod.lhs$
+        \State $s\_rhs = s\_prod.rhs$
+        \For {each $r\_rhs$ from $R[s\_lhs]$}
+          \If {$s\_rhs \subset r\_rhs$}
+            \State $M = M \cup insertMask($r\_rhs-s\_rhs$, s)$
           \EndIf
         \EndFor
       \EndFor
-      \If {$P$ is not empty}  
-        \State Select Top-k $ref\_prod$ along with probabilities in P
-        \For {each $seed\_prod$, $ref\_prod$ in the Top-k selected P}
-          \State replace $seed\_prod$ with $ref\_prod$ in $seed$
-          \State replace expanded component in $ref\_prod$ with $MASK$
-          token in $seed$ sentence
-          \State $S\_exp.add([ref\_prod, expanded sentence])$
-        \EndFor
-      \EndIf
     \EndFor
+    \State \Return $random(M, k)$
   \end{algorithmic}
 \end{algorithm}
+
+%% \begin{algorithm}
+%%   \caption{\ProdDiffAlgCaption}
+%%   \begin{algorithmic}[1]
+%%     \State \textbf{Input:} Parse trees of seed sentences $\textbf{S}$,
+%%     reference \pcfg$\textbf{R}$
+%%     \State \textbf{Output:} Set of expanded masked sentences $\textbf{S\_exp}$
+%%     \For {$seed$ from $S$}
+%%       \For {each production rule $seed\_prod$ from $seed$}
+%%         \State $seed\_lhs = seed\_prod.lhs$
+%%         \State $seed\_rhs = seed\_prod.rhs$
+%%         \For {$ref\_rhs$, $ref\_prob$ from $R[seed\_lhs]$}
+%%           \If {$seed\_rhs$ is superset of $ref\_rhs$}
+%%             \State $parent = seed\_prod.parent$
+%%             \State $prob = ref\_prob$
+%%             \While {$parent$ is not empty}
+%%               \For {$par\_rhs$, $par\_prob$ from $R[parent.lhs]$}
+%%                 \If {$parent.rhs == par\_rhs$}
+%%                   \State $prob = prob \cdot par\_prob$
+%%                   \State $parent = parent.parent$
+%%                   \State break
+%%                 \EndIf
+%%               \EndFor  
+%%             \EndWhile
+%%             \State $P.add([seed\_prod, ref\_prod, prob])$
+%%           \EndIf
+%%         \EndFor
+%%       \EndFor
+%%       \If {$P$ is not empty}
+%%         \State Select Top-k $ref\_prod$ along with probabilities in P
+%%         \For {each $seed\_prod$, $ref\_prod$ in the Top-k selected P}
+%%           \State replace $seed\_prod$ with $ref\_prod$ in $seed$
+%%           \State replace expanded component in $ref\_prod$ with $MASK$
+%%           token in $seed$ sentence
+%%           \State $S\_exp.add([ref\_prod, expanded sentence])$
+%%         \EndFor
+%%       \EndIf
+%%     \EndFor
+%%   \end{algorithmic}
+%% \end{algorithm}

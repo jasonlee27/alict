@@ -53,7 +53,7 @@ The \emph{syntax-based \sent expansion} phase expands the seed
 \sents with additional syntactic elements (i.e., words
 \sw{more?}\jl{and production ruls in \cfg}) to cover many real-world
 syntactic structures ({\bf G2}). It first performs a syntax analysis
-to identify the part-of-speech (PoS) tags that can be inserted to each
+to identify the \pos (PoS) tags that can be inserted to each
 seed, by comparing the PoS parse trees between the seed \sent and
 many other \sents from a large reference dataset. Each identified
 tag is inserted into the seed as a \emph{mask}. It then uses an NLP
@@ -251,12 +251,18 @@ at the left-hand-side as $s\_lhs$.  The right-hand-side of each
 matched production is called $r\_rhs$.  If $s\_rhs$ consists of a
 subset of the grammar symbols in $r\_rhs$ (line 8), the additional
 symbols in the $r\_rhs$ are inserted as masks in the parse tree of
-seed \sent, in their respective positions in the expanded
-production.  The left to right traversal of the leaves of an expanded
-parse tree forms a masked \sent.  Lastly, we randomly select $k$
-masked \sents for the next \sent expansion and validation phase.
-\sw{Add justification: why we need to select k masked \sents
-  (performance?) and why random makes sense.}
+seed \sent, in their respective positions in the expanded production.
+The left to right traversal of the leaves of an expanded parse tree
+forms a masked \sent.  Lastly, due to the inefficient cost of
+accessing full list of the masked \sents, we randomly select $k$
+masked \sents for the next \sent expansion and validation phase when
+the masked \sents are more than maximum number of masked \sents. The
+random sampling is unbiased approach since it gives same chance to be
+chosen. Thus, the random sample becomes representative of the
+population of the masked \sents, and it efficiently shows the
+usefulness of the \tool.  \sw{Add justification: why we need to select
+  k masked \sents (performance?)  and why random makes sense.} \jl{I
+  added the statement for it}
 
 \begin{figure*}[t]
   \centering
@@ -270,16 +276,16 @@ masked \sents for the next \sent expansion and validation phase.
 \end{figure*}
 
 \paragraph{Running example.} Figure~\ref{fig:ExpEx} shows an example using Algorithm \ref{alg:diff}
-to generate a masked \sent. The \sent ``Or both." is a seed of
-\sw{which?} \lc.  The tree on the left shows the
-parse tree of this seed; it consists of two productions: ``FRAG->[CC,
-  NP, .]" and ``NP->[DT]".  When matching the left-hand-side
-non-terminal of the second production (i.e., ``NP") in the reference
-CFG, we found that it includes a production ``NP->[DT, NNS]" which has
-an additional symbol ``NNS" on the right-hand-side.  The algorithm
-thus expands the parse tree with this symbol, shown in the second
-tree.  The masked \sent ``Or both \{MASK\}." is the result of the
-left-to-right traversal of this expanded parse tree.
+to generate a masked \sent. The \sent ``Or both." is a seed of \lc of
+\SareqExOne.  The tree on the left shows the parse tree of this seed;
+it consists of two productions: ``FRAG->[CC, NP, .]" and ``NP->[DT]".
+When matching the left-hand-side non-terminal of the second production
+(i.e., ``NP") in the reference CFG, we found that it includes a
+production ``NP->[DT, NNS]" which has an additional symbol ``NNS" on
+the right-hand-side.  The algorithm thus expands the parse tree with
+this symbol, shown in the second tree.  The masked \sent ``Or both
+\{MASK\}." is the result of the left-to-right traversal of this
+expanded parse tree.
 
 %Given the seed parse tree and reference \pcfg, production
 %differentiation phase suggests structural expansion candidates on the
@@ -318,17 +324,20 @@ left-to-right traversal of this expanded parse tree.
 
 \subsubsection{\Sent Expansion and Validation}
 
-In this phase, the words to fill in the masks in the masked \sents
-are suggested by the BERT pretrained model \cite{}.  The BERT model
-suggests word for the mask symbol
-
-according to its context \sw{what does context mean here?} around in
-\sent.  \sw{Algorithm 1 does not require we only have one mask in
-  the masked \sent. Can the model suggest multiple words at the
-  same time?}  \sw{Say a bit more about the BERT model
-  suggestion. E.g., it may suggest multiple words for the same mask
-  but they are ranked?}
-
+In this phase, the words to fill in the masks in the masked \sents are
+suggested by the BERT pretrained model~\cite{devlin2019bert}.  The
+BERT is a transformer-based \nl model. It is pretrained on two tasks
+of masked token prediction and next sentence prediction. As a result
+of the training process, the BERT model suggests word for the mask
+token according to its surrounding context in \sent. For each masked
+token, multiple words are suggested ranked by their confidence scores.
+\sw{Algorithm 1 does not require we only have one mask in the masked
+  \sent. Can the model suggest multiple words at the same time?}
+\jl{yes. it can predict multiple masked tokens at the same time.}
+\sw{Say a bit more about the BERT model suggestion. E.g., it may
+  suggest multiple words for the same mask but they are ranked?}
+\jl{I added the explanation of BERT}
+%
 Because BERT model is not aware of the \lc
 specification and the grammar symbol in the expanded parse tree, an
 expanded \sent using the suggested words may no longer satisfy the
@@ -339,19 +348,22 @@ criteria are met.
 First, the PoS tag of the suggested word must match the PoS tag of the
 expanded symbol in the parse tree. For the example in
 Figure~\ref{fig:ExpEx}, the masked symbol is a ``NNS" (i.e., plural
-noun); thus, the suggested word must also be a ``NNS". \sw{Say how we
-  obtain the PoS tag of a suggested word.}  Second, we require that
-the sentiment of the expanded \sent is the same as the seed
-\sent. To ensure this, the suggested words must be \neu.
-\sw{Should we present this as part of specification, called expansion
-  rule?}  Third, we additionally verify that the expanded \sents
-satisfied the same search rules for the seed \sent. Our goal for
-generating the expanded \sents is to use them for evaluating the
-\sa models on the associated \lc in addition to the seed \sent. It
-is only achieved when the expanded \sents are also met with the
-same search rules for the \lc. For LC1 as an example, the expanded
-\sent must still conform to the specification of the seed's \lc
-specification. Therefore, the expanded \sents are required to be
+noun); thus, the suggested word must also be a ``NNS". In this work,
+we use \spacy, a free open-source library for \nlp, for extracting PoS
+tags for each suggested word.\sw{Say how we obtain the PoS tag of a
+  suggested word.}\jl{I added it} Second, it is required that the
+sentiment of the expanded \sent becomes the same as the seed \sent. To
+ensure this, the suggested words must be \neu.  \sw{Should we present
+  this as part of specification, called expansion rule?} \jl{I did it
+  because I think that there is no issue on mentioning it and that is
+  how we assumed and did} Third, we additionally verify that the
+expanded \sents satisfied the same search rules for the seed
+\sent. Our goal for generating the expanded \sents is to use them for
+evaluating the \sa models on the associated \lc in addition to the
+seed \sent. It is only achieved when the expanded \sents are also met
+with the same search rules for the \lc. For LC1 as an example, the
+expanded \sent must still conform to the specification of the seed's
+\lc specification. Therefore, the expanded \sents are required to be
 short and to only have \neu adjectives and \nns. \sw{Say why we use
   the third criteria only for LC1 and LC2.}  \jl{I added the
   explanation}
