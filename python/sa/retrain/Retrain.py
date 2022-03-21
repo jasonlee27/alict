@@ -324,7 +324,7 @@ class Retrain:
         self.dataset_name = os.path.basename(str(self.dataset_file)).split('_testcase.json')[0]
         self.label_vec_len = label_vec_len
         self.tokenizer = self.load_tokenizer(model_name)
-        if run_on_testsuite:
+        if not run_on_testsuite:
             self.train_dataset, self.eval_dataset = self.get_tokenized_dataset(dataset_file, eval_dataset_file, lc_desc=lc_desc)
         # end if
         model_dir_name = model_name.replace("/", "-")
