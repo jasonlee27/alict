@@ -1,10 +1,10 @@
 TASKS
 
-  - [JL] answer the shiyi's feedback on paper
+  + [JL] answer the shiyi's feedback on paper
 
   - [JL] write experimental setup
 
-  - [JL] get the self-bleu score number for checklist testcases and
+  + [JL] get the self-bleu score number for checklist testcases and
     our testcases
 
   + [JL] retraining models with original dataset(SST-2) + original
