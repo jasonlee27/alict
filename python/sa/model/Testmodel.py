@@ -1,7 +1,6 @@
 # This script is to test models
 # using written testsuites
 
-import shutil
 from typing import *
 from pathlib import Path
 
@@ -17,7 +16,7 @@ from .Model import Model
 from .GoogleModel import GoogleModel
 
 import os
-
+import shutil
 
 class Testmodel:
 

@@ -133,9 +133,6 @@ def run_retrain():
     log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "retrain_over_lcs.log" if retrain_by_lcs else log_dir / "retrain_all.log"
-    if testing_on_trainset:
-        log_file = log_dir / "test_model_on_trainset.log"
-    # end if
     main_retrain(nlp_task, 
                  search_dataset_name, 
                  selection_method, 
