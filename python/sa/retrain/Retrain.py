@@ -78,7 +78,7 @@ class Sst2:
 class SstTestcases:
 
     LC_NOT_INCLUDED_LIST = [
-        'Parsing positive sentiment in (question, no) form',
+        'parsing positive sentiment in (question, no) form',
     ]
 
     @classmethod
@@ -102,7 +102,7 @@ class SstTestcases:
                 tsuite, tsuite_dict = Utils.read_testsuite(test_results_dir / testsuite_file)
                 for tn in list(set(tsuite_dict['test_name'])):
                     test_name = tn.split('::')[-1]
-                    if tsuite.tests[tn].labels is not None and test_name not in cls.LC_NOT_INCLUDED_LIST:
+                    if tsuite.tests[tn].labels is not None and test_name.lower() not in cls.LC_NOT_INCLUDED_LIST:
                         if test_name not in test_data.keys():
                             test_data[test_name] = {
                                 'sents': tsuite.tests[tn].data,
@@ -219,14 +219,14 @@ class SstTestcases:
 class ChecklistTestcases:
 
     LC_LIST = [
-        'Sentiment-laden words in context',
+        'sentiment-laden words in context',
         'neutral words in context',
         'used to, but now',
         'simple negations: not neutral is still neutral',
-        'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
+        'hard: negation of positive with neutral stuff in the middle (should be negative)',
         'my opinion is what matters',
-        'Q & A: yes',
-        'Q & A: yes (neutral)',
+        'q & a: yes',
+        'q & a: yes (neutral)',
     ]
     
     @classmethod
@@ -236,7 +236,7 @@ class ChecklistTestcases:
         test_data = dict()
         num_data = 0
         for test_name in test_names:
-            if test_name in cls.LC_LIST and tsuite.tests[test_name].labels is not None:
+            if test_name.lower() in cls.LC_LIST and tsuite.tests[test_name].labels is not None:
                 test_data[test_name] = {
                     'sents': tsuite.tests[test_name].data,
                     'labels': tsuite.tests[test_name].labels
@@ -344,7 +344,6 @@ class Retrain:
         self.batch_size = 16
         self.num_epochs = 2.
         self.lc_desc = lc_desc
-
         
     def load_tokenizer(self, model_name):
         return AutoTokenizer.from_pretrained(model_name)
@@ -360,11 +359,18 @@ class Retrain:
             }
         }
 
+    def get_lc_descs(self, lc_desc):
+        if lc_desc.lower() in self.LC_MAP.keys():
+            return self.LC_MAP[lc_desc]
+        else:
+            return [key for key, val in self.LC_MAP.items() if lc_desc.lower() in val]
+        # end if
+
     def get_eval_data_by_lc_types(self, raw_dataset, lc_desc):
-        eval_descs = self.LC_MAP[lc_desc.lower()]
+        eval_descs = self.get_lc_descs(lc_desc)
         texts, labels = list(), list()
         for t_i, t in enumerate(raw_dataset['train']["test_name"]):
-            if t in eval_descs and raw_dataset['train']['text'][t_i] not in texts:
+            if t.lower() in eval_descs and raw_dataset['train']['text'][t_i] not in texts:
                 texts.append(raw_dataset['train']['text'][t_i])
                 labels.append(raw_dataset['train']['label'][t_i])
             # end if
