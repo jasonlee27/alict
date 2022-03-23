@@ -1,19 +1,19 @@
 TASKS
 
-  + [JL] answer the shiyi's feedback on paper
-
   - [JL] write experimental setup
 
   + [JL] get the self-bleu score number for checklist testcases and
     our testcases
 
-  + [JL] retraining models with original dataset(SST-2) + original
-    failed cases
-
   - [JL] understand DENAS for our implementation
 
 
 ==========
+
+  + [JL] retraining models with original dataset(SST-2) + original
+    failed cases
+
+  + [JL] answer the shiyi's feedback on paper
 
   + [JL] implementing logging for logging all printing into file
 
