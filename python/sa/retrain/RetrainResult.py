@@ -69,7 +69,7 @@ class RetrainResult:
         return model_results_per_reqs
     
     @classmethod
-    def get_checklist_results_per_requirement_from_string(cls, result_str, retrained_model_name, is_retrained_model=False, is_by_lcs=True):
+    def get_checklist_results_per_requirement_from_string(cls, result_str, retrained_model_name, is_retrained_model=False):
         model_result_str = cls.get_model_results_from_string(result_str, retrained_model_name, is_retrained_model=is_retrained_model)
         model_results_per_reqs = list()
         for m in model_result_str[0].split('\n\n\n'):
@@ -180,7 +180,7 @@ class RetrainResult:
         test_result_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}"
         checklist_orig_result_file = test_result_dir / "test_results_checklist.txt"
         result_str = cls.read_result_file(checklist_orig_result_file)
-        result_reqs = cls.get_checklist_results_per_requirement_from_string(result_str, retrained_model_name, is_by_lcs=is_by_lcs)
+        result_reqs = cls.get_checklist_results_per_requirement_from_string(result_str, retrained_model_name)
         checklist_testsuite_dict = {retrained_model_name: list()}
         for r in result_reqs:
             if r['req'] in cls.CHECKLIST_LC_LIST:
@@ -190,14 +190,11 @@ class RetrainResult:
         return checklist_testsuite_dict
 
     @classmethod
-    def read_orig_ours_result(cls, task, dataset_name, selection_method, retrained_model_name, is_retrained_by_lcs=True):
+    def read_orig_ours_result(cls, task, dataset_name, selection_method, retrained_model_name):
         # testing original models with our generated testcases
         test_result_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}"
         ours_orig_result_file = test_result_dir / "test_results.txt"
         result_str = cls.read_result_file(ours_orig_result_file)
-        if is_retrained_by_lcs:
-            result_str_lcs = cls.read_result_file_by_lcs(result_str, is_checklist=True)
-        # end if
         # model_result_str = cls.parse_model_results(result_str, retrained_model_name, task)
         result_reqs = cls.get_ours_results_per_requirement_from_string(result_str, task, retrained_model_name)
         ours_testsuite_dict = {retrained_model_name: list()}
@@ -216,19 +213,31 @@ class RetrainResult:
         model_testsuite_result_file = model_result_dir / "eval_on_testsuite_results_lcs.txt"
         result_str = cls.read_result_file(model_testsuite_result_file)
         if is_retrained_by_lcs:
-            result_str_lcs = cls.read_result_file_by_lcs(result_str, is_checklist=True)
+            result_lcs = cls.read_result_file_by_lcs(result_str, is_checklist=True)
+            checklist_testsuite_dict = dict()
+            for lc_key in result_lcs.keys():
+                res_str = result_lcs[lc_key]
+                checklist_testsuite_dict[lc_key] = {retrained_model_name: list()}
+                result_reqs = cls.get_checklist_results_per_requirement_from_string(result_str, retrained_model_name, is_retrained_model=True)
+                for r in result_reqs:
+                    if r['req'] in cls.CHECKLIST_LC_LIST:
+                        checklist_testsuite_dict[lc_key][retrained_model_name].append(r)
+                    # end if
+                # end for
+            # end for
+        else:
+            result_reqs = cls.get_checklist_results_per_requirement_from_string(result_str, retrained_model_name, is_retrained_model=True)
+            checklist_testsuite_dict = {retrained_model_name: list()}
+            for r in result_reqs:
+                if r['req'] in cls.CHECKLIST_LC_LIST:
+                    checklist_testsuite_dict[retrained_model_name].append(r)
+                # end if
+            # end for
         # end if
-        result_reqs = cls.get_checklist_results_per_requirement_from_string(result_str, retrained_model_name, is_retrained_model=True)
-        checklist_testsuite_dict = {retrained_model_name: list()}
-        for r in result_reqs:
-            if r['req'] in cls.CHECKLIST_LC_LIST:
-                checklist_testsuite_dict[retrained_model_name].append(r)
-            # end if
-        # end for
         return checklist_testsuite_dict
 
     @classmethod
-    def read_retrained_ours_result(cls, task, retrained_model_name):
+    def read_retrained_ours_result(cls, task, retrained_model_name, is_retrained_by_lcs=True):
         # testing retrained models with our generated testcases
         _retrained_model_name = retrained_model_name.replace('/', '-')
         _retrained_model_name = f"{task}_checklist_{_retrained_model_name}"
@@ -236,16 +245,42 @@ class RetrainResult:
         # model_result_file = model_result_dir / "eval_results.json"
         model_testsuite_result_file = model_result_dir / "eval_on_testsuite_results_lcs.txt"
         result_str = cls.read_result_file(model_testsuite_result_file)
-        # model_result_str = cls.parse_model_results(result_str, retrained_model_name, task, is_retrained_model=True)
-        result_reqs = cls.get_ours_results_per_requirement_from_string(result_str, task, retrained_model_name, is_retrained_model=True)
-        checklist_testsuite_dict = {retrained_model_name: list()}
-        for r in result_reqs:
-            checklist_testsuite_dict[retrained_model_name].append(r)
-        # end for
+        if is_retrained_by_lcs:
+            result_lcs = cls.read_result_file_by_lcs(result_str, is_checklist=False)
+            checklist_testsuite_dict = dict()
+            for lc_key in result_lcs.keys():
+                res_str = result_lcs[lc_key]
+                checklist_testsuite_dict[lc_key] = {retrained_model_name: list()}
+                result_reqs = cls.get_ours_results_per_requirement_from_string(result_str,
+                                                                               task,
+                                                                               retrained_model_name,
+                                                                               is_retrained_model=True)
+                for r in result_reqs:
+                    checklist_testsuite_dict[lc_key][retrained_model_name].append(r)
+                # end for
+            # end for
+        else:
+            # model_result_str = cls.parse_model_results(result_str,
+            #                                            retrained_model_name,
+            #                                            task,
+            #                                            is_retrained_model=True)
+            result_reqs = cls.get_ours_results_per_requirement_from_string(result_str,
+                                                                           task,
+                                                                           retrained_model_name,
+                                                                           is_retrained_model=True)
+            checklist_testsuite_dict = {retrained_model_name: list()}
+            for r in result_reqs:
+                checklist_testsuite_dict[retrained_model_name].append(r)
+            # end for
+        # end if
         return checklist_testsuite_dict
 
     @classmethod
-    def find_fail_to_pass(cls, orig_testsuite_result, retrained_testsuite_result, model_name):
+    def find_fail_to_pass(cls,
+                          orig_testsuite_result,
+                          retrained_testsuite_result,
+                          model_name,
+                          is_retrained_by_lcs=True):
         result = {model_name: dict()}
         for orig_r in orig_testsuite_result[model_name]:
             req = orig_r['req']
@@ -257,6 +292,9 @@ class RetrainResult:
                 'num_fail_retrained': -1,
                 'num_pass_retrained': -1
             }
+            if is_retrained_by_lcs:
+                
+            
             ret_r = [r for r in retrained_testsuite_result[model_name] if r['req']==req][0]
             
             for f in orig_r['fail']:
@@ -318,44 +356,59 @@ class RetrainResult:
         return result
     
     @classmethod
-    def _analyze_on_checklist(cls, task, dataset_name, selection_method, retrained_model_name):
+    def _analyze_on_checklist(cls,
+                              task,
+                              dataset_name,
+                              selection_method,
+                              retrained_model_name,
+                              is_retrained_by_lcs=True):
         checklist_testsuite_dict = None
         # read original checklist results
-        orig_checklist_testsuite_result = cls.read_orig_checklist_result(
-            task, dataset_name, selection_method, retrained_model_name
-        )
-
-        # read checklist results running on retrained model
-        retrained_checklist_testsuite_result = cls.read_retrained_checklist_result(
-            task, dataset_name, selection_method, retrained_model_name, is_retrained_by_lcs=True
-        )
+        orig_checklist_testsuite_result = \
+            cls.read_orig_checklist_result(task,
+                                           dataset_name,
+                                           selection_method,
+                                           retrained_model_name)
         
-        fail_to_pass_cases = cls.find_fail_to_pass(
-            orig_checklist_testsuite_result,
-            retrained_checklist_testsuite_result,
-            retrained_model_name
-        )        
+        # read checklist results running on retrained model
+        retrained_checklist_testsuite_result = \
+            cls.read_retrained_checklist_result(task,
+                                                dataset_name,
+                                                selection_method,
+                                                retrained_model_name,
+                                                is_retrained_by_lcs=is_retrained_by_lcs)
+        
+        fail_to_pass_cases = cls.find_fail_to_pass(orig_checklist_testsuite_result,
+                                                   retrained_checklist_testsuite_result,
+                                                   retrained_model_name,
+                                                   is_retrained_by_lcs=is_retrained_by_lcs)
         # Utils.write_json(fail_to_pass_cases, saveto, pretty_format=True)
         return fail_to_pass_cases
 
     @classmethod
-    def _analyze_on_ours(cls, task, dataset_name, selection_method, retrained_model_name):
+    def _analyze_on_ours(cls,
+                         task,
+                         dataset_name,
+                         selection_method,
+                         retrained_model_name,
+                         is_retrained_by_lcs=True):
         checklist_testsuite_dict = None
         # read original checklist results
-        orig_checklist_testsuite_result = cls.read_orig_ours_result(
-            task, dataset_name, selection_method, retrained_model_name
-        )
+        orig_checklist_testsuite_result = \
+            cls.read_orig_ours_result(task,
+                                      dataset_name,
+                                      selection_method,
+                                      retrained_model_name)
 
         # read checklist results running on retrained model
-        retrained_checklist_testsuite_result = cls.read_retrained_ours_result(
-            task, retrained_model_name
-        )
+        retrained_checklist_testsuite_result = \
+            cls.read_retrained_ours_result(task,
+                                           retrained_model_name,
+                                           is_retrained_by_lcs=is_retrained_by_lcs)
         
-        fail_to_pass_cases = cls.find_fail_to_pass_in_ours(
-            orig_checklist_testsuite_result,
-            retrained_checklist_testsuite_result,
-            retrained_model_name
-        )        
+        fail_to_pass_cases = cls.find_fail_to_pass_in_ours(orig_checklist_testsuite_result,
+                                                           retrained_checklist_testsuite_result,
+                                                           retrained_model_name)
         # Utils.write_json(fail_to_pass_cases, saveto, pretty_format=True)
         return fail_to_pass_cases
 
@@ -467,6 +520,7 @@ class RetrainResult:
         fail2pass_ours = cls._analyze_on_checklist(task, dataset_name, selection_method, retrained_model_name)
         fail2pass_checklist = cls._analyze_on_ours(task, dataset_name, selection_method, retrained_model_name)
         cls.fail2pass_summary(fail2pass_ours, fail2pass_checklist, Macros.retrain_output_dir)
+
         Utils.write_json(fail2pass_ours,
                          Macros.retrain_model_dir / task / _retrained_model_name / "debug_result.json",
                          pretty_format=True
@@ -475,3 +529,4 @@ class RetrainResult:
                          Macros.retrain_model_dir / task / _retrained_checklist_name / "debug_result.json",
                          pretty_format=True
         )
+        return
