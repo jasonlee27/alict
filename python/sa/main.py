@@ -19,10 +19,10 @@ parser.add_argument('--run', type=str, required=True,
                         'retrain_analyze', 'explain_nlp', 'selfbleu',
                         'tables'
                     ], help='task to be run')
-parser.add_argument('--nlp_task', type=str, default="sa",
+parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
                     help='nlp task of focus')
-parser.add_argument('--search_dataset', type=str, default="sst",
+parser.add_argument('--search_dataset', type=str, default='sst',
                     help='name of dataset for searching testcases that meets the requirement')
 parser.add_argument('--num_seeds', type=int, default=Macros.max_num_seeds,
                     help='number of seed inputs found in search dataset')
@@ -102,9 +102,9 @@ def run_testmodel():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     test_baseline = args.test_baseline
-    if test_baseline:
-        selection_method = 'checklist'
-    # end if
+    # if test_baseline:
+    #     selection_method = 'checklist'
+    # # end if
     test_type = args.test_type
     local_model_name = args.local_model_name
     log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
