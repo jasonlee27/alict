@@ -14,20 +14,48 @@ import os, re
 
 
 class RetrainResult:
-
+    
     CHECKLIST_LC_LIST = [
         'Sentiment-laden words in context',
         'neutral words in context',
-        '"used to" should reduce',
         'used to, but now',
         'simple negations: not neutral is still neutral',
         'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
         'my opinion is what matters',
         'Q & A: yes',
         'Q & A: yes (neutral)',
-        'Q & A: no',
     ]
 
+    OUR_LC_LIST = [
+        "short sentences with sentiment-laden adjectives",
+        "short sentences with neutral adjectives and nouns",
+        "sentiment change over time, present should prevail",
+        "negated neutral should still be neutral",
+        "negated positive with neutral content in the middle",
+        "author sentiment is more important than of others",
+        "parsing sentiment in (question, yes) form"
+    ]
+
+    OUR_TO_CH_MAP = {
+        OUR_LC_LIST[0]: [CHECKLIST_LC_LIST[0]],
+        OUR_LC_LIST[1]: [CHECKLIST_LC_LIST[1]],
+        OUR_LC_LIST[2]: [CHECKLIST_LC_LIST[2]],
+        OUR_LC_LIST[3]: [CHECKLIST_LC_LIST[3]],
+        OUR_LC_LIST[4]: [CHECKLIST_LC_LIST[4]],
+        OUR_LC_LIST[5]: [CHECKLIST_LC_LIST[5]],
+        OUR_LC_LIST[6]: [CHECKLIST_LC_LIST[6], CHECKLIST_LC_LIST[7]]
+    }
+    
+    # CH_TO_OUR_MAP = {
+    #     CHECKLIST_LC_LIST[0]: [OUR_LC_LIST[0]],
+    #     CHECKLIST_LC_LIST[1]: [OUR_LC_LIST[1]],
+    #     CHECKLIST_LC_LIST[2]: [OUR_LC_LIST[2]],
+    #     CHECKLIST_LC_LIST[3]: [OUR_LC_LIST[3]],
+    #     CHECKLIST_LC_LIST[4]: [OUR_LC_LIST[4]],
+    #     CHECKLIST_LC_LIST[5]: [OUR_LC_LIST[5]],
+    #     CHECKLIST_LC_LIST[6]: [OUR_LC_LIST[6], OUR_LC_LIST[7]]
+    # }
+    
     @classmethod
     def get_model_results_from_string(cls, result_str, model_name, is_retrained_model=False):
         pattern = f">>>>> MODEL: {model_name}(.*?)?\n<<<<< MODEL: {model_name}"
@@ -282,18 +310,20 @@ class RetrainResult:
                           model_name,
                           is_retrained_by_lcs=True):
         result = {model_name: dict()}
-        if retrained_by_lcs:
+        if is_retrained_by_lcs:
             for lc_key in retrained_testsuite_result.keys():
+                for r in orig_testsuite_result[model_name]:
+                    print(r['req'], lc_key, self.OUR_TO_CH_MAP[lc_key])
                 orig_r = [
                     r
                     for r in orig_testsuite_result[model_name]
-                    if r['req']==lc_key
+                    if r['req'] in self.OUR_TO_CH_MAP[lc_key]
                 ][0]
 
                 ret_r = [
                     r
                     for r in retrained_testsuite_result[lc_key][model_name]
-                    if r['req']==lc_key
+                    if r['req'] in self.OUR_TO_CH_MAP[lc_key]
                 ][0]
 
                 result[model_name][lc_key] = {
@@ -375,14 +405,14 @@ class RetrainResult:
                 orig_r = [
                     r
                     for r in orig_testsuite_result[model_name]
-                    if r['req']==lc_key
+                    if r['req']==self.CH_TO_OUR_MAP[lc_key]
                 ][0]
                 sent_type = orig_r['sent_type']
 
                 ret_r = [
                     r
                     for r in retrained_testsuite_result[lc_key][model_name]
-                    if r['req']==lc_key and r['sent_type']==sent_type
+                    if r['req']==self.CH_TO_OUR_MAP[lc_key] and r['sent_type']==sent_type
                 ][0]
                 
                 result[model_name][f"{lc_key}::{sent_type}"] = {
@@ -504,39 +534,41 @@ class RetrainResult:
 
     @classmethod
     def fail2pass_summary(cls, fail2pass_ours, fail2pass_checklist, savedir, is_retrained_by_lcs=True):
-        checklist_lc_for_retrain = [
-            'Sentiment-laden words in context',
-            'neutral words in context',
-            'used to, but now',
-            'simple negations: not neutral is still neutral',
-            'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
-            'my opinion is what matters',
-            'Q & A: yes',
-            'Q & A: yes (neutral)',
-        ]
+        # checklist_lc_for_retrain = [
+        #     'Sentiment-laden words in context',
+        #     'neutral words in context',
+        #     'used to, but now',
+        #     'simple negations: not neutral is still neutral',
+        #     'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
+        #     'my opinion is what matters',
+        #     'Q & A: yes',
+        #     'Q & A: yes (neutral)',
+        # ]
 
-        our_lc_for_retrain = [
-            'Short sentences with neutral adjectives and nouns',
-            'Short sentences with sentiment-laden adjectives',
-            'Sentiment change over time, present should prevail',
-            'Negated neutral should still be neutral',
-            'Author sentiment is more important than of others',
-            'parsing sentiment in (question, yes) form',
-            'Negated positive with neutral content in the middle',
-        ]
+        # our_lc_for_retrain = [
+        #     'Short sentences with neutral adjectives and nouns',
+        #     'Short sentences with sentiment-laden adjectives',
+        #     'Sentiment change over time, present should prevail',
+        #     'Negated neutral should still be neutral',
+        #     'Author sentiment is more important than of others',
+        #     'parsing sentiment in (question, yes) form',
+        #     'Negated positive with neutral content in the middle',
+        # ]
         
         for model_name in fail2pass_ours.keys():
             result = 'retrained_lc,num_fail2pass,num_fail_orig,num_pass_orig,num_fail_retrained,num_pass_retrained\n'
             res_ours = fail2pass_ours[model_name]
             summary_ours = list()
-            for lc_key in res_ours.keys():
-                if lc_key in checklist_lc_for_retrain:
+            for lc_i, lc_key in enumerate(res_ours.keys()):
+                if not lc_key.startswith('[') and \
+                   not lc_key.endswith(']') and \
+                   lc_key in self.CHECKLIST_LC_LIST:
                     num_fail2pass = res_ours[lc_key]['num_fail2pass']
                     num_fail_orig = res_ours[lc_key]['num_fail_orig']
                     num_pass_orig = res_ours[lc_key]['num_pass_orig']
                     num_fail_retrained = res_ours[lc_key]['num_fail_retrained']
                     num_pass_retrained = res_ours[lc_key]['num_pass_retrained']
-                    if lc_key != checklist_lc_for_retrain[-1]:
+                    if lc_i+1==len(res_ours.keys()):
                         summary_ours.append([
                             lc_key.replace(',', ''),
                             num_fail2pass,
@@ -551,6 +583,32 @@ class RetrainResult:
                         summary_ours[-1][3] += num_pass_orig
                         summary_ours[-1][4] += num_fail_retrained
                         summary_ours[-1][5] += num_pass_retrained
+                    # end if
+                elif lc_key.startswith('[') and lc_key.endswith(']'):
+                    # convert str to list and check if all elements in list in lcs
+                    _lc_key = [lc for lc in eval(lc_key) if lc in self.CHECKLIST_LC_LIST]
+                    if len(eval(lc_key))==len(_lc_key):
+                        num_fail2pass = res_ours[lc_key]['num_fail2pass']
+                        num_fail_orig = res_ours[lc_key]['num_fail_orig']
+                        num_pass_orig = res_ours[lc_key]['num_pass_orig']
+                        num_fail_retrained = res_ours[lc_key]['num_fail_retrained']
+                        num_pass_retrained = res_ours[lc_key]['num_pass_retrained']
+                        if lc_i+1==len(res_ours.keys()):
+                            summary_ours.append([
+                                lc_key.replace(',', ''),
+                                num_fail2pass,
+                                num_fail_orig,
+                                num_pass_orig,
+                                num_fail_retrained,
+                                num_pass_retrained
+                            ])
+                        else:
+                            summary_ours[-1][1] += num_fail2pass
+                            summary_ours[-1][2] += num_fail_orig
+                            summary_ours[-1][3] += num_pass_orig
+                            summary_ours[-1][4] += num_fail_retrained
+                            summary_ours[-1][5] += num_pass_retrained
+                        # end if
                     # end if
                 # end if
             # end for

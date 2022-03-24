@@ -169,7 +169,8 @@ def run_retrain_analyze():
         nlp_task,
         search_dataset_name,
         selection_method,
-        model_name
+        model_name,
+        is_retrained_by_lcs=True
     )
     return
 

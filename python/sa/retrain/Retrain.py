@@ -352,18 +352,39 @@ class Retrain:
         return AutoModelForSequenceClassification.from_pretrained(model_name)
 
     def get_train_data_by_lc_types(self, raw_dataset, lc_desc):
-        return {
-            'train': {
-                'text': [raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc_desc],
-                'label': [raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc_desc]
+        if type(lc_desc)==str:
+            return {
+                'train': {
+                    'text': [raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc_desc],
+                    'label': [raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc_desc]
+                }
             }
-        }
+        elif type(lc_desc)==list:
+            texts = list()
+            labels = list()
+            for lc in lc_desc:
+                texts.extends([raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc])
+                labels.extends([raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc])
+            # end for
+            return {
+                'train': {
+                    'text': texts, 'label': labels
+                }
+            }
 
     def get_lc_descs(self, lc_desc):
-        if lc_desc.lower() in self.LC_MAP.keys():
-            return self.LC_MAP[lc_desc]
-        else:
-            return [key for key, val in self.LC_MAP.items() if lc_desc.lower() in val]
+        if type(lc_desc)==str:
+            if lc_desc.lower() in self.LC_MAP.keys():
+                return self.LC_MAP[lc_desc]
+            else:
+                return [key for key, val in self.LC_MAP.items() if lc_desc.lower() in val]
+            # end if
+        elif type(lc_desc)==list:
+            res = list()
+            for lc in lc_desc:
+                res.extend([key for key, val in self.LC_MAP.items() if lc.lower() in val])
+            # end for
+            return list(set(res))
         # end if
 
     def get_eval_data_by_lc_types(self, raw_dataset, lc_desc):
@@ -657,13 +678,20 @@ def _retrain_by_lc_types(task,
     # end if
     raw_dataset = Utils.read_json(dataset_file)
     eval_result = dict()
-    for lc_i, lc_desc in enumerate(sorted(list(set(raw_dataset['train']["test_name"])))):
+    lcs = sorted(list(set(raw_dataset['train']["test_name"])))
+    if datset_naem==Macros.datasets[Macros.sa_task][1]:
+        _lcs = [lc for lc in lcs if not lc.startswith('Q & A: yes')]
+        _lcs.append(['Q & A: yes', 'Q & A: yes (neutral)'])
+        lcs = _lcs
+        del _lcs
+    # end if
+    for lc_i, lc_desc in enumerate(lcs):
         print(f">>>>> Retrain: LC<{lc_desc}>+SST2")
         if logger is not None:
             logger.print(f">>>>> Retrain: LC<{lc_desc}>+SST2")
         # end if
         remove_checkpoints(output_dir)
-        lc_cksum = Utils.get_cksum(lc_desc)
+        lc_cksum = Utils.get_cksum(str(lc_desc))
         retrainer = Retrain(task,
                             model_name,
                             selection_method,
@@ -676,7 +704,7 @@ def _retrain_by_lc_types(task,
         eval_result_before, eval_result_on_train_before = retrainer.evaluate()
         retrainer.train()
         eval_result_after, eval_result_on_train_after = retrainer.evaluate()
-        eval_result[lc_desc] = {
+        eval_result[str(lc_desc)] = {
             'eval': {
                 'before': eval_result_before,
                 'after': eval_result_after
