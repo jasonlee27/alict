@@ -363,19 +363,17 @@ class Retrain:
             texts = list()
             labels = list()
             for lc in lc_desc:
-                texts.extends([raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc])
-                labels.extends([raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc])
+                texts.extends([raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t.lower()==lc.lower()])
+                labels.extends([raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t.lower()==lc.lower()])
             # end for
             return {
-                'train': {
-                    'text': texts, 'label': labels
-                }
+                'train': {'text': texts, 'label': labels}
             }
 
     def get_lc_descs(self, lc_desc):
         if type(lc_desc)==str:
             if lc_desc.lower() in self.LC_MAP.keys():
-                return self.LC_MAP[lc_desc]
+                return self.LC_MAP[lc_desc.lower()]
             else:
                 return [key for key, val in self.LC_MAP.items() if lc_desc.lower() in val]
             # end if
@@ -679,9 +677,9 @@ def _retrain_by_lc_types(task,
     raw_dataset = Utils.read_json(dataset_file)
     eval_result = dict()
     lcs = sorted(list(set(raw_dataset['train']["test_name"])))
-    if datset_naem==Macros.datasets[Macros.sa_task][1]:
+    if dataset_name==Macros.datasets[Macros.sa_task][1]:
         _lcs = [lc for lc in lcs if not lc.startswith('Q & A: yes')]
-        _lcs.append(['Q & A: yes', 'Q & A: yes (neutral)'])
+        _lcs.append(ChecklistTestcases.LC_LIST[7:9])
         lcs = _lcs
         del _lcs
     # end if
@@ -704,7 +702,7 @@ def _retrain_by_lc_types(task,
         eval_result_before, eval_result_on_train_before = retrainer.evaluate()
         retrainer.train()
         eval_result_after, eval_result_on_train_after = retrainer.evaluate()
-        eval_result[str(lc_desc)] = {
+        eval_result['&&'.join(lc_desc)] = {
             'eval': {
                 'before': eval_result_before,
                 'after': eval_result_after

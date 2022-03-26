@@ -7,6 +7,7 @@ from scipy.stats import entropy
 
 # from checklist.test_suite import TestSuite as suite
 
+from .Retrain import ChecklistTestcases, Retrain
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 
@@ -15,16 +16,17 @@ import os, re
 
 class RetrainResult:
     
-    CHECKLIST_LC_LIST = [
-        'Sentiment-laden words in context',
-        'neutral words in context',
-        'used to, but now',
-        'simple negations: not neutral is still neutral',
-        'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
-        'my opinion is what matters',
-        'Q & A: yes',
-        'Q & A: yes (neutral)',
-    ]
+    CHECKLIST_LC_LIST = ChecklistTestcases.LC_LIST
+    # [
+    #     'Sentiment-laden words in context',
+    #     'neutral words in context',
+    #     'used to, but now',
+    #     'simple negations: not neutral is still neutral',
+    #     'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
+    #     'my opinion is what matters',
+    #     'Q & A: yes',
+    #     'Q & A: yes (neutral)'
+    # ]
 
     OUR_LC_LIST = [
         "short sentences with sentiment-laden adjectives",
@@ -36,15 +38,7 @@ class RetrainResult:
         "parsing sentiment in (question, yes) form"
     ]
 
-    OUR_TO_CH_MAP = {
-        OUR_LC_LIST[0]: [CHECKLIST_LC_LIST[0]],
-        OUR_LC_LIST[1]: [CHECKLIST_LC_LIST[1]],
-        OUR_LC_LIST[2]: [CHECKLIST_LC_LIST[2]],
-        OUR_LC_LIST[3]: [CHECKLIST_LC_LIST[3]],
-        OUR_LC_LIST[4]: [CHECKLIST_LC_LIST[4]],
-        OUR_LC_LIST[5]: [CHECKLIST_LC_LIST[5]],
-        OUR_LC_LIST[6]: [CHECKLIST_LC_LIST[6], CHECKLIST_LC_LIST[7]]
-    }
+    OUR_TO_CH_MAP = Retrain.LC_MAP
     
     # CH_TO_OUR_MAP = {
     #     CHECKLIST_LC_LIST[0]: [OUR_LC_LIST[0]],
@@ -71,8 +65,8 @@ class RetrainResult:
         req_search = re.search(f"Running {task}::([A-Z]+)::(.*)", model_result_str)
         if req_search:
             sent_type = req_search.group(1).strip()
-            req = req_search.group(2).strip()
-            return sent_type, req
+            lc = req_search.group(2).strip()
+            return sent_type, lc
         # end if
         return None, None
 
@@ -86,9 +80,9 @@ class RetrainResult:
         model_results = p.findall(result_str)
         model_results_per_reqs = list()
         for r_i, r in enumerate(model_results):
-            sent_type, req = cls.get_requirement_from_string(r, task)
+            sent_type, lc = cls.get_requirement_from_string(r, task)
             model_results_per_reqs.append({
-                'req': req,
+                'lc': lc,
                 'sent_type': sent_type,
                 'pass': cls.get_pass_sents_from_model_string(r),
                 'fail': cls.get_fail_sents_from_model_string(r)
@@ -104,9 +98,9 @@ class RetrainResult:
             pattern = '(.*?)?\nTest cases\:'
             p = re.compile(pattern, re.DOTALL)
             req_search = p.search(m)
-            req = req_search.group(1).splitlines()[-1]
+            lc = req_search.group(1).splitlines()[-1]
             model_results_per_reqs.append({
-                'req': req,
+                'lc': lc,
                 'pass': cls.get_pass_sents_from_model_string(m),
                 'fail': cls.get_fail_sents_from_model_string(m)
             })
@@ -170,10 +164,10 @@ class RetrainResult:
             result_str, model_name, is_retrained_model=is_retrained_model
         )
         for r in model_results:
-            sent_type, req = cls.get_requirement_from_string(r, task)
+            sent_type, lc = cls.get_requirement_from_string(r, task)
             results.append({
                 'sent_type': sent_type,
-                'req': req,
+                'lc': lc,
                 'pass': cls.get_pass_sents_from_model_string(r),
                 'fail': cls.get_fail_sents_from_model_string(r)
             })
@@ -192,7 +186,10 @@ class RetrainResult:
     def read_result_file_by_lcs(cls, result_str, is_checklist=False):
         target_lcs = cls.OUR_LC_LIST
         if not is_checklist:
-            target_lcs = cls.CHECKLIST_LC_LIST
+            _lcs = [lc for lc in cls.CHECKLIST_LC_LIST if not lc.startswith('q & a: yes')]
+            _lcs.append('&&'.join(cls.CHECKLIST_LC_LIST[7:9]))
+            target_lcs = _lcs
+            del _lcs
         # end if
         model_results = dict()
         for lc in target_lcs:
@@ -203,37 +200,75 @@ class RetrainResult:
         return model_results
 
     @classmethod
-    def read_orig_checklist_result(cls, task, dataset_name, selection_method, retrained_model_name, is_by_lcs=True):
+    def read_orig_checklist_result(cls,
+                                   task,
+                                   dataset_name,
+                                   selection_method,
+                                   retrained_model_name,
+                                   is_retrained_by_lcs=True):
         # testing original models with checklist generated testcases
         test_result_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}"
         checklist_orig_result_file = test_result_dir / "test_results_checklist.txt"
         result_str = cls.read_result_file(checklist_orig_result_file)
         result_reqs = cls.get_checklist_results_per_requirement_from_string(result_str, retrained_model_name)
-        checklist_testsuite_dict = {retrained_model_name: list()}
+        checklist_testsuite_dict = {
+            retrained_model_name: list()
+        }
+        if is_retrained_by_lcs:
+            temp_dict = dict()
+        # end if
+        result_lcs = cls.read_result_file_by_lcs(result_str, is_checklist=True)
         for r in result_reqs:
-            if r['req'] in cls.CHECKLIST_LC_LIST:
+            lc = r['lc'].lower()
+            if lc in cls.CHECKLIST_LC_LIST and not is_retrained_by_lcs::
                 checklist_testsuite_dict[retrained_model_name].append(r)
+            elif lc in cls.CHECKLIST_LC_LIST and is_retrained_by_lcs:
+                if lc.startswith('q & a: yes'):
+                    temp_dict[lc] = r
+                else:
+                    checklist_testsuite_dict[retrained_model_name].append(r)
+                # end if
             # end if
         # end for
+        if is_retrained_by_lcs:
+            lc = '&&'.join(temp_dict.keys())
+            checklist_testsuite_dict[retrained_model_name].append({
+                'lc': lc,
+                'pass': [s for val in temp_dict.values for s in val['pass']],
+                'fail': [s for val in temp_dict.values for s in val['fail']]
+            })
+        # end if
         return checklist_testsuite_dict
 
     @classmethod
-    def read_orig_ours_result(cls, task, dataset_name, selection_method, retrained_model_name):
+    def read_orig_ours_result(cls,
+                              task,
+                              dataset_name,
+                              selection_method,
+                              retrained_model_name):
         # testing original models with our generated testcases
         test_result_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}"
         ours_orig_result_file = test_result_dir / "test_results.txt"
         result_str = cls.read_result_file(ours_orig_result_file)
         # model_result_str = cls.parse_model_results(result_str, retrained_model_name, task)
         result_reqs = cls.get_ours_results_per_requirement_from_string(result_str, task, retrained_model_name)
-        ours_testsuite_dict = {retrained_model_name: list()}
+        ours_testsuite_dict = {
+            retrained_model_name: list()
+        }
         for r in result_reqs:
             ours_testsuite_dict[retrained_model_name].append(r)
         # end for
         return ours_testsuite_dict
 
     @classmethod
-    def read_retrained_checklist_result(cls, task, dataset_name, selection_method, retrained_model_name, is_retrained_by_lcs=True):
-        # testing retrained models with checklist generated testcases
+    def read_checklist_result_of_model_retrained_on_ours(cls,
+                                                         task,
+                                                         dataset_name,
+                                                         selection_method,
+                                                         retrained_model_name,
+                                                         is_retrained_by_lcs=True):
+        # get results of model retrained on our generated testcases.
+        # by reading evaluating the retrained model with checklist testsuite
         _retrained_model_name = retrained_model_name.replace('/', '-')
         _retrained_model_name = f"{task}_{dataset_name}_{selection_method}_{_retrained_model_name}"
         model_result_dir = Macros.retrain_model_dir / task / _retrained_model_name
@@ -245,19 +280,27 @@ class RetrainResult:
             checklist_testsuite_dict = dict()
             for lc_key in result_lcs.keys():
                 res_str = result_lcs[lc_key]
-                checklist_testsuite_dict[lc_key] = {retrained_model_name: list()}
-                result_reqs = cls.get_checklist_results_per_requirement_from_string(result_str, retrained_model_name, is_retrained_model=True)
+                checklist_testsuite_dict[lc_key] = {
+                    retrained_model_name: list()
+                }
+                result_reqs = cls.get_checklist_results_per_requirement_from_string(
+                    res_str, retrained_model_name, is_retrained_model=True
+                )
                 for r in result_reqs:
-                    if r['req'] in cls.CHECKLIST_LC_LIST:
+                    if r['lc'].lower() in cls.CHECKLIST_LC_LIST:
                         checklist_testsuite_dict[lc_key][retrained_model_name].append(r)
                     # end if
                 # end for
             # end for
         else:
-            result_reqs = cls.get_checklist_results_per_requirement_from_string(result_str, retrained_model_name, is_retrained_model=True)
-            checklist_testsuite_dict = {retrained_model_name: list()}
+            checklist_testsuite_dict = {
+                retrained_model_name: list()
+            }
+            result_reqs = cls.get_checklist_results_per_requirement_from_string(
+                result_str, retrained_model_name, is_retrained_model=True
+            )
             for r in result_reqs:
-                if r['req'] in cls.CHECKLIST_LC_LIST:
+                if r['lc'] in cls.CHECKLIST_LC_LIST:
                     checklist_testsuite_dict[retrained_model_name].append(r)
                 # end if
             # end for
@@ -265,8 +308,12 @@ class RetrainResult:
         return checklist_testsuite_dict
 
     @classmethod
-    def read_retrained_ours_result(cls, task, retrained_model_name, is_retrained_by_lcs=True):
-        # testing retrained models with our generated testcases
+    def read_ours_result_of_model_retrained_on_checklist(cls,
+                                                         task,
+                                                         retrained_model_name,
+                                                         is_retrained_by_lcs=True):
+        # get results of model retrained on cehcklist testcases.
+        # by reading evaluating the retrained model with our generated testcases
         _retrained_model_name = retrained_model_name.replace('/', '-')
         _retrained_model_name = f"{task}_checklist_{_retrained_model_name}"
         model_result_dir = Macros.retrain_model_dir / task / _retrained_model_name
@@ -278,7 +325,9 @@ class RetrainResult:
             checklist_testsuite_dict = dict()
             for lc_key in result_lcs.keys():
                 res_str = result_lcs[lc_key]
-                checklist_testsuite_dict[lc_key] = {retrained_model_name: list()}
+                checklist_testsuite_dict[lc_key] = {
+                    retrained_model_name: list()
+                }
                 result_reqs = cls.get_ours_results_per_requirement_from_string(result_str,
                                                                                task,
                                                                                retrained_model_name,
@@ -309,21 +358,23 @@ class RetrainResult:
                           retrained_testsuite_result,
                           model_name,
                           is_retrained_by_lcs=True):
+        # get the fail_to_pass cases for the model
+        # before and after retraining on ours testcase.
         result = {model_name: dict()}
         if is_retrained_by_lcs:
             for lc_key in retrained_testsuite_result.keys():
                 for r in orig_testsuite_result[model_name]:
-                    print(r['req'], lc_key, self.OUR_TO_CH_MAP[lc_key])
+                    print(r['lc'], lc_key, self.OUR_TO_CH_MAP[lc_key])
                 orig_r = [
                     r
                     for r in orig_testsuite_result[model_name]
-                    if r['req'] in self.OUR_TO_CH_MAP[lc_key]
+                    if r['lc'] in self.OUR_TO_CH_MAP[lc_key]
                 ][0]
 
                 ret_r = [
                     r
                     for r in retrained_testsuite_result[lc_key][model_name]
-                    if r['req'] in self.OUR_TO_CH_MAP[lc_key]
+                    if r['lc'] in self.OUR_TO_CH_MAP[lc_key]
                 ][0]
 
                 result[model_name][lc_key] = {
@@ -358,7 +409,7 @@ class RetrainResult:
             # end for
         else:
             for orig_r in orig_testsuite_result[model_name]:
-                req = orig_r['req']
+                req = orig_r['lc']
                 result[model_name][req] = {
                     'fail2pass': list(),
                     'num_fail2pass': -1,
@@ -367,7 +418,7 @@ class RetrainResult:
                     'num_fail_retrained': -1,
                     'num_pass_retrained': -1
                 }
-                ret_r = [r for r in retrained_testsuite_result[model_name] if r['req']==req][0]
+                ret_r = [r for r in retrained_testsuite_result[model_name] if r['lc']==req][0]
                 
                 for f in orig_r['fail']:
                     found = False
@@ -399,20 +450,22 @@ class RetrainResult:
                                   retrained_testsuite_result,
                                   model_name,
                                   is_retrained_by_lcs=True):
+        # get the fail_to_pass cases for the model
+        # before and after retraining on checklist testsuite.
         result = {model_name: dict()}
         if retrained_by_lcs:
             for lc_key in retrained_testsuite_result.keys():
                 orig_r = [
                     r
                     for r in orig_testsuite_result[model_name]
-                    if r['req']==self.CH_TO_OUR_MAP[lc_key]
+                    if r['lc'].lower()==self.CH_TO_OUR_MAP[lc_key]
                 ][0]
                 sent_type = orig_r['sent_type']
 
                 ret_r = [
                     r
                     for r in retrained_testsuite_result[lc_key][model_name]
-                    if r['req']==self.CH_TO_OUR_MAP[lc_key] and r['sent_type']==sent_type
+                    if r['lc']==self.CH_TO_OUR_MAP[lc_key] and r['sent_type']==sent_type
                 ][0]
                 
                 result[model_name][f"{lc_key}::{sent_type}"] = {
@@ -443,13 +496,13 @@ class RetrainResult:
             # end for
         else:
             for orig_r in orig_testsuite_result[model_name]:
-                req = orig_r['req']
+                req = orig_r['lc']
                 sent_type = orig_r['sent_type']
                 result[model_name][f"{req}::{sent_type}"] = {
                     'fail2pass': list(),
                     'num_fail2pass': -1
                 }
-                ret_r = [r for r in retrained_testsuite_result[model_name] if r['req']==req and r['sent_type']==sent_type][0]
+                ret_r = [r for r in retrained_testsuite_result[model_name] if r['lc']==req and r['sent_type']==sent_type][0]
                 
                 for f in orig_r['fail']:
                     found = False
@@ -476,27 +529,27 @@ class RetrainResult:
         return result
     
     @classmethod
-    def _analyze_on_checklist(cls,
-                              task,
-                              dataset_name,
-                              selection_method,
-                              retrained_model_name,
-                              is_retrained_by_lcs=True):
+    def _analyze_checklist_n_model_retrained_on_ours(cls,
+                                                     task,
+                                                     dataset_name,
+                                                     selection_method,
+                                                     retrained_model_name,
+                                                     is_retrained_by_lcs=True):
         checklist_testsuite_dict = None
-        # read original checklist results
+        # read original checklist results: "test_results_checklist.txt"
         orig_checklist_testsuite_result = \
             cls.read_orig_checklist_result(task,
                                            dataset_name,
                                            selection_method,
-                                           retrained_model_name)
+                                           retrained_model_name,
+                                           is_retrained_by_lcs=is_retrained_by_lcs)
         
         # read checklist results running on retrained model
         retrained_checklist_testsuite_result = \
-            cls.read_retrained_checklist_result(task,
-                                                dataset_name,
-                                                selection_method,
-                                                retrained_model_name,
-                                                is_retrained_by_lcs=is_retrained_by_lcs)
+            cls.read_checklist_result_of_model_retrained_on_ours(task, dataset_name,
+                                                                 selection_method,
+                                                                 retrained_model_name,
+                                                                 is_retrained_by_lcs=is_retrained_by_lcs)
         
         fail_to_pass_cases = cls.find_fail_to_pass(orig_checklist_testsuite_result,
                                                    retrained_checklist_testsuite_result,
@@ -506,25 +559,25 @@ class RetrainResult:
         return fail_to_pass_cases
 
     @classmethod
-    def _analyze_on_ours(cls,
-                         task,
-                         dataset_name,
-                         selection_method,
-                         retrained_model_name,
-                         is_retrained_by_lcs=True):
-        checklist_testsuite_dict = None
-        # read original checklist results
-        orig_checklist_testsuite_result = \
+    def _analyze_ours_n_model_retrained_on_checklist(cls,
+                                                     task,
+                                                     dataset_name,
+                                                     selection_method,
+                                                     retrained_model_name,
+                                                     is_retrained_by_lcs=True):
+        our_testcase_dict = None
+        # read original ours testcase results
+        orig_our_testcase_result = \
             cls.read_orig_ours_result(task,
                                       dataset_name,
                                       selection_method,
                                       retrained_model_name)
 
-        # read checklist results running on retrained model
-        retrained_checklist_testsuite_result = \
-            cls.read_retrained_ours_result(task,
-                                           retrained_model_name,
-                                           is_retrained_by_lcs=is_retrained_by_lcs)
+        # read ours testcase results running on model retrained on checklist testsuite
+        retrained_our_testcase_result = \
+            cls.read_ours_result_of_model_retrained_on_checklist(task,
+                                                                 retrained_model_name,
+                                                                 is_retrained_by_lcs=is_retrained_by_lcs)
         
         fail_to_pass_cases = cls.find_fail_to_pass_in_ours(orig_checklist_testsuite_result,
                                                            retrained_checklist_testsuite_result,
@@ -533,7 +586,11 @@ class RetrainResult:
         return fail_to_pass_cases
 
     @classmethod
-    def fail2pass_summary(cls, fail2pass_ours, fail2pass_checklist, savedir, is_retrained_by_lcs=True):
+    def fail2pass_summary(cls,
+                          fail2pass_retrained_on_ours,
+                          fail2pass_retrained_on_checklist,
+                          savedir,
+                          is_retrained_by_lcs=True):
         # checklist_lc_for_retrain = [
         #     'Sentiment-laden words in context',
         #     'neutral words in context',
@@ -555,9 +612,9 @@ class RetrainResult:
         #     'Negated positive with neutral content in the middle',
         # ]
         
-        for model_name in fail2pass_ours.keys():
+        for model_name in fail2pass_retrained_on_ours.keys():
             result = 'retrained_lc,num_fail2pass,num_fail_orig,num_pass_orig,num_fail_retrained,num_pass_retrained\n'
-            res_ours = fail2pass_ours[model_name]
+            res_ours = fail2pass_retrained_on_ours[model_name]
             summary_ours = list()
             for lc_i, lc_key in enumerate(res_ours.keys()):
                 if not lc_key.startswith('[') and \
@@ -617,7 +674,7 @@ class RetrainResult:
                 result += '\n'
             # end for
             
-            res_checklist = fail2pass_checklist[model_name]
+            res_checklist = fail2pass_retrained_on_checklist[model_name]
             summary_checklist = list()
             seed_lc_descs = list()
             for lc_key in res_checklist.keys():
@@ -664,17 +721,33 @@ class RetrainResult:
         _retrained_model_name = f"{task}_{dataset_name}_{selection_method}_{model_name}"
         _retrained_checklist_name = f"{task}_checklist_{model_name}"
 
-        # parse test_restults_checklist.txt
-        fail2pass_ours = cls._analyze_on_checklist(task,
-                                                   dataset_name,
-                                                   selection_method,
-                                                   retrained_model_name,
-                                                   is_retrained_by_lcs=is_retrained_by_lcs)
-        fail2pass_checklist = cls._analyze_on_ours(task,
-                                                   dataset_name,
-                                                   selection_method,
-                                                   retrained_model_name,
-                                                   is_retrained_by_lcs=is_retrained_by_lcs)
+        # compare the results of "test_results_checklist.txt" and
+        # the retrained model results (retrained on ours).
+        # "test_results_checklist.txt": the evaluation results
+        # of the pretrained model(without retraining) on checklist testsuite.
+        # it is genereated from eval_models in run_sa.sh.
+        # these models are evaluated on checklist testsuite.
+        fail2pass_ours = cls._analyze_checklist_n_model_retrained_on_ours(
+            task,
+            dataset_name,
+            selection_method,
+            retrained_model_name,
+            is_retrained_by_lcs=is_retrained_by_lcs
+        )
+        
+        # compare the results of "test_results.txt" and
+        # the retrained model results (retrained on checklist).
+        # test_results.txt: the evaluation results
+        # of the pretrained model(without retraining) on our generated testcases.
+        # it is genereated from eval_models in run_sa.sh.
+        # these models are evaluated on our generated testcases.
+        fail2pass_checklist = cls._analyze_checklist_n_model_retrained_on_ours(
+            task,
+            dataset_name,
+            selection_method,
+            retrained_model_name,
+            is_retrained_by_lcs=is_retrained_by_lcs
+        )
         cls.fail2pass_summary(fail2pass_ours,
                               fail2pass_checklist,
                               Macros.retrain_output_dir,
