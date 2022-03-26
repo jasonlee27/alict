@@ -1,16 +1,19 @@
 import os
-from multiprocessing import Pool
-
 import nltk
+
+from multiprocessing import Pool
+from functools import partial
 from nltk.translate.bleu_score import SmoothingFunction
 
 from .Macros import Macros
 from .Utils import Utils
 
+NUM_PROCESSES_IN_USE=4
+
 class SelfBleu:
-    def __init__(self, test_file, gram=3):
+    def __init__(self, text_file, gram=3):
         # the json file used for retraining sa models
-        self.test_file = test_file
+        self.text_file = text_file
         self.gram = gram
         self.sample_size = 500
         self.reference = None
@@ -24,7 +27,7 @@ class SelfBleu:
     def get_reference(self):
         if self.reference is None:
             reference = list()
-            real_data = Utils.read_json(self.test_file)
+            real_data = Utils.read_json(self.text_file)
             for text in real_data['train']['text']:
                 text = Utils.tokenize(text)
                 reference.append(text)
@@ -42,9 +45,10 @@ class SelfBleu:
             return self.reference
         # end if
 
-    def calc_bleu(self, reference, hypothesis, weight):
+    def calc_bleu(self, hypothesis, reference, weight):
+        _hypothesis = Utils.tokenize(hypothesis)
         return nltk.translate.bleu_score.sentence_bleu(
-            reference, hypothesis, weight,
+            reference, _hypothesis, weight,
             smoothing_function=SmoothingFunction().method1
         )
 
@@ -53,23 +57,30 @@ class SelfBleu:
         bleu = list()
         reference = self.get_reference()
         weight = tuple((1. / ngram for _ in range(ngram)))
-        test_data = Utils.read_json(self.test_file)
-        for hypothesis in test_data['train']['text']:
-            hypothesis = Utils.tokenize(hypothesis)
-            bleu.append(self.calc_bleu(reference, hypothesis, weight))
-        # end for
+        text_data = Utils.read_json(self.text_file)
+        hypothesis = text_data['train']['text']
+        
+        pool_obj = Pool(processes=NUM_PROCESSES_IN_USE)
+        mp_calc_bleu = partial(self.calc_bleu,
+                               reference=reference,
+                               weight=weight)
+        scores = pool_obj.map(mp_calc_bleu, hypothesis)
+        bleu.extend(scores)
         if 'test' in test_data.keys():
-            for hypothesis in test_data['test']['text']:
-                hypothesis = Utils.tokenize(hypothesis)
-                bleu.append(self.calc_bleu(reference, hypothesis, weight))
-            # end for
+            hypothesis = text_data['test']['text']
+            pool_obj = Pool(processes=NUM_PROCESSES_IN_USE)
+            mp_calc_bleu = partial(self.calc_bleu,
+                                   reference=reference,
+                                   weight=weight)            
+            scores = pool_obj.map(mp_calc_bleu, hypothesis)
+            bleu.extend(scores)
         # end if
         return sum(bleu) / len(bleu)
 
 
 def main(task, search_dataset_name, selection_method):
     testcase_file = Macros.retrain_dataset_dir / f"{task}_{search_dataset_name}_{selection_method}_testcase.json"
-    sbleu = SelfBleu(test_file=testcase_file)
+    sbleu = SelfBleu(text_file=testcase_file)
     sbleu_score = sbleu.get_score()
 
     checklist_testcase_file = Macros.checklist_sa_testcase_file
