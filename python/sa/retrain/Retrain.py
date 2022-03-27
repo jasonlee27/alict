@@ -363,8 +363,8 @@ class Retrain:
             texts = list()
             labels = list()
             for lc in lc_desc:
-                texts.extends([raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t.lower()==lc.lower()])
-                labels.extends([raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t.lower()==lc.lower()])
+                texts.extend([raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t.lower()==lc.lower()])
+                labels.extend([raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t.lower()==lc.lower()])
             # end for
             return {
                 'train': {'text': texts, 'label': labels}
@@ -679,7 +679,7 @@ def _retrain_by_lc_types(task,
     lcs = sorted(list(set(raw_dataset['train']["test_name"])))
     if dataset_name==Macros.datasets[Macros.sa_task][1]:
         _lcs = [lc for lc in lcs if not lc.startswith('Q & A: yes')]
-        _lcs.append(ChecklistTestcases.LC_LIST[7:9])
+        _lcs.append(ChecklistTestcases.LC_LIST[6:8])
         lcs = _lcs
         del _lcs
     # end if

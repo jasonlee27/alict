@@ -1,5 +1,6 @@
 import os
 import nltk
+import multiprocessing
 
 from multiprocessing import Pool
 from functools import partial
@@ -8,7 +9,7 @@ from nltk.translate.bleu_score import SmoothingFunction
 from .Macros import Macros
 from .Utils import Utils
 
-NUM_PROCESSES_IN_USE=4
+NUM_PROCESSES_IN_USE=8
 
 class SelfBleu:
     def __init__(self, text_file, gram=3):
@@ -46,6 +47,7 @@ class SelfBleu:
         # end if
 
     def calc_bleu(self, hypothesis, reference, weight):
+        # print(multiprocessing.current_process())
         _hypothesis = Utils.tokenize(hypothesis)
         return nltk.translate.bleu_score.sentence_bleu(
             reference, _hypothesis, weight,
@@ -66,7 +68,7 @@ class SelfBleu:
                                weight=weight)
         scores = pool_obj.map(mp_calc_bleu, hypothesis)
         bleu.extend(scores)
-        if 'test' in test_data.keys():
+        if 'test' in text_data.keys():
             hypothesis = text_data['test']['text']
             pool_obj = Pool(processes=NUM_PROCESSES_IN_USE)
             mp_calc_bleu = partial(self.calc_bleu,
