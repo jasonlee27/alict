@@ -29,35 +29,37 @@ class RetrainResult:
     # ]
 
     OUR_LC_LIST = [
-        "short sentences with sentiment-laden adjectives",
-        "short sentences with neutral adjectives and nouns",
-        "sentiment change over time, present should prevail",
-        "negated neutral should still be neutral",
-        "negated positive with neutral content in the middle",
-        "author sentiment is more important than of others",
-        "parsing sentiment in (question, yes) form"
+        'Short sentences with neutral adjectives and nouns',
+        'Short sentences with sentiment-laden adjectives',
+        'Sentiment change over time, present should prevail',
+        'Negated neutral should still be neutral',
+        'Author sentiment is more important than of others',
+        'parsing sentiment in (question, yes) form',
+        'Negated positive with neutral content in the middle',
     ]
 
     OUR_TO_CH_MAP = Retrain.LC_MAP
     
-    # CH_TO_OUR_MAP = {
-    #     CHECKLIST_LC_LIST[0]: [OUR_LC_LIST[0]],
-    #     CHECKLIST_LC_LIST[1]: [OUR_LC_LIST[1]],
-    #     CHECKLIST_LC_LIST[2]: [OUR_LC_LIST[2]],
-    #     CHECKLIST_LC_LIST[3]: [OUR_LC_LIST[3]],
-    #     CHECKLIST_LC_LIST[4]: [OUR_LC_LIST[4]],
-    #     CHECKLIST_LC_LIST[5]: [OUR_LC_LIST[5]],
-    #     CHECKLIST_LC_LIST[6]: [OUR_LC_LIST[6], OUR_LC_LIST[7]]
-    # }
+    CH_TO_OUR_MAP = {
+        CHECKLIST_LC_LIST[0]: [OUR_LC_LIST[0]],
+        CHECKLIST_LC_LIST[1]: [OUR_LC_LIST[1]],
+        CHECKLIST_LC_LIST[2]: [OUR_LC_LIST[2]],
+        CHECKLIST_LC_LIST[3]: [OUR_LC_LIST[3]],
+        CHECKLIST_LC_LIST[4]: [OUR_LC_LIST[4]],
+        CHECKLIST_LC_LIST[5]: [OUR_LC_LIST[5]],
+        f"{CHECKLIST_LC_LIST[6]}::{CHECKLIST_LC_LIST[7]}": OUR_LC_LIST[6]
+    }
     
     @classmethod
     def get_model_results_from_string(cls, result_str, model_name, is_retrained_model=False):
-        pattern = f">>>>> MODEL: {model_name}(.*?)?\n<<<<< MODEL: {model_name}"
+        pattern = f">>>>> MODEL: {model_name}\n(.*?)?\n<<<<< MODEL: {model_name}"
         if is_retrained_model:
-            pattern = f">>>>> RETRAINED MODEL: {model_name}(.*?)?\n<<<<< RETRAINED MODEL: {model_name}"
+            pattern = f">>>>> RETRAINED MODEL: {model_name}\n(.*?)?\n<<<<< RETRAINED MODEL: {model_name}"
         # end if
         p = re.compile(pattern, re.DOTALL)
+        print(pattern)
         model_results = [m.strip() for m in p.findall(result_str)]
+        print(len(model_results))
         return model_results
 
     @classmethod
@@ -72,9 +74,9 @@ class RetrainResult:
 
     @classmethod
     def get_ours_results_per_requirement_from_string(cls, result_str, task, model_name, is_retrained_model=False):
-        pattern = f">>>>> MODEL: {model_name}(.*?)?\n<<<<< MODEL: {model_name}"
+        pattern = f">>>>> MODEL: {model_name}\n(.*?)?\n<<<<< MODEL: {model_name}"
         if is_retrained_model:
-            pattern = f">>>>> RETRAINED MODEL: {model_name}(.*?)?\n<<<<< RETRAINED MODEL: {model_name}"
+            pattern = f">>>>> RETRAINED MODEL: {model_name}\n(.*?)?\n<<<<< RETRAINED MODEL: {model_name}"
         # end if
         p = re.compile(pattern, re.DOTALL)
         model_results = p.findall(result_str)
@@ -91,8 +93,13 @@ class RetrainResult:
         return model_results_per_reqs
     
     @classmethod
-    def get_checklist_results_per_requirement_from_string(cls, result_str, retrained_model_name, is_retrained_model=False):
-        model_result_str = cls.get_model_results_from_string(result_str, retrained_model_name, is_retrained_model=is_retrained_model)
+    def get_checklist_results_per_requirement_from_string(cls,
+                                                          result_str,
+                                                          retrained_model_name,
+                                                          is_retrained_model=False):
+        model_result_str = cls.get_model_results_from_string(result_str,
+                                                             retrained_model_name,
+                                                             is_retrained_model=is_retrained_model)
         model_results_per_reqs = list()
         for m in model_result_str[0].split('\n\n\n'):
             pattern = '(.*?)?\nTest cases\:'
@@ -183,19 +190,41 @@ class RetrainResult:
         return line
 
     @classmethod
-    def read_result_file_by_lcs(cls, result_str, is_checklist=False):
+    def escape_string(cls, str_in):
+        string = str_in.translate(
+            str.maketrans({
+                "-":  r"\-",
+                "&":  r"\&",
+                ":":  r"\:",
+                "(":  r"\(",
+                ")":  r"\)",
+                "[":  r"\[",
+                "]":  r"\]",
+                "^":  r"\^",
+                "$":  r"\$",
+                "*":  r"\*",
+                ".":  r"\.",
+                ",":  r"\,"
+            })
+        )
+        return string
+        
+    @classmethod
+    def read_result_file_by_lcs(cls, result_str, is_checklist=False, is_retrained_model=False):
         target_lcs = cls.OUR_LC_LIST
         if not is_checklist:
             _lcs = [lc for lc in cls.CHECKLIST_LC_LIST if not lc.startswith('q & a: yes')]
-            _lcs.append('&&'.join(cls.CHECKLIST_LC_LIST[7:9]))
+            _lcs.append('::'.join(cls.CHECKLIST_LC_LIST[7:9]))
             target_lcs = _lcs
             del _lcs
         # end if
         model_results = dict()
         for lc in target_lcs:
-            pattern = f">>>>> Retrain: LC<{lc}>+SST2(.*?)?\n<<<<< Retrain: LC<{lc}>+SST2"
+            _lc = cls.escape_string(lc)
+            # pattern = f">>>>> MODEL: {model_name}(.*?)?\n<<<<< MODEL: {model_name}"
+            pattern = f">>>>> Retrain\: LC<{_lc}>\+SST2\n(.*)\n<<<<< Retrain\: LC<{_lc}>\+SST2"
             p = re.compile(pattern, re.DOTALL)
-            model_results[lc] = [m.strip() for m in p.findall(result_str)]
+            model_results[lc] = [m.strip() for m in p.findall(result_str)][0]
         # end for
         return model_results
 
@@ -217,10 +246,10 @@ class RetrainResult:
         if is_retrained_by_lcs:
             temp_dict = dict()
         # end if
-        result_lcs = cls.read_result_file_by_lcs(result_str, is_checklist=True)
+        # result_lcs = cls.read_result_file_by_lcs(result_str, is_checklist=True)
         for r in result_reqs:
             lc = r['lc'].lower()
-            if lc in cls.CHECKLIST_LC_LIST and not is_retrained_by_lcs::
+            if lc in cls.CHECKLIST_LC_LIST and not is_retrained_by_lcs:
                 checklist_testsuite_dict[retrained_model_name].append(r)
             elif lc in cls.CHECKLIST_LC_LIST and is_retrained_by_lcs:
                 if lc.startswith('q & a: yes'):
@@ -231,11 +260,12 @@ class RetrainResult:
             # end if
         # end for
         if is_retrained_by_lcs:
-            lc = '&&'.join(temp_dict.keys())
+            lc = '::'.join(temp_dict.keys())
+
             checklist_testsuite_dict[retrained_model_name].append({
                 'lc': lc,
-                'pass': [s for val in temp_dict.values for s in val['pass']],
-                'fail': [s for val in temp_dict.values for s in val['fail']]
+                'pass': [s for key in temp_dict.keys() for s in temp_dict[key]['pass']],
+                'fail': [s for key in temp_dict.keys() for s in temp_dict[key]['fail']]
             })
         # end if
         return checklist_testsuite_dict
@@ -364,17 +394,17 @@ class RetrainResult:
         if is_retrained_by_lcs:
             for lc_key in retrained_testsuite_result.keys():
                 for r in orig_testsuite_result[model_name]:
-                    print(r['lc'], lc_key, self.OUR_TO_CH_MAP[lc_key])
+                    print(r['lc'], lc_key, cls.OUR_TO_CH_MAP[lc_key])
                 orig_r = [
                     r
                     for r in orig_testsuite_result[model_name]
-                    if r['lc'] in self.OUR_TO_CH_MAP[lc_key]
+                    if r['lc'] in cls.OUR_TO_CH_MAP[lc_key]
                 ][0]
 
                 ret_r = [
                     r
                     for r in retrained_testsuite_result[lc_key][model_name]
-                    if r['lc'] in self.OUR_TO_CH_MAP[lc_key]
+                    if r['lc'] in cls.OUR_TO_CH_MAP[lc_key]
                 ][0]
 
                 result[model_name][lc_key] = {
@@ -458,14 +488,14 @@ class RetrainResult:
                 orig_r = [
                     r
                     for r in orig_testsuite_result[model_name]
-                    if r['lc'].lower()==self.CH_TO_OUR_MAP[lc_key]
+                    if r['lc'].lower()==cls.CH_TO_OUR_MAP[lc_key]
                 ][0]
                 sent_type = orig_r['sent_type']
 
                 ret_r = [
                     r
                     for r in retrained_testsuite_result[lc_key][model_name]
-                    if r['lc']==self.CH_TO_OUR_MAP[lc_key] and r['sent_type']==sent_type
+                    if r['lc']==cls.CH_TO_OUR_MAP[lc_key] and r['sent_type']==sent_type
                 ][0]
                 
                 result[model_name][f"{lc_key}::{sent_type}"] = {
@@ -619,7 +649,7 @@ class RetrainResult:
             for lc_i, lc_key in enumerate(res_ours.keys()):
                 if not lc_key.startswith('[') and \
                    not lc_key.endswith(']') and \
-                   lc_key in self.CHECKLIST_LC_LIST:
+                   lc_key in cls.CHECKLIST_LC_LIST:
                     num_fail2pass = res_ours[lc_key]['num_fail2pass']
                     num_fail_orig = res_ours[lc_key]['num_fail_orig']
                     num_pass_orig = res_ours[lc_key]['num_pass_orig']
@@ -643,7 +673,7 @@ class RetrainResult:
                     # end if
                 elif lc_key.startswith('[') and lc_key.endswith(']'):
                     # convert str to list and check if all elements in list in lcs
-                    _lc_key = [lc for lc in eval(lc_key) if lc in self.CHECKLIST_LC_LIST]
+                    _lc_key = [lc for lc in eval(lc_key) if lc in cls.CHECKLIST_LC_LIST]
                     if len(eval(lc_key))==len(_lc_key):
                         num_fail2pass = res_ours[lc_key]['num_fail2pass']
                         num_fail_orig = res_ours[lc_key]['num_fail_orig']

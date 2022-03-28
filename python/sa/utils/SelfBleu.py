@@ -86,7 +86,7 @@ def main(task, search_dataset_name, selection_method):
     sbleu_score = sbleu.get_score()
 
     checklist_testcase_file = Macros.checklist_sa_testcase_file
-    sbleu_baseline = SelfBleu(test_file=checklist_testcase_file)
+    sbleu_baseline = SelfBleu(text_file=checklist_testcase_file)
     sbleu_baseline_score = sbleu.get_score()
 
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)

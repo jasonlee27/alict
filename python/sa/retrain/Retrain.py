@@ -702,7 +702,8 @@ def _retrain_by_lc_types(task,
         eval_result_before, eval_result_on_train_before = retrainer.evaluate()
         retrainer.train()
         eval_result_after, eval_result_on_train_after = retrainer.evaluate()
-        eval_result['&&'.join(lc_desc)] = {
+        lc_key = lc_desc if type(lc_desc)==str else '::'.join(lc_desc)
+        eval_result[lc_key] = {
             'eval': {
                 'before': eval_result_before,
                 'after': eval_result_after
@@ -726,6 +727,9 @@ def _retrain_by_lc_types(task,
             logger.print(f"<<<<< Retrain: LC<{lc_desc}>+SST2")
         # end if
     # end for
+    if testing_on_testsuite:
+        shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results_lcs.txt")
+    # end if
     return eval_result
 
 def _retrain_all(task,
@@ -781,6 +785,9 @@ def _retrain_all(task,
     print(f"<<<<< Retrain: ALL+SST2")
     if logger is not None:
         logger.print(f"<<<<< Retrain: ALL+SST2")
+    # end if
+    if testing_on_testsuite:
+        shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results_all.txt")
     # end if
     return eval_result
     
