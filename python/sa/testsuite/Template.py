@@ -230,6 +230,9 @@ class Template:
     def get_templates(cls, num_seeds, nlp_task, dataset_name, selection_method, log_file):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
+        # Write the template results
+        res_dir = Macros.result_dir/ f"templates_{task}_{dataset_name}_{selection_method}"
+        res_dir.mkdir(parents=True, exist_ok=True)
         logger = Logger(logger_file=log_file,
                         logger_name='template')
 
@@ -251,10 +254,13 @@ class Template:
         # Make templates by synonyms
         logger.print("Generate Templates ...")
         prev_synonyms = dict()
+        cksum_map_str = ""
         for t_i in range(len(new_input_dicts)):
             # for each testing linguistic capabilities,
             inputs_per_req = new_input_dicts[t_i]
-            req_cksum = Utils.get_cksum(inputs_per_req["requirement"]["description"])
+            lc_desc = inputs_per_req["requirement"]["description"]
+            req_cksum = Utils.get_cksum(lc_desc)
+            cksum_map_str += f"{lc_desc}\t{req_cksum}"
             inputs = inputs_per_req["inputs"]
             print_str = '>>>>> REQUIREMENT:'+inputs_per_req["requirement"]["description"]
             logger.print(print_str)
@@ -306,10 +312,6 @@ class Template:
                 # # end if
             # end for
 
-            # Write the template results
-            res_dir = Macros.result_dir/ f"templates_{task}_{dataset_name}_{selection_method}"
-            res_dir.mkdir(parents=True, exist_ok=True)
-
             if any(seed_inputs):
                 Utils.write_json(seed_inputs,
                                  res_dir / f"seeds_{req_cksum}.json",
@@ -333,6 +335,7 @@ class Template:
             print_str = '<<<<< REQUIREMENT:'+inputs_per_req["requirement"]["description"]
             logger.print(print_str)
         # end for
+        Utils.write_txt(cksum_map_str, res_dir / 'cksum_map.txt')
         return
 
 
