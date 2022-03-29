@@ -90,3 +90,45 @@ class Macros:
     # SST2
     sst2_dir: Path = dataset_dir / "sst2"
     sst2_sa_trainset_file: Path = retrain_dataset_dir / "sa_sst2_trainset.json"
+
+
+    CHECKLIST_LC_LIST = [
+        'Sentiment-laden words in context',
+        'neutral words in context',
+        'used to, but now',
+        'simple negations: not negative',
+        'simple negations: not neutral is still neutral',
+        'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
+        'simple negations: I thought x was negative, but it was not (should be neutral or positive)',
+        'my opinion is what matters',
+        'Q & A: yes',
+        'Q & A: yes (neutral)',
+        'Q & A: no'
+    ]
+
+    OUR_LC_LIST = [
+        'Short sentences with sentiment-laden adjectives',
+        'Short sentences with neutral adjectives and nouns',
+        'Sentiment change over time, present should prevail',
+        'Negated negative should be positive or neutral',
+        'Negated neutral should still be neutral',
+        'Negated positive with neutral content in the middle',
+        'Negation of negative at the end, should be positive or neutral',
+        'Author sentiment is more important than of others',
+        'parsing sentiment in (question, yes) form',
+        'Parsing positive sentiment in (question, no) form',
+        'Parsing negative sentiment in (question, no) form'
+    ]
+
+    LC_MAP = {
+        CHECKLIST_LC_LIST[0]: OUR_LC_LIST[0],
+        CHECKLIST_LC_LIST[1]: OUR_LC_LIST[1],
+        CHECKLIST_LC_LIST[2]: OUR_LC_LIST[2],
+        CHECKLIST_LC_LIST[3]: OUR_LC_LIST[3],
+        CHECKLIST_LC_LIST[4]: OUR_LC_LIST[4],
+        CHECKLIST_LC_LIST[5]: OUR_LC_LIST[5],
+        CHECKLIST_LC_LIST[6]: OUR_LC_LIST[6],
+        CHECKLIST_LC_LIST[7]: OUR_LC_LIST[7],
+        str(CHECKLIST_LC_LIST[8:10]): OUR_LC_LIST[8], # Q & A: yes -> parsing sentiment in (question, yes) form
+        CHECKLIST_LC_LIST[10]: str(OUR_LC_LIST[9:]) # Q & A: no -> parsing positive/negative sentiment in (question, yes) form
+    }

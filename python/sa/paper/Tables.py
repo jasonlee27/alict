@@ -127,25 +127,83 @@ class Tables:
         return
 
     @classmethod
-    def make_numbers_selfbleu(cls, results_dir: Path, tables_dir: Path):
+    def make_numbers_selfbleu(cls,
+                              results_dir: Path,
+                              tables_dir: Path,
+                              task: str,
+                              search_dataset_name: str,
+                              selection_method: str):
         output_file = latex.File(tables_dir / 'selfbleu-numbers.tex')
         selfbleu_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
         selfbleu_res = Utils.read_json(selfbleu_file)
-        our_num_data = selfbleu_res['num_data']
-        our_score = selfbleu_res['score']
-        bl_name = selfbleu_res['baseline_name']
-        bl_num_data = selfbleu_res['baseline_num_data']
-        bl_score = selfbleu_res['baseline_score']
-        output_file.append_macro(latex.Macro("selfbleu_our_num_data", our_num_data))
-        output_file.append_macro(latex.Macro("selfbleu_our_score", FMT_FLOAT.format(our_socre)))
-        output_file.append_macro(latex.Macro("selfbleu_bl_name", bl_name))
-        output_file.append_macro(latex.Macro("selfbleu_bl_num_data", bl_num_data))
-        output_file.append_macro(latex.Macro("selfbleu_bl_score", FMT_FLOAT.format(bl_score)))
+        our_scores = selfbleu_res['ours']
+        for lc_i, lc in enumerate(our_scores.keys()):
+            output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_desc", lc))
+            output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_num_data", our_scores[lc]['num_data']))
+            output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_score", our_scores[lc]['score']))
+        # end for
 
+        checklist_scores = selfbleu_res['checklist']
+        ours_lc_list = list(our_scores.keys())
+        for lc in checklist_scores.keys():
+            if lc==Macros.CHECKLIST_LC_LIST[8]:
+                our_lc_i = ours_lc_list.index(Macros.CHECKLIST_LC_LIST[8])
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
+            elif lc==Macros.CHECKLIST_LC_LIST[10]:
+                our_lc_i = ours_lc_list.index('Parsing sentiment in (question, no) form')
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
+            else:
+                our_lc_i = ours_lc_list.index(Macros.LC_MAP[lc])
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
+            # end if
+        # end for
         output_file.save()
         return
 
     @classmethoe
-    def make_table_selfbleu(cls, results_dir: Path, tables_dir: Path):
+    def make_table_selfbleu(cls,
+                            results_dir: Path,
+                            tables_dir: Path
+                            task: str,
+                            search_dataset_name: str,
+                            selection_method: str):
+        output_file = latex.File(tables_dir / "selfbleu-table.tex")
         
+        # Header
+        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{small}")
+        output_file.append(r"\begin{center}")
+        output_file.append(r"\caption{\SelfBleuTableCaption}")
+        output_file.append(r"\begin{tabular}{p{5cm}||p{3cm}||p{3cm}}||p{3cm}||p{3cm}}")
+        output_file.append(r"\toprule")
+
+        # Content
+        output_file.append(r"\tLc & \tOurSelfBleuScore & \tChecklistSelfBleuScore \\")
+        output_file.append(r"\midrule")
+
+        selfbleu_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
+        selfbleu_res = Utils.read_json(selfbleu_file)
+        our_scores = selfbleu_res['ours']
+        for lc_i, lc in enumerate(our_scores.keys()):
+            output_file.append("\multirow{3}{*}{\parbox{5cm}{" + \
+                               f"LC{lc_i+1}: " + latex.Macro(f"selfbleu_our_lc_{lc_i}_desc").use() + "}}")
+            output_file.append(" & " + latex.Macro(f"selfbleu_our_lc_{lc_i}_num_data").use() + r"\\")
+            output_file.append(" & " + latex.Macro(f"selfbleu_our_lc_{lc_i}_score").use() + r"\\")
+            output_file.append(" & " + latex.Macro(f"selfbleu_checklist_lc_{lc_i}_num_data").use() + r"\\")
+            output_file.append(" & " + latex.Macro(f"selfbleu_checklist_lc_{lc_i}_score").use() + r"\\")
+            output_file.append(r"\\")
+            output_file.append(r"\hline")
+        # end for
+
+        # Footer
+        output_file.append(r"\bottomrule")
+        output_file.append(r"\end{tabular}")
+        output_file.append(r"\end{center}")
+        output_file.append(r"\end{small}")
+        output_file.append(r"\vspace{\SelfBleuTableVSpace}")
+        output_file.append(r"\end{table*}")
+        output_file.save()
         return

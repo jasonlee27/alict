@@ -3,14 +3,13 @@ import nltk
 import multiprocessing
 
 from multiprocessing import Pool
-from functools import partial
+# from functools import partial
 from nltk.translate.bleu_score import SmoothingFunction
 
 from .Macros import Macros
 from .Utils import Utils
 
-NUM_PROCESSES_IN_USE=8
-
+NUM_PROCESSES_IN_USE=os.cpu_count()
 
 
 class SelfBleu:
@@ -30,48 +29,50 @@ class SelfBleu:
         self.sample_size = 500
         self.reference = None
         self.is_first = True
-        self.num_data = -1
-
-    def get_score(self):
-        self.get_reference()
-        return self.get_bleu()
+        self.num_data = len(self.texts)
 
     def get_reference(self):
+        reference = list()
         if self.reference is None:
-            reference = list()
+            self.reference = self.texts
             for t in self.texts:
-                text = Utils.tokenize(t)
-                reference.append(t)
+                reference.append(Utils.tokenize(t))
             # end for
             self.reference = reference
-            self.num_data = len(reference)
             return reference
-        else:
-            return self.reference
         # end if
+        return self.reference
 
-    def calc_bleu(self, hyp_i, reference, weight):
+    def calc_bleu(self, reference, hypothesis, weight):
         # print(multiprocessing.current_process())
-        hypothesis = Utils.tokenize(self.texts[hyp_i])
         return nltk.translate.bleu_score.sentence_bleu(
             reference, hypothesis, weight,
             smoothing_function=SmoothingFunction().method1
         )
 
-    def get_bleu(self):
+    def get_score(self, reference=None):
         ngram = self.gram
-        bleu = list()
-        reference = self.get_reference()
+        if reference is None:
+            reference = self.get_reference()
+        # end if
         weight = tuple((1. / ngram for _ in range(ngram)))
-        hypothesis = self.texts
-        pool_obj = Pool(processes=NUM_PROCESSES_IN_USE)
-        mp_calc_bleu = partial(self.calc_bleu,
-                               reference=reference,
-                               weight=weight)
-        scores = pool_obj.map(mp_calc_bleu, range(self.num_data))
-        bleu.extend(scores)
-        return float("{:.3f}".format(sum(bleu) / len(bleu)))
-
+        pool = Pool(processes=NUM_PROCESSES_IN_USE)
+        result = list()
+        for d_i in range(self.num_data):
+            hypothesis = reference[d_i]
+            other = reference[:d_i] + reference[d_i+1:]
+            result.append(pool.apply_async(self.calc_bleu, args=(other, hypothesis, weight)))
+        # end for
+        score = 0.
+        cnt = 0
+        for i in result:
+            score += i.get()
+            cnt += 1
+        # end for
+        pool.close()
+        pool.join()
+        return float("{:.3f}".format(score / cnt))
+    
 
 def read_our_testcases(task, search_dataset_name, selection_method):
     template_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
@@ -89,28 +90,23 @@ def read_our_testcases(task, search_dataset_name, selection_method):
         exps_file = template_dir / f"exps_{cksum_val}.json"
         if os.path.exists(str(exps_file)):
             exps = Utils.read_json(exps_file)
-            texts_all.append(s['input'])
-            texts.append(s['input'])
+            for e in exps:
+                texts_all.append(e['input'])
+                texts.append(e['input'])
+            # end for
         # end if
-        texts_lcs[lc] = texts
+        if lc==Macros.OUR_LC_LIST[9]:
+            texts_lcs['Parsing sentiment in (question, no) form'] = texts
+        elif lc==Macros.OUR_LC_LIST[10]:
+            texts_lcs['Parsing sentiment in (question, no) form'].extend(texts)
+        else:
+            texts_lcs[lc] = texts
+        # end if
     # end for
     return texts_all, texts_lcs
 
 def read_checklist_testcases():
-    LC_LIST = [
-        'Sentiment-laden words in context',
-        'neutral words in context'
-        'used to, but now'
-        'simple negations: not negative',
-        'simple negations: not neutral is still neutral',
-        'Hard: Negation of positive with neutral stuff in the middle (should be negative)'
-        'negation of neutral with neutral in the middle, should still neutral'
-        'simple negations: I thought x was negative, but it was not (should be neutral or positive)',
-        'my opinion is what matters',
-        'Q & A: yes',
-        'Q & A: yes (neutral)',
-        'Q & A: no',
-    ]
+    LC_LIST = Macros.CHECKLIST_LC_LIST
     tsuite, tsuite_dict = Utils.read_testsuite(Macros.checklist_sa_dataset_file)
     test_names = list(set(tsuite_dict['test_name']))
     texts_all = list()
@@ -118,7 +114,13 @@ def read_checklist_testcases():
     num_data = 0
     for test_name in test_names:
         if test_name in LC_LIST:
-            texts_lcs[test_name] = tsuite.tests[test_name].data
+            if test_name==Macros.CHECKLIST_LC_LIST[8]:
+                texts_lcs['Q & A: yes'] = tsuite.tests[test_name].data
+            elif test_name==Macros.CHECKLIST_LC_LIST[9]:
+                texts_lcs['Q & A: yes'].extend(tsuite.tests[test_name].data)
+            else:
+                texts_lcs[test_name] = tsuite.tests[test_name].data
+            # end if
             texts_all.extend(texts_lcs[test_name])
         # end if
     # end for
@@ -127,33 +129,31 @@ def read_checklist_testcases():
 
 def main(task, search_dataset_name, selection_method):
     _, texts_ours = read_our_testcases(task, search_dataset_name, selection_method)
-    scores = list()
+    scores = dict()
     for lc in texts_ours.keys():
         sbleu = SelfBleu(texts=texts_ours[lc])
-        scores.append({
-            'lc': lc,
+        scores[lc] = {
             'num_data': sbleu.num_data,
-            'scores': sbleu.get_score()
-        })
+            'score': sbleu.get_score()
+        }
     # end for
 
     _, texts_checklist = read_checklist_testcases()
-    scores_baseline = list()
+    scores_baseline = dict()
     for lc in texts_checklist.keys():
+        print(lc)
         sbleu = SelfBleu(texts=texts_checklist[lc])
-        scores_baseline.append({
-            'lc': lc,
+        scores_baseline[lc] = {
             'num_data': sbleu.num_data,
             'scores': sbleu.get_score()
-        })
+        }
     # end for
 
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
     result_file = Macros.selfbleu_result_dir / f"{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
     result = {
-        'scores': scores,
-        'baseline_name': 'checklist',
-        'baseline_scores': scores_baseline
+        'ours': scores,
+        'checklist': scores_baseline
     }
     Utils.write_json(result, result_file, pretty_format=True)
     return
