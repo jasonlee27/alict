@@ -87,10 +87,10 @@ def main(task, search_dataset_name, selection_method):
 
     checklist_testcase_file = Macros.checklist_sa_testcase_file
     sbleu_baseline = SelfBleu(text_file=checklist_testcase_file)
-    sbleu_baseline_score = sbleu.get_score()
+    sbleu_baseline_score = sbleu_baseline.get_score()
 
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
-    result_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
+    result_file = Macros.selfbleu_result_dir / f"{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
     result = {
         'num_data': sbleu.num_data,
         'score': sbleu_score,

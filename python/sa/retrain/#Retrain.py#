@@ -219,25 +219,15 @@ class SstTestcases:
 class ChecklistTestcases:
 
     LC_LIST = [
-        'Sentiment-laden words in context',
+        'sentiment-laden words in context',
         'neutral words in context',
         'used to, but now',
         'simple negations: not neutral is still neutral',
-        'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
+        'hard: negation of positive with neutral stuff in the middle (should be negative)',
         'my opinion is what matters',
-        'Q & A: yes',
-        'Q & A: yes (neutral)'
+        'q & a: yes',
+        'q & a: yes (neutral)',
     ]
-    # [
-    #     'sentiment-laden words in context',
-    #     'neutral words in context',
-    #     'used to, but now',
-    #     'simple negations: not neutral is still neutral',
-    #     'hard: negation of positive with neutral stuff in the middle (should be negative)',
-    #     'my opinion is what matters',
-    #     'q & a: yes',
-    #     'q & a: yes (neutral)',
-    # ]
     
     @classmethod
     def write_checklist_testcase(cls, save_file):
