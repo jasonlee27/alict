@@ -141,7 +141,6 @@ def main(task, search_dataset_name, selection_method):
     _, texts_checklist = read_checklist_testcases()
     scores_baseline = dict()
     for lc in texts_checklist.keys():
-        print(lc)
         sbleu = SelfBleu(texts=texts_checklist[lc])
         scores_baseline[lc] = {
             'num_data': sbleu.num_data,

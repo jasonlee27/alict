@@ -181,7 +181,7 @@ class Tables:
         output_file.append(r"\toprule")
 
         # Content
-        output_file.append(r"\tLc & \tOurSelfBleuScore & \tChecklistSelfBleuScore \\")
+        output_file.append(r"\tLc & \tOurNumData & \tOurSelfBleuScore & \tChecklistNumData & \tChecklistSelfBleuScore \\")
         output_file.append(r"\midrule")
 
         selfbleu_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
