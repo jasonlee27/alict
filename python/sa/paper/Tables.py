@@ -32,11 +32,12 @@ class Tables:
     }
 
     @classmethod
-    def make_tables(cls, which):
+    def make_tables(cls, **options):
         paper_dir: Path = Macros.paper_dir
         tables_dir: Path = paper_dir / "tables"
         tables_dir.mkdir(parents=True, exist_ok=True)
-
+        which = options['which']
+        
         if not isinstance(which, list):
             which = [which]
         # end if
@@ -46,8 +47,12 @@ class Tables:
                 cls.make_numbers_lc_requirement(Macros.result_dir, tables_dir)
                 cls.make_table_lc_requirement(Macros.result_dir, tables_dir)
             elif item == "selfbleu":
-                cls.make_numbers_selfbleu(Macros.result_dir, tables_dir)
-                cls.make_table_selfbleu(Macros.result_dir, tables_dir)
+                task = options['task']
+                search_dataset = options['search_dataset_name']
+                selection_method = options['selection_method']
+                print(task, search_dataset, selection_method)
+                cls.make_numbers_selfbleu(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+                cls.make_table_selfbleu(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
             else:
                 cls.logger.warning(f"Unknown table {item}")
             # end if
@@ -166,7 +171,7 @@ class Tables:
     @classmethoe
     def make_table_selfbleu(cls,
                             results_dir: Path,
-                            tables_dir: Path
+                            tables_dir: Path,
                             task: str,
                             search_dataset_name: str,
                             selection_method: str):

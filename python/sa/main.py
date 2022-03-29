@@ -216,8 +216,13 @@ def run_selfbleu():
 
 def run_make_tables():
     from .paper.Tables import Tables
-    options = args.which
-    Tables.make_tables(options)
+    options = {
+        'which': args.which,
+        'task': args.nlp_task,
+        'search_dataset_name': args.search_dataset,
+        'selection_method': args.syntax_selection
+    }
+    Tables.make_tables(**options)
     return
     
 

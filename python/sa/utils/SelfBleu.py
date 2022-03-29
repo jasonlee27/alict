@@ -121,7 +121,7 @@ def read_checklist_testcases():
             else:
                 texts_lcs[test_name] = tsuite.tests[test_name].data
             # end if
-            texts_all.extend(texts_lcs[test_name])
+            texts_all.extend(tsuite.tests[test_name].data)
         # end if
     # end for
     return texts_all, texts_lcs
