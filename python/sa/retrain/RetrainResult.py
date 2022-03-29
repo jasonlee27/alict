@@ -590,14 +590,15 @@ class RetrainResult:
         if is_retrained_by_lcs:
             for lc_key in retrained_testsuite_result.keys():
                 lc = lc_key.lower()
+                ref_lc = cls.OUR_TO_CH_MAP[lc]
                 orig_r = None
                 for r in orig_testsuite_result[model_name]:
                     if r['lc'].lower()=="::".join(cls.CHECKLIST_LC_LIST[6:8]).lower():
-                        if cls.OUR_TO_CH_MAP[lc]==str(cls.CHECKLIST_LC_LIST[6:8]).lower():
+                        if ref_lc==str(cls.CHECKLIST_LC_LIST[6:8]).lower():
                             orig_r = r
                             break
                     else:
-                        if r['lc'].lower()==cls.OUR_TO_CH_MAP[lc]:
+                        if r['lc'].lower()==ref_lc:
                             orig_r = r
                             break
                         # end if
@@ -606,17 +607,17 @@ class RetrainResult:
                 ret_r = None
                 for r in retrained_testsuite_result[lc_key][model_name]:
                     if r['lc'].lower()=="::".join(cls.CHECKLIST_LC_LIST[6:8]).lower():
-                        if cls.OUR_TO_CH_MAP[lc]==str(cls.CHECKLIST_LC_LIST[6:8]).lower():
+                        if ref_lc==str(cls.CHECKLIST_LC_LIST[6:8]).lower():
                             ret_r = r
                             break
                     else:
-                        if r['lc'].lower()==cls.OUR_TO_CH_MAP[lc]:
+                        if r['lc'].lower()==ref_lc:
                             ret_r = r
                             break
                         # end if
                     # end if
                 # end for
-                result[model_name][lc_key] = {
+                result[model_name][ref_lc] = {
                     'fail2pass': list(),
                     'num_fail2pass': -1
                 }
@@ -624,7 +625,7 @@ class RetrainResult:
                     found = False
                     for p in ret_r['pass']:
                         if f['sent']==p['sent'] and f['label']==p['label'] and not found:
-                            result[model_name][lc_key]['fail2pass'].append({
+                            result[model_name][ref_lc]['fail2pass'].append({
                                 'sent': f['sent'],
                                 'label': f['label'],
                                 'pred': (f['pred'], p['pred']),
@@ -635,11 +636,11 @@ class RetrainResult:
                         # end if
                     # end for
                 # end for
-                result[model_name][lc_key]['num_fail2pass'] = len(result[model_name][lc_key]['fail2pass'])
-                result[model_name][lc_key]['num_fail_orig'] = len(orig_r['fail'])
-                result[model_name][lc_key]['num_pass_orig'] = len(orig_r['pass'])
-                result[model_name][lc_key]['num_fail_retrained'] = len(ret_r['fail'])
-                result[model_name][lc_key]['num_pass_retrained'] = len(ret_r['pass'])
+                result[model_name][ref_lc]['num_fail2pass'] = len(result[model_name][ref_lc]['fail2pass'])
+                result[model_name][ref_lc]['num_fail_orig'] = len(orig_r['fail'])
+                result[model_name][ref_lc]['num_pass_orig'] = len(orig_r['pass'])
+                result[model_name][ref_lc]['num_fail_retrained'] = len(ret_r['fail'])
+                result[model_name][ref_lc]['num_pass_retrained'] = len(ret_r['pass'])
             # end for
         else:
             for orig_r in orig_testsuite_result[model_name]:
@@ -710,7 +711,6 @@ class RetrainResult:
                                                        retrained_model_name,
                                                        is_retrained_by_lcs=is_retrained_by_lcs)
         # end if
-        # Utils.write_json(fail_to_pass_cases, saveto, pretty_format=True)
         return fail_to_pass_cases
 
     @classmethod
@@ -748,7 +748,6 @@ class RetrainResult:
                                                                retrained_model_name,
                                                                is_retrained_by_lcs=is_retrained_by_lcs)
         # end if
-        # Utils.write_json(fail_to_pass_cases, saveto, pretty_format=True)
         return fail_to_pass_cases
 
     @classmethod
@@ -758,65 +757,30 @@ class RetrainResult:
                           savedir,
                           is_retrained_by_lcs=True):
         for model_name in fail2pass_retrained_on_ours.keys():
-            result = 'retrained_lc,num_fail2pass,num_fail_orig,num_pass_orig,num_fail_retrained,num_pass_retrained\n'
+            result = 'approach,retrained_lc,num_fail2pass,num_fail_orig,num_pass_orig,num_fail_retrained,num_pass_retrained\n'
             res_ours = fail2pass_retrained_on_ours[model_name]    
             summary_ours = list()
             for lc_i, lc_key in enumerate(res_ours.keys()):
                 print(lc_key)
-                if not lc_key.startswith('[') and \
-                   not lc_key.endswith(']') and \
-                   lc_key in cls.CHECKLIST_LC_LIST:
+                if lc_key in [lc.lower() for lc in cls.CHECKLIST_LC_LIST]:
                     num_fail2pass = res_ours[lc_key]['num_fail2pass']
                     num_fail_orig = res_ours[lc_key]['num_fail_orig']
                     num_pass_orig = res_ours[lc_key]['num_pass_orig']
                     num_fail_retrained = res_ours[lc_key]['num_fail_retrained']
                     num_pass_retrained = res_ours[lc_key]['num_pass_retrained']
-                    if lc_i+1==len(res_ours.keys()):
-                        summary_ours.append([
-                            lc_key.replace(',', '\,'), # because we are making csv file
-                            num_fail2pass,
-                            num_fail_orig,
-                            num_pass_orig,
-                            num_fail_retrained,
-                            num_pass_retrained
-                        ])
-                    else:
-                        summary_ours[-1][1] += num_fail2pass
-                        summary_ours[-1][2] += num_fail_orig
-                        summary_ours[-1][3] += num_pass_orig
-                        summary_ours[-1][4] += num_fail_retrained
-                        summary_ours[-1][5] += num_pass_retrained
-                    # end if
-                elif lc_key.startswith('[') and lc_key.endswith(']'):
-                    # convert str to list and check if all elements in list in lcs
-                    _lc_key = [lc for lc in eval(lc_key) if lc in cls.CHECKLIST_LC_LIST]
-                    if len(eval(lc_key))==len(_lc_key):
-                        num_fail2pass = res_ours[lc_key]['num_fail2pass']
-                        num_fail_orig = res_ours[lc_key]['num_fail_orig']
-                        num_pass_orig = res_ours[lc_key]['num_pass_orig']
-                        num_fail_retrained = res_ours[lc_key]['num_fail_retrained']
-                        num_pass_retrained = res_ours[lc_key]['num_pass_retrained']
-                        if lc_i+1==len(res_ours.keys()):
-                            summary_ours.append([
-                                lc_key.replace(',', '\,'),
-                                num_fail2pass,
-                                num_fail_orig,
-                                num_pass_orig,
-                                num_fail_retrained,
-                                num_pass_retrained
-                            ])
-                        else:
-                            summary_ours[-1][1] += num_fail2pass
-                            summary_ours[-1][2] += num_fail_orig
-                            summary_ours[-1][3] += num_pass_orig
-                            summary_ours[-1][4] += num_fail_retrained
-                            summary_ours[-1][5] += num_pass_retrained
-                        # end if
-                    # end if
+                    summary_ours.append([
+                        'Retrain:Ours::Test:Checklist',
+                        lc_key.replace(',', ' '),
+                        num_fail2pass,
+                        num_fail_orig,
+                        num_pass_orig,
+                        num_fail_retrained,
+                        num_pass_retrained
+                    ])
+                    print(summary_ours[-1])
                 # end if
             # end for
             for summary in summary_ours:
-                print(summary)
                 result += ','.join([str(s) for s in summary])
                 result += '\n'
             # end for
@@ -828,7 +792,7 @@ class RetrainResult:
             for lc_key in res_checklist.keys():
                 print(lc_key)
                 lc_desc = lc_key.split('::')[0]
-                if lc_desc in cls.OUR_LC_LIST:
+                if lc_desc in [lc.lower() for lc in cls.OUR_LC_LIST]:
                     num_fail2pass = res_checklist[lc_key]['num_fail2pass']
                     num_fail_orig = res_checklist[lc_key]['num_fail_orig']
                     num_pass_orig = res_checklist[lc_key]['num_pass_orig']
@@ -837,7 +801,8 @@ class RetrainResult:
                     if lc_key.endswith('::SEED'):
                         seed_lc_descs.append(lc_desc)
                         summary_checklist.append([
-                            lc_desc.replace(',', ''),
+                            'Retrain:Checklist::Test:Ours',
+                            lc_desc.replace(',', ' '),
                             num_fail2pass,
                             num_fail_orig,
                             num_pass_orig,
@@ -845,16 +810,16 @@ class RetrainResult:
                             num_pass_retrained
                         ])
                     elif lc_key.endswith('::EXP') and seed_lc_descs[-1]==lc_desc:
-                        summary_checklist[-1][1] += num_fail2pass
-                        summary_checklist[-1][2] += num_fail_orig
-                        summary_checklist[-1][3] += num_pass_orig
-                        summary_checklist[-1][4] += num_fail_retrained
-                        summary_checklist[-1][5] += num_pass_retrained
+                        summary_checklist[-1][2] += num_fail2pass
+                        summary_checklist[-1][3] += num_fail_orig
+                        summary_checklist[-1][4] += num_pass_orig
+                        summary_checklist[-1][5] += num_fail_retrained
+                        summary_checklist[-1][6] += num_pass_retrained
+                        print(summary_checklist[-1])
                     # end if
                 # end if
             # end for
             result += ',,,,,\n'
-            print(summary_checklist)
             for summary in summary_checklist:
                 print(summary)
                 result += ','.join([str(s) for s in summary])
@@ -872,19 +837,19 @@ class RetrainResult:
         _retrained_model_name = f"{task}_{dataset_name}_{selection_method}_{model_name}"
         _retrained_checklist_name = f"{task}_checklist_{model_name}"
 
-        # # compare the results of "test_results_checklist.txt" and
-        # # the retrained model results (retrained on ours).
-        # # "test_results_checklist.txt": the evaluation results
-        # # of the pretrained model(without retraining) on checklist testsuite.
-        # # it is genereated from eval_models in run_sa.sh.
-        # # these models are evaluated on checklist testsuite.
-        # fail2pass_ours = cls._analyze_checklist_n_model_retrained_on_ours(
-        #     task,
-        #     dataset_name,
-        #     selection_method,
-        #     retrained_model_name,
-        #     is_retrained_by_lcs=is_retrained_by_lcs
-        # )
+        # compare the results of "test_results_checklist.txt" and
+        # the retrained model results (retrained on ours).
+        # "test_results_checklist.txt": the evaluation results
+        # of the pretrained model(without retraining) on checklist testsuite.
+        # it is genereated from eval_models in run_sa.sh.
+        # these models are evaluated on checklist testsuite.
+        fail2pass_ours = cls._analyze_checklist_n_model_retrained_on_ours(
+            task,
+            dataset_name,
+            selection_method,
+            retrained_model_name,
+            is_retrained_by_lcs=is_retrained_by_lcs
+        )
         
         # compare the results of "test_results.txt" and
         # the retrained model results (retrained on checklist).
