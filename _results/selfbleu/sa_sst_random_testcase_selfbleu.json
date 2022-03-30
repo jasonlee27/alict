@@ -44,43 +44,43 @@
     "checklist": {
         "used to, but now": {
             "num_data": 8000,
-            "scores": 1.0
-        },
-        "my opinion is what matters": {
-            "num_data": 8528,
-            "scores": 1.0
-        },
-        "Q & A: yes": {
-            "num_data": 9204,
-            "scores": 1.0
-        },
-        "simple negations: I thought x was negative, but it was not (should be neutral or positive)": {
-            "num_data": 2124,
-            "scores": 1.0
-        },
-        "Hard: Negation of positive with neutral stuff in the middle (should be negative)": {
-            "num_data": 1000,
-            "scores": 0.99
-        },
-        "neutral words in context": {
-            "num_data": 1716,
-            "scores": 1.0
-        },
-        "simple negations: not neutral is still neutral": {
-            "num_data": 2496,
-            "scores": 1.0
+            "score": 1.0
         },
         "Sentiment-laden words in context": {
             "num_data": 8658,
-            "scores": 1.0
+            "score": 1.0
+        },
+        "my opinion is what matters": {
+            "num_data": 8528,
+            "score": 1.0
+        },
+        "Q & A: yes": {
+            "num_data": 9204,
+            "score": 1.0
+        },
+        "neutral words in context": {
+            "num_data": 1716,
+            "score": 1.0
         },
         "Q & A: no": {
             "num_data": 7644,
-            "scores": 1.0
+            "score": 1.0
+        },
+        "simple negations: not neutral is still neutral": {
+            "num_data": 2496,
+            "score": 1.0
+        },
+        "Hard: Negation of positive with neutral stuff in the middle (should be negative)": {
+            "num_data": 1000,
+            "score": 0.99
+        },
+        "simple negations: I thought x was negative, but it was not (should be neutral or positive)": {
+            "num_data": 2124,
+            "score": 1.0
         },
         "simple negations: not negative": {
             "num_data": 6786,
-            "scores": 0.997
+            "score": 0.997
         }
     }
 }
