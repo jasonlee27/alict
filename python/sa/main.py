@@ -45,6 +45,8 @@ parser.add_argument('--lcs', action='store_true',
                     help='flag for indicating retraining model over each lc dataset')
 parser.add_argument('--label_vec_len', type=int, default=2,
                     help='label vector length for the model to be evaluated or retrained')
+parser.add_argument('--epochs', type=int, default=5,
+                    help='number of epochs for retraining')
 parser.add_argument('--testing_on_trainset', action='store_true',
                     help='flag for testing the model with train set')
 
@@ -130,9 +132,7 @@ def run_retrain():
     label_vec_len = args.label_vec_len
     testing_on_trainset = args.testing_on_trainset
     retrain_by_lcs = args.lcs
-    log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
-    log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / "retrain_over_lcs.log" if retrain_by_lcs else log_dir / "retrain_all.log"
+    epochs = args.epochs
     main_retrain(nlp_task, 
                  search_dataset_name, 
                  selection_method, 
@@ -140,7 +140,8 @@ def run_retrain():
                  label_vec_len, 
                  retrain_by_lcs,
                  testing_on_trainset,
-                 log_file)
+                 epochs,
+                 Macros.log_dir)
     return
 
 def run_analyze():

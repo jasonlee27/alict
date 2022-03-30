@@ -335,6 +335,7 @@ class Retrain:
                  dataset_file,
                  eval_dataset_file,
                  output_dir,
+                 epochs=5,
                  lc_desc=None,
                  logger=None):
         self.task = task
@@ -352,7 +353,7 @@ class Retrain:
         model_dir_name = model_name.replace("/", "-")
         self.output_dir = output_dir
         self.batch_size = 16
-        self.num_epochs = 2.
+        self.num_epochs = epochs
         self.lc_desc = lc_desc
         
     def load_tokenizer(self, model_name):
@@ -362,19 +363,40 @@ class Retrain:
         return AutoModelForSequenceClassification.from_pretrained(model_name)
 
     def get_train_data_by_lc_types(self, raw_dataset, lc_desc):
+        print("-->   ", lc_desc)
         if type(lc_desc)==str:
+            for t_i, t in enumerate(raw_dataset['train']["test_name"]):
+                if t==lc_desc:
+                    print(t_i, t==lc_desc, raw_dataset['train']['text'][t_i])
+                
             return {
                 'train': {
-                    'text': [raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc_desc],
-                    'label': [raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t==lc_desc]
+                    'text': [
+                        raw_dataset['train']['text'][t_i]
+                        for t_i, t in enumerate(raw_dataset['train']['test_name'])
+                        if t==lc_desc
+                    ],
+                    'label': [
+                        raw_dataset['train']['label'][t_i]
+                        for t_i, t in enumerate(raw_dataset['train']['test_name'])
+                        if t==lc_desc
+                    ]
                 }
             }
         elif type(lc_desc)==list:
             texts = list()
             labels = list()
             for lc in lc_desc:
-                texts.extend([raw_dataset['train']['text'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t.lower()==lc.lower()])
-                labels.extend([raw_dataset['train']['label'][t_i] for t_i, t in enumerate(raw_dataset['train']["test_name"]) if t.lower()==lc.lower()])
+                texts.extend([
+                    raw_dataset['train']['text'][t_i]
+                    for t_i, t in enumerate(raw_dataset['train']['test_name'])
+                    if t.lower()==lc.lower()
+                ])
+                labels.extend([
+                    raw_dataset['train']['label'][t_i]
+                    for t_i, t in enumerate(raw_dataset['train']['test_name'])
+                    if t.lower()==lc.lower()
+                ])
             # end for
             return {
                 'train': {'text': texts, 'label': labels}
@@ -398,7 +420,7 @@ class Retrain:
     def get_eval_data_by_lc_types(self, raw_dataset, lc_desc):
         eval_descs = self.get_lc_descs(lc_desc)
         texts, labels = list(), list()
-        for t_i, t in enumerate(raw_dataset['train']["test_name"]):
+        for t_i, t in enumerate(raw_dataset['train']['test_name']):
             if t.lower() in eval_descs and raw_dataset['train']['text'][t_i] not in texts:
                 texts.append(raw_dataset['train']['text'][t_i])
                 labels.append(raw_dataset['train']['label'][t_i])
@@ -422,7 +444,7 @@ class Retrain:
             return self.get_eval_data_by_lc_types(raw_testcases, lc_desc)
         # end if
         texts, labels = list(), list()
-        for t_i, t in enumerate(raw_testcases['train']["test_name"]):
+        for t_i, t in enumerate(raw_testcases['train']['test_name']):
             if raw_testcases['train']['text'][t_i] not in texts:
                 texts.append(raw_testcases['train']['text'][t_i])
                 labels.append(raw_testcases['train']['label'][t_i])
@@ -678,12 +700,8 @@ def _retrain_by_lc_types(task,
                          output_dir,
                          eval_dataset_file,
                          testing_on_testsuite,
-                         log_file=None):
-    logger = None
-    if log_file is not None:
-        logger = Logger(logger_file=log_file,
-                        logger_name='retrain_over_lcs')
-    # end if
+                         epochs=5,
+                         log_dir=None):
     raw_dataset = Utils.read_json(dataset_file)
     eval_result = dict()
     lcs = sorted(list(set(raw_dataset['train']["test_name"])))
@@ -693,12 +711,24 @@ def _retrain_by_lc_types(task,
         lcs = _lcs
         del _lcs
     # end if
+    cksum_map_str = ''
     for lc_i, lc_desc in enumerate(lcs):
+        lc_cksum_val = Utils.get_cksum(lc_desc, length=7)
+        cksum_map_str += f"{lc_desc}\t{lc_cksum_val}\n"
+        logger = None
+        if log_dir is not None:
+            log_file = log_dir / f"retrain_lc_{lc_cksum_val}.log"
+            logger = Logger(logger_file=log_file,
+                            logger_name=f'retrain_lc_{lc_cksum_val}')
+        # end if
+        
         print(f">>>>> Retrain: LC<{lc_desc}>+SST2")
         if logger is not None:
             logger.print(f">>>>> Retrain: LC<{lc_desc}>+SST2")
         # end if
-        remove_checkpoints(output_dir)
+
+        # remove_checkpoints(output_dir)
+        _output_dir = output_dir / lc_cksum_val
         lc_cksum = Utils.get_cksum(str(lc_desc))
         retrainer = Retrain(task,
                             model_name,
@@ -706,13 +736,15 @@ def _retrain_by_lc_types(task,
                             label_vec_len,
                             dataset_file,
                             eval_dataset_file,
-                            output_dir,
+                            _output_dir,
+                            epochs=epochs,
                             lc_desc=lc_desc,
                             logger=logger)
         eval_result_before, eval_result_on_train_before = retrainer.evaluate()
         retrainer.train()
         eval_result_after, eval_result_on_train_after = retrainer.evaluate()
-        lc_key = lc_desc if type(lc_desc)==str else '::'.join(lc_desc)
+        # lc_key = lc_desc if type(lc_desc)==str else '::'.join(lc_desc)
+        lc_key = lc_desc if type(lc_desc)==str else str(lc_desc)
         eval_result[lc_key] = {
             'eval': {
                 'before': eval_result_before,
@@ -723,23 +755,24 @@ def _retrain_by_lc_types(task,
                 'after': eval_result_on_train_after
             }
         }
-        Utils.write_json(eval_result, output_dir / f"eval_results_lcs.json", pretty_format=True)
+        Utils.write_txt(cksum_map_str, output_dir / f"cksum_map.json")
+        Utils.write_json(eval_result, _output_dir / f"eval_results_lcs.json", pretty_format=True)
         if testing_on_testsuite:
             if dataset_name.lower()==Macros.datasets[Macros.sa_task][0]:
                 retrainer.test_on_checklist_testsuite(logger=logger)
             elif dataset_name==Macros.datasets[Macros.sa_task][1]:
                 retrainer.test_on_our_testsuites(logger=logger)
             # end if
-            shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results_lcs.txt")
+            shutil.copyfile(log_file, _output_dir / "eval_on_testsuite_results.txt")
         # end if
         print(f"<<<<< Retrain: LC<{lc_desc}>+SST2")
         if logger is not None:
             logger.print(f"<<<<< Retrain: LC<{lc_desc}>+SST2")
         # end if
     # end for
-    if testing_on_testsuite:
-        shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results_lcs.txt")
-    # end if
+    # if testing_on_testsuite:
+    #     shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results_lcs.txt")
+    # # end if
     return eval_result
 
 def _retrain_all(task,
@@ -751,16 +784,16 @@ def _retrain_all(task,
                  output_dir,
                  eval_dataset_file,
                  testing_on_testsuite=True,
-                 log_file=None):
-    print(f">>>>> Retrain: ALL+SST2")
-    if log_file is None:
-        logger = None
-    else:
+                 epochs=5,
+                 log_dir=None):
+    logger = None
+    if log_dir is not None:
+        log_file = log_dir / f"retrain_all.log"
         logger = Logger(logger_file=log_file,
-                        logger_name='retrain_all')
+                        logger_name=f'retrain_all')
         logger.print(f">>>>> Retrain: ALL+SST2")
     # end if
-    remove_checkpoints(output_dir)
+    # remove_checkpoints(output_dir)
     retrainer = Retrain(task,
                         model_name,
                         selection_method,
@@ -768,6 +801,7 @@ def _retrain_all(task,
                         dataset_file,
                         eval_dataset_file,
                         output_dir,
+                        epochs=epochs,
                         lc_desc=None,
                         logger=logger)
     eval_result_before, eval_result_on_train_before = retrainer.evaluate()
@@ -790,14 +824,14 @@ def _retrain_all(task,
         elif dataset_name==Macros.datasets[Macros.sa_task][1]:
             retrainer.test_on_our_testsuites(logger=logger)
         # end if
-        shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results_all.txt")
+        # shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results.txt")
     # end if
     print(f"<<<<< Retrain: ALL+SST2")
     if logger is not None:
         logger.print(f"<<<<< Retrain: ALL+SST2")
     # end if
     if testing_on_testsuite:
-        shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results_all.txt")
+        shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results.txt")
     # end if
     return eval_result
     
@@ -810,12 +844,16 @@ def retrain(task,
             eval_dataset_file,
             train_by_lcs=True,
             testing_on_testsuite=True,
-            log_file=None):
+            epochs=5,
+            log_dir=None):
     tags = os.path.basename(str(dataset_file)).split('_testcase.json')[0]
-    dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
-    model_dir_name = tags+"_"+model_name.replace("/", "-")
-    output_dir = Macros.retrain_model_dir / task / model_dir_name
+    # dataset_name = tags.split(f"{task}_")[-1].split(f"_{selection_method}")[0]
     if train_by_lcs:
+        log_dir = log_dir / f"{tags}_epochs{epochs}_lcs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        # log_file = log_dir / "retrain_over_lcs.log" if retrain_by_lcs else log_dir / "retrain_all.log"
+        model_dir_name = f"{tags}_epochs{epochs}_lcs_"+model_name.replace("/", "-")
+        output_dir = Macros.retrain_model_dir / task / model_dir_name
         eval_result = _retrain_by_lc_types(task,
                                            model_name,
                                            dataset_name,
@@ -825,8 +863,14 @@ def retrain(task,
                                            output_dir,
                                            eval_dataset_file,
                                            testing_on_testsuite,
-                                           log_file=log_file)
+                                           epochs=epochs,
+                                           log_dir=log_dir)
     else:
+        log_dir = log_dir / f"{tags}_epochs{epochs}_all"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        # log_file = log_dir / "retrain_over_lcs.log" if retrain_by_lcs else log_dir / "retrain_all.log"
+        model_dir_name = f"{tags}_epochs{epochs}_all_"+model_name.replace("/", "-")
+        output_dir = Macros.retrain_model_dir / task / model_dir_name
         eval_result = _retrain_all(task,
                                    model_name,
                                    dataset_name,
@@ -836,7 +880,8 @@ def retrain(task,
                                    output_dir,
                                    eval_dataset_file,
                                    testing_on_testsuite,
-                                   log_file=log_file)
+                                   epochs=epochs,
+                                   log_dir=log_dir)
     # end if
     return eval_result
 
@@ -847,7 +892,8 @@ def main_retrain(nlp_task,
                  label_vec_len, 
                  retrain_by_lcs,
                  testing_on_testsuite,
-                 log_file):
+                 epochs,
+                 log_dir):
     testcase_file, eval_testcase_file = None, None
     if search_dataset_name==Macros.datasets[nlp_task][0]:
         testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_testcase.json"
@@ -868,7 +914,6 @@ def main_retrain(nlp_task,
             Retrain.get_sst_testcase_for_retrain(nlp_task, selection_method)
         # end if
     # end if
-
     _ = retrain(
         task=nlp_task,
         dataset_name=search_dataset_name,
@@ -879,6 +924,7 @@ def main_retrain(nlp_task,
         eval_dataset_file=eval_testcase_file,
         train_by_lcs=retrain_by_lcs,
         testing_on_testsuite=testing_on_testsuite,
-        log_file=log_file
+        epochs=epochs,
+        log_dir=log_dir
     )
     return

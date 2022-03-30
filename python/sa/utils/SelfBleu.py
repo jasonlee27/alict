@@ -144,7 +144,7 @@ def main(task, search_dataset_name, selection_method):
         sbleu = SelfBleu(texts=texts_checklist[lc])
         scores_baseline[lc] = {
             'num_data': sbleu.num_data,
-            'scores': sbleu.get_score()
+            'score': sbleu.get_score()
         }
     # end for
 
