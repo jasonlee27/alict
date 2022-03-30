@@ -272,7 +272,11 @@ class TestSuite:
             _print = print
         else:
             logger = kwargs['logger']
-            _print = logger.print
+            if logger is not None:
+                _print = logger.print
+            else:
+                _print = print
+            # end if
         # end if
         for n, t in self.tests.items():
             if verbose:

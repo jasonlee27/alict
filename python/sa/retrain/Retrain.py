@@ -363,12 +363,7 @@ class Retrain:
         return AutoModelForSequenceClassification.from_pretrained(model_name)
 
     def get_train_data_by_lc_types(self, raw_dataset, lc_desc):
-        print("-->   ", lc_desc)
         if type(lc_desc)==str:
-            for t_i, t in enumerate(raw_dataset['train']["test_name"]):
-                if t==lc_desc:
-                    print(t_i, t==lc_desc, raw_dataset['train']['text'][t_i])
-                
             return {
                 'train': {
                     'text': [
@@ -402,23 +397,31 @@ class Retrain:
                 'train': {'text': texts, 'label': labels}
             }
 
-    def get_lc_descs(self, lc_desc):
+    def get_eval_lc_descs(self, lc_desc):
+        # convert our lc to checklist lc
         if type(lc_desc)==str:
             if lc_desc.lower() in self.LC_MAP.keys():
                 return self.LC_MAP[lc_desc.lower()]
             else:
-                return [key for key, val in self.LC_MAP.items() if lc_desc.lower() in val]
+                vals = list()
+                for key, val in self.LC_MAP.items():
+                    if lc_desc in val:
+                        vals.extend(val)
+                    # end if
+                # end for
+                return vals
             # end if
         elif type(lc_desc)==list:
             res = list()
             for lc in lc_desc:
-                res.extend([key for key, val in self.LC_MAP.items() if lc.lower() in val])
+                res.extend([key for key, val in self.LC_MAP.items() if lc in val])
             # end for
             return list(set(res))
         # end if
-
+        
     def get_eval_data_by_lc_types(self, raw_dataset, lc_desc):
-        eval_descs = self.get_lc_descs(lc_desc)
+        eval_descs = self.get_eval_lc_descs(lc_desc)
+        print(f"@@@get_eval_data_by_lc_types:TRAIN_LC<{lc_desc}>,EVAL_LC:<{str(eval_descs)}>")
         texts, labels = list(), list()
         for t_i, t in enumerate(raw_dataset['train']['test_name']):
             if t.lower() in eval_descs and raw_dataset['train']['text'][t_i] not in texts:
@@ -755,7 +758,7 @@ def _retrain_by_lc_types(task,
                 'after': eval_result_on_train_after
             }
         }
-        Utils.write_txt(cksum_map_str, output_dir / f"cksum_map.json")
+        Utils.write_txt(cksum_map_str, output_dir / f"cksum_map.txt")
         Utils.write_json(eval_result, _output_dir / f"eval_results_lcs.json", pretty_format=True)
         if testing_on_testsuite:
             if dataset_name.lower()==Macros.datasets[Macros.sa_task][0]:
