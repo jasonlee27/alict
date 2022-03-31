@@ -219,25 +219,16 @@ class SstTestcases:
 class ChecklistTestcases:
 
     LC_LIST = [
-        'Sentiment-laden words in context',
-        'neutral words in context',
-        'used to, but now',
-        'simple negations: not neutral is still neutral',
-        'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
-        'my opinion is what matters',
-        'Q & A: yes',
-        'Q & A: yes (neutral)'
+        Macros.CHECKLIST_LC_LIST[0],
+        Macros.CHECKLIST_LC_LIST[1],
+        Macros.CHECKLIST_LC_LIST[2],
+        Macros.CHECKLIST_LC_LIST[4],
+        Macros.CHECKLIST_LC_LIST[5],
+        Macros.CHECKLIST_LC_LIST[7],
+        Macros.CHECKLIST_LC_LIST[8],
+        Macros.CHECKLIST_LC_LIST[9]
     ]
-    # [
-    #     'sentiment-laden words in context',
-    #     'neutral words in context',
-    #     'used to, but now',
-    #     'simple negations: not neutral is still neutral',
-    #     'hard: negation of positive with neutral stuff in the middle (should be negative)',
-    #     'my opinion is what matters',
-    #     'q & a: yes',
-    #     'q & a: yes (neutral)',
-    # ]
+        
     
     @classmethod
     def write_checklist_testcase(cls, save_file):
@@ -317,16 +308,16 @@ class ChecklistTestcases:
 class Retrain:
 
     LC_MAP = {
-        "short sentences with sentiment-laden adjectives": [ChecklistTestcases.LC_LIST[0]],
-        "short sentences with neutral adjectives and nouns": [ChecklistTestcases.LC_LIST[1]],
-        "sentiment change over time, present should prevail": [ChecklistTestcases.LC_LIST[2]],
-        "negated neutral should still be neutral": [ChecklistTestcases.LC_LIST[3]],
-        "negated positive with neutral content in the middle": [ChecklistTestcases.LC_LIST[4]],
-        "author sentiment is more important than of others": [ChecklistTestcases.LC_LIST[5]],
-        "parsing sentiment in (question, yes) form": [ChecklistTestcases.LC_LIST[6],
-                                                      ChecklistTestcases.LC_LIST[7]],
+        Macros.OUR_LC_LIST[0]: [Macros.CHECKLIST_LC_LIST[0]],
+        Macros.OUR_LC_LIST[1]: [Macros.CHECKLIST_LC_LIST[1]],
+        Macros.OUR_LC_LIST[2]: [Macros.CHECKLIST_LC_LIST[2]],
+        Macros.OUR_LC_LIST[4]: [Macros.CHECKLIST_LC_LIST[4]],
+        Macros.OUR_LC_LIST[5]: [Macros.CHECKLIST_LC_LIST[5]],
+        Macros.OUR_LC_LIST[7]: [Macros.CHECKLIST_LC_LIST[7]],
+        Macros.OUR_LC_LIST[8]: [Macros.CHECKLIST_LC_LIST[8],
+                                Macros.CHECKLIST_LC_LIST[9]],
     }
-    
+
     def __init__(self,
                  task,
                  model_name,
@@ -400,16 +391,16 @@ class Retrain:
     def get_eval_lc_descs(self, lc_desc):
         # convert our lc to checklist lc
         if type(lc_desc)==str:
-            if lc_desc.lower() in self.LC_MAP.keys():
-                return self.LC_MAP[lc_desc.lower()]
+            if lc_desc in self.LC_MAP.keys():
+                return self.LC_MAP[lc_desc]
             else:
-                vals = list()
+                keys = list()
                 for key, val in self.LC_MAP.items():
                     if lc_desc in val:
-                        vals.extend(val)
+                        keys.append(key)
                     # end if
                 # end for
-                return vals
+                return keys
             # end if
         elif type(lc_desc)==list:
             res = list()
@@ -421,14 +412,15 @@ class Retrain:
         
     def get_eval_data_by_lc_types(self, raw_dataset, lc_desc):
         eval_descs = self.get_eval_lc_descs(lc_desc)
-        print(f"@@@get_eval_data_by_lc_types:TRAIN_LC<{lc_desc}>,EVAL_LC:<{str(eval_descs)}>")
         texts, labels = list(), list()
         for t_i, t in enumerate(raw_dataset['train']['test_name']):
-            if t.lower() in eval_descs and raw_dataset['train']['text'][t_i] not in texts:
+            if t in eval_descs and raw_dataset['train']['text'][t_i] not in texts:
                 texts.append(raw_dataset['train']['text'][t_i])
                 labels.append(raw_dataset['train']['label'][t_i])
             # end if
         # end for
+        print(f"@@@get_eval_data_by_lc_types:TRAIN_LC<{lc_desc}>,EVAL_LC:<{str(eval_descs)}>")
+        print(f"@@@{len(texts)}")
         return {
             'text': texts,
             'label': labels

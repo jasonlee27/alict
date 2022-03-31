@@ -17,25 +17,36 @@ import os, re
 class RetrainResult:
     
     CHECKLIST_LC_LIST = [
-        'neutral words in context',
-        'Sentiment-laden words in context',
-        'used to, but now',
-        'simple negations: not neutral is still neutral',
-        'my opinion is what matters',
-        'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
-        'Q & A: yes',
-        'Q & A: yes (neutral)'
+        Macros.CHECKLIST_LC_LIST[0],
+        Macros.CHECKLIST_LC_LIST[1],
+        Macros.CHECKLIST_LC_LIST[2],
+        Macros.CHECKLIST_LC_LIST[4],
+        Macros.CHECKLIST_LC_LIST[5],
+        Macros.CHECKLIST_LC_LIST[7],
+        Macros.CHECKLIST_LC_LIST[8],
+        Macros.CHECKLIST_LC_LIST[9]
     ]
 
     OUR_LC_LIST = [
-        'Short sentences with neutral adjectives and nouns',
-        'Short sentences with sentiment-laden adjectives',
-        'Sentiment change over time, present should prevail',
-        'Negated neutral should still be neutral',
-        'Author sentiment is more important than of others',
-        'Negated positive with neutral content in the middle',
-        'parsing sentiment in (question, yes) form'
+        Macros.OUR_LC_LIST[0],
+        Macros.OUR_LC_LIST[1],
+        Macros.OUR_LC_LIST[2],
+        Macros.OUR_LC_LIST[4],
+        Macros.OUR_LC_LIST[5],
+        Macros.OUR_LC_LIST[7],
+        Macros.OUR_LC_LIST[8]
     ]
+    
+    LC_MAP = {
+        Macros.OUR_LC_LIST[0]: [Macros.CHECKLIST_LC_LIST[0]],
+        Macros.OUR_LC_LIST[1]: [Macros.CHECKLIST_LC_LIST[1]],
+        Macros.OUR_LC_LIST[2]: [Macros.CHECKLIST_LC_LIST[2]],
+        Macros.OUR_LC_LIST[4]: [Macros.CHECKLIST_LC_LIST[4]],
+        Macros.OUR_LC_LIST[5]: [Macros.CHECKLIST_LC_LIST[5]],
+        Macros.OUR_LC_LIST[7]: [Macros.CHECKLIST_LC_LIST[7]],
+        Macros.OUR_LC_LIST[8]: [Macros.CHECKLIST_LC_LIST[8],
+                                Macros.CHECKLIST_LC_LIST[9]],
+    }
 
     OUR_TO_CH_MAP = {
         OUR_LC_LIST[0].lower(): CHECKLIST_LC_LIST[0].lower(),
