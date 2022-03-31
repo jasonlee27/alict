@@ -107,7 +107,7 @@ class Macros:
         'Q & A: yes',
         'Q & A: yes (neutral)',
         'Q & A: no'
-    ]
+    ] # length=11
 
     OUR_LC_LIST = [
         'Short sentences with sentiment-laden adjectives',
@@ -121,7 +121,7 @@ class Macros:
         'parsing sentiment in (question, yes) form',
         'Parsing positive sentiment in (question, no) form',
         'Parsing negative sentiment in (question, no) form'
-    ]
+    ] # length=11
 
     LC_MAP = {
         CHECKLIST_LC_LIST[0]: OUR_LC_LIST[0],

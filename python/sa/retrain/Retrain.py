@@ -420,7 +420,6 @@ class Retrain:
             # end if
         # end for
         print(f"@@@get_eval_data_by_lc_types:TRAIN_LC<{lc_desc}>,EVAL_LC:<{str(eval_descs)}>")
-        print(f"@@@{len(texts)}")
         return {
             'text': texts,
             'label': labels
@@ -699,7 +698,7 @@ def _retrain_by_lc_types(task,
                          log_dir=None):
     raw_dataset = Utils.read_json(dataset_file)
     eval_result = dict()
-    lcs = sorted(list(set(raw_dataset['train']["test_name"])))
+    lcs = sorted(list(set(raw_dataset['train']["test_name"])), reverse=True)
     if dataset_name==Macros.datasets[Macros.sa_task][1]:
         _lcs = [lc for lc in lcs if not lc.startswith('Q & A: yes')]
         _lcs.append(ChecklistTestcases.LC_LIST[6:8])
@@ -708,7 +707,7 @@ def _retrain_by_lc_types(task,
     # end if
     cksum_map_str = ''
     for lc_i, lc_desc in enumerate(lcs):
-        lc_cksum_val = Utils.get_cksum(lc_desc, length=7)
+        lc_cksum_val = Utils.get_cksum(str(lc_desc), length=7)
         cksum_map_str += f"{lc_desc}\t{lc_cksum_val}\n"
         logger = None
         if log_dir is not None:
@@ -758,16 +757,15 @@ def _retrain_by_lc_types(task,
             elif dataset_name==Macros.datasets[Macros.sa_task][1]:
                 retrainer.test_on_our_testsuites(logger=logger)
             # end if
-            shutil.copyfile(log_file, _output_dir / "eval_on_testsuite_results.txt")
         # end if
         print(f"<<<<< Retrain: LC<{lc_desc}>+SST2")
         if logger is not None:
             logger.print(f"<<<<< Retrain: LC<{lc_desc}>+SST2")
         # end if
+        if testing_on_testsuite:
+            shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results_lcs.txt")
+        # end if
     # end for
-    # if testing_on_testsuite:
-    #     shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results_lcs.txt")
-    # # end if
     return eval_result
 
 def _retrain_all(task,
