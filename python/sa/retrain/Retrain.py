@@ -763,7 +763,7 @@ def _retrain_by_lc_types(task,
             logger.print(f"<<<<< Retrain: LC<{lc_desc}>+SST2")
         # end if
         if testing_on_testsuite:
-            shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results_lcs.txt")
+            shutil.copyfile(log_file, _output_dir / "eval_on_testsuite_results_lcs.txt")
         # end if
     # end for
     return eval_result

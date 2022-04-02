@@ -166,11 +166,13 @@ def run_retrain_analyze():
     selection_method = args.syntax_selection
     search_dataset_name = args.search_dataset
     model_name = args.model_name
+    epochs = args.epochs
     RetrainResult.analyze(
         nlp_task,
         search_dataset_name,
         selection_method,
         model_name,
+        epochs,
         is_retrained_by_lcs=True
     )
     return
