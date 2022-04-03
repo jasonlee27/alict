@@ -113,17 +113,19 @@ class RetrainResult:
             cksum_vals = list()
             for p in cls.get_pass_sents_from_model_string(r):
                 cksum = Utils.get_cksum(p['sent']+p['label'])
+                pass_sents.append(p)
                 if cksum not in cksum_vals:
                     cksum_vals.append(cksum)
-                    pass_sents.append(p)
+                    # pass_sents.append(p)
                 # end if
             # end for
             cksum_vals = list()
             for f in cls.get_fail_sents_from_model_string(r):
                 cksum = Utils.get_cksum(f['sent']+f['label'])
+                fail_sents.append(f)
                 if cksum not in cksum_vals:
                     cksum_vals.append(cksum)
-                    fail_sents.append(f)
+                    # fail_sents.append(f)
                 # end if
             # end for
             model_results_per_reqs.append({
@@ -319,7 +321,8 @@ class RetrainResult:
             # end if
         # end for
         if any(temp_dict.keys()):
-            lc = '::'.join(temp_dict.keys())
+            # lc = '::'.join(temp_dict.keys())
+            lc = str(list(temp_dict.keys()))
             checklist_testsuite_dict[retrained_model_name].append({
                 'lc': lc, #.lower(),
                 'pass': [s for key in temp_dict.keys() for s in temp_dict[key]['pass']],
@@ -344,7 +347,10 @@ class RetrainResult:
             retrained_model_name: list()
         }
         for r in result_reqs:
-            ours_testsuite_dict[retrained_model_name].append(r)
+            lc = r['lc']
+            if lc in cls.OUR_LC_LIST:
+                ours_testsuite_dict[retrained_model_name].append(r)
+            # end if
         # end for
         return ours_testsuite_dict
 
@@ -561,12 +567,12 @@ class RetrainResult:
                             'test_data': 'ours',
                             'fail2pass': list(),
                         }
-                                        
+                        
                         for f in result_retrain_lc['before']['exp']['fail']:
                             found = False
-                            for p in result_retrain_lc['before']['exp']['pass']:
+                            for p in result_retrain_lc['after']['exp']['pass']:
                                 if f['sent']==p['sent'] and f['label']==p['label'] and not found:
-                                    result[model_name][lc_exp]['fail2pass'].append({
+                                    result[model_name][str(lc_key)][lc_exp]['fail2pass'].append({
                                         'sent': f['sent'],
                                         'label': f['label'],
                                         'pred': (f['pred'], p['pred']),
@@ -837,39 +843,38 @@ class RetrainResult:
                 print('~~~~~~~~~~~')
                 res_checklist = fail2pass_retrained_on_checklist[model_name]
                 summary_checklist = list()
-                seed_lc_descs = list()
                 for retrained_lc_key in res_checklist.keys():
-                    retrained_lc_desc = retrained_lc_key.split('::')[0]
+                    # retrained_lc_desc = retrained_lc_key.split('::')[0]
                     for eval_lc_key in res_checklist[retrained_lc_key].keys():
                         eval_lc_desc = eval_lc_key.split('::')[0]
-                        num_fail2pass = res_checklist[retrained_lc_key][eval_lc_key]['num_fail2pass']
-                        num_fail_orig = res_checklist[retrained_lc_key][eval_lc_key]['num_fail_orig']
-                        num_pass_orig = res_checklist[retrained_lc_key][eval_lc_key]['num_pass_orig']
-                        num_fail_retrained = res_checklist[retrained_lc_key][eval_lc_key]['num_fail_retrained']
-                        num_pass_retrained = res_checklist[retrained_lc_key][eval_lc_key]['num_pass_retrained']
                         if eval_lc_key.endswith('::SEED'):
-                            seed_lc_descs.append(eval_lc_desc)
+                            num_fail2pass = res_checklist[retrained_lc_key][eval_lc_key]['num_fail2pass']
+                            num_fail_orig = res_checklist[retrained_lc_key][eval_lc_key]['num_fail_orig']
+                            num_pass_orig = res_checklist[retrained_lc_key][eval_lc_key]['num_pass_orig']
+                            num_fail_retrained = res_checklist[retrained_lc_key][eval_lc_key]['num_fail_retrained']
+                            num_pass_retrained = res_checklist[retrained_lc_key][eval_lc_key]['num_pass_retrained']
+                            
+                            eval_exp_lc_key = f"{eval_lc_desc}::EXP"
+                            if eval_exp_lc_key in res_checklist[retrained_lc_key].keys():
+                                num_fail2pass += res_checklist[retrained_lc_key][eval_exp_lc_key]['num_fail2pass']
+                                num_fail_orig += res_checklist[retrained_lc_key][eval_exp_lc_key]['num_fail_orig']
+                                num_pass_orig += res_checklist[retrained_lc_key][eval_exp_lc_key]['num_pass_orig']
+                                num_fail_retrained += res_checklist[retrained_lc_key][eval_exp_lc_key]['num_fail_retrained']
+                                num_pass_retrained += res_checklist[retrained_lc_key][eval_exp_lc_key]['num_pass_retrained']
+                            # end if
+                            print(retrained_lc_key)
+                            print(eval_lc_desc, num_fail2pass, num_fail_orig, num_fail_retrained)
+                            print()
                             summary_checklist.append([
                                 'Retrain:Checklist::Test:Ours',
                                 retrained_lc_key.replace(',', ' '),
-                                eval_lc_key.replace(',', ' '),
+                                eval_lc_desc.replace(',', ' '),
                                 num_fail2pass,
                                 num_fail_orig,
                                 num_pass_orig,
                                 num_fail_retrained,
                                 num_pass_retrained
                             ])
-                        # end if
-                    # end for
-                    for eval_lc_key in res_checklist[retrained_lc_key].keys():
-                        eval_lc_desc = eval_lc_key.split('::')[0]
-                        if eval_lc_key.endswith('::EXP') and eval_lc_desc in seed_lc_descs:
-                            seed_i = seed_lc_descs.index(eval_lc_desc)
-                            summary_checklist[seed_i][3] += res_checklist[retrained_lc_key][eval_lc_key]['num_fail2pass']
-                            summary_checklist[seed_i][4] += res_checklist[retrained_lc_key][eval_lc_key]['num_fail_orig']
-                            summary_checklist[seed_i][5] += res_checklist[retrained_lc_key][eval_lc_key]['num_pass_orig']
-                            summary_checklist[seed_i][6] += res_checklist[retrained_lc_key][eval_lc_key]['num_fail_retrained']
-                            summary_checklist[seed_i][7] += res_checklist[retrained_lc_key][eval_lc_key]['num_pass_retrained']
                         # end if
                     # end for
                 # end for
