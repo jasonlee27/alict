@@ -71,6 +71,7 @@
 \newcommand{\ResultTableCaptionVSpace}{-5pt}
 \newcommand{\ReqTableVSpace}{-5pt}
 \newcommand{\SelfBleuTableVSpace}{-5pt}
+\newcommand{\RetrainDebugTableVSpace}{-5pt}
 
 \newcommand{\jl}[1]{\textcolor{teal}{JL: #1}}
 \newcommand{\sw}[1]{\textcolor{purple}{Shiyi: #1}}
@@ -197,6 +198,14 @@
 \newcommand{\tChecklistNumData}{\textbf{\sharp~Data (\Cklst)}}
 \newcommand{\tOurSelfBleuScore}{\textbf{\selfbleu score (\tool)}}
 \newcommand{\tChecklistSelfBleuScore}{\textbf{\selfbleu score (\Cklst)}}
+\newcommand{\tApproach}{\textbf{Approach}}
+\newcommand{\tRetrainlc}{\textbf{RetrainLC}}
+\newcommand{\tEvallc}{\textbf{EvalLC}}
+\newcommand{\tNumfailpass}{\textbf{\sharp~Fail2Pass}}
+\newcommand{\tNumfailbeforeretrain}{\textbf{\sharp~Fail (Before Retrain)}}
+\newcommand{\tNumpassbeforeretrain}{\textbf{\sharp~Pass (Before Retrain)}}
+\newcommand{\tNumfailafterretrain}{\textbf{\sharp~Fail (After Retrain)}}
+\newcommand{\tNumpassafterretrain}{\textbf{\sharp~Pass (After Retrain)}}
 
 %% Fig Caption
 \newcommand{\OverviewFigCaption}{Overview of \tool.\label{fig:overview}}
@@ -217,7 +226,10 @@ requirement (\ref{fig:TransformReqSubEx}) and its template
 of \Ccd, \Ctr, \Cref repectively.\label{table:Result}\vspace{-5pt}}
 \newcommand{\SelfBleuTableCaption}{\selfbleu scores over testcases
 from \tool and \Chlst}
+\newcommand{\RetrainDebugTableCaption}{Result of retraining on
+each \lc and the evaluation of the retrained model.\label{table:RetrainDebug}}
 
 %%% NUMBRERS
 \input{tables/lc-requirement-numbers}
-\input{tables/selfbleu-numbers}
+%% \input{tables/selfbleu-numbers}
+\input{tables/retrain-debug-numbers}
