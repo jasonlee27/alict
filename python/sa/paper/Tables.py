@@ -272,7 +272,7 @@ class Tables:
             elif l_i>empty_l_i:
                 for att_i, att_val in enumerate(l):
                     att = attributes[att_i].strip()
-                    if att=='retrain_lc':
+                    if att=='retrained_lc':
                         _att_val = CH_TO_OUR_MAP[att_val]
                         output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", _att_val))
                     else:
@@ -304,7 +304,7 @@ class Tables:
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
         output_file.append(r"\caption{\RetrainDebugTableCaption}")
-        output_file.append(r"\begin{tabular}{p{3cm}||p{5cm}||p{5cm}||p{2cm}||p{2cm}||p{2cm}||p{2cm}||p{2cm}}")
+        output_file.append(r"\begin{tabular}{p{2cm}|p{2cm}|p{2cm}|c|c|c|c|c}")
         output_file.append(r"\toprule")
 
         # Content
@@ -318,14 +318,17 @@ class Tables:
                 for att_i, att_val in enumerate(l):
                     att = attributes[att_i].strip()
                     if att_i==0:
-                        output_file.append(latex.Macro(f"retrain_debug_{att}_{l_i}").use())
-                        # elif att_i==1 or att_i==2:
-                        #     output_file.append("\multirow{2}{*}{\parbox{5cm}{" + latex.Macro(f"retrain_debug_{att}_{l_i}").use() + "}}")
+                        output_file.append("\multirow{2}{*}{\parbox{2cm}{" + \
+                                           latex.Macro(f"retrain_debug_{att}_{l_i}").use()+ "}}")
+                    elif att_i in [1,2]:
+                        output_file.append(" & \multirow{2}{*}{\parbox{2cm}{" + \
+                                           latex.Macro(f"retrain_debug_{att}_{l_i}").use() + "}}")
                     else:
                         output_file.append(" & " + latex.Macro(f"retrain_debug_{att}_{l_i}").use())
                     # end if
                 # end for
                 output_file.append(r"\\")
+                output_file.append(r"& & & & & \\")
                 output_file.append(r"\hline")
             # end if
         # end for
