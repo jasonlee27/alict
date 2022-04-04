@@ -47,17 +47,19 @@ class Tables:
                 cls.make_numbers_lc_requirement(Macros.result_dir, tables_dir)
                 cls.make_table_lc_requirement(Macros.result_dir, tables_dir)
             elif item == "selfbleu":
-                task = options['task']
-                search_dataset = options['search_dataset_name']
-                selection_method = options['selection_method']
+                task = options.pop('task', 'sa')
+                search_dataset = options.pop('search_dataset_name', 'sst')
+                selection_method = options.pop('selection_method', 'random')
                 cls.make_numbers_selfbleu(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
                 cls.make_table_selfbleu(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
-            elif item == "retrain":
-                task = options['task']
-                search_dataset = options['search_dataset_name']
-                selection_method = options['selection_method']
-                cls.make_numbers_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
-                cls.make_table_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+            elif item == "retrain-debug":
+                task = options.pop('task', 'sa')
+                search_dataset = options.pop('search_dataset_name', 'sst')
+                selection_method = options.pop('selection_method', 'random')
+                epochs = options.pop('epochs', 5)
+                model_name = options.pop('model_name')
+                cls.make_numbers_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method, epochs, model_name)
+                cls.make_table_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method, epochs, model_name)
             else:
                 cls.logger.warning(f"Unknown table {item}")
             # end if
@@ -224,35 +226,60 @@ class Tables:
                              tables_dir: Path,
                              task: str,
                              search_dataset_name: str,
-                             selection_method: str
-                             epochs: int
+                             selection_method: str,
+                             epochs: int,
                              retrain_model_name: str):
         CH_TO_OUR_MAP = {
-            Macros.CHECKLIST_LC_LIST[0]: Macros.OUR_LC_LIST[0],
-            Macros.CHECKLIST_LC_LIST[1]: Macros.OUR_LC_LIST[1],
-            Macros.CHECKLIST_LC_LIST[2]: Macros.OUR_LC_LIST[2],
-            Macros.CHECKLIST_LC_LIST[4]: Macros.OUR_LC_LIST[4],
-            Macros.CHECKLIST_LC_LIST[5]: Macros.OUR_LC_LIST[5],
-            Macros.CHECKLIST_LC_LIST[7]: Macros.OUR_LC_LIST[7],
-            str(Macros.CHECKLIST_LC_LIST[8:10]): Macros.OUR_LC_LIST[8]
+            Macros.CHECKLIST_LC_LIST[0].replace(',', ' '): Macros.OUR_LC_LIST[0],
+            Macros.CHECKLIST_LC_LIST[1].replace(',', ' '): Macros.OUR_LC_LIST[1],
+            Macros.CHECKLIST_LC_LIST[2].replace(',', ' '): Macros.OUR_LC_LIST[2],
+            Macros.CHECKLIST_LC_LIST[4].replace(',', ' '): Macros.OUR_LC_LIST[4],
+            Macros.CHECKLIST_LC_LIST[5].replace(',', ' '): Macros.OUR_LC_LIST[5],
+            Macros.CHECKLIST_LC_LIST[7].replace(',', ' '): Macros.OUR_LC_LIST[7],
+            str(Macros.CHECKLIST_LC_LIST[8:10]).replace(',', ' '): Macros.OUR_LC_LIST[8]
         }
-        output_file = latex.File(tables_dir / 'selfbleu-numbers.tex')
 
-        retrain_model_name = retrain_model_name.replace("/", "-")
-        retrain_debug_file = Macros.retrain_output_dir / f"debug_comparison_{retrain_model_name}.csv"
+        # OUR_TO_CH_MAP = {
+        #     Macros.OUR_LC_LIST[0].replace(',', ' '): Macros.CHECKLIST_LC_LIST[0],
+        #     Macros.OUR_LC_LIST[1].replace(',', ' '): Macros.CHECKLIST_LC_LIST[1],
+        #     Macros.OUR_LC_LIST[2].replace(',', ' '): Macros.CHECKLIST_LC_LIST[2],
+        #     Macros.OUR_LC_LIST[4].replace(',', ' '): Macros.CHECKLIST_LC_LIST[4],
+        #     Macros.OUR_LC_LIST[5].replace(',', ' '): Macros.CHECKLIST_LC_LIST[5],
+        #     Macros.OUR_LC_LIST[7].replace(',', ' '): Macros.CHECKLIST_LC_LIST[7],
+        #     Macros.OUR_LC_LIST[8].replace(',', ' '): [Macros.CHECKLIST_LC_LIST[8],
+        #                                               Macros.CHECKLIST_LC_LIST[9]]
+        # }
+        
+        output_file = latex.File(tables_dir / 'retrain-debug-numbers.tex')
+
+        retrain_model_name = retrain_model_name.replace("/", "_")
+        retrain_debug_file = Macros.home_result_dir / 'retrain' / f"debug_comparison_{retrain_model_name}.csv"
         retrain_debug_res = Utils.read_sv(retrain_debug_file, delimeter=',', is_first_attributes=True)
         
         attributes = retrain_debug_res['attributes']
+        empty_l_i = retrain_debug_res['lines'].index(['', '', '', '', '', '', ''])
         for l_i, l in enumerate(retrain_debug_res['lines']):
-            for att_i, att_val in enumerate(l):
-                att = attributes[att_i]
-                if att=='eval_lc':
-                    _att_val = CH_TO_OUR_MAP[att_val]
-                    output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", _att_val))
-                else:
-                    output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", att_val))
-                # end if
-            # end for
+            if l_i<empty_l_i:
+                for att_i, att_val in enumerate(l):
+                    att = attributes[att_i].strip()
+                    if att=='eval_lc':
+                        _att_val = CH_TO_OUR_MAP[att_val]
+                        output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", _att_val))
+                    else:
+                        output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", att_val))
+                    # end if
+                # end for
+            elif l_i>empty_l_i:
+                for att_i, att_val in enumerate(l):
+                    att = attributes[att_i].strip()
+                    if att=='retrain_lc':
+                        _att_val = CH_TO_OUR_MAP[att_val]
+                        output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", _att_val))
+                    else:
+                        output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", att_val))
+                    # end if
+                # end for
+            # end if
         # end for
         output_file.save()
         return
@@ -263,13 +290,13 @@ class Tables:
                            tables_dir: Path,
                            task: str,
                            search_dataset_name: str,
-                           selection_method: str
-                           epochs: int
+                           selection_method: str,
+                           epochs: int,
                            retrain_model_name: str):
-        output_file = latex.File(tables_dir / "selfbleu-table.tex")
+        output_file = latex.File(tables_dir / "retrain-debug-table.tex")
 
-        retrain_model_name = retrain_model_name.replace("/", "-")
-        retrain_debug_file = Macros.retrain_output_dir / f"debug_comparison_{retrain_model_name}.csv"
+        retrain_model_name = retrain_model_name.replace("/", "_")
+        retrain_debug_file = Macros.home_result_dir / 'retrain' / f"debug_comparison_{retrain_model_name}.csv"
         retrain_debug_res = Utils.read_sv(retrain_debug_file, delimeter=',', is_first_attributes=True)
         
         # Header
@@ -277,7 +304,7 @@ class Tables:
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
         output_file.append(r"\caption{\RetrainDebugTableCaption}")
-        output_file.append(r"\begin{tabular}{p{3cm}||p{5cm}||p{5cm}}||p{2cm}||p{2cm}||p{2cm}||p{2cm}||p{2cm}}")
+        output_file.append(r"\begin{tabular}{p{3cm}||p{5cm}||p{5cm}||p{2cm}||p{2cm}||p{2cm}||p{2cm}||p{2cm}}")
         output_file.append(r"\toprule")
 
         # Content
@@ -285,19 +312,22 @@ class Tables:
         output_file.append(r"\midrule")
 
         attributes = retrain_debug_res['attributes']
+        empty_l_i = retrain_debug_res['lines'].index(['', '', '', '', '', '', ''])
         for l_i, l in enumerate(retrain_debug_res['lines']):
-            for att_i, att_val in enumerate(l):
-                att = attributes[att_i]
-                if att_i==0:
-                    output_file.append(latex.Macro(f"retrain_debug_{att}_{l_i}").use() + r"\\")
-                    # elif att_i==1 or att_i==2:
-                    #     output_file.append("\multirow{2}{*}{\parbox{5cm}{" + latex.Macro(f"retrain_debug_{att}_{l_i}").use() + "}}")
-                else:
-                    output_file.append(" & " + latex.Macro(f"retrain_debug_{att}_{l_i}").use() + r"\\")
-                # end if
-            # end for
-            output_file.append(r"\\")
-            output_file.append(r"\hline")
+            if l_i!=empty_l_i:
+                for att_i, att_val in enumerate(l):
+                    att = attributes[att_i].strip()
+                    if att_i==0:
+                        output_file.append(latex.Macro(f"retrain_debug_{att}_{l_i}").use())
+                        # elif att_i==1 or att_i==2:
+                        #     output_file.append("\multirow{2}{*}{\parbox{5cm}{" + latex.Macro(f"retrain_debug_{att}_{l_i}").use() + "}}")
+                    else:
+                        output_file.append(" & " + latex.Macro(f"retrain_debug_{att}_{l_i}").use())
+                    # end if
+                # end for
+                output_file.append(r"\\")
+                output_file.append(r"\hline")
+            # end if
         # end for
 
         # Footer
