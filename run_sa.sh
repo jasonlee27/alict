@@ -123,7 +123,14 @@ function make_tables() {
         (cd ${_DIR}
          # Table 1
          # python -m python.sa.main --run tables --which lc-req
-         python -m python.sa.main --run tables --which selfbleu
+         # python -m python.sa.main --run tables --which selfbleu
+         python -m python.sa.main \
+                --run tables \
+                --which retrain-debug \
+                --search_dataset sst \
+                --syntax_selection random \
+                --epochs 5 \
+                --model_name textattack/bert-base-uncased-SST-2
         )
 }
 
@@ -139,9 +146,9 @@ function main() {
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # eval_retrained_models # to ...?
         # analyze_retrained_models # to generate debug_results.json and debug_comparision file
-        selfbleu # to compute the selfbleu
+        # selfbleu # to compute the selfbleu
         # explain_nlp # to run the explainNLP
-        # make_tables
+        make_tables
 }
 
 # please make sure you actiavte nlptest conda environment
