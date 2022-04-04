@@ -1,8 +1,9 @@
 TASKS
 
-  - [JL] retraining with epochs 5 to 10
-
-  - [JL] get the eval result of model retrained on one lc over every lcs 
+  - [JL] writing retraining steps and asking for confirmation from
+    wei&yang and do the experiment.
+    
+  + [JL] retraining with epochs 5 to 10
 
   - [JL] write experimental setup
 
@@ -10,6 +11,8 @@ TASKS
 
 
 ==========
+
+  + [JL] get the eval result of model retrained on one lc over every lcs 
 
   + [JL] get the self-bleu score number for checklist testcases and
     our testcases
