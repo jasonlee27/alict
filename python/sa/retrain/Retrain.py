@@ -190,6 +190,26 @@ class SstTestcases:
                         'label': [labels[d_i] for d_i in num_balanced_train_data],
                         'test_name': [test_names[d_i] for d_i in num_balanced_train_data]
                     }
+                    if num_baseline_train_data%num_train_data>0:
+                        num_samples = num_baseline_train_data%num_train_data
+                        sample_is = list(range(num_baseline_train_data))
+                        random.shuffle(sample_is)
+                        sample_is = sample_is[:num_samples]
+                        texts = dataset['train']['text'] + \
+                            [baseline_dataset['train']['text'][d_i] for d_i in sample_is]
+                        labels = dataset['train']['label'] + \
+                            [baseline_dataset['train']['label'][d_i] for d_i in sample_is]
+                        test_names = dataset['train']['test_name'] + \
+                            [baseline_dataset['train']['test_name'][d_i] for d_i in sample_is]
+                        random.shuffle(texts)
+                        random.shuffle(labels)
+                        random.shuffle(test_names)
+                        dataset['train'] = {
+                            'text': texts,
+                            'label': labels,
+                            'test_name': test_names
+                        }
+                    # end if
                 # end if
             # end if
         # end if

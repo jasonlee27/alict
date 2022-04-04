@@ -822,10 +822,11 @@ class RetrainResult:
                         num_pass_orig = res_ours[retrained_lc_key][eval_lc_key]['num_pass_orig']
                         num_fail_retrained = res_ours[retrained_lc_key][eval_lc_key]['num_fail_retrained']
                         num_pass_retrained = res_ours[retrained_lc_key][eval_lc_key]['num_pass_retrained']
+                        _eval_lc_key = cls.CH_TO_OUR_MAP[eval_lc_key]
                         summary_ours.append([
                             'Retrain:Ours::Test:Checklist',
                             retrained_lc_key.replace(',', ' '),
-                            eval_lc_key.replace(',', ' '),
+                            _eval_lc_key.replace(',', ' '),
                             num_fail2pass,
                             num_fail_orig,
                             num_pass_orig,
@@ -862,12 +863,10 @@ class RetrainResult:
                                 num_fail_retrained += res_checklist[retrained_lc_key][eval_exp_lc_key]['num_fail_retrained']
                                 num_pass_retrained += res_checklist[retrained_lc_key][eval_exp_lc_key]['num_pass_retrained']
                             # end if
-                            print(retrained_lc_key)
-                            print(eval_lc_desc, num_fail2pass, num_fail_orig, num_fail_retrained)
-                            print()
+                            _retrained_lc_key = cls.CH_TO_OUR_MAP[retrained_lc_key]
                             summary_checklist.append([
                                 'Retrain:Checklist::Test:Ours',
-                                retrained_lc_key.replace(',', ' '),
+                                _retrained_lc_key.replace(',', ' '),
                                 eval_lc_desc.replace(',', ' '),
                                 num_fail2pass,
                                 num_fail_orig,
