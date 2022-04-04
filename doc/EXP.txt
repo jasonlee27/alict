@@ -20,7 +20,12 @@ each lc as evaluation set. On the other hand, for evaluating model
 retrained on checklist testcases, we read sa_checklist_testcase.json
 and split them by each lc as training set and read
 {task}_sst_{selection_method}_testcase.json and split them by each lc
-as evaluation set. We set the epochs as 5 and batch_size per gpu as
+as evaluation set. In this step, the number of data between our and
+checklist testcases are different (#checklist training set is more
+than #ours). As a preprocessing step, we compute ratio of number of
+retraining set (#checklist/#ours) for each lc and randomly select
+samples and make duplicates of them in order to balance retraining set
+between them. We set the epochs as 5 and batch_size per gpu as
 16. Each model retrained on each lc is saved for each directory.
 After retraining, we load the retrained model again and evaluate the
 model on evaluation over lc's. The evaluation results are written at
