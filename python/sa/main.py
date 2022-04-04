@@ -223,7 +223,9 @@ def run_make_tables():
         'which': args.which,
         'task': args.nlp_task,
         'search_dataset_name': args.search_dataset,
-        'selection_method': args.syntax_selection
+        'selection_method': args.syntax_selection,
+        'epochs': args.epochs,
+        'model_name': args.model_name
     }
     Tables.make_tables(**options)
     return
