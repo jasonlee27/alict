@@ -1,0 +1,38 @@
+- Retraining steps:
+1. Dataset collection: we use two datasets for retraining: one is our
+testcases and the other is checklist testcases. the our testcases are
+our results on test_results_{task}_sst_{selection_method}. in this
+work we set task=sa and selection_method=random. we collect our .pkl
+testcases sets and save it into
+{task}_sst_{selection_method}_testcase.json. For checklist, we read
+the sentiment_suite.pkl, which is the collection of testcases
+pre-exists in checklist github page, and save it as
+sa_checklist_testcase.json. ALl the json file consists of text, label
+and the test_name(lc).
+
+2. Model: In this work, we use the pre-trained model of
+"textattack/bert-base-uncased-SST-2". We aim to fine-tune the model
+and we only use the testcases for retraining and see the debugging
+results. For evaluating model retrained on our testcases, we read
+{task}_sst_{selection_method}_testcase.json and split them by each lc
+as training set and read sa_checklist_testcase.json and split them by
+each lc as evaluation set. On the other hand, for evaluating model
+retrained on checklist testcases, we read sa_checklist_testcase.json
+and split them by each lc as training set and read
+{task}_sst_{selection_method}_testcase.json and split them by each lc
+as evaluation set. We set the epochs as 5 and batch_size per gpu as
+16. Each model retrained on each lc is saved for each directory.
+After retraining, we load the retrained model again and evaluate the
+model on evaluation over lc's. The evaluation results are written at
+eval_on_testsuite_results_lcs.txt in each directory.
+
+3. Results: We compare the evaluation results of the model before and
+after retraining. First we read model evaluation
+results before retraining on our/checklist testcases. the results are
+pased into fail/pass cases for each lc and number of fail/pass cases.
+After retrining, for each retrained model (for each lc used for
+retraining), we read the eval_on_testsuite_results_lcs.txt and parse
+the file content into fail/pass cases for each lc and number of
+fail/pass cases. In addition, comparing fail cases before retraining
+and pass cases after retraining, we check how many testcases are
+failed to passed thourough retraining (fail2pass).
