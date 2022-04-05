@@ -129,88 +129,148 @@ class SstTestcases:
             # end if
         # end for
         
-        dataset = dict()
+        dataset = {
+            'train': {
+                'text': list(), 'label': list(), 'test_name': list()
+            }
+        }
         for test_name in test_data.keys():
-            for idx in range(len(test_data[test_name]['sents'])):
-                test_sent = test_data[test_name]['sents'][idx]
-                label = test_data[test_name]['labels'][idx]
-                _type = test_data[test_name]['types'][idx]
-                if _type=='train':
-                    if 'train' not in dataset.keys():
-                        dataset['train'] = dict()
-                        dataset['train']['text'] = [test_sent]
-                        dataset['train']['label'] = [label]
-                        dataset['train']['test_name'] = [test_name]
-                    else:
-                        dataset['train']['text'].append(test_sent)
-                        dataset['train']['label'].append(label)
-                        dataset['train']['test_name'].append(test_name)
-                    # end if
-                else:
-                    if 'test' not in dataset.keys():
-                        dataset['test'] = dict()
-                        dataset['test']['text'] = [test_sent]
-                        dataset['test']['label'] = [label]
-                        dataset['test']['test_name'] = [test_name]
-                    else:
-                        dataset['test']['text'].append(test_sent)
-                        dataset['test']['label'].append(label)
-                        dataset['test']['test_name'].append(test_name)
-                    # end if
+            target_test_name = test_name
+            texts, labels, _types = list(), list(), list()
+            if test_name in Macros.OUR_LC_LIST[9]:
+                target_test_name = str(Macros.OUR_LC_LIST[9:])
+                for _test_name in str(Macros.OUR_LC_LIST[9:]):
+                    texts.extend(test_data[_test_name]['sents'])
+                    labels.extend(test_data[_test_name]['labels'])
+                    _types.extend(test_data[_test_name]['types'])
+                # end for
+            elif test_name in Macros.OUR_LC_LIST[:9]:
+                texts.extend(test_data[test_name]['sents'])
+                labels.extend(test_data[test_name]['labels'])
+                _types.extend(test_data[test_name]['types'])
+            # end if
+            if any(texts):
+                if target_test_name not in dataset['train']['test_name']:
+                    for t, l, ty in zip(texts, labels, _types):
+                        if ty=='train':
+                            dataset['train']['text'].append(t)
+                            dataset['train']['label'].append(l)
+                            dataset['train']['test_name'].append(target_test_name)
+                        else:
+                            if 'test' not in dataset.keys():
+                                dataset['test'] = dict()
+                                dataset['test']['text'] = [t]
+                                dataset['test']['label'] = [l]
+                                dataset['test']['test_name'] = [target_test_name]
+                            else:
+                                dataset['test']['text'].append(test_sent)
+                                dataset['test']['label'].append(label)
+                                dataset['test']['test_name'].append(target_test_name)
+                            # end if
+                        # end if
+                    # end for
                 # end if
-            # end for
+            # end if
         # end for
         num_train_data = len(dataset['train']['text'])
-
-        # for balancing number of data for retraining with baseline,
-        # we compute number of baseline dataset (checklist) and upscale
-        # the number of our dataset with the ratio of # dataset between baseline and ours
-        upscale_rate = 1
         if upscale_by_baseline:
+            # for balancing number of data for retraining with baseline,
+            # we compute number of baseline dataset (checklist) and upscale
+            # the number of our dataset with the ratio of # dataset between baseline and ours
+            upscale_rate = 1
+            texts, labels, test_names = list(), list(), list()
+            texts_bl, labels_bl, test_names_bl = list(), list(), list()
             if baseline=='checklist':
                 baseline_dataset = ChecklistTestcases.get_testcase_for_retrain(
                     Macros.checklist_sa_testcase_file
                 )
-                num_baseline_train_data = len(baseline_dataset['train']['text'])
-                upscale_rate = num_baseline_train_data // num_train_data
-                if upscale_rate > 1:
-                    texts, labels, test_names = list(), list(), list()
-                    for d_i in range(num_train_data):
-                        t = dataset['train']['text'][d_i]
-                        l = dataset['train']['label'][d_i]
-                        tn = dataset['train']['test_name'][d_i]
-                        texts.extend([t]*upscale_rate)
-                        labels.extend([l]*upscale_rate)
-                        test_names.extend([tn]*upscale_rate)
-                    # end for
-                    num_balanced_train_data = list(range(len(texts)))
-                    random.shuffle(num_balanced_train_data)
-                    dataset['train'] = {
-                        'text': [texts[d_i] for d_i in num_balanced_train_data],
-                        'label': [labels[d_i] for d_i in num_balanced_train_data],
-                        'test_name': [test_names[d_i] for d_i in num_balanced_train_data]
-                    }
-                    if num_baseline_train_data%num_train_data>0:
-                        num_samples = num_baseline_train_data%num_train_data
-                        sample_is = list(range(num_baseline_train_data))
-                        random.shuffle(sample_is)
-                        sample_is = sample_is[:num_samples]
-                        texts = dataset['train']['text'] + \
-                            [baseline_dataset['train']['text'][d_i] for d_i in sample_is]
-                        labels = dataset['train']['label'] + \
-                            [baseline_dataset['train']['label'][d_i] for d_i in sample_is]
-                        test_names = dataset['train']['test_name'] + \
-                            [baseline_dataset['train']['test_name'][d_i] for d_i in sample_is]
-                        random.shuffle(texts)
-                        random.shuffle(labels)
-                        random.shuffle(test_names)
-                        dataset['train'] = {
-                            'text': texts,
-                            'label': labels,
-                            'test_name': test_names
-                        }
+                for test_name in set(dataset['train']['test_name']):
+                    baseline_test_name = [key for key, val in Macros.LC_MAP.items() if test_name==val]
+                    if any(baseline_test_name):
+                        if baseline_test_name[0]==str(Macros.CHECKLIST_LC_LIST[8:10]):
+                            baseline_test_name = eval(baseline_test_name[0])
+                        # end if
+                    else:
+                        baseline_test_name = None
                     # end if
-                # end if
+
+                    if baseline_test_name is not None:
+                        num_baseline_train_data = len(baseline_dataset['train']['text'])
+                        baseline_target_i = [
+                            t_i
+                            for t_i in range(num_baseline_train_data)
+                            if baseline_dataset['train']['test_name'][t_i] in baseline_test_name
+                        ]
+                        # baseline_train_data_per_lc = {
+                        #     'text': [ baseline_dataset['train']['text'][t_i] for i_i in baseline_target_i],
+                        #     'label': [ baseline_dataset['train']['label'][t_i] for i_i in baseline_target_i],
+                        #     'test_name': [ baseline_dataset['train']['test_name'][t_i] for i_i in baseline_target_i]
+                        # }
+                        
+                        target_i = [
+                            t_i
+                            for t_i in range(len(dataset['train']['text']))
+                            if dataset['train']['test_name'][t_i]==test_name
+                        ]
+                        # texts = [dataset['train']['text'][t_i] for t_i in target_i]
+                        # labels = [dataset['train']['label'][t_i] for t_i in target_i]
+                        # our_train_data_per_lc = {
+                        #     'text': texts,
+                        #     'label': labels,
+                        #     'test_name': str(test_name)
+                        # }
+                        num_baseline_train_data_per_lc = len(baseline_target_i)
+                        num_our_train_data_per_lc = len(target_i)
+                        if num_baseline_train_data_per_lc > num_our_train_data_per_lc:
+                            upscale_rate = num_baseline_train_data_per_lc // num_our_train_data_per_lc
+                            if upscale_rate > 1:
+                                for d_i in range(num_train_data):
+                                    if d_i in target_i:
+                                        texts.extend([dataset['train']['text'][d_i]]*(upscale_rate-1))
+                                        labels.extend([dataset['train']['label'][d_i]]*(upscale_rate-1))
+                                        test_names.extend([dataset['train']['test_name'][d_i]]*(upscale_rate-1))
+                                    # end if
+                                # end for
+                            # end if
+                            num_samples_remain = num_baseline_train_data_per_lc%num_our_train_data_per_lc
+                            if num_samples_remain>0:
+                                sample_is = target_i
+                                random.shuffle(sample_is)
+                                sample_is = sample_is[:num_samples_remain]
+                                texts.extend([dataset['train']['text'][d_i] for d_i in sample_is])
+                                labels.extend([dataset['train']['label'][d_i] for d_i in sample_is])
+                                test_names.extend([dataset['train']['test_name'][d_i] for d_i in sample_is])
+                            # end if
+                        elif num_baseline_train_data_per_lc < num_our_train_data_per_lc:
+                            upscale_rate = num_our_train_data_per_lc//num_baseline_train_data_per_lc
+                            if upscale_rate > 1:
+                                for d_i in range(len(baseline_dataset['train']['text'])):
+                                    if d_i in baseline_target_i:
+                                        texts_bl.extend([baseline_dataset['train']['text'][d_i]]*(upscale_rate-1))
+                                        labels_bl.extend([baseline_dataset['train']['label'][d_i]]*(upscale_rate-1))
+                                        test_names_bl.extend([baseline_dataset['train']['test_name'][d_i]]*(upscale_rate-1))
+                                    # end if
+                                # end for
+                            # end if
+                            num_samples_remain = num_our_train_data_per_lc%num_baseline_train_data_per_lc
+                            if num_samples_remain>0:
+                                sample_is = baseline_target_i
+                                random.shuffle(sample_is)
+                                sample_is = sample_is[:num_samples_remain]
+                                texts_bl.extend([baseline_dataset['train']['text'][d_i] for d_i in sample_is])
+                                labels_bl.extend([baseline_dataset['train']['label'][d_i] for d_i in sample_is])
+                                test_names_bl.extend([baseline_dataset['train']['test_name'][d_i] for d_i in sample_is])
+                            # end if
+                        # end if
+                    # end if
+                # end for
+                dataset['train']['text'].extend(texts)
+                dataset['train']['label'].extend(labels)
+                dataset['train']['test_name'].extend(test_names)
+                baseline_dataset['train']['text'].extend(texts_bl)
+                baseline_dataset['train']['label'].extend(labels_bl)
+                baseline_dataset['train']['test_name'].extend(test_names_bl)
+                Utils.write_json(baseline_dataset, Macros.checklist_sa_testcase_file, pretty_format=True)
             # end if
         # end if
         Utils.write_json(dataset, save_file, pretty_format=True)
@@ -347,6 +407,7 @@ class Retrain:
                  eval_dataset_file,
                  output_dir,
                  epochs=5,
+                 train_from_the_scratch=False,
                  lc_desc=None,
                  logger=None):
         self.task = task
@@ -356,6 +417,7 @@ class Retrain:
         self.dataset_file = dataset_file # dataset for train
         self.eval_dataset_file = eval_dataset_file # dataset_for val
         self.dataset_name = os.path.basename(str(self.dataset_file)).split('_testcase.json')[0]
+        self.train_from_the_scratch = train_from_the_scratch
         self.label_vec_len = label_vec_len
         self.tokenizer = self.load_tokenizer(model_name)
         self.logger = logger
@@ -439,7 +501,7 @@ class Retrain:
                 labels.append(raw_dataset['train']['label'][t_i])
             # end if
         # end for
-        print(f"@@@get_eval_data_by_lc_types:TRAIN_LC<{lc_desc}>,EVAL_LC:<{str(eval_descs)}>")
+        # print(f"@@@get_eval_data_by_lc_types:TRAIN_LC<{lc_desc}>,EVAL_LC:<{str(eval_descs)}>")
         return {
             'text': texts,
             'label': labels
@@ -478,10 +540,15 @@ class Retrain:
         return sst_train_data
         
     def get_tokenized_dataset(self, dataset_file, eval_dataset_file, lc_desc=None):
-        sst2_train_dataset = Sst2.get_trainset_for_retrain()
         raw_testcases = self.get_testcases(dataset_file, lc_desc=lc_desc)
-        
-        raw_dataset = self.merge_train_data(sst2_train_dataset, raw_testcases)
+        if self.train_from_the_scratch:
+            sst2_train_dataset = Sst2.get_trainset_for_retrain()
+            raw_dataset = self.merge_train_data(sst2_train_dataset, raw_testcases)
+            num_sst2_train_dataset = len(sst2_train_dataset['train']['text'])
+        else:
+            raw_dataset = raw_testcases
+            num_sst2_train_dataset = 0
+        # end if
         train_texts = self.tokenizer(raw_dataset['train']['text'], truncation=True, padding=True)
         train_labels = raw_dataset['train']['label']
         train_dataset = Dataset(train_texts, labels=train_labels, label_vec_len=self.label_vec_len)
@@ -496,11 +563,10 @@ class Retrain:
         eval_on_train_dataset = Dataset(eval_on_train_texts, labels=eval_on_train_labels, label_vec_len=self.label_vec_len)
         
         num_testcases = len(raw_testcases['train']['text'])
-        num_sst2_train_dataset = len(sst2_train_dataset['train']['text'])
         num_eval_testcases = len(eval_testcases['text'])
-        print(f"#TrainData: SST2:{num_sst2_train_dataset}, Testcases:{num_testcases}, #EvalData: {num_eval_testcases}")
+        print(f"#TrainData: Testcases:{num_testcases}, #EvalData: {num_eval_testcases}")
         if self.logger is not None:
-            self.logger.print(f"#TrainData: SST2:{num_sst2_train_dataset}, Testcases:{num_testcases}, #EvalData: {num_eval_testcases}")
+            self.logger.print(f"#TrainData: Testcases:{num_testcases}, #EvalData: {num_eval_testcases}")
         # end if
         return train_dataset, eval_dataset, eval_on_train_dataset
     
@@ -607,7 +673,10 @@ class Retrain:
         return results, results_on_train
     
     def load_retrained_model(self):
-        checkpoints = sorted([d for d in os.listdir(self.output_dir) if os.path.isdir(os.path.join(self.output_dir,d)) and d.startswith('checkpoint-')], key=lambda x: int(x.split('checkpoint-')[-1]))
+        checkpoints = sorted([
+            d for d in os.listdir(self.output_dir)
+            if os.path.isdir(os.path.join(self.output_dir,d)) and d.startswith('checkpoint-')
+        ], key=lambda x: int(x.split('checkpoint-')[-1]))
         checkpoint_dir = self.output_dir / checkpoints[-1]
         tokenizer = AutoTokenizer.from_pretrained(self.output_dir)
         _task, _ = Model.model_map[self.task]
@@ -736,9 +805,9 @@ def _retrain_by_lc_types(task,
                             logger_name=f'retrain_lc_{lc_cksum_val}')
         # end if
         
-        print(f">>>>> Retrain: LC<{lc_desc}>+SST2")
+        print(f">>>>> Retrain: LC<{lc_desc}>")
         if logger is not None:
-            logger.print(f">>>>> Retrain: LC<{lc_desc}>+SST2")
+            logger.print(f">>>>> Retrain: LC<{lc_desc}>")
         # end if
 
         # remove_checkpoints(output_dir)
@@ -778,9 +847,9 @@ def _retrain_by_lc_types(task,
                 retrainer.test_on_our_testsuites(logger=logger)
             # end if
         # end if
-        print(f"<<<<< Retrain: LC<{lc_desc}>+SST2")
+        print(f"<<<<< Retrain: LC<{lc_desc}>")
         if logger is not None:
-            logger.print(f"<<<<< Retrain: LC<{lc_desc}>+SST2")
+            logger.print(f"<<<<< Retrain: LC<{lc_desc}>")
         # end if
         if testing_on_testsuite:
             shutil.copyfile(log_file, _output_dir / "eval_on_testsuite_results_lcs.txt")
@@ -804,7 +873,7 @@ def _retrain_all(task,
         log_file = log_dir / f"retrain_all.log"
         logger = Logger(logger_file=log_file,
                         logger_name=f'retrain_all')
-        logger.print(f">>>>> Retrain: ALL+SST2")
+        logger.print(f">>>>> Retrain: ALL")
     # end if
     # remove_checkpoints(output_dir)
     retrainer = Retrain(task,
@@ -839,9 +908,9 @@ def _retrain_all(task,
         # end if
         # shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results.txt")
     # end if
-    print(f"<<<<< Retrain: ALL+SST2")
+    print(f"<<<<< Retrain: ALL")
     if logger is not None:
-        logger.print(f"<<<<< Retrain: ALL+SST2")
+        logger.print(f"<<<<< Retrain: ALL")
     # end if
     if testing_on_testsuite:
         shutil.copyfile(log_file, output_dir / "eval_on_testsuite_results.txt")
