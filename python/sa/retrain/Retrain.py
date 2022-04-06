@@ -193,7 +193,6 @@ class SstTestcases:
                     else:
                         baseline_test_name = None
                     # end if
-
                     if baseline_test_name is not None:
                         num_baseline_train_data = len(baseline_dataset['train']['text'])
                         baseline_target_i = [
@@ -317,7 +316,7 @@ class ChecklistTestcases:
         test_data = dict()
         num_data = 0
         for test_name in test_names:
-            if test_name.lower() in cls.LC_LIST and tsuite.tests[test_name].labels is not None:
+            if test_name in cls.LC_LIST and tsuite.tests[test_name].labels is not None:
                 test_data[test_name] = {
                     'sents': tsuite.tests[test_name].data,
                     'labels': tsuite.tests[test_name].labels
@@ -977,16 +976,7 @@ def main_retrain(nlp_task,
                  epochs,
                  log_dir):
     testcase_file, eval_testcase_file = None, None
-    if search_dataset_name==Macros.datasets[nlp_task][0]:
-        testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_testcase.json"
-        eval_testcase_file = Macros.checklist_sa_testcase_file
-        if not os.path.exists(str(testcase_file)):
-            Retrain.get_sst_testcase_for_retrain(nlp_task, selection_method)
-        # end if
-        if not os.path.exists(str(eval_testcase_file)):
-            Retrain.get_checklist_testcase_for_retrain(nlp_task)
-        # end if
-    elif search_dataset_name==Macros.datasets[nlp_task][1]:
+    if search_dataset_name==Macros.datasets[nlp_task][1]:
         testcase_file = Macros.checklist_sa_testcase_file
         eval_testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_sst_{selection_method}_testcase.json"
         if not os.path.exists(str(testcase_file)):
@@ -994,6 +984,15 @@ def main_retrain(nlp_task,
         # end if
         if not os.path.exists(str(eval_testcase_file)):
             Retrain.get_sst_testcase_for_retrain(nlp_task, selection_method)
+        # end if
+    elif search_dataset_name==Macros.datasets[nlp_task][0]:
+        testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_testcase.json"
+        eval_testcase_file = Macros.checklist_sa_testcase_file
+        if not os.path.exists(str(testcase_file)):
+            Retrain.get_sst_testcase_for_retrain(nlp_task, selection_method)
+        # end if
+        if not os.path.exists(str(eval_testcase_file)):
+            Retrain.get_checklist_testcase_for_retrain(nlp_task)
         # end if
     # end if
     _ = retrain(
