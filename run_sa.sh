@@ -19,18 +19,18 @@ function gen_requirements() {
 function gen_templates() {
         # write templates in json
         (cd ${_DIR}
-         # CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main --run template --search_dataset sst --syntax_selection random > /dev/null 2>&1
+         CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main --run template --search_dataset sst --syntax_selection random > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection bertscore > /dev/null 2>&1
-         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection noselect
+         # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection noselect
         )
 }
 
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
         (cd ${_DIR}
-         # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection random
+         python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection random
          # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection bertscore
-         python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection noselect
+         # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection noselect
         )
 }
 
@@ -38,10 +38,10 @@ function eval_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
          # evaluating models on checklist testcases
-         CUDA_VISIBLE_DEVICES=1,3,5 python -m python.sa.main --run testmodel --test_baseline
+         # CUDA_VISIBLE_DEVICES=1,3,5 python -m python.sa.main --run testmodel --test_baseline
 
          # evaluating models on our generated testcases
-         # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection random
+         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection random
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection bertscore
          # CUDA_VISIBLE_DEVICES=6,7 time python -m python.sa.main --run testmodel --syntax_selection noselect
         )
@@ -51,18 +51,20 @@ function retrain_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
          echo "***** TRAIN: ours, EVAL: checklist *****"
-         CUDA_VISIBLE_DEVICES=3,5,6,7 python -m python.sa.main \
+         CUDA_VISIBLE_DEVICES=0,1,2,3 python -m python.sa.main \
                              --run retrain \
                              --search_dataset sst \
                              --syntax_selection random \
                              --lcs \
+                             --epochs 10 \
                              --testing_on_trainset \
                              --model_name textattack/bert-base-uncased-SST-2
          echo "***** TRAIN: checklist, EVAL: ours *****"
-         CUDA_VISIBLE_DEVICES=3,5,6,7 python -m python.sa.main \
+         CUDA_VISIBLE_DEVICES=0,1,2,3 python -m python.sa.main \
                              --run retrain \
                              --search_dataset checklist \
                              --lcs \
+                             --epochs 10 \
                              --testing_on_trainset \
                              --model_name textattack/bert-base-uncased-SST-2
         )
@@ -93,7 +95,8 @@ function analyze_retrained_models() {
                 --run retrain_analyze \
                 --search_dataset sst \
                 --syntax_selection random \
-                --model_name textattack/bert-base-uncased-SST-2
+                --model_name textattack/bert-base-uncased-SST-2 \
+                --epochs 10
         )
 }
 
@@ -115,6 +118,16 @@ function selfbleu() {
         )
 }
 
+# ==========
+# Human study
+function humanstudy() {
+        (cd ${_DIR}
+         python -m python.sa.main \
+                --run humanstudy \
+                --search_dataset sst \
+                --syntax_selection random
+        )
+}
 
 # ==========
 # Tables & Plots
@@ -144,11 +157,14 @@ function main() {
         # eval_models # run testsuite.run on our and checklist generated testsets
         # analyze_eval_models # to generate test_results_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
-        # eval_retrained_models # to ...?
-        # analyze_retrained_models # to generate debug_results.json and debug_comparision file
+        # analyze_retrained_models # to generate debug_results file
         # selfbleu # to compute the selfbleu
         # explain_nlp # to run the explainNLP
-        make_tables
+        # make_tables
+        humanstudy
+
+
+        # eval_retrained_models # to ...?
 }
 
 # please make sure you actiavte nlptest conda environment

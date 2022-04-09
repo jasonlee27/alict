@@ -16,7 +16,7 @@ parser.add_argument('--run', type=str, required=True,
                     choices=[
                         'requirement', 'template', 'testsuite',
                         'testmodel', 'retrain', 'analyze',
-                        'retrain_analyze', 'explain_nlp', 'selfbleu',
+                        'retrain_analyze', 'explain_nlp', 'selfbleu', 'humanstudy',
                         'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
@@ -215,6 +215,20 @@ def run_selfbleu():
     return
 
 # ==========
+# Human study
+
+def run_humanstudy():
+    from .exp import Humanstudy
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    Humanstudy.main(nlp_task,
+                    search_dataset_name,
+                    selection_method)
+    return
+    
+
+# ==========
 # Tables & Plots
 
 def run_make_tables():
@@ -242,6 +256,7 @@ func_map = {
         'retrain_analyze': run_retrain_analyze,
         'explain_nlp': run_explainNLP,
         'selfbleu': run_selfbleu,
+        'humanstudy': run_humanstudy,
         'tables': run_make_tables
     }
 }

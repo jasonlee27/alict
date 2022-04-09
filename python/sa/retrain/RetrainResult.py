@@ -284,7 +284,7 @@ class RetrainResult:
         for lc in target_lcs:
             _lc = cls.escape_string(lc)
             # pattern = f">>>>> MODEL: {model_name}(.*?)?\n<<<<< MODEL: {model_name}"
-            pattern = f">>>>> Retrain\: LC<{_lc}>\+SST2\n(.*)\n<<<<< Retrain\: LC<{_lc}>\+SST2"
+            pattern = f">>>>> Retrain\: LC<{_lc}>\n(.*)\n<<<<< Retrain\: LC<{_lc}>"
             p = re.compile(pattern, re.DOTALL)
             res_obtained = [m.strip() for m in p.findall(result_str)]
             if any(res_obtained):

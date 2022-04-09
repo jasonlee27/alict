@@ -272,7 +272,7 @@ class SstTestcases:
                 Utils.write_json(baseline_dataset, Macros.checklist_sa_testcase_file, pretty_format=True)
             # end if
         # end if
-        Utils.write_json(dataset, save_file, pretty_format=True)
+
         return dataset
 
     @classmethod
