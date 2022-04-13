@@ -21,19 +21,25 @@ from ..utils.Logger import Logger
 class Humanstudy:
     
     @classmethod
-    def read_sentences(cls, json_file: Path):
+    def read_sentences(cls, json_file: Path, include_label=False):
         inputs = Utils.read_json(json_file)
         results = dict()
         for inp in inputs:
             req = inp['requirement']
             seeds, exps = list(), list()
             for seed in inp['inputs'].keys():
-                seeds.append(seed)
-                exps.extend([e[5] for e in inp['inputs'][seed]['exp_inputs']])
+                if include_label:
+                    label = inp['inputs'][seed]['label']
+                    seeds.append((seed, label))
+                    exps.extend([(e[5], label) for e in inp['inputs'][seed]['exp_inputs']])
+                else:
+                    seeds.append(seed)
+                    exps.extend([e[5] for e in inp['inputs'][seed]['exp_inputs']])
+                # end if
             # end for
             results[req] = {
                 'seed': seeds,
-                'exp': exp
+                'exp': exps
             }
         # end for
         return results
@@ -77,9 +83,69 @@ class Humanstudy:
         Utils.write_txt(seed_res, res_dir / "seed_samples.txt")
         Utils.write_txt(exp_res, res_dir / "exp_samples.txt")
         return
-
+    
     @classmethod
-    def main(cls,
+    def read_results(cls, res_file: Path):
+        res_lines = Utils.read_txt(res_file)
+        res = dict()
+        for l in res_lines:
+            if l!="\n":
+                l_split = l.strip().split('::')
+                res[l_split[0]] = l_split[1]
+            # end if
+        # end for
+        return res
+
+    def get_target_results(seed_results, exp_results=None):
+        sent_dict = cls.read_sentences(target_file, include_label=True)
+        res = dict()
+        for r in sent_dict.keys():
+            for s in sent_dict[r]['seed']:
+                res[s[0]] = s[1]
+            # end for
+            for s in sent_dict[r]['exp']:
+                res[s[0]] = s[1]
+            # end for
+        # end for
+        return res
+    
+    @classmethod
+    def get_results(cls,
+                    seed_res_file: Path,
+                    exp_res_file: Path,
+                    model_name="textattack/bert-base-uncased-SST-2"):
+        seed_res = cls.read_results(seed_res_file)
+        exp_res = cls.read_results(exp_res_file)
+        tgt_res = cls.get_target_results(seed_res, exp_results=exp_res)
+        pred_res = cls.get_predict_results(seed_res, exp_results=exp_res)
+        num_seed_corr, num_seed_incorr = 0, 0
+        num_exp_corr, num_exp_incorr = 0, 0
+        res = {'seed': dict(), 'exp': dict()}
+        for s in seed_res.keys():
+            res['seed'][s] = (
+                seed_res[s], tgt_res[s]
+            )
+            if seed_res[s]==tgt_res[s]:
+                num_seed_corr += 1
+            else:
+                num_seed_incorr += 1
+            # end if
+        # end for
+        
+        for e in exp_res.keys():
+            res['seed'][e] = (
+                exp_res[e], tgt_res[s]
+            )
+            if exp_res[s]==tgt_res[s]:
+                num_exp_corr += 1
+            else:
+                num_exp_incorr += 1
+            # end if
+        # end for
+        return res
+    
+    @classmethod
+    def main_sample(cls,
              nlp_task,
              search_dataset_name,
              selection_method):
