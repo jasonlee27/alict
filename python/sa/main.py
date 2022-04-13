@@ -16,8 +16,8 @@ parser.add_argument('--run', type=str, required=True,
                     choices=[
                         'requirement', 'template', 'testsuite',
                         'testmodel', 'retrain', 'analyze',
-                        'retrain_analyze', 'explain_nlp', 'selfbleu', 'humanstudy',
-                        'tables'
+                        'retrain_analyze', 'explain_nlp', 'selfbleu',
+                        'humanstudy', 'humanstudy_result', 'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
@@ -218,13 +218,25 @@ def run_selfbleu():
 # Human study
 
 def run_humanstudy():
-    from .exp import Humanstudy
+    from .exp.Humanstudy import Humanstudy
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    Humanstudy.main(nlp_task,
-                    search_dataset_name,
-                    selection_method)
+    Humanstudy.main_sample(nlp_task,
+                           search_dataset_name,
+                           selection_method)
+    return
+
+def run_humanstudy_result():
+    from .exp.Humanstudy import Humanstudy
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    num_samples = 20
+    Humanstudy.main_result(nlp_task,
+                           search_dataset_name,
+                           selection_method,
+                           num_samples)
     return
     
 
@@ -257,6 +269,7 @@ func_map = {
         'explain_nlp': run_explainNLP,
         'selfbleu': run_selfbleu,
         'humanstudy': run_humanstudy,
+        'humanstudy_result': run_humanstudy_result,
         'tables': run_make_tables
     }
 }
