@@ -22,6 +22,22 @@ from ..utils.Logger import Logger
 
 
 class Humanstudy:
+
+    # SENTIMENT_MAP = {
+    #     1: 'strong_neg',
+    #     2: 'weak_neg',
+    #     3: 'strong_neutral',
+    #     4: 'weak_neg',
+    #     5: 'strong_pos'
+    # }
+
+    SENTIMENT_MAP = {
+        'negative': [1,2],
+        'neutral': [3],
+        'positive': [4,5],
+        "['positive', 'neutral']": [3,4,5]
+    }
+
     
     @classmethod
     def read_sentences(cls, json_file: Path, include_label=False):
@@ -33,8 +49,8 @@ class Humanstudy:
             for seed in inp['inputs'].keys():
                 if include_label:
                     label = inp['inputs'][seed]['label']
-                    seeds.append((seed, label))
-                    exps.extend([(e[5], label) for e in inp['inputs'][seed]['exp_inputs']])
+                    seeds.append((seed, cls.SENTIMENT_MAP[str(label)]))
+                    exps.extend([(e[5], cls.SENTIMENT_MAP[str(label)]) for e in inp['inputs'][seed]['exp_inputs']])
                 else:
                     seeds.append(seed)
                     exps.extend([e[5] for e in inp['inputs'][seed]['exp_inputs']])
@@ -93,10 +109,10 @@ class Humanstudy:
         res = dict()
         num_sents = 0
         for l in res_lines:
-            if l!="\n" and l.num_sents<num_samples:
+            if l!="\n" and re.search("\:\:\d$", l) and num_sents<num_samples:
                 l_split = l.strip().split('::')
                 res[l_split[0]] = l_split[1]
-                num_sent += 1
+                num_sents += 1
             # end if
         # end for
         return res
@@ -105,14 +121,16 @@ class Humanstudy:
     def get_target_results(cls, target_file, seed_results, exp_results=None):
         sent_dict = cls.read_sentences(target_file, include_label=True)
         res = dict()
+        seed_sents = list(seed_results.keys())
+        exp_sents = list(exp_results.keys())
         for r in sent_dict.keys():
             for s in sent_dict[r]['seed']:
-                if s in seed_results.keys():
+                if s[0] in seed_sents and s[0] is not None:
                     res[s[0]] = s[1]
                 # end if
             # end for
             for s in sent_dict[r]['exp']:
-                if s in exp_results.keys():
+                if s[0] in exp_sents and s[0] is not None:
                     res[s[0]] = s[1]
                 # end if
             # end for
@@ -137,7 +155,7 @@ class Humanstudy:
         # end if
         return None, None
 
-        @classmethod
+    @classmethod
     def get_pass_sents_from_model_string(cls, model_result_str):
         result = list()
         for l in model_result_str.splitlines():
@@ -150,7 +168,6 @@ class Humanstudy:
                     'conf': sent_search.group(1),
                     'pred': sent_search.group(2),
                     'label': sent_search.group(3),
-                    'ent': str(round(entropy([float(p) for p in sent_search.group(1).split()], base=2), 5)),
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
@@ -171,7 +188,6 @@ class Humanstudy:
                     'conf': sent_search.group(1),
                     'pred': sent_search.group(2),
                     'label': sent_search.group(3),
-                    'ent': str(round(entropy([float(p) for p in sent_search.group(1).split()], base=2), 5)),
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
@@ -221,92 +237,148 @@ class Humanstudy:
                             nlp_task,
                             search_dataset_name,
                             selection_method,
-                            model_name,
-                            seed_results,
-                            exp_results=None):
-        pred_res_file = Macros.res_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}"
-        result_str = cls.read_result_file(pred_res_file):
+                            model_name):
+        pred_res_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / "test_results.txt"
+        result_str = cls.read_result_file(pred_res_file)
         model_res_per_reqs = cls.get_ours_results_per_requirement_from_string(result_str, nlp_task, model_name)
-        sents = dict()
-        for res in model_res_per_reqs:
-            for r in res['pass']:
-                if r['sent'] in seed_results.keys() or r['sent'] in exp_results.keys():
-                    sents[r['sent']] = r['label']
-                # end if
-            # end for
-            for r in res['fail']:
-                if r['sent'] in seed_results.keys() or r['sent'] in exp_results.keys():
-                    sents[r['sent']] = r['label']
-                # end if
-            # end for
-        # end for
-        return sents
+        return model_res_per_reqs
 
     @classmethod
-    def get_label_inconsistency(cls, pred_results, human_results):
+    def get_label_inconsistency(cls,
+                                pred_results,
+                                human_results,
+                                seed_results,
+                                exp_results):
         # Label inconsistency: # of l{i}_ours != l{i}_human
-        num_corr, num_incorr = 0, 0
+        num_seed_corr, num_seed_incorr = 0, 0
+        num_exp_corr, num_exp_incorr = 0, 0
+        seed_sents = list(seed_results.keys())
+        exp_sents = list(exp_results.keys())
         for res in pred_results:
             for r in res['pass']:
                 sent = r['sent']
                 label = r['label']
-                label_h = human_results[sent]
-                if label==label_h:
-                    num_corr += 1
-                else:
-                    num_incorr += 1
+                if sent in list(human_results.keys()):
+                    label_h = human_results[sent]
+                    if label in label_h:
+                        if sent in seed_sents:
+                            num_seed_corr += 1
+                        elif sent in exp_sents:
+                            num_exp_corr += 1
+                        # end if
+                    else:
+                        if sent in seed_sents:
+                            num_seed_incorr += 1
+                        elif sent in exp_sents:
+                            num_exp_incorr += 1
+                        # end if
+                    # end if
                 # end if
             # end for
+            
             for r in res['fail']:
                 sent = r['sent']
                 label = r['label']
-                label_h = human_results[sent]
-                if label==label_h:
-                    num_corr += 1
-                else:
-                    num_incorr += 1
+                if sent in list(human_results.keys()):
+                    label_h = human_results[sent]
+                    if label in label_h:
+                        if sent in seed_sents:
+                            num_seed_corr += 1
+                        elif sent in exp_sents:
+                            num_exp_corr += 1
+                        # end if
+                    else:
+                        if sent in seed_sents:
+                            num_seed_incorr += 1
+                        elif sent in exp_sents:
+                            num_exp_incorr += 1
+                        # end if
+                    # end if
                 # end if
             # end for
         # end for
-        return num_incorr
+        return num_seed_incorr, num_exp_incorr
         
     @classmethod
-    def get_incorrect_inputs(cls, pred_results, human_results):
+    def get_incorrect_inputs(cls,
+                             pred_results,
+                             human_results,
+                             seed_results,
+                             exp_results):
         # Incorrect input (Ground Truth): # of l{i}_model != l{i}_human
-        num_corr, num_incorr = 0, 0
+        seed_sents = list(seed_results.keys())
+        exp_sents = list(exp_results.keys())
+        num_seed_corr, num_seed_incorr = 0, 0
+        num_exp_corr, num_exp_incorr = 0, 0
         for res in pred_results:
             for r in res['pass']:
                 sent = r['sent']
                 label = r['pred']
-                label_h = human_results[sent]
-                if label==label_h:
-                    num_corr += 1
-                else:
-                    num_incorr += 1
+                if sent in list(human_results.keys()):
+                    label_h = human_results[sent]
+                    if label in label_h:
+                        if sent in seed_sents:
+                            num_seed_corr += 1
+                        elif sent in exp_sents:
+                            num_exp_corr += 1
+                            # end if
+                    else:
+                        if sent in seed_sents:
+                            num_seed_incorr += 1
+                        elif sent in exp_sents:
+                            num_exp_incorr += 1
+                        # end if
+                    # end if
                 # end if
             # end for
             for r in res['fail']:
                 sent = r['sent']
                 label = r['pred']
-                label_h = human_results[sent]
-                if label==label_h:
-                    num_corr += 1
-                else:
-                    num_incorr += 1
+                if sent in list(human_results.keys()):
+                    label_h = human_results[sent]
+                    if label in label_h:
+                        if sent in seed_sents:
+                            num_seed_corr += 1
+                        elif sent in exp_sents:
+                            num_exp_corr += 1
+                        # end if
+                    else:
+                        if sent in seed_sents:
+                            num_seed_incorr += 1
+                        elif sent in exp_sents:
+                            num_exp_incorr += 1
+                        # end if
+                    # end if
                 # end if
             # end for
         # end for
-        return num_incorr
+        return num_seed_incorr, num_exp_incorr
     
     @classmethod
-    def get_reported_bugs(cls, pred_results):
+    def get_reported_bugs(cls, pred_results, seed_results, exp_results):
         # Reported bugs (Approach): # of l{i}_ours != l{i}_model
-        num_corr, num_incorr = 0, 0
-        for res in our_results:
-            num_corr += len(res['pass'])
-            num_incorr += len(res['fail'])
+        num_seed_corr, num_seed_incorr = 0, 0
+        num_exp_corr, num_exp_incorr = 0, 0
+        seed_sents = list(seed_results.keys())
+        exp_sents = list(exp_results.keys())
+        for res in pred_results:
+            for r in res['pass']:
+                if r['sent'] in seed_sents:
+                    num_seed_corr += 1
+                elif r['sent'] in exp_sents:
+                    num_exp_corr += 1
+                # end if
+            # end for
+            
+            for r in res['fail']:
+                if r['sent'] in seed_sents:
+                    num_seed_incorr += 1
+                elif r['sent'] in exp_sents:
+                    num_exp_incorr += 1
+                # end if
+            # end for
         # end for
-        return num_incorr
+        return num_seed_incorr, num_exp_incorr
     
     @classmethod
     def get_results(cls,
@@ -318,48 +390,74 @@ class Humanstudy:
                     target_file: Path,
                     num_samples:int=100):
         # model_name="textattack/bert-base-uncased-SST-2"
-        seed_res_files = [
+        seed_res_files = sorted([
             f for f in os.listdir(str(res_dir))
-            if os.path.isfile(join(str(res_dir), f)) and \
+            if os.path.isfile(os.path.join(str(res_dir), f)) and \
             f.startswith('seed_samples_subject') and \
             f.endswith('.txt')
-        ]
-        rep_bugs_subjs = list()
-        incorr_inps_subjs = list()
-        label_incons_subjs = list()
+        ])
+        res = dict()
+        seed_rep_bugs_subjs = list()
+        seed_incorr_inps_subjs = list()
+        seed_label_incons_subjs = list()
+        exp_rep_bugs_subjs = list()
+        exp_incorr_inps_subjs = list()
+        exp_label_incons_subjs = list()
+        pred_res = cls.get_predict_results(nlp_task,
+                                           search_dataset_name,
+                                           selection_method,
+                                           model_name)
         for seed_res_file in seed_res_files:
             subject_i = int(re.search(r"seed_samples_subject(\d+)\.txt", seed_res_file).group(1))
             seed_res_file = res_dir / seed_res_file
             exp_res_file = res_dir / f"exp_samples_subject{subject_i}.txt"
-        
+            
             seed_res = cls.read_results(seed_res_file, num_samples=num_samples)
             exp_res = cls.read_results(exp_res_file, num_samples=num_samples)
             tgt_res = cls.get_target_results(target_file, seed_res, exp_results=exp_res)
-            pred_res = cls.get_predict_results(nlp_task,
-                                               search_dataset_name,
-                                               selection_method,
-                                               model_name,
-                                               seed_res,
-                                               exp_results=exp_res)
-            rep_bugs = cls.get_reported_bugs(pred_res)
-            incorr_inps = cls.get_incorrect_inputs(pred_res, tgt_res)
-            rep_bugs = cls.get_incorrect_inputs(pred_res, tgt_res)
-            label_incons = get_label_inconsistency(pred_res, tgt_res)
-            rep_bugs_subjs.append(rep_bugs)
-            incorr_inps_subjs.append(incorr_inps)
-            label_incons_subjs.append(label_incons)
+            
+            seed_rep_bugs, exp_rep_bugs = cls.get_reported_bugs(
+                pred_res, seed_res, exp_res
+            )
+            seed_incorr_inps, exp_incorr_inps = cls.get_incorrect_inputs(
+                pred_res, tgt_res, seed_res, exp_res
+            )
+            seed_label_incons, exp_label_incons = cls.get_label_inconsistency(
+                pred_res, tgt_res, seed_res, exp_res
+            )
             res[f"subject_{subject_i}"] = {
-                'reported_bugs': rep_bugs,
-                'incorrect_inputs': incorr_inps,
-                'label_inconsistency': label_incons
+                'seed': {
+                    'reported_bugs': seed_rep_bugs,
+                    'incorrect_inputs': seed_incorr_inps,
+                    'label_inconsistency': seed_label_incons
+                },
+                'exp': {
+                    'reported_bugs': exp_rep_bugs,
+                    'incorrect_inputs': exp_incorr_inps,
+                    'label_inconsistency': exp_label_incons
+                }
             }
+            seed_rep_bugs_subjs.append(seed_rep_bugs)
+            seed_incorr_inps_subjs.append(seed_incorr_inps)
+            seed_label_incons_subjs.append(seed_label_incons)
+            exp_rep_bugs_subjs.append(exp_rep_bugs)
+            exp_incorr_inps_subjs.append(exp_incorr_inps)
+            exp_label_incons_subjs.append(exp_label_incons)
         # end for
         res['agg'] = {
-            'num_subjects': len(rep_bugs_subjs),
-            'reported_bugs': sum(rep_bugs_subjs)/len(rep_bugs_subjs),
-            'incorrect_inputs': sum(incorr_inps_subjs)/len(incorr_inps_subjs),
-            'label_inconsistency': sum(label_incons_subjs)/len(label_incons_subjs)
+            'num_subjects': len(seed_rep_bugs_subjs),
+            'seed': {
+                'avg_reported_bugs': sum(seed_rep_bugs_subjs)/len(seed_rep_bugs_subjs),
+                'avg_incorrect_inputs': sum(seed_incorr_inps_subjs)/len(seed_incorr_inps_subjs),
+                'avg_label_inconsistency': sum(seed_label_incons_subjs)/len(seed_label_incons_subjs)
+            },
+            'exp': {
+                'avg_reported_bugs': sum(exp_rep_bugs_subjs)/len(exp_rep_bugs_subjs),
+                'avg_incorrect_inputs': sum(exp_incorr_inps_subjs)/len(exp_incorr_inps_subjs),
+                'avg_label_inconsistency': sum(exp_label_incons_subjs)/len(exp_label_incons_subjs)
+            }
         }
+        print(res)
         return res
     
     @classmethod
@@ -369,7 +467,7 @@ class Humanstudy:
                     selection_method):
         target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
         sent_dict = cls.read_sentences(target_file)
-        sample_dict = cls.sample_sents(sent_dict, num_samples=5):
+        sample_dict = cls.sample_sents(sent_dict, num_samples=5)
         cls.write_samples(sample_dict)
         return
 
