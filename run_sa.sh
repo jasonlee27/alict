@@ -129,6 +129,16 @@ function humanstudy() {
         )
 }
 
+function humanstudy_results() {
+        (cd ${_DIR}
+         python -m python.sa.main \
+                --run humanstudy_results \
+                --search_dataset sst \
+                --syntax_selection random \
+                --model_name textattack/bert-base-uncased-SST-2
+        )
+}
+
 # ==========
 # Tables & Plots
 
@@ -161,7 +171,8 @@ function main() {
         # selfbleu # to compute the selfbleu
         # explain_nlp # to run the explainNLP
         # make_tables
-        humanstudy
+        # humanstudy
+        humanstudy_results
 
 
         # eval_retrained_models # to ...?

@@ -378,10 +378,11 @@ class Humanstudy:
                     nlp_task,
                     search_dataset_name,
                     selection_method,
+                    model_name,
                     num_samples):
         target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
         res_dir = Macros.result_dir / 'human_study'
-        model_name = "textattack/bert-base-uncased-SST-2"
+        # model_name = "textattack/bert-base-uncased-SST-2"
         result = cls.get_results(
             nlp_task,
             search_dataset_name,
