@@ -31,11 +31,17 @@ class Humanstudy:
     #     5: 'strong_pos'
     # }
 
-    SENTIMENT_MAP = {
+    SENTIMENT_MAP_FROM_STR = {
         'negative': [1,2],
         'neutral': [3],
         'positive': [4,5],
         "['positive', 'neutral']": [3,4,5]
+    }
+    SENTIMENT_MAP_FROM_SCORE = {
+        '0': [1,2],
+        '1': [3],
+        '2': [4,5],
+        "None": [3,4,5]
     }
 
     
@@ -49,8 +55,8 @@ class Humanstudy:
             for seed in inp['inputs'].keys():
                 if include_label:
                     label = inp['inputs'][seed]['label']
-                    seeds.append((seed, cls.SENTIMENT_MAP[str(label)]))
-                    exps.extend([(e[5], cls.SENTIMENT_MAP[str(label)]) for e in inp['inputs'][seed]['exp_inputs']])
+                    seeds.append((seed, cls.SENTIMENT_MAP_FROM_STR[str(label)]))
+                    exps.extend([(e[5], cls.SENTIMENT_MAP_FROM_STR[str(label)]) for e in inp['inputs'][seed]['exp_inputs']])
                 else:
                     seeds.append(seed)
                     exps.extend([e[5] for e in inp['inputs'][seed]['exp_inputs']])
@@ -166,8 +172,8 @@ class Humanstudy:
                 sent = Utils.detokenize(tokens)
                 result.append({
                     'conf': sent_search.group(1),
-                    'pred': sent_search.group(2),
-                    'label': sent_search.group(3),
+                    'pred': cls.SENTIMENT_MAP_FROM_SCORE[str(sent_search.group(2))],
+                    'label': cls.SENTIMENT_MAP_FROM_SCORE[str(sent_search.group(3))],
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
@@ -186,8 +192,8 @@ class Humanstudy:
                 sent = Utils.detokenize(tokens)
                 result.append({
                     'conf': sent_search.group(1),
-                    'pred': sent_search.group(2),
-                    'label': sent_search.group(3),
+                    'pred': cls.SENTIMENT_MAP_FROM_SCORE[str(sent_search.group(2))],
+                    'label': cls.SENTIMENT_MAP_FROM_SCORE[str(sent_search.group(3))],
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
@@ -207,7 +213,7 @@ class Humanstudy:
             pass_sents, fail_sents = list(), list()
             cksum_vals = list()
             for p in cls.get_pass_sents_from_model_string(r):
-                cksum = Utils.get_cksum(p['sent']+p['label'])
+                cksum = Utils.get_cksum(p['sent']+str(p['label']))
                 pass_sents.append(p)
                 if cksum not in cksum_vals:
                     cksum_vals.append(cksum)
@@ -216,7 +222,7 @@ class Humanstudy:
             # end for
             cksum_vals = list()
             for f in cls.get_fail_sents_from_model_string(r):
-                cksum = Utils.get_cksum(f['sent']+f['label'])
+                cksum = Utils.get_cksum(f['sent']+str(f['label']))
                 fail_sents.append(f)
                 if cksum not in cksum_vals:
                     cksum_vals.append(cksum)
@@ -260,7 +266,8 @@ class Humanstudy:
                 label = r['label']
                 if sent in list(human_results.keys()):
                     label_h = human_results[sent]
-                    if label in label_h:
+                    is_same_label = [l for l in label if l in label_h]
+                    if any(is_same_label):
                         if sent in seed_sents:
                             num_seed_corr += 1
                         elif sent in exp_sents:
@@ -281,7 +288,8 @@ class Humanstudy:
                 label = r['label']
                 if sent in list(human_results.keys()):
                     label_h = human_results[sent]
-                    if label in label_h:
+                    is_same_label = [l for l in label if l in label_h]
+                    if any(is_same_label):
                         if sent in seed_sents:
                             num_seed_corr += 1
                         elif sent in exp_sents:
@@ -316,7 +324,8 @@ class Humanstudy:
                 label = r['pred']
                 if sent in list(human_results.keys()):
                     label_h = human_results[sent]
-                    if label in label_h:
+                    is_same_label = [l for l in label if l in label_h]
+                    if any(is_same_label):
                         if sent in seed_sents:
                             num_seed_corr += 1
                         elif sent in exp_sents:
@@ -336,7 +345,8 @@ class Humanstudy:
                 label = r['pred']
                 if sent in list(human_results.keys()):
                     label_h = human_results[sent]
-                    if label in label_h:
+                    is_same_label = [l for l in label if l in label_h]
+                    if any(is_same_label):
                         if sent in seed_sents:
                             num_seed_corr += 1
                         elif sent in exp_sents:
