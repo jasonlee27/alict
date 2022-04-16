@@ -20,6 +20,7 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 
+random.seed(27)
 
 class Humanstudy:
 
@@ -80,8 +81,8 @@ class Humanstudy:
             random.shuffle(seed_ids)
             random.shuffle(exp_ids)
             sample_results[req] = {
-                'seed': [sent_dict[req]['seed'][idx] for idx in seed_ids[:num_samples]],
-                'exp': [sent_dict[req]['exp'][idx] for idx in exp_ids[:num_samples]]
+                'seed': [(sent_dict[req]['seed'][idx], req) for idx in seed_ids[:num_samples]],
+                'exp': [(sent_dict[req]['exp'][idx], req) for idx in exp_ids[:num_samples]]
             }
         # end for
         return sample_results
@@ -97,16 +98,17 @@ class Humanstudy:
         exp_res = ""
         random.shuffle(seeds)
         random.shuffle(exps)
-        for s in seeds:
-            seed_res += f"{s}\n"
+        for s, r in seeds:
+            seed_res += f"{s} :: {r}\n\n\n"
         # end for
-        for e in exps:
-            exp_res += f"{e}\n"
+        for e, r in exps:
+            exp_res += f"{e} :: {r}\n\n\n"
         # end for
         res_dir = Macros.result_dir / 'human_study'
         res_dir.mkdir(parents=True, exist_ok=True)
-        Utils.write_txt(seed_res, res_dir / "seed_samples.txt")
-        Utils.write_txt(exp_res, res_dir / "exp_samples.txt")
+        Utils.write_txt(seed_res, res_dir / "seed_samples_raw.txt")
+        Utils.write_txt(exp_res, res_dir / "exp_samples_raw.txt")
+        print(f"num_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
         return
     
     @classmethod
@@ -289,9 +291,15 @@ class Humanstudy:
     @classmethod
     def get_reported_bugs(cls,
                           pred_results,
-                          tgt_results):
+                          tgt_results,
+                          seed_results,
+                          exp_results):
         # Reported bugs (Approach): # of l{i}_ours != l{i}_model
-        return len(pred_results['fail'])
+        seed_sents = list(seed_results.keys())
+        exp_sents = list(exp_results.keys())
+        seed_rep_bugs = len([s for s in pred_results['fail'] if s['sent'] in seed_sents])
+        exp_rep_bugs = len([s for s in pred_results['fail'] if s['sent'] in exp_sents])
+        return seed_rep_bugs, exp_rep_bugs
     
     @classmethod
     def get_incorrect_inputs(cls,
@@ -301,22 +309,50 @@ class Humanstudy:
         # Incorrect input (Ground Truth): # of l{i}_model != l{i}_human
         num_seed_corr, num_seed_incorr = 0, 0
         num_exp_corr, num_exp_incorr = 0, 0
-        seed_sents = list(seed_results.keys())
-        exp_sents = list(exp_results.keys())
+        # seed_sents = list(seed_results.keys())
+        # exp_sents = list(exp_results.keys())
         for r in pred_results['pass']:
-            if r['sent'] in seed_sents:
-                num_seed_corr += 1
-            elif r['sent'] in exp_sents:
-                num_exp_corr += 1
+            sent = r['sent']
+            pred = r['pred']
+            if sent in seed_results.keys():
+                label_h = seed_results[sent]
+                is_same_label = [l for l in pred if str(l)==str(label_h)]
+                if any(is_same_label):
+                    num_seed_corr += 1
+                else:
+                    num_seed_incorr += 1
+                # end if
+            elif sent in exp_results.keys():
+                label_h = exp_results[sent]
+                is_same_label = [l for l in pred if str(l)==str(label_h)]
+                if any(is_same_label):
+                    num_exp_corr += 1
+                else:
+                    num_exp_incorr += 1
+                # end if
             # end if
         # end for
         
         for r in pred_results['fail']:
-            if r['sent'] in seed_sents:
-                num_seed_incorr += 1
-            elif r['sent'] in exp_sents:
-                num_exp_incorr += 1
-            # end if
+            sent = r['sent']
+            pred = r['pred']
+            if sent in seed_results.keys():
+                label_h = seed_results[sent]
+                is_same_label = [l for l in pred if str(l)==str(label_h)]
+                if any(is_same_label):
+                    num_seed_corr += 1
+                else:
+                    num_seed_incorr += 1
+                # end if
+            elif sent in exp_results.keys():
+                label_h = exp_results[sent]
+                is_same_label = [l for l in pred if str(l)==str(label_h)]
+                if any(is_same_label):
+                    num_exp_corr += 1
+                else:
+                    num_exp_incorr += 1
+                # end if
+            # end if            
         # end for
         return num_seed_incorr, num_exp_incorr
     
@@ -358,8 +394,8 @@ class Humanstudy:
                                                model_name,
                                                seed_res,
                                                exp_res)
-            rep_bugs = cls.get_reported_bugs(
-                pred_res, tgt_res
+            seed_rep_bugs, exp_rep_bugs = cls.get_reported_bugs(
+                pred_res, tgt_res, seed_res, exp_res
             )
             seed_incorr_inps, exp_incorr_inps = cls.get_incorrect_inputs(
                 pred_res, seed_res, exp_res
@@ -369,20 +405,20 @@ class Humanstudy:
             )
             res[f"subject_{subject_i}"] = {
                 'seed': {
-                    'reported_bugs': rep_bugs,
+                    'reported_bugs': seed_rep_bugs,
                     'incorrect_inputs': seed_incorr_inps,
                     'label_inconsistency': seed_label_incons
                 },
                 'exp': {
-                    'reported_bugs': rep_bugs,
+                    'reported_bugs': exp_rep_bugs,
                     'incorrect_inputs': exp_incorr_inps,
                     'label_inconsistency': exp_label_incons
                 }
             }
-            seed_rep_bugs_subjs.append(rep_bugs)
+            seed_rep_bugs_subjs.append(seed_rep_bugs)
             seed_incorr_inps_subjs.append(seed_incorr_inps)
             seed_label_incons_subjs.append(seed_label_incons)
-            exp_rep_bugs_subjs.append(rep_bugs)
+            exp_rep_bugs_subjs.append(exp_rep_bugs)
             exp_incorr_inps_subjs.append(exp_incorr_inps)
             exp_label_incons_subjs.append(exp_label_incons)
         # end for
