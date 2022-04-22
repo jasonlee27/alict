@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  18 APR 2022 16:17
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  22 APR 2022 14:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1574,10 +1574,6 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
 (Font)              scaled to size 8.0pt on input line 176.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
 (Font)              scaled to size 8.0pt on input line 176.
-
-
-LaTeX Warning: Reference `TotPages' on page 1 undefined on input line 176.
-
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 8.0pt on input line 176.
 Package microtype Info: Loading generic protrusion settings for font family
@@ -1586,124 +1582,37 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 6.2pt on input line 176.
+
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ) (./intro.tex
-
-Package natbib Warning: Citation `recht2019imagenetbias' on page 1 undefined on
- input line 24.
-
-
-Package natbib Warning: Citation `wu2019errudite' on page 1 undefined on input 
-line 30.
-
-
-Package natbib Warning: Citation `marcoACL2020checklist' on page 1 undefined on
- input line 36.
-
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 87.
+(Font)              scaled to size 9.0pt on input line 60.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 6.0pt on input line 102.
+(Font)              scaled to size 6.0pt on input line 75.
+ [1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
-
-LaTeX Warning: Reference `LastPage' on page 1 undefined on input line 102.
-
-[1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
-
-]
-
-Package natbib Warning: Citation `devlin2019bert' on page 2 undefined on input 
-line 104.
-
-
-Package natbib Warning: Citation `liu2019roberta' on page 2 undefined on input 
-line 105.
-
-
-Package natbib Warning: Citation `sanh2019distilbert' on page 2 undefined on in
-put line 105.
-
-) (./background.tex) (./related.tex
+]) (./background.tex)
+(./related.tex
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
 (Font)              scaled to size 9.0pt on input line 6.
-
-
-Package natbib Warning: Citation `wang2018glue' on page 2 undefined on input li
-ne 6.
-
-
-Package natbib Warning: Citation `ribeiro2018sear' on page 2 undefined on input
- line 10.
-
-
-Package natbib Warning: Citation `belinkov2018breaknmt' on page 2 undefined on 
-input line 10.
-
-
-Package natbib Warning: Citation `rychalska2019wildnlp' on page 2 undefined on 
-input line 10.
-
-
-Package natbib Warning: Citation `iyyer2018adversarial' on page 2 undefined on 
-input line 10.
-
-
-Package natbib Warning: Citation `prabhakaran2019fairness' on page 2 undefined 
-on input line 11.
-
-
-Package natbib Warning: Citation `rottger2020hatecheck' on page 2 undefined on 
-input line 11.
-
-
-Package natbib Warning: Citation `ribeiro2019consistencyeval' on page 2 undefin
-ed on input line 12.
-
-
-Package natbib Warning: Citation `ribeiroSG16lime' on page 2 undefined on input
- line 13.
-
-
-Package natbib Warning: Citation `wu2019errudite' on page 2 undefined on input 
-line 14.
-
-
-Package natbib Warning: Citation `marcoACL2020checklist' on page 2 undefined on
- input line 17.
-
-Excluding 'comment' comment.) (./approach.tex
+ Excluding 'comment' comment.) (./approach.tex
 
 pdfTeX warning: pdflatex (file ./figs/overview.pdf): PDF inclusion: found PDF v
 ersion <1.7>, but at most version <1.5> allowed
-<figs/overview.pdf, id=32, 1056.94875pt x 352.31625pt>
+<figs/overview.pdf, id=94, 1056.94875pt x 352.31625pt>
 File: figs/overview.pdf Graphic file (type pdf)
 <use figs/overview.pdf>
 Package pdftex.def Info: figs/overview.pdf  used on input line 6.
 (pdftex.def)             Requested size: 506.295pt x 168.76581pt.
 
 Class acmart Warning: A possible image without description on input line 8.
-
-
-LaTeX Warning: Reference `fig:overview' on page 2 undefined on input line 40.
-
-
-LaTeX Warning: Reference `tab:specification' on page 2 undefined on input line 
-105.
-
-
-LaTeX Warning: Reference `tab:specification' on page 2 undefined on input line 
-119.
-
-
-LaTeX Warning: Reference `tab:specification' on page 2 undefined on input line 
-122.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1737,19 +1646,7 @@ LaTeX Warning: Float too large for page by 4.32822pt on input line 72.
 )
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
 (Font)              scaled to size 9.0pt on input line 214.
-
-
-LaTeX Warning: Reference `alg:diff' on page 3 undefined on input line 214.
-
-
-Package natbib Warning: Citation `kitaev2018seedparser' on page 3 undefined on 
-input line 217.
-
-
-Package natbib Warning: Citation `kitaev2019seedparser' on page 3 undefined on 
-input line 217.
-
-(./code/prod_diff_pseudocode.tex
+ (./code/prod_diff_pseudocode.tex
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 2.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
@@ -1760,29 +1657,13 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 
 pdfTeX warning: pdflatex (file ./figs/running_example.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<figs/running_example.pdf, id=94, 694.19348pt x 217.21149pt>
+<figs/running_example.pdf, id=174, 694.19348pt x 217.21149pt>
 File: figs/running_example.pdf Graphic file (type pdf)
 <use figs/running_example.pdf>
 Package pdftex.def Info: figs/running_example.pdf  used on input line 269.
 (pdftex.def)             Requested size: 485.93213pt x 152.047pt.
 
 Class acmart Warning: A possible image without description on input line 276.
-
-
-LaTeX Warning: Reference `fig:ExpEx' on page 4 undefined on input line 278.
-
-
-LaTeX Warning: Reference `alg:diff' on page 4 undefined on input line 278.
-
-
-Package natbib Warning: Citation `devlin2019bert' on page 4 undefined on input 
-line 328.
-
-
-LaTeX Warning: Reference `fig:ExpEx' on page 4 undefined on input line 350.
-
-
-LaTeX Warning: Reference `fig:ExpEx' on page 4 undefined on input line 371.
 
 ) (./rq.tex) (./experiment.tex (./tables/retrain-debug-table.tex
 Overfull \hbox (32.75156pt too wide) in paragraph at lines 12--12
@@ -4186,131 +4067,102 @@ Overfull \hbox (76.11702pt too wide) in paragraph at lines 8--1092
 
 LaTeX Warning: Float too large for page by 1810.12022pt on input line 1095.
 
-)
+) [4.4]
 
-LaTeX Warning: Reference `rq:one' on page 4 undefined on input line 20.
-
-
-LaTeX Warning: Reference `rq:two' on page 4 undefined on input line 20.
-
-
-LaTeX Warning: Reference `rq:three' on page 4 undefined on input line 25.
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 63.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 36.
+surrounding objects on input line 69.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 42.
+surrounding objects on input line 78.
 
 
-Package natbib Warning: Citation `baccianella2010sentiwordnet' on page 4 undefi
-ned on input line 45.
-
-
-Package natbib Warning: Citation `mihaela2017sentiwordnetlabel' on page 4 undef
-ined on input line 49.
-
-[4.4]
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 51.
-
-
-Package natbib Warning: Citation `mitchell1993treebank' on page 5 undefined on 
-input line 54.
-
-
-Package natbib Warning: Citation `nltkTreebankCorporaWebPage' on page 5 undefin
-ed on input line 54.
-
-
-Package natbib Warning: Citation `kitaev2018constituency' on page 5 undefined o
-n input line 61.
-
-
-Package natbib Warning: Citation `kitaev2019multilingual' on page 5 undefined o
-n input line 61.
-
-
-Overfull \hbox (1.75647pt too wide) in paragraph at lines 51--67
+Overfull \hbox (1.75647pt too wide) in paragraph at lines 78--94
 \T1/LinuxLibertineT-TLF/b/n/9 Context-free gram-mar Ex-pan-sion\T1/LinuxLiberti
 neT-TLF/m/n/9 (-20) . We build a ref-er-ence Context-
  []
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 68.
+surrounding objects on input line 95.
 
 
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 73.
+Underfull \vbox (badness 2635) has occurred while \output is active []
 
-
-Package natbib Warning: Citation `devlin2019bert' on page 5 undefined on input 
-line 76.
-
-
-Package natbib Warning: Citation `liu2019roberta' on page 5 undefined on input 
-line 76.
-
-
-Package natbib Warning: Citation `sanh2019distilbert' on page 5 undefined on in
-put line 77.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 80.
+surrounding objects on input line 100.
+
+
+Overfull \hbox (8.09563pt too wide) in paragraph at lines 100--106
+\T1/LinuxLibertineT-TLF/m/n/9 (-20) Auto-CHECKLIST: BERT-base [[]], RoBERTa-bas
+e [[]] and DistilBERT-
+ []
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 107.
 
 ) (./result.tex) (./main.bbl
+LaTeX Info: Redefining \tempurl on input line 70.
+LaTeX Info: Redefining \tempurl on input line 88.
+LaTeX Info: Redefining \tempurl on input line 105.
+LaTeX Info: Redefining \tempurl on input line 124.
+LaTeX Info: Redefining \tempurl on input line 140.
+LaTeX Info: Redefining \tempurl on input line 156.
+LaTeX Info: Redefining \tempurl on input line 171.
 
-Package natbib Warning: Empty `thebibliography' environment on input line 40.
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
+ [5.5 <./figs/running_example.pdf>]
+LaTeX Info: Redefining \tempurl on input line 186.
+LaTeX Info: Redefining \tempurl on input line 206.
+LaTeX Info: Redefining \tempurl on input line 239.
+LaTeX Info: Redefining \tempurl on input line 259.
+LaTeX Info: Redefining \tempurl on input line 277.
+LaTeX Info: Redefining \tempurl on input line 294.
+LaTeX Info: Redefining \tempurl on input line 313.
+LaTeX Info: Redefining \tempurl on input line 343.
+LaTeX Info: Redefining \tempurl on input line 401.
+LaTeX Info: Redefining \tempurl on input line 419.
 )
-
-Package natbib Warning: There were undefined citations.
-
 
 Class acmart Warning: Some images may lack descriptions.
 
 
-Overfull \vbox (1.249pt too high) has occurred while \output is active []
+Class acmart Warning: ACM keywords are mandatory for papers over two pages.
 
- [5.5 <./figs/running_example.pdf>] [6.6] [7.7]
+
+Class acmart Warning: CCS concepts are mandatory for papers over two pages.
+
+
+Overfull \vbox (1.31648pt too high) has occurred while \output is active []
+
+
+[6.6] [7.7]
+Package atenddvi Info: Last page = 8.
+ [8.8]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 217.
 Package atveryend Info: Executing hook `AfterLastShipout' on input line 217.
- (./main.aux
-
-Package atenddvi Warning: Rerun LaTeX, last page not yet found.
-
-)
+ (./main.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 217.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 217.
-
-
-Package rerunfilecheck Warning: File `main.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `main.out':
-(rerunfilecheck)             Before: 610CC6B9652203B46DD83EC3A4FD2400;200
-(rerunfilecheck)             After:  44522175A7307208CEB71C0A9415F6F4;1986.
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 44522175A7307208CEB71C0A9415F6F4;1986.
  ) 
 Here is how much of TeX's memory you used:
- 33538 strings out of 492982
- 599250 string characters out of 6134896
- 883362 words of memory out of 5000000
- 35862 multiletter control sequences out of 15000+600000
- 165100 words of font info for 299 fonts, out of 8000000 for 9000
+ 33732 strings out of 492982
+ 604028 string characters out of 6134896
+ 893360 words of memory out of 5000000
+ 35933 multiletter control sequences out of 15000+600000
+ 175240 words of font info for 365 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 60i,16n,94p,997b,547s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,17n,94p,997b,714s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texliv
 e/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/usr/share/texlive/texm
 f-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{/usr/share/texlive/texmf-dist
@@ -4327,10 +4179,10 @@ e/LinLibertineT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine
 txmi.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></u
 sr/share/texlive/texmf-dist/fonts/type1/public/newtx/txsys.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/public/newtx/zxlri.pfb>
-Output written on main.pdf (7 pages, 544925 bytes).
+Output written on main.pdf (8 pages, 576258 bytes).
 PDF statistics:
- 272 PDF objects out of 1000 (max. 8388607)
- 226 compressed objects within 3 object streams
- 36 named destinations out of 1000 (max. 500000)
- 48179 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 410 PDF objects out of 1000 (max. 8388607)
+ 361 compressed objects within 4 object streams
+ 61 named destinations out of 1000 (max. 500000)
+ 48263 words of extra memory for PDF output out of 51595 (max. 10000000)
 

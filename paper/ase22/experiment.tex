@@ -9,30 +9,71 @@ of our proposed evaluation methodology. In particular, we address the
 following research questions (RQs):
 
 \begin{enumerate}[label=\textbf{RQ\arabic*}]
-\item \label{rq:one}: Can \tool find different bugs from \Cklst?
-\item \label{rq:two}: Can the \tool generated testcases have stronger
+\item \label{rq:one}: Can \tool generate sentences consistent to their
+  sentiment label and their target \lc?
+\item \label{rq:two}: Can \tool find different bugs from \Cklst?
+\item \label{rq:three}: Can the \tool generated testcases have stronger
   generalization ability to test NLP models?
-\item \label{rq:three}: Can \tool be useful to find root of bug in the
+\item \label{rq:four}: Can \tool be useful to find root of bug in the
   NLP models?
 %% \item \label{rq:three}: How effective is our new test case generation
 %%   using \cfg expansion? % ablation study
 \end{enumerate}
 
-To answer the RQs, we need to show: (i) effect of testcase
-distribution on finding bugs; (ii) degree of execution of a NLP model
-on testcases; and (iii) ability to guide to find cause of bug in a NLP
-model. First, evaluation on distribution of generated testcase more
-equivalent to real world estimates model performance in practical use
-more accurately. It means more various bugs from the input
-distribution are likely to be detected.  On the other hand, limited
-distribution only represents narrow or uncommon portion of real world,
-and it leads to detect bugs within the restricted range. Therefore,
-demonstrating bugs detected from testcases distribution can answer the
-RQ~\ref{rq:one}. Second, 
+To answer the RQs, we need to show: (\romnum{1}) correctness of testcase to
+evaluate its target \lc.  (\romnum{2}) effect of testcase distribution on
+finding bugs; (\romnum{3}) degree of execution of a NLP model on testcases;
+and (\romnum{4}) ability to guide to find cause of bug in a NLP
+model.
 
+First, \tool generates sentences and its label by empirical reasoning
+derived from \lc statements. Therefore, we meaure acceptibility of the
+testcases by verifying the relevancy between sentence and label, and
+between sentence and its \lc. The RQ~\ref{rq:one} thereby is answered
+by verifying the quality of generated testcases. In this work, we
+conduct manual study and measure the correlation of human labeled
+testcases and \tool labeled testcases.
 
-we generate test cases
-and use them for evaluating model on linguistic capabilities. In this
+Second, evaluation on testcases more equivalent to real world
+estimates model performance in practical use more accurately. It means
+more various bugs from the input distribution are likely to be
+captured.  On the other hand, limited distribution only represents
+narrow or uncommon portion of real world, and it leads to detect bugs
+within the restricted range. As a result, retraining a model on the
+testcases within  obtains lower 
+
+debugs less various bugs.
+
+To answer the RQ~\ref{rq:two}, we retrain
+a NLP model on generated testcases and analyze the retraining performance.
+
+it means that retraining model on more
+generalized testcases can debug more various bugs found in the
+original model.
+
+To answer the RQ~\ref{rq:two}, we retrain a NLP model on generated testcases.
+
+Third, the amount of NLP
+model component executed during testing is also critical measurement
+for assessing quality of software testing. A high software coverage
+results in lower chances of unidentified bugs in the NLP
+model. Accordingly, the ability of testcases to produce high portion
+of model coverage needs to be measured and answer the
+RQ~\ref{rq:three}.
+
+In addition to the detection of bugs in the model,
+explaination of the bugs is also important stage of debugging and
+repairing the model. Therefore, we anwer RQ~\ref{rq:four} by showing
+usefulness of \tool by analyzing the NLP model based on \tool and
+finding root of the bug.
+
+\subsection{Experiment Setup}
+
+To resolve these, we conduct practical experiments and show the
+effectiveness of \tool. We conduct a maual studyRQ~\ref{rq:one}
+
+we generate test cases and use
+them for evaluating model on linguistic capabilities. In this
 experiment, We assess the ability to find failures by anlyzing model's
 performance on the generated test cases. We also measure the diversity
 among the generated test cases using similarites among them. Next, we
@@ -45,54 +86,55 @@ compare performances of the retrained model. Not only that, we conduct
 ablation study of \cfg expansion to understand the its impact in our
 approach.
 
-\subsection{Experiment Setup}
-%
-\MyPara{Seed Input Selection}
-%
-For each linguistic capability, we first search all sentences that
-meet its requirement. Among found sentences, we randomly select 10
-sentences due to memory constraint.
 
-\MyPara{Word Sentiment}
-%
-we extract sentiments of words using the
-\Swn~\cite{baccianella2010sentiwordnet}. The \Swn is a publicly
-available lexical resource of words on Wordnet with three numerical
-scores of objectivity, positivity and negativity. Sentiment word
-labels from the scores are classified from the algorithm from Mihaela
-\etal~\cite{mihaela2017sentiwordnetlabel}.
 
-\MyPara{\Cfg Expansion}
-%
-We build a reference \Cfg of natural language from the English Penn
-\Trb corpora~\cite{mitchell1993treebank,nltkTreebankCorporaWebPage}.
-The corpus is sampled from 2,499 stories from a tree year \Wsj
-collection The \Trb provides a parsed text corpus with annotation of
-syntactic and semantic structure. In this experiment We implement the
-\trb corpora available through \Nltk, which is a suite of libraries
-and programs for \Nlp for English. In addition, we parse the seed
-input using into its CFG using the Berkeley Neural
-Parser~\cite{kitaev2018constituency, kitaev2019multilingual}, a
-high-accuracy parser with models for 11 languages. The input is a raw
-text in natural language and the output is the string representation of
-parse tree. Next after comparing CFGs between reference and seed input,
-we randomly select 10 expansions for generating templates due to
-memory constraint.
 
-\MyPara{Synonyms}
-%
-\Model searches synonyms of each token from synonym sets extracted
-from \Wrdnt using \Spacy open-source library for NLP.
+%% \MyPara{Seed Input Selection}
+%% %
+%% For each linguistic capability, we first search all sentences that
+%% meet its requirement. Among found sentences, we randomly select 10
+%% sentences due to memory constraint.
 
-\MyPara{Models}
-%
-We evaluate the following \sa models via \Model:
-\Bert~\cite{devlin2019bert}, \Roberta~\cite{liu2019roberta} and
-\Dbert~\cite{sanh2019distilbert}. These models are fine-tuned on \Sstt
-and their accuracies are \BertAcc, \RobertaAcc and \DbertAcc.
+%% \MyPara{Word Sentiment}
+%% %
+%% we extract sentiments of words using the
+%% \Swn~\cite{baccianella2010sentiwordnet}. The \Swn is a publicly
+%% available lexical resource of words on Wordnet with three numerical
+%% scores of objectivity, positivity and negativity. Sentiment word
+%% labels from the scores are classified from the algorithm from Mihaela
+%% \etal~\cite{mihaela2017sentiwordnetlabel}.
 
-\MyPara{Retraining}
-%
-We retrain \sa models. we split \Model generated test cases into
-train/validation/test sets with the ratio of 8:1:1. The number of
-epochs and batch size for retraining are 1 and 16 respectively.
+%% \MyPara{\Cfg Expansion}
+%% %
+%% We build a reference \Cfg of natural language from the English Penn
+%% \Trb corpora~\cite{mitchell1993treebank,nltkTreebankCorporaWebPage}.
+%% The corpus is sampled from 2,499 stories from a tree year \Wsj
+%% collection The \Trb provides a parsed text corpus with annotation of
+%% syntactic and semantic structure. In this experiment We implement the
+%% \trb corpora available through \Nltk, which is a suite of libraries
+%% and programs for \Nlp for English. In addition, we parse the seed
+%% input using into its CFG using the Berkeley Neural
+%% Parser~\cite{kitaev2018constituency, kitaev2019multilingual}, a
+%% high-accuracy parser with models for 11 languages. The input is a raw
+%% text in natural language and the output is the string representation of
+%% parse tree. Next after comparing CFGs between reference and seed input,
+%% we randomly select 10 expansions for generating templates due to
+%% memory constraint.
+
+%% \MyPara{Synonyms}
+%% %
+%% \Model searches synonyms of each token from synonym sets extracted
+%% from \Wrdnt using \Spacy open-source library for NLP.
+
+%% \MyPara{Models}
+%% %
+%% We evaluate the following \sa models via \Model:
+%% \Bert~\cite{devlin2019bert}, \Roberta~\cite{liu2019roberta} and
+%% \Dbert~\cite{sanh2019distilbert}. These models are fine-tuned on \Sstt
+%% and their accuracies are \BertAcc, \RobertaAcc and \DbertAcc.
+
+%% \MyPara{Retraining}
+%% %
+%% We retrain \sa models. we split \Model generated test cases into
+%% train/validation/test sets with the ratio of 8:1:1. The number of
+%% epochs and batch size for retraining are 1 and 16 respectively.
