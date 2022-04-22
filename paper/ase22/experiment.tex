@@ -6,18 +6,32 @@
 
 In this section, we present experiments to evaluate the effectiveness
 of our proposed evaluation methodology. In particular, we address the
-following research questions:
+following research questions (RQs):
 
 \begin{enumerate}[label=\textbf{RQ\arabic*}]
-\item \label{rq:one}: How effective is our proposed evaluation model
-  for finding failures given a linguistic capability?
-\item \label{rq:two}: Can \tool be useful to find root of bug in the
+\item \label{rq:one}: Can \tool find different bugs from \Cklst?
+\item \label{rq:two}: Can the \tool generated testcases have stronger
+  generalization ability to test NLP models?
+\item \label{rq:three}: Can \tool be useful to find root of bug in the
   NLP models?
-\item \label{rq:three}: How effective is our new test case generation
-  using \cfg expansion? % ablation study
+%% \item \label{rq:three}: How effective is our new test case generation
+%%   using \cfg expansion? % ablation study
 \end{enumerate}
 
-For answering \ref{rq:one} and \ref{rq:two}, we generate test cases
+To answer the RQs, we need to show: (i) effect of testcase
+distribution on finding bugs; (ii) degree of execution of a NLP model
+on testcases; and (iii) ability to guide to find cause of bug in a NLP
+model. First, evaluation on distribution of generated testcase more
+equivalent to real world estimates model performance in practical use
+more accurately. It means more various bugs from the input
+distribution are likely to be detected.  On the other hand, limited
+distribution only represents narrow or uncommon portion of real world,
+and it leads to detect bugs within the restricted range. Therefore,
+demonstrating bugs detected from testcases distribution can answer the
+RQ~\ref{rq:one}. Second, 
+
+
+we generate test cases
 and use them for evaluating model on linguistic capabilities. In this
 experiment, We assess the ability to find failures by anlyzing model's
 performance on the generated test cases. We also measure the diversity
