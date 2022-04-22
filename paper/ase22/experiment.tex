@@ -11,10 +11,9 @@ following research questions (RQs):
 \begin{enumerate}[label=\textbf{RQ\arabic*}]
 \item \label{rq:one}: Can \tool generate sentences consistent to their
   sentiment label and their target \lc?
-\item \label{rq:two}: Can \tool find different bugs from \Cklst?
-\item \label{rq:three}: Can the \tool generated testcases have stronger
+\item \label{rq:two}: Can the \tool generated testcases have stronger
   generalization ability to test NLP models?
-\item \label{rq:four}: Can \tool be useful to find root of bug in the
+\item \label{rq:three}: Can \tool be useful to find root of bug in the
   NLP models?
 %% \item \label{rq:three}: How effective is our new test case generation
 %%   using \cfg expansion? % ablation study
@@ -32,60 +31,52 @@ testcases by verifying the relevancy between sentence and label, and
 between sentence and its \lc. The RQ~\ref{rq:one} thereby is answered
 by verifying the quality of generated testcases. In this work, we
 conduct manual study and measure the correlation of human labeled
-testcases and \tool labeled testcases.
-
-Second, evaluation on testcases more equivalent to real world
-estimates model performance in practical use more accurately. It means
-more various bugs from the input distribution are likely to be
-captured.  On the other hand, limited distribution only represents
-narrow or uncommon portion of real world, and it leads to detect bugs
-within the restricted range. As a result, retraining a model on the
-testcases within  obtains lower 
-
-debugs less various bugs.
-
-To answer the RQ~\ref{rq:two}, we retrain
-a NLP model on generated testcases and analyze the retraining performance.
-
-it means that retraining model on more
-generalized testcases can debug more various bugs found in the
-original model.
-
-To answer the RQ~\ref{rq:two}, we retrain a NLP model on generated testcases.
-
-Third, the amount of NLP
-model component executed during testing is also critical measurement
-for assessing quality of software testing. A high software coverage
-results in lower chances of unidentified bugs in the NLP
-model. Accordingly, the ability of testcases to produce high portion
-of model coverage needs to be measured and answer the
-RQ~\ref{rq:three}.
-
-In addition to the detection of bugs in the model,
+testcases and \tool labeled testcases. Second, the amount of NLP model
+component executed during testing is a critical measurement for
+assessing quality of software testing. A high software coverage
+results in higher chances of unidentified bugs in the NLP model. On
+the other hand, limited distribution only represents narrow portion of
+real world covering limited execution paths in a NLP model. It leads
+to detect bugs within the restricted execution paths.  Therefore,
+testcases more equivalent to real world represents more generalized
+distribution, and it results in high coverage of the NLP model.
+Accordingly, the ability of testcases to produce high portion of model
+coverage needs to be measured. We answer the RQ~\ref{rq:three}
+measuring neural coverage of the neural NLP model according to the
+measurements. In addition to the detection of bugs in the model,
 explaination of the bugs is also important stage of debugging and
 repairing the model. Therefore, we anwer RQ~\ref{rq:four} by showing
 usefulness of \tool by analyzing the NLP model based on \tool and
 finding root of the bug.
 
 \subsection{Experiment Setup}
+We conduct practical experiments and show the effectiveness of
+\tool.
 
-To resolve these, we conduct practical experiments and show the
-effectiveness of \tool. We conduct a maual studyRQ~\ref{rq:one}
+\subsubsection{Manual study}
+We sample set of test cases and corresponding \lc randomly sampled
+from seed sentences and expanded sentences from \tool.  Subjects are
+also provided with the sampled testcases. Each subject is asked for
+scoring relevancy between the linguistic capability of the
+sentences. The scores range from 1 to 5 representing strongly not
+relevant to strongly relevant respectively. Additionally, the subject
+scores the relevancy between sentences and their sentiment labels. The
+scores also range from 1 to 5, and they represent strongly negative to
+strongly positive respectively. In this work, we collect manual study
+scores from {} subjects attended. From the collected scores, we
+measure the following metrics:
 
-we generate test cases and use
-them for evaluating model on linguistic capabilities. In this
-experiment, We assess the ability to find failures by anlyzing model's
-performance on the generated test cases. We also measure the diversity
-among the generated test cases using similarites among them. Next, we
-answer \ref{rq:three} by retraining \sa model with generated test
-cases and measuring performances. The idea behind this is that more
-comprehensive inputs becomes closer to real-world distribution and
-addresses more type of errors.  Therefore, it leads to improve the
-model performance. In this experiment, We retrain the model and
-compare performances of the retrained model. Not only that, we conduct
-ablation study of \cfg expansion to understand the its impact in our
-approach.
+\begin{enumerate}[label=\textbf{Metrics}]
+\item \label{mm:one} Reported bugs
+\item \label{mm:two} Incorrect inputs
+\item \label{mm:three} Label Inconsistency
+%% \item \label{rq:three}: How effective is our new test case generation
+%%   using \cfg expansion? % ablation study
+\end{enumerate}
 
+
+
+The metrics used for this study
 
 
 
