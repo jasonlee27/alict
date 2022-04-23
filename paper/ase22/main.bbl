@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{17}
+\begin{thebibliography}{18}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -139,6 +139,21 @@
 \url{http://arxiv.org/abs/1907.11692}
 \showURL{%
 \tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Pei, Cao, Yang, and Jana}{Pei
+  et~al\mbox{.}}{2017}]%
+        {pei2017deepxplore}
+\bibfield{author}{\bibinfo{person}{Kexin Pei}, \bibinfo{person}{Yinzhi Cao},
+  \bibinfo{person}{Junfeng Yang}, {and} \bibinfo{person}{Suman Jana}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{{DeepXplore}}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 26th Symposium on Operating
+  Systems Principles}}. \bibinfo{publisher}{{ACM}}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3132747.3132785}
+\showDOI{\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Prabhakaran, Hutchinson, and

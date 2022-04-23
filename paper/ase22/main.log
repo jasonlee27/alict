@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  22 APR 2022 22:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  23 APR 2022 01:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -4078,20 +4078,21 @@ LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/sl' will be
 LaTeX Info: Redefining \tempurl on input line 69.
 LaTeX Info: Redefining \tempurl on input line 88.
 LaTeX Info: Redefining \tempurl on input line 104.
-LaTeX Info: Redefining \tempurl on input line 119.
-LaTeX Info: Redefining \tempurl on input line 139.
-LaTeX Info: Redefining \tempurl on input line 157.
-LaTeX Info: Redefining \tempurl on input line 177.
-LaTeX Info: Redefining \tempurl on input line 195.
-LaTeX Info: Redefining \tempurl on input line 212.
-LaTeX Info: Redefining \tempurl on input line 231.
-LaTeX Info: Redefining \tempurl on input line 261.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 1622) has occurred while \output is active []
 
  [5.5 <./figs/running_example.pdf>]
-LaTeX Info: Redefining \tempurl on input line 309.
-LaTeX Info: Redefining \tempurl on input line 327.
+LaTeX Info: Redefining \tempurl on input line 119.
+LaTeX Info: Redefining \tempurl on input line 139.
+LaTeX Info: Redefining \tempurl on input line 155.
+LaTeX Info: Redefining \tempurl on input line 172.
+LaTeX Info: Redefining \tempurl on input line 192.
+LaTeX Info: Redefining \tempurl on input line 210.
+LaTeX Info: Redefining \tempurl on input line 227.
+LaTeX Info: Redefining \tempurl on input line 246.
+LaTeX Info: Redefining \tempurl on input line 276.
+LaTeX Info: Redefining \tempurl on input line 324.
+LaTeX Info: Redefining \tempurl on input line 342.
 )
 
 Class acmart Warning: Some images may lack descriptions.
@@ -4102,7 +4103,11 @@ Class acmart Warning: ACM keywords are mandatory for papers over two pages.
 
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
-[6.6] [7.7]
+
+Overfull \vbox (1.152pt too high) has occurred while \output is active []
+
+ [6.6]
+[7.7]
 Package atenddvi Info: Last page = 8.
  [8.8]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 217.
@@ -4111,16 +4116,16 @@ Package atveryend Info: Executing hook `AfterLastShipout' on input line 217.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 217.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 217.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 3C97C0B47553415A35193B94A25CF244;1986.
+(rerunfilecheck)             Checksum: 051E0EB12DD0A4318201B24EFCA43246;1986.
  ) 
 Here is how much of TeX's memory you used:
- 33711 strings out of 492982
- 603248 string characters out of 6134896
- 888245 words of memory out of 5000000
- 35919 multiletter control sequences out of 15000+600000
- 181198 words of font info for 366 fonts, out of 8000000 for 9000
+ 33719 strings out of 492982
+ 603393 string characters out of 6134896
+ 891626 words of memory out of 5000000
+ 35923 multiletter control sequences out of 15000+600000
+ 181375 words of font info for 367 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 60i,16n,94p,997b,721s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,16n,94p,997b,703s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/newtx/libertinealt.enc}{/usr/s
 hare/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/usr/share/t
 exlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/texmf-dist/fo
@@ -4141,10 +4146,10 @@ r/share/texlive/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texlive/texmf-dis
 t/fonts/type1/public/newtx/txsys.pfb></usr/share/texlive/texmf-dist/fonts/type1
 /public/newtx/zxlri.pfb>
-Output written on main.pdf (8 pages, 693275 bytes).
+Output written on main.pdf (8 pages, 696844 bytes).
 PDF statistics:
- 412 PDF objects out of 1000 (max. 8388607)
- 356 compressed objects within 4 object streams
- 56 named destinations out of 1000 (max. 500000)
+ 417 PDF objects out of 1000 (max. 8388607)
+ 361 compressed objects within 4 object streams
+ 59 named destinations out of 1000 (max. 500000)
  50823 words of extra memory for PDF output out of 51595 (max. 10000000)
 

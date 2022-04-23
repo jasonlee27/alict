@@ -12,17 +12,17 @@ following research questions (RQs):
 \item \label{rq:one}: Can \tool generate sentences consistent to their
   sentiment label and their target \lc?
 \item \label{rq:two}: Can the \tool generated testcases have stronger
-  generalization ability to test NLP models?
+  generalization ability to test \sa models?
 \item \label{rq:three}: Can \tool be useful to find root of bug in the
-  NLP models?
+  \sa models?
 %% \item \label{rq:three}: How effective is our new test case generation
 %%   using \cfg expansion? % ablation study
 \end{enumerate}
 
 To answer the RQs, we need to show: (\romnum{1}) correctness of testcase to
 evaluate its target \lc.  (\romnum{2}) effect of testcase distribution on
-finding bugs; (\romnum{3}) degree of execution of a NLP model on testcases;
-and (\romnum{4}) ability to guide to find cause of bug in a NLP
+finding bugs; (\romnum{3}) degree of execution of a \sa model on testcases;
+and (\romnum{4}) ability to guide to find cause of bug in a \sa
 model.
 
 First, \tool generates sentences and its label by empirical reasoning
@@ -31,22 +31,22 @@ testcases by verifying the relevancy between sentence and label, and
 between sentence and its \lc. The RQ~\ref{rq:one} thereby is answered
 by verifying the quality of generated testcases. In this work, we
 conduct manual study and measure the correlation of human labeled
-testcases and \tool labeled testcases. Second, the amount of NLP model
+testcases and \tool labeled testcases. Second, the amount of \sa model
 component executed during testing is a critical measurement for
 assessing quality of software testing. A high software coverage
-results in higher chances of unidentified bugs in the NLP model. On
+results in higher chances of unidentified bugs in the \sa model. On
 the other hand, limited distribution only represents narrow portion of
-real world covering limited execution behaviors in a NLP model. It leads
+real world covering limited execution behaviors in a \sa model. It leads
 to detect bugs within the restricted execution behaviors.  Therefore,
 testcases more equivalent to real world represents more generalized
-distribution, and it results in high coverage of the NLP model.
+distribution, and it results in high coverage of the \sa model.
 Accordingly, the ability of testcases to produce high portion of model
 coverage needs to be measured. We answer the RQ~\ref{rq:three}
-measuring neural coverage of the neural NLP model according to the
+measuring neural coverage of the neural \sa model according to the
 measurements. In addition to the detection of bugs in the model,
 explaination of the bugs is also important stage of debugging and
 repairing the model. Therefore, we anwer RQ~\ref{rq:three} by showing
-usefulness of \tool by analyzing the NLP model based on \tool and
+usefulness of \tool by analyzing the \sa model based on \tool and
 finding root of the bug.
 
 \subsection{Experiment Setup}
@@ -81,7 +81,7 @@ incorrect inputs.
 %% and between \tool and human (eq~\ref{metric:li}).
 
 \subsubsection*{\textbf{Model Coverage}}
-We implement DeepXplore to measure the NLP model
+We implement DeepXplore to measure the \sa model
 coverage~\cite{pei2017deepxplore}. \Dxp is the first efficient
 whitebox testing framework for large-scale \dl systems. It introduces
 neuron coverage of a set of test inputs as the ratio of the number of
@@ -89,6 +89,20 @@ unique activated neurons and the total number of neurons in input \dl
 system. In this experiment, we compute the neuron coverage of a test
 cases from \tool and \Cklst on the fine-tuned \sa model of
 \bertsamodel and compare the coverage between \tool and \Cklst.
+
+\subsubsection*{\textbf{Analysis of Root of bug}}
+In this experiment, we analyze a \sa model based on the test results
+of the set of \tool test inputs and find the root of bug in the
+model. It shows that \tool generated testcases are useful to explain
+the \sa model test results and identify the rationale of the bug
+found. We implement \Denas for this experiment. Rules generated from
+\Denas is interpretable functions mapping certain features of the
+input to the expected output of a deep \nn system, and the generated
+rules are considered as the behaviors of the deep \nn system. To
+anlayze the bug of a \sa model, we generates rules over the test
+inputs using \Denas and identifies falty rules for the failed test
+inputs. We manually identify the root of the falty rules and find the
+root of bug in the end.
 
 %% \MyPara{Seed Input Selection}
 %% %
