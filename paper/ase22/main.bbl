@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{23}
+\begin{thebibliography}{17}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -37,25 +37,6 @@
 \providecommand\natexlab[1]{#1}
 \providecommand\showeprint[2][]{arXiv:#2}
 
-\bibitem[\protect\citeauthoryear{Baccianella, Esuli, and
-  Sebastiani}{Baccianella et~al\mbox{.}}{2010}]%
-        {baccianella2010sentiwordnet}
-\bibfield{author}{\bibinfo{person}{Stefano Baccianella},
-  \bibinfo{person}{Andrea Esuli}, {and} \bibinfo{person}{Fabrizio Sebastiani}.}
-  \bibinfo{year}{2010}\natexlab{}.
-\newblock \showarticletitle{{S}enti{W}ord{N}et 3.0: An Enhanced Lexical
-  Resource for Sentiment Analysis and Opinion Mining}. In
-  \bibinfo{booktitle}{\emph{Proceedings of the Seventh International Conference
-  on Language Resources and Evaluation ({LREC}'10)}}.
-  \bibinfo{publisher}{European Language Resources Association (ELRA)},
-  \bibinfo{address}{Valletta, Malta}.
-\newblock
-\urldef\tempurl%
-\url{http://www.lrec-conf.org/proceedings/lrec2010/pdf/769_Paper.pdf}
-\showURL{%
-\tempurl}
-
-
 \bibitem[\protect\citeauthoryear{Belinkov and Bisk}{Belinkov and Bisk}{2017}]%
         {belinkov2018breaknmt}
 \bibfield{author}{\bibinfo{person}{Yonatan Belinkov} {and}
@@ -70,23 +51,6 @@
 \url{http://arxiv.org/abs/1711.02173}
 \showURL{%
 \tempurl}
-
-
-\bibitem[\protect\citeauthoryear{Colhon, Vlăduţescu, and Negrea}{Colhon
-  et~al\mbox{.}}{2017}]%
-        {mihaela2017sentiwordnetlabel}
-\bibfield{author}{\bibinfo{person}{Mihaela Colhon}, \bibinfo{person}{Ştefan
-  Vlăduţescu}, {and} \bibinfo{person}{Xenia Negrea}.}
-  \bibinfo{year}{2017}\natexlab{}.
-\newblock \showarticletitle{How Objective a Neutral Word Is? A Neutrosophic
-  Approach for the Objectivity Degrees of Neutral Words}.
-\newblock \bibinfo{journal}{\emph{Symmetry}} \bibinfo{volume}{9},
-  \bibinfo{number}{11} (\bibinfo{year}{2017}).
-\newblock
-\showISSN{2073-8994}
-\urldef\tempurl%
-\url{https://doi.org/10.3390/sym9110280}
-\showDOI{\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Devlin, Chang, Lee, and Toutanova}{Devlin
@@ -126,10 +90,10 @@
 
 
 \bibitem[\protect\citeauthoryear{Kitaev, Cao, and Klein}{Kitaev
-  et~al\mbox{.}}{2019a}]%
+  et~al\mbox{.}}{2019}]%
         {kitaev2019seedparser}
 \bibfield{author}{\bibinfo{person}{Nikita Kitaev}, \bibinfo{person}{Steven
-  Cao}, {and} \bibinfo{person}{Dan Klein}.} \bibinfo{year}{2019}\natexlab{a}.
+  Cao}, {and} \bibinfo{person}{Dan Klein}.} \bibinfo{year}{2019}\natexlab{}.
 \newblock \showarticletitle{Multilingual Constituency Parsing with
   Self-Attention and Pre-Training}. In \bibinfo{booktitle}{\emph{Proceedings of
   the 57th Annual Meeting of the Association for Computational Linguistics}}.
@@ -141,41 +105,10 @@
 \showDOI{\tempurl}
 
 
-\bibitem[\protect\citeauthoryear{Kitaev, Cao, and Klein}{Kitaev
-  et~al\mbox{.}}{2019b}]%
-        {kitaev2019multilingual}
-\bibfield{author}{\bibinfo{person}{Nikita Kitaev}, \bibinfo{person}{Steven
-  Cao}, {and} \bibinfo{person}{Dan Klein}.} \bibinfo{year}{2019}\natexlab{b}.
-\newblock \showarticletitle{Multilingual Constituency Parsing with
-  Self-Attention and Pre-Training}. In \bibinfo{booktitle}{\emph{Proceedings of
-  the 57th Annual Meeting of the Association for Computational Linguistics}}.
-  \bibinfo{publisher}{Association for Computational Linguistics},
-  \bibinfo{address}{Florence, Italy}, \bibinfo{pages}{3499--3505}.
-\newblock
-\urldef\tempurl%
-\url{https://doi.org/10.18653/v1/P19-1340}
-\showDOI{\tempurl}
-
-
-\bibitem[\protect\citeauthoryear{Kitaev and Klein}{Kitaev and Klein}{2018a}]%
+\bibitem[\protect\citeauthoryear{Kitaev and Klein}{Kitaev and Klein}{2018}]%
         {kitaev2018seedparser}
 \bibfield{author}{\bibinfo{person}{Nikita Kitaev} {and} \bibinfo{person}{Dan
-  Klein}.} \bibinfo{year}{2018}\natexlab{a}.
-\newblock \showarticletitle{Constituency Parsing with a Self-Attentive
-  Encoder}. In \bibinfo{booktitle}{\emph{Proceedings of the 56th Annual Meeting
-  of the Association for Computational Linguistics (Volume 1: Long Papers)}}.
-  \bibinfo{publisher}{Association for Computational Linguistics},
-  \bibinfo{address}{Melbourne, Australia}, \bibinfo{pages}{2676--2686}.
-\newblock
-\urldef\tempurl%
-\url{https://doi.org/10.18653/v1/P18-1249}
-\showDOI{\tempurl}
-
-
-\bibitem[\protect\citeauthoryear{Kitaev and Klein}{Kitaev and Klein}{2018b}]%
-        {kitaev2018constituency}
-\bibfield{author}{\bibinfo{person}{Nikita Kitaev} {and} \bibinfo{person}{Dan
-  Klein}.} \bibinfo{year}{2018}\natexlab{b}.
+  Klein}.} \bibinfo{year}{2018}\natexlab{}.
 \newblock \showarticletitle{Constituency Parsing with a Self-Attentive
   Encoder}. In \bibinfo{booktitle}{\emph{Proceedings of the 56th Annual Meeting
   of the Association for Computational Linguistics (Volume 1: Long Papers)}}.
@@ -206,21 +139,6 @@
 \url{http://arxiv.org/abs/1907.11692}
 \showURL{%
 \tempurl}
-
-
-\bibitem[\protect\citeauthoryear{Marcus, Marcinkiewicz, and Santorini}{Marcus
-  et~al\mbox{.}}{1993}]%
-        {mitchell1993treebank}
-\bibfield{author}{\bibinfo{person}{Mitchell~P. Marcus},
-  \bibinfo{person}{Mary~Ann Marcinkiewicz}, {and} \bibinfo{person}{Beatrice
-  Santorini}.} \bibinfo{year}{1993}\natexlab{}.
-\newblock \showarticletitle{Building a Large Annotated Corpus of English: The
-  Penn Treebank}.
-\newblock \bibinfo{journal}{\emph{Comput. Linguist.}} \bibinfo{volume}{19},
-  \bibinfo{number}{2} (\bibinfo{date}{jun} \bibinfo{year}{1993}),
-  \bibinfo{pages}{313–330}.
-\newblock
-\showISSN{0891-2017}
 
 
 \bibitem[\protect\citeauthoryear{Prabhakaran, Hutchinson, and
@@ -372,16 +290,6 @@
 \newblock \bibinfo{journal}{\emph{ArXiv}}  \bibinfo{volume}{abs/1910.01108}
   (\bibinfo{year}{2019}).
 \newblock
-
-
-\bibitem[\protect\citeauthoryear{Sphinx and Theme}{Sphinx and Theme}{2021}]%
-        {nltkTreebankCorporaWebPage}
-\bibfield{author}{\bibinfo{person}{Sphinx} {and} \bibinfo{person}{NLTK Theme}.}
-  \bibinfo{year}{2021}\natexlab{}.
-\newblock \bibinfo{booktitle}{\emph{NLTK Documentation}}.
-\newblock
-\newblock
-\shownote{\url{https://www.nltk.org/howto/corpus.html}}.
 
 
 \bibitem[\protect\citeauthoryear{Wang, Singh, Michael, Hill, Levy, and

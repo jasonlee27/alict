@@ -36,8 +36,8 @@ component executed during testing is a critical measurement for
 assessing quality of software testing. A high software coverage
 results in higher chances of unidentified bugs in the NLP model. On
 the other hand, limited distribution only represents narrow portion of
-real world covering limited execution paths in a NLP model. It leads
-to detect bugs within the restricted execution paths.  Therefore,
+real world covering limited execution behaviors in a NLP model. It leads
+to detect bugs within the restricted execution behaviors.  Therefore,
 testcases more equivalent to real world represents more generalized
 distribution, and it results in high coverage of the NLP model.
 Accordingly, the ability of testcases to produce high portion of model
@@ -45,40 +45,50 @@ coverage needs to be measured. We answer the RQ~\ref{rq:three}
 measuring neural coverage of the neural NLP model according to the
 measurements. In addition to the detection of bugs in the model,
 explaination of the bugs is also important stage of debugging and
-repairing the model. Therefore, we anwer RQ~\ref{rq:four} by showing
+repairing the model. Therefore, we anwer RQ~\ref{rq:three} by showing
 usefulness of \tool by analyzing the NLP model based on \tool and
 finding root of the bug.
 
 \subsection{Experiment Setup}
 We conduct practical experiments and show the effectiveness of
 \tool.
-
-\subsubsection{Manual study}
+\subsubsection*{\textbf{Manual Study}}
 We sample set of test cases and corresponding \lc randomly sampled
 from seed sentences and expanded sentences from \tool.  Subjects are
 also provided with the sampled testcases. Each subject is asked for
 scoring relevancy between the linguistic capability of the
-sentences. The scores range from 1 to 5 representing strongly not
-relevant to strongly relevant respectively. Additionally, the subject
-scores the relevancy between sentences and their sentiment labels. The
-scores also range from 1 to 5, and they represent strongly negative to
-strongly positive respectively. In this work, we collect manual study
-scores from {} subjects attended. From the collected scores, we
-measure the following metrics:
+sentences. The score is discrete and it ranges from 1 to 5
+representing ``strongly not relevant'' to ``strongly relevant''
+respectively. Additionally, the subject scores the relevancy between
+sentences and their sentiment labels. The score is also discreate and
+ranges from 1 to 5. It represents ``strongly negative'' to ``strongly
+positive'' respectively. In this work, we collect manual study scores
+from 8 subjects attended. From the collected scores, we measure the
+following metrics:
 
-\begin{enumerate}[label=\textbf{Metrics}]
-\item \label{mm:one} Reported bugs
-\item \label{mm:two} Incorrect inputs
-\item \label{mm:three} Label Inconsistency
-%% \item \label{rq:three}: How effective is our new test case generation
-%%   using \cfg expansion? % ablation study
-\end{enumerate}
+\begin{eqnarray}
+  &Reported\:bugs &=\sum_{i} \delta(label_{S^2LCT}!=pred_{model}) \label{metric:rb}\\
+  &Incorrect\:inputs &= \sum_{i} \delta(pred_{model}!=label_{human}) \label{metric:ii}\\
+  %% &Label\:inconsistency &= \sum_{i} \delta(label_{S^2LCT}!=label_{human}) \label{metric:li}
+\end{eqnarray}
 
+The metrics represents the number of data instance that its label
+assigned from are different between \tool and its model prediction
+(eq~\ref{metric:rb}) and between the model prediction and human
+(eq~\ref{metric:ii}). We show the correspondonce between \tool and
+human by computing the precision and recall from the reported bugs and
+incorrect inputs.
+%% and between \tool and human (eq~\ref{metric:li}).
 
-
-The metrics used for this study
-
-
+\subsubsection*{\textbf{Model Coverage}}
+We implement DeepXplore to measure the NLP model
+coverage~\cite{pei2017deepxplore}. \Dxp is the first efficient
+whitebox testing framework for large-scale \dl systems. It introduces
+neuron coverage of a set of test inputs as the ratio of the number of
+unique activated neurons and the total number of neurons in input \dl
+system. In this experiment, we compute the neuron coverage of a test
+cases from \tool and \Cklst on the fine-tuned \sa model of
+\bertsamodel and compare the coverage between \tool and \Cklst.
 
 %% \MyPara{Seed Input Selection}
 %% %
