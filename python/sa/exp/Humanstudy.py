@@ -44,7 +44,6 @@ class Humanstudy:
         '2': [4,5],
         "None": [3,4,5]
     }
-
     
     @classmethod
     def read_sentences(cls, json_file: Path, include_label=False):
@@ -52,63 +51,91 @@ class Humanstudy:
         results = dict()
         for inp in inputs:
             req = inp['requirement']['description']
-            seeds, exps = list(), list()
+            # seeds, exps = list(), list()
+            seed_dict = dict()
             for seed in inp['inputs'].keys():
                 if include_label:
-                    label = inp['inputs'][seed]['label']
-                    seeds.append((seed, cls.SENTIMENT_MAP_FROM_STR[str(label)]))
-                    exps.extend([(e[5], cls.SENTIMENT_MAP_FROM_STR[str(label)]) for e in inp['inputs'][seed]['exp_inputs']])
+                    seed_dict[seed] = {
+                        'label': inp['inputs'][seed]['label'],
+                        'exp': [
+                            (e[5], cls.SENTIMENT_MAP_FROM_STR[str(label)])
+                            for e in inp['inputs'][seed]['exp_inputs'] if e[5] is not None
+                        ]
+                    }                    
                 else:
-                    seeds.append(seed)
-                    exps.extend([e[5] for e in inp['inputs'][seed]['exp_inputs']])
+                    seed_dict[seed] = {
+                        'exp': [
+                            e[5]
+                            for e in inp['inputs'][seed]['exp_inputs'] if e[5] is not None
+                        ]
+                    }
                 # end if
             # end for
-            results[req] = {
-                'seed': seeds,
-                'exp': exps
-            }
+            results[req] = seed_dict
         # end for
         return results
-
+        
     @classmethod
-    def sample_sents(cls, sent_dict: Dict, num_samples=10):
+    def sample_sents(cls, sent_dict: Dict, num_files=3, num_samples=5):
         sample_results = dict()
+        for f_i in range(num_files):
+            sample_results[f"file{f_i}"] = dict()
+        # end for
+        
         for req in sent_dict.keys():
-            num_seed = len(sent_dict[req]['seed'])
-            num_exp = len(sent_dict[req]['exp'])
-            seed_ids = list(range(num_seed))
-            exp_ids = list(range(num_exp))
-            random.shuffle(seed_ids)
-            random.shuffle(exp_ids)
-            sample_results[req] = {
-                'seed': [(sent_dict[req]['seed'][idx], req) for idx in seed_ids[:num_samples]],
-                'exp': [(sent_dict[req]['exp'][idx], req) for idx in exp_ids[:num_samples]]
-            }
+            seed_sents = list(sent_dict[req].keys())
+            random.shuffle(seed_sents)
+            s_i = 0
+            for f_i in range(num_files):
+                seed_sents_per_step = list()
+                exp_sents_per_step = list()
+                if s_i<len(seed_sents):
+                    for _s_i, s in enumerate(seed_sents[s_i:]):
+                        if len(sent_dict[req][s]['exp'])>0:
+                            seed_sents_per_step.append((s, req))
+                            s_i = _s_i+1
+                        # end if
+                        if len(seed_sents_per_step)==num_samples:
+                            break
+                        # end if
+                    # end for
+                    for s, req in seed_sents_per_step:
+                        exps = sent_dict[req][s]['exp']
+                        random.shuffle(exps)
+                        exp_sents_per_step.append((exps[0], req))
+                    # end for
+                    
+                    sample_results[f"file{f_i}"][req] = {
+                        'seed': seed_sents_per_step,
+                        'exp': exp_sents_per_step
+                    }
+                # end if
+            # end for
         # end for
         return sample_results
     
     @classmethod
     def write_samples(cls, sample_dict: Dict):
-        seeds, exps = list(), list()
-        for req in sample_dict.keys():
-            seeds.extend(sample_dict[req]['seed'])
-            exps.extend(sample_dict[req]['exp'])
+        for f_i in sample_dict.keys():
+            seeds, exps = list(), list()
+            seed_res = ""
+            exp_res = ""
+            for req in sample_dict[f_i].keys():
+                seeds.extend(sample_dict[f_i][req]['seed'])
+                exps.extend(sample_dict[f_i][req]['exp'])
+            # end for
+            for s, r in seeds:
+                seed_res += f"{s} :: {r}\n\n\n"
+            # end for
+            for e, r in exps:
+                exp_res += f"{e} :: {r}\n\n\n"
+            # end for
+            res_dir = Macros.result_dir / 'human_study'
+            res_dir.mkdir(parents=True, exist_ok=True)
+            Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
+            Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
+            print(f"{f_i}:\nnum_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
         # end for
-        seed_res = ""
-        exp_res = ""
-        random.shuffle(seeds)
-        random.shuffle(exps)
-        for s, r in seeds:
-            seed_res += f"{s} :: {r}\n\n\n"
-        # end for
-        for e, r in exps:
-            exp_res += f"{e} :: {r}\n\n\n"
-        # end for
-        res_dir = Macros.result_dir / 'human_study'
-        res_dir.mkdir(parents=True, exist_ok=True)
-        Utils.write_txt(seed_res, res_dir / "seed_samples_raw.txt")
-        Utils.write_txt(exp_res, res_dir / "exp_samples_raw.txt")
-        print(f"num_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
         return
     
     @classmethod
@@ -446,7 +473,7 @@ class Humanstudy:
                     selection_method):
         target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
         sent_dict = cls.read_sentences(target_file)
-        sample_dict = cls.sample_sents(sent_dict, num_samples=5)
+        sample_dict = cls.sample_sents(sent_dict, num_files=3, num_samples=5)
         cls.write_samples(sample_dict)
         return
 
