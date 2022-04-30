@@ -1,24 +1,22 @@
 \begin{abstract}
-  \Nlp (NLP) technique becomes one of the core techniques for
-  developing text analytics applications.  For developing the NLP
-  applications, the applications are required to achieve high
-  reliability before it goes to market.  The trustworthiness of the
-  prevalent NLP applications is obtained by measuring the accuracy of
-  the applications on held-out dataset.  However, evaluating NLP on
-  testset with the held-out accuracy is limited to validate its
-  quality because the held-out datasets are often not
-  comprehensive. Along with this, Evaluating a NLP model on
-  task-specific behaviours defined on empirical linguistic
-  capabilities has been introduced. However, it relies on manually
-  created test cases, and is still limited to measure the model
-  performance on biased testcases. In this work, we introduce \tool,
-  an NLP model testing methodology.  Given a linguistic capability,
-  The \tool finds suitable testcases to test the linguistic capability
-  from existing datasets as seed inputs, generates sufficient number
-  of new test cases by fuzzing the seed inputs based on their \cfg
-  (CFG).  We illustrate the usefulness of the \tool by showing its
-  reliability on generated testcases and its generalization ability.
-  In our experiment, we also show that \tool facilitates
-  identification of critical failures and its origins in NLP models
-  for \sa task.
+  \Nlp (NLP) technique has become one of the core techniques for
+  developing text analytic applications.  These applications are
+  required to achieve high reliability to be useful in practice.  The
+  trustworthiness of the prevalent NLP applications is obtained by
+  measuring the accuracy of the applications on held-out dataset.
+  However, evaluating NLP on testset with the held-out accuracy is
+  limited in validating its overall quality because the held-out
+  datasets are often not comprehensive. Along with this, evaluating an
+  NLP model on task-specific behaviors defined on empirical linguistic
+  capabilities has been introduced. However, such evaluation relies on
+  manually created test cases, and is still limited to measure the
+  model performance on biased dataset. In this work, we introduce
+  \tool, an NLP model testing infrastructure.  Given a linguistic
+  capability that users want to evaluate for a NLP model, \tool finds
+  suitable seed inputs from existing datasets, generates sufficient
+  number of new test inputs by fuzzing the seed inputs based on their
+  \cfg (CFG).  We evaluate \tool by showing its reliability on
+  generated inputs and its generalization ability.  In our
+  experiments, we also show that \tool facilitates identification of
+  critical failures and its origins in the NLP models for \sa task.
 \end{abstract}
