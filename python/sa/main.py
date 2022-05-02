@@ -17,7 +17,7 @@ parser.add_argument('--run', type=str, required=True,
                         'requirement', 'template', 'testsuite',
                         'testmodel', 'retrain', 'analyze',
                         'retrain_analyze', 'explain_nlp', 'selfbleu',
-                        'humanstudy', 'humanstudy_results', 'tables'
+                        'humanstudy', 'humanstudy_results', 'coverage_sent_gen', 'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
@@ -240,7 +240,19 @@ def run_humanstudy_result():
                            model_name,
                            num_samples)
     return
-    
+
+# ==========
+# Coverage Exp
+
+def run_generate_coverage_sents():
+    from .exp.Coverage import Coverage
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    Coverage.write_testcase_to_txt(nlp_task,
+                                   search_dataset_name,
+                                   selection_method)
+    return
 
 # ==========
 # Tables & Plots
@@ -272,6 +284,7 @@ func_map = {
         'selfbleu': run_selfbleu,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
+        'coverage_sent_gen': run_generate_coverage_sents,
         'tables': run_make_tables
     }
 }

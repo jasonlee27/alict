@@ -120,6 +120,7 @@ function selfbleu() {
 
 # ==========
 # Human study
+
 function humanstudy() {
         (cd ${_DIR}
          python -m python.sa.main \
@@ -136,6 +137,18 @@ function humanstudy_results() {
                 --search_dataset sst \
                 --syntax_selection random \
                 --model_name textattack/bert-base-uncased-SST-2
+        )
+}
+
+# ==========
+# Coverage Exp
+
+function coverage_sent_gen() {
+        (cd ${_DIR}
+         python -m python.sa.main \
+                --run coverage_sent_gen \
+                --search_dataset sst \
+                --syntax_selection random
         )
 }
 
@@ -172,7 +185,8 @@ function main() {
         # explain_nlp # to run the explainNLP
         # make_tables
         # humanstudy
-        humanstudy_results
+        # humanstudy_results
+        coverage_sent_gen
 
 
         # eval_retrained_models # to ...?
