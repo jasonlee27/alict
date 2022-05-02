@@ -13,10 +13,14 @@ following research questions (RQs):
   we measure the results (e.g., number of misclassified test cases).}
 
 \begin{enumerate}[label=\textbf{RQ\arabic*}]
-\item \label{rq:one}: Can \tool generate test cases with the correct \lc categorization and
-  sentiment label?
-\item \label{rq:two}: Can \tool generate more diverse test cases than \Cklst?
-\item \label{rq:three}: Can \tool be useful to find root causes of bugs in the \sa models?
+\item \label{rq:one}: Can \tool generate consistent test sentence and
+  its oracle?
+\item \label{rq:two}: Is \tool generated testcases relevant to be used
+  for their \lc evaluation?
+\item \label{rq:three}: Can \tool generate more diverse test cases
+  than \Cklst?
+\item \label{rq:four}: Can \tool be useful to find root causes of bugs
+  in the \sa models?
 %% \item \label{rq:three}: How effective is our new test case generation
 %%   using \cfg expansion? % ablation study
 \end{enumerate}
@@ -27,22 +31,31 @@ following research questions (RQs):
 %and (\romnum{4}) ability to guide to find cause of bug in a \sa
 %model.
 
-\sw{Make clear (earlier in the paper): a test case is a sentence in a linguistic capability with a sentiment label.}
+\sw{Make clear (earlier in the paper): a test case is a sentence in a
+  linguistic capability with a sentiment label.}
 
 
-\paragraph{RQ1.} As described in Section \ref{sec:approach}, \tool generates test cases in
-two steps: specification-based seed generation and syntax-based sentence expansion. These
-automated steps may generate seed/expanded sentences marked with incorrect sentiment labels or categorized into
-wrong linguistic capabilities. For example, the search rule and template defined in a linguistic capability
-may not always generate seed sentences in that capability or with the correct label.
-To answer {\bf RQ1}, we perform a manual study to measure the correctness of the sentiment labels and linguistic capabilities
-associated with the seed/expanded sentences, produced by \tool 
+\paragraph{RQ1.} As described in Section \ref{sec:approach},
+\tool generates test cases in two steps: specification-based seed
+generation and syntax-based sentence expansion. These automated steps
+may generate seed/expanded sentences marked with incorrect sentiment
+labels or categorized into wrong linguistic capabilities. For example,
+the search rule and template defined in a linguistic capability may
+not always generate seed sentences in that capability or with the
+correct label.  To answer {\bf RQ1}, we perform a manual study to
+measure the correctness of the sentiment labels and linguistic
+capabilities associated with the seed/expanded sentences, produced by
+\tool
 
-\sw{@Jaeseong: rewrite the next two paragraphs to reflect the updated manual study. Also, be explicit about the setup: sample size, population size, number of participants, protocol (each given how many sentences, and how disagreement is resolved), etc.}
-In the manual study, we sample a set of test cases and corresponding \lc randomly sampled
-from seed sentences and expanded sentences from \tool. 
-also provided with the sampled test cases. Each subject is asked for
-scoring relevancy between the linguistic capability of the
+\sw{@Jaeseong: rewrite the next two paragraphs to reflect the updated
+  manual study. Also, be explicit about the setup: sample size,
+  population size, number of participants, protocol (each given how
+  many sentences, and how disagreement is resolved), etc.}
+
+In the manual study, we sample a set of test cases and corresponding
+\lc randomly sampled from seed sentences and expanded sentences from
+\tool.  also provided with the sampled test cases. Each subject is
+asked for scoring relevancy between the linguistic capability of the
 sentences. The score is discrete and it ranges from 1 to 5
 representing ``strongly not relevant'' to ``strongly relevant''
 respectively. Additionally, the subject scores the relevancy between
