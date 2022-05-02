@@ -4,9 +4,9 @@
 
 % \InputWithSpace{tables/retrain-debug-table}
 
-In this section, we present the setup of the experiments to evaluate the effectiveness
-of \tool{}. We address the
-following research questions (RQs):
+In this section, we present the setup of the experiments to evaluate
+the effectiveness of \tool{}. We address the following research
+questions (RQs):
 
 \sw{We may miss a RQ for the test results using \tool. In the setup,
   we have not said which sentiment analysis models we tested, and how
@@ -34,60 +34,71 @@ following research questions (RQs):
 \sw{Make clear (earlier in the paper): a test case is a sentence in a
   linguistic capability with a sentiment label.}
 
-
-\paragraph{RQ1.} As described in Section \ref{sec:approach},
+\paragraph{\textbf{RQ1 and RQ2}} As described in Section \ref{sec:approach},
 \tool generates test cases in two steps: specification-based seed
 generation and syntax-based sentence expansion. These automated steps
 may generate seed/expanded sentences marked with incorrect sentiment
 labels or categorized into wrong linguistic capabilities. For example,
 the search rule and template defined in a linguistic capability may
 not always generate seed sentences in that capability or with the
-correct label.  To answer {\bf RQ1}, we perform a manual study to
+correct label.  To answer RQ1 and RQ2, we perform a manual study to
 measure the correctness of the sentiment labels and linguistic
 capabilities associated with the seed/expanded sentences, produced by
-\tool
+\tool.
 
-\sw{@Jaeseong: rewrite the next two paragraphs to reflect the updated
-  manual study. Also, be explicit about the setup: sample size,
-  population size, number of participants, protocol (each given how
-  many sentences, and how disagreement is resolved), etc.}
-
-In the manual study, we sample a set of test cases and corresponding
-\lc randomly sampled from seed sentences and expanded sentences from
-\tool.  also provided with the sampled test cases. Each subject is
-asked for scoring relevancy between the linguistic capability of the
-sentences. The score is discrete and it ranges from 1 to 5
-representing ``strongly not relevant'' to ``strongly relevant''
-respectively. Additionally, the subject scores the relevancy between
-sentences and their sentiment labels. The score is also discreate and
-ranges from 1 to 5. It represents ``strongly negative'' to ``strongly
-positive'' respectively. In this work, we collect manual study scores
-from 8 subjects attended. From the collected scores, we measure the
-following metrics:
+In the manual study, we randomly sample three sets of pairs of seed
+sentences and corresponding \lc from seed test cases. For each set, we
+also select expanded sentences that \tool generated from the formerly
+sampled seed sentences. In this experiment, each set has 100 sentences
+(50 from seed sentences and 50 from expanded sentences) and 300
+sentences, in total, are used for the manual study. For each sampled
+set, two subjects are provided with the same set of sampled
+sentences. The subjects are asked for scoring the two following:
+\textbf{1. relevancy score between sentence and its associated \lc}:
+this score measures the amount of appropriateness of the use of
+sentence for evaluating the model on its \lc.  The scores are discrete
+ranging from 1 to 5, and each represents ``strongly not relevant'' to
+``strongly relevant'' respectively. \textbf{2. sentiment score of
+  sentence}: this score measures the level of sentence sentiment. It
+is also discrete, and it ranges from 1 to 5 representing ``strongly
+negative'' to ``strongly positive'' respectively. In this work, we
+collect manual study scores from 6 subjects in total. From the
+collected scores, we measure the following metrics:
 
 \begin{eqnarray}
-  &Reported\:bugs &=\sum_{i} \delta(label_{S^2LCT}!=pred_{model}) \label{metric:rb}\\
-  &Incorrect\:inputs &= \sum_{i} \delta(pred_{model}!=label_{human}) \label{metric:ii}
-  %% &Label\:inconsistency &= \sum_{i} \delta(label_{S^2LCT}!=label_{human}) \label{metric:li}
+  sentiment\_relecancy &= \sum_{i} \delta(label_{S^2LCT}!=label_{human}) \label{metric:srel} \\
+  LC\_relevancy_{AVG} &= \frac{1}{\#data}\cdot\sum_{i} LC\_relevancy_i \label{metric:lcrel}
 \end{eqnarray}
 
-The metrics represents the number of data instance that its label
-assigned from are different between \tool and its model prediction
-(eq~\ref{metric:rb}) and between the model prediction and human
-(eq~\ref{metric:ii}). We show the correspondence between \tool and
-human by computing the precision and recall from the reported bugs and
-incorrect inputs.
-%% and between \tool and human (eq~\ref{metric:li}).
+The equation~\ref{metric:srel} represent the number of test cases that
+their labels assigned from are different between \tool and
+human. Higher number of this metric indicates worse correlation of
+test oracle that \tool generated with human. In addition, the
+equation~\ref{metric:lcrel} represents the average score of the
+relevancy score between sentence and its associated \lc. higer average
+score means that higher human-level agreement of the use of sentence
+for its \lc, resulting in higher suitability of the use of the
+testcases for evaluating model on the \lc. Given the metrics, we
+answer RQ1 and RQ2 by the metrics from the equation~\ref{metric:srel}
+and equation~\ref{metric:lcrel} respectively, thereby, show its ability
+of \tool to understand human intelligence.
 
-\paragraph{RQ2.}
+\paragraph{RQ3.}
 Recall that a key limitation of \Cklst is that its template-based
-approach that relies on significant manual efforts may not generate test cases that comprehensively cover the sentences
-in a linguistic capability. \tool, instead, automatically generates test cases based on a search
-dataset and the syntax in a large reference corpus. We expect \tool can generate a more diverse test suite
-than \Cklst. To measure diversity, we follow the approach presented by Ma et al. \cite{ma2018deepgauge},
-where the authors measure the coverage of NLP model intermediate states as corner-case neurons.
-\sw{Why is this a good metric for diversity?}
-Specifically, we use the  \sw{are these metrics we define or are they from ma2018deepgauge?} two coverage metrics in existing work \cite{ma2018deepgauge}, \textit{boundary coverage} (BoundCov) and \textit{strong activation coverage} (SActCov), as our metrics to evaluate the test suite diversity.
+approach that relies on significant manual efforts may not generate
+test cases that comprehensively cover the sentences in a linguistic
+capability. \tool, instead, automatically generates test cases based
+on a search dataset and the syntax in a large reference corpus. We
+expect \tool can generate a more diverse test suite than \Cklst. To
+measure diversity, we follow the approach presented by Ma et
+al. \cite{ma2018deepgauge}, where the authors measure the coverage of
+NLP model intermediate states as corner-case neurons.  \sw{Why is this
+  a good metric for diversity?}  Specifically, we use the \sw{are
+  these metrics we define or are they from ma2018deepgauge?} two
+coverage metrics in existing work \cite{ma2018deepgauge},
+\textit{boundary coverage} (BoundCov) and \textit{strong activation
+  coverage} (SActCov), as our metrics to evaluate the test suite
+diversity.
 
 \begin{equation}
 \begin{split}
@@ -119,7 +130,7 @@ Higher coverage indicates the test suite is better for triggering the corner-cas
 % Because AdNNs activate different blocks for decision making, then a higher block coverage indicates the test samples cover more decision behaviors. 
 
 
-To answer {\bf RQ2}, for each NLP model under test, we first feed its training dataset to compute each neuron's lower and upper bounds. After that, we randomly select 100 \sw{Why 100, not all?} test cases from \tool and \Cklst as the test suite and compute the corresponding coverage metrics. 
+To answer {\bf RQ3}, for each NLP model under test, we first feed its training dataset to compute each neuron's lower and upper bounds. After that, we randomly select 100 \sw{Why 100, not all?} test cases from \tool and \Cklst as the test suite and compute the corresponding coverage metrics. 
 \cm{we repeat this process and record both the average and variance value of each coverage}
 % For each subject, we randomly select 100 seed samples from the test dataset as seed inputs. We then feed the same seed inputs into \tool and \texttt{ILFO} to generate test samples. 
 % Finally, we feed the generated test samples to AdNNs and measure block coverage.
@@ -148,7 +159,7 @@ To answer {\bf RQ2}, for each NLP model under test, we first feed its training d
 %cases from \tool and \Cklst on the fine-tuned \sw{first time mention fine-tuning: reader does not know how we fine-tune} \sa model of
 %\bertsamodel and compare the coverage between \tool and \Cklst.
 
-\paragraph{RQ3.} To demonstrate that \tool can help developers to understand the bugs in the sentiment analysis modes, we conduct experiments to visualize 
+\paragraph{RQ4.} To demonstrate that \tool can help developers to understand the bugs in the sentiment analysis modes, we conduct experiments to visualize 
 
 
 

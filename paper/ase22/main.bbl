@@ -141,18 +141,22 @@
 \tempurl}
 
 
-\bibitem[\protect\citeauthoryear{Pei, Cao, Yang, and Jana}{Pei
-  et~al\mbox{.}}{2017}]%
-        {pei2017deepxplore}
-\bibfield{author}{\bibinfo{person}{Kexin Pei}, \bibinfo{person}{Yinzhi Cao},
-  \bibinfo{person}{Junfeng Yang}, {and} \bibinfo{person}{Suman Jana}.}
-  \bibinfo{year}{2017}\natexlab{}.
-\newblock \showarticletitle{{DeepXplore}}. In
-  \bibinfo{booktitle}{\emph{Proceedings of the 26th Symposium on Operating
-  Systems Principles}}. \bibinfo{publisher}{{ACM}}.
+\bibitem[\protect\citeauthoryear{Patel, Fogarty, Landay, and Harrison}{Patel
+  et~al\mbox{.}}{2008}]%
+        {patel2018mlevalforsoftware}
+\bibfield{author}{\bibinfo{person}{Kayur Patel}, \bibinfo{person}{James
+  Fogarty}, \bibinfo{person}{James~A. Landay}, {and} \bibinfo{person}{Beverly
+  Harrison}.} \bibinfo{year}{2008}\natexlab{}.
+\newblock \showarticletitle{Investigating Statistical Machine Learning as a
+  Tool for Software Development}. In \bibinfo{booktitle}{\emph{Proceedings of
+  the SIGCHI Conference on Human Factors in Computing Systems}} (Florence,
+  Italy) \emph{(\bibinfo{series}{CHI '08})}. \bibinfo{publisher}{Association
+  for Computing Machinery}, \bibinfo{address}{New York, NY, USA},
+  \bibinfo{pages}{667–676}.
 \newblock
+\showISBNx{9781605580111}
 \urldef\tempurl%
-\url{https://doi.org/10.1145/3132747.3132785}
+\url{https://doi.org/10.1145/1357054.1357160}
 \showDOI{\tempurl}
 
 

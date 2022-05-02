@@ -11,6 +11,7 @@ Repeated entry---line 244 of file bib.bib
  :                              ,
 I'm skipping whatever remains of this entry
 Warning--I didn't find a database entry for ""
+Warning--I didn't find a database entry for "ma2018deepgauge"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=20001) to 20 items from 10.
@@ -19,8 +20,6 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Warning--page numbers missing in both pages and numpages fields in belinkov2018breaknmt
 Warning--page numbers missing in both pages and numpages fields in devlin2019bert
 Warning--page numbers missing in both pages and numpages fields in liu2019roberta
-Warning--empty address in pei2017deepxplore
-Warning--page numbers missing in both pages and numpages fields in pei2017deepxplore
 Warning--page numbers missing in both pages and numpages fields in prabhakaran2019fairness
 Warning--empty address in recht2019imagenetbias
 Warning--page numbers missing in both pages and numpages fields in ribeiroSG16lime
@@ -32,43 +31,43 @@ Warning--page numbers missing in both pages and numpages fields in sanh2019disti
 Warning--page numbers missing in both pages and numpages fields in wang2018glue
 You've used 18 entries,
             5959 wiz_defined-function locations,
-            1689 strings with 25424 characters,
-and the built_in function-call counts, 23160 in all, are:
-= -- 2800
+            1696 strings with 25620 characters,
+and the built_in function-call counts, 23421 in all, are:
+= -- 2848
 > -- 982
 < -- 0
 + -- 323
 - -- 313
-* -- 1839
-:= -- 2332
+* -- 1852
+:= -- 2346
 add.period$ -- 89
 call.type$ -- 18
 change.case$ -- 145
 chr.to.int$ -- 18
-cite$ -- 32
-duplicate$ -- 1982
-empty$ -- 1405
+cite$ -- 30
+duplicate$ -- 2010
+empty$ -- 1416
 format.name$ -- 385
-if$ -- 5573
+if$ -- 5646
 int.to.chr$ -- 2
 int.to.str$ -- 1
 missing$ -- 82
-newline$ -- 235
+newline$ -- 236
 num.names$ -- 148
-pop$ -- 809
+pop$ -- 801
 preamble$ -- 1
 purify$ -- 307
 quote$ -- 0
-skip$ -- 663
+skip$ -- 688
 stack$ -- 0
-substring$ -- 1533
-swap$ -- 190
+substring$ -- 1569
+swap$ -- 209
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 428
-warning$ -- 14
-while$ -- 106
+warning$ -- 12
+while$ -- 107
 width$ -- 0
-write$ -- 405
+write$ -- 409
 (There was 1 error message)
