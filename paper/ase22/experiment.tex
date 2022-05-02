@@ -1,61 +1,47 @@
-\section{Experiment}
+\section{Experimental Setup}
 \label{sec:experiment}
 %
 
-\InputWithSpace{tables/retrain-debug-table}
+% \InputWithSpace{tables/retrain-debug-table}
 
-In this section, we present experiments to evaluate the effectiveness
-of our proposed evaluation methodology. In particular, we address the
+In this section, we present the setup of the experiments to evaluate the effectiveness
+of \tool{}. We address the
 following research questions (RQs):
 
+\sw{We may miss a RQ for the test results using \tool. In the setup,
+  we have not said which sentiment analysis models we tested, and how
+  we measure the results (e.g., number of misclassified test cases).}
+
 \begin{enumerate}[label=\textbf{RQ\arabic*}]
-\item \label{rq:one}: Can \tool generate sentences consistent to their
-  sentiment label and their target \lc?
-\item \label{rq:two}: Can the \tool generated testcases have stronger
-  generalization ability to test \sa models?
-\item \label{rq:three}: Can \tool be useful to find root of bug in the
-  \sa models?
+\item \label{rq:one}: Can \tool generate test cases with the correct \lc categorization and
+  sentiment label?
+\item \label{rq:two}: Can \tool generate more diverse test cases than \Cklst?
+\item \label{rq:three}: Can \tool be useful to find root causes of bugs in the \sa models?
 %% \item \label{rq:three}: How effective is our new test case generation
 %%   using \cfg expansion? % ablation study
 \end{enumerate}
 
-To answer the RQs, we need to show: (\romnum{1}) correctness of testcase to
-evaluate its target \lc.  (\romnum{2}) effect of testcase distribution on
-finding bugs; (\romnum{3}) degree of execution of a \sa model on testcases;
-and (\romnum{4}) ability to guide to find cause of bug in a \sa
-model.
+%To answer the RQs, we need to show: (\romnum{1}) correctness of testcase to
+%evaluate its target \lc.  (\romnum{2}) effect of testcase distribution on
+%finding bugs; (\romnum{3}) degree of execution of a \sa model on testcases;
+%and (\romnum{4}) ability to guide to find cause of bug in a \sa
+%model.
 
-First, \tool generates sentences and its label by empirical reasoning
-derived from \lc statements. Therefore, we meaure acceptibility of the
-testcases by verifying the relevancy between sentence and label, and
-between sentence and its \lc. The RQ~\ref{rq:one} thereby is answered
-by verifying the quality of generated testcases. In this work, we
-conduct manual study and measure the correlation of human labeled
-testcases and \tool labeled testcases. Second, the amount of \sa model
-component executed during testing is a critical measurement for
-assessing quality of software testing. A high software coverage
-results in higher chances of unidentified bugs in the \sa model. On
-the other hand, limited distribution only represents narrow portion of
-real world covering limited execution behaviors in a \sa model. It leads
-to detect bugs within the restricted execution behaviors.  Therefore,
-testcases more equivalent to real world represents more generalized
-distribution, and it results in high coverage of the \sa model.
-Accordingly, the ability of testcases to produce high portion of model
-coverage needs to be measured. We answer the RQ~\ref{rq:three}
-measuring neural coverage of the neural \sa model according to the
-measurements. In addition to the detection of bugs in the model,
-explaination of the bugs is also important stage of debugging and
-repairing the model. Therefore, we anwer RQ~\ref{rq:three} by showing
-usefulness of \tool by analyzing the \sa model based on \tool and
-finding root of the bug.
+\sw{Make clear (earlier in the paper): a test case is a sentence in a linguistic capability with a sentiment label.}
 
-\subsection{Experiment Setup}
-We conduct practical experiments and show the effectiveness of
-\tool.
-\subsubsection*{\textbf{Manual Study}}
-We sample set of test cases and corresponding \lc randomly sampled
-from seed sentences and expanded sentences from \tool.  Subjects are
-also provided with the sampled testcases. Each subject is asked for
+
+\paragraph{RQ1.} As described in Section \ref{sec:approach}, \tool generates test cases in
+two steps: specification-based seed generation and syntax-based sentence expansion. These
+automated steps may generate seed/expanded sentences marked with incorrect sentiment labels or categorized into
+wrong linguistic capabilities. For example, the search rule and template defined in a linguistic capability
+may not always generate seed sentences in that capability or with the correct label.
+To answer {\bf RQ1}, we perform a manual study to measure the correctness of the sentiment labels and linguistic capabilities
+associated with the seed/expanded sentences, produced by \tool 
+
+\sw{@Jaeseong: rewrite the next two paragraphs to reflect the updated manual study. Also, be explicit about the setup: sample size, population size, number of participants, protocol (each given how many sentences, and how disagreement is resolved), etc.}
+In the manual study, we sample a set of test cases and corresponding \lc randomly sampled
+from seed sentences and expanded sentences from \tool. 
+also provided with the sampled test cases. Each subject is asked for
 scoring relevancy between the linguistic capability of the
 sentences. The score is discrete and it ranges from 1 to 5
 representing ``strongly not relevant'' to ``strongly relevant''
@@ -68,41 +54,126 @@ following metrics:
 
 \begin{eqnarray}
   &Reported\:bugs &=\sum_{i} \delta(label_{S^2LCT}!=pred_{model}) \label{metric:rb}\\
-  &Incorrect\:inputs &= \sum_{i} \delta(pred_{model}!=label_{human}) \label{metric:ii}\\
+  &Incorrect\:inputs &= \sum_{i} \delta(pred_{model}!=label_{human}) \label{metric:ii}
   %% &Label\:inconsistency &= \sum_{i} \delta(label_{S^2LCT}!=label_{human}) \label{metric:li}
 \end{eqnarray}
 
 The metrics represents the number of data instance that its label
 assigned from are different between \tool and its model prediction
 (eq~\ref{metric:rb}) and between the model prediction and human
-(eq~\ref{metric:ii}). We show the correspondonce between \tool and
+(eq~\ref{metric:ii}). We show the correspondence between \tool and
 human by computing the precision and recall from the reported bugs and
 incorrect inputs.
 %% and between \tool and human (eq~\ref{metric:li}).
 
-\subsubsection*{\textbf{Model Coverage}}
-We implement DeepXplore to measure the \sa model
-coverage~\cite{pei2017deepxplore}. \Dxp is the first efficient
-whitebox testing framework for large-scale \dl systems. It introduces
-neuron coverage of a set of test inputs as the ratio of the number of
-unique activated neurons and the total number of neurons in input \dl
-system. In this experiment, we compute the neuron coverage of a test
-cases from \tool and \Cklst on the fine-tuned \sa model of
-\bertsamodel and compare the coverage between \tool and \Cklst.
+\paragraph{RQ2.}
+Recall that a key limitation of \Cklst is that its template-based
+approach that relies on significant manual efforts may not generate test cases that comprehensively cover the sentences
+in a linguistic capability. \tool, instead, automatically generates test cases based on a search
+dataset and the syntax in a large reference corpus. We expect \tool can generate a more diverse test suite
+than \Cklst. To measure diversity, we follow the approach presented by Ma et al. \cite{ma2018deepgauge},
+where the authors measure the coverage of NLP model intermediate states as corner-case neurons.
+\sw{Why is this a good metric for diversity?}
+Specifically, we use the  \sw{are these metrics we define or are they from ma2018deepgauge?} two coverage metrics in existing work \cite{ma2018deepgauge}, \textit{boundary coverage} (BoundCov) and \textit{strong activation coverage} (SActCov), as our metrics to evaluate the test suite diversity.
 
-\subsubsection*{\textbf{Analysis of Root of bug}}
-In this experiment, we analyze a \sa model based on the test results
-of the set of \tool test inputs and find the root of bug in the
-model. It shows that \tool generated testcases are useful to explain
-the \sa model test results and identify the rationale of the bug
-found. We implement \Denas for this experiment. Rules generated from
-\Denas is interpretable functions mapping certain features of the
-input to the expected output of a deep \nn system, and the generated
-rules are considered as the behaviors of the deep \nn system. To
-anlayze the bug of a \sa model, we generates rules over the test
-inputs using \Denas and identifies falty rules for the failed test
-inputs. We manually identify the root of the falty rules and find the
-root of bug in the end.
+\begin{equation}
+\begin{split}
+    \text{UpperCornerNeuron}(\mathcal{X}) = \{n \in N | \exists x \in \mathcal{X}: f_n(x) \in (high_n, +\infty)\}; \\
+    \text{LowerCornerNeuron}(\mathcal{X}) = \{n \in N | \exists x \in \mathcal{X}: f_n(x) \in (-\infty, low_n)\}; \\
+\end{split}
+    \label{eq:corner}
+\end{equation}
+
+\noindent Eq. \ref{eq:corner} shows the formal definition of the corner-case neuron of the NLP model $f(\cdot)$, where $\mathcal{X}$ is the given test suite, $N$ is the number of neurons in model $f(\cdot)$, $f_n(\cdot)$ is the $n^{th}$ neuron's output, and $high_n, low_n$ are the $n^{th}$ neurons' output bounds on the model training dataset.
+Eq. \ref{eq:corner} can be interpreted as the collection of neurons that emit outputs beyond the model's numerical boundary.
+
+\begin{equation}
+\begin{split}
+     & BoundCov(\mathcal{X}) = \frac{|UpperCornerNeuron(\mathcal{X})| + |LowerCornerNeuron| }{2 \times |N|} \\ 
+     & SActCov(\mathcal{X}) = \frac{|UpperCornerNeuron(\mathcal{X})|} {|N|} \\ 
+\end{split}
+    \label{eq:coverage}
+\end{equation}
+
+\noindent The formal definition of our coverage metrics are shown in Eq.\ref{eq:coverage}, where BoundCov measures the coverage of neurons that produce outputs that exceed the upper or lower bounds, and SActCov measures the coverage of neurons that create outputs that exceed the lower bound.
+Higher coverage indicates the test suite is better for triggering the corner-case neurons, thus better test suite diversity.
+
+
+
+% ($Cov(\mathcal{X})$ in \equref{eq:coverage}),
+% where $N$ is the total number blocks, $\mathbb I(\cdot)$ is the indicator function, and
+% $(B_i(x) > \tau_i))$ represents whether $i^{th}$ block is activated by input $x$~(the definition of $B_i$ and $\tau_i$ are the same with \equref{eq:new2} and \equref{eq:new3}).
+% Because AdNNs activate different blocks for decision making, then a higher block coverage indicates the test samples cover more decision behaviors. 
+
+
+To answer {\bf RQ2}, for each NLP model under test, we first feed its training dataset to compute each neuron's lower and upper bounds. After that, we randomly select 100 \sw{Why 100, not all?} test cases from \tool and \Cklst as the test suite and compute the corresponding coverage metrics. 
+\cm{we repeat this process and record both the average and variance value of each coverage}
+% For each subject, we randomly select 100 seed samples from the test dataset as seed inputs. We then feed the same seed inputs into \tool and \texttt{ILFO} to generate test samples. 
+% Finally, we feed the generated test samples to AdNNs and measure block coverage.
+% We repeat this process 10 times and record the average coverage and the variance.
+% The results are shown in \tabref{tab:coverage} last two columns. 
+
+%
+%The amount of \sa model
+%components \sw{?} executed during testing is a critical measurement for
+%assessing quality of software testing. A high software coverage
+%results in higher chances of unidentified bugs in the \sa model. On
+%the other hand, limited distribution only represents narrow portion of
+%real world covering limited execution behaviors in a \sa model. It leads
+%to detect bugs within the restricted execution behaviors.  Therefore,
+%test cases more representative of real-world data result in more generalized
+%distribution and higher coverage of the \sa model.
+%Therefore, we answer the {\bf RQ2} by
+%measuring the neural coverage of the \sa model.
+%
+%Specifically, we implemented DeepXplore to measure the \sa model
+%coverage~\cite{pei2017deepxplore}. \Dxp is the first efficient
+%white-box testing framework for large-scale \dl systems. It introduces
+%neuron coverage of a set of test inputs as the ratio of the number of
+%unique activated neurons and the total number of neurons in input \dl
+%system. In this experiment, we compute the neuron coverage of a test
+%cases from \tool and \Cklst on the fine-tuned \sw{first time mention fine-tuning: reader does not know how we fine-tune} \sa model of
+%\bertsamodel and compare the coverage between \tool and \Cklst.
+
+\paragraph{RQ3.} To demonstrate that \tool can help developers to understand the bugs in the sentiment analysis modes, we conduct experiments to visualize 
+
+
+
+
+\sw{@Simin: add the setup of the bug explanation case study here.}
+%In addition to the detection of bugs \sw{have we defined ``bug" in this context?} in the model,
+%explanation of the bugs is also important for debugging and
+%repairing the model. Therefore, we answer {\bf RQ3} by analyzing the \sa model based on \tool test cases to find the root causes of the bugs.
+%
+%Specifically, we adapt \Denas{} for this experiment. \sw{Say more what DENAS does.} Rules generated from
+%\Denas{} are interpretable functions mapping certain features of the
+%input to the expected output of a deep \nn system, and the generated
+%rules are considered as the behaviors of the deep \nn system. To
+%analyze the bug of a \sa model, we generates rules over the test
+%inputs using \Denas{} and identifies faulty rules for the failed test
+%inputs.
+%\sw{Previous sounds vague. Any specific adaptation of DENAS we did?}
+%We manually identify the root of the faulty rules and find the
+%root causes of bug in the end.
+
+
+
+
+
+
+
+
+\noindent\textbf{Implementation Details.}
+
+
+
+
+
+
+
+
+
+\sw{Missing: environment running these experiments.}
 
 %% \MyPara{Seed Input Selection}
 %% %
@@ -153,3 +224,10 @@ root of bug in the end.
 %% We retrain \sa models. we split \Model generated test cases into
 %% train/validation/test sets with the ratio of 8:1:1. The number of
 %% epochs and batch size for retraining are 1 and 16 respectively.
+
+
+
+
+%\input{CM/coverage}
+
+%\input{CM/explain}
