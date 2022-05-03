@@ -75,101 +75,53 @@ class Humanstudy:
         # end for
         return results
         
-    # @classmethod
-    # def sample_sents(cls, sent_dict: Dict, num_files=3, num_samples=5):
-    #     sample_results = dict()
-    #     for f_i in range(num_files):
-    #         sample_results[f"file{f_i}"] = dict()
-    #     # end for
-        
-    #     for req in sent_dict.keys():
-    #         seed_sents = list(sent_dict[req].keys())
-    #         random.shuffle(seed_sents)
-    #         s_i = 0
-    #         for f_i in range(num_files):
-    #             seed_sents_per_step = list()
-    #             exp_sents_per_step = list()
-    #             if s_i<len(seed_sents):
-    #                 for _s_i, s in enumerate(seed_sents[s_i:]):
-    #                     if len(sent_dict[req][s]['exp'])>0:
-    #                         seed_sents_per_step.append((s, req))
-    #                         s_i = _s_i+1
-    #                     # end if
-    #                     if len(seed_sents_per_step)==num_samples:
-    #                         break
-    #                     # end if
-    #                 # end for
-    #                 for s, req in seed_sents_per_step:
-    #                     exps = sent_dict[req][s]['exp']
-    #                     random.shuffle(exps)
-    #                     exp_sents_per_step.append((exps[0], req))
-    #                 # end for
-                    
-    #                 sample_results[f"file{f_i}"][req] = {
-    #                     'seed': seed_sents_per_step,
-    #                     'exp': exp_sents_per_step
-    #                 }
-    #             # end if
-    #         # end for
-    #     # end for
-    #     return sample_results
-
     @classmethod
     def sample_sents(cls, sent_dict: Dict, num_files=3, num_samples=5):
-        sample_results = {
-            "file2": dict()
-        }
-        res_dir = Macros.result_dir / 'human_study'
-        seed_sample_sents0 = [
-            l for l in Utils.read_txt(res_dir / f"seed_samples_raw_file0.txt") if l.strip()!=''
-        ]
-        seed_sample_sents1 = [
-            l for l in Utils.read_txt(res_dir / f"seed_samples_raw_file1.txt") if l.strip()!=''
-        ]
-        exp_sample_sents0 = [
-            l for l in Utils.read_txt(res_dir / f"exp_samples_raw_file0.txt") if l.strip()!=''
-        ]
-        exp_sample_sents1 = [
-            l for l in Utils.read_txt(res_dir / f"exp_samples_raw_file1.txt") if l.strip()!=''
-        ]
+        sample_results = dict()
+        for f_i in range(num_files):
+            sample_results[f"file{f_i}"] = dict()
+        # end for
         
         for req in sent_dict.keys():
             seed_sents = list(sent_dict[req].keys())
             random.shuffle(seed_sents)
             s_i = 0
-            seed_sents_per_step = list()
-            exp_sents_per_step = list()
-            if s_i<len(seed_sents):
-                for _s_i, s in enumerate(seed_sents[s_i:]):
-                    if len(sent_dict[req][s]['exp'])>0 and \
-                       s not in seed_sample_sents0 and \
-                       s not in seed_sample_sents1:
-                        seed_sents_per_step.append((s, req))
-                        s_i = _s_i+1
-                    # end if
-                    if len(seed_sents_per_step)==num_samples:
-                        break
-                    # end if
-                # end for
-                for s, req in seed_sents_per_step:
-                    exps = sent_dict[req][s]['exp']
-                    random.shuffle(exps)
-                    for e in exps:
-                        if e not in exp_sample_sents0 and \
-                           e not in exp_sample_sents1:
-                            exp_sents_per_step.append((e, req))
+            sample_seed_sents = list()
+            sample_exp_sents = list()
+            for f_i in range(num_files):
+                seed_sents_per_step = list()
+                exp_sents_per_step = list()
+                if s_i<len(seed_sents):
+                    for _s_i, s in enumerate(seed_sents[s_i:]):
+                        if len(sent_dict[req][s]['exp'])>0 and \
+                           s not in sample_seed_sents:
+                            seed_sents_per_step.append((s, req))
+                            sample_seed_sents.append(s)
+                            s_i = _s_i+1
+                        # end if
+                        if len(seed_sents_per_step)==num_samples:
                             break
                         # end if
                     # end for
-                # end for
-                sample_results[f"file2"][req] = {
-                    'seed': seed_sents_per_step,
-                    'exp': exp_sents_per_step
-                }
-            # end if
+                    for s, req in seed_sents_per_step:
+                        exps = sent_dict[req][s]['exp']
+                        random.shuffle(exps)
+                        for e in exps:
+                            if e not in sample_exp_sents:
+                                exp_sents_per_step.append((e, req))
+                                sample_exp_sents.append(e)
+                                break
+                            # end if
+                        # end for
+                    # end for
+                    sample_results[f"file{f_i}"][req] = {
+                        'seed': seed_sents_per_step,
+                        'exp': exp_sents_per_step
+                    }
+                # end if
+            # end for
         # end for
         return sample_results
-
     
     @classmethod
     def write_samples(cls, sample_dict: Dict):
@@ -189,8 +141,9 @@ class Humanstudy:
             # end for
             res_dir = Macros.result_dir / 'human_study'
             res_dir.mkdir(parents=True, exist_ok=True)
-            Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
-            Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
+            print(seed_res)
+            # Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
+            # Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
             print(f"{f_i}:\nnum_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
         # end for
         return
