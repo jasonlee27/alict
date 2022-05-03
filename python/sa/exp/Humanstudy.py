@@ -61,7 +61,7 @@ class Humanstudy:
                             (e[5], cls.SENTIMENT_MAP_FROM_STR[str(label)])
                             for e in inp['inputs'][seed]['exp_inputs'] if e[5] is not None
                         ]
-                    }                    
+                    }
                 else:
                     seed_dict[seed] = {
                         'exp': [
@@ -139,8 +139,8 @@ class Humanstudy:
         return
     
     @classmethod
-    def read_results(cls, res_file: Path, num_samples: int=100):
-        res_lines = Utils.read_txt(res_file)
+    def read_sample_sentences(cls, sample_sent_file: Path, num_samples: int=100):
+        res_lines = Utils.read_txt(sample_sent_file)
         res = dict()
         num_sents = 0
         for l in res_lines:
@@ -155,11 +155,34 @@ class Humanstudy:
         return res
 
     @classmethod
-    def get_target_results(cls, target_file, seed_results, exp_results=None):
-        sent_dict = cls.read_sentences(target_file, include_label=True)
+    def read_sample_scores(cls, resp_files: List[Path], sents: List[str], num_samples: int=100):
         res = dict()
-        seed_sents = list(seed_results.keys())
-        exp_sents = list(exp_results.keys())
+        for resp_i, resp_f in enumerate(resp_files):                
+            res_lines = Utils.read_txt(resp_f)
+            num_sents = 0
+            for l_i, l in enumerate(res_lines):
+                if num_sents<num_samples:
+                    l_split = l.strip().split()
+                    sent_score, lc_score = l_split[0], l_split[1]
+                    if resp_i==0:
+                        res[sents[l_i]]['sent_score'] = [sent_score]
+                        res[sents[l_i]]['lc_score'] = [lc_score]
+                    else:
+                        res[sents[l_i]]['sent_score'].append(sent_score)
+                        res[sents[l_i]]['lc_score'].append(lc_score)
+                    # end if
+                    num_sents += 1
+                # end if
+            # end for
+        # end for
+        return res
+
+    @classmethod
+    def get_target_results(cls, target_file, seed_human_results, exp_humanresults):
+        sent_dict = cls.read_sentences(target_file, include_label=True)
+        res, res_lc = dict(), dict()
+        seed_sents = list(seed_human_results.keys())
+        exp_sents = list(exp_human_results.keys())
         for r in sent_dict.keys():
             for s in sent_dict[r]['seed']:
                 if s[0] is not None:
@@ -168,6 +191,7 @@ class Humanstudy:
                     _sent = Utils.detokenize(tokens)
                     if sent in seed_sents or _sent in seed_sents:
                         res[_sent] = s[1]
+                        res_lc[_sent] = r
                     # end if
                 # end if
             # end for
@@ -178,11 +202,12 @@ class Humanstudy:
                     _sent = Utils.detokenize(tokens)
                     if sent in exp_sents or _sent in exp_sents:
                         res[_sent] = s[1]
+                        res_lc[_sent] = r
                     # end if
                 # end if
             # end for
         # end for
-        return res
+        return res, res_lc
 
     @classmethod
     def read_result_file(cls, result_file):
@@ -283,37 +308,80 @@ class Humanstudy:
         return model_res_per_reqs
     
     @classmethod
-    def get_label_inconsistency(cls,
-                                tgt_results,
-                                seed_results,
-                                exp_results):
+    def get_label_consistency(cls,
+                              tgt_results,
+                              seed_human_results,
+                              exp_human_results):
         # Label inconsistency: # of l{i}_ours != l{i}_human
         num_seed_corr, num_seed_incorr = 0, 0
         num_exp_corr, num_exp_incorr = 0, 0
-        seed_sents = list(seed_results.keys())
-        exp_sents = list(exp_results.keys())
+        seed_sents = list(seed_human_results.keys())
+        exp_sents = list(exp_human_results.keys())
+        res = {
+            'seed': dict(),
+            'exp': dict()
+        }
         for s_i, sent in enumerate(tgt_results.keys()):
             label = tgt_results[sent]
             if sent in seed_sents:
-                label_h = seed_results[sent]
-                is_same_label = [l for l in label if str(l)==str(label_h)]
-                if any(is_same_label):
-                    num_seed_corr += 1
-                else:
-                    num_seed_incorr += 1
-                # end if
+                labels_h = seed_human_results[sent]['sent_score']
+                label_consistency = list()
+                for l_h in labels_h:
+                    is_same_label = [l for l in label if str(l)==str(l_h)]
+                    if any(is_same_label):
+                        label_consistency.append(1)
+                        # num_seed_corr += 1
+                    else:
+                        label_consistency.append(0)
+                        # num_seed_incorr += 1
+                    # end if
+                # end for
+                res['seed'][sent] = sum(label_consistency)/len(label_consistency)
             elif sent in exp_sents:
-                label_h = exp_results[sent]
-                is_same_label = [l for l in label if str(l)==str(label_h)]
-                if any(is_same_label):
-                    num_exp_corr += 1
-                else:
-                    num_exp_incorr += 1
-                # end if
+                label_h = exp_results[sent]['sent_score']
+                label_consistency = list()
+                for l_h in labels_h:
+                    is_same_label = [l for l in label if str(l)==str(label_h)]
+                    if any(is_same_label):
+                        label_consistency.append(1)
+                        # num_exp_corr += 1
+                    else:
+                        label_consistency.append(0)
+                        # num_exp_incorr += 1
+                    # end if
+                # end for
+                res['exp'][sent] = sum(label_consistency)/len(label_consistency)
             # end if
         # end for
-        return num_seed_incorr, num_exp_incorr
+        return res
 
+    @classmethod
+    def get_lc_relevancy(cls,
+                         tgt_lc_results,
+                         seed_human_results,
+                         exp_human_results):
+        # Label inconsistency: # of l{i}_ours != l{i}_human
+        num_seed_corr, num_seed_incorr = 0, 0
+        num_exp_corr, num_exp_incorr = 0, 0
+        seed_sents = list(seed_human_results.keys())
+        exp_sents = list(exp_human_results.keys())
+        res = {
+            'seed': dict(),
+            'exp': dict()
+        }
+        for s_i, sent in enumerate(tgt_lc_results.keys()):
+            lc = tgt_lc_results[sent]
+            res['seed'][lc] = dict()
+            res['exp'][lc] = dict()
+            if sent in seed_sents:
+                lc_scores_h = seed_human_results[sent]['lc_score']
+                res['seed'][lc][sent] = sum(lc_scores_h)/len(lc_scores_h)
+            elif sent in exp_sents:
+                lc_scores_h = exp_human_results[sent]['lc_score']
+                res['exp'][lc][sent] = sum(lc_scores_h)/len(lc_scores_h)
+            # end if
+        # end for
+        return res
 
     @classmethod
     def get_reported_bugs(cls,
@@ -393,11 +461,10 @@ class Humanstudy:
                     target_file: Path,
                     num_samples:int=100):
         # model_name="textattack/bert-base-uncased-SST-2"
-        seed_res_files = sorted([
+        seed_sent_files = sorted([
             f for f in os.listdir(str(res_dir))
             if os.path.isfile(os.path.join(str(res_dir), f)) and \
-            f.startswith('seed_samples_subject') and \
-            f.endswith('.txt')
+            re.search(r"seed_samples_raw_file(\d+)\.txt", f)
         ])
         res = dict()
         seed_rep_bugs_subjs = list()
@@ -407,60 +474,79 @@ class Humanstudy:
         exp_incorr_inps_subjs = list()
         exp_label_incons_subjs = list()
         labels = dict()
-        for seed_i, seed_res_file in enumerate(seed_res_files):
-            subject_i = int(re.search(r"seed_samples_subject(\d+)\.txt", seed_res_file).group(1))
-            seed_res_file = res_dir / seed_res_file
-            exp_res_file = res_dir / f"exp_samples_subject{subject_i}.txt"
+        for seed_f_i, seed_sent_file in enumerate(seed_sent_files):
+            subject_i = int(re.search(r"seed_samples_raw_file(\d+)\.txt", seed_res_file).group(1))
+            exp_sent_file = res_dir / f"exp_samples_raw_file{subject_i}.txt"
+            seed_resp_files = sorted([
+                f for f in os.listdir(str(res_dir))
+                if os.path.isfile(os.path.join(str(res_dir), f)) and \
+                re.search(r"seed_samples_raw_file{subject_i}_resp(\d+)\.txt", f)
+            ])
+            exp_resp_files = sorted([
+                f for f in os.listdir(str(res_dir))
+                if os.path.isfile(os.path.join(str(res_dir), f)) and \
+                re.search(r"exp_samples_raw_file{subject_i}_resp(\d+)\.txt", f)
+            ])
+
+            seed_human_res = dict()
+            seed_sents = cls.read_sample_sentences(sample_sent_file)
+            seed_human_res = cls.read_sample_scores(seed_resp_files, seed_sents)
             
-            seed_res = cls.read_results(seed_res_file, num_samples=num_samples)
-            exp_res = cls.read_results(exp_res_file, num_samples=num_samples)
-            tgt_res = cls.get_target_results(target_file, seed_res, exp_results=exp_res)
-            pred_res = cls.get_predict_results(nlp_task,
-                                               search_dataset_name,
-                                               selection_method,
-                                               model_name,
-                                               seed_res,
-                                               exp_res)
-            seed_rep_bugs, exp_rep_bugs = cls.get_reported_bugs(
-                pred_res, tgt_res, seed_res, exp_res
-            )
-            seed_incorr_inps, exp_incorr_inps = cls.get_incorrect_inputs(
-                pred_res, seed_res, exp_res
-            )
-            seed_label_incons, exp_label_incons = cls.get_label_inconsistency(
-                tgt_res, seed_res, exp_res
-            )
-            res[f"subject_{subject_i}"] = {
-                'seed': {
-                    'reported_bugs': seed_rep_bugs,
-                    'incorrect_inputs': seed_incorr_inps,
-                    'label_inconsistency': seed_label_incons
-                },
-                'exp': {
-                    'reported_bugs': exp_rep_bugs,
-                    'incorrect_inputs': exp_incorr_inps,
-                    'label_inconsistency': exp_label_incons
-                }
+            exp_sents = cls.read_sample_sentences(exp_sent_file)
+            exp_human_res = cls.read_sample_scores(exp_resp_files, exp_sents)
+            
+            tgt_res, tgt_res_lc = cls.get_target_results(target_file,
+                                                         seed_human_res,
+                                                         exp_human_res)
+            # pred_res = cls.get_predict_results(nlp_task,
+            #                                    search_dataset_name,
+            #                                    selection_method,
+            #                                    model_name,
+            #                                    seed_res,
+            #                                    exp_res)            
+            # seed_rep_bugs, exp_rep_bugs = cls.get_reported_bugs(
+            #     pred_res, tgt_res, seed_res, exp_res
+            # )
+            # seed_incorr_inps, exp_incorr_inps = cls.get_incorrect_inputs(
+            #     pred_res, seed_res, exp_res
+            # )
+            res[f"file{seed_f_i}"] = {
+                'label_scores': cls.get_label_consistency(tgt_res, seed_human_res, exp_human_res),
+                'lc_scores': cls.get_lc_relevancy(tgt_res_lc, seed_human_res, exp_human_res)
             }
-            seed_rep_bugs_subjs.append(seed_rep_bugs)
-            seed_incorr_inps_subjs.append(seed_incorr_inps)
-            seed_label_incons_subjs.append(seed_label_incons)
-            exp_rep_bugs_subjs.append(exp_rep_bugs)
-            exp_incorr_inps_subjs.append(exp_incorr_inps)
-            exp_label_incons_subjs.append(exp_label_incons)
         # end for
+
+        agg_seed_label_scores = list()
+        agg_seed_lc_scores = list()
+        agg_exp_label_scores = list()
+        agg_exp_lc_scores = list()
+        for s_i, sent in enumerate(tgt_res.keys()):
+            seed_sents = list(seed_human_res.keys())
+            exp_sents = list(exp_human_res.keys())
+            for f_i in res.keys():
+                if sent in seed_sents:
+                    agg_seed_label_scores.append(res[f_i]['label_scores']['seed'][sent])
+                    agg_seed_lc_scores.append(res[f_i]['lc_scores']['seed'][sent])
+                elif sent in exp_sents:
+                    agg_exp_label_scores.append(res[f_i]['label_scores']['exp'][sent])
+                    agg_exp_lc_scores.append(res[f_i]['lc_scores']['exp'][sent])
+                # end if
+            # end for
+        # end for
+
         
         res['agg'] = {
-            'num_subjects': len(seed_rep_bugs_subjs),
             'seed': {
-                'avg_reported_bugs': sum(seed_rep_bugs_subjs)/len(seed_rep_bugs_subjs),
-                'avg_incorrect_inputs': sum(seed_incorr_inps_subjs)/len(seed_incorr_inps_subjs),
-                'avg_label_inconsistency': sum(seed_label_incons_subjs)/len(seed_label_incons_subjs)
+                'label_scores': agg_seed_label_scores,
+                'lc_scores': agg_seed_lc_scores,
+                'avg_label_score': sum(agg_seed_label_scores)/len(agg_seed_label_scores),
+                'avg_lc_score': sum(agg_seed_lc_scores)/len(agg_seed_lc_scores),
             },
             'exp': {
-                'avg_reported_bugs': sum(exp_rep_bugs_subjs)/len(exp_rep_bugs_subjs),
-                'avg_incorrect_inputs': sum(exp_incorr_inps_subjs)/len(exp_incorr_inps_subjs),
-                'avg_label_inconsistency': sum(exp_label_incons_subjs)/len(exp_label_incons_subjs)
+                'label_scores': agg_exp_label_scores,
+                'lc_scores': agg_exp_lc_scores,
+                'avg_label_score': sum(agg_exp_label_scores)/len(agg_exp_label_scores),
+                'avg_lc_score': sum(agg_exp_lc_scores)/len(agg_exp_lc_scores),
             }
         }
         print(res)
