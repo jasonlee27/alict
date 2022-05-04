@@ -46,13 +46,13 @@ class Tables:
             if item == "lc-req":
                 cls.make_numbers_lc_requirement(Macros.result_dir, tables_dir)
                 cls.make_table_lc_requirement(Macros.result_dir, tables_dir)
-            elif item == "selfbleu":
+            elif item == "selfbleu": # deprecated
                 task = options.pop('task', 'sa')
                 search_dataset = options.pop('search_dataset_name', 'sst')
                 selection_method = options.pop('selection_method', 'random')
                 cls.make_numbers_selfbleu(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
                 cls.make_table_selfbleu(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
-            elif item == "retrain-debug":
+            elif item == "retrain-debug": # deprecated
                 task = options.pop('task', 'sa')
                 search_dataset = options.pop('search_dataset_name', 'sst')
                 selection_method = options.pop('selection_method', 'random')
@@ -60,6 +60,12 @@ class Tables:
                 model_name = options.pop('model_name')
                 cls.make_numbers_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method, epochs, model_name)
                 cls.make_table_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method, epochs, model_name)
+            elif item == "manual-study":
+                task = options.pop('task', 'sa')
+                search_dataset = options.pop('search_dataset_name', 'sst')
+                selection_method = options.pop('selection_method', 'random')
+                cls.make_numbers_manual_study(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+                cls.make_table_manual_study(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
             else:
                 cls.logger.warning(f"Unknown table {item}")
             # end if
@@ -339,6 +345,84 @@ class Tables:
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
         output_file.append(r"\vspace{\RetrainDebugTableVSpace}")
+        output_file.append(r"\end{table*}")
+        output_file.save()
+        return
+
+    @classmethoe
+    def make_numbers_manual_study(cls,
+                                  result_dir,
+                                  tables_dir,
+                                  task,
+                                  search_dataset,
+                                  selection_method):
+        result_file = result_dir / f"{task}_{search_dataset}_{selection_method}" / "human_study_results.json"
+        output_file = latex.File(tables_dir / 'manual-study-numbers.tex')
+        result = Utils.read_json(result_file)
+        seed_agg_result = result['agg']['seed']
+        exp_agg_result = result['agg']['exp']
+        output_file.append_macro(latex.Macro(f"manual_study_seed_num_sents",
+                                             seed_agg_result['num_sents']))
+        output_file.append_macro(latex.Macro(f"manual_study_seed_label_consistency",
+                                             seed_agg_result['avg_label_score']))
+        output_file.append_macro(latex.Macro(f"manual_study_seed_lc_relevancy",
+                                             seed_agg_result['avg_lc_score']))
+        output_file.append_macro(latex.Macro(f"manual_study_exp_num_sents",
+                                             exp_agg_result['num_sents']))
+        output_file.append_macro(latex.Macro(f"manual_study_exp_label_consistency",
+                                             exp_agg_result['avg_label_score']))
+        output_file.append_macro(latex.Macro(f"manual_study_exp_lc_relevancy",
+                                             exp_agg_result['avg_lc_score']))
+        output_file.save()
+        return
+
+
+    @classmethod
+    def make_table_manual_study(cls,
+                                result_dir,
+                                tables_dir,
+                                task,
+                                search_dataset,
+                                selection_method):
+        output_file = latex.File(tables_dir / "manual-study-numbers.tex")
+        
+        result_file = result_dir / f"{task}_{search_dataset}_{selection_method}" / "human_study_results.json"
+        output_file = latex.File(tables_dir / 'manual-study-numbers.tex')
+        result = Utils.read_json(result_file)
+        seed_agg_result = result['agg']['seed']
+        exp_agg_result = result['agg']['exp']
+        
+        # Header
+        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{small}")
+        output_file.append(r"\begin{center}")
+        output_file.append(r"\caption{\RetrainDebugTableCaption}")
+        output_file.append(r"\begin{tabular}{c|c|c|c}")
+        output_file.append(r"\toprule")
+
+        # Content
+        output_file.append(r"\tSentType & \tNumSents & \tAvgLabelCons & \tAvgLCRel \\")
+        output_file.append(r"\midrule")
+
+        output_file.append("Seed" + r"\\")
+        output_file.append("& " + latex.Macro("manual_study_seed_num_sents").use() + r"\\")
+        output_file.append(" & " + latex.Macro("manual_study_seed_label_consistency").use() + r"\\")
+        output_file.append(" & " + latex.Macro("manual_study_seed_lc_relevancy").use() + r"\\")
+        output_file.append(r"\\")
+        output_file.append(r"\hline")
+        output_file.append("Expanded" + r"\\")
+        output_file.append(" & " + latex.Macro("manual_study_exp_num_sents").use() + r"\\")
+        output_file.append(" & " + latex.Macro("manual_study_exp_label_consistency").use() + r"\\")
+        output_file.append(" & " + latex.Macro("manual_study_exp_lc_relevancy").use() + r"\\")
+        output_file.append(r"\\")
+        output_file.append(r"\hline")
+
+        # Footer
+        output_file.append(r"\bottomrule")
+        output_file.append(r"\end{tabular}")
+        output_file.append(r"\end{center}")
+        output_file.append(r"\end{small}")
+        output_file.append(r"\vspace{\ManualStudyTableVSpace}")
         output_file.append(r"\end{table*}")
         output_file.save()
         return

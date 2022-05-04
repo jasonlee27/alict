@@ -9,9 +9,9 @@ class Macros:
 
     this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__))) # nlptest/python/utils
     root_dir: Path = this_dir.parent.parent.parent # nlptest/
-    # storage_dir: Path = Path("/glusterfs/data/jxl115330/nlptest")
-    # result_dir: Path = storage_dir / "_results" # /glusterfs/data/jxl115330/nlptest/_results
-    result_dir: Path = root_dir / "_results" # nlptest/_results
+    storage_dir: Path = Path("/glusterfs/data/jxl115330/nlptest")
+    result_dir: Path = storage_dir / "_results" # /glusterfs/data/jxl115330/nlptest/_results
+    # result_dir: Path = root_dir / "_results" # nlptest/_results
     
     download_dir: Path = result_dir / "_downloads" # /glusterfs/data/jxl115330/nlptest/_downloads
     log_dir: Path = result_dir / "_logs" # /glusterfs/data/jxl115330/nlptest/_downloads

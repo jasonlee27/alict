@@ -125,7 +125,7 @@ class Humanstudy:
         return sample_results
     
     @classmethod
-    def write_samples(cls, sample_dict: Dict):
+    def write_samples(cls, sample_dict: Dict, res_dir: Path):
         for f_i in sample_dict.keys():
             seeds, exps = list(), list()
             seed_res = ""
@@ -140,11 +140,8 @@ class Humanstudy:
             for e, r in exps:
                 exp_res += f"{e} :: {r}\n\n\n"
             # end for
-            res_dir = Macros.result_dir / 'human_study'
-            res_dir.mkdir(parents=True, exist_ok=True)
-            print(seed_res)
-            # Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
-            # Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
+            Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
+            Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
             print(f"{f_i}:\nnum_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
         # end for
         return
@@ -543,9 +540,11 @@ class Humanstudy:
                     search_dataset_name,
                     selection_method):
         target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
+        res_dir = Macros.result_dir / 'human_study' / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+        res_dir.mkdir(parents=True, exist_ok=True)
         sent_dict = cls.read_sentences(target_file)
         sample_dict = cls.sample_sents(sent_dict, num_files=3, num_samples=5)
-        cls.write_samples(sample_dict)
+        cls.write_samples(sample_dict, res_dir)
         return
 
     @classmethod
@@ -556,7 +555,8 @@ class Humanstudy:
                     model_name,
                     num_samples):
         target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
-        res_dir = Macros.result_dir / 'human_study'
+        res_dir = Macros.result_dir / 'human_study' / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+        res_dir.mkdir(parents=True, exist_ok=True)
         # model_name = "textattack/bert-base-uncased-SST-2"
         result = cls.get_results(
             nlp_task,
@@ -567,5 +567,5 @@ class Humanstudy:
             target_file,
             num_samples=num_samples
         )
-        Utils.write_json(result, res_dir / "human_study_results.json", pretty_format=True)
+        Utils.write_json(result, res_dir / f"human_study_results.json", pretty_format=True)
         return
