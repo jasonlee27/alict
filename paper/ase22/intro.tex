@@ -1,112 +1,151 @@
 \section{Introduction}
 \label{sec:intro}
 
-%% [Thursday 3:01 PM] Yang, Wei
-
-%% 1. existing NLP testing practice.
-
-%% 2. Limitation in three perspectives:
-%% (i) automated input generation,
-%% (ii) test oracle (of generated input),
-%% (iii) metrics/capabilities to debug the issues
-
-%% 3. Issues with existing techniques: cannot satisfy all three requirements. Give some example, checklist (ii) and (iii), adversarial
-%% testing (i) (ii) ....
-
-%% 4. To address the limitation of existing work, we propose....
-
-%% 5. insight that enable the three requirements
+% In the early stage of the software development process, automated
+% software testing and debugging can identify and fix
+% defects. Therefore, effective software testing assures software
+% quality, and it meets needs of the end user. Nowdays, software at work
+% has elements of \ml (ML). Especially, 
 
 
-In the early stage of the software development process, automated
-software testing and debugging can identify and fix
-defects. Therefore, effective software testing assures software
-quality, and it meets needs of the end user. Nowdays, software at work
-has elements of \ml (ML). Especially, \Nlp (NLP) applications in
-software are growing exponentially. Therefore, as quality assurance of
-software is an essential process in the software development
-processes, trustworthiness in quality of NLP application has become an
-important component for its practical use in real world.
-%% \sw{Should we lead with this paragraph? We are talking about
-%%   functional testing here but next we say NLP uses
-%%   train-validation-test.}
-Traditionally, the prevalent models of NLP are evaluated via
-train-validation-test splits. Training and validation set are used to
-train the NLP models, and the test set, also named as \ho set, is used
-for testing the trained model. Meanwhile, the model performance is
-estimated into numbers used as performance metric. Especially,
-accuracy, the fraction of model output that the model correctly
-predicts, is the most widely the performance metric for classification
-models. Accordingly, a model is considered better if it has higher
-accuracy than another model.
+\Nlp (NLP) applications are growing exponentially.  As a result,
+trustworthiness in the quality of NLP applications has become critical
+for its practical use in the real world.  Therefore, quality assurance
+of NLP applications is an essential process in the software
+development processes.  Traditionally, the prevalent models of NLP are
+evaluated via train-validation-test splits \cite{}.  Training and
+validation sets are used to train the NLP models, and the test set,
+also called \ho set, is used to test the trained model.  The quality
+of these models is estimated into numbers using performance
+metrics. Especially, accuracy (i.e., the fraction of outputs that the
+model correctly predicts) is the most widely used metric for assessing
+the quality of classification models. When comparing two NLP models,
+one is considered better if it has higher accuracy than the other.
 
-Despite its simplicity and usefulness, there are several limitations
-for the prevalent testing paradigm: First, the testing paradigm mostly
-requires manual work for collecting and generating the data. The
-manual work is costly with respect to time consumption and its impact
-on market price. Therefore, it necessitates automated data generation
-for improving model testing approach. Second, this testing paradigm
-often overestimates the model performances from the \ho
+Researchers aim to improve the current practices of testing NLP models
+from three perspectives: (i) \emph{Test input generation}, (ii)
+\emph{Automated test oracle}, and (iii) \emph{Meaningful quality
+  metrics}.
+
+\noindent \textbf{Test input generation.} Currently, most testing of
+an NLP model reuses existing large textual corpus as the testing
+dataset to evaluate the model. This practice will often overestimates
+the model performances from the \ho
 set~\cite{patel2018mlevalforsoftware, recht2019imagenetbias,
-  marcoACL2020checklist}.
-%% \sw{Not sure what overestimate means here}
-The overestimation comes from the discrepancy between distribution of
-data collected and actual distribution in real world.  Oftentimes, the
-\ho dataset is not representative and it is likely to introduce
-specific biases. In addition, the inconsistency between test input and
-its oracle causes biases. Such biases increase the discrepancy of
-distribution between the dataset and real-world data. Consequently,
-representiveness of the test data is required for testing approach.
-Not only that, forced aggregation static into a single number such as
-average makes user to difficult to localize and fix the bug found in
-\ho set. Therefore, making this testing method fails to validate model
-behaviors resulting in localization of the causes of the inaccuracy at
-a high. In cost~\cite{wu2019errudite}. Therefore behavioral testing
-approach provides the better ability to examine the inaccuracy and
-find the bugs in the model.
+  marcoACL2020checklist}.  The overestimation comes from the
+discrepancy between distribution of the used dataset and actual data
+distribution in real world. Oftentimes, the \ho dataset is not
+representative and it is likely to introduce specific biases. Such
+biases lead to make the model delicated to out-of-distribution and
+decrease robustness of model in the end. In this regards, prior works
+have proposed techniques for testing NLP model robustness by crafting
+adversarial examples and attacking a model with them intentionally
+\cite{ribeiro2018sear,belinkov2018breaknmt,
+  rychalska2019wildnlp,iyyer2018adversarial}. \TODO{Jaeseong, mention
+  and cite adversarial testing techniques here.} \jl{done.}
 
-To address these challenges, several approaches have been proposed to
-evaluate different aspects of the NLP models, such as robustness on
-adversarial examples \cite{ribeiro2018sear,belinkov2018breaknmt,
-  rychalska2019wildnlp,iyyer2018adversarial}, model coverage
-\cite{rottger2020hatecheck}, and fairness
-\cite{prabhakaran2019fairness,rottger2020hatecheck}. In addition,
+\noindent \textbf{Automated test oracle.} The current testing practice
+requires manual work for labelling the test oracles of the \ho
+data. The manual work is costly in terms of time consumption and its
+impact on market price. Therefore, it necessitates automated test
+oracle generation for improving the testing process of NLP
+models. However, validity of the automation is ensured by the
+correctness of test oracle. Auto-generated test orcle may not always
+be feasible; predicting the correct test oracle is one of main
+challenges to gaurantee its practical use. Along with this, software
+metamorphic testing approach has been
+introduced~\cite{segura2016metamorphictest} to alleviate the test
+oracle discrepancy between expected and observed test oracle.
+\TODO{Describe and Add citations to metamorphic testing techniques
+  here}\jl{done.}
+
+
+%% \sw{Not sure what overestimate means here}
+%  In addition, the inconsistency between test input and
+% its oracle causes biases. Such biases increase the discrepancy of
+% distribution between the dataset and real-world data.
+\noindent \textbf{Meaningful quality metrics.}  As discussed, accuracy
+is the most widely used quality metric for measuring NLP model
+performance. Forced aggregation statistics into a single number makes
+the user difficult to assess the capability of NLP models.  Not to
+mention localizing and fixing the bugs found from the \ho
+set. Therefore, this forced aggregation method not only fails to
+validate model behaviors, but it also makes the localization of the
+causes of the inaccuracy more costly~\cite{wu2019errudite}.
+% Therefore behavioral testing
+% approach provides the better ability to examine the inaccuracy and
+% find the bugs in the model.
+To address this limitation,
+% several approaches have been proposed to
+% evaluate different aspects of the NLP models, such as , model coverage
+% \cite{rottger2020hatecheck}, and fairness
+% \cite{prabhakaran2019fairness,rottger2020hatecheck}. In addition, For example, Testing model coverage
+% only shows model behaviors, but not the model performance on existing
+% testing set. The fairness and robustness testing only focus on only
+% one model capability resulting in its limited comprehensiveness. In
+% addition,
 Ribeiro~\etal introduced \Cklst, a behavioral testing framework for
 evaluating NLP model on multiple linguistic
 capabilities~\cite{marcoACL2020checklist}. \Cklst defines
-task-relevant linguistic capabilities and generates testcases for each
-\lc. In spite of their effectiveness, they have limitations with
-respective to model evaluation. For example, Testing model coverage
-only shows model behaviors, but not the model performance on existing
-testing set. The fairness and robustness testing only focus on only
-one model capability resulting in its limited comprehensiveness. In
-addition, \Cklst relies on manually generated input templates; thus,
-the template generation requires manual work, and it needs to be
-preset before test data generation. Consequently, the templates
-becomes distributed in limited range of their structure. It restricts
-its ability to comprehensively test the linguistic capabilities.
+task-relevant linguistic capabilities and generates test cases for
+each \lc.
 
-Despite the limitations, \Cklst approach of testing the linguistic
-capabilities is a promising direction. Each \lc explains the
-functionality of the input and output behavior for the NLP model under
-test. Typically, it describes certain type of input and outputs
-observed in real world for the target NLP task ranging from simple to
-complicated behaviors so that they are able to evaluate the NLP model
-comprehensively. For exmaple, a linguistic capability of ``Negated
-neutral should still be neutral.'' measures how accurately the \sa
-model understands the negative neutral input as an neutral
-sentiment. Therefore, it requires the \sa model to output neural
-sentiment on the negated neutral input.  Such methodology of
-evaluation on the specified functionalities avoids the overestimation
-of the model performance as it equivalently measures the model
-performance on each functionality, and the separate model performance
-explain distribution of the performance over the linguistic
-capabilities. In the end, it provides not only the overall model
-performance, but also the malfunction facets of the model.
+However, none of the above approaches satisfy all three requirements
+at the same time. First, prior adversarial testing approaches merely
+focus on evaluating model robustness. These measure how much model is
+sensetive to the output on which input perturbations while limited to
+provide evaluation on linguistic functionalities of interests in
+real-world. In addition, the metamorphic testing approach is required
+to understand characteristics of metamorphic relations between input
+and output.  However, finding these is one of the most challenging
+problem in the metamorphic
+testing~\cite{segura2016metamorphictest}. Along with this, such
+relations in textual data in NLP domain has not been evaluated despite
+its importance. \TODO{Describe the limitation of adversarial testing
+  and Metamorphic testing} \jl{done.}
 
-To address the limitations of existing works, we present \tool, an
-automated NLP model evaluation method for comprehensive behavioral
-testing of NLP models on \sa task. We first address increasing input
+Specifically, \Cklst relies on manually generated input templates,
+which need to be preset before test input generation. Consequently,
+\Cklst templates are distributed in a limited range of their
+structures. This restricts \Cklst's ability to comprehensively test
+the linguistic capabilities.
+
+Despite \Cklst's limitations, assessing the quality of NLP models
+through the linguistic capabilities is a promising direction. Each \lc
+explains the functionality of the input and output behavior for the
+NLP model under test. Typically, it describes certain type of inputs
+and outputs observed in real world for the target NLP task ranging
+from simple to complicated behaviors, so the model developers can
+better understand the capabilities and potential issues of the NLP
+models. For example, a linguistic capability of ``Negated neutral
+should still be neutral'' measures how accurately the \sa model
+understands the negative neutral input as an neutral sentiment
+\cite{marcoACL2020checklist}.  Therefore, it requires the \sa model to
+output neutral sentiment on the negated neutral input.  Such
+methodology of evaluation on the specified functionalities avoids the
+overestimation of the model performance as it equivalently measures
+the model performance on each functionality.
+% ,and the separate model performance
+% explain distribution of the performance over the linguistic capabilities
+In the end, testing through linguistic capabilities provides not only
+the overall model performance, but also the malfunction facets of the
+model.
+
+To satisfy all three requirements mentioned above, we present \tool,
+an automated NLP model evaluation method for comprehensive behavioral
+testing of NLP models on \sa task.  There are three main challenges
+that \tool overcomes to satisfy all three aforementioned requirements.
+\begin{description}
+\item[{\bf C1}] The test suite should cover diverse syntactic structures;
+\item[{\bf C2}] Each test case should be categorized into a \lc;
+\item[{\bf C3}] The label of each test case should be automatically
+  and accurately defined.
+\end{description}
+
+
+\TODO{adding detail description about challenges}
+
+\noindent \textbf{C1.} We first address increasing input
 representiveness. Compared with templates used in \Cklst, \tool
 instead establishes input requirement for evaluating a linguistic
 capability and finds suitable inputs that meet the requirement from
@@ -114,17 +153,107 @@ existing public dataset. In this process, \tool applies the fuzzing
 testing principle to generate inputs by mutating the selected inputs
 as seed inputs. Fuzzer in \tool first expands seed input grammar
 structures and determines its available \pos to maintain structural
-naturalness. After that, to hold contextual naturalness of the mutated
-inputs, the fuzzer completes the expanded new structures via
-data-driven context-aware word suggestion. Additionally,
-sentiment-independent words in the inputs are replaced with rule-based
-word suggestion. Further, we address the manual input generation
-process by automating the process mentioned above. Lastly, we adopts
-behavioral model testing method by introducing multiple behavior of
-linguistic capabilities on \sa task and generating inputs relevant to
-each linguistic capability.
+naturalness.
+
+% After that, to hold contextual naturalness of the mutated
+% inputs, the fuzzer completes the expanded new structures via
+% data-driven context-aware word suggestion. Additionally,
+% sentiment-independent words in the inputs are replaced with rule-based
+% word suggestion. Further, we address the manual input generation
+% process by automating the process mentioned above. 
+
+\noindent \textbf{C2.} Morover, we adopts behavioral model testing
+method by introducing multiple behaviors from \lcs on \sa task and
+generating inputs relevant to each \lc. Each test case provides not
+only correcteness of model prediction on it, but \lc on the test case
+also gives infromation about classification on the model
+performance. Therefore assigning appropriate \lc for each testcase
+alleviates overestimation of model testing results.
+
+\noindent \textbf{C3.} Lastly, we show the appropriateness of test
+orable that \tool automatically generated by manual study of generated
+test cases. Aggreement of input-output relations between human and
+\tool is crucial to increase trustworthiness of model. In this manner,
+reliabilty of model for its practical use can be achieved in the end.
+
 
 We demonstrate its generality and utility as a NLP model evaluation
 tool by evaluating well-known \sa models: \Bert~\cite{devlin2019bert},
 \Roberta~\cite{liu2019roberta} and \Dbert~\cite{sanh2019distilbert}.
 We show that ...
+
+% \section{Introduction}
+% \label{sec:intro}
+
+% Software functional testing is an essential component of the software development
+% process. It evaluates an attribute of the software and
+% determines the correctness by comparing the actual and the expected behaviors.  \sw{Should we lead with this paragraph? We are talking about functional testing here but next we say NLP uses train-validation-test.}
+% Automated software
+% testing and debugging in the early stage of the development process can identify and fix defects. Therefore,
+% effective software testing assures software quality, and
+% it meets needs of the end user. 
+
+% Meanwhile, the trustworthiness in
+% quality of \nlp (NLP) application has become an important component for
+% its practical use in real world. Traditionally, the prevalent models
+% of NLP are evaluated via train-validation-test splits \cite{}. Training and
+% validation set are used to train the NLP models and the \ho set is used
+% for testing. Accuracy is often used as the performance
+% metric of the models \cite{}, i.e., a model is considered better if it has higher
+% accuracy than another model.
+% Despite its simplicity and usefulness, this testing paradigm often
+% overestimates \sw{Not sure what overestimate means here} the performances from the \ho set. Oftentimes, the \ho dataset is not representative and it is likely to introduce specific
+% biases. Such biases increase the discrepancy of distribution between
+% the dataset and real-world data~\cite{recht2019imagenetbias}. Therefore, making this testing method fail to measure the comprehensive performance of the NLP
+% models. In addition, the accuracy metric does not validate
+% certain behaviors of the model; as a result, it still is costly to localize the causes of the inaccuracy~\cite{wu2019errudite}.
+
+% To address these challenges, several approaches have
+% been proposed to evaluate different aspects of the NLP models,
+% such as robustness on adversarial examples \cite{}, model coverage \cite{}, and
+% fairness \cite{}.  Especially, Ribeiro~\etal introduced \Chlst, a
+% behavioral testing framework for evaluating NLP model on multiple
+% linguistic capabilities~\cite{marcoACL2020checklist}. \Chlst defines
+% task-relevant linguistic capabilities and generates testcases for each \lc.
+% However, the approach relies on manually generated input
+% templates; thus, the template generation becomes expensive and time
+% consuming. In addition, only a few simple templates are used by \Chlst, limiting its ability to comprehensively test the linguistic capabilities.
+
+% Despite the limitations\jl{this paragraph, how about mentioning checklist first and limitations and our model?}, \Chlst's approach of testing the linguistic capabilities is a promising direction. Each \lc explain the functionality
+% of the input and output behavior for the NLP model under test. \sw{For example, ...} The
+% expected behavior is determined by combining the input and output
+% scopes specified on the \lc. \sw{Not sure what the last sentence means.} Typically, it describes certain type of
+% input and outputs observed in real world for the target NLP task
+% ranging from simple to complicated behaviors so that they are able to
+% evaluate the NLP model comprehensively. \sw{For example, ...} Such evaluation on the
+% specified functionalities avoids the overestimation of the model
+% performance as it equivalently measures the model performance on each
+% functionality, and the separate model performance explain distribution
+% of the performance over the linguistic capabilities. In the end, it provides not only the
+% overall model performance, but also the malfunction facets of the
+% model. However, the prior work currently generated model. \sw{This paragraph can be moved before the limitations of \Chlst (last paragraph)? I will make the description more concrete.}
+
+% In this paper, we present \tool, an automated NLP model evaluation
+% method for comprehensive behavioral testing of NLP models on \sa
+% task. For each behavior of linguistic capability, \tool does not rely
+% on the manual input generation. \sw{Make sure this paragrpah is consistent with our approach description in Section 3. Also, make clear in this paragraph: what challenges/limitations from CheckList we address and how.} Instead, it establishes input
+% requirement for evaluating a linguistic capability and finds suitable
+% inputs that meet the requirement from existing public dataset.
+% Therefore, \tool increases input diversity and generality. Further,
+% \tool applies the fuzzing testing principle to generate inputs by
+% mutating the selected inputs as seed inputs. Fuzzer in \tool first
+% expands seed input grammar structures and determines its available
+% \pos to maintain structural naturalness. After that, to hold
+% contextual naturalness of the mutated inputs, the fuzzer completes the
+% expanded new structures via data-driven context-aware word
+% suggestion. Additionally, sentiment-independent words in the inputs
+% are replaced with rule-based word suggestion.
+
+% We demonstrate its generality and utility as a NLP model evaluation
+% tool by evaluating well-known \sa models: \Bert~\cite{devlin2019bert},
+% \Roberta~\cite{liu2019roberta} and \Dbert~\cite{sanh2019distilbert}.
+% We show that ...
+
+% Contributions:
+
+% \jl{test oracle relevancy, and relevancy of testcase with lc}
