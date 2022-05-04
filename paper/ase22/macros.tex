@@ -72,6 +72,7 @@
 \newcommand{\ReqTableVSpace}{-5pt}
 \newcommand{\SelfBleuTableVSpace}{-5pt}
 \newcommand{\RetrainDebugTableVSpace}{-5pt}
+\newcommand{\ManualStudyTableVSpace}{-5pt}
 \newcommand{\romnum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
 
 \newcommand{\jl}[1]{\textcolor{teal}{JL: #1}}
@@ -213,11 +214,10 @@
 \newcommand{\tNumpassbeforeretrain}{\textbf{\#Pass(BeforeRetrain)}}
 \newcommand{\tNumfailafterretrain}{\textbf{\#Fail(AfterRetrain)}}
 \newcommand{\tNumpassafterretrain}{\textbf{\#Pass(AfterRetrain)}}
-
-\newcommand{\tSentType}{\textbf{Testcase\_Type}}
+\newcommand{\tSentType}{\textbf{Type}}
 \newcommand{\tNumTestCases}{\textbf{\#Testcases}}
-\newcommand{\tAvgLabelCons}{\textbf{Label\_Consistency_{AVG}}}
-\newcommand{\tAvgLCRel}{\textbf{LC\_Relevancy_{AVG}}}
+\newcommand{\tAvgLabelCons}{\textbf{LabelConsistency}}
+\newcommand{\tAvgLCRel}{\textbf{LcRelevancy}}
 
 %% Fig Caption
 \newcommand{\OverviewFigCaption}{Overview of \tool.\label{fig:overview}}
@@ -240,6 +240,10 @@ of \Ccd, \Ctr, \Cref repectively.\label{table:Result}\vspace{-5pt}}
 from \tool and \Chlst}
 \newcommand{\RetrainDebugTableCaption}{Result of retraining on
 each \lc and the evaluation of the retrained model.\label{table:RetrainDebug}}
+\newcommand{\ManualStudyTableCaption}{Aggregated Statistics of manual
+study of label consistency and \lc relevancy of \tool generated
+testcases compared with human annotations.\label{table:ManualStudy}}
+
 
 %%% NUMBRERS
 \input{tables/lc-requirement-numbers}
