@@ -55,8 +55,9 @@ class Humanstudy:
             seed_dict = dict()
             for seed in inp['inputs'].keys():
                 if include_label:
+                    label = inp['inputs'][seed]['label']
                     seed_dict[seed] = {
-                        'label': inp['inputs'][seed]['label'],
+                        'label': label,
                         'exp': [
                             (e[5], cls.SENTIMENT_MAP_FROM_STR[str(label)])
                             for e in inp['inputs'][seed]['exp_inputs'] if e[5] is not None
@@ -79,7 +80,7 @@ class Humanstudy:
     def sample_sents(cls, sent_dict: Dict, num_files=3, num_samples=5):
         sample_results = dict()
         for f_i in range(num_files):
-            sample_results[f"file{f_i}"] = dict()
+            sample_results[f"file{f_i+1}"] = dict()
         # end for
         
         for req in sent_dict.keys():
@@ -114,7 +115,7 @@ class Humanstudy:
                             # end if
                         # end for
                     # end for
-                    sample_results[f"file{f_i}"][req] = {
+                    sample_results[f"file{f_i+1}"][req] = {
                         'seed': seed_sents_per_step,
                         'exp': exp_sents_per_step
                     }
@@ -142,8 +143,8 @@ class Humanstudy:
             res_dir = Macros.result_dir / 'human_study'
             res_dir.mkdir(parents=True, exist_ok=True)
             print(seed_res)
-            # Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
-            # Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
+            Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
+            Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
             print(f"{f_i}:\nnum_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
         # end for
         return
@@ -188,32 +189,30 @@ class Humanstudy:
         return res
 
     @classmethod
-    def get_target_results(cls, target_file, seed_human_results, exp_humanresults):
+    def get_target_results(cls, target_file, seed_human_results, exp_human_results):
         sent_dict = cls.read_sentences(target_file, include_label=True)
         res, res_lc = dict(), dict()
         seed_sents = list(seed_human_results.keys())
         exp_sents = list(exp_human_results.keys())
         for r in sent_dict.keys():
-            for s in sent_dict[r]['seed']:
-                if s[0] is not None:
-                    sent = s[0]
-                    tokens = Utils.tokenize(s[0])
+            for s in sent_dict[r].keys(): # seed sents
+                if any(sent_dict[r][s]['exp']):
+                    sent = s
+                    tokens = Utils.tokenize(sent)
                     _sent = Utils.detokenize(tokens)
                     if sent in seed_sents or _sent in seed_sents:
-                        res[_sent] = s[1]
+                        res[_sent] = sent_dict[r][s]['label']
                         res_lc[_sent] = r
                     # end if
-                # end if
-            # end for
-            for s in sent_dict[r]['exp']:
-                if s[0] is not None:
-                    sent = s[0]
-                    tokens = Utils.tokenize(s[0])
-                    _sent = Utils.detokenize(tokens)
-                    if sent in exp_sents or _sent in exp_sents:
-                        res[_sent] = s[1]
-                        res_lc[_sent] = r
-                    # end if
+                    for e in sent_dict[r][s]['exp']:
+                        sent = e[0]
+                        tokens = Utils.tokenize(sent)
+                        _sent = Utils.detokenize(tokens)
+                        if sent in exp_sents or _sent in exp_sents:
+                            res[_sent] = e[1]
+                            res_lc[_sent] = r
+                        # end if
+                    # end for
                 # end if
             # end for
         # end for
@@ -485,7 +484,8 @@ class Humanstudy:
         exp_label_incons_subjs = list()
         labels = dict()
         for seed_f_i, seed_sent_file in enumerate(seed_sent_files):
-            subject_i = int(re.search(r"seed_samples_raw_file(\d+)\.txt", seed_res_file).group(1))
+            print(seed_f_i, seed_sent_files)
+            subject_i = int(re.search(r"seed_samples_raw_file(\d+)\.txt", seed_sent_file).group(1))
             exp_sent_file = res_dir / f"exp_samples_raw_file{subject_i}.txt"
             seed_resp_files = sorted([
                 f for f in os.listdir(str(res_dir))
@@ -499,7 +499,7 @@ class Humanstudy:
             ])
 
             seed_human_res = dict()
-            seed_sents = cls.read_sample_sentences(sample_sent_file)
+            seed_sents = cls.read_sample_sentences(res_dir / seed_sent_file)
             seed_human_res = cls.read_sample_scores(seed_resp_files, seed_sents)
             
             exp_sents = cls.read_sample_sentences(exp_sent_file)
@@ -520,7 +520,7 @@ class Humanstudy:
             # seed_incorr_inps, exp_incorr_inps = cls.get_incorrect_inputs(
             #     pred_res, seed_res, exp_res
             # )
-            res[f"file{seed_f_i}"] = {
+            res[f"file{subject_i}"] = {
                 'label_scores': cls.get_label_consistency(tgt_res, seed_human_res, exp_human_res),
                 'lc_scores': cls.get_lc_relevancy(tgt_res_lc, seed_human_res, exp_human_res)
             }
