@@ -469,6 +469,7 @@ class Tables:
         # end for
         
         for m_i, model_name in enumerate(result.keys()):
+            print(m_i, model_name)
             # model_name = model_name.replace('/', '-')
             temp_num_seeds, temp_num_exps = 0,0
             temp_num_seed_fail, temp_num_exp_fail = 0,0
@@ -567,41 +568,42 @@ class Tables:
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
         output_file.append(r"\caption{\TestResultsTableCaption}")
-        output_file.append(r"\begin{tabular}{p{5cm}||c c c c c c c}")
+        output_file.append(r"\begin{adjustbox}{angle=90}")
+        output_file.append(r"\begin{tabular}{p{5cm}||ccccccc}")
         output_file.append(r"\toprule")
         
-        output_file.append(r"\tLc & \tNumBlSents & \tNumBlFail & \tNumSeeds & \tNumSeedFail & \tNumExps & \tNumExpsFail & \tNumPasstoFail\\")
+        output_file.append(r"\tLc & \tNumBlSents & \tNumBlFail & \tNumSeeds & \tNumSeedFail & \tNumExps & \tNumExpFail & \tNumPasstoFail\\")
         output_file.append(r"\midrule")
 
         # Content
         for lc_i in range(lcs_len):
-            output_file.append("\multirow{"+str(len(model_names))+"}{*}{" + \
-                               latex.Macro(f"test-results-lc{lc_i}").use() + "}")
+            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{5cm}{" + \
+                               f"LC{lc_i+1}: " + latex.Macro(f"test-results-lc{lc_i}").use() + "}}")
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
                                latex.Macro(f"test-results-bl-lc{lc_i}-num-sents").use() + "}")
-            output_file.append(" & m0\colon" + latex.Macro("test-results-bl-model0-lc{lc_i}-num-fail").use())
+            output_file.append(" & Model1$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
 
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
                                latex.Macro(f"test-results-lc{lc_i}-num-seeds").use() + "}")
-            output_file.append(" & m0\colon" + latex.Macro("test-results-model0-lc{lc_i}-num-seed-fail").use())
+            output_file.append(" & Model1$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-seed-fail").use())
             
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
                                latex.Macro(f"test-results-lc{lc_i}-num-exps").use() + "}")
-            output_file.append(" & m0\colon" + latex.Macro("test-results-model0-lc{lc_i}-num-exp-fail").use())
-            output_file.append(" & m0\colon" + latex.Macro("test-results-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+            output_file.append(" & Model1$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-exp-fail").use())
+            output_file.append(" & Model1$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             
             for m_i in range(1,len(model_names)):
-                output_file.append(f" & & m{m_i}\colon" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & & m{m_i}\colon" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail").use())
-                output_file.append(f" & & m{m_i}\colon" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail").use())
-                output_file.append(f" & m{m_i}\colon" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+                output_file.append(f" & & Model{m_i+1}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & & Model{m_i+1}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail").use())
+                output_file.append(f" & & Model{m_i+1}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail").use())
+                output_file.append(f" & Model{m_i+1}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             # end for
+            output_file.append(r"\hline")
         # end for
-        output_file.append(r"\hline")
-
         # Footer
         output_file.append(r"\bottomrule")
         output_file.append(r"\end{tabular}")
+        output_file.append(r"\end{adjustbox}")
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
         output_file.append(r"\vspace{\TestResultsTableVSpace}")
