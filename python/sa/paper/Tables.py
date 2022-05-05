@@ -66,6 +66,12 @@ class Tables:
                 selection_method = options.pop('selection_method', 'random')
                 cls.make_numbers_manual_study(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
                 cls.make_table_manual_study(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+            elif item == "test-results":
+                task = options.pop('task', 'sa')
+                search_dataset = options.pop('search_dataset_name', 'sst')
+                selection_method = options.pop('selection_method', 'random')
+                cls.make_numbers_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+                cls.make_table_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method)xs
             else:
                 cls.logger.warning(f"Unknown table {item}")
             # end if
@@ -349,7 +355,7 @@ class Tables:
         output_file.save()
         return
 
-    @classmethoe
+    @classmethod
     def make_numbers_manual_study(cls,
                                   result_dir,
                                   tables_dir,
@@ -405,7 +411,7 @@ class Tables:
         output_file.append(r"\midrule")
 
         output_file.append("Seed" + r"\\")
-        output_file.append("& " + latex.Macro("manual_study_seed_num_sents").use() + r"\\")
+        output_file.append(" & " + latex.Macro("manual_study_seed_num_sents").use() + r"\\")
         output_file.append(" & " + latex.Macro("manual_study_seed_label_consistency").use() + r"\\")
         output_file.append(" & " + latex.Macro("manual_study_seed_lc_relevancy").use() + r"\\")
         output_file.append(r"\\")
@@ -423,6 +429,126 @@ class Tables:
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
         output_file.append(r"\vspace{\ManualStudyTableVSpace}")
+        output_file.append(r"\end{table*}")
+        output_file.save()
+        return
+
+    @classmethod
+    def make_numbers_test_results(cls,
+                                  result_dir,
+                                  tables_dir,
+                                  task,
+                                  search_dataset,
+                                  selection_method):
+        result_file = result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_analysis.json'
+        baseline_result_file = result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_checklist_analysis.json'
+        
+        output_file = latex.File(tables_dir / 'test-results-numbers.tex')
+        result = Utils.read_json(result_file)
+        for m_i, model_name in enumerate(result.keys()):
+            model_name = model_name.replace('/', '-')
+            for res_i, res in enumerate(result[model_name].keys()):
+                if m_i==0:
+                    desc = cls.replace_latex_symbol(res['lc'])
+                    output_file.append_macro(latex.Macro(f"test-results-lc{res_i}",
+                                                         desc))
+                    output_file.append_macro(latex.Macro(f"test-results-lc{res_i}-num-seeds",
+                                                         res['num_seeds']))
+                    output_file.append_macro(latex.Macro(f"test-results-lc{res_i}-num-exps",
+                                                         res['num_exps']))
+                # end if
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{res_i}-num-seed-fail",
+                                                     res['num_seed_fail']))
+                if res['is_exp_exist']:
+                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{res_i}-num-exp-fail",
+                                                         res['num_exp_fail']))
+                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{res_i}-num-pass-to-fail",
+                                                         res['num_pass2fail']))
+                else:
+                    output_file.append_macro(latex.Macro(f"test-results-lc{res_i}-num-exps", '-'))
+                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{res_i}-num-exp-fail", '-'))
+                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{res_i}-num-pass-to-fail", '-'))
+            # end for
+        # end for
+        
+        baseline_result = Utils.read_json(baseline_result_file)
+        for m_i, model_name in enumerate(baseline_result.keys()):
+            model_name = model_name.replace('/', '-')
+            for res_i, res in enumerate(baseline_result[model_name].keys()):
+                if m_i==0:
+                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{res_i}-num-sents",
+                                                         res['num_tcs']))
+                # end if
+                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{res_i}-num-fail",
+                                                     res['num_tc_fail']))
+            # end for
+        # end for
+        output_file.save()
+        return
+
+    @classmethod
+    def make_table_test_results(cls,
+                                result_dir,
+                                tables_dir,
+                                task,
+                                search_dataset,
+                                selection_method):
+        output_file = latex.File(tables_dir / "test-results-table.tex")
+
+        result_file = result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_analysis.json'
+        baseline_result_file = result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_checklist_analysis.json'
+        
+        result = Utils.read_json(result_file)
+        baseline_result = Utils.read_json(baseline_result_file)
+        model_names = list(baseline_result.keys())
+        lcs = list(baseline_result[model_names[0]].keys())
+        
+        seed_agg_result = result['agg']['seed']
+        exp_agg_result = result['agg']['exp']
+        
+        # Header
+        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{small}")
+        output_file.append(r"\begin{center}")
+        output_file.append(r"\caption{\TestResultsTableCaption}")
+        output_file.append(r"\begin{tabular}{p{5cm}||c c c c c c c}")
+        output_file.append(r"\toprule")
+        
+        output_file.append(r"\tLc & \tNumBlSents & \tNumBlFail & \tNumSeeds & \tNumSeedFail & \tNumExps & \tNumExpsFail & \tNumPasstoFail\\")
+        output_file.append(r"\midrule")
+
+        # Content
+        for lc_i, lc in enumerate(lcs):
+            output_file.append("\multirow{"+str(len(model_names))+"}{*}{" + \
+                               latex.Macro(f"test-results-lc{lc_i}").use() + "}")
+            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
+                               latex.Macro(f"test-results-bl-lc{lc_i}-num-sents").use() + "}")
+            output_file.append(" & m0\colon" + latex.Macro("test-results-bl-model0-lc{lc_i}-num-fail").use())
+
+            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
+                               latex.Macro(f"test-results-lc{lc_i}-num-seeds").use() + "}")
+            output_file.append(" & m0\colon" + latex.Macro("test-results-model0-lc{lc_i}-num-seed-fail").use())
+            
+            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
+                               latex.Macro(f"test-results-lc{lc_i}-num-exps").use() + "}")
+            output_file.append(" & m0\colon" + latex.Macro("test-results-model0-lc{lc_i}-num-exp-fail").use())
+            output_file.append(" & m0\colon" + latex.Macro("test-results-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+            
+            for m_i, m_name in model_names[1:]:
+                output_file.append(f" & & m{m_i+1}\colon" + latex.Macro(f"test-results-bl-model{m_i+1}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & & m{m_i+1}\colon" + latex.Macro(f"test-results-model{m_i+1}-lc{lc_i}-num-seed-fail").use())
+                output_file.append(f" & & m{m_i+1}\colon" + latex.Macro(f"test-results-model{m_i+1}-lc{lc_i}-num-exp-fail").use())
+                output_file.append(f" & m{m_i+1}\colon" + latex.Macro(f"test-results-model{m_i+1}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+            # end for
+        # end for
+        output_file.append(r"\hline")
+
+        # Footer
+        output_file.append(r"\bottomrule")
+        output_file.append(r"\end{tabular}")
+        output_file.append(r"\end{center}")
+        output_file.append(r"\end{small}")
+        output_file.append(r"\vspace{\TestResultsTableVSpace}")
         output_file.append(r"\end{table*}")
         output_file.save()
         return
