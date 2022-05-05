@@ -32,7 +32,7 @@ class Result:
         )
         model_results_str = [m.strip() for m in p.findall(result_str)]
         model_results = list()
-        for m in model_result_str[0].split('\n\n\n'):
+        for m in model_results_str[0].split('\n\n\n'):
             pattern = '(.*?)?\nTest cases\:'
             p = re.compile(pattern, re.DOTALL)
             req_search = p.search(m)

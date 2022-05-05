@@ -153,7 +153,7 @@ def run_analyze():
     if test_baseline:
         result_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results_checklist.txt'
         save_to = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_checklist_analysis.json'
-        Result.analyze(
+        Result.analyze_checklist(
             result_file,
             Macros.sa_models_file,
             save_to
