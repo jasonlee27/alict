@@ -458,7 +458,6 @@ location = {Florence, Italy},
 series = {CHI '08}
 }
 
-
 @ARTICLE{segura2016metamorphictest,
   author={Segura, Sergio and Fraser, Gordon and Sanchez, Ana B. and Ruiz-Cortés, Antonio},
   journal={IEEE Transactions on Software Engineering}, 
