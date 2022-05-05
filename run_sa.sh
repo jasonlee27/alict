@@ -82,8 +82,16 @@ function eval_retrained_models() {
 function analyze_eval_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         python -m python.sa.main --run analyze --search_dataset sst --syntax_selection random
-         python -m python.sa.main --run analyze --search_dataset sst --syntax_selection bertscore
+         # python -m python.sa.main \
+         #        --run analyze \
+         #        --search_dataset sst \
+         #        --syntax_selection random
+         python -m python.sa.main \
+                --run analyze \
+                --search_dataset sst \
+                --syntax_selection random \
+                --test_baseline
+         # python -m python.sa.main --run analyze --search_dataset sst --syntax_selection bertscore
          # python -m python.sa.main --run analyze --search_dataset sst --syntax_selection noselect
         )
 }
@@ -184,9 +192,9 @@ function main() {
         # analyze_retrained_models # to generate debug_results file
         # selfbleu # to compute the selfbleu
         # explain_nlp # to run the explainNLP
-        # humanstudy
-        # humanstudy_results
-        # coverage_sent_gen
+        # humanstudy # sample sentences for manual study
+        # humanstudy_results # get results of manual study into human_study.json
+        # coverage_sent_gen # get sentences for coverage experiment
         make_tables
 
 

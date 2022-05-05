@@ -147,17 +147,28 @@ def run_retrain():
 def run_analyze():
     from .model.Result import Result
     nlp_task = args.nlp_task
-    selection_method = args.syntax_selection
     search_dataset_name = args.search_dataset
-    result_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results.txt'
-    template_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
-    save_to = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_analysis.json'
-    Result.analyze(
-        result_file,
-        Macros.sa_models_file,
-        template_file,
-        save_to
-    )
+    selection_method = args.syntax_selection
+    test_baseline = args.test_baseline
+    if test_baseline:
+        result_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results_checklist.txt'
+        save_to = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_checklist_analysis.json'
+        Result.analyze(
+            result_file,
+            Macros.sa_models_file,
+            save_to
+        )
+    else:
+        result_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results.txt'
+        template_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
+        save_to = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_analysis.json'
+        Result.analyze(
+            result_file,
+            Macros.sa_models_file,
+            template_file,
+            save_to
+        )
+    # end if
     return
 
 def run_retrain_analyze():

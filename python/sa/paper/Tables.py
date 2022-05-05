@@ -30,7 +30,7 @@ class Tables:
     LATEX_SYMBOL_MAP = {
         '&': '\&', '{': '\{', '}': '\}', '_': '\_'
     }
-
+    
     @classmethod
     def make_tables(cls, **options):
         paper_dir: Path = Macros.paper_dir

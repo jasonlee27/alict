@@ -25,6 +25,29 @@ class Result:
         return model_results
 
     @classmethod
+    def get_model_checklist_results_from_string(cls, result_str, model_name):
+        p = re.compile(
+            f">>>>> MODEL: {model_name}(.*?)?\n<<<<< MODEL: {model_name}",
+            re.DOTALL
+        )
+        model_results_str = [m.strip() for m in p.findall(result_str)]
+        model_results = list()
+        for m in model_result_str[0].split('\n\n\n'):
+            pattern = '(.*?)?\nTest cases\:'
+            p = re.compile(pattern, re.DOTALL)
+            req_search = p.search(m)
+            lc = req_search.group(1).splitlines()[-1]
+            if lc in Macros.CHECKLIST_LC_LIST:
+                model_results.append({
+                    'lc': lc,
+                    'pass': cls.get_pass_sents_from_model_string(m),
+                    'fail': cls.get_fail_sents_from_model_string(m)
+                })
+            # end if
+        # end for
+        return model_results
+
+    @classmethod
     def get_requirement_from_string(cls, model_result_str, task):
         req_search = re.search(f"Running {task}::([A-Z]+)::(.*)", model_result_str)
         if req_search:
@@ -100,12 +123,59 @@ class Result:
         return results
 
     @classmethod
+    def parse_model_on_checklist_results(cls, result_str, model_name, task):
+        results = list()
+        model_results = cls.get_model_checklist_results_from_string(result_str, model_name)
+        temp_dict = dict()
+        for r in model_results:
+            if r['lc'] in Macros.CHECKLIST_LC_LIST[8:10]:
+                lc = str(Macros.CHECKLIST_LC_LIST[8:10])
+                if r['lc'] not in temp_dict.keys():
+                    temp_dict[lc] = {
+                        'req': lc,
+                        'pass': r['pass'],
+                        'fail': r['fail']
+                    }
+                else:
+                    temp_dict[lc]['pass'].extend(r['pass'])
+                    temp_dict[lc]['fail'].extend(r['fail'])
+                    results.append({
+                        'req': lc,
+                        'pass': temp_dict[lc]['pass'],
+                        'fail': temp_dict[lc]['fail']
+                    })
+                # end if
+            else:
+                lc = Macros.LC_MAP[r['lc']]
+                results.append({
+                    'req': lc,
+                    'pass': r['pass'],
+                    'fail': r['fail']
+                })
+            # end if
+        # end for
+        return results
+
+    @classmethod
     def parse_results(cls, result_file, model_name_file):
         with open(result_file, "r") as f:
             line = f.read()
             task = cls.get_task_from_result_str(line)
             return {
                 model.strip(): cls.parse_model_results(
+                    line, model.strip(), task
+                )
+                for model in Utils.read_txt(model_name_file)
+            }
+        # end with
+
+    @classmethod
+    def parse_checklist_results(cls, result_file, model_name_file):
+        with open(result_file, "r") as f:
+            line = f.read()
+            task = cls.get_task_from_result_str(line)
+            return {
+                model.strip(): cls.parse_model_on_checklist_results(
                     line, model.strip(), task
                 )
                 for model in Utils.read_txt(model_name_file)
@@ -134,6 +204,21 @@ class Result:
             # end for
         # end for
         return seed_exp_map
+
+    @classmethod
+    def analyze_model_checklist(cls, model_results):
+        reqs = sorted(set([r['req'] for r in model_results]))
+        results = list()
+        for r in reqs:
+            testcases = [mr for mr in model_results if mr['req']==r]
+            result = {'req': r, 'is_exps_exist': False}
+            tcs_pass = testcases[0]['pass']
+            tcs_fail = testcases[0]['fail']
+            result['num_tcs'] = len(tcs_pass)+len(tcs_fail)
+            result['num_tc_fail'] = len(tcs_fail)
+            results.append(result)
+        # end for
+        return results
 
     @classmethod
     def analyze_model(cls, model_results, seed_exp_map):
@@ -327,6 +412,18 @@ class Result:
         for model in result_dict.keys():
             model_result = result_dict[model]
             results[model] = cls.analyze_model(model_result, seed_exp_map)
+        # end for
+        Utils.write_json(results, saveto, pretty_format=True)
+        return results
+    
+    @classmethod
+    def analyze_checklist(cls, result_file, model_name_file, saveto):
+        # result_file: Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results_checklist.txt'
+        result_dict = cls.parse_checklist_results(result_file, model_name_file)
+        results = dict()
+        for model in result_dict.keys():
+            model_result = result_dict[model]
+            results[model] = cls.analyze_model_checklist(model_result)
         # end for
         Utils.write_json(results, saveto, pretty_format=True)
         return results
