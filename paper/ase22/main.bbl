@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{18}
+\begin{thebibliography}{19}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -309,6 +309,22 @@
 \newblock \bibinfo{journal}{\emph{ArXiv}}  \bibinfo{volume}{abs/1910.01108}
   (\bibinfo{year}{2019}).
 \newblock
+
+
+\bibitem[\protect\citeauthoryear{Segura, Fraser, Sanchez, and
+  Ruiz-Cortés}{Segura et~al\mbox{.}}{2016}]%
+        {segura2016metamorphictest}
+\bibfield{author}{\bibinfo{person}{Sergio Segura}, \bibinfo{person}{Gordon
+  Fraser}, \bibinfo{person}{Ana~B. Sanchez}, {and} \bibinfo{person}{Antonio
+  Ruiz-Cortés}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{A Survey on Metamorphic Testing}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Software Engineering}}
+  \bibinfo{volume}{42}, \bibinfo{number}{9} (\bibinfo{year}{2016}),
+  \bibinfo{pages}{805--824}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1109/TSE.2016.2532875}
+\showDOI{\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Wang, Singh, Michael, Hill, Levy, and

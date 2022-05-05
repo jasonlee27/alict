@@ -14,6 +14,7 @@
 \usepackage[normalem]{ulem} % normalem do not replace \emph to underline
 \usepackage{amsmath}
 \usepackage{enumitem}
+\usepackage{adjustbox}
 
 %%% Reference, Citation and Link
 \usepackage{hyperref}
@@ -73,6 +74,7 @@
 \newcommand{\SelfBleuTableVSpace}{-5pt}
 \newcommand{\RetrainDebugTableVSpace}{-5pt}
 \newcommand{\ManualStudyTableVSpace}{-5pt}
+\newcommand{\TestResultsTableVSpace}{-5pt}
 \newcommand{\romnum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
 
 \newcommand{\jl}[1]{\textcolor{teal}{JL: #1}}
@@ -218,6 +220,14 @@
 \newcommand{\tNumTestCases}{\textbf{\#Testcases}}
 \newcommand{\tAvgLabelCons}{\textbf{LabelConsistency}}
 \newcommand{\tAvgLCRel}{\textbf{LcRelevancy}}
+\newcommand{\tNumBlSents}{\textbf{\#\Cklst~Tcs}}
+\newcommand{\tNumBlFail}{\textbf{\#\Cklst~FailTcs}}
+\newcommand{\tNumSeeds}{\textbf{\#\tool~Seeds}}
+\newcommand{\tNumSeedFail}{\textbf{\#\tool~SeedFails}}
+\newcommand{\tNumExps}{\textbf{\#\tool~Exps}}
+\newcommand{\tNumExpFail}{\textbf{\#\tool~ExpFails}}
+\newcommand{\tNumPasstoFail}{\textbf{\#\tool~PassToFail}}
+
 
 %% Fig Caption
 \newcommand{\OverviewFigCaption}{Overview of \tool.\label{fig:overview}}
@@ -237,12 +247,16 @@ requirement (\ref{fig:TransformReqSubEx}) and its template
 \newcommand{\ResultTableCaption}{Results on \Nlp tasks
 of \Ccd, \Ctr, \Cref repectively.\label{table:Result}\vspace{-5pt}}
 \newcommand{\SelfBleuTableCaption}{\selfbleu scores over testcases
-from \tool and \Chlst}
+from \tool and \Cklst}
 \newcommand{\RetrainDebugTableCaption}{Result of retraining on
 each \lc and the evaluation of the retrained model.\label{table:RetrainDebug}}
 \newcommand{\ManualStudyTableCaption}{Aggregated Statistics of manual
 study of label consistency and \lc relevancy of \tool generated
 testcases compared with human annotations.\label{table:ManualStudy}}
+\newcommand{\TestResultsTableCaption}{Comparison of evaluation of \Bert, \Roberta and
+\Dbert on \tool and \Cklst testcases. Due to the spatial constraints
+of table, \Bert, \Roberta and
+\Dbert models are denoted as Model1, Model2 and Model3 respectively.\label{table:TestResult}}
 
 
 %%% NUMBRERS
@@ -250,3 +264,4 @@ testcases compared with human annotations.\label{table:ManualStudy}}
 %% \input{tables/selfbleu-numbers}
 %% \input{tables/retrain-debug-numbers}
 \input{tables/manual-study-numbers}
+\input{tables/test-results-numbers}

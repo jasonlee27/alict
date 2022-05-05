@@ -29,45 +29,45 @@ Warning--page numbers missing in both pages and numpages fields in marcoACL2020c
 Warning--page numbers missing in both pages and numpages fields in rottger2020hatecheck
 Warning--page numbers missing in both pages and numpages fields in sanh2019distilbert
 Warning--page numbers missing in both pages and numpages fields in wang2018glue
-You've used 18 entries,
+You've used 19 entries,
             5959 wiz_defined-function locations,
-            1696 strings with 25620 characters,
-and the built_in function-call counts, 23421 in all, are:
-= -- 2848
-> -- 982
+            1702 strings with 25788 characters,
+and the built_in function-call counts, 24785 in all, are:
+= -- 3057
+> -- 1034
 < -- 0
-+ -- 323
-- -- 313
-* -- 1852
-:= -- 2346
-add.period$ -- 89
-call.type$ -- 18
-change.case$ -- 145
-chr.to.int$ -- 18
-cite$ -- 30
-duplicate$ -- 2010
-empty$ -- 1416
-format.name$ -- 385
-if$ -- 5646
++ -- 342
+- -- 329
+* -- 1954
+:= -- 2476
+add.period$ -- 94
+call.type$ -- 19
+change.case$ -- 153
+chr.to.int$ -- 19
+cite$ -- 31
+duplicate$ -- 2115
+empty$ -- 1490
+format.name$ -- 405
+if$ -- 5998
 int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 82
-newline$ -- 236
-num.names$ -- 148
-pop$ -- 801
+missing$ -- 86
+newline$ -- 247
+num.names$ -- 156
+pop$ -- 833
 preamble$ -- 1
-purify$ -- 307
+purify$ -- 324
 quote$ -- 0
-skip$ -- 688
+skip$ -- 723
 stack$ -- 0
-substring$ -- 1569
-swap$ -- 209
+substring$ -- 1676
+swap$ -- 222
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 428
+type$ -- 444
 warning$ -- 12
-while$ -- 107
+while$ -- 113
 width$ -- 0
-write$ -- 409
+write$ -- 429
 (There was 1 error message)
