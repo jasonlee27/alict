@@ -129,8 +129,9 @@ class Result:
         temp_dict = dict()
         for r in model_results:
             if r['lc'] in Macros.CHECKLIST_LC_LIST[8:10]:
-                lc = str(Macros.CHECKLIST_LC_LIST[8:10])
-                if r['lc'] not in temp_dict.keys():
+                lc = Macros.LC_MAP[str(Macros.CHECKLIST_LC_LIST[8:10])]
+                print(lc)
+                if lc not in temp_dict.keys():
                     temp_dict[lc] = {
                         'req': lc,
                         'pass': r['pass'],
