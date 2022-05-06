@@ -354,7 +354,7 @@ class Tables:
         output_file.append(r"\end{table*}")
         output_file.save()
         return
-
+    
     @classmethod
     def make_numbers_manual_study(cls,
                                   result_dir,
@@ -362,26 +362,25 @@ class Tables:
                                   task,
                                   search_dataset,
                                   selection_method):
-        result_file = result_dir / f"{task}_{search_dataset}_{selection_method}" / "human_study_results.json"
+        result_file = result_dir / 'human_study' / f"{task}_{search_dataset}_{selection_method}" / "human_study_results.json"
         output_file = latex.File(tables_dir / 'manual-study-numbers.tex')
         result = Utils.read_json(result_file)
         seed_agg_result = result['agg']['seed']
         exp_agg_result = result['agg']['exp']
-        output_file.append_macro(latex.Macro(f"manual_study_seed_num_sents",
+        output_file.append_macro(latex.Macro(f"manual-study-seed-num-sents",
                                              seed_agg_result['num_sents']))
-        output_file.append_macro(latex.Macro(f"manual_study_seed_label_consistency",
+        output_file.append_macro(latex.Macro(f"manual-study-seed-label-consistency",
                                              seed_agg_result['avg_label_score']))
-        output_file.append_macro(latex.Macro(f"manual_study_seed_lc_relevancy",
-                                             seed_agg_result['avg_lc_score']))
-        output_file.append_macro(latex.Macro(f"manual_study_exp_num_sents",
+        output_file.append_macro(latex.Macro(f"manual-study-seed-lc-relevancy",
+                                             seed_agg_result['avg_lc_score']/5.))
+        output_file.append_macro(latex.Macro(f"manual-study-exp-num-sents",
                                              exp_agg_result['num_sents']))
-        output_file.append_macro(latex.Macro(f"manual_study_exp_label_consistency",
+        output_file.append_macro(latex.Macro(f"manual-study-exp-label-consistency",
                                              exp_agg_result['avg_label_score']))
-        output_file.append_macro(latex.Macro(f"manual_study_exp_lc_relevancy",
-                                             exp_agg_result['avg_lc_score']))
+        output_file.append_macro(latex.Macro(f"manual-study-exp-lc-relevancy",
+                                             exp_agg_result['avg_lc_score']/5.))
         output_file.save()
         return
-
 
     @classmethod
     def make_table_manual_study(cls,
@@ -389,47 +388,42 @@ class Tables:
                                 tables_dir,
                                 task,
                                 search_dataset,
-                                selection_method):
-        output_file = latex.File(tables_dir / "manual-study-numbers.tex")
-        
-        result_file = result_dir / f"{task}_{search_dataset}_{selection_method}" / "human_study_results.json"
-        output_file = latex.File(tables_dir / 'manual-study-numbers.tex')
+                                selection_method):        
+        result_file = result_dir / 'human_study' / f"{task}_{search_dataset}_{selection_method}" / "human_study_results.json"
+        output_file = latex.File(tables_dir / 'manual-study-table.tex')
         result = Utils.read_json(result_file)
         seed_agg_result = result['agg']['seed']
         exp_agg_result = result['agg']['exp']
         
         # Header
-        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{table}[htbp]")
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
-        output_file.append(r"\caption{\RetrainDebugTableCaption}")
-        output_file.append(r"\begin{tabular}{c|c|c|c}")
+        output_file.append(r"\caption{\ManualStudyTableCaption}")
+        output_file.append(r"\resizebox{0.47\textwidth}{!}{")
+        output_file.append(r"\begin{tabular}{l c c c}")
         output_file.append(r"\toprule")
 
         # Content
-        output_file.append(r"\tSentType & \tNumSents & \tAvgLabelCons & \tAvgLCRel \\")
+        output_file.append(r"\tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel \\")
         output_file.append(r"\midrule")
 
-        output_file.append("Seed" + r"\\")
-        output_file.append(" & " + latex.Macro("manual_study_seed_num_sents").use() + r"\\")
-        output_file.append(" & " + latex.Macro("manual_study_seed_label_consistency").use() + r"\\")
-        output_file.append(" & " + latex.Macro("manual_study_seed_lc_relevancy").use() + r"\\")
+        output_file.append("Seed & " + latex.Macro("manual-study-seed-num-sents").use())
+        output_file.append(" & " + latex.Macro("manual-study-seed-label-consistency").use())
+        output_file.append(" & " + latex.Macro("manual-study-seed-lc-relevancy").use())
         output_file.append(r"\\")
-        output_file.append(r"\hline")
-        output_file.append("Expanded" + r"\\")
-        output_file.append(" & " + latex.Macro("manual_study_exp_num_sents").use() + r"\\")
-        output_file.append(" & " + latex.Macro("manual_study_exp_label_consistency").use() + r"\\")
-        output_file.append(" & " + latex.Macro("manual_study_exp_lc_relevancy").use() + r"\\")
+        output_file.append("Expanded & " + latex.Macro("manual-study-exp-num-sents").use())
+        output_file.append(" & " + latex.Macro("manual-study-exp-label-consistency").use())
+        output_file.append(" & " + latex.Macro("manual-study-exp-lc-relevancy").use())
         output_file.append(r"\\")
-        output_file.append(r"\hline")
 
         # Footer
         output_file.append(r"\bottomrule")
-        output_file.append(r"\end{tabular}")
+        output_file.append(r"\end{tabular}}")
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
         output_file.append(r"\vspace{\ManualStudyTableVSpace}")
-        output_file.append(r"\end{table*}")
+        output_file.append(r"\end{table}")
         output_file.save()
         return
 
