@@ -11,11 +11,11 @@
 %   paper. I am just writing them here for now as I don't think we have
 %   them in the intro/background yet.} 
   
-We design and implement a new NLP model testing method,
-\emph{Specification- and Syntax-based Linguistic Capability Testing
-  (\tool{})}, that automatically generate test cases with oracles to
-test the robustness of sentiment analysis models. \tool{} addresses
-all three challenges discussed above.
+  We design and implement a new NLP model testing method,
+  \emph{Specification- and Syntax-based Linguistic Capability Testing
+    (\tool{})}, that automatically generate test cases with oracles to
+  test the robustness of sentiment analysis models. \tool{} addresses
+  all three challenges discussed above.
 
 % We identify four goals for a
 % large and effective test suite:
@@ -284,11 +284,11 @@ expanded parse tree.
 
 %Given the seed parse tree and reference \pcfg, production
 %differentiation phase suggests structural expansion candidates on the
-%seed input. this phase aims to analyze which structural components and
-%where they can be added into the seed structure for its expansion. To
-%do so, we explore reference \prodrs comparing it with each \prodr used
-%in seed input. This results in the phase described in
-%Algorithm~\ref{code:ProdDiffAlg}. For each production rule in seed
+%seed input. this phase aims to analyze which structural components
+%and where they can be added into the seed structure for its
+%expansion. To do so, we explore reference \prodrs comparing it with
+%each \prodr used in seed input. This results in the phase described
+%in Algorithm~\ref{code:ProdDiffAlg}. For each production rule in seed
 %inputs ($seed\_prod$), it searches production rules in reference
 %($ref\_prod$) which it has same non-terminal on the \lhs
 %($seed\_prod.lhs==ref\_prod.lhs$) and superset of \rhs of the seed
@@ -298,8 +298,8 @@ expanded parse tree.
 %seed\_prod.rhs$) become an expansion candidate which can be expanded
 %from the $seed\_prod.rhs$ found in real world. In addition, the
 %measure of how consistent the production rule is with the given seed
-%structure is given in its probability of the reference production rule
-%($ref\_prob$) multiplied by that of parents of $seed\_prod$. The
+%structure is given in its probability of the reference production
+%rule ($ref\_prob$) multiplied by that of parents of $seed\_prod$. The
 %expansion candidate consists of terminal or nonterminal symbols. When
 %there is a phrase-level or clause-level nonterminal symbol, \eg noun
 %phrase, it needs to be expanded and replaced with word-level
@@ -310,10 +310,10 @@ expanded parse tree.
 %symbols for the effectiveness of \Model. Lastly, the expanded
 %component is replaced with the mask token for the next phase. The
 %example of the expansion is illustrated in
-%Figure~\ref{fig:ExpEx}. The ``NP->[DT]'' is queried into
-%reference, and ``NP->[DT,NNS]'' is identified as its expansion
-%candidate since the \rhs of ``NP->[DT,NNS]'' is superset of that of
-%``NP->[DT]''. the component of NNS is replaced with mask token in
+%Figure~\ref{fig:ExpEx}. The ``NP->[DT]'' is queried into reference,
+%and ``NP->[DT,NNS]'' is identified as its expansion candidate since
+%the \rhs of ``NP->[DT,NNS]'' is superset of that of ``NP->[DT]''. the
+%component of NNS is replaced with mask token in
 %\sent-level. Therefore, the ``Or both \{MASK\}.'' is suggested for
 %the next phase.
 
@@ -359,14 +359,13 @@ tree. The words that meets the second and third criteria are finally
 employed for the expanded \sents.
 % Our goal for generating the expanded \sents is to use them for
 % evaluating the \sa models on the associated \lc in addition to the
-% seed \sent. It is only achieved when the expanded \sents are also met
-% with the same search rules for the \lc. For LC1 as an example, the
-% expanded \sent must still conform to the specification of the seed's
-% \lc specification. Therefore, the expanded \sents are required to be
-% short and to only have \neu adjectives and \nns.
-% \sw{Say why we use
-%   the third criteria only for LC1 and LC2.}  \jl{I added the
-%   explanation}
+% seed \sent. It is only achieved when the expanded \sents are also
+% met with the same search rules for the \lc. For LC1 as an example,
+% the expanded \sent must still conform to the specification of the
+% seed's \lc specification. Therefore, the expanded \sents are
+% required to be short and to only have \neu adjectives and \nns.
+% \sw{Say why we use the third criteria only for LC1 and LC2.}  \jl{I
+% added the explanation}
 
 \paragraph{Running example.} The third step in Figure~\ref{fig:ExpEx} shows the words suggested
 by BERT. For this masked \sent, BERT suggested six words. Each word is
@@ -395,6 +394,6 @@ both ways'' and ``Or both things'' are generated.
 % \subsubsection{\Sent Selection}
 % \sw{@Jaeseong: Add how we select expanded \sents and motivate why.}
 
-%% \paragraph{Running example.} \jl{I dont think we need this
-%%   subsection of \sent selection it is already explained at the
-%%   previous stage with running example.} \sw{This is to use the bert score to rank and select. Did we discuss this already?}
+% \paragraph{Running example.} \jl{I dont think we need this
+%   subsection of \sent selection it is already explained at the
+%   previous stage with running example.} \sw{This is to use the bert score to rank and select. Did we discuss this already?}

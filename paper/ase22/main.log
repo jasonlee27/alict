@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  5 MAY 2022 01:54
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  6 MAY 2022 02:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1635,15 +1635,18 @@ LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 6.2pt on input line 176.
  (./intro.tex
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
-(Font)              scaled to size 9.0pt on input line 26.
+(Font)              scaled to size 9.0pt on input line 17.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 6.0pt on input line 106.
+(Font)              scaled to size 6.0pt on input line 123.
  [1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 ]) (./background.tex
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2015/06/04 1.6 listings language file
 )
@@ -1670,14 +1673,14 @@ Package microtype Info: Loading generic protrusion settings for font family
 
 Class acmart Warning: A possible image without description on input line 15.
 
-) (./related.tex
+) (./approach.tex
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
 (Font)              scaled to size 7.0pt on input line 1.
- [2.2] Excluding 'comment' comment.) (./approach.tex
+ [2.2]
 
 pdfTeX warning: pdflatex (file ./figs/overview.pdf): PDF inclusion: found PDF v
 ersion <1.7>, but at most version <1.5> allowed
-<figs/overview.pdf, id=175, 930.47626pt x 274.12413pt>
+<figs/overview.pdf, id=173, 930.47626pt x 274.12413pt>
 File: figs/overview.pdf Graphic file (type pdf)
 <use figs/overview.pdf>
 Package pdftex.def Info: figs/overview.pdf  used on input line 6.
@@ -1692,9 +1695,9 @@ test-ing method, \T1/LinuxLibertineT-TLF/m/it/9 (-20) Specification-
  []
 
 
-Underfull \vbox (badness 8189) has occurred while \output is active []
+Underfull \vbox (badness 4279) has occurred while \output is active []
 
- [3.3]
+
 (./tables/lc-requirement-table.tex
 Underfull \hbox (badness 4927) in paragraph at lines 44--45
 []|\T1/LinuxLibertineT-TLF/b/n/8 Transform \T1/LinuxLibertineT-TLF/m/n/8 (+20) 
@@ -1716,7 +1719,7 @@ re temp1={[`Some peo-ple
 
 LaTeX Warning: Float too large for page by 4.32822pt on input line 72.
 
-)
+) [3.3]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
 (Font)              scaled to size 9.0pt on input line 211.
  (./code/prod_diff_pseudocode.tex
@@ -1730,7 +1733,7 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 
 pdfTeX warning: pdflatex (file ./figs/running_example.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<figs/running_example.pdf, id=195, 694.19348pt x 217.21149pt>
+<figs/running_example.pdf, id=187, 694.19348pt x 217.21149pt>
 File: figs/running_example.pdf Graphic file (type pdf)
 <use figs/running_example.pdf>
 Package pdftex.def Info: figs/running_example.pdf  used on input line 264.
@@ -1738,35 +1741,57 @@ Package pdftex.def Info: figs/running_example.pdf  used on input line 264.
 
 Class acmart Warning: A possible image without description on input line 271.
 
-[4.4 <./figs/overview.pdf>]) (./rq.tex) (./experiment.tex
+[4.4 <./figs/overview.pdf>]) (./experiment.tex
+Underfull \vbox (badness 2990) has occurred while \output is active []
+
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/it' will be
-(Font)              scaled to size 9.0pt on input line 37.
- [5.5 <./figs/running_example.pdf>]
+(Font)              scaled to size 9.0pt on input line 39.
+LaTeX Font Info:    Try loading font information for T1+zi4 on input line 41.
+
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd
+File: t1zi4.fd 2018/01/14 T1/zi4 (Inconsolata)
+)
+LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
+(Font)              scaled to size 9.0pt on input line 41.
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `zi4' (encoding: T1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+Package microtype Info: Character `textendash ' is missing
+(microtype)             in font `T1/zi4/m/n/9'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `textemdash ' is missing
+(microtype)             in font `T1/zi4/m/n/9'.
+(microtype)             Ignoring protrusion settings for this character.
+
+Overfull \hbox (3.67346pt too wide) in paragraph at lines 50--56
+ []\T1/LinuxLibertineT-TLF/b/it/9 Comparison Base-lines.[] \T1/LinuxLibertineT-
+TLF/m/n/9 (-20) We com-pare our ap-proach with CHECK-
+ []
+
+[5.5 <./figs/running_example.pdf>]
 
 Package natbib Warning: Citation `ma2018deepgauge' on page 6 undefined on input
- line 94.
+ line 120.
 
 
 Package natbib Warning: Citation `ma2018deepgauge' on page 6 undefined on input
- line 98.
+ line 126.
 
 
-Overfull \hbox (6.23637pt too wide) in paragraph at lines 87--102
+Overfull \hbox (6.23637pt too wide) in paragraph at lines 113--133
  []\T1/LinuxLibertineT-TLF/m/it/9 (-20) RQ3.[] \T1/LinuxLibertineT-TLF/m/n/9 (-
 20) Re-call that a key lim-i-ta-tion of CHECK-LIST is that its template-
  []
 
 
-Overfull \hbox (2.6584pt too wide) detected at line 109
-[]
- []
+Package natbib Warning: Citation `lemna' on page 6 undefined on input line 199.
 
 
-Overfull \hbox (9.55264pt too wide) detected at line 120
-[]
- []
 
-) (./result.tex
+Package natbib Warning: Citation `lime' on page 6 undefined on input line 199.
+
+[6.6]) (./result.tex
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 10.95pt on input line 7.
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
@@ -1785,12 +1810,48 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 7.
 
 (./tables/manual-study-table.tex) (./tables/test-results-table.tex
+Underfull \hbox (badness 10000) in paragraph at lines 184--184
+[]\T1/LinuxLibertineT-TLF/b/n/8 Cklst
+ []
 
-LaTeX Warning: Float too large for page by 68.4086pt on input line 189.
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--184
+[]\T1/LinuxLibertineT-TLF/b/n/8 Cklst
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--184
+[]\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--184
+[]\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--184
+[]\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--184
+[]\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--184
+[]\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--184
+[]\T1/LinuxLibertineT-TLF/m/n/8 (+20) LC8: Short sen-tences with
+ []
 
 )
 
-LaTeX Warning: Reference `tab:coverage' on page 6 undefined on input line 17.
+LaTeX Warning: Reference `tab:coverage' on page 7 undefined on input line 17.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -1804,23 +1865,23 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 19.
 
-) (./main.bbl
-LaTeX Info: Redefining \tempurl on input line 69.
+) (./related.tex Excluding 'comment' comment.) (./concl.tex) (./main.bbl
+LaTeX Info: Redefining \tempurl on input line 70.
 LaTeX Info: Redefining \tempurl on input line 88.
-LaTeX Info: Redefining \tempurl on input line 104.
-LaTeX Info: Redefining \tempurl on input line 119.
- [6.6]
-LaTeX Info: Redefining \tempurl on input line 139.
-LaTeX Info: Redefining \tempurl on input line 159.
-LaTeX Info: Redefining \tempurl on input line 176.
-LaTeX Info: Redefining \tempurl on input line 196.
-LaTeX Info: Redefining \tempurl on input line 214.
-LaTeX Info: Redefining \tempurl on input line 231.
+LaTeX Info: Redefining \tempurl on input line 107.
+LaTeX Info: Redefining \tempurl on input line 123.
+LaTeX Info: Redefining \tempurl on input line 138.
+LaTeX Info: Redefining \tempurl on input line 158.
+LaTeX Info: Redefining \tempurl on input line 178.
+LaTeX Info: Redefining \tempurl on input line 195.
+LaTeX Info: Redefining \tempurl on input line 215.
+LaTeX Info: Redefining \tempurl on input line 233.
 LaTeX Info: Redefining \tempurl on input line 250.
-LaTeX Info: Redefining \tempurl on input line 280.
-LaTeX Info: Redefining \tempurl on input line 326.
-LaTeX Info: Redefining \tempurl on input line 344.
-LaTeX Info: Redefining \tempurl on input line 362.
+LaTeX Info: Redefining \tempurl on input line 269.
+LaTeX Info: Redefining \tempurl on input line 299.
+LaTeX Info: Redefining \tempurl on input line 345.
+LaTeX Info: Redefining \tempurl on input line 363.
+LaTeX Info: Redefining \tempurl on input line 381.
 )
 
 Package natbib Warning: There were undefined citations.
@@ -1835,8 +1896,8 @@ Class acmart Warning: ACM keywords are mandatory for papers over two pages.
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
 
-Overfull \vbox (1.28499pt too high) has occurred while \output is active []
-
+Package balance Warning: You have called \balance in second column
+(balance)                Columns might not be balanced.
 
 [7.7] [8.8] [9.9
 
@@ -1847,13 +1908,13 @@ Package atenddvi Info: Last page = 11.
 
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 217.
-Package atveryend Info: Executing hook `AfterLastShipout' on input line 217.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 218.
+Package atveryend Info: Executing hook `AfterLastShipout' on input line 218.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 217.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 217.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 218.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 218.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: A0A8084F3E8749F1D989CCDB3934C4CD;3132.
+(rerunfilecheck)             Checksum: CEB8FB3A322E826323B8BCBA21B1BEF7;3386.
 
 
 LaTeX Warning: There were undefined references.
@@ -1863,40 +1924,42 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 34016 strings out of 492982
- 598513 string characters out of 6134896
- 882716 words of memory out of 5000000
- 36096 multiletter control sequences out of 15000+600000
- 194920 words of font info for 409 fonts, out of 8000000 for 9000
+ 34052 strings out of 492982
+ 599050 string characters out of 6134896
+ 881593 words of memory out of 5000000
+ 36121 multiletter control sequences out of 15000+600000
+ 195299 words of font info for 408 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  60i,17n,100p,997b,1603s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/newtx/libertinealt.enc}{/usr/s
-hare/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_ki75ao.enc}{/usr/share/t
-exlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/usr/share/texlive
-/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/texmf-dist/fonts/en
-c/dvips/libertine/lbtn_afusau.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvip
-s/libertine/lbtn_naooyc.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libe
-rtine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/
-lbtn_oexx6f.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_n
-h77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.
-enc}</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumT.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.pfb
-></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTI.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTBI.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/newtx/fxlri-7letters.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/newtx/ntxsyralt.pfb></usr/share/t
-exlive/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/newtx/txexs.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
-/newtx/txsys.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/zxlri.
-pfb>
-Output written on main.pdf (11 pages, 718900 bytes).
+hare/texlive/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc}{/usr/share/tex
+live/texmf-dist/fonts/enc/dvips/libertine/lbtn_ki75ao.enc}{/usr/share/texlive/t
+exmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/usr/share/texlive/texmf-d
+ist/fonts/enc/dvips/base/8r.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/
+libertine/lbtn_afusau.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libert
+ine/lbtn_naooyc.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lb
+tn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_oex
+x6f.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.en
+c}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}</us
+r/share/texlive/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumT.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTI.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTBI.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/newtx/fxlri-7letters.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/newtx/ntxsyralt.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/newtx/txexs.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/new
+tx/txsys.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/zxlri.pfb>
+
+Output written on main.pdf (11 pages, 742905 bytes).
 PDF statistics:
- 510 PDF objects out of 1000 (max. 8388607)
- 447 compressed objects within 5 object streams
- 103 named destinations out of 1000 (max. 500000)
- 56487 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 538 PDF objects out of 1000 (max. 8388607)
+ 473 compressed objects within 5 object streams
+ 111 named destinations out of 1000 (max. 500000)
+ 57015 words of extra memory for PDF output out of 61914 (max. 10000000)
 

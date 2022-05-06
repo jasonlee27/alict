@@ -1,9 +1,6 @@
 \section{Experimental Setup}
 \label{sec:experiment}
 %
-
-% \InputWithSpace{tables/retrain-debug-table}
-
 In this section, we present the setup of the experiments to evaluate
 the effectiveness of \tool{}. We address the following research
 questions (RQs):
@@ -15,7 +12,7 @@ questions (RQs):
 \begin{enumerate}[label=\textbf{RQ\arabic*}]
 \item \label{rq:one}: Can \tool generate consistent test sentence and
   its oracle?
-\item \label{rq:two}: Is \tool generated testcases relevant to be used
+\item \label{rq:two}: Are \tool generated test cases relevant to be used
   for their \lc evaluation?
 \item \label{rq:three}: Can \tool generate more diverse test cases
   than \Cklst?
@@ -34,6 +31,32 @@ questions (RQs):
 \sw{Make clear (earlier in the paper): a test case is a sentence in a
   linguistic capability with a sentiment label.}
 
+
+
+\subsection{Experimental Subjects}
+
+\paragraph{\textbf{NLP Models \& Dataset.}}
+We evaluate our approach on three leaerning-based \sa models
+implemented in Transformer library from the Hugging Face centralized
+Model Hub.\footnote{https://huggingface.co/models}: \texttt{\Bert}
+(\bertsamodel), \texttt{\Roberta} (\robertasamodel), and
+\texttt{\Dbert} (\disbertsamodel). They are pre-trained on English
+language using a masked language modeling (MLM) objective, and
+fine-tuned on \sa task. In this experiment, we use \Sstt dataset for
+searching seeds and expanding the seeds in \tool.
+%% \TODO{introduce details about each model}
+
+\paragraph{\textbf{Comparison Baselines.}}
+We compare our approach with
+\Cklst\footnote{https://github.com/marcotcr/checklist}, which is a
+manual template-based approach to generate test cases. In this
+experiment, we used the \Cklst released \sa test cases which are
+generated from its publicly available jupyter notebook implementation.
+%% \TODO{introduce details about CHECKLIST}
+
+
+\subsection{Experimental Process}
+
 \paragraph{\textbf{RQ1 and RQ2}} As described in Section \ref{sec:approach},
 \tool generates test cases in two steps: specification-based seed
 generation and syntax-based sentence expansion. These automated steps
@@ -50,7 +73,7 @@ In the manual study, we randomly sample three sets of pairs of seed
 sentences and corresponding \lc from seed test cases. For each set, we
 also select expanded sentences that \tool generated from the formerly
 sampled seed sentences. In this experiment, each set has 100 sentences
-(50 from seed sentences and 50 from expanded sentences) and 300
+(50 from seed sentences and 50 from expanded sentences) and 200
 sentences, in total, are used for the manual study. For each sampled
 set, two subjects are provided with the same set of sampled
 sentences. The subjects are asked for scoring the two following:
@@ -62,8 +85,11 @@ ranging from 1 to 5, and each represents ``strongly not relevant'' to
   sentence}: this score measures the level of sentence sentiment. It
 is also discrete, and it ranges from 1 to 5 representing ``strongly
 negative'' to ``strongly positive'' respectively. In this work, we
-collect manual study scores from 6 subjects in total. From the
-collected scores, we measure the following metrics:
+collect manual study scores from 3 subjects in total. In case of
+different scores with a same sentence from different subjects, we used
+their average score as a score of the sentence.
+%% \sw{6 or 3 participants? What happened if participants scored differently?}
+From the collected scores, we measure the following metrics:
 
 \begin{eqnarray}
   sentiment\_relecancy &= \sum_{i} \delta(label_{S^2LCT}!=label_{human}) \label{metric:srel} \\
@@ -75,13 +101,13 @@ their labels assigned from are different between \tool and
 human. Higher number of this metric indicates worse correlation of
 test oracle that \tool generated with human. In addition, the
 equation~\ref{metric:lcrel} represents the average score of the
-relevancy score between sentence and its associated \lc. higer average
+relevancy score between sentence and its associated \lc. Higer average
 score means that higher human-level agreement of the use of sentence
 for its \lc, resulting in higher suitability of the use of the
 testcases for evaluating model on the \lc. Given the metrics, we
 answer RQ1 and RQ2 by the metrics from the equation~\ref{metric:srel}
-and equation~\ref{metric:lcrel} respectively, thereby, show its ability
-of \tool to understand human intelligence.
+and equation~\ref{metric:lcrel} respectively, thereby, show its
+ability of \tool to understand human intelligence.
 
 \paragraph{RQ3.}
 Recall that a key limitation of \Cklst is that its template-based
@@ -92,18 +118,24 @@ on a search dataset and the syntax in a large reference corpus. We
 expect \tool can generate a more diverse test suite than \Cklst. To
 measure diversity, we follow the approach presented by Ma et
 al. \cite{ma2018deepgauge}, where the authors measure the coverage of
-NLP model intermediate states as corner-case neurons.  \sw{Why is this
-  a good metric for diversity?}  Specifically, we use the \sw{are
-  these metrics we define or are they from ma2018deepgauge?} two
-coverage metrics in existing work \cite{ma2018deepgauge},
-\textit{boundary coverage} (BoundCov) and \textit{strong activation
-  coverage} (SActCov), as our metrics to evaluate the test suite
-diversity.
+NLP model intermediate states as corner-case neurons.  Because the
+matrix computation of intermediate states impacts NLP model
+decision-making, a test suite that covers a greater number of
+intermediate states can represent more NLP model decision-making,
+making it more diverse.  Specifically, we used two coverage metrics in
+existing work \cite{ma2018deepgauge}, \textit{boundary coverage}
+(BoundCov) and \textit{strong activation coverage} (SActCov), as our
+metrics to evaluate the test suite diversity.  \TODO{It is worth
+  noting that a test sample with a statistical distribution similar to
+  the training data would rarely be found in the corner case
+  region. As a result, covering a larger corner case region means that
+  the test suite is more likely to be buggy.}
+
 
 \begin{equation}
 \begin{split}
-    \text{UpperCornerNeuron}(\mathcal{X}) = \{n \in N | \exists x \in \mathcal{X}: f_n(x) \in (high_n, +\infty)\}; \\
-    \text{LowerCornerNeuron}(\mathcal{X}) = \{n \in N | \exists x \in \mathcal{X}: f_n(x) \in (-\infty, low_n)\}; \\
+    \text{UpperCorner}(\mathcal{X}) = \{n \in N | \exists x \in \mathcal{X}: f_n(x) \in (high_n, +\infty)\}; \\
+    \text{LowerCorner}(\mathcal{X}) = \{n \in N | \exists x \in \mathcal{X}: f_n(x) \in (-\infty, low_n)\}; \\
 \end{split}
     \label{eq:corner}
 \end{equation}
@@ -113,8 +145,8 @@ Eq. \ref{eq:corner} can be interpreted as the collection of neurons that emit ou
 
 \begin{equation}
 \begin{split}
-     & BoundCov(\mathcal{X}) = \frac{|UpperCornerNeuron(\mathcal{X})| + |LowerCornerNeuron| }{2 \times |N|} \\ 
-     & SActCov(\mathcal{X}) = \frac{|UpperCornerNeuron(\mathcal{X})|} {|N|} \\ 
+     & BoundCov(\mathcal{X}) = \frac{|UpperCorner(\mathcal{X})| + |LowerCorner(\mathcal{X})| }{2 \times |N|} \\ 
+     &\quad  \qquad \qquad  SActCov(\mathcal{X}) = \frac{|UpperCorner(\mathcal{X})|} {|N|} \\ 
 \end{split}
     \label{eq:coverage}
 \end{equation}
@@ -130,8 +162,8 @@ Higher coverage indicates the test suite is better for triggering the corner-cas
 % Because AdNNs activate different blocks for decision making, then a higher block coverage indicates the test samples cover more decision behaviors. 
 
 
-To answer {\bf RQ3}, for each NLP model under test, we first feed its training dataset to compute each neuron's lower and upper bounds. After that, we randomly select 100 \sw{Why 100, not all?} test cases from \tool and \Cklst as the test suite and compute the corresponding coverage metrics. 
-\cm{we repeat this process and record both the average and variance value of each coverage}
+To answer {\bf RQ3}, for each NLP model under test, we first feed its training dataset to compute each neuron's lower and upper bounds. After that, we select the same number of test cases from \tool and \Cklst as the test suite and compute the corresponding coverage metrics. 
+
 % For each subject, we randomly select 100 seed samples from the test dataset as seed inputs. We then feed the same seed inputs into \tool and \texttt{ILFO} to generate test samples. 
 % Finally, we feed the generated test samples to AdNNs and measure block coverage.
 % We repeat this process 10 times and record the average coverage and the variance.
@@ -159,12 +191,42 @@ To answer {\bf RQ3}, for each NLP model under test, we first feed its training d
 %cases from \tool and \Cklst on the fine-tuned \sw{first time mention fine-tuning: reader does not know how we fine-tune} \sa model of
 %\bertsamodel and compare the coverage between \tool and \Cklst.
 
-\paragraph{RQ4.} To demonstrate that \tool can help developers to understand the bugs in the sentiment analysis modes, we conduct experiments to visualize 
+\paragraph{RQ4.} 
+
+To answer RQ4, we conduct experiments to demonstrate that \tool can help developers understand the bugs in the NLP models.
+Recall that \tool generates test cases by mutating seed sentences (\eg by expanding one token in the seed input). Still, it is unclear why mutating one token will cause the model to produce misclassified results.
+We seek to help developers to understand why such mutation will result in the misclassification. 
+Existing work \cite{simin2020denas, lemna, lime} has demonstrated that the ML model prediction is dominated by a minimal set of input features (\ie tokens in input sentences). Motivated by such intuition, we seek to identify a minimal set of input tokens that dominate the model prediction.
+
+Formally, given a input sentence $x = [tk_1, tk_2, \cdots, tk_n]$, and the NLP model under test $f(\cdot)$, our goal is to find a masking template $T = [t_1, t_2, \cdots, t_n]$, where $t_i$ is 0 or 1, representing masking the $i^{th}$ token in $x$ or not.
+The template $T$ can mask some tokens in $x$ with attribute tokens, and the masked input has a high probability of retaining the original prediction $x$, denoted as 
+
+\begin{equation}
+    P(f(T(x)) = f(x)) \ge P_{thresh}
+    \label{eq:prob}
+\end{equation}
+
+
+To create such a template $T$, we first compute the contribution score of each input token using an existing explainable ML technique \cite{}. Following that, we begin with the full mask template (\ie, all tokens are masked); such full mask template definitely does not satisfy Eq. \ref{eq:prob}.
+We then iteratively shift one position from mask to non-mask based on the order of each token's contribution score, until the template $T$ satisfies Eq. \ref{eq:prob}
+Because we iterate the size of our mask, the generated template $T$ will keep the minimum number of tokens in $x$. Moreover, since the input $x$ is an incorrect prediction, the generated template $T$ is likely to produce misclassification (i.e., the probability to be misclassified is larger than $P_{thresh}$).
+
+
+
+% In particular, we apply the explainable ML techniques to visualize the contribution of each input token to the model predictions.
+% 
 
 
 
 
-\sw{@Simin: add the setup of the bug explanation case study here.}
+
+
+
+
+
+
+
+% \sw{@Simin: add the setup of the bug explanation case study here.}
 %In addition to the detection of bugs \sw{have we defined ``bug" in this context?} in the model,
 %explanation of the bugs is also important for debugging and
 %repairing the model. Therefore, we answer {\bf RQ3} by analyzing the \sa model based on \tool test cases to find the root causes of the bugs.

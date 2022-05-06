@@ -5,12 +5,12 @@
 \begin{small}
 \begin{center}
 \caption{\TestResultsTableCaption}
-\begin{adjustbox}{angle=90}
-\begin{tabular}{p{5cm}||ccccccc}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{p{4cm}||p{1cm}p{2cm}p{1cm}p{2cm}p{1cm}p{2cm}p{2cm}}
 \toprule
-\tLc & \tNumBlSents & \tNumBlFail & \tNumSeeds & \tNumSeedFail & \tNumExps & \tNumExpFail & \tNumPasstoFail\\
+\tLc & \parbox{1cm}{\tNumBlSents} & \parbox{1cm}{\tNumBlFail} & \parbox{1cm}{\tNumSeeds} & \parbox{1.4cm}{\tNumSeedFail} & \parbox{1cm}{\tNumExps} & \parbox{1.3cm}{\tNumExpFail} & \parbox{1.5cm}{\tNumPasstoFail}\\
 \midrule
-\multirow{3}{*}{\parbox{5cm}{LC1: \UseMacro{test-results-lc0}}}
+\multirow{3}{*}{\parbox{4cm}{LC1: \UseMacro{test-results-lc0}}}
  & \multirow{3}{*}{\UseMacro{test-results-bl-lc0-num-sents}}
  & Model1$\colon$\UseMacro{test-results-bl-model0-lc0-num-fail}
  & \multirow{3}{*}{\UseMacro{test-results-lc0-num-seeds}}
@@ -27,7 +27,7 @@
  & & Model3$\colon$\UseMacro{test-results-model2-lc0-num-exp-fail}
  & Model3$\colon$\UseMacro{test-results-model2-lc0-num-pass-to-fail}\\
 \hline
-\multirow{3}{*}{\parbox{5cm}{LC2: \UseMacro{test-results-lc1}}}
+\multirow{3}{*}{\parbox{4cm}{LC2: \UseMacro{test-results-lc1}}}
  & \multirow{3}{*}{\UseMacro{test-results-bl-lc1-num-sents}}
  & Model1$\colon$\UseMacro{test-results-bl-model0-lc1-num-fail}
  & \multirow{3}{*}{\UseMacro{test-results-lc1-num-seeds}}
@@ -44,7 +44,7 @@
  & & Model3$\colon$\UseMacro{test-results-model2-lc1-num-exp-fail}
  & Model3$\colon$\UseMacro{test-results-model2-lc1-num-pass-to-fail}\\
 \hline
-\multirow{3}{*}{\parbox{5cm}{LC3: \UseMacro{test-results-lc2}}}
+\multirow{3}{*}{\parbox{4cm}{LC3: \UseMacro{test-results-lc2}}}
  & \multirow{3}{*}{\UseMacro{test-results-bl-lc2-num-sents}}
  & Model1$\colon$\UseMacro{test-results-bl-model0-lc2-num-fail}
  & \multirow{3}{*}{\UseMacro{test-results-lc2-num-seeds}}
@@ -61,7 +61,7 @@
  & & Model3$\colon$\UseMacro{test-results-model2-lc2-num-exp-fail}
  & Model3$\colon$\UseMacro{test-results-model2-lc2-num-pass-to-fail}\\
 \hline
-\multirow{3}{*}{\parbox{5cm}{LC4: \UseMacro{test-results-lc3}}}
+\multirow{3}{*}{\parbox{4cm}{LC4: \UseMacro{test-results-lc3}}}
  & \multirow{3}{*}{\UseMacro{test-results-bl-lc3-num-sents}}
  & Model1$\colon$\UseMacro{test-results-bl-model0-lc3-num-fail}
  & \multirow{3}{*}{\UseMacro{test-results-lc3-num-seeds}}
@@ -78,7 +78,7 @@
  & & Model3$\colon$\UseMacro{test-results-model2-lc3-num-exp-fail}
  & Model3$\colon$\UseMacro{test-results-model2-lc3-num-pass-to-fail}\\
 \hline
-\multirow{3}{*}{\parbox{5cm}{LC5: \UseMacro{test-results-lc4}}}
+\multirow{3}{*}{\parbox{4cm}{LC5: \UseMacro{test-results-lc4}}}
  & \multirow{3}{*}{\UseMacro{test-results-bl-lc4-num-sents}}
  & Model1$\colon$\UseMacro{test-results-bl-model0-lc4-num-fail}
  & \multirow{3}{*}{\UseMacro{test-results-lc4-num-seeds}}
@@ -95,7 +95,7 @@
  & & Model3$\colon$\UseMacro{test-results-model2-lc4-num-exp-fail}
  & Model3$\colon$\UseMacro{test-results-model2-lc4-num-pass-to-fail}\\
 \hline
-\multirow{3}{*}{\parbox{5cm}{LC6: \UseMacro{test-results-lc5}}}
+\multirow{3}{*}{\parbox{4cm}{LC6: \UseMacro{test-results-lc5}}}
  & \multirow{3}{*}{\UseMacro{test-results-bl-lc5-num-sents}}
  & Model1$\colon$\UseMacro{test-results-bl-model0-lc5-num-fail}
  & \multirow{3}{*}{\UseMacro{test-results-lc5-num-seeds}}
@@ -112,7 +112,7 @@
  & & Model3$\colon$\UseMacro{test-results-model2-lc5-num-exp-fail}
  & Model3$\colon$\UseMacro{test-results-model2-lc5-num-pass-to-fail}\\
 \hline
-\multirow{3}{*}{\parbox{5cm}{LC7: \UseMacro{test-results-lc6}}}
+\multirow{3}{*}{\parbox{4cm}{LC7: \UseMacro{test-results-lc6}}}
  & \multirow{3}{*}{\UseMacro{test-results-bl-lc6-num-sents}}
  & Model1$\colon$\UseMacro{test-results-bl-model0-lc6-num-fail}
  & \multirow{3}{*}{\UseMacro{test-results-lc6-num-seeds}}
@@ -129,7 +129,7 @@
  & & Model3$\colon$\UseMacro{test-results-model2-lc6-num-exp-fail}
  & Model3$\colon$\UseMacro{test-results-model2-lc6-num-pass-to-fail}\\
 \hline
-\multirow{3}{*}{\parbox{5cm}{LC8: \UseMacro{test-results-lc7}}}
+\multirow{3}{*}{\parbox{4cm}{LC8: \UseMacro{test-results-lc7}}}
  & \multirow{3}{*}{\UseMacro{test-results-bl-lc7-num-sents}}
  & Model1$\colon$\UseMacro{test-results-bl-model0-lc7-num-fail}
  & \multirow{3}{*}{\UseMacro{test-results-lc7-num-seeds}}
@@ -146,7 +146,7 @@
  & & Model3$\colon$\UseMacro{test-results-model2-lc7-num-exp-fail}
  & Model3$\colon$\UseMacro{test-results-model2-lc7-num-pass-to-fail}\\
 \hline
-\multirow{3}{*}{\parbox{5cm}{LC9: \UseMacro{test-results-lc8}}}
+\multirow{3}{*}{\parbox{4cm}{LC9: \UseMacro{test-results-lc8}}}
  & \multirow{3}{*}{\UseMacro{test-results-bl-lc8-num-sents}}
  & Model1$\colon$\UseMacro{test-results-bl-model0-lc8-num-fail}
  & \multirow{3}{*}{\UseMacro{test-results-lc8-num-seeds}}
@@ -163,7 +163,7 @@
  & & Model3$\colon$\UseMacro{test-results-model2-lc8-num-exp-fail}
  & Model3$\colon$\UseMacro{test-results-model2-lc8-num-pass-to-fail}\\
 \hline
-\multirow{3}{*}{\parbox{5cm}{LC10: \UseMacro{test-results-lc9}}}
+\multirow{3}{*}{\parbox{4cm}{LC10: \UseMacro{test-results-lc9}}}
  & \multirow{3}{*}{\UseMacro{test-results-bl-lc9-num-sents}}
  & Model1$\colon$\UseMacro{test-results-bl-model0-lc9-num-fail}
  & \multirow{3}{*}{\UseMacro{test-results-lc9-num-seeds}}
@@ -181,8 +181,7 @@
  & Model3$\colon$\UseMacro{test-results-model2-lc9-num-pass-to-fail}\\
 \hline
 \bottomrule
-\end{tabular}
-\end{adjustbox}
+\end{tabular}}
 \end{center}
 \end{small}
 \vspace{\TestResultsTableVSpace}

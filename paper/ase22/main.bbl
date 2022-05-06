@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{19}
+\begin{thebibliography}{20}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -49,6 +49,25 @@
 \showeprint[arXiv]{1711.02173}
 \urldef\tempurl%
 \url{http://arxiv.org/abs/1711.02173}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Chen, Bateni, Grandhi, Li, Liu, and Yang}{Chen
+  et~al\mbox{.}}{2020}]%
+        {simin2020denas}
+\bibfield{author}{\bibinfo{person}{Simin Chen}, \bibinfo{person}{Soroush
+  Bateni}, \bibinfo{person}{Sampath Grandhi}, \bibinfo{person}{Xiaodi Li},
+  \bibinfo{person}{Cong Liu}, {and} \bibinfo{person}{Wei Yang}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{DENAS: Automated Rule Generation by
+  Knowledge Extraction from Neural Networks}}.
+\newblock \bibinfo{publisher}{Association for Computing Machinery},
+  \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{813–825}.
+\newblock
+\showISBNx{9781450370431}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3368089.3409733}
 \showURL{%
 \tempurl}
 
