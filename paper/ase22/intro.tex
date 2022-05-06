@@ -132,12 +132,14 @@ that \tool overcomes to satisfy all three aforementioned requirements.
   and accurately defined.
 \end{description}
 
-\noindent \textbf{C1.} generating sentences with diverse syntactic
-structure is challenging since text have a higher order of its
-structure. However, the structures are obscured by word usage. To
-address the challenge, \tool establishes specifications for evaluating
-a linguistic capability and searches suitable sentences that satisfy
-the specification from existing public dataset. In this process, \tool
+\noindent \textbf{C1.} The first challenge comes with the second and
+third challenges of maintaining the label and linguistic capability of
+the test sentence while making the syntactic structure of the sentence
+more diverse. In addition, text have a higher order of structures and
+structures are obscured by word usage~\cite{}. To address the
+challenge, \tool establishes specifications for evaluating a
+linguistic capability and searches suitable sentences that satisfy the
+specification from existing public dataset. In this process, \tool
 generates new inputs by mutating the searched sentences, used as seed
 inputs. \tool expands seed input grammar structures and determines its
 available \pos to maintain structural naturalness.
@@ -149,15 +151,18 @@ available \pos to maintain structural naturalness.
 % word suggestion. Further, we address the manual input generation
 % process by automating the process mentioned above. 
 
-\noindent \textbf{C2.} Suitability of test case for evaluating NLP
-model on a \lc is obtained from its high relevancy to the
-\lc. Relevancy between test case and \lc is difficult to be measured
-because the \lc is defined on a specific phenomenon appeared in the
-mixture of textual structure and semantic, and understanding each test
-case with respect to the phenomenon and measuring its relevancy are
-not trivial. To address the difficulty, \tool implements search rules
-and the transformation templates of \lcs. In addition, anlyzing parse
-tree of seed sentence is used for its expansion identification.
+\noindent \textbf{C2.} Suitability of test sentences for evaluating
+NLP model on a \lc is obtained from its high relevancy to the
+\lc. Relevancy between a test sentence and its \lc is challenging to
+be maintained during the transformation and expansion of the test
+sentence.  This is because the \lc is defined on a specific mixture of
+syntaxe and semantics of the sentence, and there exists no automatic
+way to check the consistency between each sentence with the semantics
+specified in corresponding \lc due to the inherent ambiguity of
+natural language sentences. To address the difficulty, \tool
+implements search rules and the transformation templates of \lcs. In
+addition, anlyzing parse tree of seed sentence is used for its
+expansion identification.
 %% \tool adopts behavioral model testing method by
 %% introducing multiple behaviors from \lcs on \sa tasks and generating
 %% inputs relevant to each \lc. Each test case provides not only
@@ -166,16 +171,17 @@ tree of seed sentence is used for its expansion identification.
 %% performance. Therefore assigning appropriate \lc for each test case
 %% alleviates overestimation of model testing results.
 
-\noindent \textbf{C3.} Last challenge is on estimating the
-appropriateness of test oracle. For \sa task, test oracle is
-determined by understanding meaning from text. The meaning of text is
-sensitive to its semnatic, structure, and the combination of
-two. Therefore, generation of test case ought to ensure the
-correctness of its oracle allocation. In this work, \tool obtain the
-appropriateness of test oracle by implementing domain-specific
-knowledge on word sentiment dataset and word suggestion model
-pre-trained on large corpus for validation of generated sentence and
-its oracle.
+\noindent \textbf{C3.} Last challenge is on automated test oracle.
+For NLP tasks, test oracle is determined by understanding meaning from
+texts. This requires domain knowledge for different NLP tasks
+% Therefore, generation of test case ought to ensure the
+%correctness of its oracle allocation.
+In this work, as a first step, we consider \sa as the NLP task for the
+models under test. \tool obtain the appropriateness of test oracle by
+implementing domain-specific knowledge on word sentiment dataset and
+word suggestion model pre-trained on large corpus for validation of
+generated sentence and its oracle.
+
 
 We demonstrate its generality and utility as a NLP model evaluation
 tool by evaluating well-known \sa models: \Bert~\cite{devlin2019bert},

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  6 MAY 2022 05:35
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  6 MAY 2022 15:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1640,10 +1640,11 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 6.0pt on input line 123.
  [1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
-]) (./background.tex
+]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-
+)
+(./background.tex
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2015/06/04 1.6 listings language file
 )
@@ -1739,8 +1740,6 @@ Package pdftex.def Info: figs/running_example.pdf  used on input line 264.
 Class acmart Warning: A possible image without description on input line 271.
 
 [4.4 <./figs/overview.pdf>]) (./experiment.tex
-Underfull \vbox (badness 2990) has occurred while \output is active []
-
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/it' will be
 (Font)              scaled to size 9.0pt on input line 39.
 LaTeX Font Info:    Try loading font information for T1+zi4 on input line 41.
@@ -1790,38 +1789,13 @@ Package natbib Warning: Citation `lime' on page 6 undefined on input line 204.
 
 [6.6]) (./result.tex (./tables/manual-study-table.tex)
 (./tables/test-results-table.tex
-Underfull \hbox (badness 10000) in paragraph at lines 184--184
-[]\T1/LinuxLibertineT-TLF/b/n/8 Cklst
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 184--184
-[]\T1/LinuxLibertineT-TLF/b/n/8 Cklst
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 184--184
+Underfull \hbox (badness 10000) in paragraph at lines 144--144
 []\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 184--184
+Underfull \hbox (badness 10000) in paragraph at lines 144--144
 []\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
- []
-
-
-Underfull \hbox (badness 5388) in paragraph at lines 184--184
-[]\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT Exp
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 184--184
-[]\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 184--184
-[]\T1/LinuxLibertineT-TLF/m/n/8 (+20) LC8: Short sen-tences with
  []
 
 )
@@ -1851,7 +1825,7 @@ LaTeX Warning: Reference `table:ManualStudy' on page 7 undefined on input line
 27.
 
 (./CM/coverage.tex
-<figs/covergae.pdf, id=360, 776.09074pt x 359.31036pt>
+<figs/covergae.pdf, id=361, 776.09074pt x 359.31036pt>
 File: figs/covergae.pdf Graphic file (type pdf)
 <use figs/covergae.pdf>
 Package pdftex.def Info: figs/covergae.pdf  used on input line 4.
@@ -1864,28 +1838,26 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 4--6
 
 Class acmart Warning: A possible image without description on input line 8.
 
-
-Underfull \vbox (badness 1484) has occurred while \output is active []
-
 )
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 38.
+(hyperref)                removing `math shift' on input line 50.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 38.
+(hyperref)                removing `superscript' on input line 50.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 38.
+(hyperref)                removing `math shift' on input line 50.
 
 ) (./related.tex Excluding 'comment' comment.) (./concl.tex) (./main.bbl
+Underfull \vbox (badness 1565) has occurred while \output is active []
+
+ [7.7 <./figs/covergae.pdf>]
 LaTeX Info: Redefining \tempurl on input line 70.
 LaTeX Info: Redefining \tempurl on input line 88.
 LaTeX Info: Redefining \tempurl on input line 107.
-
-[7.7 <./figs/covergae.pdf>]
 LaTeX Info: Redefining \tempurl on input line 123.
 LaTeX Info: Redefining \tempurl on input line 138.
 LaTeX Info: Redefining \tempurl on input line 158.
@@ -1898,6 +1870,9 @@ LaTeX Info: Redefining \tempurl on input line 269.
 LaTeX Info: Redefining \tempurl on input line 299.
 LaTeX Info: Redefining \tempurl on input line 345.
 LaTeX Info: Redefining \tempurl on input line 363.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 LaTeX Info: Redefining \tempurl on input line 381.
 )
 
@@ -1913,10 +1888,10 @@ Class acmart Warning: ACM keywords are mandatory for papers over two pages.
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
 
-Overfull \vbox (1.271pt too high) has occurred while \output is active []
+Package balance Warning: You have called \balance in second column
+(balance)                Columns might not be balanced.
 
- [8.8]
-[9.9] [10.10
+[8.8] [9.9] [10.10
 
 
 ] [11.11]
@@ -1938,11 +1913,11 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 34076 strings out of 492982
- 599555 string characters out of 6134896
- 881865 words of memory out of 5000000
+ 34073 strings out of 492982
+ 599483 string characters out of 6134896
+ 883012 words of memory out of 5000000
  36125 multiletter control sequences out of 15000+600000
- 197367 words of font info for 418 fonts, out of 8000000 for 9000
+ 197094 words of font info for 416 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  60i,17n,100p,997b,1603s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/newtx/libertinealt.enc}{/usr/s
@@ -1970,10 +1945,10 @@ st/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts/typ
 e1/public/newtx/txexs.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/new
 tx/txsys.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/zxlri.pfb>
 
-Output written on main.pdf (12 pages, 775032 bytes).
+Output written on main.pdf (12 pages, 775179 bytes).
 PDF statistics:
- 556 PDF objects out of 1000 (max. 8388607)
- 484 compressed objects within 5 object streams
+ 557 PDF objects out of 1000 (max. 8388607)
+ 485 compressed objects within 5 object streams
  112 named destinations out of 1000 (max. 500000)
  57012 words of extra memory for PDF output out of 61914 (max. 10000000)
 
