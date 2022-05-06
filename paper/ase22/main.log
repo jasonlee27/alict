@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  6 MAY 2022 15:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  6 MAY 2022 15:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1789,12 +1789,12 @@ Package natbib Warning: Citation `lime' on page 6 undefined on input line 204.
 
 [6.6]) (./result.tex (./tables/manual-study-table.tex)
 (./tables/test-results-table.tex
-Underfull \hbox (badness 10000) in paragraph at lines 144--144
+Underfull \hbox (badness 10000) in paragraph at lines 157--157
 []\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 144--144
+Underfull \hbox (badness 10000) in paragraph at lines 157--157
 []\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
  []
 
@@ -1841,20 +1841,21 @@ Class acmart Warning: A possible image without description on input line 8.
 )
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 50.
+(hyperref)                removing `math shift' on input line 63.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 50.
+(hyperref)                removing `superscript' on input line 63.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 50.
+(hyperref)                removing `math shift' on input line 63.
 
-) (./related.tex Excluding 'comment' comment.) (./concl.tex) (./main.bbl
-Underfull \vbox (badness 1565) has occurred while \output is active []
+) (./related.tex
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [7.7 <./figs/covergae.pdf>]
+ [7.7 <./figs/covergae.pdf>] Excluding 'comment' comment.) (./concl.tex) (./mai
+n.bbl
 LaTeX Info: Redefining \tempurl on input line 70.
 LaTeX Info: Redefining \tempurl on input line 88.
 LaTeX Info: Redefining \tempurl on input line 107.
@@ -1867,12 +1868,12 @@ LaTeX Info: Redefining \tempurl on input line 215.
 LaTeX Info: Redefining \tempurl on input line 233.
 LaTeX Info: Redefining \tempurl on input line 250.
 LaTeX Info: Redefining \tempurl on input line 269.
-LaTeX Info: Redefining \tempurl on input line 299.
-LaTeX Info: Redefining \tempurl on input line 345.
-LaTeX Info: Redefining \tempurl on input line 363.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
+LaTeX Info: Redefining \tempurl on input line 299.
+LaTeX Info: Redefining \tempurl on input line 345.
+LaTeX Info: Redefining \tempurl on input line 363.
 LaTeX Info: Redefining \tempurl on input line 381.
 )
 
@@ -1913,10 +1914,10 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 34073 strings out of 492982
- 599483 string characters out of 6134896
- 883012 words of memory out of 5000000
- 36125 multiletter control sequences out of 15000+600000
+ 34045 strings out of 492982
+ 598449 string characters out of 6134896
+ 882850 words of memory out of 5000000
+ 36097 multiletter control sequences out of 15000+600000
  197094 words of font info for 416 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  60i,17n,100p,997b,1603s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1945,7 +1946,7 @@ st/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts/typ
 e1/public/newtx/txexs.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/new
 tx/txsys.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/zxlri.pfb>
 
-Output written on main.pdf (12 pages, 775179 bytes).
+Output written on main.pdf (12 pages, 776180 bytes).
 PDF statistics:
  557 PDF objects out of 1000 (max. 8388607)
  485 compressed objects within 5 object streams

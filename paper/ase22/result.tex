@@ -36,13 +36,26 @@ relevancy. Accordingly, we answer the RQ2 by concluding that
 results of evaluation of three \sa models. First column lists
 linguistic capability for \sa task, and Columns 2-3 show the number of
 seed and expanded test cases respectively. Columns 4-5 show the
-failure rate in percentage by running the \sa models on the seed and
-expanded test cases respectively. Column 6 shows the number of
-expanded test cases failed, but their seed test cases passed. For LC9,
-we combine two 
+failure rate in percentage by evaluating the \sa models on the seed
+and expanded test cases respectively. Column 6 shows the number of
+expanded test cases failed, but their seed test cases passed.  From
+the table, we can observe that LC3 has no expanded sentences from its
+seeds. It means that the 50 seeds selected in this experiment does not
+provide any validated expansions. It is because the randomness of
+selection of 50 seeds determines the number of validated
+expansions. we expect that more selection of seeds increases the
+probability of availability of their expansion. In addition, LC1 and
+LC5 obtains 19 and 26 seeds respectively. It represents that \tool
+finds and generates their seeds lower than the target number of seeds,
+which is 50 in this experiment. In this case, use of larger search
+dataset increases the amount of seeds for the \lcs. Finally, we find
+that there are number of a number of failed expanded test cases succeeded
+before the expansion (pass on seed, but fail on its expanded test
+cases). This shows that phase of syntax-based sentence expansion in
+\tool captures failure-inducing expansion given a seed. It finally
+shows usefulness of \tool since the different test results between seed
+and expanded cases provide accurate guidance for debugging model.
 
-From the
-table, we can observe that 
 
 \subsection{RQ3: Test Suite Diversity}
 \input{CM/coverage}

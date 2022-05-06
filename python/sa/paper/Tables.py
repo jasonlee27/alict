@@ -444,38 +444,31 @@ class Tables:
         req_file = req_dir / 'requirements_desc.txt'
         for l_i, l in enumerate(Utils.read_txt(req_file)):
             desc = l.split('::')[0]
-            if desc in Macros.OUR_LC_LIST[9:]:
-                desc = 'Parsing positive and negative sentiment in (question, no) form'
-                if desc.lower() not in lc_ids.keys():
-                    lc_ids[desc.lower()] = (desc,l_i)
-                # end if
-            else:
-                lc_ids[desc.lower()] = (desc,l_i)
-            # end if
+            lc_ids[desc.lower()] = (desc,l_i)
         # end for
         
-        for m_i, model_name in enumerate(baseline_result.keys()):
-            # model_name = model_name.replace('/', '-')
-            for res_i, res in enumerate(baseline_result[model_name]):
-                if res['req']==str(Macros.OUR_LC_LIST[9:]):
-                    desc = 'Parsing positive and negative sentiment in (question, no) form'
-                    desc, lc_i = lc_ids[desc.lower()]
-                else:
-                    desc, lc_i = lc_ids[res['req'].lower()]
-                # end if
-                desc = cls.replace_latex_symbol(desc)
-                lc_orig_ids[desc] = lc_i
-                if m_i==0:
-                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}", desc))
-                # end if
-                if m_i==0:
-                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-sents",
-                                                         res['num_tcs']))
-                # end if
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail",
-                                                     cls.FMT_FLOAT.format(res['num_tc_fail']*100./res['num_tcs'])))
-            # end for
-        # end for
+        # for m_i, model_name in enumerate(baseline_result.keys()):
+        #     # model_name = model_name.replace('/', '-')
+        #     for res_i, res in enumerate(baseline_result[model_name]):
+        #         if res['req']==str(Macros.OUR_LC_LIST[9:]):
+        #             desc = 'Parsing positive and negative sentiment in (question, no) form'
+        #             desc, lc_i = lc_ids[desc.lower()]
+        #         else:
+        #             desc, lc_i = lc_ids[res['req'].lower()]
+        #         # end if
+        #         desc = cls.replace_latex_symbol(desc)
+        #         lc_orig_ids[desc] = lc_i
+        #         if m_i==0:
+        #             output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}", desc))
+        #         # end if
+        #         if m_i==0:
+        #             output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-sents",
+        #                                                  res['num_tcs']))
+        #         # end if
+        #         output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail",
+        #                                              cls.FMT_FLOAT.format(res['num_tc_fail']*100./res['num_tcs'])))
+        #     # end for
+        # # end for
         
         for m_i, model_name in enumerate(result.keys()):
             # model_name = model_name.replace('/', '-')
@@ -483,76 +476,32 @@ class Tables:
             temp_num_seed_fail, temp_num_exp_fail = 0,0
             temp_num_pass2fail = 0
             for res_i, res in enumerate(result[model_name]):
-                if res['req'] in Macros.OUR_LC_LIST[9:]:
-                    desc = 'Parsing positive and negative sentiment in (question, no) form'
-                    desc, _ = lc_ids[desc.lower()]
-                    desc = cls.replace_latex_symbol(desc)
-                    _res_i = lc_orig_ids[desc]
-                    if temp_num_seeds>0 and temp_num_exps>0:
-                        temp_num_seeds += res['num_seeds']
-                        temp_num_exps += res['num_exps']
-                        temp_num_seed_fail += res['num_seed_fail']
-                        temp_num_exp_fail += res['num_exp_fail']
-                        temp_num_pass2fail += res['num_pass2fail']
-                        temp_num_seed_fail = cls.FMT_FLOAT.format(temp_num_seed_fail*100./temp_num_seeds)
-                        temp_num_exp_fail = cls.FMT_FLOAT.format(temp_num_exp_fail*100./temp_num_exps)
-                        if m_i==0:
-                            output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-seeds",
-                                                                 temp_num_seeds))
-                            if res['is_exps_exist']:
-                                output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-exps",
-                                                                     temp_num_exps))
-                            else:
-                                output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-exps", '-'))
-                            # end if
-                        # end if
-
-                        output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-seed-fail",
-                                                             temp_num_seed_fail))
-                        if res['is_exps_exist']:
-                            output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-exp-fail",
-                                                                 temp_num_exp_fail))
-                            output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-pass-to-fail",
-                                                                 temp_num_pass2fail))
-                        else:
-                            output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-exp-fail", '-'))
-                            output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-pass-to-fail", '-'))
-                        # end if
-                    else:
-                        temp_num_seeds += res['num_seeds']
-                        temp_num_exps += res['num_exps']
-                        temp_num_seed_fail += res['num_seed_fail']
-                        temp_num_exp_fail += res['num_exp_fail']
-                        temp_num_pass2fail += res['num_pass2fail']
-                    # end if
-                else:
-                    desc, _ = lc_ids[res['req'].lower()]
-                    desc = cls.replace_latex_symbol(desc)
-                    _res_i = lc_orig_ids[desc]
-                    if m_i==0:
-                        output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-seeds",
-                                                             res['num_seeds']))
-                        if res['is_exps_exist']:
-                            output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-exps",
-                                                                 res['num_exps']))
-                        else:
-                            output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-exps", '-'))
-                        # end if
-                    # end if
-
-                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-seed-fail",
-                                                         cls.FMT_FLOAT.format(res['num_seed_fail']*100./res['num_seeds'])))
+                desc, _res_i = lc_ids[res['req'].lower()]
+                desc = cls.replace_latex_symbol(desc)
+                if m_i==0:
+                    output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}", desc))
+                    output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-seeds",
+                                                         res['num_seeds']))
                     if res['is_exps_exist']:
-                        output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-exp-fail",
-                                                             cls.FMT_FLOAT.format(res['num_exp_fail']*100./res['num_exps'])))
-                        output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-pass-to-fail",
-                                                             res['num_pass2fail']))
+                        output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-exps",
+                                                             res['num_exps']))
                     else:
-                        output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-exp-fail", '-'))
-                        output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-pass-to-fail", '-'))
+                        output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-exps", '-'))
                     # end if
                 # end if
-            # end for
+                
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-seed-fail",
+                                                     cls.FMT_FLOAT.format(res['num_seed_fail']*100./res['num_seeds'])))
+                if res['is_exps_exist']:
+                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-exp-fail",
+                                                         cls.FMT_FLOAT.format(res['num_exp_fail']*100./res['num_exps'])))
+                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-pass-to-fail",
+                                                         res['num_pass2fail']))
+                else:
+                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-exp-fail", '-'))
+                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-pass-to-fail", '-'))
+                # end if
+            # end if
         # end for
         output_file.save()
         return
@@ -572,7 +521,7 @@ class Tables:
         result = Utils.read_json(result_file)
         baseline_result = Utils.read_json(baseline_result_file)
         model_names = list(baseline_result.keys())
-        lcs_len = len(baseline_result[model_names[0]])
+        lcs_len = len(result[model_names[0]])
         
         # Header
         output_file.append(r"\begin{table*}[t]")
@@ -581,7 +530,7 @@ class Tables:
         output_file.append(r"\caption{\TestResultsTableCaption}")
         output_file.append(r"\resizebox{0.9\textwidth}{!}{")
         # output_file.append(r"\begin{tabular}{p{4cm}||p{1cm}p{2cm}p{1cm}p{2cm}p{1cm}p{2cm}p{2cm}}")
-        output_file.append(r"\begin{tabular}{p{8.5cm}||cclll}")
+        output_file.append(r"\begin{tabular}{p{8cm}||cclll}")
         output_file.append(r"\toprule")
         
         # output_file.append(r"\tLc & \parbox{1cm}{\tNumBlSents} & \parbox{1cm}{\tNumBlFail} & \parbox{1cm}{\tNumSeeds} & \parbox{1.5cm}{\tNumSeedFail} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\tNumExpFail} & \parbox{1.5cm}{\tNumPasstoFail}\\")
@@ -590,12 +539,9 @@ class Tables:
         
         # Content
         for lc_i in range(lcs_len):
-            if lc_i+1==lcs_len:
-                lc_prefix_str = f"LC{lc_i+1}\&{lc_i+2}: "
-            else:
-                lc_prefix_str = f"LC{lc_i+1}: "
+            lc_prefix_str = f"LC{lc_i+1}: "
             # end if
-            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8.5cm}{" + \
+            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8cm}{" + \
                                lc_prefix_str + latex.Macro(f"test-results-lc{lc_i}").use() + "}}")
             # output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
             #                    latex.Macro(f"test-results-bl-lc{lc_i}-num-sents").use() + "}")
