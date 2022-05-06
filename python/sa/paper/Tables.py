@@ -438,26 +438,41 @@ class Tables:
         baseline_result_file = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}" / 'test_result_checklist_analysis.json'        
         output_file = latex.File(tables_dir / 'test-results-numbers.tex')
         result = Utils.read_json(result_file)
-        lc_ids = dict()
+        lc_orig_ids, lc_ids = dict(), dict()
         baseline_result = Utils.read_json(baseline_result_file)
+        req_dir = result_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        for l_i, l in enumerate(Utils.read_txt(req_file)):
+            desc = l.split('::')[0]
+            if desc in Macros.OUR_LC_LIST[9:]:
+                desc = 'Parsing positive and negative sentiment in (question, no) form'
+                if desc.lower() not in lc_ids.keys():
+                    lc_ids[desc.lower()] = (desc,l_i)
+                # end if
+            else:
+                lc_ids[desc.lower()] = (desc,l_i)
+            # end if
+        # end for
+        
         for m_i, model_name in enumerate(baseline_result.keys()):
             # model_name = model_name.replace('/', '-')
             for res_i, res in enumerate(baseline_result[model_name]):
                 if res['req']==str(Macros.OUR_LC_LIST[9:]):
                     desc = 'Parsing positive and negative sentiment in (question, no) form'
-                    desc = cls.replace_latex_symbol(desc)
+                    desc, lc_i = lc_ids[desc.lower()]
                 else:
-                    desc = cls.replace_latex_symbol(res['req'])
+                    desc, lc_i = lc_ids[res['req'].lower()]
+                # end if
+                desc = cls.replace_latex_symbol(desc)
+                lc_orig_ids[desc] = lc_i
+                if m_i==0:
+                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}", desc))
                 # end if
                 if m_i==0:
-                    lc_ids[desc] = res_i
-                    output_file.append_macro(latex.Macro(f"test-results-lc{res_i}", desc))
-                # end if
-                if m_i==0:
-                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{res_i}-num-sents",
+                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-sents",
                                                          res['num_tcs']))
                 # end if
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{res_i}-num-fail",
+                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail",
                                                      cls.FMT_FLOAT.format(res['num_tc_fail']*100./res['num_tcs'])))
             # end for
         # end for
@@ -470,8 +485,9 @@ class Tables:
             for res_i, res in enumerate(result[model_name]):
                 if res['req'] in Macros.OUR_LC_LIST[9:]:
                     desc = 'Parsing positive and negative sentiment in (question, no) form'
+                    desc, _ = lc_ids[desc.lower()]
                     desc = cls.replace_latex_symbol(desc)
-                    _res_i = lc_ids[desc]
+                    _res_i = lc_orig_ids[desc]
                     if temp_num_seeds>0 and temp_num_exps>0:
                         temp_num_seeds += res['num_seeds']
                         temp_num_exps += res['num_exps']
@@ -510,9 +526,9 @@ class Tables:
                         temp_num_pass2fail += res['num_pass2fail']
                     # end if
                 else:
-                    desc = cls.replace_latex_symbol(res['req'])
-                    _res_i = lc_ids[desc]
-                    
+                    desc, _ = lc_ids[res['req'].lower()]
+                    desc = cls.replace_latex_symbol(desc)
+                    _res_i = lc_orig_ids[desc]
                     if m_i==0:
                         output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-seeds",
                                                              res['num_seeds']))
@@ -565,7 +581,7 @@ class Tables:
         output_file.append(r"\caption{\TestResultsTableCaption}")
         output_file.append(r"\resizebox{0.9\textwidth}{!}{")
         # output_file.append(r"\begin{tabular}{p{4cm}||p{1cm}p{2cm}p{1cm}p{2cm}p{1cm}p{2cm}p{2cm}}")
-        output_file.append(r"\begin{tabular}{p{8cm}||cclll}")
+        output_file.append(r"\begin{tabular}{p{8.5cm}||cclll}")
         output_file.append(r"\toprule")
         
         # output_file.append(r"\tLc & \parbox{1cm}{\tNumBlSents} & \parbox{1cm}{\tNumBlFail} & \parbox{1cm}{\tNumSeeds} & \parbox{1.5cm}{\tNumSeedFail} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\tNumExpFail} & \parbox{1.5cm}{\tNumPasstoFail}\\")
@@ -574,8 +590,13 @@ class Tables:
         
         # Content
         for lc_i in range(lcs_len):
-            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8cm}{" + \
-                               f"LC{lc_i+1}: " + latex.Macro(f"test-results-lc{lc_i}").use() + "}}")
+            if lc_i+1==lcs_len:
+                lc_prefix_str = f"LC{lc_i+1}\&{lc_i+2}: "
+            else:
+                lc_prefix_str = f"LC{lc_i+1}: "
+            # end if
+            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8.5cm}{" + \
+                               lc_prefix_str + latex.Macro(f"test-results-lc{lc_i}").use() + "}}")
             # output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
             #                    latex.Macro(f"test-results-bl-lc{lc_i}-num-sents").use() + "}")
             # output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
