@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  6 MAY 2022 02:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  6 MAY 2022 05:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1343,17 +1343,14 @@ Package: balance 1999/02/23 4.3 (PWD)
 \oldvsize=\dimen291
 )
 Excluding comment 'screenonly' Include comment 'printonly'
-Excluding comment 'anonsuppress' Excluding comment 'acks' (./main.aux
-
-LaTeX Warning: Label `sec:result' multiply defined.
-
-)
+Excluding comment 'anonsuppress' Excluding comment 'acks' (./main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/nxlmi/m/it on input line 50.
 LaTeX Font Info:    Try loading font information for OML+nxlmi on input line 50
 .
- (/usr/share/texlive/texmf-dist/tex/latex/newtx/omlnxlmi.fd
+
+(/usr/share/texlive/texmf-dist/tex/latex/newtx/omlnxlmi.fd
 File: omlnxlmi.fd 2013/11/19 Fontinst v1.933 font definitions for OML/nxlmi.
 )
 LaTeX Font Info:    ... okay on input line 50.
@@ -1680,7 +1677,7 @@ LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
 
 pdfTeX warning: pdflatex (file ./figs/overview.pdf): PDF inclusion: found PDF v
 ersion <1.7>, but at most version <1.5> allowed
-<figs/overview.pdf, id=173, 930.47626pt x 274.12413pt>
+<figs/overview.pdf, id=168, 930.47626pt x 274.12413pt>
 File: figs/overview.pdf Graphic file (type pdf)
 <use figs/overview.pdf>
 Package pdftex.def Info: figs/overview.pdf  used on input line 6.
@@ -1733,7 +1730,7 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 
 pdfTeX warning: pdflatex (file ./figs/running_example.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<figs/running_example.pdf, id=187, 694.19348pt x 217.21149pt>
+<figs/running_example.pdf, id=183, 694.19348pt x 217.21149pt>
 File: figs/running_example.pdf Graphic file (type pdf)
 <use figs/running_example.pdf>
 Package pdftex.def Info: figs/running_example.pdf  used on input line 264.
@@ -1764,7 +1761,7 @@ Package microtype Info: Character `textemdash ' is missing
 (microtype)             in font `T1/zi4/m/n/9'.
 (microtype)             Ignoring protrusion settings for this character.
 
-Overfull \hbox (3.67346pt too wide) in paragraph at lines 50--56
+Overfull \hbox (3.67346pt too wide) in paragraph at lines 54--60
  []\T1/LinuxLibertineT-TLF/b/it/9 Comparison Base-lines.[] \T1/LinuxLibertineT-
 TLF/m/n/9 (-20) We com-pare our ap-proach with CHECK-
  []
@@ -1772,44 +1769,27 @@ TLF/m/n/9 (-20) We com-pare our ap-proach with CHECK-
 [5.5 <./figs/running_example.pdf>]
 
 Package natbib Warning: Citation `ma2018deepgauge' on page 6 undefined on input
- line 120.
+ line 125.
 
 
 Package natbib Warning: Citation `ma2018deepgauge' on page 6 undefined on input
- line 126.
+ line 131.
 
 
-Overfull \hbox (6.23637pt too wide) in paragraph at lines 113--133
+Overfull \hbox (6.23637pt too wide) in paragraph at lines 118--138
  []\T1/LinuxLibertineT-TLF/m/it/9 (-20) RQ3.[] \T1/LinuxLibertineT-TLF/m/n/9 (-
 20) Re-call that a key lim-i-ta-tion of CHECK-LIST is that its template-
  []
 
 
-Package natbib Warning: Citation `lemna' on page 6 undefined on input line 199.
+Package natbib Warning: Citation `lemna' on page 6 undefined on input line 204.
 
 
 
-Package natbib Warning: Citation `lime' on page 6 undefined on input line 199.
+Package natbib Warning: Citation `lime' on page 6 undefined on input line 204.
 
-[6.6]) (./result.tex
-LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.95pt on input line 7.
-LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 6.1pt on input line 7.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 7.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 7.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 7.
-
-(./tables/manual-study-table.tex) (./tables/test-results-table.tex
+[6.6]) (./result.tex (./tables/manual-study-table.tex)
+(./tables/test-results-table.tex
 Underfull \hbox (badness 10000) in paragraph at lines 184--184
 []\T1/LinuxLibertineT-TLF/b/n/8 Cklst
  []
@@ -1830,13 +1810,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 184--184
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 184--184
-[]\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 184--184
-[]\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT
+Underfull \hbox (badness 5388) in paragraph at lines 184--184
+[]\T1/LinuxLibertineT-TLF/b/n/8 S$[]$LCT Exp
  []
 
 
@@ -1850,25 +1825,67 @@ Underfull \hbox (badness 10000) in paragraph at lines 184--184
  []
 
 )
-
-LaTeX Warning: Reference `tab:coverage' on page 7 undefined on input line 17.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 19.
+LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 10.95pt on input line 10.
+LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 6.1pt on input line 10.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 19.
+(hyperref)                removing `math shift' on input line 10.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 19.
+(hyperref)                removing `superscript' on input line 10.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 10.
+
+
+LaTeX Warning: Reference `table:ManualStudy' on page 7 undefined on input line 
+11.
+
+
+LaTeX Warning: Reference `table:ManualStudy' on page 7 undefined on input line 
+27.
+
+(./CM/coverage.tex
+<figs/covergae.pdf, id=360, 776.09074pt x 359.31036pt>
+File: figs/covergae.pdf Graphic file (type pdf)
+<use figs/covergae.pdf>
+Package pdftex.def Info: figs/covergae.pdf  used on input line 4.
+(pdftex.def)             Requested size: 253.14749pt x 117.20212pt.
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 4--6
+ [][] 
+ []
+
+
+Class acmart Warning: A possible image without description on input line 8.
+
+
+Underfull \vbox (badness 1484) has occurred while \output is active []
+
+)
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 38.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `superscript' on input line 38.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 38.
 
 ) (./related.tex Excluding 'comment' comment.) (./concl.tex) (./main.bbl
 LaTeX Info: Redefining \tempurl on input line 70.
 LaTeX Info: Redefining \tempurl on input line 88.
 LaTeX Info: Redefining \tempurl on input line 107.
+
+[7.7 <./figs/covergae.pdf>]
 LaTeX Info: Redefining \tempurl on input line 123.
 LaTeX Info: Redefining \tempurl on input line 138.
 LaTeX Info: Redefining \tempurl on input line 158.
@@ -1896,15 +1913,15 @@ Class acmart Warning: ACM keywords are mandatory for papers over two pages.
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
 
-Package balance Warning: You have called \balance in second column
-(balance)                Columns might not be balanced.
+Overfull \vbox (1.271pt too high) has occurred while \output is active []
 
-[7.7] [8.8] [9.9
+ [8.8]
+[9.9] [10.10
 
 
-] [10.10]
-Package atenddvi Info: Last page = 11.
- [11.11
+] [11.11]
+Package atenddvi Info: Last page = 12.
+ [12.12
 
 
 ]
@@ -1914,21 +1931,18 @@ Package atveryend Info: Executing hook `AfterLastShipout' on input line 218.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 218.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 218.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: CEB8FB3A322E826323B8BCBA21B1BEF7;3386.
+(rerunfilecheck)             Checksum: E46AA7A788C37B89AAF6BCDB8990473C;3299.
 
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: There were multiply-defined labels.
-
  ) 
 Here is how much of TeX's memory you used:
- 34052 strings out of 492982
- 599050 string characters out of 6134896
- 881615 words of memory out of 5000000
- 36121 multiletter control sequences out of 15000+600000
- 195299 words of font info for 408 fonts, out of 8000000 for 9000
+ 34076 strings out of 492982
+ 599555 string characters out of 6134896
+ 881865 words of memory out of 5000000
+ 36125 multiletter control sequences out of 15000+600000
+ 197367 words of font info for 418 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  60i,17n,100p,997b,1603s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/newtx/libertinealt.enc}{/usr/s
@@ -1956,10 +1970,10 @@ st/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts/typ
 e1/public/newtx/txexs.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/new
 tx/txsys.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/zxlri.pfb>
 
-Output written on main.pdf (11 pages, 743165 bytes).
+Output written on main.pdf (12 pages, 775032 bytes).
 PDF statistics:
- 538 PDF objects out of 1000 (max. 8388607)
- 473 compressed objects within 5 object streams
- 111 named destinations out of 1000 (max. 500000)
- 57015 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 556 PDF objects out of 1000 (max. 8388607)
+ 484 compressed objects within 5 object streams
+ 112 named destinations out of 1000 (max. 500000)
+ 57012 words of extra memory for PDF output out of 61914 (max. 10000000)
 

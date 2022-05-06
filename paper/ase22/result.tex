@@ -1,19 +1,38 @@
-\section{Result}
-\label{sec:result}
-
 \section{Experimental Results}
 \label{sec:result}
 
-\subsection{RQ1: \tool Sentiment Label Consistency}
+This section presents experiment results and answer the RQs by
+studying the results quantatively and qualitatively.
 
 \InputWithSpace{tables/manual-study-table}
 \InputWithSpace{tables/test-results-table}
 
+\subsection{RQ1: \tool Sentiment Label Consistency}
+Table~\ref{table:ManualStudy} shows the statistics of scores collected
+from the manual study of \tool. First column represents type of test
+case. The number of test cases used for the study is represented in
+second column. Label consistency score and \lc relevancy score defined
+at equation~\ref{metric:srel} and~\ref{metric:lcrel} are shown at the
+remaining columns. First, it is shown that high label consistency
+score over 0.8. It means that \tool generates test oracles consistent
+to human understanding. It is also observed that there is no
+difference of the scores between seed and expanded sentences. The
+observation implies that the expansion method in \tool preserves
+sentiment of expanded sentences as its seed, and provides its
+reliability. These observations answer RQ1 and conclude that \tool
+generates test case with high consistency between test sentence and
+its oracle.
+
 \subsection{RQ2: Correctness of Linguistic Capability Categorization}
+The result in table~\ref{table:ManualStudy} also shows that \tool
+achieves high order of agreement with human assessment on \lc
+relevancy. In parallel, it is observed that the expanded sentences
+generated from \tool also have same level of \lc
+relevancy. Accordingly, we answer the RQ2 by concluding that
+\tool generates \lc relevant test cases with the agreement with human.
+
 
 \subsection{RQ3: Test Suite Diversity}
-
-
-Table \ref{tab:coverage} shows that ....
+\input{CM/coverage}
 
 \subsection{RQ4: Use \tool for Debugging}

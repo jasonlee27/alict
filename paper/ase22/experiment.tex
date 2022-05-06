@@ -43,7 +43,11 @@ Model Hub.\footnote{https://huggingface.co/models}: \texttt{\Bert}
 \texttt{\Dbert} (\disbertsamodel). They are pre-trained on English
 language using a masked language modeling (MLM) objective, and
 fine-tuned on \sa task. In this experiment, we use \Sstt dataset for
-searching seeds and expanding the seeds in \tool.
+searching seeds and expanding the seeds in \tool. The \Sstt is a
+corpus of movie review, and it consists of 11,855 single sentences
+with its sentiment score. As original dataset suggests, we split the
+score range into [0, 0.4], (0.4, 0.6] and (0.6, 0.8] for assigning
+    negative, neutral and positive labels respectively.
 %% \TODO{introduce details about each model}
 
 \paragraph{\textbf{Comparison Baselines.}}
@@ -93,7 +97,7 @@ From the collected scores, we measure the following metrics:
 
 \begin{eqnarray}
   sentiment\_relecancy &= \sum_{i} \delta(label_{S^2LCT}!=label_{human}) \label{metric:srel} \\
-  LC\_relevancy_{AVG} &= \frac{1}{\#data}\cdot\sum_{i} LC\_relevancy_i \label{metric:lcrel}
+  LC\_relevancy_{AVG} &= \frac{1}{\#Data\cdot~}\cdot\sum_{i} Norm(LC\_relevancy_i) \label{metric:lcrel}
 \end{eqnarray}
 
 The equation~\ref{metric:srel} represent the number of test cases that
@@ -101,13 +105,14 @@ their labels assigned from are different between \tool and
 human. Higher number of this metric indicates worse correlation of
 test oracle that \tool generated with human. In addition, the
 equation~\ref{metric:lcrel} represents the average score of the
-relevancy score between sentence and its associated \lc. Higer average
-score means that higher human-level agreement of the use of sentence
-for its \lc, resulting in higher suitability of the use of the
-testcases for evaluating model on the \lc. Given the metrics, we
-answer RQ1 and RQ2 by the metrics from the equation~\ref{metric:srel}
-and equation~\ref{metric:lcrel} respectively, thereby, show its
-ability of \tool to understand human intelligence.
+normalized relevancy score between sentence and its associated
+\lc. Higer average score means that higher human-level agreement of
+the use of sentence for its \lc, resulting in higher suitability of
+the use of the testcases for evaluating model on the \lc. Given the
+metrics, we answer RQ1 and RQ2 by the metrics from the
+equation~\ref{metric:srel} and equation~\ref{metric:lcrel}
+respectively, thereby, show its ability of \tool to understand human
+intelligence.
 
 \paragraph{RQ3.}
 Recall that a key limitation of \Cklst is that its template-based
