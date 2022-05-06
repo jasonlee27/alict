@@ -370,15 +370,15 @@ class Tables:
         output_file.append_macro(latex.Macro(f"manual-study-seed-num-sents",
                                              seed_agg_result['num_sents']))
         output_file.append_macro(latex.Macro(f"manual-study-seed-label-consistency",
-                                             seed_agg_result['avg_label_score']))
+                                             cls.FMT_FLOAT.format(round(seed_agg_result['avg_label_score'],2))))
         output_file.append_macro(latex.Macro(f"manual-study-seed-lc-relevancy",
-                                             seed_agg_result['avg_lc_score']/5.))
+                                             cls.FMT_FLOAT.format(round(seed_agg_result['avg_lc_score'],2))))
         output_file.append_macro(latex.Macro(f"manual-study-exp-num-sents",
                                              exp_agg_result['num_sents']))
         output_file.append_macro(latex.Macro(f"manual-study-exp-label-consistency",
-                                             exp_agg_result['avg_label_score']))
+                                             cls.FMT_FLOAT.format(round(exp_agg_result['avg_label_score'],2))))
         output_file.append_macro(latex.Macro(f"manual-study-exp-lc-relevancy",
-                                             exp_agg_result['avg_lc_score']/5.))
+                                             cls.FMT_FLOAT.format(round(exp_agg_result['avg_lc_score'],2))))
         output_file.save()
         return
 
@@ -458,12 +458,11 @@ class Tables:
                                                          res['num_tcs']))
                 # end if
                 output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{res_i}-num-fail",
-                                                     res['num_tc_fail']))
+                                                     cls.FMT_FLOAT.format(res['num_tc_fail']*100./res['num_tcs'])))
             # end for
         # end for
         
         for m_i, model_name in enumerate(result.keys()):
-            print(m_i, model_name)
             # model_name = model_name.replace('/', '-')
             temp_num_seeds, temp_num_exps = 0,0
             temp_num_seed_fail, temp_num_exp_fail = 0,0
@@ -479,6 +478,8 @@ class Tables:
                         temp_num_seed_fail += res['num_seed_fail']
                         temp_num_exp_fail += res['num_exp_fail']
                         temp_num_pass2fail += res['num_pass2fail']
+                        temp_num_seed_fail = cls.FMT_FLOAT.format(temp_num_seed_fail*100./temp_num_seeds)
+                        temp_num_exp_fail = cls.FMT_FLOAT.format(temp_num_exp_fail*100./temp_num_exps)
                         if m_i==0:
                             output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-seeds",
                                                                  temp_num_seeds))
@@ -501,13 +502,13 @@ class Tables:
                             output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-exp-fail", '-'))
                             output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-pass-to-fail", '-'))
                         # end if
-                        
+                    else:
+                        temp_num_seeds += res['num_seeds']
+                        temp_num_exps += res['num_exps']
+                        temp_num_seed_fail += res['num_seed_fail']
+                        temp_num_exp_fail += res['num_exp_fail']
+                        temp_num_pass2fail += res['num_pass2fail']
                     # end if
-                    temp_num_seeds += res['num_seeds']
-                    temp_num_exps += res['num_exps']
-                    temp_num_seed_fail += res['num_seed_fail']
-                    temp_num_exp_fail += res['num_exp_fail']
-                    temp_num_pass2fail += res['num_pass2fail']
                 else:
                     desc = cls.replace_latex_symbol(res['req'])
                     _res_i = lc_ids[desc]
@@ -524,10 +525,10 @@ class Tables:
                     # end if
 
                     output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-seed-fail",
-                                                         res['num_seed_fail']))
+                                                         cls.FMT_FLOAT.format(res['num_seed_fail']*100./res['num_seeds'])))
                     if res['is_exps_exist']:
                         output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-exp-fail",
-                                                             res['num_exp_fail']))
+                                                             cls.FMT_FLOAT.format(res['num_exp_fail']*100./res['num_exps'])))
                         output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-pass-to-fail",
                                                              res['num_pass2fail']))
                     else:
@@ -562,42 +563,45 @@ class Tables:
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
         output_file.append(r"\caption{\TestResultsTableCaption}")
-        output_file.append(r"\begin{adjustbox}{angle=90}")
-        output_file.append(r"\begin{tabular}{p{5cm}||ccccccc}")
+        output_file.append(r"\resizebox{\textwidth}{!}{")
+        output_file.append(r"\begin{tabular}{p{4cm}||p{1cm}p{2cm}p{1cm}p{2cm}p{1cm}p{2cm}p{2cm}}")
         output_file.append(r"\toprule")
         
-        output_file.append(r"\tLc & \tNumBlSents & \tNumBlFail & \tNumSeeds & \tNumSeedFail & \tNumExps & \tNumExpFail & \tNumPasstoFail\\")
+        output_file.append(r"\tLc & \parbox{1cm}{\tNumBlSents} & \parbox{1cm}{\tNumBlFail} & \parbox{1cm}{\tNumSeeds} & \parbox{1.5cm}{\tNumSeedFail} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\tNumExpFail} & \parbox{1.5cm}{\tNumPasstoFail}\\")
         output_file.append(r"\midrule")
 
         # Content
         for lc_i in range(lcs_len):
-            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{5cm}{" + \
+            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{4cm}{" + \
                                f"LC{lc_i+1}: " + latex.Macro(f"test-results-lc{lc_i}").use() + "}}")
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
                                latex.Macro(f"test-results-bl-lc{lc_i}-num-sents").use() + "}")
-            output_file.append(" & Model1$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
 
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
                                latex.Macro(f"test-results-lc{lc_i}-num-seeds").use() + "}")
-            output_file.append(" & Model1$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-seed-fail").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-seed-fail").use())
             
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
                                latex.Macro(f"test-results-lc{lc_i}-num-exps").use() + "}")
-            output_file.append(" & Model1$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-exp-fail").use())
-            output_file.append(" & Model1$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-exp-fail").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             
             for m_i in range(1,len(model_names)):
-                output_file.append(f" & & Model{m_i+1}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & & Model{m_i+1}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail").use())
-                output_file.append(f" & & Model{m_i+1}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail").use())
-                output_file.append(f" & Model{m_i+1}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+                if m_i==1:
+                    m_name = 'RoBERTa'
+                else:
+                    m_name = 'dstBERT'
+                output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail").use())
+                output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             # end for
             output_file.append(r"\hline")
         # end for
         # Footer
         output_file.append(r"\bottomrule")
-        output_file.append(r"\end{tabular}")
-        output_file.append(r"\end{adjustbox}")
+        output_file.append(r"\end{tabular}}")
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
         output_file.append(r"\vspace{\TestResultsTableVSpace}")

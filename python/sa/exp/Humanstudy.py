@@ -372,6 +372,10 @@ class Humanstudy:
         return res
 
     @classmethod
+    def norm_lc_relevancy(cls, scores, min_val=1, max_val=5):
+        return [(s-min_val)/(max_val-min_val) for s in scores]
+
+    @classmethod
     def get_reported_bugs(cls,
                           pred_results,
                           tgt_results,
@@ -514,6 +518,8 @@ class Humanstudy:
             agg_exp_label_scores.extend(list(res[f_i]['label_scores']['exp'].values()))
             agg_exp_lc_scores.extend(list(res[f_i]['lc_scores']['exp'].values()))
         # end for
+        agg_seed_lc_scores = cls.norm_lc_relevancy(agg_seed_lc_scores)
+        agg_exp_lc_scores = cls.norm_lc_relevancy(agg_exp_lc_scores)
         
         res['agg'] = {
             'seed': {
