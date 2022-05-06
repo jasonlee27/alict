@@ -563,27 +563,29 @@ class Tables:
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
         output_file.append(r"\caption{\TestResultsTableCaption}")
-        output_file.append(r"\resizebox{\textwidth}{!}{")
-        output_file.append(r"\begin{tabular}{p{4cm}||p{1cm}p{2cm}p{1cm}p{2cm}p{1cm}p{2cm}p{2cm}}")
+        output_file.append(r"\resizebox{0.9\textwidth}{!}{")
+        # output_file.append(r"\begin{tabular}{p{4cm}||p{1cm}p{2cm}p{1cm}p{2cm}p{1cm}p{2cm}p{2cm}}")
+        output_file.append(r"\begin{tabular}{p{8cm}||cclll}")
         output_file.append(r"\toprule")
         
-        output_file.append(r"\tLc & \parbox{1cm}{\tNumBlSents} & \parbox{1cm}{\tNumBlFail} & \parbox{1cm}{\tNumSeeds} & \parbox{1.5cm}{\tNumSeedFail} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\tNumExpFail} & \parbox{1.5cm}{\tNumPasstoFail}\\")
+        # output_file.append(r"\tLc & \parbox{1cm}{\tNumBlSents} & \parbox{1cm}{\tNumBlFail} & \parbox{1cm}{\tNumSeeds} & \parbox{1.5cm}{\tNumSeedFail} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\tNumExpFail} & \parbox{1.5cm}{\tNumPasstoFail}\\")
+        output_file.append(r"\tLc & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumSeedFail} & \parbox{1.5cm}{\centering\tNumExpFail} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\")
         output_file.append(r"\midrule")
-
+        
         # Content
         for lc_i in range(lcs_len):
-            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{4cm}{" + \
+            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8cm}{" + \
                                f"LC{lc_i+1}: " + latex.Macro(f"test-results-lc{lc_i}").use() + "}}")
-            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
-                               latex.Macro(f"test-results-bl-lc{lc_i}-num-sents").use() + "}")
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
+            # output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
+            #                    latex.Macro(f"test-results-bl-lc{lc_i}-num-sents").use() + "}")
+            # output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
 
-            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
+            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
                                latex.Macro(f"test-results-lc{lc_i}-num-seeds").use() + "}")
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-seed-fail").use())
-            
-            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
+            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
                                latex.Macro(f"test-results-lc{lc_i}-num-exps").use() + "}")
+            
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-seed-fail").use())
             output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-exp-fail").use())
             output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             
@@ -592,9 +594,9 @@ class Tables:
                     m_name = 'RoBERTa'
                 else:
                     m_name = 'dstBERT'
-                output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail").use())
-                output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail").use())
+                # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail").use())
                 output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             # end for
             output_file.append(r"\hline")
