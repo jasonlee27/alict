@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{28}
+\begin{thebibliography}{31}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -137,6 +137,38 @@
   SIGSAC conference on computer and communications security}}.
   \bibinfo{pages}{364--379}.
 \newblock
+
+
+\bibitem[\protect\citeauthoryear{He, Meister, and Su}{He et~al\mbox{.}}{2019}]%
+        {pinjia2020structinvtestingnmt}
+\bibfield{author}{\bibinfo{person}{Pinjia He}, \bibinfo{person}{Clara Meister},
+  {and} \bibinfo{person}{Zhendong Su}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Structure-Invariant Testing for Machine
+  Translation}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1907.08710}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1907.08710}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1907.08710}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{He, Meister, and Su}{He et~al\mbox{.}}{2020}]%
+        {pinjia2020testnmtrt}
+\bibfield{author}{\bibinfo{person}{Pinjia He}, \bibinfo{person}{Clara Meister},
+  {and} \bibinfo{person}{Zhendong Su}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Testing Machine Translation via Referential
+  Transparency}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/2004.10361}
+  (\bibinfo{year}{2020}).
+\newblock
+\showeprint[arXiv]{2004.10361}
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2004.10361}
+\showURL{%
+\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Husnain, Missen, Akhtar, Coustaty, Mumtaz, and
@@ -462,6 +494,26 @@
 \newblock
 \newblock
 \shownote{\url{https://www.nltk.org/howto/corpus.html}}.
+
+
+\bibitem[\protect\citeauthoryear{Wang, Pruksachatkun, Nangia, Singh, Michael,
+  Hill, Levy, and Bowman}{Wang et~al\mbox{.}}{2019}]%
+        {wang2019superglue}
+\bibfield{author}{\bibinfo{person}{Alex Wang}, \bibinfo{person}{Yada
+  Pruksachatkun}, \bibinfo{person}{Nikita Nangia}, \bibinfo{person}{Amanpreet
+  Singh}, \bibinfo{person}{Julian Michael}, \bibinfo{person}{Felix Hill},
+  \bibinfo{person}{Omer Levy}, {and} \bibinfo{person}{Samuel~R. Bowman}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{SuperGLUE: {A} Stickier Benchmark for
+  General-Purpose Language Understanding Systems}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1905.00537}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1905.00537}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1905.00537}
+\showURL{%
+\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Wang, Singh, Michael, Hill, Levy, and

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  6 MAY 2022 20:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  7 MAY 2022 00:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1835,30 +1835,41 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 81.
 
-) (./threats.tex) (./related.tex Excluding 'comment' comment.) (./concl.tex)
-(./main.bbl
+) (./threats.tex) (./related.tex
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 4.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 34.
+
+) (./concl.tex) (./main.bbl
 LaTeX Info: Redefining \tempurl on input line 70.
 LaTeX Info: Redefining \tempurl on input line 89.
 LaTeX Info: Redefining \tempurl on input line 107.
 LaTeX Info: Redefining \tempurl on input line 124.
-LaTeX Info: Redefining \tempurl on input line 171.
-LaTeX Info: Redefining \tempurl on input line 187.
-LaTeX Info: Redefining \tempurl on input line 202.
-LaTeX Info: Redefining \tempurl on input line 222.
-LaTeX Info: Redefining \tempurl on input line 273.
-LaTeX Info: Redefining \tempurl on input line 290.
-LaTeX Info: Redefining \tempurl on input line 310.
-LaTeX Info: Redefining \tempurl on input line 328.
+LaTeX Info: Redefining \tempurl on input line 153.
+LaTeX Info: Redefining \tempurl on input line 169.
+LaTeX Info: Redefining \tempurl on input line 203.
+LaTeX Info: Redefining \tempurl on input line 219.
+LaTeX Info: Redefining \tempurl on input line 234.
 
-Underfull \vbox (badness 5756) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [8.8]
-LaTeX Info: Redefining \tempurl on input line 358.
-LaTeX Info: Redefining \tempurl on input line 377.
-LaTeX Info: Redefining \tempurl on input line 407.
-LaTeX Info: Redefining \tempurl on input line 453.
-LaTeX Info: Redefining \tempurl on input line 481.
-LaTeX Info: Redefining \tempurl on input line 499.
+LaTeX Info: Redefining \tempurl on input line 254.
+LaTeX Info: Redefining \tempurl on input line 305.
+LaTeX Info: Redefining \tempurl on input line 322.
+LaTeX Info: Redefining \tempurl on input line 342.
+LaTeX Info: Redefining \tempurl on input line 360.
+LaTeX Info: Redefining \tempurl on input line 390.
+LaTeX Info: Redefining \tempurl on input line 409.
+LaTeX Info: Redefining \tempurl on input line 439.
+LaTeX Info: Redefining \tempurl on input line 485.
+LaTeX Info: Redefining \tempurl on input line 514.
+LaTeX Info: Redefining \tempurl on input line 533.
+LaTeX Info: Redefining \tempurl on input line 551.
 )
 
 Class acmart Warning: Some images may lack descriptions.
@@ -1870,7 +1881,7 @@ Class acmart Warning: ACM keywords are mandatory for papers over two pages.
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
 
-Overfull \vbox (1.11351pt too high) has occurred while \output is active []
+Overfull \vbox (1.43549pt too high) has occurred while \output is active []
 
 
 [9.9] [10.10] [11.11
@@ -1895,11 +1906,11 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 34121 strings out of 492982
- 600305 string characters out of 6134896
- 882496 words of memory out of 5000000
- 36121 multiletter control sequences out of 15000+600000
- 201231 words of font info for 442 fonts, out of 8000000 for 9000
+ 34144 strings out of 492982
+ 600945 string characters out of 6134896
+ 883703 words of memory out of 5000000
+ 36129 multiletter control sequences out of 15000+600000
+ 202617 words of font info for 450 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  60i,17n,100p,997b,1603s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/newtx/libertinealt.enc}{/usr/s
@@ -1927,10 +1938,10 @@ st/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts/typ
 e1/public/newtx/txexs.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/new
 tx/txsys.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/zxlri.pfb>
 
-Output written on main.pdf (13 pages, 785007 bytes).
+Output written on main.pdf (13 pages, 787007 bytes).
 PDF statistics:
- 593 PDF objects out of 1000 (max. 8388607)
- 519 compressed objects within 6 object streams
- 122 named destinations out of 1000 (max. 500000)
+ 605 PDF objects out of 1000 (max. 8388607)
+ 531 compressed objects within 6 object streams
+ 125 named destinations out of 1000 (max. 500000)
  57020 words of extra memory for PDF output out of 61914 (max. 10000000)
 
