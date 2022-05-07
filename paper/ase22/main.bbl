@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{20}
+\begin{thebibliography}{28}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -36,6 +36,25 @@
 \providecommand\bibinfo[2]{#2}
 \providecommand\natexlab[1]{#1}
 \providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[\protect\citeauthoryear{Baccianella, Esuli, and
+  Sebastiani}{Baccianella et~al\mbox{.}}{2010}]%
+        {baccianella2010sentiwordnet}
+\bibfield{author}{\bibinfo{person}{Stefano Baccianella},
+  \bibinfo{person}{Andrea Esuli}, {and} \bibinfo{person}{Fabrizio Sebastiani}.}
+  \bibinfo{year}{2010}\natexlab{}.
+\newblock \showarticletitle{{S}enti{W}ord{N}et 3.0: An Enhanced Lexical
+  Resource for Sentiment Analysis and Opinion Mining}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the Seventh International Conference
+  on Language Resources and Evaluation ({LREC}'10)}}.
+  \bibinfo{publisher}{European Language Resources Association (ELRA)},
+  \bibinfo{address}{Valletta, Malta}.
+\newblock
+\urldef\tempurl%
+\url{http://www.lrec-conf.org/proceedings/lrec2010/pdf/769_Paper.pdf}
+\showURL{%
+\tempurl}
+
 
 \bibitem[\protect\citeauthoryear{Belinkov and Bisk}{Belinkov and Bisk}{2017}]%
         {belinkov2018breaknmt}
@@ -72,6 +91,23 @@
 \tempurl}
 
 
+\bibitem[\protect\citeauthoryear{Colhon, Vlăduţescu, and Negrea}{Colhon
+  et~al\mbox{.}}{2017}]%
+        {mihaela2017sentiwordnetlabel}
+\bibfield{author}{\bibinfo{person}{Mihaela Colhon}, \bibinfo{person}{Ştefan
+  Vlăduţescu}, {and} \bibinfo{person}{Xenia Negrea}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{How Objective a Neutral Word Is? A Neutrosophic
+  Approach for the Objectivity Degrees of Neutral Words}.
+\newblock \bibinfo{journal}{\emph{Symmetry}} \bibinfo{volume}{9},
+  \bibinfo{number}{11} (\bibinfo{year}{2017}).
+\newblock
+\showISSN{2073-8994}
+\urldef\tempurl%
+\url{https://doi.org/10.3390/sym9110280}
+\showDOI{\tempurl}
+
+
 \bibitem[\protect\citeauthoryear{Devlin, Chang, Lee, and Toutanova}{Devlin
   et~al\mbox{.}}{2018}]%
         {devlin2019bert}
@@ -88,6 +124,34 @@
 \url{http://arxiv.org/abs/1810.04805}
 \showURL{%
 \tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Guo, Mu, Xu, Su, Wang, and Xing}{Guo
+  et~al\mbox{.}}{2018}]%
+        {lemna}
+\bibfield{author}{\bibinfo{person}{Wenbo Guo}, \bibinfo{person}{Dongliang Mu},
+  \bibinfo{person}{Jun Xu}, \bibinfo{person}{Purui Su}, \bibinfo{person}{Gang
+  Wang}, {and} \bibinfo{person}{Xinyu Xing}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Lemna: Explaining deep learning based security
+  applications}. In \bibinfo{booktitle}{\emph{proceedings of the 2018 ACM
+  SIGSAC conference on computer and communications security}}.
+  \bibinfo{pages}{364--379}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Husnain, Missen, Akhtar, Coustaty, Mumtaz, and
+  Prasath}{Husnain et~al\mbox{.}}{2021}]%
+        {husnain2021swnvalidity}
+\bibfield{author}{\bibinfo{person}{Mujtaba Husnain}, \bibinfo{person}{Malik
+  Muhammad~Saad Missen}, \bibinfo{person}{Nadeem Akhtar},
+  \bibinfo{person}{Micka{\"e}l Coustaty}, \bibinfo{person}{Shahzad Mumtaz},
+  {and} \bibinfo{person}{VB Prasath}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{A systematic study on the role of SentiWordNet in
+  opinion mining}.
+\newblock \bibinfo{journal}{\emph{Frontiers of Computer Science}}
+  \bibinfo{volume}{15}, \bibinfo{number}{4} (\bibinfo{year}{2021}),
+  \bibinfo{pages}{1--19}.
+\newblock
 
 
 \bibitem[\protect\citeauthoryear{Iyyer, Wieting, Gimpel, and Zettlemoyer}{Iyyer
@@ -158,6 +222,37 @@
 \url{http://arxiv.org/abs/1907.11692}
 \showURL{%
 \tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Ma, Juefei-Xu, Zhang, Sun, Xue, Li, Chen, Su,
+  Li, Liu, et~al\mbox{.}}{Ma et~al\mbox{.}}{2018}]%
+        {ma2018deepgauge}
+\bibfield{author}{\bibinfo{person}{Lei Ma}, \bibinfo{person}{Felix Juefei-Xu},
+  \bibinfo{person}{Fuyuan Zhang}, \bibinfo{person}{Jiyuan Sun},
+  \bibinfo{person}{Minhui Xue}, \bibinfo{person}{Bo Li},
+  \bibinfo{person}{Chunyang Chen}, \bibinfo{person}{Ting Su},
+  \bibinfo{person}{Li Li}, \bibinfo{person}{Yang Liu}, {et~al\mbox{.}}}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Deepgauge: Multi-granularity testing criteria for
+  deep learning systems}. In \bibinfo{booktitle}{\emph{Proceedings of the 33rd
+  ACM/IEEE International Conference on Automated Software Engineering}}.
+  \bibinfo{pages}{120--131}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Marcus, Marcinkiewicz, and Santorini}{Marcus
+  et~al\mbox{.}}{1993}]%
+        {mitchell1993treebank}
+\bibfield{author}{\bibinfo{person}{Mitchell~P. Marcus},
+  \bibinfo{person}{Mary~Ann Marcinkiewicz}, {and} \bibinfo{person}{Beatrice
+  Santorini}.} \bibinfo{year}{1993}\natexlab{}.
+\newblock \showarticletitle{Building a Large Annotated Corpus of English: The
+  Penn Treebank}.
+\newblock \bibinfo{journal}{\emph{Comput. Linguist.}} \bibinfo{volume}{19},
+  \bibinfo{number}{2} (\bibinfo{date}{jun} \bibinfo{year}{1993}),
+  \bibinfo{pages}{313–330}.
+\newblock
+\showISSN{0891-2017}
 
 
 \bibitem[\protect\citeauthoryear{Patel, Fogarty, Landay, and Harrison}{Patel
@@ -235,11 +330,24 @@
 
 
 \bibitem[\protect\citeauthoryear{Ribeiro, Singh, and Guestrin}{Ribeiro
-  et~al\mbox{.}}{2016}]%
+  et~al\mbox{.}}{2016a}]%
+        {lime}
+\bibfield{author}{\bibinfo{person}{Marco~Tulio Ribeiro},
+  \bibinfo{person}{Sameer Singh}, {and} \bibinfo{person}{Carlos Guestrin}.}
+  \bibinfo{year}{2016}\natexlab{a}.
+\newblock \showarticletitle{" Why should i trust you?" Explaining the
+  predictions of any classifier}. In \bibinfo{booktitle}{\emph{Proceedings of
+  the 22nd ACM SIGKDD international conference on knowledge discovery and data
+  mining}}. \bibinfo{pages}{1135--1144}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Ribeiro, Singh, and Guestrin}{Ribeiro
+  et~al\mbox{.}}{2016b}]%
         {ribeiroSG16lime}
 \bibfield{author}{\bibinfo{person}{Marco~T{\'{u}}lio Ribeiro},
   \bibinfo{person}{Sameer Singh}, {and} \bibinfo{person}{Carlos Guestrin}.}
-  \bibinfo{year}{2016}\natexlab{}.
+  \bibinfo{year}{2016}\natexlab{b}.
 \newblock \showarticletitle{"Why Should {I} Trust You?": Explaining the
   Predictions of Any Classifier}.
 \newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1602.04938}
@@ -344,6 +452,16 @@
 \urldef\tempurl%
 \url{https://doi.org/10.1109/TSE.2016.2532875}
 \showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Sphinx and Theme}{Sphinx and Theme}{2021}]%
+        {nltkTreebankCorporaWebPage}
+\bibfield{author}{\bibinfo{person}{Sphinx} {and} \bibinfo{person}{NLTK Theme}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{NLTK Documentation}}.
+\newblock
+\newblock
+\shownote{\url{https://www.nltk.org/howto/corpus.html}}.
 
 
 \bibitem[\protect\citeauthoryear{Wang, Singh, Michael, Hill, Levy, and

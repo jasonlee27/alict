@@ -47,7 +47,12 @@ searching seeds and expanding the seeds in \tool. The \Sstt is a
 corpus of movie review, and it consists of 11,855 single sentences
 with its sentiment score. As original dataset suggests, we split the
 score range into [0, 0.4], (0.4, 0.6] and (0.6, 0.8] for assigning
-    negative, neutral and positive labels respectively.
+    negative, neutral and positive labels respectively. In addition,
+    we use \Swn as word sentiment
+    dataset~\cite{baccianella2010sentiwordnet}. \Swn is a publicly
+    available English sentiment lexicons.  It provides lexical
+    sentiment scores and the sentiment word labels are categorized by
+    implementing the rules in~\cite{mihaela2017sentiwordnetlabel}.
 %% \TODO{introduce details about each model}
 
 \paragraph{\textbf{Comparison Baselines.}}
@@ -119,22 +124,25 @@ Recall that a key limitation of \Cklst is that its template-based
 approach that relies on significant manual efforts may not generate
 test cases that comprehensively cover the sentences in a linguistic
 capability. \tool, instead, automatically generates test cases based
-on a search dataset and the syntax in a large reference corpus. We
-expect \tool can generate a more diverse test suite than \Cklst. To
-measure diversity, we follow the approach presented by Ma et
-al. \cite{ma2018deepgauge}, where the authors measure the coverage of
-NLP model intermediate states as corner-case neurons.  Because the
-matrix computation of intermediate states impacts NLP model
-decision-making, a test suite that covers a greater number of
-intermediate states can represent more NLP model decision-making,
-making it more diverse.  Specifically, we used two coverage metrics in
-existing work \cite{ma2018deepgauge}, \textit{boundary coverage}
-(BoundCov) and \textit{strong activation coverage} (SActCov), as our
-metrics to evaluate the test suite diversity.  \TODO{It is worth
-  noting that a test sample with a statistical distribution similar to
-  the training data would rarely be found in the corner case
-  region. As a result, covering a larger corner case region means that
-  the test suite is more likely to be buggy.}
+on a search dataset and the syntax in a large reference corpus.  We
+expect \tool can generate a more diverse test suite than \Cklst, and
+achieve more probable evaluation results. We first evaluate the three
+\sa models by testing them on the test cases that \tool
+generates. Next, to measure diversity, we follow the approach
+presented by Ma et al. \cite{ma2018deepgauge}, where the authors
+measure the coverage of NLP model intermediate states as corner-case
+neurons.  Because the matrix computation of intermediate states
+impacts NLP model decision-making, a test suite that covers a greater
+number of intermediate states can represent more NLP model
+decision-making, making it more diverse.  Specifically, we used two
+coverage metrics in existing work \cite{ma2018deepgauge},
+\textit{boundary coverage} (BoundCov) and \textit{strong activation
+  coverage} (SActCov), as our metrics to evaluate the test suite
+diversity.  \TODO{It is worth noting that a test sample with a
+  statistical distribution similar to the training data would rarely
+  be found in the corner case region. As a result, covering a larger
+  corner case region means that the test suite is more likely to be
+  buggy.}
 
 
 \begin{equation}
@@ -145,8 +153,13 @@ metrics to evaluate the test suite diversity.  \TODO{It is worth
     \label{eq:corner}
 \end{equation}
 
-\noindent Eq. \ref{eq:corner} shows the formal definition of the corner-case neuron of the NLP model $f(\cdot)$, where $\mathcal{X}$ is the given test suite, $N$ is the number of neurons in model $f(\cdot)$, $f_n(\cdot)$ is the $n^{th}$ neuron's output, and $high_n, low_n$ are the $n^{th}$ neurons' output bounds on the model training dataset.
-Eq. \ref{eq:corner} can be interpreted as the collection of neurons that emit outputs beyond the model's numerical boundary.
+\noindent Eq. \ref{eq:corner} shows the formal definition of the
+corner-case neuron of the NLP model $f(\cdot)$, where $\mathcal{X}$ is
+the given test suite, $N$ is the number of neurons in model
+$f(\cdot)$, $f_n(\cdot)$ is the $n^{th}$ neuron's output, and $high_n,
+low_n$ are the $n^{th}$ neurons' output bounds on the model training
+dataset.  Eq. \ref{eq:corner} can be interpreted as the collection of
+neurons that emit outputs beyond the model's numerical boundary.
 
 \begin{equation}
 \begin{split}
@@ -156,8 +169,13 @@ Eq. \ref{eq:corner} can be interpreted as the collection of neurons that emit ou
     \label{eq:coverage}
 \end{equation}
 
-\noindent The formal definition of our coverage metrics are shown in Eq.\ref{eq:coverage}, where BoundCov measures the coverage of neurons that produce outputs that exceed the upper or lower bounds, and SActCov measures the coverage of neurons that create outputs that exceed the lower bound.
-Higher coverage indicates the test suite is better for triggering the corner-case neurons, thus better test suite diversity.
+\noindent The formal definition of our coverage metrics are shown in
+Eq.\ref{eq:coverage}, where BoundCov measures the coverage of neurons
+that produce outputs that exceed the upper or lower bounds, and
+SActCov measures the coverage of neurons that create outputs that
+exceed the lower bound.  Higher coverage indicates the test suite is
+better for triggering the corner-case neurons, thus better test suite
+diversity.
 
 
 
@@ -167,7 +185,11 @@ Higher coverage indicates the test suite is better for triggering the corner-cas
 % Because AdNNs activate different blocks for decision making, then a higher block coverage indicates the test samples cover more decision behaviors. 
 
 
-To answer {\bf RQ3}, for each NLP model under test, we first feed its training dataset to compute each neuron's lower and upper bounds. After that, we select the same number of test cases from \tool and \Cklst as the test suite and compute the corresponding coverage metrics. 
+To answer {\bf RQ3}, for each NLP model under test, we first feed its
+training dataset to compute each neuron's lower and upper
+bounds. After that, we select the same number of test cases from \tool
+and \Cklst as the test suite and compute the corresponding coverage
+metrics.
 
 % For each subject, we randomly select 100 seed samples from the test dataset as seed inputs. We then feed the same seed inputs into \tool and \texttt{ILFO} to generate test samples. 
 % Finally, we feed the generated test samples to AdNNs and measure block coverage.
@@ -198,13 +220,25 @@ To answer {\bf RQ3}, for each NLP model under test, we first feed its training d
 
 \paragraph{RQ4.} 
 
-To answer RQ4, we conduct experiments to demonstrate that \tool can help developers understand the bugs in the NLP models.
-Recall that \tool generates test cases by mutating seed sentences (\eg by expanding one token in the seed input). Still, it is unclear why mutating one token will cause the model to produce misclassified results.
-We seek to help developers to understand why such mutation will result in the misclassification. 
-Existing work \cite{simin2020denas, lemna, lime} has demonstrated that the ML model prediction is dominated by a minimal set of input features (\ie tokens in input sentences). Motivated by such intuition, we seek to identify a minimal set of input tokens that dominate the model prediction.
+To answer RQ4, we conduct experiments to demonstrate that \tool can
+help developers understand the bugs in the NLP models.  Recall that
+\tool generates test cases by mutating seed sentences (\eg by
+expanding one token in the seed input). Still, it is unclear why
+mutating one token will cause the model to produce misclassified
+results.  We seek to help developers to understand why such mutation
+will result in the misclassification.  Existing work
+\cite{simin2020denas, lemna, lime} has demonstrated that the ML model
+prediction is dominated by a minimal set of input features (\ie tokens
+in input sentences). Motivated by such intuition, we seek to identify
+a minimal set of input tokens that dominate the model prediction.
 
-Formally, given a input sentence $x = [tk_1, tk_2, \cdots, tk_n]$, and the NLP model under test $f(\cdot)$, our goal is to find a masking template $T = [t_1, t_2, \cdots, t_n]$, where $t_i$ is 0 or 1, representing masking the $i^{th}$ token in $x$ or not.
-The template $T$ can mask some tokens in $x$ with attribute tokens, and the masked input has a high probability of retaining the original prediction $x$, denoted as 
+Formally, given a input sentence $x = [tk_1, tk_2, \cdots, tk_n]$, and
+the NLP model under test $f(\cdot)$, our goal is to find a masking
+template $T = [t_1, t_2, \cdots, t_n]$, where $t_i$ is 0 or 1,
+representing masking the $i^{th}$ token in $x$ or not.  The template
+$T$ can mask some tokens in $x$ with attribute tokens, and the masked
+input has a high probability of retaining the original prediction $x$,
+denoted as
 
 \begin{equation}
     P(f(T(x)) = f(x)) \ge P_{thresh}
@@ -212,9 +246,18 @@ The template $T$ can mask some tokens in $x$ with attribute tokens, and the mask
 \end{equation}
 
 
-To create such a template $T$, we first compute the contribution score of each input token using an existing explainable ML technique \cite{}. Following that, we begin with the full mask template (\ie, all tokens are masked); such full mask template definitely does not satisfy Eq. \ref{eq:prob}.
-We then iteratively shift one position from mask to non-mask based on the order of each token's contribution score, until the template $T$ satisfies Eq. \ref{eq:prob}
-Because we iterate the size of our mask, the generated template $T$ will keep the minimum number of tokens in $x$. Moreover, since the input $x$ is an incorrect prediction, the generated template $T$ is likely to produce misclassification (i.e., the probability to be misclassified is larger than $P_{thresh}$).
+To create such a template $T$, we first compute the contribution score
+of each input token using an existing explainable ML technique
+\cite{}. Following that, we begin with the full mask template (\ie,
+all tokens are masked); such full mask template definitely does not
+satisfy Eq. \ref{eq:prob}.  We then iteratively shift one position
+from mask to non-mask based on the order of each token's contribution
+score, until the template $T$ satisfies Eq. \ref{eq:prob} Because we
+iterate the size of our mask, the generated template $T$ will keep the
+minimum number of tokens in $x$. Moreover, since the input $x$ is an
+incorrect prediction, the generated template $T$ is likely to produce
+misclassification (i.e., the probability to be misclassified is larger
+than $P_{thresh}$).
 
 
 

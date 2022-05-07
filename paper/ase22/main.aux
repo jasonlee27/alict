@@ -56,8 +56,8 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Specification-based Seed Generation}{3}{subsection.3.1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Syntax-based Sentence\xspace  Expansion}{3}{subsection.3.2}}
 \citation{kitaev2018seedparser,kitaev2019seedparser}
-\citation{}
-\citation{}
+\citation{mitchell1993treebank}
+\citation{nltkTreebankCorporaWebPage}
 \citation{devlin2019bert}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Overview of S$^2$LCT\xspace  .\relax }}{4}{figure.caption.4}}
 \newlabel{fig:overview}{{2}{4}{\OverviewFigCaption \relax }{figure.caption.4}{}}
@@ -66,6 +66,8 @@
 \newlabel{alg:diff}{{1}{4}{Syntax expansion identification algorithm.\relax }{algorithm.1}{}}
 \@writefile{toc}{\contentsline {paragraph}{Running example.}{4}{section*.7}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}Sentence\xspace  Expansion and Validation}{4}{subsubsection.3.2.2}}
+\citation{baccianella2010sentiwordnet}
+\citation{mihaela2017sentiwordnetlabel}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Example of masked sentence generation. \leavevmode {\color  {purple}Shiyi: Expansion: Or both \{MASK\}. -> Masked sentence: Or both {MASK.}}\relax }}{5}{figure.caption.6}}
 \newlabel{fig:ExpEx}{{3}{5}{\RunningExCaption \relax }{figure.caption.6}{}}
 \@writefile{toc}{\contentsline {paragraph}{Running example.}{5}{section*.8}}
@@ -78,26 +80,19 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Experimental Subjects}{5}{subsection.4.1}}
 \@writefile{toc}{\contentsline {paragraph}{\textbf  {NLP Models \& Dataset.}}{5}{section*.9}}
 \@writefile{toc}{\contentsline {paragraph}{\textbf  {Comparison Baselines.}}{5}{section*.10}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Experimental Process}{5}{subsection.4.2}}
-\@writefile{toc}{\contentsline {paragraph}{\textbf  {RQ1 and RQ2}}{5}{section*.11}}
 \citation{ma2018deepgauge}
 \citation{ma2018deepgauge}
 \citation{simin2020denas,lemna,lime}
-\citation{}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Experimental Process}{6}{subsection.4.2}}
+\@writefile{toc}{\contentsline {paragraph}{\textbf  {RQ1 and RQ2}}{6}{section*.11}}
 \newlabel{metric:srel}{{1}{6}{\textbf {RQ1 and RQ2}}{equation.4.1}{}}
 \newlabel{metric:lcrel}{{2}{6}{\textbf {RQ1 and RQ2}}{equation.4.1}{}}
 \@writefile{toc}{\contentsline {paragraph}{RQ3.}{6}{section*.12}}
 \newlabel{eq:corner}{{3}{6}{RQ3}{equation.4.3}{}}
 \newlabel{eq:coverage}{{4}{6}{RQ3}{equation.4.4}{}}
 \@writefile{toc}{\contentsline {paragraph}{RQ4.}{6}{section*.13}}
-\newlabel{eq:prob}{{5}{6}{RQ4}{equation.4.5}{}}
-\citation{wang2018glue}
-\citation{ribeiro2018sear,belinkov2018breaknmt,rychalska2019wildnlp,iyyer2018adversarial}
-\citation{prabhakaran2019fairness,rottger2020hatecheck}
-\citation{ribeiro2019consistencyeval}
-\citation{ribeiroSG16lime}
-\citation{wu2019errudite}
-\citation{marcoACL2020checklist}
+\citation{}
+\newlabel{eq:prob}{{5}{7}{RQ4}{equation.4.5}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Experimental Results}{7}{section.5}}
 \newlabel{sec:result}{{5}{7}{Experimental Results}{section.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}RQ1: S$^2$LCT\xspace  Sentiment Label Consistency}{7}{subsection.5.1}}
@@ -105,41 +100,61 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces The coverage results of the generated test samples. \leavevmode {\color  {purple}Shiyi: Make the figures larger.}\relax }}{7}{figure.caption.16}}
 \newlabel{fig:coverage}{{4}{7}{The coverage results of the generated test samples. \sw {Make the figures larger.}\relax }{figure.caption.16}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.3}RQ3: Test Suite Diversity}{7}{subsection.5.3}}
+\citation{baccianella2010sentiwordnet}
+\citation{mitchell1993treebank,nltkTreebankCorporaWebPage}
+\citation{husnain2021swnvalidity}
+\citation{wang2018glue}
+\citation{ribeiro2018sear,belinkov2018breaknmt,rychalska2019wildnlp,iyyer2018adversarial}
+\citation{prabhakaran2019fairness,rottger2020hatecheck}
+\citation{ribeiro2019consistencyeval}
+\citation{ribeiroSG16lime}
+\citation{wu2019errudite}
+\citation{marcoACL2020checklist}
 \bibdata{bib}
-\bibcite{belinkov2018breaknmt}{{1}{2017}{{Belinkov and Bisk}}{{Belinkov and Bisk}}}
-\bibcite{simin2020denas}{{2}{2020}{{Chen et~al\unhbox \voidb@x \hbox {.}}}{{Chen, Bateni, Grandhi, Li, Liu, and Yang}}}
-\bibcite{devlin2019bert}{{3}{2018}{{Devlin et~al\unhbox \voidb@x \hbox {.}}}{{Devlin, Chang, Lee, and Toutanova}}}
-\bibcite{iyyer2018adversarial}{{4}{2018}{{Iyyer et~al\unhbox \voidb@x \hbox {.}}}{{Iyyer, Wieting, Gimpel, and Zettlemoyer}}}
-\bibcite{kitaev2019seedparser}{{5}{2019}{{Kitaev et~al\unhbox \voidb@x \hbox {.}}}{{Kitaev, Cao, and Klein}}}
-\bibcite{kitaev2018seedparser}{{6}{2018}{{Kitaev and Klein}}{{Kitaev and Klein}}}
-\bibcite{liu2019roberta}{{7}{2019}{{Liu et~al\unhbox \voidb@x \hbox {.}}}{{Liu, Ott, Goyal, Du, Joshi, Chen, Levy, Lewis, Zettlemoyer, and Stoyanov}}}
-\bibcite{patel2018mlevalforsoftware}{{8}{2008}{{Patel et~al\unhbox \voidb@x \hbox {.}}}{{Patel, Fogarty, Landay, and Harrison}}}
-\bibcite{prabhakaran2019fairness}{{9}{2019}{{Prabhakaran et~al\unhbox \voidb@x \hbox {.}}}{{Prabhakaran, Hutchinson, and Mitchell}}}
-\bibcite{recht2019imagenetbias}{{10}{2019}{{Recht et~al\unhbox \voidb@x \hbox {.}}}{{Recht, Roelofs, Schmidt, and Shankar}}}
-\bibcite{ribeiro2019consistencyeval}{{11}{2019}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Guestrin, and Singh}}}
-\bibcite{ribeiroSG16lime}{{12}{2016}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Singh, and Guestrin}}}
-\bibcite{ribeiro2018sear}{{13}{2018}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Singh, and Guestrin}}}
-\bibcite{marcoACL2020checklist}{{14}{2020}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Wu, Guestrin, and Singh}}}
-\bibcite{rottger2020hatecheck}{{15}{2020}{{R{\"{o}}ttger et~al\unhbox \voidb@x \hbox {.}}}{{R{\"{o}}ttger, Vidgen, Nguyen, Waseem, Margetts, and Pierrehumbert}}}
-\bibcite{rychalska2019wildnlp}{{16}{2019}{{Rychalska et~al\unhbox \voidb@x \hbox {.}}}{{Rychalska, Basaj, Gosiewska, and Biecek}}}
-\bibcite{sanh2019distilbert}{{17}{2019}{{Sanh et~al\unhbox \voidb@x \hbox {.}}}{{Sanh, Debut, Chaumond, and Wolf}}}
-\bibcite{segura2016metamorphictest}{{18}{2016}{{Segura et~al\unhbox \voidb@x \hbox {.}}}{{Segura, Fraser, Sanchez, and Ruiz-Cortés}}}
-\bibcite{wang2018glue}{{19}{2018}{{Wang et~al\unhbox \voidb@x \hbox {.}}}{{Wang, Singh, Michael, Hill, Levy, and Bowman}}}
-\bibcite{wu2019errudite}{{20}{2019}{{Wu et~al\unhbox \voidb@x \hbox {.}}}{{Wu, Ribeiro, Heer, and Weld}}}
+\bibcite{baccianella2010sentiwordnet}{{1}{2010}{{Baccianella et~al\unhbox \voidb@x \hbox {.}}}{{Baccianella, Esuli, and Sebastiani}}}
+\bibcite{belinkov2018breaknmt}{{2}{2017}{{Belinkov and Bisk}}{{Belinkov and Bisk}}}
+\bibcite{simin2020denas}{{3}{2020}{{Chen et~al\unhbox \voidb@x \hbox {.}}}{{Chen, Bateni, Grandhi, Li, Liu, and Yang}}}
+\bibcite{mihaela2017sentiwordnetlabel}{{4}{2017}{{Colhon et~al\unhbox \voidb@x \hbox {.}}}{{Colhon, Vlăduţescu, and Negrea}}}
+\bibcite{devlin2019bert}{{5}{2018}{{Devlin et~al\unhbox \voidb@x \hbox {.}}}{{Devlin, Chang, Lee, and Toutanova}}}
+\bibcite{lemna}{{6}{2018}{{Guo et~al\unhbox \voidb@x \hbox {.}}}{{Guo, Mu, Xu, Su, Wang, and Xing}}}
+\bibcite{husnain2021swnvalidity}{{7}{2021}{{Husnain et~al\unhbox \voidb@x \hbox {.}}}{{Husnain, Missen, Akhtar, Coustaty, Mumtaz, and Prasath}}}
+\bibcite{iyyer2018adversarial}{{8}{2018}{{Iyyer et~al\unhbox \voidb@x \hbox {.}}}{{Iyyer, Wieting, Gimpel, and Zettlemoyer}}}
+\bibcite{kitaev2019seedparser}{{9}{2019}{{Kitaev et~al\unhbox \voidb@x \hbox {.}}}{{Kitaev, Cao, and Klein}}}
+\bibcite{kitaev2018seedparser}{{10}{2018}{{Kitaev and Klein}}{{Kitaev and Klein}}}
+\bibcite{liu2019roberta}{{11}{2019}{{Liu et~al\unhbox \voidb@x \hbox {.}}}{{Liu, Ott, Goyal, Du, Joshi, Chen, Levy, Lewis, Zettlemoyer, and Stoyanov}}}
+\bibcite{ma2018deepgauge}{{12}{2018}{{Ma et~al\unhbox \voidb@x \hbox {.}}}{{Ma, Juefei-Xu, Zhang, Sun, Xue, Li, Chen, Su, Li, Liu, et~al\unhbox \voidb@x \hbox {.}}}}
+\bibcite{mitchell1993treebank}{{13}{1993}{{Marcus et~al\unhbox \voidb@x \hbox {.}}}{{Marcus, Marcinkiewicz, and Santorini}}}
+\bibcite{patel2018mlevalforsoftware}{{14}{2008}{{Patel et~al\unhbox \voidb@x \hbox {.}}}{{Patel, Fogarty, Landay, and Harrison}}}
+\bibcite{prabhakaran2019fairness}{{15}{2019}{{Prabhakaran et~al\unhbox \voidb@x \hbox {.}}}{{Prabhakaran, Hutchinson, and Mitchell}}}
+\bibcite{recht2019imagenetbias}{{16}{2019}{{Recht et~al\unhbox \voidb@x \hbox {.}}}{{Recht, Roelofs, Schmidt, and Shankar}}}
+\bibcite{ribeiro2019consistencyeval}{{17}{2019}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Guestrin, and Singh}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}RQ4: Use S$^2$LCT\xspace  for Debugging}{8}{subsection.5.4}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Threats to Validity}{8}{section.6}}
+\newlabel{sec:threats}{{6}{8}{Threats to Validity}{section.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Related Work}{8}{section.7}}
+\newlabel{sec:related}{{7}{8}{Related Work}{section.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusions}{8}{section.8}}
+\newlabel{sec:concl}{{8}{8}{Conclusions}{section.8}{}}
+\@writefile{toc}{\contentsline {section}{References}{8}{section*.18}}
+\bibcite{lime}{{18}{2016a}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Singh, and Guestrin}}}
+\bibcite{ribeiroSG16lime}{{19}{2016b}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Singh, and Guestrin}}}
+\bibcite{ribeiro2018sear}{{20}{2018}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Singh, and Guestrin}}}
+\bibcite{marcoACL2020checklist}{{21}{2020}{{Ribeiro et~al\unhbox \voidb@x \hbox {.}}}{{Ribeiro, Wu, Guestrin, and Singh}}}
+\bibcite{rottger2020hatecheck}{{22}{2020}{{R{\"{o}}ttger et~al\unhbox \voidb@x \hbox {.}}}{{R{\"{o}}ttger, Vidgen, Nguyen, Waseem, Margetts, and Pierrehumbert}}}
+\bibcite{rychalska2019wildnlp}{{23}{2019}{{Rychalska et~al\unhbox \voidb@x \hbox {.}}}{{Rychalska, Basaj, Gosiewska, and Biecek}}}
+\bibcite{sanh2019distilbert}{{24}{2019}{{Sanh et~al\unhbox \voidb@x \hbox {.}}}{{Sanh, Debut, Chaumond, and Wolf}}}
+\bibcite{segura2016metamorphictest}{{25}{2016}{{Segura et~al\unhbox \voidb@x \hbox {.}}}{{Segura, Fraser, Sanchez, and Ruiz-Cortés}}}
+\bibcite{nltkTreebankCorporaWebPage}{{26}{2021}{{Sphinx and Theme}}{{Sphinx and Theme}}}
+\bibcite{wang2018glue}{{27}{2018}{{Wang et~al\unhbox \voidb@x \hbox {.}}}{{Wang, Singh, Michael, Hill, Levy, and Bowman}}}
+\bibcite{wu2019errudite}{{28}{2019}{{Wu et~al\unhbox \voidb@x \hbox {.}}}{{Wu, Ribeiro, Heer, and Weld}}}
 \newlabel{tocindent-1}{0pt}
 \newlabel{tocindent0}{0pt}
 \newlabel{tocindent1}{4.185pt}
 \newlabel{tocindent2}{10.34999pt}
 \newlabel{tocindent3}{18.198pt}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}RQ4: Use S$^2$LCT\xspace  for Debugging}{8}{subsection.5.4}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Related Work}{8}{section.6}}
-\newlabel{sec:related}{{6}{8}{Related Work}{section.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusions}{8}{section.7}}
-\newlabel{sec:concl}{{7}{8}{Conclusions}{section.7}{}}
-\@writefile{toc}{\contentsline {section}{References}{8}{section*.18}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Search rules and transformation templates for linguistic capabilities. \leavevmode {\color  {purple}Shiyi: Add transformation templates. May need to find a better specification language.}.\vspace  {-5pt}\relax }}{9}{table.caption.5}}
-\newlabel{tab:specification}{{1}{9}{\ReqTableCaption \relax }{table.caption.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Comparison of evaluation of BERT-base\xspace  , RoBERTa-base\xspace  and DistilBERT-base\xspace  sentiment analysis\xspace  models on seed and expanded testcases (TCs). Due to the spatial constraints of table, BERT-base\xspace  , RoBERTa-base\xspace  and DistilBERT-base\xspace  models are denoted as BERT, RoBERTa and dstBERT respectively.\relax }}{11}{table.caption.15}}
-\newlabel{table:TestResult}{{3}{11}{\TestResultsTableCaption \relax }{table.caption.15}{}}
-\newlabel{TotPages}{{12}{12}{}{page.12}{}}
-\zref@newlabel{LastPage}{\default{7}\page{12}\abspage{12}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Search rules and transformation templates for linguistic capabilities. \leavevmode {\color  {purple}Shiyi: Add transformation templates. May need to find a better specification language.}.\vspace  {-5pt}\relax }}{10}{table.caption.5}}
+\newlabel{tab:specification}{{1}{10}{\ReqTableCaption \relax }{table.caption.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Comparison of evaluation of BERT-base\xspace  , RoBERTa-base\xspace  and DistilBERT-base\xspace  sentiment analysis\xspace  models on seed and expanded testcases (TCs). Due to the spatial constraints of table, BERT-base\xspace  , RoBERTa-base\xspace  and DistilBERT-base\xspace  models are denoted as BERT, RoBERTa and dstBERT respectively.\relax }}{12}{table.caption.15}}
+\newlabel{table:TestResult}{{3}{12}{\TestResultsTableCaption \relax }{table.caption.15}{}}
+\newlabel{TotPages}{{13}{13}{}{page.13}{}}
+\zref@newlabel{LastPage}{\default{8}\page{13}\abspage{13}}

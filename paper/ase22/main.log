@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  6 MAY 2022 15:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.15)  6 MAY 2022 20:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1678,7 +1678,7 @@ LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
 
 pdfTeX warning: pdflatex (file ./figs/overview.pdf): PDF inclusion: found PDF v
 ersion <1.7>, but at most version <1.5> allowed
-<figs/overview.pdf, id=168, 930.47626pt x 274.12413pt>
+<figs/overview.pdf, id=173, 930.47626pt x 274.12413pt>
 File: figs/overview.pdf Graphic file (type pdf)
 <use figs/overview.pdf>
 Package pdftex.def Info: figs/overview.pdf  used on input line 6.
@@ -1731,7 +1731,7 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 
 pdfTeX warning: pdflatex (file ./figs/running_example.pdf): PDF inclusion: foun
 d PDF version <1.7>, but at most version <1.5> allowed
-<figs/running_example.pdf, id=183, 694.19348pt x 217.21149pt>
+<figs/running_example.pdf, id=189, 694.19348pt x 217.21149pt>
 File: figs/running_example.pdf Graphic file (type pdf)
 <use figs/running_example.pdf>
 Package pdftex.def Info: figs/running_example.pdf  used on input line 264.
@@ -1760,32 +1760,16 @@ Package microtype Info: Character `textemdash ' is missing
 (microtype)             in font `T1/zi4/m/n/9'.
 (microtype)             Ignoring protrusion settings for this character.
 
-Overfull \hbox (3.67346pt too wide) in paragraph at lines 54--60
+Overfull \hbox (3.67346pt too wide) in paragraph at lines 59--65
  []\T1/LinuxLibertineT-TLF/b/it/9 Comparison Base-lines.[] \T1/LinuxLibertineT-
 TLF/m/n/9 (-20) We com-pare our ap-proach with CHECK-
  []
 
 [5.5 <./figs/running_example.pdf>]
-
-Package natbib Warning: Citation `ma2018deepgauge' on page 6 undefined on input
- line 125.
-
-
-Package natbib Warning: Citation `ma2018deepgauge' on page 6 undefined on input
- line 131.
-
-
-Overfull \hbox (6.23637pt too wide) in paragraph at lines 118--138
+Overfull \hbox (6.23637pt too wide) in paragraph at lines 123--146
  []\T1/LinuxLibertineT-TLF/m/it/9 (-20) RQ3.[] \T1/LinuxLibertineT-TLF/m/n/9 (-
 20) Re-call that a key lim-i-ta-tion of CHECK-LIST is that its template-
  []
-
-
-Package natbib Warning: Citation `lemna' on page 6 undefined on input line 204.
-
-
-
-Package natbib Warning: Citation `lime' on page 6 undefined on input line 204.
 
 [6.6]) (./result.tex (./tables/manual-study-table.tex)
 (./tables/test-results-table.tex
@@ -1800,32 +1784,32 @@ Underfull \hbox (badness 10000) in paragraph at lines 157--157
 
 )
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.95pt on input line 10.
+(Font)              scaled to size 10.95pt on input line 9.
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 6.1pt on input line 10.
+(Font)              scaled to size 6.1pt on input line 9.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 10.
+(hyperref)                removing `math shift' on input line 9.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 10.
+(hyperref)                removing `superscript' on input line 9.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 10.
+(hyperref)                removing `math shift' on input line 9.
 
 
 LaTeX Warning: Reference `table:ManualStudy' on page 7 undefined on input line 
-11.
+10.
 
 
 LaTeX Warning: Reference `table:ManualStudy' on page 7 undefined on input line 
-27.
+39.
 
 (./CM/coverage.tex
-<figs/covergae.pdf, id=361, 776.09074pt x 359.31036pt>
+<figs/covergae.pdf, id=379, 776.09074pt x 359.31036pt>
 File: figs/covergae.pdf Graphic file (type pdf)
 <use figs/covergae.pdf>
 Package pdftex.def Info: figs/covergae.pdf  used on input line 4.
@@ -1838,47 +1822,44 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 4--6
 
 Class acmart Warning: A possible image without description on input line 8.
 
-)
+[7.7 <./figs/covergae.pdf>])
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 63.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 63.
+(hyperref)                removing `math shift' on input line 81.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 63.
+(hyperref)                removing `superscript' on input line 81.
 
-) (./related.tex
-Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [7.7 <./figs/covergae.pdf>] Excluding 'comment' comment.) (./concl.tex) (./mai
-n.bbl
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 81.
+
+) (./threats.tex) (./related.tex Excluding 'comment' comment.) (./concl.tex)
+(./main.bbl
 LaTeX Info: Redefining \tempurl on input line 70.
-LaTeX Info: Redefining \tempurl on input line 88.
+LaTeX Info: Redefining \tempurl on input line 89.
 LaTeX Info: Redefining \tempurl on input line 107.
-LaTeX Info: Redefining \tempurl on input line 123.
-LaTeX Info: Redefining \tempurl on input line 138.
-LaTeX Info: Redefining \tempurl on input line 158.
-LaTeX Info: Redefining \tempurl on input line 178.
-LaTeX Info: Redefining \tempurl on input line 195.
-LaTeX Info: Redefining \tempurl on input line 215.
-LaTeX Info: Redefining \tempurl on input line 233.
-LaTeX Info: Redefining \tempurl on input line 250.
-LaTeX Info: Redefining \tempurl on input line 269.
+LaTeX Info: Redefining \tempurl on input line 124.
+LaTeX Info: Redefining \tempurl on input line 171.
+LaTeX Info: Redefining \tempurl on input line 187.
+LaTeX Info: Redefining \tempurl on input line 202.
+LaTeX Info: Redefining \tempurl on input line 222.
+LaTeX Info: Redefining \tempurl on input line 273.
+LaTeX Info: Redefining \tempurl on input line 290.
+LaTeX Info: Redefining \tempurl on input line 310.
+LaTeX Info: Redefining \tempurl on input line 328.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 5756) has occurred while \output is active []
 
-LaTeX Info: Redefining \tempurl on input line 299.
-LaTeX Info: Redefining \tempurl on input line 345.
-LaTeX Info: Redefining \tempurl on input line 363.
-LaTeX Info: Redefining \tempurl on input line 381.
+ [8.8]
+LaTeX Info: Redefining \tempurl on input line 358.
+LaTeX Info: Redefining \tempurl on input line 377.
+LaTeX Info: Redefining \tempurl on input line 407.
+LaTeX Info: Redefining \tempurl on input line 453.
+LaTeX Info: Redefining \tempurl on input line 481.
+LaTeX Info: Redefining \tempurl on input line 499.
 )
-
-Package natbib Warning: There were undefined citations.
-
 
 Class acmart Warning: Some images may lack descriptions.
 
@@ -1889,36 +1870,36 @@ Class acmart Warning: ACM keywords are mandatory for papers over two pages.
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
 
-Package balance Warning: You have called \balance in second column
-(balance)                Columns might not be balanced.
-
-[8.8] [9.9] [10.10
+Overfull \vbox (1.11351pt too high) has occurred while \output is active []
 
 
-] [11.11]
-Package atenddvi Info: Last page = 12.
- [12.12
+[9.9] [10.10] [11.11
+
+
+] [12.12]
+Package atenddvi Info: Last page = 13.
+ [13.13
 
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 218.
-Package atveryend Info: Executing hook `AfterLastShipout' on input line 218.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 219.
+Package atveryend Info: Executing hook `AfterLastShipout' on input line 219.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 218.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 218.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 219.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 219.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: E46AA7A788C37B89AAF6BCDB8990473C;3299.
+(rerunfilecheck)             Checksum: 66736F1AB4DBC6600A4FD6D215982DDF;3457.
 
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 34045 strings out of 492982
- 598449 string characters out of 6134896
- 882850 words of memory out of 5000000
- 36097 multiletter control sequences out of 15000+600000
- 197094 words of font info for 416 fonts, out of 8000000 for 9000
+ 34121 strings out of 492982
+ 600305 string characters out of 6134896
+ 882496 words of memory out of 5000000
+ 36121 multiletter control sequences out of 15000+600000
+ 201231 words of font info for 442 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  60i,17n,100p,997b,1603s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/newtx/libertinealt.enc}{/usr/s
@@ -1946,10 +1927,10 @@ st/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts/typ
 e1/public/newtx/txexs.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/new
 tx/txsys.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/zxlri.pfb>
 
-Output written on main.pdf (12 pages, 776180 bytes).
+Output written on main.pdf (13 pages, 785007 bytes).
 PDF statistics:
- 557 PDF objects out of 1000 (max. 8388607)
- 485 compressed objects within 5 object streams
- 112 named destinations out of 1000 (max. 500000)
- 57012 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 593 PDF objects out of 1000 (max. 8388607)
+ 519 compressed objects within 6 object streams
+ 122 named destinations out of 1000 (max. 500000)
+ 57020 words of extra memory for PDF output out of 61914 (max. 10000000)
 
