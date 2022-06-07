@@ -4,6 +4,7 @@
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{figs/overview.pdf}
+  \vspace{-6mm}
   \caption{\OverviewFigCaption}
 \end{figure*}
 
@@ -12,10 +13,8 @@
 %   them in the intro/background yet.} 
   
   We design and implement a new NLP model testing method,
-  \emph{Specification- and Syntax-based Linguistic Capability Testing
-    (\tool{})}, that automatically generate test cases with oracles to
-  test the robustness of sentiment analysis models. \tool{} addresses
-  all three challenges discussed above.
+\emph{Specification- and Syntax-based Linguistic Capability Testing
+  (\tool{})}, that automatically generates test cases with oracles to assess the quality of sentiment analysis models. \tool{} addresses all three challenges discussed in Section~\ref{sec:intro}.
 
 % We identify four goals for a
 % large and effective test suite:
@@ -45,29 +44,30 @@
 Figure~\ref{fig:overview} shows the overview of \tool{}, which
 consists of two phases.  The \emph{specification-based seed
   generation} phase performs rule-based searches from a real-world
-dataset and template-based transformation to obtain the initial seed
-\sents.  The search rules (e.g., search for \neu \sents that do not
-include any \pstv or \ngtv words) and transformation templates (e.g.,
-negating a sentence) are defined in the \emph{\lc specifications},
-which guarantee that each resulting seed conforms to a specific \lc
-({\bf C2}) and is labelled correctly ({\bf C3}).
+dataset and template-based transformation to obtain the
+initial seed \sents.  The search rules (e.g., search for \neu
+\sents that do not include any \pstv or \ngtv words) and
+transformation templates (e.g., negating a sentence) are defined in the \emph{\lc
+  specifications} (Table~\ref{tab:specification}), which result in seed sentences that are most likely to conform
+to a specific \lc ({\bf C2}) and is labelled
+correctly ({\bf C3}).
 
-The \emph{syntax-based \sent expansion} phase expands the seed \sents
-with additional syntactic elements (i.e., words) to cover many
-real-world syntactic structures ({\bf C1}). It first performs a syntax
-analysis to identify the \pos (PoS) tags that can be inserted to each
-seed, by comparing the PoS parse trees between the seed \sent and many
-other \sents from a large reference dataset. Each identified tag is
-inserted into the seed as a \emph{mask}. It then uses an NLP
-recommendation model (i.e., BERT \cite{}) to suggest possible
+The \emph{syntax-based \sent expansion} phase expands the seed
+\sents with additional syntactic elements (i.e., words) to cover many real-world
+syntactic structures ({\bf C1}). It first performs a syntax analysis
+to identify the \pos (PoS) tags that can be inserted to each
+seed, by comparing the PoS parse trees between the seed \sent and
+many other \sents from a large reference dataset. Each identified
+tag is inserted into the seed as a \emph{mask}. It then uses an NLP
+recommendation model (i.e., BERT \cite{devlin2019bert}) to suggest possible
 words. If a resulting \sent is validated to be consistent with the
 specification which additionally defines the rules for expansion
 (e.g., the expanded word should be \neu), {\bf C2} and {\bf C3} are
-still satisfied. Last, because some validated \sents may include
-unacceptable suggested words given the context, we use a heuristic
-(i.e., the confidence score from the NLP recommendation model) to
-select the more realistic context-aware expanded \sents into \tool{}'s
-test suite.
+still satisfied.
+% Last, because some validated \sents may include
+% unacceptable suggested words given the context, we use a heuristic (i.e., the
+% confidence score from the NLP recommendation model) to select the more
+% realistic context-aware expanded \sents into \tool{}'s test suite.
 
 We now describe each phase of \tool{} in detail.
 
@@ -84,23 +84,24 @@ We now describe each phase of \tool{} in detail.
 The seed generation phase of \tool starts by searching \sents in a
 real-world dataset that match the rules defined in the \lc
 specification, and then transforming the matched \sents using
-templates to generate seed \sents that conform to individual \lcs. The
-reasons for this design choice are twofold.  First, while generally
-judging which \lc any \sent falls into and which label it should have
-is infeasible, there exist simple rules and templates to allow
-classifying the resulting \sents into individual \lcs and with the
-correct labels, with high confidence.  This enables us to test each
-\lc individually.  Second, searching from a real-world dataset ensures
-that the \sents used as test cases for testing \lcs are realistic and
-diverse. The diverse test cases are more likely to achieve a high
-coverage of the target model's functionality in each \lc, thus
-detecting more errors.
+templates to generate seed \sents that conform to individual
+\lcs. The reasons for this design choice are twofold.  First, while
+generally judging which \lc any \sent falls into and which label it
+should have is infeasible, there exist simple rules and templates to
+allow classifying the resulting \sents into individual \lcs and
+with the correct labels, with high confidence.  This enables us to
+test each \lc individually.  Second, searching from a real-world
+dataset ensures that the \sents used as test cases for testing \lcs
+are realistic and diverse. The diverse test cases are more likely to
+achieve a high coverage of the target model's functionality in each
+\lc, thus detecting more errors.
 %
-In this phase, \tool first search and selects \sents applicable to the
-\lc in a given real-world dataset with search rules. In case that the
-search rules only fulfill portion of the \lc specifications, the
-selected \sents are not yet appropriate to become seed, we transform
-the selected \sents into seed \sents using the heuristic templates.
+In this phase, \tool first searches and selects \sents applicable to
+the \lc in a given real-world dataset with search rules. In case that
+the search rules only fulfill portion of the \lc specifications, the
+selected \sents are not yet ready to be used as seeds, we
+transform the selected \sents into seed \sents using the
+heuristic templates.
 %
 Table~\ref{tab:specification} shows the search rules and the
 transformation templates of all 11 linguistic capabilities we
@@ -108,14 +109,11 @@ implemented in \tool. The first column shows the \lc type and its
 description, and the second column shows the search rule and
 transformation template used in each \lc. For LC1 and LC2, the NLP
 models are evaluated in the scope of short \sents with selective
-sentiment words. It does not require any transformation because the
-search rule alone is sufficient to conform to the \lcs. On the other
-hand, search rules of LC3 to LC11 are not enough to match their \lc
-specification, thus \tool uses heuristic templates to conform the
-searched \sents to the \lc. For example, in LC3's transformation
-template, the searched \sents become seeds by preturbing them with the
-defined templates.  In LC4's transformation template, the searched
-demonstrative sentences are negated.
+sentiment words. It does not require any
+transformation because the search rules alone are sufficient to find sentences that conform
+to the \lcs. On the other hand, search rules of LC3 to LC11 are not enough to match their \lc specification; thus, \tool additionally uses 
+templates to transform the searched \sents to match the corresponding \lc. For example, in LC3's transformation template, the searched \sents are appended as part of a sentence to generate a seed.
+In LC4's transformation template, the searched demonstrative sentences are negated.
 % \sw{@Jaeseong: revise the rest of 3.1 based on
 %   Table~\ref{tab:specification}. I commented out the old text but it
 %   is still in the tex file.} \jl{I revised and added the explanation}
@@ -197,14 +195,15 @@ demonstrative sentences are negated.
 The simple search rules and transformation templates used to generate
 the seed \sents may limit the syntactic structures these seeds may
 cover. To address this limitation, the syntax-based \sent expansion
-phase extends the seed \sents to cover syntactic structures commonly
-used in real-life \sents. Our idea is to differentiate the parse trees
-between the seed \sents and the reference \sents from a large
-real-world dataset. The extra PoS tags in the reference parse trees
-are identified as potential syntactic elements for expansion and
-inserted into the seed \sents as masks. We then use masked language
-model to suggest the fill-ins. If the resulting \sents still conform
-to the \lc specification, they are added to \tool{}'s test suite.
+phase extends the seed \sents to cover syntactic structures
+commonly used in real-life \sents. Our idea is to differentiate the
+parse trees between the seed \sents and the reference \sents
+from a large real-world dataset. The extra PoS tags in the reference
+parse trees are identified as potential syntactic elements for
+expansion and inserted into the seed \sents as masks. We then use
+masked language model to suggest the fill-ins. If the resulting
+\sents still conform to the \lc specification,
+they are added to \tool{}'s test suite.
 
 \subsubsection{Syntax Expansion Identification}
 
@@ -213,11 +212,10 @@ Algorithm \ref{alg:diff} shows how masks are identified for each seed
 Berkeley Neural
 Parser~\cite{kitaev2018seedparser,kitaev2019seedparser}, and a
 reference context-free grammar (CFG) from the Penn Treebank corpus
-dataset \cite{mitchell1993treebank} as inputs.  The reference CFG is
-learned from a large dataset \cite{nltkTreebankCorporaWebPage} that is
-representative of the distribution of real-world language usage.  The
-algorithm identifies the discrepancy between the seed syntax and the
-reference grammar to decide how a seed can be expanded.
+dataset~\cite{mitchell1993treebank} as inputs.  
+This reference CFG was learned from a large dataset~\cite{nltkTreebankCorporaWebPage} that is representative of the distribution of real-world language usage.  
+The algorithm identifies the discrepancy between the seed syntax 
+and the reference grammar to decide how a seed can be expanded.
 %This phase builds \pcfg from the reference corpus. \cfg
 %is constructed by parsing \sents in the corpus and extracting
 %\prodrs. In addition, the probability of \cfg is estimated by
@@ -243,25 +241,25 @@ For each production of in each seed's parse tree (lines 3 and 4), we
 extract its non-terminal at the left-hand-side (line 5), $s\_lhs$, and
 the grammar symbols at the right-hand-side (line 6), $s\_rhs$. In line
 7, the algorithm iterates through all productions in the reference
-context-free grammar and match these that have the same non-terminal
+context-free grammar and matches these that have the same non-terminal
 at the left-hand-side as $s\_lhs$.  The right-hand-side of each
 matched production is called $r\_rhs$.  If $s\_rhs$ consists of a
 subset of the grammar symbols in $r\_rhs$ (line 8), the additional
 symbols in the $r\_rhs$ are inserted as masks in the parse tree of
-seed \sent, in their respective positions in the expanded production.
+the seed \sent, in their respective positions in the expanded production.
 The left to right traversal of the leaves of an expanded parse tree
-forms a masked \sent.  Lastly, due to the inefficient cost of
-accessing full list of the masked \sents, we randomly select $k$
-masked \sents for the next \sent expansion and validation phase when
-the masked \sents are more than maximum number of masked \sents. The
-random sampling is unbiased approach since it gives same chance to be
-chosen. Thus, the random sample becomes representative of the
-population of the masked \sents, and it efficiently shows the
-usefulness of the \tool.
+forms a masked \sent.  Due to a potential large number of masked \sents created by this algorithm, we randomly select $k$
+masked \sents for the next \sent expansion and validation phase (line 14).
+% The
+% random sampling is unbiased approach since it gives same chance to be
+% chosen. Thus, the random sample becomes representative of the
+% population of the masked \sents, and it efficiently shows the
+% usefulness of the \tool.
 
 \begin{figure*}[t]
   \centering
   \includegraphics[scale=0.7]{figs/running_example.pdf}
+  \vspace{-5mm}
   \caption{\RunningExCaption}
 %  Expansion of the seed \sent ``Or
 %both.''. For a \prodr in seed ``NP->[DT]'' on the left, the \prodr of
@@ -271,7 +269,7 @@ usefulness of the \tool.
 \end{figure*}
 
 \paragraph{Running example.} Figure~\ref{fig:ExpEx} shows an example using Algorithm \ref{alg:diff}
-to generate a masked \sent. The \sent ``Or both." is a seed of \lc of
+to generate a masked \sent. The \sent ``Or both." is a seed of the \lc of
 \SareqExOne.  The tree on the left shows the parse tree of this seed;
 it consists of two productions: ``FRAG->[CC, NP, .]" and ``NP->[DT]".
 When matching the left-hand-side non-terminal of the second production
@@ -284,11 +282,11 @@ expanded parse tree.
 
 %Given the seed parse tree and reference \pcfg, production
 %differentiation phase suggests structural expansion candidates on the
-%seed input. this phase aims to analyze which structural components
-%and where they can be added into the seed structure for its
-%expansion. To do so, we explore reference \prodrs comparing it with
-%each \prodr used in seed input. This results in the phase described
-%in Algorithm~\ref{code:ProdDiffAlg}. For each production rule in seed
+%seed input. this phase aims to analyze which structural components and
+%where they can be added into the seed structure for its expansion. To
+%do so, we explore reference \prodrs comparing it with each \prodr used
+%in seed input. This results in the phase described in
+%Algorithm~\ref{code:ProdDiffAlg}. For each production rule in seed
 %inputs ($seed\_prod$), it searches production rules in reference
 %($ref\_prod$) which it has same non-terminal on the \lhs
 %($seed\_prod.lhs==ref\_prod.lhs$) and superset of \rhs of the seed
@@ -298,8 +296,8 @@ expanded parse tree.
 %seed\_prod.rhs$) become an expansion candidate which can be expanded
 %from the $seed\_prod.rhs$ found in real world. In addition, the
 %measure of how consistent the production rule is with the given seed
-%structure is given in its probability of the reference production
-%rule ($ref\_prob$) multiplied by that of parents of $seed\_prod$. The
+%structure is given in its probability of the reference production rule
+%($ref\_prob$) multiplied by that of parents of $seed\_prod$. The
 %expansion candidate consists of terminal or nonterminal symbols. When
 %there is a phrase-level or clause-level nonterminal symbol, \eg noun
 %phrase, it needs to be expanded and replaced with word-level
@@ -310,71 +308,70 @@ expanded parse tree.
 %symbols for the effectiveness of \Model. Lastly, the expanded
 %component is replaced with the mask token for the next phase. The
 %example of the expansion is illustrated in
-%Figure~\ref{fig:ExpEx}. The ``NP->[DT]'' is queried into reference,
-%and ``NP->[DT,NNS]'' is identified as its expansion candidate since
-%the \rhs of ``NP->[DT,NNS]'' is superset of that of ``NP->[DT]''. the
-%component of NNS is replaced with mask token in
+%Figure~\ref{fig:ExpEx}. The ``NP->[DT]'' is queried into
+%reference, and ``NP->[DT,NNS]'' is identified as its expansion
+%candidate since the \rhs of ``NP->[DT,NNS]'' is superset of that of
+%``NP->[DT]''. the component of NNS is replaced with mask token in
 %\sent-level. Therefore, the ``Or both \{MASK\}.'' is suggested for
 %the next phase.
 
 \subsubsection{\Sent Expansion and Validation}
 
 In this phase, the words to fill in the masks in the masked \sents are
-suggested by the BERT pretrained model~\cite{devlin2019bert}.  The
-BERT is a transformer-based \nl model. It is pretrained on two tasks
-of masked token prediction and next sentence prediction. As a result
-of the training process, the BERT model suggests word for the mask
-token according to its surrounding context in \sent. For each masked
-token, multiple words are suggested ranked by their confidence scores.
+suggested by the BERT model~\cite{devlin2019bert}. 
+BERT is a transformer-based \nl model that is pre-trained on two tasks: masked token prediction and next sentence prediction. BERT model is capable of suggesting words for the masked
+token according to its surrounding context in a \sent. For each masked
+token, multiple words are suggested, ranked by their confidence scores.
 % \sw{Algorithm 1 does not require we only have one mask in the masked
 %   \sent. Can the model suggest multiple words at the same time?}
 % \jl{yes. it can predict multiple masked tokens at the same time.}
 % \jl{I added the explanation of BERT}
 %
-Because BERT model is not aware of the \lc specification and the
-grammar symbol in the expanded parse tree, an expanded \sent using the
-suggested words may no longer satisfy the \lc
-specification. Therefore, we perform validation on the suggested words
-and only accept them if the following three criteria are met.
+Because BERT model is not aware of the \lc
+specification and the grammar symbol in the expanded parse tree, an
+expanded \sent using the suggested words may no longer satisfy the
+\lc specification. Therefore, we perform validation
+on the suggested words and only accept them if the following three
+criteria are met.
 
 First, the PoS tag of the suggested word must match the PoS tag of the
 expanded symbol in the parse tree. For the example in
 Figure~\ref{fig:ExpEx}, the masked symbol is a ``NNS" (i.e., plural
-noun); thus, the suggested word must also be a ``NNS". In this work,
-we use \spacy, a free open-source library for \nlp, for extracting PoS
-tags for each suggested word.
+noun); thus, the suggested word must also be a ``NNS". We use \spacy \cite{spacy}, a free open-source library for \nlp, to extract the PoS
+tag for each suggested word.
 
-Second, it is required that the sentiment of the expanded \sent
-becomes the same as the seed \sent. To ensure this, the suggested
-words must be \neu.
+Second, it is required that the
+sentiment of the expanded \sent is the same as the seed \sent. To
+ensure this, the suggested words must be \neu. 
 
-Third, we additionally verify that the expanded \sents satisfied the
-same search rules for the seed \sent in LC1 and LC2. This criteria
-cannot be applied to other linguistic capabilities because they have
-additional transformation templates.
+Third, we additionally verify that the
+expanded \sents satisfy the same search rules for the seed
+\sent in LC1 and LC2. This criteria cannot be applied to other linguistic capabilities because they have additional transformation templates.
 
-In this work, out of the BERT suggested words, we randomly selects
-words that matches their PoS tag of the expanded symbol in the parse
-tree. The words that meets the second and third criteria are finally
-employed for the expanded \sents.
+% In this work, out of the BERT suggested words, we randomly selects
+% words that matches their PoS tag of the expanded symbol in the parse
+% tree. The words that meets the second and third criteria are finally
+% employed for the expanded \sents.
+
 % Our goal for generating the expanded \sents is to use them for
 % evaluating the \sa models on the associated \lc in addition to the
-% seed \sent. It is only achieved when the expanded \sents are also
-% met with the same search rules for the \lc. For LC1 as an example,
-% the expanded \sent must still conform to the specification of the
-% seed's \lc specification. Therefore, the expanded \sents are
-% required to be short and to only have \neu adjectives and \nns.
-% \sw{Say why we use the third criteria only for LC1 and LC2.}  \jl{I
-% added the explanation}
+% seed \sent. It is only achieved when the expanded \sents are also met
+% with the same search rules for the \lc. For LC1 as an example, the
+% expanded \sent must still conform to the specification of the seed's
+% \lc specification. Therefore, the expanded \sents are required to be
+% short and to only have \neu adjectives and \nns.
+% \sw{Say why we use
+%   the third criteria only for LC1 and LC2.}  \jl{I added the
+%   explanation}
 
 \paragraph{Running example.} The third step in Figure~\ref{fig:ExpEx} shows the words suggested
-by BERT. For this masked \sent, BERT suggested six words. Each word is
-associated with the confidence score provided by BERT, the PoS tag,
+by BERT. For this masked \sent, BERT suggested six words. Each word
+is associated with the confidence score provided by BERT, the PoS tag,
 and the sentiment. Among the six words, only ``ways'' and ``things''
 are validated by \tool{} because they have the Pos tag ``NNS'' and are
-\neu. In addition, it is found that both \sents meets the search rule
-of the associated \lc of \SareqExOne. In the end, two \sents of ``Or
-both ways'' and ``Or both things'' are generated.
+\neu. In addition, it is found that both \sents meets the search
+rule of the associated \lc of \SareqExOne. In the end, two \sents
+of ``Or both ways'' and ``Or both things'' are generated.
 
 %The suggested word are
 %validated by three criteria. First, The tag of POS must be matched with

@@ -1,86 +1,60 @@
+\vspace{-6pt}
 \section{Related Work}
-\label{sec:related}
 
-\MyPara{NLP Testing.}
+\MyPara{NLP Testing}
 %
 With the increasing use of NLP models, evaluation of NLP models is
-becoming more important. Apart from the task accuracy based testing
-scheme, recent works have also considered model robustness as an
-aspect for model evaluation. Belinkov
-\textit{\etal}~\cite{belinkov2018breaknmt} aims to fail neural machine
+becoming a more important issue. Apart from the accuracy-based testing
+scheme, recent works have considered model robustness as an
+aspect for evaluation. Belinkov and Bisk
+\textit{\etal}~\cite{belinkov2018breaknmt} aimed to fail neural machine
 translation model by intentionally introducing noise in the input
-text.Pinjia
+text. Pinjia
 \textit{\etal}~\cite{pinjia2020structinvtestingnmt,pinjia2020testnmtrt}
-measures the robustness by assuming syntatic and semantic relation
+measured the robustness by assuming syntactic and semantic relation
 between input and output of neural machine translation model.  Ribeiro
 \textit{\etal}~\cite{ribeiro2018sear} proposed an approach to
 generalize semantically equivalent adversarial rules. In addition,
-Rychalska \textit{\etal}~\cite{rychalska2019wildnlp} measures drops in
-BLEU scores by corruption operation, and compare model robustness
-based on the amount of the drops. In addition, Iyyer
-\textit{\etal}~\cite{iyyer2018adversarial} introduced learning based
-model for adversarial data augmentation. Not only evaluating the
-robustness on adversarial set, but various aspets on the NLP model are
+Rychalska \textit{\etal}~\cite{rychalska2019wildnlp} measured drops in
+BLEU scores by corruption operation, and compared model robustness
+based on the amount of the drops. Iyyer
+\textit{\etal}~\cite{iyyer2018adversarial} introduced learning-based
+model for adversarial data augmentation.
+
+In addition to the
+robustness on adversarial set, various other aspects of the NLP model have been
 considered for the robustness evaluation. Prabhakaran
 \textit{\etal}~\cite{prabhakaran2019fairness} developed an evaluation
-framework to detect unintended societal bias in NLP model. Rottger
+framework to detect unintended societal bias in NLP models. Rottger
 \textit{\etal}~\cite{rottger2020hatecheck} introduced a functional
 test suite for hate speech detection in the NLP model.  Ribeiro
-\textit{\etal}~\cite{ribeiro2019consistencyeval} measures logical
+\textit{\etal}~\cite{ribeiro2019consistencyeval} measured logical
 consistency of NLP model. These techniques evaluate the robustness of
-the NLP model. However, we focused on evaluation of model capability
-over multiple perspectives and give debugging information by comparing
+the NLP model. However, we focused on the evaluation of model capability
+over multiple perspectives and produce debugging information by comparing
 seed and expanded test cases.
 
 \MyPara{Linguistic Capability Evaluation}
 %
-Wang \textit{\etal}~\cite{wang2018glue, wang2019superglue} propose
-multiple diagnostic datasets to evaluate NLP models. This dataset
-evaluates NLP model's ability to understand input sentence via natural
-language inference problems. More recently, \Cklst proposes evaluation
+Wang \textit{\etal}~\cite{wang2018glue, wang2019superglue} proposed
+multiple diagnostic datasets to evaluate NLP models. These datasets
+evaluate NLP model's ability to understand input sentence via natural
+language inference problems. More recently, \Cklst proposed an evaluation
 method of input-output behavior defined as \lcs. \Cklst generates
 behavior-guided inputs for validating the
-behaviors.~\cite{marcoACL2020checklist}. Unlike prior work on manual
-data generation method, we used structural information in text to
-generate data which enables automated data generation.
+behaviors.~\cite{marcoACL2020checklist}. Unlike prior work that relies on manual
+test case generation, we used structural information in text to
+generate test cases automatically.
 
 \MyPara{NLP Model Debugging}
 %
-Futher, researchers have been explaining NLP model prediction and
-analyze it for debugging the model. Ribeiro
-\textit{\etal}~\cite{ribeiroSG16lime} computes the word relevance for
-a model prediction are evaluated and implemented crowdcourcing for
-model inspection with the word relevance explanation.  Interactive
-error analysis~\cite{wu2019errudite} have been proposed to evaluate
-model robustness. Zylberajch~\cite{zylberajch2021hildif} used
-influence functions for model explanation generation so as to enable
-interactive debugging using humans effort as feedback with the
-explanation. Lertvittaya~\cite{lertvittayakumjorn2020find} proposed
-approach to understand behavior of text classifier model and improve
+Researchers have been explaining NLP model prediction and
+analyzing it for debugging the model. Ribeiro
+\textit{\etal}~\cite{ribeiroSG16lime} evaluated model prediction guided by human feedback providing relevance scores for words on the model prediction. 
+Interactive error analysis~\cite{wu2019errudite} also has been proposed to evaluate
+model robustness. Zylberajch~\cite{zylberajch2021hildif} used influence functions to generate model explanation, and it enables interactive debugging incorporating humans feedback
+explanation.
+Lertvittaya~\cite{lertvittayakumjorn2020find} proposed
+an approach to understand behavior of text classifier model and improve the
 model by disabling irrelevant hidden features. In this work, \tool
-provides source of model failure by comparing performance on seed and
-expanded test cases.
-
-%% On the subject of the limitation of traditional testing paradigm, a
-%% number of methods have been proposed. First, multiple diagnostic
-%% datasets for evaluating NLP model were introduced for obtaining
-%% generalized evaluation of the NLP model~\cite{wang2018glue}. Not only
-%% that, model is evaluated on different aspects such as robustness of
-%% the model on adversarial
-%% sets~\cite{ribeiro2018sear,belinkov2018breaknmt,
-%%   rychalska2019wildnlp,iyyer2018adversarial},
-%% fairness~\cite{prabhakaran2019fairness,rottger2020hatecheck}, logical
-%% consistancy~\cite{ribeiro2019consistencyeval}, prediction
-%% interpretations~\cite{ribeiroSG16lime} and interactive error
-%% analysis~\cite{wu2019errudite}. Especially, \Cklst implements
-%% behavioral testing methodolgy for evaluating multiple linguistic
-%% capabilities of NLP model~\cite{marcoACL2020checklist}. \Cklst
-%% introduces input-output behaviors of linguistic capabilities and
-%% generates behavior-guided inputs for validating the behaviors. It
-%% provides comprehensive behavioral testing of NLP models through a
-%% number of generated inputs. However, the approach only relies on
-%% manually generated input templates, thus the template generation
-%% becomes expensive and time consuming. In addition, the generated
-%% templates are selective and often too simple, and it is limited to
-%% provide restricted evaluation of linguistic capabilities. Thus, it
-  %% does not garauntee the comprehensive evaluation.
+is useful for identifying the sources of model failure as shown in RQ4.

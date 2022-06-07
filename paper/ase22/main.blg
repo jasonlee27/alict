@@ -6,11 +6,6 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Database file #1: bib.bib
-Repeated entry---line 244 of file bib.bib
- : @inproceedings{wu2019errudite
- :                              ,
-I'm skipping whatever remains of this entry
-Warning--I didn't find a database entry for ""
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=20001) to 20 items from 10.
@@ -40,45 +35,47 @@ Warning--page numbers missing in both pages and numpages fields in sanh2019disti
 Warning--empty organization in nltkTreebankCorporaWebPage
 Warning--page numbers missing in both pages and numpages fields in wang2019superglue
 Warning--page numbers missing in both pages and numpages fields in wang2018glue
-You've used 31 entries,
+Warning--no number and no volume in zylberajch2021hildif
+Warning--page numbers missing in both pages and numpages fields in zylberajch2021hildif
+You've used 35 entries,
             5959 wiz_defined-function locations,
-            1781 strings with 28857 characters,
-and the built_in function-call counts, 39992 in all, are:
-= -- 4924
-> -- 1764
+            1802 strings with 29851 characters,
+and the built_in function-call counts, 44418 in all, are:
+= -- 5443
+> -- 1969
 < -- 0
-+ -- 589
-- -- 565
-* -- 3187
-:= -- 4072
-add.period$ -- 154
-call.type$ -- 31
-change.case$ -- 257
-chr.to.int$ -- 30
-cite$ -- 55
-duplicate$ -- 3349
-empty$ -- 2351
-format.name$ -- 688
-if$ -- 9655
++ -- 657
+- -- 633
+* -- 3531
+:= -- 4558
+add.period$ -- 176
+call.type$ -- 35
+change.case$ -- 288
+chr.to.int$ -- 34
+cite$ -- 61
+duplicate$ -- 3711
+empty$ -- 2608
+format.name$ -- 772
+if$ -- 10676
 int.to.chr$ -- 3
 int.to.str$ -- 1
-missing$ -- 132
-newline$ -- 369
-num.names$ -- 251
-pop$ -- 1336
+missing$ -- 141
+newline$ -- 408
+num.names$ -- 283
+pop$ -- 1472
 preamble$ -- 1
-purify$ -- 534
+purify$ -- 601
 quote$ -- 0
-skip$ -- 1156
+skip$ -- 1292
 stack$ -- 0
-substring$ -- 2619
-swap$ -- 359
+substring$ -- 2907
+swap$ -- 391
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 702
-warning$ -- 24
-while$ -- 179
+type$ -- 808
+warning$ -- 26
+while$ -- 202
 width$ -- 0
-write$ -- 655
-(There was 1 error message)
+write$ -- 730
+(There were 26 warnings)

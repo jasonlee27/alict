@@ -5,17 +5,11 @@ In this section, we present the setup of the experiments to evaluate
 the effectiveness of \tool{}. We address the following research
 questions (RQs):
 
-\sw{We may miss a RQ for the test results using \tool. In the setup,
-  we have not said which sentiment analysis models we tested, and how
-  we measure the results (e.g., number of misclassified test cases).}
-
 \begin{enumerate}[label=\textbf{RQ\arabic*}]
-\item \label{rq:one}: Can \tool generate consistent test sentence and
-  its oracle?
-\item \label{rq:two}: Are \tool generated test cases relevant to be used
-  for their \lc evaluation?
 \item \label{rq:three}: Can \tool generate more diverse test cases
   than \Cklst?
+\item \label{rq:one}: Can \tool generate test sentences with correct sentiment labels?
+\item \label{rq:two}: Are \tool generated test sentences correctly categorized into a \lc?
 \item \label{rq:four}: Can \tool be useful to find root causes of bugs
   in the \sa models?
 %% \item \label{rq:three}: How effective is our new test case generation
@@ -28,36 +22,29 @@ questions (RQs):
 %and (\romnum{4}) ability to guide to find cause of bug in a \sa
 %model.
 
-\sw{Make clear (earlier in the paper): a test case is a sentence in a
-  linguistic capability with a sentiment label.}
-
-
-
 \subsection{Experimental Subjects}
 
 \paragraph{\textbf{NLP Models \& Dataset.}}
-We evaluate our approach on three leaerning-based \sa models
+We evaluate our approach on three learning-based \sa models
 implemented in Transformer library from the Hugging Face centralized
-Model Hub.\footnote{https://huggingface.co/models}: \texttt{\Bert}
-(\bertsamodel), \texttt{\Roberta} (\robertasamodel), and
-\texttt{\Dbert} (\disbertsamodel). They are pre-trained on English
+Model Hub:\footnote{https://huggingface.co/models} \texttt{\Bert}
+(\bertsamodel), \texttt{\Roberta} (\robertasamodel), and \texttt{\Dbert} (\disbertsamodel). These models were pre-trained on English
 language using a masked language modeling (MLM) objective, and
-fine-tuned on \sa task. In this experiment, we use \Sstt dataset for
-searching seeds and expanding the seeds in \tool. The \Sstt is a
-corpus of movie review, and it consists of 11,855 single sentences
-with its sentiment score. As original dataset suggests, we split the
-score range into [0, 0.4], (0.4, 0.6] and (0.6, 0.8] for assigning
-    negative, neutral and positive labels respectively. In addition,
-    we use \Swn as word sentiment
-    dataset~\cite{baccianella2010sentiwordnet}. \Swn is a publicly
-    available English sentiment lexicons.  It provides lexical
-    sentiment scores and the sentiment word labels are categorized by
-    implementing the rules in~\cite{mihaela2017sentiwordnetlabel}.
+fine-tuned on the \sa task. In this experiment, we use \Sstt \cite{socher2013sst} dataset for
+searching the seeds in \tool. \Sstt is a
+corpus of movie review, and consists of 11,855 sentences
+with sentiment scores. We split the
+scores into ranges [0, 0.4], (0.4, 0.6] and (0.6, 1.0] to assign 
+negative, neutral and positive labels, respectively. In addition, 
+we use \Swn as the word sentiment dataset~\cite{baccianella2010sentiwordnet}. 
+\Swn is a publicly available English sentiment lexicons.  
+It provides lexical sentiment scores and the sentiment word labels 
+are categorized by implementing the rules in~\cite{mihaela2017sentiwordnetlabel}.
 %% \TODO{introduce details about each model}
 
-\paragraph{\textbf{Comparison Baselines.}}
-We compare our approach with
-\Cklst\footnote{https://github.com/marcotcr/checklist}, which is a
+\paragraph{\textbf{Comparison Baseline.}}
+We compare \tool with
+\Cklst,\footnote{https://github.com/marcotcr/checklist} a
 manual template-based approach to generate test cases. In this
 experiment, we used the \Cklst released \sa test cases which are
 generated from its publicly available jupyter notebook implementation.
@@ -66,83 +53,23 @@ generated from its publicly available jupyter notebook implementation.
 
 \subsection{Experimental Process}
 
-\paragraph{\textbf{RQ1 and RQ2}} As described in Section \ref{sec:approach},
-\tool generates test cases in two steps: specification-based seed
-generation and syntax-based sentence expansion. These automated steps
-may generate seed/expanded sentences marked with incorrect sentiment
-labels or categorized into wrong linguistic capabilities. For example,
-the search rule and template defined in a linguistic capability may
-not always generate seed sentences in that capability or with the
-correct label.  To answer RQ1 and RQ2, we perform a manual study to
-measure the correctness of the sentiment labels and linguistic
-capabilities associated with the seed/expanded sentences, produced by
-\tool.
-
-In the manual study, we randomly sample three sets of pairs of seed
-sentences and corresponding \lc from seed test cases. For each set, we
-also select expanded sentences that \tool generated from the formerly
-sampled seed sentences. In this experiment, each set has 100 sentences
-(50 from seed sentences and 50 from expanded sentences) and 200
-sentences, in total, are used for the manual study. For each sampled
-set, two subjects are provided with the same set of sampled
-sentences. The subjects are asked for scoring the two following:
-\textbf{1. relevancy score between sentence and its associated \lc}:
-this score measures the amount of appropriateness of the use of
-sentence for evaluating the model on its \lc.  The scores are discrete
-ranging from 1 to 5, and each represents ``strongly not relevant'' to
-``strongly relevant'' respectively. \textbf{2. sentiment score of
-  sentence}: this score measures the level of sentence sentiment. It
-is also discrete, and it ranges from 1 to 5 representing ``strongly
-negative'' to ``strongly positive'' respectively. In this work, we
-collect manual study scores from 3 subjects in total. In case of
-different scores with a same sentence from different subjects, we used
-their average score as a score of the sentence.
-%% \sw{6 or 3 participants? What happened if participants scored differently?}
-From the collected scores, we measure the following metrics:
-
-\begin{eqnarray}
-  sentiment\_relecancy &= \sum_{i} \delta(label_{S^2LCT}!=label_{human}) \label{metric:srel} \\
-  LC\_relevancy_{AVG} &= \frac{1}{\#Data\cdot~}\cdot\sum_{i} Norm(LC\_relevancy_i) \label{metric:lcrel}
-\end{eqnarray}
-
-The equation~\ref{metric:srel} represent the number of test cases that
-their labels assigned from are different between \tool and
-human. Higher number of this metric indicates worse correlation of
-test oracle that \tool generated with human. In addition, the
-equation~\ref{metric:lcrel} represents the average score of the
-normalized relevancy score between sentence and its associated
-\lc. Higer average score means that higher human-level agreement of
-the use of sentence for its \lc, resulting in higher suitability of
-the use of the testcases for evaluating model on the \lc. Given the
-metrics, we answer RQ1 and RQ2 by the metrics from the
-equation~\ref{metric:srel} and equation~\ref{metric:lcrel}
-respectively, thereby, show its ability of \tool to understand human
-intelligence.
-
-\paragraph{RQ3.}
+\paragraph{\textbf{RQ1.}}
 Recall that a key limitation of \Cklst is that its template-based
-approach that relies on significant manual efforts may not generate
-test cases that comprehensively cover the sentences in a linguistic
-capability. \tool, instead, automatically generates test cases based
-on a search dataset and the syntax in a large reference corpus.  We
-expect \tool can generate a more diverse test suite than \Cklst, and
-achieve more probable evaluation results. We first evaluate the three
-\sa models by testing them on the test cases that \tool
-generates. Next, to measure diversity, we follow the approach
-presented by Ma et al. \cite{ma2018deepgauge}, where the authors
-measure the coverage of NLP model intermediate states as corner-case
-neurons.  Because the matrix computation of intermediate states
-impacts NLP model decision-making, a test suite that covers a greater
-number of intermediate states can represent more NLP model
-decision-making, making it more diverse.  Specifically, we used two
-coverage metrics in existing work \cite{ma2018deepgauge},
-\textit{boundary coverage} (BoundCov) and \textit{strong activation
-  coverage} (SActCov), as our metrics to evaluate the test suite
-diversity.  \TODO{It is worth noting that a test sample with a
-  statistical distribution similar to the training data would rarely
-  be found in the corner case region. As a result, covering a larger
-  corner case region means that the test suite is more likely to be
-  buggy.}
+approach relies on significant manual efforts and may not generate test cases that comprehensively cover the sentences
+in a linguistic capability. \tool, instead, automatically generates test cases based on a search
+dataset and the syntax in a large reference corpus. 
+We expect \tool can generate a more diverse test suite than \Cklst, and achieve
+more probable evaluation results.
+
+We first evaluate the three \sa
+models by testing them on the \tool generated test cases, reporting number of test cases and each model's failure rate in each linguistic capability.
+
+Next,
+to measure diversity, we follow the approach presented by Ma et al. \cite{ma2018deepgauge},
+where the authors measure the coverage of NLP model intermediate states as corner-case neurons.
+Because the matrix computation of intermediate states impacts NLP model decision-making, a test suite that covers a greater number of intermediate states can represent more NLP model decision-making, making it more diverse.
+Specifically, we used two coverage metrics by Ma et al. \cite{ma2018deepgauge}, \textit{boundary coverage} (BoundCov) and \textit{strong activation coverage} (SActCov), to evaluate the test suite diversity.
+It is worth noting that a test sample with a statistical distribution similar to the training data would rarely be found in the corner case region. As a result, covering a larger corner case region means that the test suite is more likely to be buggy.
 
 
 \begin{equation}
@@ -153,13 +80,8 @@ diversity.  \TODO{It is worth noting that a test sample with a
     \label{eq:corner}
 \end{equation}
 
-\noindent Eq. \ref{eq:corner} shows the formal definition of the
-corner-case neuron of the NLP model $f(\cdot)$, where $\mathcal{X}$ is
-the given test suite, $N$ is the number of neurons in model
-$f(\cdot)$, $f_n(\cdot)$ is the $n^{th}$ neuron's output, and $high_n,
-low_n$ are the $n^{th}$ neurons' output bounds on the model training
-dataset.  Eq. \ref{eq:corner} can be interpreted as the collection of
-neurons that emit outputs beyond the model's numerical boundary.
+\noindent Equation \ref{eq:corner} shows the formal definition of the corner-case neuron of the NLP model $f(\cdot)$, where $\mathcal{X}$ is the given test suite, $N$ is the number of neurons in model $f(\cdot)$, $f_n(\cdot)$ is the $n^{th}$ neuron's output, and $high_n$ and $low_n$ are the $n^{th}$ neurons' output bounds on the model training dataset.
+Eq. \ref{eq:corner} can be interpreted as the collection of neurons that emit outputs beyond the model's numerical boundary.
 
 \begin{equation}
 \begin{split}
@@ -169,13 +91,8 @@ neurons that emit outputs beyond the model's numerical boundary.
     \label{eq:coverage}
 \end{equation}
 
-\noindent The formal definition of our coverage metrics are shown in
-Eq.\ref{eq:coverage}, where BoundCov measures the coverage of neurons
-that produce outputs that exceed the upper or lower bounds, and
-SActCov measures the coverage of neurons that create outputs that
-exceed the lower bound.  Higher coverage indicates the test suite is
-better for triggering the corner-case neurons, thus better test suite
-diversity.
+\noindent The formal definition of our coverage metrics are shown in Equation \ref{eq:coverage}, where BoundCov measures the coverage of neurons that produce outputs that exceed the upper or lower bounds, and SActCov measures the coverage of neurons that create outputs that exceed the lower bound.
+Higher coverage indicates the test suite is better for triggering the corner-case neurons, thus better test suite diversity.
 
 
 
@@ -185,11 +102,7 @@ diversity.
 % Because AdNNs activate different blocks for decision making, then a higher block coverage indicates the test samples cover more decision behaviors. 
 
 
-To answer {\bf RQ3}, for each NLP model under test, we first feed its
-training dataset to compute each neuron's lower and upper
-bounds. After that, we select the same number of test cases from \tool
-and \Cklst as the test suite and compute the corresponding coverage
-metrics.
+To answer RQ1, for each NLP model under test, we first feed its training dataset to compute each neuron's lower and upper bounds. After that, we select the same number of test cases from \tool and \Cklst as the test suite and compute the corresponding coverage metrics. 
 
 % For each subject, we randomly select 100 seed samples from the test dataset as seed inputs. We then feed the same seed inputs into \tool and \texttt{ILFO} to generate test samples. 
 % Finally, we feed the generated test samples to AdNNs and measure block coverage.
@@ -218,46 +131,57 @@ metrics.
 %cases from \tool and \Cklst on the fine-tuned \sw{first time mention fine-tuning: reader does not know how we fine-tune} \sa model of
 %\bertsamodel and compare the coverage between \tool and \Cklst.
 
-\paragraph{RQ4.} 
+\paragraph{\textbf{RQ2 and RQ3}} As described in Section \ref{sec:approach},
+\tool generates test cases in two steps: specification-based seed
+generation and syntax-based sentence expansion. These automated steps
+may generate seed/expanded sentences marked with incorrect sentiment
+labels or categorized into wrong linguistic capabilities. For example,
+the search rule and template defined in a linguistic capability may
+not always generate seed sentences in that capability or with the
+correct label.  To answer RQ2 and RQ3, we performed a manual study to
+measure the correctness of the sentiment labels and linguistic
+capabilities associated with the seed/expanded sentences, produced by
+\tool.
 
-To answer RQ4, we conduct experiments to demonstrate that \tool can
-help developers understand the bugs in the NLP models.  Recall that
-\tool generates test cases by mutating seed sentences (\eg by
-expanding one token in the seed input). Still, it is unclear why
-mutating one token will cause the model to produce misclassified
-results.  We seek to help developers to understand why such mutation
-will result in the misclassification.  Existing work
-\cite{simin2020denas, lemna, lime} has demonstrated that the ML model
-prediction is dominated by a minimal set of input features (\ie tokens
-in input sentences). Motivated by such intuition, we seek to identify
-a minimal set of input tokens that dominate the model prediction.
+In the manual study, we randomly sample 100 seed sentences, each of which has at least one expanded sentence, and divide these seeds to two sets (i.e., 50 in each set). For each sampled seed sentence, we randomly obtain one of its expanded sentences.
+This forms the two sets of sentences (200 sentences in total) we use for this study, each with 50 seeds and 50 corresponding expanded sentences.
+We recruited three participants of this study; all of them are graduate students with no knowledge about this work. 
+2 of them were assigned one set of sentences and the third was assigned the other set.
+Each participant was asked to provide two scores for each sentence.
+\emph{(1) Relevancy score between sentence and its associated \lc}:
+this score measures the correctness of \tool linguistic capability categorization.  The scores are discrete,
+ranging from 1 (``strongly not relevant'') to 5 (``strongly relevant''). \emph{(2) sentiment score of the sentence}: this score measures the sentiment level of the sentence . It
+is also discrete, ranging from 1 (``strongly
+negative'') to 5 (``strongly positive''). 
+We measure the following:
 
-Formally, given a input sentence $x = [tk_1, tk_2, \cdots, tk_n]$, and
-the NLP model under test $f(\cdot)$, our goal is to find a masking
-template $T = [t_1, t_2, \cdots, t_n]$, where $t_i$ is 0 or 1,
-representing masking the $i^{th}$ token in $x$ or not.  The template
-$T$ can mask some tokens in $x$ with attribute tokens, and the masked
-input has a high probability of retaining the original prediction $x$,
-denoted as
+\begin{eqnarray}
+  sent\_consistency &= \frac{1}{\#Sample\cdot~}\cdot \sum_{i} \delta(label_{S^2LCT}=label_{human}) \label{metric:srel} \\
+  LC\_relevancy_{AVG} &= \frac{1}{\#Sample\cdot~}\cdot\sum_{i} Norm(LC\_relevancy_i) \label{metric:lcrel}
+\end{eqnarray}
 
+Equation~\ref{metric:srel} represents the percentage of the test cases that \tool and the participants produce the same sentiment labels. High value of this metric indicates \tool generates test cases with correct labels. Equation~\ref{metric:lcrel} represents the average of the
+normalized relevancy score between a sentence and its associated
+\lc. Higher average score means indicates the linguistic capability categorization by \tool is correct. We answer RQ2 and RQ3 using the metrics defined by
+Equation~\ref{metric:srel} and Equation~\ref{metric:lcrel},
+respectively.
+
+\paragraph{\textbf{RQ4.}} 
+
+To answer RQ4, we conduct experiments to demonstrate that \tool can help developers understand the bugs in the NLP models.
+Recall that \tool generates test cases by mutating seed sentences (\eg by expanding one token in the seed input). Still, it is unclear why mutating one token will cause the model to produce misclassified results.
+We seek to help developers understand why such mutation will result in the misclassification. 
+Existing work \cite{simin2020denas, lemna, lime} has demonstrated that the ML model prediction is dominated by a minimal set of input features (\ie tokens in input sentences). Motivated by such intuition, we identify a minimal set of input tokens that dominate the model prediction.
+
+Formally, given a input sentence $x = [tk_1, tk_2, \cdots, tk_n]$, and the NLP model under test $f(\cdot)$, our goal is to find a masking template $T = [t_1, t_2, \cdots, t_n]$, where $t_i$ is 0 or 1, representing masking the $i^{th}$ token (\ie $tk_i$) in $x$ or not.
+The template $T$ can mask some tokens in $x$ with attribute tokens, and the masked input has a high probability of retaining the original prediction $x$, denoted as
 \begin{equation}
     P(f(T(x)) = f(x)) \ge P_{thresh}
     \label{eq:prob}
 \end{equation}
-
-
-To create such a template $T$, we first compute the contribution score
-of each input token using an existing explainable ML technique
-\cite{}. Following that, we begin with the full mask template (\ie,
-all tokens are masked); such full mask template definitely does not
-satisfy Eq. \ref{eq:prob}.  We then iteratively shift one position
-from mask to non-mask based on the order of each token's contribution
-score, until the template $T$ satisfies Eq. \ref{eq:prob} Because we
-iterate the size of our mask, the generated template $T$ will keep the
-minimum number of tokens in $x$. Moreover, since the input $x$ is an
-incorrect prediction, the generated template $T$ is likely to produce
-misclassification (i.e., the probability to be misclassified is larger
-than $P_{thresh}$).
+To create such a template $T$, we first compute the contribution score of each input token using an existing explainable ML technique \cite{lemna}. We then begin with the full mask template (\ie, all tokens are masked); such full mask template definitely does not satisfy Equation \ref{eq:prob}.
+We then iteratively shift one position from mask to non-mask based on the order of each token's contribution score, until the template $T$ satisfies Equation \ref{eq:prob}.
+Because we iterate the size of the mask, the generated template $T$ will keep the minimum number of tokens in $x$. Moreover, since the input $x$ is an incorrect prediction, the generated template $T$ is likely to produce misclassification (i.e., the probability to be misclassified is larger than $P_{thresh}$).
 
 
 
@@ -297,7 +221,7 @@ than $P_{thresh}$).
 
 
 
-\noindent\textbf{Implementation Details.}
+% \noindent\textbf{Implementation Details.}
 
 
 
@@ -307,7 +231,7 @@ than $P_{thresh}$).
 
 
 
-\sw{Missing: environment running these experiments.}
+% \sw{Missing: environment running these experiments.}
 
 %% \MyPara{Seed Input Selection}
 %% %

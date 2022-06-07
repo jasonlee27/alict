@@ -1,13 +1,9 @@
+\vspace{-6pt}
 \section{Conclusions}
 \label{sec:concl}
 
-In this paper, we present \tool automatically that finds and generates
-suitable seed test cases for each \lc. \tool fuzz the seeds into a
-sufficient number of test cases by expanding \cfg of the seed inputs.
-We evaluated \sa models on the generated test cases and anlyzed its
-impact on testing the models. Further, we examined failure-inducing
-cases for seeking the root of the bug.  We also studied the quality of
-\tool test cases by measuring their consistencies with their test
-oracles and \lc. These led to show generalization ability of \tool for
-model evaluation and its reliability in the end. Our work stands to
-provide automated and comprehensive NLP model testing tool.
+In this paper, we present \tool that automatically searches and generates seed test cases for each \lc. \tool expands the seeds into a
+sufficient number of test cases based on \cfg, covering diverse syntactic structures.
+We evaluated \sa models on the generated test cases. It is shown that \tool ensures quality of test cases by showing consistency of test oracle with its input sentence and its \lc. In addition, we showed that diversity in \tool test cases leads to cover more region in \sa models, resulting in higher reliability on the testing. We also examined failure-inducing
+cases to understand the root causes of the bugs. These results demonstrate the correctness and usefulness \tool for
+model evaluation.

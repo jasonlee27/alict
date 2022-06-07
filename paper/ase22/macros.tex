@@ -73,8 +73,8 @@
 \newcommand{\ReqTableVSpace}{-5pt}
 \newcommand{\SelfBleuTableVSpace}{-5pt}
 \newcommand{\RetrainDebugTableVSpace}{-5pt}
-\newcommand{\ManualStudyTableVSpace}{-5pt}
 \newcommand{\TestResultsTableVSpace}{-5pt}
+
 \newcommand{\romnum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
 
 \newcommand{\jl}[1]{\textcolor{teal}{JL: #1}}
@@ -140,7 +140,7 @@
 %\newcommand{\Sw}{Software\xspace}
 %\newcommand{\sw}{software\xspace}
 \newcommand{\pos}{part-of-speech\xspace}
-\newcommand{\ho}{hold-out\xspace}
+\newcommand{\ho}{holdout\xspace}
 \newcommand{\ie}{i.e.\xspace}
 \newcommand{\eg}{e.g.\xspace}
 \newcommand{\etal}{et al.\xspace}
@@ -155,7 +155,6 @@
 \newcommand{\mask}{\{MASK\}}
 \newcommand{\SareqExOne}{``Short sentences with neutral adjectives and nouns''\xspace}
 \newcommand{\SareqExTwo}{``Negated positive with neutral content in the middle''\xspace}
-\newcommand{\SareqExThree}{``Short sentences with sentiment-laden adjectives''\xspace}
 \newcommand{\Sent}{Sentence\xspace}
 \newcommand{\sent}{sentence\xspace}
 \newcommand{\sents}{sentences\xspace}
@@ -194,11 +193,12 @@
 \newcommand{\Spacy}{Spacy\xspace}
 \newcommand{\Wrdnt}{WordNet\xspace}
 \newcommand{\Swn}{SentiWordNet\xspace}
-\newcommand{\Sstt}{Stanford Sentiment Treebank version 1\xspace}
+\newcommand{\Sstt}{SST-2\xspace}
 \newcommand{\spacy}{SpaCy\xspace}
 \newcommand{\bertsamodel}{textattack/bert-base-uncased-SST-2\xspace}
-\newcommand{\robertasamodel}{textattack/roberta-base-SST-2\xspace}
-\newcommand{\disbertsamodel}{distilbert-base-uncased-finetuned-sst-2-english\xspace}
+\newcommand{\robertasamodel}{textattack/bert-base-uncased-SST-2\xspace}
+\newcommand{\disbertsamodel}{distilbert-base-uncased\xspace}
+
 
 %% Table
 \newcommand{\tStatement}{\textbf{Statement Types}}
@@ -219,18 +219,16 @@
 \newcommand{\tNumfailafterretrain}{\textbf{\#Fail(AfterRetrain)}}
 \newcommand{\tNumpassafterretrain}{\textbf{\#Pass(AfterRetrain)}}
 \newcommand{\tSentType}{\textbf{Type}}
-\newcommand{\tNumTestCases}{\textbf{\#Testcases}}
-\newcommand{\tAvgLabelCons}{\textbf{LabelConsistency}}
-\newcommand{\tAvgLCRel}{\textbf{LcRelevancy}}
-
+\newcommand{\tNumTestCases}{\textbf{\#Test\_Cases}}
+\newcommand{\tAvgLabelCons}{\textbf{Label\_Consistency}}
+\newcommand{\tAvgLCRel}{\textbf{Sent\_Relevancy}}
 \newcommand{\tNumBlSents}{\textbf{Cklst \#TCs}}
-\newcommand{\tNumBlFail}{\textbf{Cklst \#Fails}}
+\newcommand{\tNumBlFail}{\textbf{Cklst \#Fails[\%]}}
 \newcommand{\tNumSeeds}{\textbf{\tool\#Seeds}}
 \newcommand{\tNumSeedFail}{\textbf{\tool Seed Fails[\%]}}
 \newcommand{\tNumExps}{\textbf{\tool\#Exps}}
 \newcommand{\tNumExpFail}{\textbf{\tool Exp Fails[\%]}}
 \newcommand{\tNumPasstoFail}{\textbf{\tool\#PassToFail}}
-
 
 %% Fig Caption
 \newcommand{\OverviewFigCaption}{Overview of \tool.\label{fig:overview}}
@@ -242,25 +240,25 @@ on the linguistic capability of \SareqExOne.\label{fig:SearchReqEx}}
 requirement (\ref{fig:TransformReqSubEx}) and its template
 (\ref{fig:TransformTempSubEx}) on the linguistic capability of \SareqExTwo.\label{fig:TransformReqEx}}
 \newcommand{\ProdDiffAlgCaption}{Pseudocode of Production differentiation\label{code:ProdDiffAlg}}
-\newcommand{\RunningExCaption}{Example of masked sentence generation. \sw{Expansion: Or both \mask. -> Masked sentence: Or both {MASK.}}\label{fig:ExpEx}}
-\newcommand{\CklstTemplateFigCaption}{Example of \Cklst templates on \lc of \SareqExThree.\label{code:TempEx}}
+\newcommand{\RunningExCaption}{Example of sentence expansion.\label{fig:ExpEx}}
+\newcommand{\CklstTemplateFigCaption}{Example of \Cklst templates on the \lc of \SareqExThree.\label{code:TempEx}}
+
+\newcommand{\SareqExThree}{``Sentiment change over time, present should prevail"}
 
 %% Table Caption
-\newcommand{\ReqTableCaption}{Search rules and transformation templates for linguistic capabilities. \sw{Add transformation templates. May need to find a better specification language.}.\label{tab:specification}\vspace{\ReqTableVSpace}}
+\newcommand{\ReqTableCaption}{Search rules and transformation templates for linguistic capabilities.\label{tab:specification}\vspace{\ReqTableVSpace}}
 \newcommand{\ResultTableCaption}{Results on \Nlp tasks
-of \Ccd, \Ctr, \Cref repectively.\label{table:Result}\vspace{-5pt}}
+of \Ccd, \Ctr, \Cref respectively.\label{table:Result}\vspace{-5pt}}
 \newcommand{\SelfBleuTableCaption}{\selfbleu scores over testcases
-from \tool and \Cklst}
+from \tool and \Chlst}
 \newcommand{\RetrainDebugTableCaption}{Result of retraining on
 each \lc and the evaluation of the retrained model.\label{table:RetrainDebug}}
-\newcommand{\ManualStudyTableCaption}{Aggregated statistics of manual
-study of label consistency and \lc relevancy of \tool generated
-testcases compared with human annotations.\label{table:ManualStudy}}
-\newcommand{\TestResultsTableCaption}{Comparison of evaluation of \Bert, \Roberta and
-\Dbert \sa models on seed and expanded testcases (TCs). Due to the spatial constraints
-of table, \Bert, \Roberta and
-\Dbert models are denoted as BERT, RoBERTa and dstBERT respectively.\label{table:TestResult}}
-
+\newcommand{\ManualStudyTableCaption}{Manual
+study results of label consistency and \lc relevancy of \tool generated
+test cases compared to human annotations.\label{table:ManualStudy}}
+\newcommand{\TestResultsTableCaption}{Results of \Bert, \Roberta and
+\Dbert \sa models on \tool test cases. \Bert, \Roberta and
+\Dbert models are denoted as BERT, RoBERTa and dstBERT, respectively.\label{table:TestResult}}
 
 %%% NUMBRERS
 \input{tables/lc-requirement-numbers}
@@ -268,3 +266,4 @@ of table, \Bert, \Roberta and
 %% \input{tables/retrain-debug-numbers}
 \input{tables/manual-study-numbers}
 \input{tables/test-results-numbers}
+

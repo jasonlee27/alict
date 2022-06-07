@@ -1,15 +1,17 @@
 \section{Threats to Validity}
 \label{sec:threats}
 
-Use of publicly available datasets poses an external validity threat
-with respect to the generalizability of our results. We implemented
-domain-spefic knowledge on publically available word sentiments
-dataset~\cite{baccianella2010sentiwordnet}. We also constructed
-reference CFG from publically available corpus dataset
-\cite{mitchell1993treebank, nltkTreebankCorporaWebPage}. The dataset
-used in our study might not be completely representative of all
-English grammatical structures and English word sentiments. We
-mitigate this threat by observing that they are widely used in NLP
-domain~\cite{husnain2021swnvalidity} and reviewed each script and the
-output logs.
+There are two potential threats to validity.
+First, the dataset
+used in our study might not be representative of all
+English grammatical structures and word sentiments. We
+mitigate this threat by using widely used dataset in the NLP
+domain~\cite{husnain2021swnvalidity}.
+Second, using ranges of the sentiment scores in SST-2 to determine the sentiment labels of search dataset may introduce incorrect labels. We performed a manual study to confirm that this is rare. 
+% Use of publicly available datasets poses an external validity threat
+% with respect to the generalizability of our results. We implemented
+% domain-specific knowledge on publicly available word sentiments
+% dataset~\cite{baccianella2010sentiwordnet}. We also constructed
+% reference CFG from publicly available corpus dataset
+\cite{mitchell1993treebank, nltkTreebankCorporaWebPage}. 
 

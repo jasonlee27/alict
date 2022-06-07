@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{31}
+\begin{thebibliography}{35}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -171,6 +171,19 @@
 \tempurl}
 
 
+\bibitem[\protect\citeauthoryear{Honnibal and Montani}{Honnibal and
+  Montani}{2017}]%
+        {spacy}
+\bibfield{author}{\bibinfo{person}{Matthew Honnibal} {and}
+  \bibinfo{person}{Ines Montani}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{{spaCy 2}: Natural language understanding with
+  {B}loom embeddings, convolutional neural networks and incremental parsing}.
+  (\bibinfo{year}{2017}).
+\newblock
+\newblock
+\shownote{To appear}.
+
+
 \bibitem[\protect\citeauthoryear{Husnain, Missen, Akhtar, Coustaty, Mumtaz, and
   Prasath}{Husnain et~al\mbox{.}}{2021}]%
         {husnain2021swnvalidity}
@@ -232,6 +245,21 @@
 \newblock
 \urldef\tempurl%
 \url{https://doi.org/10.18653/v1/P18-1249}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Lertvittayakumjorn, Specia, and
+  Toni}{Lertvittayakumjorn et~al\mbox{.}}{2020}]%
+        {lertvittayakumjorn2020find}
+\bibfield{author}{\bibinfo{person}{Piyawat Lertvittayakumjorn},
+  \bibinfo{person}{Lucia Specia}, {and} \bibinfo{person}{Francesca Toni}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \bibinfo{title}{FIND: Human-in-the-Loop Debugging Deep Text
+  Classifiers}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.48550/ARXIV.2010.04987}
 \showDOI{\tempurl}
 
 
@@ -486,6 +514,25 @@
 \showDOI{\tempurl}
 
 
+\bibitem[\protect\citeauthoryear{Socher, Perelygin, Wu, Chuang, Manning, Ng,
+  and Potts}{Socher et~al\mbox{.}}{2013}]%
+        {socher2013sst}
+\bibfield{author}{\bibinfo{person}{Richard Socher}, \bibinfo{person}{Alex
+  Perelygin}, \bibinfo{person}{Jean Wu}, \bibinfo{person}{Jason Chuang},
+  \bibinfo{person}{Christopher~D. Manning}, \bibinfo{person}{Andrew Ng}, {and}
+  \bibinfo{person}{Christopher Potts}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{Recursive Deep Models for Semantic Compositionality
+  Over a Sentiment Treebank}. In \bibinfo{booktitle}{\emph{Proceedings of the
+  2013 Conference on Empirical Methods in Natural Language Processing}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Seattle, Washington, USA}, \bibinfo{pages}{1631--1642}.
+\newblock
+\urldef\tempurl%
+\url{https://aclanthology.org/D13-1170}
+\showURL{%
+\tempurl}
+
+
 \bibitem[\protect\citeauthoryear{Sphinx and Theme}{Sphinx and Theme}{2021}]%
         {nltkTreebankCorporaWebPage}
 \bibfield{author}{\bibinfo{person}{Sphinx} {and} \bibinfo{person}{NLTK Theme}.}
@@ -550,6 +597,20 @@
 \urldef\tempurl%
 \url{https://doi.org/10.18653/v1/P19-1073}
 \showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Zylberajch, Lertvittayakumjorn, and
+  Toni}{Zylberajch et~al\mbox{.}}{2021}]%
+        {zylberajch2021hildif}
+\bibfield{author}{\bibinfo{person}{Hugo Zylberajch}, \bibinfo{person}{Piyawat
+  Lertvittayakumjorn}, {and} \bibinfo{person}{Francesca Toni}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{HILDIF: Interactive Debugging of NLI Models Using
+  Influence Functions}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the First Workshop on
+  Interactive Learning for Natural Language Processing}}
+  (\bibinfo{year}{2021}).
+\newblock
 
 
 \end{thebibliography}
