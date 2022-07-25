@@ -1,16 +1,30 @@
 TASKS
 
-  - [JL] writing retraining steps and asking for confirmation from
+  - [JL] modify our s2lct approach overview figure (This word
+    sentiment dataset has been used for both generation and
+    expansion. We discussed last time that generation and expansion
+    should use different set of domain knowledge rather than the same
+    one.  Generation is more about the attributes (e.g., sentiment,
+    hatefulness) of tokens that should appear in the
+    sentence. Expansion is about the constraints that prevent certain
+    tokens to be appeared in the expanded part of the sentence. And
+    also you should make this figure to be general for all tasks
+    rather than just sentimental analysis task)
+
+  - [JL] add all the related works metioned by the reviewer and more
+    on the NLP testing. Also emphasize the difference of our work and
+    related work.
+
+
+==========
+  + [JL] writing retraining steps and asking for confirmation from
     wei&yang and do the experiment.
     
   + [JL] retraining with epochs 5 to 10
 
-  - [JL] write experimental setup
+  + [JL] write experimental setup
 
-  - [JL] understand DENAS for our implementation
-
-
-==========
+  + [JL] understand DENAS for our implementation
 
   + [JL] get the eval result of model retrained on one lc over every lcs 
 

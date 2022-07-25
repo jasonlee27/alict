@@ -1,0 +1,168 @@
+ASE'22 Paper #1694 Reviews and Comments
+===========================================================================
+Paper #1694 S^2LCT: Specification- and Syntax-based Automated Testing
+Linguistic Capabilities of NLP Models
+
+
+Review #1694A
+===========================================================================
+
+Overall merit
+-------------
+1. Reject
+
+Paper summary
+-------------
+This paper proposes an NLP model testing approach named S2LCT, which finds a suitable test set and generates new cases for a given NLP model under-tested. The experiment results verify the effectiveness of the proposed method in this paper to a certain extent. S2LCT can be applied to identify some failures in the NLP models for the sentiment analysis task.
+
+Strengths
+---------
++ Testing the linguistic capabilities of NLP models is an interesting and important research direction.
++ Most of the NLP test case generation methods presented in this paper appear to be feasible.
+
+Weaknesses
+----------
+- The application scenario is too single, and it has only been verified on the sentiment analysis task, which is a binary classification task.
+- Lack of comparison with baseline approaches.
+- The assessment of the diversity of the generated test cases is insufficient.
+
+Comments for authors
+--------------------
+This paper presents S2LCT that automatically searches and generates seed test cases for each linguistic capability. The effectiveness of S2LCT is validated on a binary sentiment analysis task. I think testing the linguistic capabilities of NLP models is crucial for many NLP-based software applications, such as machine translation, machine reading comprehension, intelligent question answering, etc. 
+However, this paper only conducts experiments on the sentiment analysis task, which does not give a good indication of the effectiveness of the proposed approach. I suggest that the authors try further testing on other types of NLP tasks, thus illustrating that the generated test data is valid in a variety of scenarios.
+On the other hand, I have some doubts about the method of diversity assessment for generated test cases. In this paper, boundary coverage and strong activation coverage are applied to assess the diversity of the generated test cases. These two metrics are mainly designed for feedforward neural networks, but they cannot be directly applied to feedback RNN or attention mechanism networks used in most NLP tasks. Considering that many existing studies have questioned the coverage of neuron activations [1-4], I do not think that neuron coverage is a good measure of test diversity.
+
+Besides, are there any other similar NLP model/task testing methods? Of all the experiments, only the diversity experiment was compared with the other existing approach, CHECKLIST. I think the proposed approach is mainly designed as a test generation for NLP tasks. It contains many similarities with text augmentation techniques [5-9]. The existing text augmentation technology can perform operations such as synonym replacement, word addition, and modification on the original test case, thereby generating a large amount of text for testing tasks such as sentiment analysis. I believe these related works may be good baselines for the proposed approach. I suggest authors search for related work and compare it with other baseline approaches.
+
+
+[1] Li Z, Ma X, Xu C, et al. Structural coverage criteria for neural networks could be misleading[C]//2019 IEEE/ACM 41st International Conference on Software Engineering: New Ideas and Emerging Results (ICSE-NIER). IEEE, 2019: 89-92.
+
+[2] Harel-Canada F, Wang L, Gulzar M A, et al. Is neuron coverage a meaningful measure for testing deep neural networks?[C]//Proceedings of the 28th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering. 2020: 851-862.
+
+[3] Yan S, Tao G, Liu X, et al. Correlations between deep neural network model coverage criteria and model quality[C]//Proceedings of the 28th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering. 2020: 775-787.
+
+[4] Chen J, Yan M, Wang Z, et al. Deep neural network test coverage: How far are we?[J]. arXiv preprint arXiv:2010.04946, 2020.
+[5] Xie Q, Dai Z, Hovy E, et al. Unsupervised data augmentation for consistency training[J]. Advances in Neural Information Processing Systems, 2020, 33: 6256-6268. 
+
+[6] Coulombe C. Text data augmentation made simple by leveraging nlp cloud apis[J]. arXiv preprint arXiv:1812.04718, 2018. 
+
+[7] Wei J, Zou K. Eda: Easy data augmentation techniques for boosting performance on text classification tasks[J]. arXiv preprint arXiv:1901.11196, 2019. 
+
+[8] Guo H, Mao Y, Zhang R. Augmenting data with mixup for sentence classification: An empirical study[J]. arXiv preprint arXiv:1905.08941, 2019. 
+
+[9] Anaby-Tavor A, Carmeli B, Goldbraich E, et al. Do not have enough data? Deep learning to the rescue![C]//Proceedings of the AAAI Conference on Artificial Intelligence. 2020, 34(05): 7383-7390.
+
+
+
+Review #1694B
+===========================================================================
+
+Overall merit
+-------------
+4. Accept
+
+Paper summary
+-------------
+The authors describe an approach to test capabilities of NLP Models (NLMs) for sentiment analysis. To achieve this, the approach enhances test data sets by taking seed sentences and creating extended sentences that keep linguistic capabilities and labels. The extended sentences then might introduce slightly different forms of sentences that can challenge NLMs. The authors evaluate different aspects of their approach, including how diverse the generated tests are, whether the labels are correct and correctly categorized, and, lastly, if the approach can help for understanding errors.
+
+Strengths
+---------
+- The paper presents a mostly sound and good solution to the problem of generating more test cases for NLMs for testing the sentiment analysis capabilities
+- The idea and approach as well as the goal is novel
+- The evaluation checks different aspects of the approach to assess the capabilities
+- Mostly easy to understand and to follow paper with a clear common theme
+
+Weaknesses
+----------
+- The approach tries to improve testing of sentiment analysis capabilities of NLM. However, there is no argumentation, why sentiment analysis is a highly relevant topic for software engineering or why its testing is relevant, especially for this conference.
+- (minor) Only one dataset for searching seeds is used. There is no evaluation that shows that this approach also works (well) on other datasets.
+- (minor) The motivation made me feel like the proposed solution might be used for all kinds of NLM testing to figure out the overall linguistic capabilities. Only late, the authors then lower the expectations and state that they look (only) at capabilities for sentiment analysis.
+- (minor) Very short section about threats to validity only covering the threat of unrepresentative dataset and incorrect labels due to their process. What about other threats? Can the user's of the study introduce threats because of some bias? What about the study design? What about the selection of seed sentences? etc...
+
+Comments for authors
+--------------------
+
+- Equation 4: Can you please explain a little more what the parts of the formula are? It took me quite a few seconds to understand the equation, especially the mapping of the parameters took a while.
+- I am not 100% sure about your expansions: Example "Or both." is expanded into "Or both ways/things.". The problem I see: The semantics might be changed. "Or both." is not a real full sentence but one that makes use of ellipses and is reliant on one or more prior sentences. Adding a NNS can change the statement/meaning of this sentence. However, this depends on how the sentence is then embedded/used with others.
+- Did you look into the cases where seed passes but the expanded sentences fail? Are you sure, this is solely a failure of the model instead of a wrongly expanded sentence? Especially given the fact that label consistency and linguistic capability relevancy score are not perfect.
+- The conclusion is not that great. I would expect some statement about the problem you are dealing with. Also: Is there some future work that you plan to do to enhance your approach?
+
+- Presentation
+	- Line 220: "line 1, 6 and 23, ." --> "line 1, 6 and 13."
+	- Line 410, 414: "exlcude"
+	- Figure 2: "setences" and I and my dictioniaries don't know the word "Exapended"
+	- Line 669: "lexicons"
+	- Line 774: "Higher average score means indicates" --> ".. indicate"
+	- Line 234, 660 are too wide
+
+
+
+Review #1694C
+===========================================================================
+
+Overall merit
+-------------
+2. Weak reject
+
+Paper summary
+-------------
+The paper proposes a test case generation framework for Natural Language Processing (NLP) models.
+
+Strengths
+---------
+- Addressing a relevant software testing problem. 
+- Automated approach to generate test cases for NLP models. 
+- Outperforming an existing manual approach.
+
+Weaknesses
+----------
+- Only support testing sentiment analysis tasks. 
+- Limited significance and novelty.
+
+Comments for authors
+--------------------
+Significance:
+- Testing NLP models is a relevant and timely topic. However, the significance of this work is questionable. The proposed approach seems to specifically focus on sentiment analysis task. The search rules and transformation templates are specific to sentiment analysis. There are however many other NLP tasks and it is not clear how generalized the proposed approach is to other tasks. This was not explored in the current work. 
+
+Novelty:
+- The proposed approach follows the notions of fuzzing (both mutation-based and generation-based). There have been substantial research in fuzzing, but they were overlooked in the paper. 
+
+Soundness:
+- The approach relies on a set of rules. However, it is not clear if those rules are complete. Furthermore, if new rules are added later, how to ensure consistency among the rules and templates. These questions were not explored in the current research, hence the practicality of the proposed approach is rather limited. 
+
+- Several places in the description of the approach are not clear. For example, what is the definition for function insertMask() in line 9 of Algorithm 1? Why was BERT model chosen over other pre-trained language model? 
+
+- The motivation for the chosen research questions were not made clear. For example, why was RQ3 important? Why was it important for categorizing test cases into linguistic capabilities? RQ2 and RQ3 are related - why were they not merged into one research question? 
+
+- Why was only CHECKLIST chosen as the benchmark? Early in the paper, adversarial testing techniques were discussed to motivate the need for the proposed approach. Why were they not used as a benchmark?  
+
+- The discussions for RQ2 and RQ3 are rather short and need more insightful analysis. In answering RQ4, the authors picked out only 2 examples. This is rather subjective and not sufficient to demonstrate the effectiveness of the approach. 
+
+- The discussion on threats to validity is really short. Need to consider other aspects such as external, internal, etc. 
+
+Verifiability:
+- A GitHub link is provided but code was not provided. 
+
+Transparency:
+- The description of the approach is generally clear. However, code was not provided for replication, and the reasons for not doing so were not provided either. 
+
+Presentation:
+- Some parts are not clear. For example, the abstract states that the contribution is a testing infrastructure. The introduction says “an automated evaluation method”. Need to be clearer in terms of the contribution: a test case generation framework.
+
+- The introduction is rather lengthy and lacks of focus. 
+
+- Some paragraphs are very long, for example the first paragraph in Section 3.1.
+
+
+
+Comment @A1 by Reviewer B
+---------------------------------------------------------------------------
+# Metareview 
+
+Thank you for submitting to ASE 2022! The reviewers recognize that the paper make a step in an important and relevant research direction. The results for sentiment analysis indicate that the approach leads to improvements compared to existing approaches. 
+
+However, most reviewers agree the evaluation of the approach is not yet convincing enough for a venue like ASE: The approach was only evaluated for sentiment analysis, which is only one possible application area. Already the baseline approach, Checklist, was evaluated using multiple applications. Thus, the reviewers agree that it is not clear why only one application was considered and agree that more applications need to be considered to show the generalizability of the approach. 
+
+Two other major points of criticism were discussed. First, it is not clear whether neuron coverage is a good metric for measuring test case quality. While one may argue that there is no better one, this still is a threat to the validity of the results. Second, the differentiation from text augmentation techniques was not clear enough for one of the reviewers. 
+
+We would like to encourage you to continue exploring this direction and, in particular, extend the evaluation with examples from more application areas.
