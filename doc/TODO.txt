@@ -1,8 +1,5 @@
 TASKS
 
-  - [JL] create search/transform specification for hatecheck
-    capabilities.
-
   - [JL] modify our s2lct approach overview figure (This word
     sentiment dataset has been used for both generation and
     expansion. We discussed last time that generation and expansion
@@ -17,6 +14,9 @@ TASKS
 
 ==========
 
+  + [JL] create search/transform specification for hatecheck
+    capabilities.
+    
   + [JL] add all the related works metioned by the reviewer and more
     on the NLP testing. Also emphasize the difference of our work and
     related work.
