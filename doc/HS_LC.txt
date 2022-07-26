@@ -1,0 +1,78 @@
+Hatecheck functionality searching specification
+(https://aclanthology.org/2021.acl-long.4.pdf)
+1. Derogation
+   Expression of strong negative emotions (explicit):
+   - Search: seed={label: 1(hate speech); include: “I {hate synonyms} {hurtlex nouns}”}
+   - Transform: N/A
+   Description using very negative attributes (explicit):
+   - Search: seed={label: 1; include: “is/are {hurtlex adj}”}
+   - Transform: N/A
+   Dehumanisation (explicit):
+   - Search: seed={label: 1; include: “is/are {hurtlex animal/plants nouns}”}
+   - Transform: N/A
+   Implicit derogation:
+   - Search: seed={label: 1; include: “belong to”|”I would(I’d) rather”}
+   - Transform: N/A
+2. Threatening language
+   Direct threat:
+   - Search: seed={label: 1; include: “I will/am going to {shoot|kill|hurt|tear synonyms}”}
+   - Transform: N/A
+   Threat as normative statement:
+   - Search: seed={label: 1; include: “we/they must/should {shoot|kill|hurt|tear synonyms}”}
+   - Transform: N/A
+3. Slur usage
+   Hate expressed using slur:
+   - Search: seed={label: 1; include: “is/are {hurtlex nouns}”}
+   - Transform: N/A
+   Non-hateful homonyms of slurs
+   - Search: seed={label: 0(non hate speech); include: “{hurtlex nouns}”}
+   - Transform: N/A
+   Reclaimed slurs
+   - Search: seed={label: 0(non hate speech); include: “{hurtlex nouns}”}
+   - Transform: N/A
+4. Profanity usage
+   Hate expressed using profanity
+   - Search: seed={label: 1; include: “{hurtlex ASM/ASF words}”}
+   - Transform: N/A
+   Non-hateful use of profanity
+   - Search: seed={label: 0; include: “{hurtlex ASM/ASF words}”}
+   - Transform: N/A
+5. Pronoun reference
+   Hate expressed through reference in subsequent clauses
+   Hate expressed through reference in subsequent sentences
+6. Negation
+   Hate expressed using negated positive statement
+   - Search: seed={label: 1; include: “not  {sentiwordnet positive words}”}
+   - Transform: N/A
+   Non-hate expressed using negated hateful statement
+   - Search: seed={label: 0; include: “not  {hurtlex words}”}
+   - Transform: N/A
+7. Phrasing
+   Hate phrased as a question
+   - Search: seed={label: 1}
+   - Transform: seed={[‘Why is it true that’, ‘How come it is true that’+[{hate_sent}]+’?’}
+   Hate phrased as an opinion
+   - Search: seed={label: 1|label:0}
+   - Transform: seed={[‘I think that’, ‘I agree that’]+[pos_sent | neg_sent]}
+8. Non-hate grp. ident.
+   Neutral statements using protected group identifiers
+   - Search: seed={label: 0; include: “group|kind|family of {hurtlex words}”}
+   - Transform: N/A
+   Positive statements using protected group identifiers
+   - Search: seed={label: 0; include: [“I {love synonyms} {hurtlex nouns}”|“{hurtlex nouns} is/are {hurtlex nouns}”]}
+   - Transform: N/A
+9. Counter speech
+   Denouncements of hate that quote it
+   - Search: seed={label: 1}
+   - Transform: seed={[“Statements like ”+‘{hate_sent}’+”are {hurtful synonyms}”]}
+   Denouncements of hate that make direct reference to it
+   - Search: seed={label: 1}
+   - Transform: seed={[“I {disagree synonyms} statements like”+”‘{hate_sent}’”| “I don’t think|agree statements like ”+“‘{hate_sent}’”| “I {hate synonyms} statements like”+“‘{hate_sent}’”]}
+10. Abuse against non-prot. targets
+   Abuse targeted at objects
+   - Search: seed={label: 0; include: “{hurtlex adjs|verbs} {non-hurtlex nouns}”}
+   - Transform: N/A
+   Abuse targeted at individuals (not as member of a prot. group) (I
+   don’t think that this is non-hate speech)
+   Abuse targeted at non-protected groups (e.f. professions) (I don’t
+   think that this is non-hate speech)
