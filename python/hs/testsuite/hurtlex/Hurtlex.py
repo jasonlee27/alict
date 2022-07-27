@@ -36,23 +36,35 @@ class Hurtlex:
         return data
 
     @classmethod
-    def split_by_pos(cls, raw_data: Dict) -> Dict:
-        poss = ['n', 'a', 'v'] # n: noun, a: adj, v: verb
-        data = {
-            'n': list(),
-            'a': list(),
-            'v': list()
-        }
+    def get_target_pos_words(cls, raw_data: Dict, target_pos) -> Dict:
+        # poss = ['n', 'a', 'v'] # n: noun, a: adj, v: verb
+        data = list()
         for d in raw_data.keys():
-            if d['pos']==poss[0]: # n
-                data[poss[0]].append({
-                    
+            if raw_data[d]['pos']==target_pos: # n
+                data.append({
+                    'id': d,
+                    'cat': raw_data[d]['category'],
+                    'stereotype': raw_data[d]['stereotype'],
+                    'lemma': raw_data[d]['lemma'],
+                    'level': raw_data[d]['level']
                 })
-        
-        
-        
-        
+            # end if
+        # end for
+        return data
 
-
-# if __name__=="__main__":
-#     Sentiwordnet.get_sent_words()
+    @classmethod
+    def get_target_cat_words(cls, raw_data: Dict, target_cat) -> Dict:
+        poss = ['n', 'a', 'v'] # n: noun, a: adj, v: verb
+        data = list()
+        for d in raw_data.keys():
+            if raw_data[d]['category']==target_cat: # n
+                data.append({
+                    'id': d,
+                    'pos': raw_data[d]['pos'],
+                    'stereotype': raw_data[d]['stereotype'],
+                    'lemma': raw_data[d]['lemma'],
+                    'level': raw_data[d]['level']
+                })
+            # end if
+        # end for
+        return data
