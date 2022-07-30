@@ -103,96 +103,12 @@ class SearchOperator:
         # end if
         return results
 
-    # def search_by_punctuation_include(self, sents):
-    #     nlp = spacy.load('en_core_web_sm')
-    #     results = list()
-    #     for sent in sents:
-    #         s = Utils.detokenize(sent[1])
-    #         doc = nlp(s)
-    #         if len(doc) and doc[-1].pos_ == 'PUNCT':
-    #             results.append(sent)
-    #         # end if
-    #     # end for
-    #     return results
+    # def search_by_label(self, sents, search_reqs):
+    #     label = search_reqs["label"]
     
-    # def search_by_person_name_include(self, sents):
-    #     nlp = spacy.load('en_core_web_sm')
-    #     results = list()
-    #     for sent in sents:
-    #         s = Utils.detokenize(sent[1])
-    #         doc = nlp(s)
-    #         is_person_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'PERSON' for a in x])])
-    #         if is_person_name_contained:
-    #             ents = [x.text for x in doc.ents if np.all([a.ent_type_ == 'PERSON' for a in x])]
-    #             if any([x for x in ents if x in NAME_LOC_DICT['name_set']['women'] or x in NAME_LOC_DICT['name_set']['men']]):
-    #                 results.append(sent)
-    #             # end if
-    #         # end if
-    #     # end for
-    #     return results
-
-    # def search_by_location_name_include(self, sents):
-    #     # location: city names && country names
-    #     nlp = spacy.load('en_core_web_sm')
-    #     results = list()
-    #     for sent in sents:
-    #         s = Utils.detokenize(sent[1])
-    #         doc = nlp(s)
-    #         is_loc_name_contained = any([True for x in doc.ents if any([a.ent_type_ == 'GPE' for a in x])])
-    #         if is_loc_name_contained:
-    #             ents = [x.text for x in doc.ents if np.all([a.ent_type_ == 'GPE' for a in x])]
-    #             if any([x for x in ents if x in NAME_LOC_DICT['city'] or x in NAME_LOC_DICT['country']]):
-    #                 results.append(sent)
-    #             # end if
-    #         # end if
-    #     # end for
-    #     return results
-    
-    # def search_by_number_include(self, sents):
-    #     nlp = spacy.load('en_core_web_sm')
-    #     results = list()
-    #     for sent in sents:
-    #         s = Utils.detokenize(sent[1])
-    #         doc = nlp(s)
-    #         nums = [x.text for x in doc if x.text.isdigit()]
-    #         if any(nums) and any([x for x in nums if x != '2' and x != '4']):
-    #             results.append(sent)
-    #         # end if
-    #     # end for
-    #     return results
-
-    # def search_by_contraction_include(self, sents):
-    #     contraction_pattern = re.compile(r'\b({})\b'.format('|'.join(CONTRACTION_MAP.keys())), flags=re.IGNORECASE|re.DOTALL)
-    #     reverse_contraction_pattern = re.compile(r'\b({})\b'.format('|'.join(CONTRACTION_MAP.values())), flags=re.IGNORECASE|re.DOTALL)        
-    #     results = list()
-    #     for sent in sents:
-    #         s = Utils.detokenize(sent[1])
-    #         if contraction_pattern.search(s) or reverse_contraction_pattern.search(s):
-    #             results.append(sent)
-    #         # end if
-    #     # end for
-    #     return results
-
-    def search_by_score(self, sents, search_reqs):
-        param = search_reqs["score"]
-        # match = re.search(r"([<>]=?|==)(\d+\.?\d+)", param)
-        # op, score = match.groups()
-        results = list()
-        if len(sents[0])==4:
-            _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
-        else:
-            _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
-        # end if
-        for s_i, s, l, sc in _sents:
-            if eval(f"{sc}{param}"):
-                results.append((s_i,Utils.detokenize(s),l,sc))
-            # end if
-        # end for
-        return results
-
     def search_by_label(self, sents, search_reqs):
         label = search_reqs["label"]
-        if label=="neutral" or label=="positive" or label=="negative":
+        if label=="hate" or label=="positive" or label=="negative":
             if len(sents[0])==4:
                 _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
                 _sents = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in _sents if l==label]
@@ -464,36 +380,51 @@ class SearchOperator:
         return result
 
 
-class Sst:
+class Hatexplain:
 
     @classmethod
-    def get_sents(cls, sent_file, label_file, phrase_dict_file):
-        # sents: List of [sent_index, sent]
-        sents = [(l.split("\t")[0].strip(),l.split("\t")[1].strip()) for l in Utils.read_txt(sent_file)[1:]]
-        label_scores = {
-            l.split("|")[0].strip():l.split("|")[1].strip() # id: score
-            for l in Utils.read_txt(label_file)[1:]
-        }
-        phrases = {
-            l.split("|")[0].strip(): l.split("|")[1].strip() # phrase: id
-            for l in Utils.read_txt(phrase_dict_file)
-        }
-        result = list()
-        for s_i, s in sents:
-            s = Utils.replace_non_english_letter(s)
-            if s in phrases.keys():
-                phrase_id = phrases[s]
-                label_score = float(label_scores[phrase_id])
-                label = "neutral"
-                if label_score<=0.4:
-                    label = "negative"
-                elif label_score>0.6:
-                    label = "positive"
+    def get_labels(cls, annotators, is_binary_class=True):
+        final_label = [ann['label'] for ann in annotators]
+        final_label_id = max(final_label,key=final_label.count)
+        if is_binary_class:
+            if(final_label.count(final_label_id)==1):
+                final_label_id = 'undecided'
+            else:
+                if(final_label_id in ['hatespeech','offensive']):
+                    final_label_id='toxic'
+                else:
+                    final_label_id='non-toxic'
                 # end if
-                result.append((s_i,s,label,label_score))
+            # end if
+        else:
+            if(final_label.count(final_label_id)==1):
+                final_label_id = 'undecided'
+            # end if
+        # end if
+        return final_label_id
+    
+    @classmethod
+    def get_sents(cls,
+                  sent_file: Path = Macros.hatexplain_data_file,
+                  is_binary_class=True):
+        raw_data_dict = Utils.read_json(sent_file)
+        sents = list()
+        for key, vals in raw_data_dict.items():
+            label = cls.get_labels(
+                vals['annotators'],
+                is_binary_class=is_binary_class
+            )
+            if label!='undecided':
+                post_id = vals['post_id']
+                tokens = vals['post_tokens']
+                sents.append({
+                    'post_id': vals['post_id'],
+                    'tokens': vals['post_tokens']
+                    'label': label
+                })
             # end if
         # end for
-        return result
+        return sents
     
     @classmethod
     def search(cls, req):
@@ -514,104 +445,6 @@ class Sst:
                 selected = [(s_i,Utils.detokenize(s),l) for s_i, s, l in selected]
             # end if
         # end if
-        random.shuffle(selected)
-        return selected
-
-
-class ChecklistTestsuite:
-
-    @classmethod
-    def get_sents(cls, testsuite_file):
-        tsuite, tsuite_dict = Utils.read_testsuite(testsuite_file)
-        test_names = list(set(tsuite_dict['test_name']))
-        sents, raw_labels = list(), list()
-        for test_name in test_names:
-            # sents: List of sent
-            # label: 0(neg), 1(neu) and 2(pos)
-            if type(tsuite.tests[test_name])==MFT and tsuite.tests[test_name].labels is not None:
-                labels = tsuite.tests[test_name].labels
-                if type(tsuite.tests[test_name].labels)==int:
-                    labels = [labels]*len(tsuite.tests[test_name].data)
-                # end if
-                sents.extend(tsuite.tests[test_name].data) 
-                raw_labels.extend(labels)
-            # end if
-        # end for
-        labels = dict()
-        for s_i, s in enumerate(raw_labels):
-            if s=='0':
-                labels[s_i] = ["negative", 0.]
-            elif s=='1':
-                labels[s_i] = ["neutral", 0.5]
-            else:
-                labels[s_i] = ["positive", 1.]
-            # end if
-        # end for
-        sents = [(s_i, s, labels[s_i][0], labels[s_i][1]) for s_i, s in enumerate(sents)]
-        return sents
-    
-    @classmethod
-    def search(cls, req):
-        # sent: (index, sentence)
-        # label: (index, label score)
-        sents = cls.get_sents(Macros.checklist_sa_dataset_file)
-        req_obj = SearchOperator(req)
-        selected = sorted([(s[0],s[1],s[2],s[3]) for s in req_obj.search(sents)], key=lambda x: x[0])
-        random.shuffle(selected)
-        return selected
-
-    
-class AirlineTweets:
-
-    @classmethod
-    def get_sents(cls, src_file):
-        # src_file: Tweets.csv file
-        import csv
-        rows = csv.DictReader(open(src_file))
-        labels, confs, airlines, sents, reasons = list(), list(), list(), list(), list()
-        for row in rows:
-            labels.append(row['airline_sentiment'])
-            # airlines.append(row['airline'])
-            s = Utils.replace_non_english_letter(row['text'])
-            sents.append(s)
-            reasons.append(row['negativereason'])
-        # end for
-        # labels = [Macros.sa_label_map[x] for x in labels]
-        return [(s_i, s, labels[s_i]) for s_i, s in enumerate(sents)]
-
-    @classmethod
-    def search(cls, req):
-        sents = cls.get_sents(Macros.tweet_file)
-        req_obj = SearchOperator(req)
-        if req_obj.search_reqs_list is not None:
-            selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
-        # end if
-        random.shuffle(selected)
-        return selected
-
-    
-class DynasentRoundOne:
-
-    @classmethod
-    def get_sents(cls, src_file):
-        sents = list()
-        sent_i = 0
-        with open(yelp_src_filename) as f:
-            for line in f:
-                d = json.loads(line)
-                sents.append((sent_i, d['sentence'], d['gold_label']))
-                sent_i += 1
-            # end for
-        # end with
-        return [(s_i,s,labels[s_i]) for s_i, s in sents]
-
-    @classmethod
-    def search(cls, req):
-        # sent: (index, sentence)
-        # label: (index, label score) 
-        sents = cls.get_labels(Macros.dyna_r1_test_src_file)
-        req_obj = SearchOperator(req)
-        selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
         random.shuffle(selected)
         return selected
 

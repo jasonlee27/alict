@@ -2,6 +2,25 @@
 # based on the Hurtlex lexicon dataset
 # Link: https://github.com/valeriobasile/hurtlex
 
+# Hurtlex Category Label Description
+# PS	negative stereotypes ethnic slurs
+# RCI	locations and demonyms
+# PA	professions and occupations
+# DDF	physical disabilities and diversity
+# DDP	cognitive disabilities and diversity
+# DMC	moral and behavioral defects
+# IS	words related to social and economic disadvantage
+# OR	plants
+# AN	animals
+# ASM	male genitalia
+# ASF	female genitalia
+# PR	words related to prostitution
+# OM	words related to homosexuality
+# QAS	with potential negative connotations
+# CDS	derogatory words
+# RE	felonies and words related to crime and immoral behavior
+# SVP	words related to the seven deadly sins of the Christian tradition
+
 from typing import *
 
 import re, os
@@ -37,7 +56,10 @@ class Hurtlex:
 
     @classmethod
     def get_target_pos_words(cls, raw_data: Dict, target_pos) -> Dict:
-        # poss = ['n', 'a', 'v'] # n: noun, a: adj, v: verb
+        poss = ['n', 'a', 'v'] # n: noun, a: adj, v: verb
+        if target_pos in poss:
+            return
+        # end if
         data = list()
         for d in raw_data.keys():
             if raw_data[d]['pos']==target_pos: # n
@@ -54,10 +76,18 @@ class Hurtlex:
 
     @classmethod
     def get_target_cat_words(cls, raw_data: Dict, target_cat) -> Dict:
-        poss = ['n', 'a', 'v'] # n: noun, a: adj, v: verb
+        cats = [
+            'ps', 'rci', 'pa', 'ddf', 'ddp',
+            'dmc', 'is', 'or', 'an', 'asm',
+            'asf', 'pr', 'om', 'qas', 'cds'
+            're', 'svp'
+        ]
+        if target_cat in cats:
+            return
+        # end if
         data = list()
         for d in raw_data.keys():
-            if raw_data[d]['category']==target_cat: # n
+            if raw_data[d]['category']==target_cat and : # n
                 data.append({
                     'id': d,
                     'pos': raw_data[d]['pos'],
@@ -68,3 +98,5 @@ class Hurtlex:
             # end if
         # end for
         return data
+
+    
