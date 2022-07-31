@@ -31,9 +31,9 @@ class Macros:
     hs_label_map = {'toxic': 0, 'non-toxic': 1}
 
     # HateXplain dataset (hate speech detection dataset):
-    # datasets = {
-    #     hs_task: ['hatexplain'],
-    # }
+    datasets = {
+        hs_task: ['hatexplain'],
+    }
     hatexplain_data_file: Path = dataset_dir / 'hs' / 'HateXplain' / 'Data' / 'dataset.json'
     
     # Hurtlex lexicon dataset

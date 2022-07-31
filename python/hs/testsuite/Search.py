@@ -6,6 +6,7 @@ from pathlib import Path
 import re, os
 import sys
 import json
+import copy
 import spacy
 import random
 import checklist
@@ -17,8 +18,10 @@ from checklist.test_types import MFT, INV, DIR
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from .Transform import TransformOperator
+from .Synonyms import Synonyms
 from ..requirement.Requirements import Requirements
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
+from .hurtlex.Hurtlex import Hurtlex
 
 
 # get pos/neg/neu words from SentiWordNet
@@ -54,7 +57,6 @@ class SearchOperator:
             "include": self.search_by_include,
             "exclude": self.search_by_exclude,
             "label": self.search_by_label,
-            "score": self.search_by_score,
         }
 
     def search(self, sents):
@@ -63,7 +65,7 @@ class SearchOperator:
             return sents
         # end if
         for search_reqs in self.search_reqs_list:
-            _sents = sents.copy()
+            _sents = Utils.copy_list_of_dict(sents)
             for op, param in search_reqs.items():
                 if len(_sents)>0:
                     _sents = self.search_method[op](_sents, search_reqs)
@@ -82,82 +84,77 @@ class SearchOperator:
         match = re.search(r"([<>]=?|==)(\d+)", param)
         op, _len = match.groups()
         results = list()
-        if len(sents[0])==4:
-            _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
-            for s_i, s, l, sc in _sents:
-                if s[-1]=="." and (eval(f"{len(s)-1} {op} {_len}")):
-                    results.append((s_i,Utils.detokenize(s),l,sc))
-                elif s[-1]!="." and (eval(f"{len(s)} {op} {_len}")):
-                    results.append((s_i,Utils.detokenize(s),l,sc))
-                # end if
-            # end for
-        else:
-            _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
-            for s_i, s, l in _sents:
-                if s[-1]=="." and (eval(f"{len(s)-1}{op}{_len}")):
-                    results.append((s_i,Utils.detokenize(s),l))
-                elif s[-1]!="." and (eval(f"{len(s)}{op}{_len}")):
-                    results.append((s_i,Utils.detokenize(s),l))
-                # end if
-            # end for
-        # end if
+        for s_i, s in enumerate(sents):
+            if eval(f"{len(s)-1} {op} {_len}"):
+                results.append((
+                    s_i, s['tokens'], s['label']
+                ))
+            # end if
+        # end for
         return results
-
-    # def search_by_label(self, sents, search_reqs):
-    #     label = search_reqs["label"]
     
     def search_by_label(self, sents, search_reqs):
         label = search_reqs["label"]
-        if label=="hate" or label=="positive" or label=="negative":
-            if len(sents[0])==4:
-                _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
-                _sents = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in _sents if l==label]
-            else:
-                _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
-                _sents = [(s_i,Utils.detokenize(s),l) for s_i, s, l in sents if l==label]
-            # end if
-            return _sents
-        elif type(label)==list and ("neutral" in label or "positive" in label or "negative" in label):
-            if len(sents[0])==4:
-                _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
-                _sents = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in _sents if l==label]
-            else:
-                _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
-                _sents = [(s_i,Utils.detokenize(s),l) for s_i, s, l in _sents if l==label]
-            # end if
-            return _sents
-        else:
-            if len(sents[0])==4:
-                _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
-                _sents = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in _sents]
-            else:
-                _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
-                _sents = [(s_i,Utils.detokenize(s),l) for s_i, s, l in sents]
-            # end if
-        # end if
-        return _sents
+        return [(s_i,s['tokens'],s['label']) for s_i, s in enumerate(sents) if label==s['label']]
 
+    def get_synonyms(self, nlp, word: str):
+        wpos = Synonyms.get_word_pos(nlp, word)
+        return Synonyms.get_synonyms(nlp, word, wpos)
+
+    def get_hurtlex_words(self, target_type):
+        if target_type in Hurtlex.POS:
+            hurtlex_lex = Hurtlex.read_raw_data()
+            words = Hurtlex.get_target_pos_words(hurtlex_lex, target_type)
+        elif target_type in Hurtlex.CAT:
+            hurtlex_lex = Hurtlex.read_raw_data()
+            words = Hurtlex.get_target_cat_words(hurtlex_lex, targety_type)
+        # end if
+        return words
+    
     def _search_by_word_include(self, sents, word_cond):
         search = re.search("\<([^\<\>]+)\>", word_cond)
         selected = list()
         if search:
             # if word condition searches a specific group of words
-            # such as "name of person, location"
+            # such as "I <hate_syn> <hurtlex_nn>"
             word_group = search.group(1)
-            word_list = list()
-            # if word_group=="contraction":
-            #     selected = self.search_by_contraction_include(sents)
-            # elif word_group=="punctuation":
-            #     selected = self.search_by_punctuation_include(sents)
-            # elif word_group=="person_name":
-            #     selected = self.search_by_person_name_include(sents)
-            # elif word_group=="location_name":
-            #     selected = self.search_by_location_name_include(sents)
-            # elif word_group=="number":
-            #     selected = self.search_by_number_include(sents)
-            # end if
+            target_words = word_group.split()
+            word_dict = dict()
+            nlp = spacy.load('en_core_web_md')
+            for tw in target_words:
+                if tw.startswith('<') and tw.endswith('>'):
+                    # search any words in the values in the target template
+                    target_template = tw.strip('<>')
+                    if target_template.endswith('_syn'):
+                        _tw = target_template.split('_syn')[0]
+                        _tw_syns = self.get_synonyms(nlp, _tw)
+                        _tw_syns.append(_tw)
+                        word_dict[_tw] = list(set(_tw_syns))
+                    elif target_template.startswith('hurtlex_'):
+                        target_type = target_template.split('hurtlex_')[1]
+                        hurtlex_words = self.get_hurtlex_words(target_type)
+                        word_dict[_tw] = list(set(hurtlex_words))
+                    # elif target_template.startswith('hatexplain_'):
+                    # end if
+                else:
+                    word_dict[tw] = tw
+                # end if
+            # end for
+
+            # perturb the words for searching in the dataset
+            word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
+            search_words = [list(wp.values()) for wp in word_product]
+
+            # find any sentences with any search_words
+            for s in sents:
+                for sw in search_words:
+                    if Utils.is_a_in_x(sw, s['tokens']):
+                        selected.append(s)
+                    # end if
+                # end for
+            # end for
         else:
-            selected = [sent for sent in sents if word_cond in sent[1]]
+            selected = sents
         # end if
         return selected
 
@@ -167,7 +164,7 @@ class SearchOperator:
             p: WORD2POS_MAP[p]
             for p in pos_pattern.split('_')
         }
-        word_product = [dict(zip(d, v)) for v in product(*pos_dict.values())]
+        word_product = [dict(zip(pos_dict, v)) for v in product(*pos_dict.values())]
         for wp in word_product:
             results.append(" ".join(list(wp.values())))
         # end for
@@ -252,12 +249,6 @@ class SearchOperator:
         if type(params)==dict:
             params = [params]
         # end if
-        _sents = sents.copy()
-        if len(sents[0])==4:
-            _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in _sents]
-        else:
-            _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in _sents]
-        # end if
         selected_indices = list()
         for param in params:
             word_include = param["word"]
@@ -265,49 +256,15 @@ class SearchOperator:
             
             if word_include is not None:
                 for w in word_include: # AND relationship
-                    _sents = self._search_by_word_include(_sents, w)
+                    _sents = self._search_by_word_include(sents, w)
                 # end for
             # end if
         
-            if tpos_include is not None:                
-                temp_sents = list()
-                for cond in tpos_include:
-                    search = re.search(r"\<([^\<\>]+)\>", cond)
-                    if search:
-                        pos_pat = search.group(1)
-                        temp_sents.extend(self._search_by_pos_pattern_include(_sents, pos_pat))
-                    else:
-                        match = re.search(r"(\d+)?\s?(positive|negative|neutral)?\s?(adj|noun|verb)?(s)?", cond)
-                        num, sentiment, pos, is_plural = match.groups()
-                        if pos is None: raise("Tag of POS is not valid!")
-                        num = -1
-                        if num is None and not is_plural:
-                            num = 1
-                        # end if
-                
-                        if sentiment is None:
-                            for _sentiment in ["neutral","positive","negative"]:
-                                temp_sents.extend(self._search_by_pos_include(_sents, f"{_sentiment}_{pos}", num))
-                            # end for
-                        else:
-                            temp_sents = self._search_by_pos_include(_sents, f"{sentiment}_{pos}", num)
-                        # end if
-                        _sents = temp_sents
-                    # end if
-                # end for
+            if tpos_include is not None:
+                pass
             # end if
-            for sent in _sents:
-                if sent[0] not in selected_indices:
-                    selected_indices.append(sent[0])
-                # end if
-            # end for
         # end for
-        result = list()
-        if len(sents[0])==4:
-            result = [(s[0],Utils.detokenize(s[1]),s[2],s[3]) for s in _sents if s[0] in selected_indices]
-        else:
-            result = [(s[0],Utils.detokenize(s[1]),s[2]) for s in _sents if s[0] in selected_indices]
-        # end if
+        result = _sents
         return result
 
     def _search_by_pos_exclude(self, sents, cond_key):
@@ -428,54 +385,40 @@ class Hatexplain:
     
     @classmethod
     def search(cls, req):
-        sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file, Macros.sst_dict_file)
+        sents = cls.get_sents(Macros.sst_datasent_file, is_bibary_class=True)
         req_obj = SearchOperator(req)
+
         if req_obj.search_reqs_list is not None:
-            if len(sents[0])==4:
-                selected = sorted([(s[0],s[1],s[2],s[3]) for s in req_obj.search(sents)], key=lambda x: x[0])
-            else:
-                selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
-            # end if
+            selected = sorted([s for s in req_obj.search(sents)], key=lambda x: x['post_id'])
+            # selected = [s for s in req_obj.search(sents)]
         else:
-            if len(sents[0])==4:
-                selected = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
-                selected = [(s_i,Utils.detokenize(s),l,sc) for s_i, s, l, sc in selected]
-            else:
-                selected = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
-                selected = [(s_i,Utils.detokenize(s),l) for s_i, s, l in selected]
-            # end if
+            selected = sents
         # end if
         random.shuffle(selected)
         return selected
 
 
 class Search:
-
+    
     SEARCH_FUNC = {
-        Macros.sa_task : {
-            Macros.datasets[Macros.sa_task][0]: Sst.search,
-            Macros.datasets[Macros.sa_task][1]: ChecklistTestsuite.search,
-            Macros.datasets[Macros.sa_task][2]: AirlineTweets.search,
-        },
-        Macros.mc_task : {},
-        Macros.qqp_task : {}
+        Macros.hs_task : {
+            Macros.datasets[Macros.hs_task][0]: Hatexlain.search
+        }
     }
-
+    
     @classmethod
     def get_dataset(cls, task_name, dataset_name):
         pass
 
     @classmethod
     def search_sentiment_analysis(cls, requirements, dataset):
-        func = cls.SEARCH_FUNC[Macros.sa_task][dataset]
+        func = cls.SEARCH_FUNC[Macros.hs_task][dataset]
         for req in requirements:
             selected = func(req)
-            
             if req["transform"] is not None:
                 transform_obj = TransformOperator(req)
                 selected = transform_obj.transform(selected)
             # end if
-            
             yield {
                 "requirement": req,
                 "selected_inputs": selected

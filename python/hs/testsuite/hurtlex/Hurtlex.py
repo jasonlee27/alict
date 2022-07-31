@@ -34,6 +34,14 @@ from ...utils.Utils import Utils
 
 class Hurtlex:
 
+    POS = ['n', 'a', 'v']
+    CAT = [
+        'ps', 'rci', 'pa', 'ddf', 'ddp',
+        'dmc', 'is', 'or', 'an', 'asm',
+        'asf', 'pr', 'om', 'qas', 'cds'
+        're', 'svp'
+    ]
+
     @classmethod
     def read_raw_data(cls) -> Dict:
         data = dict()
@@ -56,7 +64,7 @@ class Hurtlex:
 
     @classmethod
     def get_target_pos_words(cls, raw_data: Dict, target_pos) -> Dict:
-        poss = ['n', 'a', 'v'] # n: noun, a: adj, v: verb
+        poss = cls.POS # n: noun, a: adj, v: verb
         if target_pos in poss:
             return
         # end if
@@ -76,12 +84,7 @@ class Hurtlex:
 
     @classmethod
     def get_target_cat_words(cls, raw_data: Dict, target_cat) -> Dict:
-        cats = [
-            'ps', 'rci', 'pa', 'ddf', 'ddp',
-            'dmc', 'is', 'or', 'an', 'asm',
-            'asf', 'pr', 'om', 'qas', 'cds'
-            're', 'svp'
-        ]
+        cats = cls.CAT
         if target_cat in cats:
             return
         # end if

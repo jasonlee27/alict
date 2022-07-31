@@ -156,3 +156,20 @@ class Utils:
     @classmethod
     def replace_abbreviation(cls, sent):
         pass
+
+    @classmethod
+    def is_a_in_x(cls, a_list, x_list):
+        for i in range(len(x_list) - len(a_list) + 1):
+            if a_list == x_list[i:i+len(a_list)]:
+                return True
+            # end if
+        # end for
+        return False            
+
+    @classmethod
+    def copy_list_of_dict(cls, data_list):
+        import copy
+        return [
+            copy.deepcopy(d)
+            for d in data_list
+        ]

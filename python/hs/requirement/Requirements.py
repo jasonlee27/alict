@@ -74,10 +74,10 @@ class Requirements:
                         'capability': cap,
                         'description': d,
                         'search': [{
-                            'length': '<10',
+                            'length': None,
                             'include': {
                                 'POS': None
-                                'word': 'I <hate_syn> <hurtlex_nn>'
+                                'word': ['I <hate_syn> <hurtlex_n>']
                             },
                             'label': 'hate'
                         }],

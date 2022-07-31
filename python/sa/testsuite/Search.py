@@ -261,7 +261,8 @@ class SearchOperator:
             p: WORD2POS_MAP[p]
             for p in pos_pattern.split('_')
         }
-        word_product = [dict(zip(d, v)) for v in product(*pos_dict.values())]
+        # word_product = [dict(zip(d, v)) for v in product(*pos_dict.values())]
+        word_product = [dict(zip(pos_dict, v)) for v in product(*pos_dict.values())]
         for wp in word_product:
             results.append(" ".join(list(wp.values())))
         # end for
