@@ -24,7 +24,7 @@ class Requirements:
     @classmethod
     def convert_test_type_txt_to_json(cls):
         for task, dataset_name in datasets.items():
-            dataset_path = cls.req_dir / f"test_type_{task}.txt"
+            dataset_path = cls.req_dir / f"requirements_desc_{task}.txt"
             result = None
             if os.path.exists(dataset_path):
                 with open(dataset_path, 'r') as f:

@@ -7,14 +7,14 @@ import os
 
 class Macros:
 
-    this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__))) # nlptest/python/utils
-    root_dir: Path = this_dir.parent.parent.parent # nlptest/
-    storage_dir: Path = Path("/glusterfs/data/jxl115330/nlptest")
-    result_dir: Path = storage_dir / "_results" # /glusterfs/data/jxl115330/nlptest/_results
-    # result_dir: Path = root_dir / "_results" # nlptest/_results
+    this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__))) # s2lct/python/utils
+    root_dir: Path = this_dir.parent.parent.parent # s2lct/
+    storage_dir: Path = Path("/glusterfs/data/jxl115330/s2lct")
+    result_dir: Path = storage_dir / "_results" # /glusterfs/data/jxl115330/s2lct/_results
+    # result_dir: Path = root_dir / "_results" # s2lct/_results
     
-    download_dir: Path = result_dir / "_downloads" # /glusterfs/data/jxl115330/nlptest/_downloads
-    log_dir: Path = result_dir / "_logs" # /glusterfs/data/jxl115330/nlptest/_downloads
+    download_dir: Path = result_dir / "_downloads" # /glusterfs/data/jxl115330/s2lct/_downloads
+    log_dir: Path = result_dir / "_logs" # /glusterfs/data/jxl115330/s2lct/_downloads
     paper_dir = root_dir / "paper" / "ase22"
     dataset_dir = download_dir / "datasets"
 

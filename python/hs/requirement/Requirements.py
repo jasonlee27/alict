@@ -67,7 +67,7 @@ class Requirements:
         reqs = list()
         for cap, descs in cap_desc.items():
             for d in descs:
-                if d.lower()=='Expression of strong negative emotions(explicit)':
+                if d.lower()=='expression of strong negative emotions(explicit)':
                     # Search: seed={label: 1(hate speech); include: “I {hate synonyms} {hurtlex nouns}”}
                     # Transform: N/A
                     reqs.append({
@@ -76,7 +76,7 @@ class Requirements:
                         'search': [{
                             'length': None,
                             'include': {
-                                'POS': None
+                                'POS': None,
                                 'word': ['I <hate_syn> <hurtlex_n>']
                             },
                             'label': 'hate'
@@ -85,11 +85,11 @@ class Requirements:
                         'transform': None,
                         'transform_req': None
                     })
-                elif d.lower()=='Description using very negative attributes(explicit)':
+                elif d.lower()=='description using very negative attributes(explicit)':
                     pass
-                elif d.lower()=='Dehumanisation (explicit)':
+                elif d.lower()=='dehumanisation (explicit)':
                     pass
-                elif d.lower()=='Implicit derogation':
+                elif d.lower()=='implicit derogation':
                     pass
                 # end if
             # end for

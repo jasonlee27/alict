@@ -101,7 +101,7 @@ def run_testmodel():
     
 
 func_map = {
-    "sa": {
+    "hs": {
         'requirement': run_requirements,
         'template': run_templates,
         'testsuite': run_testsuites,

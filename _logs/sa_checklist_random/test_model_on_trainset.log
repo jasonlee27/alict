@@ -1,0 +1,40 @@
+***** Eval on Train Testsuite: LC<Hard: Negation of positive with neutral stuff in the middle (should be negative)> *****
+***** Baseline: checklist *****
+>>>>> RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+<<<<< RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+**********
+***** Eval on Train Testsuite: LC<Q & A: yes> *****
+***** Baseline: checklist *****
+>>>>> RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+<<<<< RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+**********
+***** Eval on Train Testsuite: LC<Q & A: yes (neutral)> *****
+***** Baseline: checklist *****
+>>>>> RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+<<<<< RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+**********
+***** Eval on Train Testsuite: LC<Sentiment-laden words in context> *****
+***** Baseline: checklist *****
+>>>>> RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+<<<<< RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+**********
+***** Eval on Train Testsuite: LC<my opinion is what matters> *****
+***** Baseline: checklist *****
+>>>>> RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+<<<<< RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+**********
+***** Eval on Train Testsuite: LC<neutral words in context> *****
+***** Baseline: checklist *****
+>>>>> RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+<<<<< RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+**********
+***** Eval on Train Testsuite: LC<simple negations: not neutral is still neutral> *****
+***** Baseline: checklist *****
+>>>>> RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+<<<<< RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+**********
+***** Eval on Train Testsuite: LC<used to, but now> *****
+***** Baseline: checklist *****
+>>>>> RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+<<<<< RETRAINED MODEL: textattack/bert-base-uncased-SST-2
+**********

@@ -183,11 +183,11 @@ function make_tables() {
 # Main
 
 function main() {
-        # gen_requirements # to generate test_type_sa.json and requirement_sa.json
+        gen_requirements # to generate test_type_sa.json and requirement_sa.json
         # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
         # eval_models # run testsuite.run on our and checklist generated testsets
-        # analyze_eval_models # to generate test_results_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json
+        # analyze_eval_models # to generate test_results_analysis.json and test_results_checklist_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json 
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # analyze_retrained_models # to generate debug_results file
         # selfbleu # to compute the selfbleu
@@ -195,7 +195,7 @@ function main() {
         # humanstudy # sample sentences for manual study
         # humanstudy_results # get results of manual study into human_study.json
         # coverage_sent_gen # get sentences for coverage experiment
-        make_tables
+        # make_tables
 
 
         # eval_retrained_models # to ...?

@@ -22,7 +22,7 @@ from .RefPCFG import RefPCFG
 
 random.seed(Macros.SEED)
 
-class CFGExpander:
+class CFGConverter:
 
     def __init__(self, seed_input, pcfg_ref, ref_corpus='treebank'):
         self.corpus_name = ref_corpus
@@ -30,11 +30,8 @@ class CFGExpander:
         tree_dict = self.get_seed_cfg()
         self.tree_seed = tree_dict['tree']
         self.cfg_seed: dict = tree_dict['rule']
-        # self.pcfg_ref = RefPCFG(corpus_name=self.corpus_name)
         self.pcfg_ref = pcfg_ref
         self.cfg_diff: dict = self.get_cfg_diff()
-        # self.is_ref_pcfg: bool = is_ref_pcfg
-        # self.cfg_ref: dict = self.get_tb_ref_cfg(ref_corpus=ref_corpus)
         del tree_dict
     
     def get_seed_cfg(self):
