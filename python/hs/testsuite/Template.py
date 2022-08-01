@@ -73,25 +73,26 @@ class Template:
             # for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
             for _id, seed_tokens, seed_label in selected["selected_inputs"][:Macros.max_num_seeds]:
                 seed = Utils.detokenize(seed_tokens)
-                logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label} :: ", end='\n')
-                # index += 1
-                # generator = Generator(seed, pcfg_ref)
-                # gen_inputs = generator.masked_input_generator()
-                # logger.print(f"{len(gen_inputs)} syntax expansions :: ", end='')
-                # new_input_results = list()
-                # tot_num_exp += len(gen_inputs)
-                # if any(gen_inputs):
-                #     new_input_results = Suggest.get_exp_inputs(
-                #         nlp,
-                #         generator,
-                #         gen_inputs,
-                #         seed_label,
-                #         selected["requirement"],
-                #         num_target=Macros.num_suggestions_on_exp_grammer_elem,
-                #         selection_method=selection_method,
-                #         logger=logger
-                #     )
-                # # end if
+                logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label} :: ", end='')
+                index += 1
+                generator = Generator(seed, pcfg_ref)
+                gen_inputs = generator.masked_input_generator()
+                logger.print(f"{len(gen_inputs)} syntax expansions :: ", end='')
+                new_input_results = list()
+                tot_num_exp += len(gen_inputs)
+                if any(gen_inputs):
+                    new_input_results = Suggest.get_exp_inputs(
+                        nlp,
+                        generator,
+                        gen_inputs,
+                        seed_label,
+                        selected["requirement"],
+                        num_target=Macros.num_suggestions_on_exp_grammer_elem,
+                        selection_method=selection_method,
+                        logger=logger
+                    )
+                # end if
+                
                 # logger.print(f"{len(new_input_results)} word suggestion by req")
                 # exp_inputs[seed] = {
                 #     "cfg_seed": generator.expander.cfg_seed,

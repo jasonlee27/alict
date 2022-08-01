@@ -86,9 +86,37 @@ class Requirements:
                         'transform_req': None
                     })
                 elif d.lower()=='description using very negative attributes(explicit)':
-                    pass
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [{
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> <hurtlex_a>']
+                            },
+                            'label': 'toxic'
+                        }],
+                        'expansion': ['neutral'],
+                        'transform': None,
+                        'transform_req': None
+                    })
                 elif d.lower()=='dehumanisation (explicit)':
-                    pass
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [{
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> <hurtlex_n&anor>']
+                            },
+                            'label': 'toxic'
+                        }],
+                        'expansion': ['neutral'],
+                        'transform': None,
+                        'transform_req': None
+                    })
                 elif d.lower()=='implicit derogation':
                     pass
                 # end if
