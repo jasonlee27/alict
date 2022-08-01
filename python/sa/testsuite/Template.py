@@ -48,6 +48,7 @@ class Template:
         logger.print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(task)
         nlp = spacy.load('en_core_web_md')
+        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         results = list()
         if os.path.exists(save_to):
             results = Utils.read_json(save_to)

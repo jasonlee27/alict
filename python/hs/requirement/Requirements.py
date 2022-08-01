@@ -77,9 +77,9 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['I <hate_syn> <hurtlex_n>']
+                                'word': ['I <hate_syn> <hurtlex_n&ddf>']
                             },
-                            'label': 'hate'
+                            'label': 'toxic'
                         }],
                         'expansion': ['neutral'],
                         'transform': None,

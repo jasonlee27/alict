@@ -48,6 +48,7 @@ class Template:
         logger.print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(task)
         nlp = spacy.load('en_core_web_md')
+        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         results = list()
         if os.path.exists(save_to):
             results = Utils.read_json(save_to)
@@ -70,11 +71,9 @@ class Template:
             num_seed_for_exp = 0
             tot_num_exp = 0
             # for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
-            for seed_dict in selected["selected_inputs"][:Macros.max_num_seeds]:
-                _id = seed_dict['post_id']
-                seed = Utils.detokenize(seed_dict['post_tokens'])
-                seed_label = seed_dict['label']
-                logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label} :: ", end='')
+            for _id, seed_tokens, seed_label in selected["selected_inputs"][:Macros.max_num_seeds]:
+                seed = Utils.detokenize(seed_tokens)
+                logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label} :: ", end='\n')
                 # index += 1
                 # generator = Generator(seed, pcfg_ref)
                 # gen_inputs = generator.masked_input_generator()
@@ -235,7 +234,7 @@ class Template:
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
         # Write the template results
-        res_dir = Macros.result_dir/ f"templates_{task}_{dataset_name}_{selection_method}"
+        res_dir = Macros.result_dir/ f"templates_{nlp_task}_{dataset_name}_{selection_method}"
         res_dir.mkdir(parents=True, exist_ok=True)
         logger = Logger(logger_file=log_file,
                         logger_name='template')

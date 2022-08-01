@@ -95,7 +95,7 @@ class Utils:
                 if is_first_attributes:
                     lines = f.readlines()
                     return {
-                        'attributes': lines[0].split(delimeter),
+                        'attributes': [att.strip() for att in lines[0].split(delimeter)],
                         'lines': [l.strip().split(delimeter) for l in lines[1:]]
                     }
                 # end if

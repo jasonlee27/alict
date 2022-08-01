@@ -43,8 +43,8 @@ class Hurtlex:
     ]
 
     @classmethod
-    def read_raw_data(cls) -> Dict:
-        data = dict()
+    def read_raw_data(cls) -> List[Dict]:
+        data = list()
         raw_data = Utils.read_sv(
             Macros.hurtlex_data_file,
             delimeter='	',
@@ -52,52 +52,41 @@ class Hurtlex:
         )
         for d in raw_data['lines']:
             w_id, w_pos, w_cat, w_streo, w_lem, w_lvl = d[0], d[1], d[2], d[3], d[4], d[5]
-            data[w_id] = {
+            data.append({
+                raw_data['attributes'][0]: w_id,
                 raw_data['attributes'][1]: w_pos,
                 raw_data['attributes'][2]: w_cat,
                 raw_data['attributes'][3]: w_streo,
                 raw_data['attributes'][4]: w_lem,
                 raw_data['attributes'][5]: w_lvl
-            }
+            })
         # end for
         return data
 
     @classmethod
-    def get_target_pos_words(cls, raw_data: Dict, target_pos) -> Dict:
+    def get_target_pos_words(cls, raw_data: List[Dict], target_pos) -> List[Dict]:
         poss = cls.POS # n: noun, a: adj, v: verb
-        if target_pos in poss:
+        if target_pos not in poss:
             return
         # end if
         data = list()
-        for d in raw_data.keys():
-            if raw_data[d]['pos']==target_pos: # n
-                data.append({
-                    'id': d,
-                    'cat': raw_data[d]['category'],
-                    'stereotype': raw_data[d]['stereotype'],
-                    'lemma': raw_data[d]['lemma'],
-                    'level': raw_data[d]['level']
-                })
+        for d in raw_data:
+            if d['pos']==target_pos: # n
+                data.append(d)
             # end if
         # end for
         return data
 
     @classmethod
-    def get_target_cat_words(cls, raw_data: Dict, target_cat) -> Dict:
+    def get_target_cat_words(cls, raw_data: List[Dict], target_cat) -> List[Dict]:
         cats = cls.CAT
-        if target_cat in cats:
+        if target_cat not in cats:
             return
         # end if
         data = list()
-        for d in raw_data.keys():
-            if raw_data[d]['category']==target_cat and : # n
-                data.append({
-                    'id': d,
-                    'pos': raw_data[d]['pos'],
-                    'stereotype': raw_data[d]['stereotype'],
-                    'lemma': raw_data[d]['lemma'],
-                    'level': raw_data[d]['level']
-                })
+        for d in raw_data:
+            if d['category']==target_cat: # n
+                data.append(d)
             # end if
         # end for
         return data

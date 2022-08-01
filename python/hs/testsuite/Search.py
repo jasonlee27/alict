@@ -67,7 +67,7 @@ class SearchOperator:
         for search_reqs in self.search_reqs_list:
             _sents = Utils.copy_list_of_dict(sents)
             for op, param in search_reqs.items():
-                if len(_sents)>0:
+                if len(_sents)>0 and param is not None:
                     _sents = self.search_method[op](_sents, search_reqs, nlp)
                 # end if
             # end for
@@ -79,7 +79,7 @@ class SearchOperator:
         # end for
         return selected
 
-    def search_by_len(self, sents, search_reqs):
+    def search_by_len(self, sents, search_reqs, nlp):
         param = search_reqs["length"]
         match = re.search(r"([<>]=?|==)(\d+)", param)
         op, _len = match.groups()
@@ -93,35 +93,40 @@ class SearchOperator:
         # end for
         return results
     
-    def search_by_label(self, sents, search_reqs):
+    def search_by_label(self, sents, search_reqs, nlp):
         label = search_reqs["label"]
         return [(s_i,s['tokens'],s['label']) for s_i, s in enumerate(sents) if label==s['label']]
 
     def get_synonyms(self, nlp, word: str):
         wpos = Synonyms.get_word_pos(nlp, word)
-        return Synonyms.get_synonyms(nlp, word, wpos)
+        return Synonyms.get_synonyms(nlp, wpos[0], wpos[1])
 
     def get_hurtlex_words(self, target_type):
-        if target_type in Hurtlex.POS:
-            hurtlex_lex = Hurtlex.read_raw_data()
-            words = Hurtlex.get_target_pos_words(hurtlex_lex, target_type)
-        elif target_type in Hurtlex.CAT:
-            hurtlex_lex = Hurtlex.read_raw_data()
-            words = Hurtlex.get_target_cat_words(hurtlex_lex, targety_type)
+        target_pos, target_cat = target_type.split('&')
+        hurtlex_lex = Hurtlex.read_raw_data()
+        if target_pos in Hurtlex.POS:
+            words = Hurtlex.get_target_pos_words(hurtlex_lex, target_pos)
+        else:
+            words = hurtlex_lex
         # end if
+
+        if target_cat in Hurtlex.CAT:
+            words = Hurtlex.get_target_cat_words(words, target_cat)
+        # end if
+        words = [w['lemma'] for w in words]
+        random.shuffle(words)
         return words
     
-    def _search_by_word_include(self, sents, nlp, word_cond):
-        search = re.search("\<([^\<\>]+)\>", word_cond)
+    def _search_by_word_include(self, sents, word_cond, nlp):
+        # if word condition searches a specific group of words
+        # such as "I <hate_syn> <hurtlex_nn>"
         selected = list()
-        if search:
-            # if word condition searches a specific group of words
-            # such as "I <hate_syn> <hurtlex_nn>"
-            word_group = search.group(1)
-            target_words = word_group.split()
-            word_dict = dict()
-            # nlp = spacy.load('en_core_web_md')
-            for tw in target_words:
+        word_dict = dict()
+        target_words = word_cond.split()
+        for tw in target_words:
+            search = re.search("\<([^\<\>]+)\>", tw)
+            if search:
+                # find pattern
                 if tw.startswith('<') and tw.endswith('>'):
                     # search any words in the values in the target template
                     target_template = tw.strip('<>')
@@ -129,33 +134,31 @@ class SearchOperator:
                         _tw = target_template.split('_syn')[0]
                         _tw_syns = self.get_synonyms(nlp, _tw)
                         _tw_syns.append(_tw)
-                        word_dict[_tw] = list(set(_tw_syns))
+                        word_dict[tw] = list(set(_tw_syns))
                     elif target_template.startswith('hurtlex_'):
                         target_type = target_template.split('hurtlex_')[1]
                         hurtlex_words = self.get_hurtlex_words(target_type)
-                        word_dict[_tw] = list(set(hurtlex_words))
+                        word_dict[tw] = list(set(hurtlex_words))
                     # elif target_template.startswith('hatexplain_'):
                     # end if
-                else:
-                    word_dict[tw] = tw
+                # end if
+            else:
+                # find word
+                word_dict[tw] = [tw.lower()]
+            # end if
+        # end for
+        # perturb the words for searching in the dataset
+        word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
+        search_words = [list(wp.values()) for wp in word_product]
+        
+        # find any sentences with any search_words
+        for s in sents:
+            for sw in search_words:
+                if Utils.is_a_in_x(sw, s['tokens']):
+                    selected.append(s)
                 # end if
             # end for
-
-            # perturb the words for searching in the dataset
-            word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
-            search_words = [list(wp.values()) for wp in word_product]
-
-            # find any sentences with any search_words
-            for s in sents:
-                for sw in search_words:
-                    if Utils.is_a_in_x(sw, s['tokens']):
-                        selected.append(s)
-                    # end if
-                # end for
-            # end for
-        else:
-            selected = sents
-        # end if
+        # end for
         return selected
 
     def get_pospat_to_wordproduct(self, pos_pattern):
@@ -376,7 +379,7 @@ class Hatexplain:
                 tokens = vals['post_tokens']
                 sents.append({
                     'post_id': vals['post_id'],
-                    'tokens': vals['post_tokens']
+                    'tokens': vals['post_tokens'],
                     'label': label
                 })
             # end if
@@ -385,12 +388,12 @@ class Hatexplain:
     
     @classmethod
     def search(cls, req, nlp):
-        sents = cls.get_sents(Macros.sst_datasent_file, is_bibary_class=True)
+        sents = cls.get_sents(Macros.hatexplain_data_file, is_binary_class=True)
         req_obj = SearchOperator(req)
 
         if req_obj.search_reqs_list is not None:
-            selected = sorted([s for s in req_obj.search(sents, nlp)], key=lambda x: x['post_id'])
-            # selected = [s for s in req_obj.search(sents)]
+            # selected = sorted([s for s in req_obj.search(sents, nlp)], key=lambda x: x['post_id'])
+            selected = req_obj.search(sents, nlp)
         else:
             selected = sents
         # end if
