@@ -40,7 +40,7 @@ class Template:
     #     Macros.qqp_task: 
     # }
     SEARCH_FUNC = {
-        Macros.sa_task: Search.search_sentiment_analysis
+        Macros.hs_task: Search.search_hatespeech
     }
     
     @classmethod
@@ -61,7 +61,7 @@ class Template:
         # end if
 
         pcfg_ref = RefPCFG()
-        for selected in cls.SEARCH_FUNC[task](reqs, dataset):
+        for selected in cls.SEARCH_FUNC[task](reqs, dataset, nlp):
             exp_inputs = dict()
             print_str = '>>>>> REQUIREMENT:'+selected["requirement"]["description"]
             num_selected_inputs = len(selected["selected_inputs"])
@@ -69,47 +69,51 @@ class Template:
             index = 1
             num_seed_for_exp = 0
             tot_num_exp = 0
-            for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
-                logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score} :: ", end='')
-                index += 1
-                generator = Generator(seed, pcfg_ref)
-                gen_inputs = generator.masked_input_generator()
-                logger.print(f"{len(gen_inputs)} syntax expansions :: ", end='')
-                new_input_results = list()
-                tot_num_exp += len(gen_inputs)
-                if any(gen_inputs):
-                    new_input_results = Suggest.get_exp_inputs(
-                        nlp,
-                        generator,
-                        gen_inputs,
-                        seed_label,
-                        selected["requirement"],
-                        num_target=Macros.num_suggestions_on_exp_grammer_elem,
-                        selection_method=selection_method,
-                        logger=logger
-                    )
-                # end if
-                logger.print(f"{len(new_input_results)} word suggestion by req")
-                exp_inputs[seed] = {
-                    "cfg_seed": generator.expander.cfg_seed,
-                    "exp_inputs": new_input_results,
-                    "label": seed_label,
-                    "label_score": seed_score
-                }
+            # for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
+            for seed_dict in selected["selected_inputs"][:Macros.max_num_seeds]:
+                _id = seed_dict['post_id']
+                seed = Utils.detokenize(seed_dict['post_tokens'])
+                seed_label = seed_dict['label']
+                logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label} :: ", end='')
+                # index += 1
+                # generator = Generator(seed, pcfg_ref)
+                # gen_inputs = generator.masked_input_generator()
+                # logger.print(f"{len(gen_inputs)} syntax expansions :: ", end='')
+                # new_input_results = list()
+                # tot_num_exp += len(gen_inputs)
+                # if any(gen_inputs):
+                #     new_input_results = Suggest.get_exp_inputs(
+                #         nlp,
+                #         generator,
+                #         gen_inputs,
+                #         seed_label,
+                #         selected["requirement"],
+                #         num_target=Macros.num_suggestions_on_exp_grammer_elem,
+                #         selection_method=selection_method,
+                #         logger=logger
+                #     )
+                # # end if
+                # logger.print(f"{len(new_input_results)} word suggestion by req")
+                # exp_inputs[seed] = {
+                #     "cfg_seed": generator.expander.cfg_seed,
+                #     "exp_inputs": new_input_results,
+                #     "label": seed_label,
+                #     "label_score": seed_score
+                # }
             # end for
-            logger.print(f"Total {tot_num_exp} syntactical expansion identified in the requirement out of {num_selected_inputs} seeds")
-            results.append({
-                "requirement": selected["requirement"],
-                "inputs": exp_inputs
-            })
+            # logger.print(f"Total {tot_num_exp} syntactical expansion identified in the requirement out of {num_selected_inputs} seeds")
+            # results.append({
+            #     "requirement": selected["requirement"],
+            #     "inputs": exp_inputs
+            # })
             # write raw new inputs for each requirement
-            Utils.write_json(results, save_to, pretty_format=True)
+            # Utils.write_json(results, save_to, pretty_format=True)
             print_str = '<<<<< REQUIREMENT:'+selected["requirement"]["description"]
             logger.print(print_str)
         # end for
         
         # # write raw new inputs
-        Utils.write_json(results, save_to, pretty_format=True)
+        # Utils.write_json(results, save_to, pretty_format=True)
         logger.print('**********')
         return results
     
@@ -250,92 +254,6 @@ class Template:
             selection_method=selection_method,
             logger=logger
         )
-
-        # Make templates by synonyms
-        logger.print("Generate Templates ...")
-        prev_synonyms = dict()
-        cksum_map_str = ""
-        for t_i in range(len(new_input_dicts)):
-            # for each testing linguistic capabilities,
-            inputs_per_req = new_input_dicts[t_i]
-            lc_desc = inputs_per_req["requirement"]["description"]
-            req_cksum = Utils.get_cksum(lc_desc)
-            cksum_map_str += f"{lc_desc}\t{req_cksum}"
-            inputs = inputs_per_req["inputs"]
-            print_str = '>>>>> REQUIREMENT:'+inputs_per_req["requirement"]["description"]
-            logger.print(print_str)
-            seed_inputs, exp_seed_inputs = list(), list()
-            seed_templates, exp_templates = list(), list()
-            for s_i, seed_input in enumerate(inputs.keys()):
-                logger.print(f"\tSEED {s_i}: {seed_input}")
-                    
-                cfg_seed = inputs[seed_input]["cfg_seed"]
-                label_seed = inputs[seed_input]["label"]
-                exp_inputs = inputs[seed_input]["exp_inputs"]
-                seed_inputs.append({
-                    "input": seed_input,
-                    "place_holder": Utils.tokenize(seed_input),
-                    "label": label_seed
-                })
-
-                if any(exp_inputs):
-                    # expanded inputs
-                    for inp_i, inp in enumerate(exp_inputs):
-                        exp_sent = inp[5]
-                        if exp_sent is not None:
-                            exp_seed_inputs.append({
-                                "input": inp[5],
-                                "place_holder": Utils.tokenize(inp[5]),
-                                "label": inp[6]
-                            })
-                        # end if
-                    # end for
-                # end if
-                
-                # # make template for seed input
-                # tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
-                # _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
-                # _templates["label"] = label_seed
-                # seed_templates.append(_templates)
-
-                # if any(exp_inputs):
-                #     # Make template for expanded inputs
-                #     for inp_i, inp in enumerate(exp_inputs):
-                #         (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
-                #         tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
-                #         _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
-                #         _templates["label"] = exp_input_label
-                #         exp_templates.append(_templates)
-                #         print(".", end="")
-                #     # end for
-                #     print()
-                # # end if
-            # end for
-
-            if any(seed_inputs):
-                Utils.write_json(seed_inputs,
-                                 res_dir / f"seeds_{req_cksum}.json",
-                                 pretty_format=True)
-            # end if
-            if any(exp_seed_inputs):
-                Utils.write_json(exp_seed_inputs,
-                                 res_dir / f"exps_{req_cksum}.json",
-                                 pretty_format=True)
-            # end if
-            # if any(seed_templates):
-            #     Utils.write_json(seed_templates,
-            #                      res_dir / f"templates_seed_{req_cksum}.json",
-            #                      pretty_format=True)
-            # # end if
-            # if any(exp_templates):
-            #     Utils.write_json(exp_templates,
-            #                      res_dir / f"templates_exp_{req_cksum}.json",
-            #                      pretty_format=True)
-            # # end if
-            print_str = '<<<<< REQUIREMENT:'+inputs_per_req["requirement"]["description"]
-            logger.print(print_str)
-        # end for
-        Utils.write_txt(cksum_map_str, res_dir / 'cksum_map.txt')
         return
 
 

@@ -20,7 +20,7 @@ function gen_templates() {
         # write templates in json
         (cd ${_DIR}
          CUDA_VISIBLE_DEVICES=5,6 python -m python.hs.main \
-                             --run template --search_dataset sst \
+                             --run template --search_dataset hatexplain \
                              --syntax_selection random > /dev/null 2>&1
         )
 }

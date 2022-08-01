@@ -59,7 +59,7 @@ class SearchOperator:
             "label": self.search_by_label,
         }
 
-    def search(self, sents):
+    def search(self, sents, nlp):
         selected = list()
         if self.search_reqs_list is None:
             return sents
@@ -68,7 +68,7 @@ class SearchOperator:
             _sents = Utils.copy_list_of_dict(sents)
             for op, param in search_reqs.items():
                 if len(_sents)>0:
-                    _sents = self.search_method[op](_sents, search_reqs)
+                    _sents = self.search_method[op](_sents, search_reqs, nlp)
                 # end if
             # end for
             for s in _sents:
@@ -111,7 +111,7 @@ class SearchOperator:
         # end if
         return words
     
-    def _search_by_word_include(self, sents, word_cond):
+    def _search_by_word_include(self, sents, nlp, word_cond):
         search = re.search("\<([^\<\>]+)\>", word_cond)
         selected = list()
         if search:
@@ -120,7 +120,7 @@ class SearchOperator:
             word_group = search.group(1)
             target_words = word_group.split()
             word_dict = dict()
-            nlp = spacy.load('en_core_web_md')
+            # nlp = spacy.load('en_core_web_md')
             for tw in target_words:
                 if tw.startswith('<') and tw.endswith('>'):
                     # search any words in the values in the target template
@@ -244,7 +244,7 @@ class SearchOperator:
         # end for
         return selected
         
-    def search_by_include(self, sents, search_reqs):
+    def search_by_include(self, sents, search_reqs, nlp):
         params = search_reqs["include"]
         if type(params)==dict:
             params = [params]
@@ -256,7 +256,7 @@ class SearchOperator:
             
             if word_include is not None:
                 for w in word_include: # AND relationship
-                    _sents = self._search_by_word_include(sents, w)
+                    _sents = self._search_by_word_include(sents, w, nlp)
                 # end for
             # end if
         
@@ -384,12 +384,12 @@ class Hatexplain:
         return sents
     
     @classmethod
-    def search(cls, req):
+    def search(cls, req, nlp):
         sents = cls.get_sents(Macros.sst_datasent_file, is_bibary_class=True)
         req_obj = SearchOperator(req)
 
         if req_obj.search_reqs_list is not None:
-            selected = sorted([s for s in req_obj.search(sents)], key=lambda x: x['post_id'])
+            selected = sorted([s for s in req_obj.search(sents, nlp)], key=lambda x: x['post_id'])
             # selected = [s for s in req_obj.search(sents)]
         else:
             selected = sents
@@ -402,7 +402,7 @@ class Search:
     
     SEARCH_FUNC = {
         Macros.hs_task : {
-            Macros.datasets[Macros.hs_task][0]: Hatexlain.search
+            Macros.datasets[Macros.hs_task][0]: Hatexplain.search
         }
     }
     
@@ -411,10 +411,10 @@ class Search:
         pass
 
     @classmethod
-    def search_sentiment_analysis(cls, requirements, dataset):
+    def search_hatespeech(cls, requirements, dataset, nlp):
         func = cls.SEARCH_FUNC[Macros.hs_task][dataset]
         for req in requirements:
-            selected = func(req)
+            selected = func(req, nlp)
             if req["transform"] is not None:
                 transform_obj = TransformOperator(req)
                 selected = transform_obj.transform(selected)
