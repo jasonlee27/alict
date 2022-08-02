@@ -532,99 +532,102 @@ class Sst:
 class ChecklistTestsuite:
 
     @classmethod
-    def get_sents(cls, testsuite_file):
+    def get_sents(cls, testsuite_file, req_desc):
         tsuite, tsuite_dict = Utils.read_testsuite(testsuite_file)
         test_names = list(set(tsuite_dict['test_name']))
-        sents, raw_labels = list(), list()
-        for test_name in test_names:
-            # sents: List of sent
-            # label: 0(neg), 1(neu) and 2(pos)
-            if type(tsuite.tests[test_name])==MFT and tsuite.tests[test_name].labels is not None:
-                labels = tsuite.tests[test_name].labels
-                if type(tsuite.tests[test_name].labels)==int:
-                    labels = [labels]*len(tsuite.tests[test_name].data)
-                # end if
-                sents.extend(tsuite.tests[test_name].data) 
-                raw_labels.extend(labels)
+        sents_dict = dict()
+        for tn in list(set(tsuite_dict['test_name'])):
+            checklist_test_name = tn.split('::')[-1]
+            if checklist_test_name in Macros.LC_MAP.keys() and \
+               req_desc == Macros.LC_MAP[checklist_test_name] and \
+               tsuite.tests[test_name].labels is not None:
+                # sents: List of sent
+                # label: 0(neg), 1(neu) and 2(pos)
+                test_name = Macros.LC_MAP[checklist_test_name]
+                sents = tsuite.tests[test_name].data
+                raw_labels = tsuite.tests[checklist_test_name].labels
+                # if type(tsuite.tests[checklist_test_name].labels)==int:
+                #     labels = [labels]*len(tsuite.tests[test_name].data)
+                # # end if
+                labels = dict()
+                for s_i, s in enumerate(raw_labels):
+                    if s=='0':
+                        labels[s_i] = ["negative", 0.]
+                    elif s=='1':
+                        labels[s_i] = ["neutral", 0.5]
+                    else:
+                        labels[s_i] = ["positive", 1.]
+                    # end if
+                # end for
+                sents = [(s_i, s, labels[s_i][0], labels[s_i][1]) for s_i, s in enumerate(sents)]
             # end if
         # end for
-        labels = dict()
-        for s_i, s in enumerate(raw_labels):
-            if s=='0':
-                labels[s_i] = ["negative", 0.]
-            elif s=='1':
-                labels[s_i] = ["neutral", 0.5]
-            else:
-                labels[s_i] = ["positive", 1.]
-            # end if
-        # end for
-        sents = [(s_i, s, labels[s_i][0], labels[s_i][1]) for s_i, s in enumerate(sents)]
         return sents
     
     @classmethod
     def search(cls, req):
         # sent: (index, sentence)
         # label: (index, label score)
-        sents = cls.get_sents(Macros.checklist_sa_dataset_file)
-        req_obj = SearchOperator(req)
-        selected = sorted([(s[0],s[1],s[2],s[3]) for s in req_obj.search(sents)], key=lambda x: x[0])
-        random.shuffle(selected)
-        return selected
+        sents = cls.get_sents(Macros.checklist_sa_dataset_file, req['description'])
+        # req_obj = SearchOperator(req)
+        # selected = sorted([(s[0],s[1],s[2],s[3]) for s in req_obj.search(sents)], key=lambda x: x[0])
+        random.shuffle(sents)
+        return sents
 
     
-class AirlineTweets:
+# class AirlineTweets:
 
-    @classmethod
-    def get_sents(cls, src_file):
-        # src_file: Tweets.csv file
-        import csv
-        rows = csv.DictReader(open(src_file))
-        labels, confs, airlines, sents, reasons = list(), list(), list(), list(), list()
-        for row in rows:
-            labels.append(row['airline_sentiment'])
-            # airlines.append(row['airline'])
-            s = Utils.replace_non_english_letter(row['text'])
-            sents.append(s)
-            reasons.append(row['negativereason'])
-        # end for
-        # labels = [Macros.sa_label_map[x] for x in labels]
-        return [(s_i, s, labels[s_i]) for s_i, s in enumerate(sents)]
+#     @classmethod
+#     def get_sents(cls, src_file):
+#         # src_file: Tweets.csv file
+#         import csv
+#         rows = csv.DictReader(open(src_file))
+#         labels, confs, airlines, sents, reasons = list(), list(), list(), list(), list()
+#         for row in rows:
+#             labels.append(row['airline_sentiment'])
+#             # airlines.append(row['airline'])
+#             s = Utils.replace_non_english_letter(row['text'])
+#             sents.append(s)
+#             reasons.append(row['negativereason'])
+#         # end for
+#         # labels = [Macros.sa_label_map[x] for x in labels]
+#         return [(s_i, s, labels[s_i]) for s_i, s in enumerate(sents)]
 
-    @classmethod
-    def search(cls, req):
-        sents = cls.get_sents(Macros.tweet_file)
-        req_obj = SearchOperator(req)
-        if req_obj.search_reqs_list is not None:
-            selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
-        # end if
-        random.shuffle(selected)
-        return selected
+#     @classmethod
+#     def search(cls, req):
+#         sents = cls.get_sents(Macros.tweet_file)
+#         req_obj = SearchOperator(req)
+#         if req_obj.search_reqs_list is not None:
+#             selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
+#         # end if
+#         random.shuffle(selected)
+#         return selected
 
     
-class DynasentRoundOne:
+# class DynasentRoundOne:
 
-    @classmethod
-    def get_sents(cls, src_file):
-        sents = list()
-        sent_i = 0
-        with open(yelp_src_filename) as f:
-            for line in f:
-                d = json.loads(line)
-                sents.append((sent_i, d['sentence'], d['gold_label']))
-                sent_i += 1
-            # end for
-        # end with
-        return [(s_i,s,labels[s_i]) for s_i, s in sents]
+#     @classmethod
+#     def get_sents(cls, src_file):
+#         sents = list()
+#         sent_i = 0
+#         with open(yelp_src_filename) as f:
+#             for line in f:
+#                 d = json.loads(line)
+#                 sents.append((sent_i, d['sentence'], d['gold_label']))
+#                 sent_i += 1
+#             # end for
+#         # end with
+#         return [(s_i,s,labels[s_i]) for s_i, s in sents]
 
-    @classmethod
-    def search(cls, req):
-        # sent: (index, sentence)
-        # label: (index, label score) 
-        sents = cls.get_labels(Macros.dyna_r1_test_src_file)
-        req_obj = SearchOperator(req)
-        selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
-        random.shuffle(selected)
-        return selected
+#     @classmethod
+#     def search(cls, req):
+#         # sent: (index, sentence)
+#         # label: (index, label score) 
+#         sents = cls.get_labels(Macros.dyna_r1_test_src_file)
+#         req_obj = SearchOperator(req)
+#         selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
+#         random.shuffle(selected)
+#         return selected
 
 
 class Search:
@@ -633,7 +636,6 @@ class Search:
         Macros.sa_task : {
             Macros.datasets[Macros.sa_task][0]: Sst.search,
             Macros.datasets[Macros.sa_task][1]: ChecklistTestsuite.search,
-            Macros.datasets[Macros.sa_task][2]: AirlineTweets.search,
         },
         Macros.mc_task : {},
         Macros.qqp_task : {}
