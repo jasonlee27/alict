@@ -91,6 +91,7 @@ class Template:
                         selection_method=selection_method,
                         logger=logger
                     )
+                    print(new_input_results)
                 # end if
                 
                 # logger.print(f"{len(new_input_results)} word suggestion by req")
