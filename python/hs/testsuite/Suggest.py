@@ -174,7 +174,7 @@ class Suggest:
         return False
     
     @classmethod
-    def eval_sug_words_by_req(cls, new_input, requirement, label):
+    def eval_sug_words_by_req(cls, new_input, requirement, label, nlp):
         if requirement['transform_req'] is not None:
             _requirement = {
                 'capability': requirement['capability'],
@@ -185,7 +185,12 @@ class Suggest:
             _requirement = requirement
         # end if
         search_obj = SearchOperator(_requirement)
-        search_res = search_obj.search([('1', new_input, label)])
+        search_res = search_obj.search([{
+            'post_id': '1',
+            'tokens': Utils.tokenize(new_input),
+            'label': label
+        }], nlp)
+        # search_res = search_obj.search([('1', new_input, label)], nlp)
         if len(search_res)>0:
             return True
         # end if
@@ -203,7 +208,7 @@ class Suggest:
             if len(r.split())>1:
                 is_req_met = word_suggest in SENT_DICT[r]
             else:
-                if r in list(Macros.sa_label_map.keys()):
+                if r in list(Macros.hs_label_map.keys()):
                     sentiment_list = [key for key in SENT_DICT.keys() if word_suggest in SENT_DICT[key]]
                     if not any(sentiment_list):
                         is_req_met = False
@@ -299,7 +304,7 @@ class Suggest:
             # end if
             gen_inputs[g_i] = gen_input
         # end for
-        gen_inputs = [g for g in gen_inputs if g['words_suggest'] is not None]
+        gen_inputs = [g for g in gen_inputs if any(g['words_suggest'])]
         num_words_suggest = sum([len(g['words_suggest']) for g in gen_inputs])
         logger.print(f"{num_words_suggest} words suggestions :: ", end='')
         return gen_inputs
@@ -320,7 +325,7 @@ class Suggest:
             for w_sug in gen_input['words_suggest']:
                 input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
                 # check sentence and expansion requirements
-                if cls.eval_sug_words_by_req(input_candid, requirement, label):
+                if cls.eval_sug_words_by_req(input_candid, requirement, label, nlp):
                     if cls.eval_sug_words_by_exp_req(nlp, w_sug, requirement):
                         results.append((masked_input,
                                         gen_input['cfg_from'],
