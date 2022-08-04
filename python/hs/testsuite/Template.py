@@ -91,16 +91,14 @@ class Template:
                         selection_method=selection_method,
                         logger=logger
                     )
-                    print(new_input_results)
                 # end if
                 
-                # logger.print(f"{len(new_input_results)} word suggestion by req")
-                # exp_inputs[seed] = {
-                #     "cfg_seed": generator.expander.cfg_seed,
-                #     "exp_inputs": new_input_results,
-                #     "label": seed_label,
-                #     "label_score": seed_score
-                # }
+                logger.print(f"{len(new_input_results)} word suggestion by req")
+                exp_inputs[seed] = {
+                    "cfg_seed": generator.expander.cfg_seed,
+                    "exp_inputs": new_input_results,
+                    "label": seed_label
+                }
             # end for
             # logger.print(f"Total {tot_num_exp} syntactical expansion identified in the requirement out of {num_selected_inputs} seeds")
             # results.append({
