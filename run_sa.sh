@@ -19,9 +19,14 @@ function gen_requirements() {
 function gen_templates() {
         # write templates in json
         (cd ${_DIR}
-         CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main --run template --search_dataset sst --syntax_selection random > /dev/null 2>&1
+
+         # generate templates from sst dataset
+         # CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main --run template --search_dataset sst --syntax_selection random > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection bertscore > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection noselect
+
+         # generate tempaltes from checklist testcase
+         CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main --run template --search_dataset checklist --syntax_selection random > /dev/null 2>&1
         )
 }
 
@@ -182,7 +187,7 @@ function make_tables() {
 # ==========
 # Main
 
-function main() {
+function main_sst() {
         gen_requirements # to generate test_type_sa.json and requirement_sa.json
         # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
@@ -201,5 +206,16 @@ function main() {
         # eval_retrained_models # to ...?
 }
 
+
 # please make sure you actiavte nlptest conda environment
-main
+# main_sst
+
+
+function main_checklist() {
+        # implement our expansion technique from checklist testcase
+        # make sure that you change the name of dataset into checklist
+        gen_requirements # to generate test_type_sa.json and requirement_sa.json
+        gen_templates # to generate templates_sa_{dataset_name}/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa_{dataset_name}/templates_exp_{cksum}.json and cfg_expanded_inputs_sa_{dataset_name}.json
+}
+
+main_checklist

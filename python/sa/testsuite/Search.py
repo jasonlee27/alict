@@ -562,6 +562,7 @@ class ChecklistTestsuite:
                 sents = [(s_i, s, labels[s_i][0], labels[s_i][1]) for s_i, s in enumerate(sents)]
             # end if
         # end for
+        random.shuffle(selected)
         return sents
     
     @classmethod
@@ -622,7 +623,7 @@ class ChecklistTestsuite:
 #     @classmethod
 #     def search(cls, req):
 #         # sent: (index, sentence)
-#         # label: (index, label score) 
+#         # label: (index, label score)
 #         sents = cls.get_labels(Macros.dyna_r1_test_src_file)
 #         req_obj = SearchOperator(req)
 #         selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
