@@ -21,7 +21,7 @@ function gen_templates() {
         (cd ${_DIR}
          CUDA_VISIBLE_DEVICES=5,6 python -m python.hs.main \
                              --run template --search_dataset hatexplain \
-                             --syntax_selection random > /dev/null 2>&1
+                             --syntax_selection random # > /dev/null 2>&1
         )
 }
 
@@ -31,7 +31,7 @@ function gen_templates() {
 
 function main() {
         gen_requirements # to generate test_type_hs.json and requirement_hs.json
-        # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
+        gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
 }
 
 # please make sure you actiavte nlptest conda environment

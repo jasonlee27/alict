@@ -537,18 +537,18 @@ class ChecklistTestsuite:
         test_names = list(set(tsuite_dict['test_name']))
         sents_dict = dict()
         for tn in list(set(tsuite_dict['test_name'])):
-            checklist_test_name = tn.split('::')[-1]
-            if checklist_test_name in Macros.LC_MAP.keys() and \
-               req_desc == Macros.LC_MAP[checklist_test_name] and \
-               tsuite.tests[test_name].labels is not None:
+            # checklist_test_name = tn.split('::')[-1]
+            if tn in Macros.LC_MAP.keys() and \
+               req_desc == Macros.LC_MAP[tn] and \
+               tsuite.tests[tn].labels is not None:
                 # sents: List of sent
                 # label: 0(neg), 1(neu) and 2(pos)
-                test_name = Macros.LC_MAP[checklist_test_name]
-                sents = tsuite.tests[test_name].data
-                raw_labels = tsuite.tests[checklist_test_name].labels
-                # if type(tsuite.tests[checklist_test_name].labels)==int:
-                #     labels = [labels]*len(tsuite.tests[test_name].data)
-                # # end if
+                print(tn)
+                sents = tsuite.tests[tn].data
+                raw_labels = tsuite.tests[tn].labels
+                if type(raw_labels)==int:
+                    raw_labels = [raw_labels]*len(tsuite.tests[tn].data)
+                # end if
                 labels = dict()
                 for s_i, s in enumerate(raw_labels):
                     if s=='0':
@@ -562,7 +562,7 @@ class ChecklistTestsuite:
                 sents = [(s_i, s, labels[s_i][0], labels[s_i][1]) for s_i, s in enumerate(sents)]
             # end if
         # end for
-        random.shuffle(selected)
+        random.shuffle(sents)
         return sents
     
     @classmethod

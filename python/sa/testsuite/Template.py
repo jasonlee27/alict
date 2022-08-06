@@ -232,7 +232,7 @@ class Template:
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
         # Write the template results
-        res_dir = Macros.result_dir/ f"templates_{task}_{dataset_name}_{selection_method}"
+        res_dir = Macros.result_dir/ f"templates_{nlp_task}_{dataset_name}_{selection_method}"
         res_dir.mkdir(parents=True, exist_ok=True)
         logger = Logger(logger_file=log_file,
                         logger_name='template')

@@ -20,7 +20,7 @@ from checklist.editor import Editor
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..requirement.Requirements import Requirements
-from .cfg.CFGExpander import CFGExpander
+from .cfg.CFGConverter import CFGConverter
 from .Suggest import Suggest
 
 random.seed(Macros.SEED)
@@ -29,7 +29,7 @@ class Generator:
 
     def __init__(self, seed: str, pcfg_ref: str):
         self.seed = seed
-        self.expander = CFGExpander(
+        self.expander = CFGConverter(
             seed_input=seed,
             pcfg_ref=pcfg_ref,
         )

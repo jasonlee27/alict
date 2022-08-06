@@ -26,7 +26,7 @@ function gen_templates() {
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection noselect
 
          # generate tempaltes from checklist testcase
-         CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main --run template --search_dataset checklist --syntax_selection random > /dev/null 2>&1
+         CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main --run template --search_dataset checklist --syntax_selection random # > /dev/null 2>&1
         )
 }
 
