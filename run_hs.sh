@@ -19,7 +19,7 @@ function gen_requirements() {
 function gen_templates() {
         # write templates in json
         (cd ${_DIR}
-         CUDA_VISIBLE_DEVICES=5,6 python -m python.hs.main \
+         CUDA_VISIBLE_DEVICES=1,2 python -m python.hs.main \
                              --run template --search_dataset hatexplain \
                              --syntax_selection random # > /dev/null 2>&1
         )

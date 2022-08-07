@@ -102,8 +102,21 @@ class SearchOperator:
         return Synonyms.get_synonyms(nlp, wpos[0], wpos[1])
 
     def get_hurtlex_words(self, target_type):
-        target_pos, target_cat = target_type.split('&')
         hurtlex_lex = Hurtlex.read_raw_data()
+        for t in target_type.split('&'):
+            if t.startswith('pos:'):
+                # get target pos for hurtlex
+                target_pos = t.split('pos:')[-1]
+                words = Hurtlex.get_target_pos_words(hurtlex_lex, target_pos)
+            elif t.startswith('cat:'):
+                # get target categories for hurtlex
+                target_cat = t.split('cat:')[-1]
+                words = Hurtlex.get_target_cat_words(hurtlex_lex, target_cat)
+            # end if
+        # end for
+                
+
+                
         if target_pos in Hurtlex.POS:
             words = Hurtlex.get_target_pos_words(hurtlex_lex, target_pos)
         else:

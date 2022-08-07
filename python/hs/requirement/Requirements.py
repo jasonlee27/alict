@@ -77,7 +77,7 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['I <hate_syn> <hurtlex_n&ddf>']
+                                'word': ['I <hate_syn>']
                             },
                             'label': 'toxic'
                         }],
@@ -93,7 +93,7 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<isare> <hurtlex_a>']
+                                'word': ['<isare> <hurtlex_pos:a>']
                             },
                             'label': 'toxic'
                         }],
@@ -109,7 +109,7 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<isare> <hurtlex_n&anor>']
+                                'word': ['<isare> <hurtlex_pos:n&cat:an_or>']
                             },
                             'label': 'toxic'
                         }],

@@ -100,13 +100,13 @@ class Template:
                     "label": seed_label
                 }
             # end for
-            # logger.print(f"Total {tot_num_exp} syntactical expansion identified in the requirement out of {num_selected_inputs} seeds")
-            # results.append({
-            #     "requirement": selected["requirement"],
-            #     "inputs": exp_inputs
-            # })
+            logger.print(f"Total {tot_num_exp} syntactical expansion identified in the requirement out of {num_selected_inputs} seeds")
+            results.append({
+                "requirement": selected["requirement"],
+                "inputs": exp_inputs
+            })
             # write raw new inputs for each requirement
-            # Utils.write_json(results, save_to, pretty_format=True)
+            Utils.write_json(results, save_to, pretty_format=True)
             print_str = '<<<<< REQUIREMENT:'+selected["requirement"]["description"]
             logger.print(print_str)
         # end for

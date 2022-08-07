@@ -535,18 +535,20 @@ class ChecklistTestsuite:
     def get_sents(cls, testsuite_file, req_desc):
         tsuite, tsuite_dict = Utils.read_testsuite(testsuite_file)
         test_names = list(set(tsuite_dict['test_name']))
-        sents_dict = dict()
         for tn in list(set(tsuite_dict['test_name'])):
             # checklist_test_name = tn.split('::')[-1]
             if tn in Macros.LC_MAP.keys() and \
-               req_desc == Macros.LC_MAP[tn] and \
-               tsuite.tests[tn].labels is not None:
+               req_desc == Macros.LC_MAP[tn]:
                 # sents: List of sent
                 # label: 0(neg), 1(neu) and 2(pos)
                 sents = tsuite.tests[tn].data
                 raw_labels = tsuite.tests[tn].labels
                 if type(raw_labels)==int:
                     raw_labels = [raw_labels]*len(tsuite.tests[tn].data)
+                elif raw_labels is None:
+                    if req_desc == Macros.OUR_LC_LIST[3]:
+                        raw_labels = [['positive', 'neutral']]*len(tsuite.tests[tn].data)
+                    # end if
                 # end if
                 labels = dict()
                 for s_i, s in enumerate(raw_labels):
@@ -561,10 +563,12 @@ class ChecklistTestsuite:
                     # end if
                 # end for
                 sents = [(s_i, s, labels[s_i][0], labels[s_i][1]) for s_i, s in enumerate(sents)]
+                random.shuffle(sents)
+                return sents
             # end if
         # end for
-        random.shuffle(sents)
-        return sents
+        return
+        
     
     @classmethod
     def search(cls, req):
