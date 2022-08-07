@@ -543,7 +543,6 @@ class ChecklistTestsuite:
                tsuite.tests[tn].labels is not None:
                 # sents: List of sent
                 # label: 0(neg), 1(neu) and 2(pos)
-                print(tn)
                 sents = tsuite.tests[tn].data
                 raw_labels = tsuite.tests[tn].labels
                 if type(raw_labels)==int:
@@ -551,6 +550,8 @@ class ChecklistTestsuite:
                 # end if
                 labels = dict()
                 for s_i, s in enumerate(raw_labels):
+                    # remove multiple spaces in the text
+                    sents[s_i]= re.sub('\\s+', ' ', sents[s_i])
                     if s=='0':
                         labels[s_i] = ["negative", 0.]
                     elif s=='1':

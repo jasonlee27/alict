@@ -29,6 +29,7 @@ class Generator:
 
     def __init__(self, seed: str, pcfg_ref: str):
         self.seed = seed
+        print(f"-> seed: {seed}")
         self.expander = CFGConverter(
             seed_input=seed,
             pcfg_ref=pcfg_ref,

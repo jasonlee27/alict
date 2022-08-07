@@ -135,6 +135,8 @@ class SearchOperator:
                         _tw_syns = self.get_synonyms(nlp, _tw)
                         _tw_syns.append(_tw)
                         word_dict[tw] = list(set(_tw_syns))
+                    elif target_template.endswith('isare'):
+                        word_dict[tw] = ['is', 'are']
                     elif target_template.startswith('hurtlex_'):
                         target_type = target_template.split('hurtlex_')[1]
                         hurtlex_words = self.get_hurtlex_words(target_type)
