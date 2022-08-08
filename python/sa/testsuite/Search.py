@@ -546,7 +546,10 @@ class ChecklistTestsuite:
                 if type(raw_labels)==int:
                     raw_labels = [raw_labels]*len(tsuite.tests[tn].data)
                 elif raw_labels is None:
-                    if req_desc == Macros.OUR_LC_LIST[3]:
+                    print(req_desc)
+                    if req_desc == Macros.OUR_LC_LIST[3] or \
+                       req_desc == Macros.OUR_LC_LIST[6] or \
+                       req_desc == Macros.OUR_LC_LIST[10]:
                         raw_labels = [['positive', 'neutral']]*len(tsuite.tests[tn].data)
                     # end if
                 # end if

@@ -113,19 +113,7 @@ class SearchOperator:
                 target_cat = t.split('cat:')[-1]
                 words = Hurtlex.get_target_cat_words(hurtlex_lex, target_cat)
             # end if
-        # end for
-                
-
-                
-        if target_pos in Hurtlex.POS:
-            words = Hurtlex.get_target_pos_words(hurtlex_lex, target_pos)
-        else:
-            words = hurtlex_lex
-        # end if
-
-        if target_cat in Hurtlex.CAT:
-            words = Hurtlex.get_target_cat_words(words, target_cat)
-        # end if
+        # end for        
         words = [w['lemma'] for w in words]
         random.shuffle(words)
         return words
