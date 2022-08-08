@@ -537,8 +537,15 @@ class ChecklistTestsuite:
         test_names = list(set(tsuite_dict['test_name']))
         for tn in list(set(tsuite_dict['test_name'])):
             # checklist_test_name = tn.split('::')[-1]
-            if tn in Macros.LC_MAP.keys() and \
-               req_desc == Macros.LC_MAP[tn]:
+            print(req_desc)
+            print(tn)
+            print()
+            if (tn in Macros.LC_MAP.keys() and \
+                req_desc == Macros.LC_MAP[tn]) or \
+                (tn.startswith(Macros.CHECKLIST_LC_LIST[8]) and \
+                 req_desc == Macros.OUR_LC_LIST[8]) or \
+                 (tn in Macros.LC_MAP.keys() and \
+                  req_desc.endswith('sentiment in (question, no) form')):
                 # sents: List of sent
                 # label: 0(neg), 1(neu) and 2(pos)
                 sents = tsuite.tests[tn].data
@@ -546,7 +553,6 @@ class ChecklistTestsuite:
                 if type(raw_labels)==int:
                     raw_labels = [raw_labels]*len(tsuite.tests[tn].data)
                 elif raw_labels is None:
-                    print(req_desc)
                     if req_desc == Macros.OUR_LC_LIST[3] or \
                        req_desc == Macros.OUR_LC_LIST[6] or \
                        req_desc == Macros.OUR_LC_LIST[10]:

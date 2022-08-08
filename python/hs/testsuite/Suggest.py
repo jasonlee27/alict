@@ -208,7 +208,7 @@ class Suggest:
             if len(r.split())>1:
                 is_req_met = word_suggest in SENT_DICT[r]
             else:
-                if r in list(Macros.hs_label_map.keys()):
+                if r in list(Macros.sa_label_map.keys()):
                     sentiment_list = [key for key in SENT_DICT.keys() if word_suggest in SENT_DICT[key]]
                     if not any(sentiment_list):
                         is_req_met = False

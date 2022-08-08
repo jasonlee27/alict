@@ -28,6 +28,7 @@ class Macros:
     ## hate speech setting
     hs_task = 'hs'
     nlp_tasks = [hs_task]
+    sa_label_map = {'negative': 0, 'positive': 2, 'neutral': 1}
     hs_label_map = {'toxic': 0, 'non-toxic': 1}
 
     # HateXplain dataset (hate speech detection dataset):
