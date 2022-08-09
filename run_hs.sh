@@ -33,11 +33,11 @@ function gen_templates() {
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
         (cd ${_DIR}
-         # python -m python.sa.main \
+         # python -m python.hs.main \
          #        --run testsuite \
          #        --search_dataset hatexplain \
          #        --syntax_selection random
-         python -m python.sa.main \
+         python -m python.hs.main \
                 --run testsuite \
                 --search_dataset hatecheck \
                 --syntax_selection random

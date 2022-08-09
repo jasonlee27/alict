@@ -440,8 +440,8 @@ class Hatecheck:
         raw_data_dict = Utils.read_sv(sent_file,
                                       delimeter=',',
                                       is_first_attributes=True)
-        atts = raw_dta_dict['attributes']
-        data = raw_dta_dict['lines']
+        atts = raw_data_dict['attributes']
+        data = raw_data_dict['lines']
         sents = list()
         func_att_index = atts.index('functionality')
         sent_att_index = atts.index('test_case')
@@ -462,9 +462,9 @@ class Hatecheck:
         req_desc = req['description']
         sh_req_desc = cls.FUNCTIONALITY_MAP[req_desc]
         selected = list()
-        for s in sents:
+        for s_i, s in enumerate(sents):
             if s['func']==sh_req_desc:
-                selected.append(s)
+                selected.append((s_i, s['sent'], s['label']))
         # end if
         random.shuffle(selected)
         return selected
@@ -474,7 +474,7 @@ class Search:
     
     SEARCH_FUNC = {
         Macros.hs_task : {
-            Macros.datasets[Macros.hs_task][0]: Hatexplain.search
+            Macros.datasets[Macros.hs_task][0]: Hatexplain.search,
             Macros.datasets[Macros.hs_task][1]: Hatecheck.search
         }
     }

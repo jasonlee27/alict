@@ -34,11 +34,6 @@ class Template:
         "PRP$": "PP$"
     }
 
-    # SEARCH_MAP = {
-    #     Macros.sa_task: Search.search_sentiment_analysis
-    #     Macros.mc_task:
-    #     Macros.qqp_task: 
-    # }
     SEARCH_FUNC = {
         Macros.hs_task: Search.search_hatespeech
     }
@@ -71,8 +66,10 @@ class Template:
             num_seed_for_exp = 0
             tot_num_exp = 0
             # for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
-            for _id, seed_tokens, seed_label in selected["selected_inputs"][:Macros.max_num_seeds]:
-                seed = Utils.detokenize(seed_tokens)
+            for _id, seed, seed_label in selected["selected_inputs"][:Macros.max_num_seeds]:
+                if type(seed)==list:
+                    seed = Utils.detokenize(seed)
+                # end if
                 logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label} :: ", end='')
                 index += 1
                 generator = Generator(seed, pcfg_ref)
