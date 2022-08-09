@@ -537,9 +537,6 @@ class ChecklistTestsuite:
         test_names = list(set(tsuite_dict['test_name']))
         for tn in list(set(tsuite_dict['test_name'])):
             # checklist_test_name = tn.split('::')[-1]
-            print(req_desc)
-            print(tn)
-            print()
             if (tn in Macros.LC_MAP.keys() and \
                 req_desc == Macros.LC_MAP[tn]) or \
                 (tn.startswith(Macros.CHECKLIST_LC_LIST[8]) and \

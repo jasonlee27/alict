@@ -2,17 +2,14 @@
 # the checklist Testing model framework
 # and test model.
 
-from typing import *
-
 import re, os
 import copy
 import spacy
 import random
 import numpy as np
 
+from typing import *
 from pathlib import Path
-
-from nltk.tokenize import word_tokenize as tokenize
 
 from checklist.editor import Editor
 from checklist.test_types import MFT, INV, DIR
