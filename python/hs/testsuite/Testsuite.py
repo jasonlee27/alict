@@ -30,13 +30,13 @@ class Testsuite:
 
     @classmethod
     def map_labels(cls, task: str, label):
-        if task==Macros.sa_task:
+        if task==Macros.hs_task:
             if type(label)==list:
-                label_not= [v for k, v in Macros.sa_label_map.items() if k not in label]
+                label_not= [v for k, v in Macros.hs_label_map.items() if k not in label]
                 is_not_label = lambda x, pred, *args: pred != label_not[0]
                 return is_not_label
             # end if
-            return Macros.sa_label_map[label]
+            return Macros.hs_label_map[label]
         # end if
         return
 
