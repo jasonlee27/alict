@@ -19,9 +19,13 @@ function gen_requirements() {
 function gen_templates() {
         # write templates in json
         (cd ${_DIR}
+         # CUDA_VISIBLE_DEVICES=1,2 python -m python.hs.main \
+         #                     --run template \
+         #                     --search_dataset hatexplain \
+         #                     --syntax_selection random # > /dev/null 2>&1
          CUDA_VISIBLE_DEVICES=1,2 python -m python.hs.main \
                              --run template \
-                             --search_dataset hatexplain \
+                             --search_dataset hatecheck \
                              --syntax_selection random # > /dev/null 2>&1
         )
 }
@@ -29,9 +33,13 @@ function gen_templates() {
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
         (cd ${_DIR}
+         # python -m python.sa.main \
+         #        --run testsuite \
+         #        --search_dataset hatexplain \
+         #        --syntax_selection random
          python -m python.sa.main \
                 --run testsuite \
-                --search_dataset hatexplain \
+                --search_dataset hatecheck \
                 --syntax_selection random
         )
 }
