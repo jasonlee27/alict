@@ -40,6 +40,9 @@ class Macros:
     # Hurtlex lexicon dataset
     hurtlex_data_file: Path = dataset_dir / 'hs' / 'hurtlex' / 'lexica' / 'EN' / '1.2' / 'hurtlex_EN.tsv'
 
+    # Hatecheck dataset
+    hatecheck_data_file: Path = dataset_dir / 'hs' / 'hatecheck' / 'hatecheck-data' / 'test_suite_annotations.csv'
+
     # SentiWordNet
     swn_data_file: Path = dataset_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"
 
