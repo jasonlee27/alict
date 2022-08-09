@@ -33,7 +33,7 @@ class Macros:
 
     # HateXplain dataset (hate speech detection dataset):
     datasets = {
-        hs_task: ['hatexplain'],
+        hs_task: ['hatexplain', 'hatecheck'],
     }
     hatexplain_data_file: Path = dataset_dir / 'hs' / 'HateXplain' / 'Data' / 'dataset.json'
     
