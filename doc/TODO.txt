@@ -1,5 +1,9 @@
 TASKS
 
+  - [JL] update word_suggest on sa task as hs task. when multiple
+    masks in a sentence is introduced, eval_sug_words_by_req(?) would
+    check each suggested worde for each mask.
+  
   - [JL] modify our s2lct approach overview figure (This word
     sentiment dataset has been used for both generation and
     expansion. We discussed last time that generation and expansion
