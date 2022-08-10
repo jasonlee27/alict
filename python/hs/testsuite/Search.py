@@ -446,12 +446,13 @@ class Hatecheck:
         func_att_index = atts.index('functionality')
         sent_att_index = atts.index('test_case')
         label_att_index = atts.index('label_gold')
+        orig_label_keys = list(Macros.hs_label_map)
         for d in data:
             # attributes: ,functionality,case_id,templ_id,test_case,label_gold,label_1,label_2,label_3,label_4,label_5,label_6,label_7,label_8,label_9,label_10,count_label_h,count_label_nh,label_annot_maj
             sents.append({
                 'func': d[func_att_index],
                 'sent': re.sub('\\s+', ' ', d[sent_att_index].strip()),
-                'label': d[label_att_index]
+                'label': orig_label_keys[0] if d[label_att_index]=='hateful' else orig_label_keys[1]
             })
         # end for
         return sents

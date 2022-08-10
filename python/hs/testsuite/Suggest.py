@@ -187,7 +187,7 @@ class Suggest:
         search_obj = SearchOperator(_requirement)
         search_res = search_obj.search([{
             'post_id': '1',
-            'tokens': Utils.tokenize(new_input),
+            'tokens': Utils.tokenize(new_input) if type(new_input)==str else new_input,
             'label': label
         }], nlp)
         # search_res = search_obj.search([('1', new_input, label)], nlp)
@@ -198,38 +198,42 @@ class Suggest:
 
     @classmethod
     def eval_sug_words_by_exp_req(cls, nlp, word_suggest, requirement):
+        word_suggest = [word_suggest] if type(word_suggest)==str else list(word_suggest)
         if requirement['expansion'] is None:
             return True
         # end if
-        all_reqs_met = list()
-        
-        for r in requirement['expansion']:
-            is_req_met = False
-            if len(r.split())>1:
-                is_req_met = word_suggest in SENT_DICT[r]
-            else:
-                if r in list(Macros.sa_label_map.keys()):
-                    sentiment_list = [key for key in SENT_DICT.keys() if word_suggest in SENT_DICT[key]]
-                    if not any(sentiment_list):
-                        is_req_met = False
-                    elif len(sentiment_list)==1:
-                        if sentiment_list[0].startswith(r):
-                            is_req_met = True
-                        # end if
-                    elif len(sentiment_list)>1:
-                        w_tag = nlp(word_suggest)[0].pos_.lower()
-                        for key in sentiment_list:
-                            if key.endswith(w_tag) and key.startswith(r):
+        all_reqs_met_over_words = list()
+        for ws in word_suggest:
+            all_reqs_met_over_reqs = list()
+            for r in requirement['expansion']:
+                is_req_met = False
+                if len(r.split())>1:
+                    is_req_met = ws in SENT_DICT[r.join('_')]
+                else:
+                    if r in list(Macros.sa_label_map.keys()):
+                        sentiment_list = [key for key in SENT_DICT.keys() if ws in SENT_DICT[key]]
+                        if not any(sentiment_list):
+                            is_req_met = False
+                        elif len(sentiment_list)==1:
+                            if sentiment_list[0].startswith(r):
                                 is_req_met = True
-                                break
                             # end if
-                        # end for
+                        elif len(sentiment_list)>1:
+                            w_tag = nlp(ws)[0].pos_.lower()
+                            for key in sentiment_list:
+                                if key.endswith(w_tag) and key.startswith(r):
+                                    is_req_met = True
+                                    break
+                                # end if
+                            # end for
+                        # end if
                     # end if
                 # end if
-            # end if
-            all_reqs_met.append(is_req_met)
+                all_reqs_met_over_reqs.append(is_req_met)
+            # end for
+            all_reqs_met_over_words.append(all(all_reqs_met_over_reqs))
         # end for
-        return all(all_reqs_met)
+        return all(all_reqs_met_over_words)
 
     @classmethod
     def get_words_by_prob(cls, words_suggest, gen_input, masked_input, num_target):
@@ -313,15 +317,7 @@ class Suggest:
     def eval_word_suggest(cls, nlp, gen_input, label: str, requirement):
         results = list()
         masked_input, mask_pos = gen_input['masked_input']
-        if not gen_input['words_suggest']:
-            results.append((masked_input,
-                            gen_input['cfg_from'],
-                            gen_input['cfg_to'],
-                            mask_pos,
-                            None,
-                            None,
-                            label))
-        else:
+        if any(gen_input['words_suggest']):
             for w_sug in gen_input['words_suggest']:
                 input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
                 # check sentence and expansion requirements
@@ -337,6 +333,14 @@ class Suggest:
                     # end if
                 # end if
             # end for
+        # else:
+        #     results.append((masked_input,
+        #                     gen_input['cfg_from'],
+        #                     gen_input['cfg_to'],
+        #                     mask_pos,
+        #                     None,
+        #                     None,
+        #                     label))
         # end if
         return results
 

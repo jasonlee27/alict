@@ -80,6 +80,13 @@ class Requirements:
                                 'word': ['I <hate_syn>']
                             },
                             'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['make me <sick_syn>']
+                            },
+                            'label': 'toxic'
                         }],
                         'expansion': ['neutral'],
                         'transform': None,

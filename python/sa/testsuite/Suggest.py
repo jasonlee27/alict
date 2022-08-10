@@ -193,38 +193,42 @@ class Suggest:
 
     @classmethod
     def eval_sug_words_by_exp_req(cls, nlp, word_suggest, requirement):
+        word_suggest = [word_suggest] if type(word_suggest)==str else list(word_suggest)
         if requirement['expansion'] is None:
             return True
         # end if
-        all_reqs_met = list()
-        
-        for r in requirement['expansion']:
-            is_req_met = False
-            if len(r.split())>1:
-                is_req_met = word_suggest in SENT_DICT[r]
-            else:
-                if r in list(Macros.sa_label_map.keys()):
-                    sentiment_list = [key for key in SENT_DICT.keys() if word_suggest in SENT_DICT[key]]
-                    if not any(sentiment_list):
-                        is_req_met = False
-                    elif len(sentiment_list)==1:
-                        if sentiment_list[0].startswith(r):
-                            is_req_met = True
-                        # end if
-                    elif len(sentiment_list)>1:
-                        w_tag = nlp(word_suggest)[0].pos_.lower()
-                        for key in sentiment_list:
-                            if key.endswith(w_tag) and key.startswith(r):
+        all_reqs_met_over_words = list()
+        for ws in word_suggest:
+            all_reqs_met_over_reqs = list()
+            for r in requirement['expansion']:
+                is_req_met = False
+                if len(r.split())>1:
+                    is_req_met = ws in SENT_DICT[r]
+                else:
+                    if r in list(Macros.sa_label_map.keys()):
+                        sentiment_list = [key for key in SENT_DICT.keys() if ws in SENT_DICT[key]]
+                        if not any(sentiment_list):
+                            is_req_met = False
+                        elif len(sentiment_list)==1:
+                            if sentiment_list[0].startswith(r):
                                 is_req_met = True
-                                break
                             # end if
-                        # end for
+                        elif len(sentiment_list)>1:
+                            w_tag = nlp(ws)[0].pos_.lower()
+                            for key in sentiment_list:
+                                if key.endswith(w_tag) and key.startswith(r):
+                                    is_req_met = True
+                                    break
+                                # end if
+                            # end for
+                        # end if
                     # end if
                 # end if
-            # end if
-            all_reqs_met.append(is_req_met)
+                all_reqs_met_over_reqs.append(is_req_met)
+            # end for
+            all_reqs_met_over_words.append(all(all_reqs_met_over_reqs))
         # end for
-        return all(all_reqs_met)
+        return all(all_reqs_met_over_words)
 
     @classmethod
     def get_words_by_prob(cls, words_suggest, gen_input, masked_input, num_target):
