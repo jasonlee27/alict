@@ -120,6 +120,7 @@ class Testsuite:
             task,
             dataset,
             n=num_seeds,
+            selection_method=selection_method,
             logger=logger
         )
         seeds_per_task = list()
