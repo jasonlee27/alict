@@ -184,6 +184,7 @@ class Suggest:
         else:
             _requirement = requirement
         # end if
+        temp = Utils.tokenize(new_input) if type(new_input)==str else new_input
         search_obj = SearchOperator(_requirement)
         search_res = search_obj.search([{
             'post_id': '1',
@@ -191,10 +192,7 @@ class Suggest:
             'label': label
         }], nlp)
         # search_res = search_obj.search([('1', new_input, label)], nlp)
-        if len(search_res)>0:
-            return True
-        # end if
-        return False
+        return any(search_res)
 
     @classmethod
     def eval_sug_words_by_exp_req(cls, nlp, word_suggest, requirement):

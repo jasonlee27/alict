@@ -77,14 +77,21 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['I <hate_syn>']
+                                'word': ['i <hate_syn>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['make me <sick_syn>']
+                                'word': ['<make_syn> me']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<makes_syn> me']
                             },
                             'label': 'toxic'
                         }],

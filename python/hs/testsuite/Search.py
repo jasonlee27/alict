@@ -382,7 +382,7 @@ class Hatexplain:
                 tokens = vals['post_tokens']
                 sents.append({
                     'post_id': vals['post_id'],
-                    'tokens': vals['post_tokens'],
+                    'tokens': [t.lower() for t in vals['post_tokens']],
                     'label': label
                 })
             # end if
@@ -451,7 +451,7 @@ class Hatecheck:
             # attributes: ,functionality,case_id,templ_id,test_case,label_gold,label_1,label_2,label_3,label_4,label_5,label_6,label_7,label_8,label_9,label_10,count_label_h,count_label_nh,label_annot_maj
             sents.append({
                 'func': d[func_att_index],
-                'sent': re.sub('\\s+', ' ', d[sent_att_index].strip()),
+                'sent': re.sub('\\s+', ' ', d[sent_att_index].strip().lower()),
                 'label': orig_label_keys[0] if d[label_att_index]=='hateful' else orig_label_keys[1]
             })
         # end for
