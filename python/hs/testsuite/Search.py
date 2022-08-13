@@ -410,7 +410,7 @@ class Hatecheck:
     FUNCTIONALITY_MAP = {
         Macros.OUR_LC_LIST[0]: 'derog_neg_emote_h',
         Macros.OUR_LC_LIST[1]: 'derog_neg_attrib_h',
-        Macros.OUR_LC_LIST[2]: 'derog_neg_dehum_h',
+        Macros.OUR_LC_LIST[2]: 'derog_dehum_h',
         Macros.OUR_LC_LIST[3]: 'derog_neg_impl_h',
         Macros.OUR_LC_LIST[4]: 'threat_dir_h',
         Macros.OUR_LC_LIST[5]: 'threat_norm_h',

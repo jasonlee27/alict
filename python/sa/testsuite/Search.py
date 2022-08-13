@@ -532,6 +532,36 @@ class Sst:
 class ChecklistTestsuite:
 
     @classmethod
+    def get_labels(cls, raw_labels, num_data):
+        labels = dict()
+        if type(raw_labels)==int:
+            raw_labels = [raw_labels]*num_data
+        elif raw_labels is None:
+            if req_desc == Macros.OUR_LC_LIST[3] or \
+               req_desc == Macros.OUR_LC_LIST[6] or \
+               req_desc == Macros.OUR_LC_LIST[10]:
+                raw_labels = [['positive', 'neutral']]*num_data
+            # end if
+        else:
+            labels = raw_labels
+        # end if
+        labels = dict()
+        for s_i, s in enumerate(raw_labels):
+            # remove multiple spaces in the text
+            # checklist label map {'negative': 0, 'positive': 2, 'neutral': 1} 
+            if type(s)==list:
+                labels[s_i] = [s, 1.]
+            elif s==0:
+                labels[s_i] = ['negative', 0.]
+            elif s==1:
+                labels[s_i] = ['neutral', 0.5]
+            else: # '2'
+                labels[s_i] = ['positive', 1.]
+            # end if
+        # end for
+        return labels
+        
+    @classmethod
     def get_sents(cls, testsuite_file, req_desc):
         tsuite, tsuite_dict = Utils.read_testsuite(testsuite_file)
         test_names = list(set(tsuite_dict['test_name']))
@@ -547,28 +577,14 @@ class ChecklistTestsuite:
                 # label: 0(neg), 1(neu) and 2(pos)
                 sents = tsuite.tests[tn].data
                 raw_labels = tsuite.tests[tn].labels
-                if type(raw_labels)==int:
-                    raw_labels = [raw_labels]*len(tsuite.tests[tn].data)
-                elif raw_labels is None:
-                    if req_desc == Macros.OUR_LC_LIST[3] or \
-                       req_desc == Macros.OUR_LC_LIST[6] or \
-                       req_desc == Macros.OUR_LC_LIST[10]:
-                        raw_labels = [['positive', 'neutral']]*len(tsuite.tests[tn].data)
-                    # end if
-                # end if
-                labels = dict()
-                for s_i, s in enumerate(raw_labels):
-                    # remove multiple spaces in the text
-                    sents[s_i]= re.sub('\\s+', ' ', sents[s_i])
-                    if s=='0':
-                        labels[s_i] = ["negative", 0.]
-                    elif s=='1':
-                        labels[s_i] = ["neutral", 0.5]
-                    else:
-                        labels[s_i] = ["positive", 1.]
-                    # end if
-                # end for
-                sents = [(s_i, s, labels[s_i][0], labels[s_i][1]) for s_i, s in enumerate(sents)]
+                print(tn)
+                print(raw_labels)
+                print()
+                labels = cls.get_labels(raw_labels, len(tsuite.tests[tn].data))
+                sents = [
+                    (s_i, re.sub('\\s+', ' ', s), labels[s_i][0], labels[s_i][1])
+                    for s_i, s in enumerate(sents)
+                ]
                 random.shuffle(sents)
                 return sents
             # end if
@@ -663,11 +679,11 @@ class Search:
         for req in requirements:
             selected = func(req)
             
-            if req["transform"] is not None:
+            if req["transform"] is not None and \
+               dataset!=Macros.datasets[Macros.sa_task][1]:
                 transform_obj = TransformOperator(req)
                 selected = transform_obj.transform(selected)
-            # end if
-            
+            # end if            
             yield {
                 "requirement": req,
                 "selected_inputs": selected

@@ -65,6 +65,7 @@ class Hurtlex:
 
     @classmethod
     def get_target_pos_words(cls, raw_data: List[Dict], target_pos) -> List[Dict]:
+        target_pos = target_pos.strip('<>')
         poss = cls.POS # n: noun, a: adj, v: verb
         if target_pos not in poss:
             return raw_data
@@ -79,6 +80,7 @@ class Hurtlex:
 
     @classmethod
     def get_target_cat_words(cls, raw_data: List[Dict], target_cat) -> List[Dict]:
+        target_cat = target_cat.strip('<>')
         data = list()
         for cat in target_cat.split('_'):
             for d in raw_data:
@@ -88,5 +90,3 @@ class Hurtlex:
             # end for
         # end for
         return data
-
-    

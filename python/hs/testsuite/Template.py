@@ -266,7 +266,6 @@ class Template:
             # end if
             inputs = inputs_per_req["inputs"]
             print_str = '>>>>> REQUIREMENT:'+inputs_per_req["requirement"]["description"]
-            logger.print(print_str)
             seed_inputs, exp_seed_inputs = list(), list()
             seed_templates, exp_templates = list(), list()
             for s_i, seed_input in enumerate(inputs.keys()):
