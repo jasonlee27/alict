@@ -532,7 +532,7 @@ class Sst:
 class ChecklistTestsuite:
 
     @classmethod
-    def get_labels(cls, raw_labels, num_data):
+    def get_labels(cls, raw_labels, req_desc, num_data):
         labels = dict()
         if type(raw_labels)==int:
             raw_labels = [raw_labels]*num_data
@@ -577,10 +577,9 @@ class ChecklistTestsuite:
                 # label: 0(neg), 1(neu) and 2(pos)
                 sents = tsuite.tests[tn].data
                 raw_labels = tsuite.tests[tn].labels
-                print(tn)
-                print(raw_labels)
-                print()
-                labels = cls.get_labels(raw_labels, len(tsuite.tests[tn].data))
+                labels = cls.get_labels(raw_labels,
+                                        req_desc,
+                                        len(tsuite.tests[tn].data))
                 sents = [
                     (s_i, re.sub('\\s+', ' ', s), labels[s_i][0], labels[s_i][1])
                     for s_i, s in enumerate(sents)
