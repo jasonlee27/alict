@@ -28,7 +28,8 @@ parser.add_argument('--syntax_selection', type=str, default='random',
                     help='method for selection of syntax suggestions')
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
-
+parser.add_argument('--test_baseline', action='store_true',
+                    help='test models on running baseline (checklist) test cases')
 
 args = parser.parse_args()
 def run_requirements():
@@ -80,11 +81,6 @@ def run_testmodel():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     test_baseline = args.test_baseline
-    # if test_baseline:
-    #     selection_method = 'checklist'
-    # # end if
-    test_type = args.test_type
-    local_model_name = args.local_model_name
     log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "test_orig_model.log"
@@ -93,19 +89,17 @@ def run_testmodel():
         search_dataset_name,
         selection_method,
         test_baseline,
-        test_type,
         log_file,
-        local_model_name=local_model_name
     )
     return
-    
+
 
 func_map = {
     "hs": {
         'requirement': run_requirements,
         'template': run_templates,
         'testsuite': run_testsuites,
-        'testmodel': run_testmodel
+        'testmodel': run_testmodel,
     }
 }
 

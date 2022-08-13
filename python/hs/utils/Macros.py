@@ -30,12 +30,6 @@ class Macros:
     nlp_tasks = [hs_task]
     sa_label_map = {'negative': 0, 'positive': 2, 'neutral': 1}
     hs_label_map = {'toxic': 0, 'non-toxic': 1}
-
-    BASELINES = {
-        "hatecheck": {
-            "testsuite_file": checklist_sa_dataset_file
-        }
-    }
     
     # HateXplain dataset (hate speech detection dataset):
     datasets = {

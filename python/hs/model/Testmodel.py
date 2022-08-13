@@ -4,14 +4,14 @@
 from typing import *
 from pathlib import Path
 
-from checklist.test_suite import TestSuite as suite
-from checklist.test_types import MFT, INV, DIR
-from checklist.expect import Expect
+from checklist.editor import Editor
+from checklist.test_suite import TestSuite # as suite
+from checklist.test_types import MFT #, INV, DIR
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
-from ..testsuite.Testsuite import Testsuite
+# from ..testsuite.Testsuite import Testsuite
 from ..testsuite.Search import Hatecheck
 
 from .Model import Model
@@ -26,7 +26,7 @@ class Testmodel:
         "hs": Model.hatespeech_pred_and_conf
     }
 
-    @classsmethod
+    @classmethod
     def generate_baseline_testsuite(cls, save_dir: Path):
         sents = Hatecheck.get_sents()
         # save_dir = Macros.result_dir / 'templates_hs_hatecheck_baseline'
@@ -39,30 +39,26 @@ class Testmodel:
                 for s in sents:
                     if s['func']==val:
                         if t is None:
-                            t = editor.template(template["sent"],
-                                                labels=template["label"],
+                            t = editor.template(s['sent'],
+                                                labels=s["label"],
                                                 save=True)
                         elif t is not None and len(t.data)<Macros.max_num_sents:
-                            t += editor.template(template["sent"],
-                                                 labels=template["label"],
+                            t += editor.template(s["sent"],
+                                                 labels=s["label"],
                                                  save=True)
                         # end if
                     # end if
                 # end for
-                test = MFT(**t)
-                suite.add(test,
-                          name=f"{task}::SEED::{val}",
-                          capability=val.split('_')[0],
-                          description=key)
-                num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
-                if num_data>0:
-                    # test_cksum = Utils.get_cksum(
-                    #     task+templates_per_req["capability"]+templates_per_req["description"]
-                    # )
-                    suite.save(save_dir / f'testsuite_{test_cksum}.pkl')
-                    logger.print('SAVED')
-                else:
-                    logger.print('NO_DATA')
+                if t is not None:
+                    test = MFT(**t)
+                    suite.add(test,
+                              name=f"hs::SEED::{val}",
+                              capability=val.split('_')[0],
+                              description=key)
+                    num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
+                    if num_data>0:
+                        suite.save(save_dir / f'testsuite_{test_cksum}.pkl')
+                    # end if
                 # end if
             # end if
         # end for
@@ -70,18 +66,10 @@ class Testmodel:
 
     @classmethod
     def load_testsuite(cls, testsuite_file: Path):
-        tsuite = suite().from_file(testsuite_file)
+        tsuite = TestSuite().from_file(testsuite_file)
         # print(tsuite.info)
         return tsuite
-
-    @classmethod
-    def load_baseline_testsuite(cls, testsuite_file: Path):
-        if not os.path.exists(str(testsuite_file)):
-            testsuite_dir = Macros.result_dir / 'templates_hs_hatecheck_baseline'
-            generate_baseline_testsuite(testsuite_dir)
-        # end if
-        return suite().from_file(testsuite_file)
-
+    
     @classmethod
     def _run_testsuite(cls, task: str, dataset_name: str, selection_method: str, logger, local_model_name=None):
         logger.print(f"***** TASK: {task} *****")
@@ -130,15 +118,24 @@ class Testmodel:
         logger.print(f"***** TASK: {task} *****")
         logger.print(f"***** Baseline: {bl_name} *****")
         testsuite_dir = Macros.result_dir / 'templates_hs_hatecheck_baseline'
+        testsuite_dir.mkdir(parents=True, exist_ok=True)
         cksum_vals = [
             os.path.basename(test_file).split("_")[-1].split(".")[0]
-            for test_file in os.listdir(Macros.result_dir / 'templates_hs_hatecheck_baseline')
-            if test_file.startswith('testsuite_seeds_') and test_file.endswith(".pkl")
+            for test_file in os.listdir(testsuite_dir)
+            if test_file.startswith('testsuite_') and test_file.endswith(".pkl")
         ]
+        if not any(cksum_vals):
+            cls.generate_baseline_testsuite(testsuite_dir)
+            cksum_vals = [
+                os.path.basename(test_file).split("_")[-1].split(".")[0]
+                for test_file in os.listdir(testsuite_dir)
+                if test_file.startswith('testsuite_') and test_file.endswith(".pkl")
+            ]
+        # end if
         for cksum_val in cksum_vals:
-            testsuite = cls.load_baseline_testsuite(
+            testsuite = cls.load_testsuite(
                 testsuite_dir / f'testsuite_{cksum_val}.pkl'
-            )            
+            )
             for mname, model in Model.load_models(task):
                 logger.print(f">>>>> MODEL: {mname}")
                 Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples, logger=logger)
@@ -159,60 +156,8 @@ class Testmodel:
         # end if
         return
 
-    @classmethod
-    def run_on_diff_dataset(cls, task: str, dataset_name: str, test_type: str, logger):
-        # run models on other type of dataset
-        def run(model, data):
-            preds_all, pp_all = list(), list()
-            for batch in Model.get_batch(data, 32):
-                preds = model(batch)
-                pr = np.array([x['score'] if x['label']=='POSITIVE' or x['label']=='LABEL_1' else 1 - x['score'] for x in preds])
-                pp = np.zeros((pr.shape[0], 3))
-                margin_neutral = 1/3.
-                mn = margin_neutral / 2.
-                neg = pr < 0.5 - mn
-                pp[neg, 0] = 1 - pr[neg]
-                pp[neg, 2] = pr[neg]
-                pos = pr > 0.5 + mn
-                pp[pos, 0] = 1 - pr[pos]
-                pp[pos, 2] = pr[pos]
-                neutral_pos = (pr >= 0.5) * (pr < 0.5 + mn)
-                pp[neutral_pos, 1] = 1 - (1 / margin_neutral) * np.abs(pr[neutral_pos] - 0.5)
-                pp[neutral_pos, 2] = 1 - pp[neutral_pos, 1]
-                neutral_neg = (pr < 0.5) * (pr > 0.5 - mn)
-                pp[neutral_neg, 1] = 1 - (1 / margin_neutral) * np.abs(pr[neutral_neg] - 0.5)
-                pp[neutral_neg, 0] = 1 - pp[neutral_neg, 1]
-                preds = np.argmax(pp, axis=1)
-                preds_all.extend(preds)
-                pp_all.extend(pp)
-            # end for
-            return preds_all, pp_all
-        
-        dataset_name = None
-        if test_type is not None:
-            dataset_name = test_type
-            assert(dataset_name in Macros.datasets[task])
-            logger.print(f"***** TASK: {task} *****")
-            logger.print(f"***** DATASET: {dataset_name} *****")
-            if dataset_name=="dynasent":
-                srcs = DynasentRoundOne.get_data(Macros.dyna_r1_test_src_file)
-                sents = [s[1] for s in srcs]
-                labels = [s[-1] for s in srcs]
-                for mname, model in Model.load_models(task):
-                    logger.print(f">>>>> MODEL: {mname}")
-                    preds, pp = run(model, sents)
-                    fail_cnt, fail_rate = Utils.compute_failure_rate(task, preds, labels)
-                    logger.print(f"Test cases run:\t{len(preds)}")
-                    logger.print(f"Fails (rate):\t{fail_cnt} \({fail_rate}\)")
-                    logger.print(f"<<<<< MODEL: {mname}")
-                # end for
     
-            # end if
-        # end if
-        return
-
-    
-def main(task, dataset_name, selection_method, test_baseline, test_type, log_file, local_model_name=None):
+def main(task, dataset_name, selection_method, test_baseline, log_file, local_model_name=None):
     logger = Logger(logger_file=log_file,
                     logger_name='testmodel')
     test_result_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}"
@@ -224,12 +169,6 @@ def main(task, dataset_name, selection_method, test_baseline, test_type, log_fil
             test_result_file = test_result_dir / 'test_results.txt'
         # end if
         shutil.copyfile(log_file, test_result_file)
-        # if test_type=="testsuite":
-        #     Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, logger)
-        #     shutil.copyfile(log_file, 'file2.txt')
-        # else:
-        #     Testmodel.run_on_diff_dataset(task, dataset_name, selection_method, test_type=test_type, logger=logger)
-        # # end if
     else:
         Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, logger, local_model_name=local_model_name)
         if test_baseline:
@@ -238,12 +177,6 @@ def main(task, dataset_name, selection_method, test_baseline, test_type, log_fil
             test_result_file = test_result_dir / 'test_results.txt'
         # end if
         shutil.copyfile(log_file, test_result_file)
-        # if test_type=="testsuite":
-        #     Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, local_model_name=local_model_name, logger)
-        #     shutil.copyfile(log_file, 'file2.txt')
-        # else:
-        #     Testmodel.run_on_diff_dataset(task, dataset_name, test_type, logger)
-        # # end if
     # end if
     
     return
