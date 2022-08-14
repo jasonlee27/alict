@@ -66,8 +66,9 @@ function eval_models() {
 
 function main() {
         # gen_requirements # to generate test_type_hs.json and requirement_hs.json
-        gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
-        gen_testsuite
+        # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
+        # gen_testsuite
+        eval_models
 }
 
 # Please make sure you actiavte nlptest conda environment

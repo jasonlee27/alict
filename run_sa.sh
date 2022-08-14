@@ -26,16 +26,25 @@ function gen_templates() {
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection noselect
 
          # generate tempaltes from checklist testcase
-         CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main --run template --search_dataset checklist --syntax_selection random # > /dev/null 2>&1
+         CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main \
+                             --run template \
+                             --search_dataset checklist \
+                             --syntax_selection random # > /dev/null 2>&1
         )
 }
 
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
         (cd ${_DIR}
-         python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection random
+         # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection random
          # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection bertscore
          # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection noselect
+
+         # write test cases into Checklist Testsuite format from checklist testcases
+         python -m python.sa.main \
+                --run testsuite \
+                --search_dataset checklist \
+                --syntax_selection random
         )
 }
 
@@ -46,9 +55,15 @@ function eval_models() {
          # CUDA_VISIBLE_DEVICES=1,3,5 python -m python.sa.main --run testmodel --test_baseline
 
          # evaluating models on our generated testcases
-         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection random
+         # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection random
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection bertscore
          # CUDA_VISIBLE_DEVICES=6,7 time python -m python.sa.main --run testmodel --syntax_selection noselect
+
+         # evaluating models on checklist expanded testcases
+         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
+                             --run testmodel \
+                             --search_dataset checklist \
+                             --syntax_selection random
         )
 }
 
@@ -214,8 +229,10 @@ function main_sst() {
 function main_checklist() {
         # implement our expansion technique from checklist testcase
         # make sure that you change the name of dataset into checklist
-        gen_requirements # to generate test_type_sa.json and requirement_sa.json
-        gen_templates # to generate templates_sa_{dataset_name}/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa_{dataset_name}/templates_exp_{cksum}.json and cfg_expanded_inputs_sa_{dataset_name}.json
+        # gen_requirements # to generate test_type_sa.json and requirement_sa.json
+        # gen_templates # to generate templates_sa_{dataset_name}/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa_{dataset_name}/templates_exp_{cksum}.json and cfg_expanded_inputs_sa_{dataset_name}.json
+        # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
+        eval_models # run testsuite.run on checklist expanded testsets
 }
 
 main_checklist

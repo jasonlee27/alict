@@ -10,7 +10,6 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 from ..testsuite.Testsuite import Testsuite
-from ..testsuite.Search import DynasentRoundOne
 
 from .Model import Model
 from .GoogleModel import GoogleModel
