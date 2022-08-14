@@ -56,22 +56,29 @@ class Model:
         # end for
         return preds
     
+    # @classmethod
+    # def hatespeech_pred_and_conf(cls, data: List[str]):
+    #     # distilbert-base-uncased-finetuned-sst-2-english: label [NEGATIVE, POSITIVE]
+    #     # textattack/bert-base-uncased-SST-2: label [LABEL_0, LABEL_1]
+    #     # textattack/bert-base-SST-2: label [LABEL_0, LABEL_1]
+    #     # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
+    #     preds = cls.batch_predict(data)
+    #     pr = np.array([x['score'] if x['label'].lower()=='abusive' else 1 - x['score'] for x in preds])
+    #     pp = np.zeros((pr.shape[0], 2))
+    #     norm = pr < 0.5
+    #     pp[norm, 0] = 1 - pr[norm]
+    #     pp[norm, 1] = pr[norm]
+    #     toxic = pr >= 0.5
+    #     pp[toxic, 0] = 1 - pr[toxic]
+    #     pp[toxic, 1] = pr[toxic]
+    #     preds = np.argmax(pp, axis=1)
+    #     return preds, pp
+
     @classmethod
     def hatespeech_pred_and_conf(cls, data: List[str]):
-        # distilbert-base-uncased-finetuned-sst-2-english: label [NEGATIVE, POSITIVE]
-        # textattack/bert-base-uncased-SST-2: label [LABEL_0, LABEL_1]
-        # textattack/bert-base-SST-2: label [LABEL_0, LABEL_1]
-        # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
-        preds = cls.batch_predict(data)
-        pr = np.array([x['score'] if x['label'].lower()=='offensive' else 1 - x['score'] for x in preds])
-        pp = np.zeros((pr.shape[0], 2))
-        neg = pr < 0.5
-        pp[neg, 0] = 1 - pr[neg]
-        pp[neg, 1] = pr[neg]
-        pos = pr >= 0.5
-        pp[pos, 0] = 1 - pr[pos]
-        pp[pos, 1] = pr[pos]
-        preds = np.argmax(pp, axis=1)
+        raw_preds = cls.batch_predict(data)
+        preds = np.array([0 if p['label'].lower()=='abusive' or p['label'].lower()=='offensive' else 1 for p in raw_preds])
+        pp = np.array([[p['score'], 1-p['score']] if p['label'].lower()=='abusive' else [1-p['score'], p['score']] for p in raw_preds])
         return preds, pp
 
     @classmethod

@@ -40,11 +40,11 @@ class Testmodel:
                     if s['func']==val:
                         if t is None:
                             t = editor.template(s['sent'],
-                                                labels=s["label"],
+                                                labels=Macros.hs_label_map[s['label']],
                                                 save=True)
                         elif t is not None and len(t.data)<Macros.max_num_sents:
                             t += editor.template(s["sent"],
-                                                 labels=s["label"],
+                                                 labels=Macros.hs_label_map[s['label']],
                                                  save=True)
                         # end if
                     # end if
@@ -69,7 +69,7 @@ class Testmodel:
         tsuite = TestSuite().from_file(testsuite_file)
         # print(tsuite.info)
         return tsuite
-    
+
     @classmethod
     def _run_testsuite(cls, task: str, dataset_name: str, selection_method: str, logger, local_model_name=None):
         logger.print(f"***** TASK: {task} *****")

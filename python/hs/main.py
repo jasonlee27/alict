@@ -89,7 +89,7 @@ def run_testmodel():
         search_dataset_name,
         selection_method,
         test_baseline,
-        log_file,
+        log_file
     )
     return
 
