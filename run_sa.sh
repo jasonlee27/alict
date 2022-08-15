@@ -48,6 +48,17 @@ function gen_testsuite() {
         )
 }
 
+function gen_seeds() {
+        (cd ${_DIR}
+         # write test cases into Checklist Testsuite format from checklist testcases
+         python -m python.sa.main \
+                --run seedgen \
+                --search_dataset sst \
+                --syntax_selection random \
+                --num_seeds -1
+        )
+}
+
 function eval_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
@@ -252,4 +263,5 @@ function main_checklist() {
         analyze_eval_models # to generate test_results_analysis.json and test_results_checklist_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json 
 }
 
-main_checklist
+main
+# main_checklist

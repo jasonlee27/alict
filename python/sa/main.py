@@ -14,10 +14,10 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
-                        'requirement', 'template', 'testsuite',
-                        'testmodel', 'retrain', 'analyze',
-                        'retrain_analyze', 'explain_nlp', 'selfbleu',
-                        'humanstudy', 'humanstudy_results', 'coverage_sent_gen', 'tables'
+                        'requirement', 'template', 'testsuite', 'seedgen'
+                        'testmodel', 'retrain', 'analyze', 'retrain_analyze',
+                        'explain_nlp', 'selfbleu', 'humanstudy', 'humanstudy_results',
+                        'coverage_sent_gen', 'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
@@ -72,6 +72,24 @@ def run_templates():
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "template_generation.log"
     Template.get_templates(
+        num_seeds=num_seeds,
+        nlp_task=nlp_task,
+        dataset_name=search_dataset_name,
+        selection_method=selection_method,
+        log_file=log_file
+    )
+    return
+
+def run_seedgen():
+    from .testsuite.Seedgen import Seedgen
+    nlp_task = args.nlp_task
+    # search_dataset_name = args.search_dataset
+    num_seeds = args.num_seeds # -1 means acceptance of every seeds
+    selection_method = args.syntax_selection
+    log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / "seed_generation.log"
+    Seedgen.get_seeds(
         num_seeds=num_seeds,
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
@@ -286,6 +304,7 @@ func_map = {
     "sa": {
         'requirement': run_requirements,
         'template': run_templates,
+        'seedgen': run_seedgen,
         'testsuite': run_testsuites,
         'testmodel': run_testmodel,
         'retrain': run_retrain,

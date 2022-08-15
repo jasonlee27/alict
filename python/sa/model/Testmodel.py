@@ -30,7 +30,12 @@ class Testmodel:
         return tsuite
 
     @classmethod
-    def _run_testsuite(cls, task: str, dataset_name: str, selection_method: str, logger, local_model_name=None):
+    def _run_testsuite(cls,
+                       task: str,
+                       dataset_name: str,
+                       selection_method: str,
+                       logger,
+                       local_model_name=None):
         logger.print(f"***** TASK: {task} *****")
         cksum_vals = [
             os.path.basename(test_file).split("_")[-1].split(".")[0]
@@ -76,9 +81,51 @@ class Testmodel:
         # end for
         logger.print('**********')
         return
+
+    @classmethod
+    def _run_seed_testsuite(cls,
+                            task: str,
+                            dataset_name: str,
+                            selection_method: str,
+                            logger,
+                            local_model_name=None):
+        logger.print(f"***** TASK: {task} *****")
+        res_dir = Macros.result_dir/ f"seeds_{task}_{dataset}"
+        cksum_vals = [
+            os.path.basename(test_file).split("_")[-1].split(".")[0]
+            for test_file in os.listdir(res_dir)
+            if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
+        ]
+        for cksum_val in cksum_vals:
+            testsuite_file = res_dir / f"{task}_testsuite_seeds_{test_cksum}.pkl"
+            testsuite = cls.load_testsuite(testsuite_file)
+            if local_model_name is None:
+                # # Run Google nlp model
+                # print(f">>>>> MODEL: Google NLP model")
+                # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
+                # print(f"<<<<< MODEL: Google NLP model")
+                
+                for mname, model in Model.load_models(task):
+                    logger.print(f">>>>> MODEL: {mname}")
+                    Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples, logger=logger)
+                    logger.print(f"<<<<< MODEL: {mname}")
+                # end for
+            else:
+                logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
+                model = Model.load_local_model(task, local_model_name)
+                Model.run(testsuite, model, cls.model_func_map[task], logger=logger)
+                logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+            # end if
+        # end for
+        logger.print('**********')
+        return
     
     @classmethod
-    def _run_bl_testsuite(cls, task, bl_name, logger, local_model_name=None):
+    def _run_bl_testsuite(cls,
+                          task,
+                          bl_name,
+                          logger,
+                          local_model_name=None):
         logger.print(f"***** TASK: {task} *****")
         logger.print(f"***** Baseline: {bl_name} *****")
         testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
@@ -104,13 +151,33 @@ class Testmodel:
         return
 
     @classmethod
-    def run_testsuite(cls, task: str, dataset_name: str, selection_method: str, test_baseline: bool, logger, local_model_name: str = None):
+    def run_testsuite(cls,
+                      task: str,
+                      dataset_name: str,
+                      selection_method: str,
+                      test_baseline: bool,
+                      test_seed: bool,
+                      logger,
+                      local_model_name: str = None):
         # run models on checklist introduced testsuite format
         bl_name = None
         if test_baseline:
-            cls._run_bl_testsuite(task, "checklist", logger, local_model_name=local_model_name)
-        else:
-            cls._run_testsuite(task, dataset_name, selection_method, logger, local_model_name=local_model_name)
+            cls._run_bl_testsuite(task,
+                                  'checklist',
+                                  logger,
+                                  local_model_name=local_model_name)
+        elif test_baseline==False and test_seed:
+            cls._run_seed_testsuite(task,
+                                    dataset_name,
+                                    selection_method,
+                                    logger,
+                                    local_model_name=local_model_name)
+        elif test_baseline==False and test_seed==False:
+            cls._run_testsuite(task,
+                               dataset_name,
+                               selection_method,
+                               logger,
+                               local_model_name=local_model_name)
         # end if
         return
 
@@ -166,13 +233,25 @@ class Testmodel:
         # end if
         return
 
-    
-def main(task, dataset_name, selection_method, test_baseline, test_type, log_file, local_model_name=None):
+
+def main(task,
+         dataset_name,
+         selection_method,
+         test_baseline,
+         test_type,
+         log_file,
+         test_seed=False,
+         local_model_name=None):
     logger = Logger(logger_file=log_file,
                     logger_name='testmodel')
     test_result_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}"
     if local_model_name is None:
-        Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, logger)
+        Testmodel.run_testsuite(task,
+                                dataset_name,
+                                selection_method,
+                                test_baseline,
+                                test_seed,
+                                logger)
         if test_baseline:
             test_result_file = test_result_dir / 'test_results_checklist.txt'
         else:
@@ -186,7 +265,13 @@ def main(task, dataset_name, selection_method, test_baseline, test_type, log_fil
         #     Testmodel.run_on_diff_dataset(task, dataset_name, selection_method, test_type=test_type, logger=logger)
         # # end if
     else:
-        Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, logger, local_model_name=local_model_name)
+        Testmodel.run_testsuite(task,
+                                dataset_name,
+                                selection_method,
+                                test_baseline,
+                                test_seed,
+                                logger,
+                                local_model_name=local_model_name)
         if test_baseline:
             test_result_file = test_result_dir / 'test_results_checklist.txt'
         else:
@@ -201,6 +286,47 @@ def main(task, dataset_name, selection_method, test_baseline, test_type, log_fil
         # # end if
     # end if
     
+    return
+
+def main_seed(task,
+              dataset_name,
+              selection_method,
+              test_baseline,
+              log_file,
+              test_seed=True,
+              test_type=True,
+              local_model_name=None):
+    logger = Logger(logger_file=log_file,
+                    logger_name='testseed')
+    test_result_dir = Macros.result_dir/ f"seeds_{task}_{dataset}"
+    if local_model_name is None:
+        Testmodel.run_testsuite(task,
+                                dataset_name,
+                                selection_method,
+                                test_baseline,
+                                test_seed,
+                                logger)
+        if test_baseline:
+            test_result_file = test_result_dir / 'test_results_checklist.txt'
+        else:
+            test_result_file = test_result_dir / 'test_results.txt'
+        # end if
+        shutil.copyfile(log_file, test_result_file)
+    else:
+        Testmodel.run_testsuite(task,
+                                dataset_name,
+                                selection_method,
+                                test_baseline,
+                                test_seed,
+                                logger,
+                                local_model_name=local_model_name)
+        if test_baseline:
+            test_result_file = test_result_dir / 'test_results_checklist.txt'
+        else:
+            test_result_file = test_result_dir / 'test_results.txt'
+        # end if
+        shutil.copyfile(log_file, test_result_file)
+    # end if
     return
 
 
