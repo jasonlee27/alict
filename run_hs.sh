@@ -31,7 +31,7 @@ function gen_templates() {
 }
 
 function gen_testsuite() {
-        # write test cases into Checklist Testsuite format
+        # write test cases into hatexplain Testsuite format
         (cd ${_DIR}
          python -m python.hs.main \
                 --run testsuite \
@@ -47,16 +47,30 @@ function gen_testsuite() {
 function eval_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
-         # evaluating models on checklist testcases
+         # evaluating models on  our generated(hatexplain) testcases
          CUDA_VISIBLE_DEVICES=1,2 python -m python.hs.main \
                              --run testmodel \
-                             --test_baseline
-         
-         # evaluating models on our generated testcases
+                             --search_dataset hatexplain \
+                             --syntax_selection random
+         # evaluating models on hatecheck testcases (not expanded) as baseline
          # CUDA_VISIBLE_DEVICES=1,2 python -m python.hs.main \
          #                     --run testmodel \
-         #                     --search_dataset hatexplain \
-         #                     --syntax_selection random
+         #                     --test_baseline
+        )
+}
+
+function analyze_eval_models() {
+        (cd ${_DIR}
+         # evaluate NLP models with hatexplain expanded testsuites
+         python -m python.hs.main \
+                --run analyze \
+                --search_dataset hatexplain \
+                --syntax_selection random
+         # python -m python.hs.main \
+         #        --run analyze \
+         #        --search_dataset hatexplain \
+         #        --syntax_selection random \
+         #        --test_baseline
         )
 }
 
@@ -68,7 +82,8 @@ function main() {
         # gen_requirements # to generate test_type_hs.json and requirement_hs.json
         # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
         # gen_testsuite
-        eval_models
+        # eval_models
+        analyze_eval_models
 }
 
 # Please make sure you actiavte nlptest conda environment

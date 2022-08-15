@@ -60,10 +60,15 @@ function eval_models() {
          # CUDA_VISIBLE_DEVICES=6,7 time python -m python.sa.main --run testmodel --syntax_selection noselect
 
          # evaluating models on checklist expanded testcases
-         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
-                             --run testmodel \
-                             --search_dataset checklist \
-                             --syntax_selection random
+         # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
+         #                     --run testmodel \
+         #                     --search_dataset checklist \
+         #                     --syntax_selection random
+         # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
+         #                     --run testmodel \
+         #                     --search_dataset checklist \
+         #                     --syntax_selection random \
+         #                     --test_baseline
         )
 }
 
@@ -100,19 +105,30 @@ function eval_retrained_models() {
 }
 
 function analyze_eval_models() {
-        # evaluate NLP models with generated testsuites
         (cd ${_DIR}
+         # evaluate NLP models with generated testsuites
          # python -m python.sa.main \
          #        --run analyze \
          #        --search_dataset sst \
          #        --syntax_selection random
-         python -m python.sa.main \
-                --run analyze \
-                --search_dataset sst \
-                --syntax_selection random \
-                --test_baseline
+         # python -m python.sa.main \
+         #        --run analyze \
+         #        --search_dataset sst \
+         #        --syntax_selection random \
+         #        --test_baseline
          # python -m python.sa.main --run analyze --search_dataset sst --syntax_selection bertscore
          # python -m python.sa.main --run analyze --search_dataset sst --syntax_selection noselect
+
+         # evaluate NLP models with checklist expanded testsuites
+         python -m python.sa.main \
+                --run analyze \
+                --search_dataset checklist \
+                --syntax_selection random
+         python -m python.sa.main \
+                --run analyze \
+                --search_dataset checklist \
+                --syntax_selection random \
+                --test_baseline
         )
 }
 
@@ -232,7 +248,8 @@ function main_checklist() {
         # gen_requirements # to generate test_type_sa.json and requirement_sa.json
         # gen_templates # to generate templates_sa_{dataset_name}/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa_{dataset_name}/templates_exp_{cksum}.json and cfg_expanded_inputs_sa_{dataset_name}.json
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
-        eval_models # run testsuite.run on checklist expanded testsets
+        # eval_models # run testsuite.run on checklist expanded testsets
+        analyze_eval_models # to generate test_results_analysis.json and test_results_checklist_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json 
 }
 
 main_checklist
