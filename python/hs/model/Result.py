@@ -9,11 +9,21 @@ from scipy.stats import entropy
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from ..testsuite.Search import Hatecheck
 
 import os, re
 
 
 class Result:
+
+    @classmethod
+    def find_lc_desc(cls, short_desc):
+        for key, val in Hatecheck.FUNCTIONALITY_MAP.items():
+            if short_desc==val:
+                return key
+            # end if
+        # end for
+        return
 
     @classmethod
     def get_model_results_from_string(cls, result_str, model_name):
@@ -24,28 +34,28 @@ class Result:
         model_results = [m.strip() for m in p.findall(result_str)]
         return model_results
 
-    @classmethod
-    def get_model_checklist_results_from_string(cls, result_str, model_name):
-        p = re.compile(
-            f">>>>> MODEL: {model_name}(.*?)?\n<<<<< MODEL: {model_name}",
-            re.DOTALL
-        )
-        model_results_str = [m.strip() for m in p.findall(result_str)]
-        model_results = list()
-        for m in model_results_str[0].split('\n\n\n'):
-            pattern = '(.*?)?\nTest cases\:'
-            p = re.compile(pattern, re.DOTALL)
-            req_search = p.search(m)
-            lc = req_search.group(1).splitlines()[-1]
-            if lc in Macros.CHECKLIST_LC_LIST:
-                model_results.append({
-                    'lc': lc,
-                    'pass': cls.get_pass_sents_from_model_string(m),
-                    'fail': cls.get_fail_sents_from_model_string(m)
-                })
-            # end if
-        # end for
-        return model_results
+    # @classmethod
+    # def get_model_checklist_results_from_string(cls, result_str, model_name):
+    #     p = re.compile(
+    #         f">>>>> MODEL: {model_name}(.*?)?\n<<<<< MODEL: {model_name}",
+    #         re.DOTALL
+    #     )
+    #     model_results_str = [m.strip() for m in p.findall(result_str)]
+    #     model_results = list()
+    #     for m in model_results_str[0].split('\n\n\n'):
+    #         pattern = '(.*?)?\nTest cases\:'
+    #         p = re.compile(pattern, re.DOTALL)
+    #         req_search = p.search(m)
+    #         lc = req_search.group(1).splitlines()[-1]
+    #         if lc in Macros.CHECKLIST_LC_LIST:
+    #             model_results.append({
+    #                 'lc': lc,
+    #                 'pass': cls.get_pass_sents_from_model_string(m),
+    #                 'fail': cls.get_fail_sents_from_model_string(m)
+    #             })
+    #         # end if
+    #     # end for
+    #     return model_results
 
     @classmethod
     def get_requirement_from_string(cls, model_result_str, task):
@@ -61,16 +71,17 @@ class Result:
     def get_pass_sents_from_model_string(cls, model_result_str):
         result = list()
         for l in model_result_str.splitlines():
-            sent_search = re.search(r"DATA::PASS::(\d*\.?\d* \d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
+            sent_search = re.search(r"DATA::PASS::(\d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
             if sent_search:
                 sent = sent_search.group(4)
                 tokens = Utils.tokenize(sent)
                 sent = Utils.detokenize(tokens)
+                pred_prob = float(sent_search.group(1))
                 result.append({
                     'conf': sent_search.group(1),
                     'pred': sent_search.group(2),
                     'label': sent_search.group(3),
-                    'ent': str(round(entropy([float(p) for p in sent_search.group(1).split()], base=2), 5)),
+                    'ent': str(round(entropy([pred_prob, 1-pred_prob], base=2), 5)),
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
@@ -82,16 +93,17 @@ class Result:
     def get_fail_sents_from_model_string(cls, model_result_str):
         result = list()
         for l in model_result_str.splitlines():
-            sent_search = re.search(r"DATA::FAIL::(\d*\.?\d* \d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
+            sent_search = re.search(r"DATA::FAIL::(\d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
             if sent_search:
                 sent = sent_search.group(4)
                 tokens = Utils.tokenize(sent)
                 sent = Utils.detokenize(tokens)
+                pred_prob = float(sent_search.group(1))
                 result.append({
                     'conf': sent_search.group(1),
                     'pred': sent_search.group(2),
                     'label': sent_search.group(3),
-                    'ent': str(round(entropy([float(p) for p in sent_search.group(1).split()], base=2), 5)),
+                    'ent': str(round(entropy([pred_prob, 1-pred_prob], base=2), 5)),
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
@@ -112,48 +124,31 @@ class Result:
         results = list()
         model_results = cls.get_model_results_from_string(result_str, model_name)
         for r in model_results:
-            sent_type, req = cls.get_requirement_from_string(r, task)
+            sent_type, lc = cls.get_requirement_from_string(r, task)
+            lc_desc = cls.find_lc_desc(lc)
             results.append({
                 'sent_type': sent_type,
-                'req': req,
+                'req': lc,
+                'lc_desc': lc_desc,
                 'pass': cls.get_pass_sents_from_model_string(r),
                 'fail': cls.get_fail_sents_from_model_string(r)
             })
         # end for
         return results
-
+    
     @classmethod
-    def parse_model_on_checklist_results(cls, result_str, model_name, task):
+    def parse_model_on_hatecheck_results(cls, result_str, model_name, task):
         results = list()
-        model_results = cls.get_model_checklist_results_from_string(result_str, model_name)
-        temp_dict = dict()
+        model_results = cls.get_model_results_from_string(result_str, model_name)
         for r in model_results:
-            if r['lc'] in Macros.CHECKLIST_LC_LIST[8:10]:
-                lc = Macros.LC_MAP[str(Macros.CHECKLIST_LC_LIST[8:10])]
-                print(lc)
-                if lc not in temp_dict.keys():
-                    temp_dict[lc] = {
-                        'req': lc,
-                        'pass': r['pass'],
-                        'fail': r['fail']
-                    }
-                else:
-                    temp_dict[lc]['pass'].extend(r['pass'])
-                    temp_dict[lc]['fail'].extend(r['fail'])
-                    results.append({
-                        'req': lc,
-                        'pass': temp_dict[lc]['pass'],
-                        'fail': temp_dict[lc]['fail']
-                    })
-                # end if
-            else:
-                lc = Macros.LC_MAP[r['lc']]
-                results.append({
-                    'req': lc,
-                    'pass': r['pass'],
-                    'fail': r['fail']
-                })
-            # end if
+            sent_type, lc = cls.get_requirement_from_string(r, task)
+            lc_desc = cls.find_lc_desc(lc)
+            results.append({
+                'req': lc,
+                'lc_desc': lc_desc,
+                'pass': cls.get_pass_sents_from_model_string(r),
+                'fail': cls.get_fail_sents_from_model_string(r)
+            })
         # end for
         return results
 
@@ -171,12 +166,12 @@ class Result:
         # end with
 
     @classmethod
-    def parse_checklist_results(cls, result_file, model_name_file):
+    def parse_hatecheck_results(cls, result_file, model_name_file):
         with open(result_file, "r") as f:
             line = f.read()
             task = cls.get_task_from_result_str(line)
             return {
-                model.strip(): cls.parse_model_on_checklist_results(
+                model.strip(): cls.parse_model_on_hatecheck_results(
                     line, model.strip(), task
                 )
                 for model in Utils.read_txt(model_name_file)
@@ -207,14 +202,17 @@ class Result:
         return seed_exp_map
 
     @classmethod
-    def analyze_model_checklist(cls, model_results):
+    def analyze_model_hatecheck(cls, model_results):
         reqs = sorted(set([r['req'] for r in model_results]))
         results = list()
-        for r in reqs:
-            testcases = [mr for mr in model_results if mr['req']==r]
-            result = {'req': r, 'is_exps_exist': False}
-            tcs_pass = testcases[0]['pass']
-            tcs_fail = testcases[0]['fail']
+        for r in model_results:
+            result = {
+                'req': r['req'],
+                'lc_desc': r['lc_desc'],
+                'is_exps_exist': False
+            }
+            tcs_pass = r['pass']
+            tcs_fail = r['fail']
             result['num_tcs'] = len(tcs_pass)+len(tcs_fail)
             result['num_tc_fail'] = len(tcs_fail)
             results.append(result)
@@ -418,13 +416,13 @@ class Result:
         return results
     
     @classmethod
-    def analyze_checklist(cls, result_file, model_name_file, saveto):
+    def analyze_hatecheck(cls, result_file, model_name_file, saveto):
         # result_file: Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results_checklist.txt'
-        result_dict = cls.parse_checklist_results(result_file, model_name_file)
+        result_dict = cls.parse_hatecheck_results(result_file, model_name_file)
         results = dict()
         for model in result_dict.keys():
             model_result = result_dict[model]
-            results[model] = cls.analyze_model_checklist(model_result)
+            results[model] = cls.analyze_model_hatecheck(model_result)
         # end for
         Utils.write_json(results, saveto, pretty_format=True)
         return results

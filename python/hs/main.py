@@ -14,7 +14,7 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
-                        'requirement', 'template', 'testsuite', 'testmodel'
+                        'requirement', 'template', 'testsuite', 'testmodel', 'analyze'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='hs',
                     choices=['hs'],
@@ -29,7 +29,7 @@ parser.add_argument('--syntax_selection', type=str, default='random',
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
 parser.add_argument('--test_baseline', action='store_true',
-                    help='test models on running baseline (checklist) test cases')
+                    help='test models on running baseline (hatecheck) test cases')
 
 args = parser.parse_args()
 def run_requirements():
@@ -93,6 +93,33 @@ def run_testmodel():
     )
     return
 
+def run_analyze():
+    from .model.Result import Result
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    test_baseline = args.test_baseline
+    if test_baseline:
+        result_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results_hatecheck.txt'
+        save_to = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_hatecheck_analysis.json'
+        Result.analyze_hatecheck(
+            result_file,
+            Macros.hs_models_file,
+            save_to
+        )
+    else:
+        result_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results.txt'
+        template_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
+        save_to = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_analysis.json'
+        Result.analyze(
+            result_file,
+            Macros.hs_models_file,
+            template_file,
+            save_to
+        )
+    # end if
+    return
+
 
 func_map = {
     "hs": {
@@ -100,6 +127,7 @@ func_map = {
         'template': run_templates,
         'testsuite': run_testsuites,
         'testmodel': run_testmodel,
+        'analyze': run_analyze
     }
 }
 
