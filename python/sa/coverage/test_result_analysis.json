@@ -1,0 +1,2721 @@
+{
+    "textattack/bert-base-uncased-SST-2": [
+        {
+            "req": "Negated positive with neutral content in the middle",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 45,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "I wouldn't say, given If you're looking for a tale of Brits behaving badly, watch Snatch again., Any movie that makes hard work seem heroic deserves a look.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.7 0.0 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "I wouldn't say, given even If you're looking for a tale of Brits behaving badly, watch Snatch again., Any movie that makes hard work seem heroic deserves a look.",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.0 0.9 0.1"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "I wouldn't say, given The main problem being that it's only a peek., Quietly engaging.",
+                        "pred": "2",
+                        "label": "0",
+                        "conf": "0.0 0.0 1.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I wouldn't say, given The main problem being that it's only a peek ., or Quietly engaging.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I don't agree with, given The main problem being that it's only a peek., Has a lot of the virtues of Eastwood at his best.",
+                        "pred": "2",
+                        "label": "0",
+                        "conf": "0.1 0.0 0.9"
+                    },
+                    "to": [
+                        {
+                            "sent": "I don't agree with, given The main problem being that it's only a peek., Has a lot none of the virtues of Eastwood at his best.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 146,
+            "num_exp_fail": 100,
+            "num_pass2fail": 1,
+            "num_fail2pass": 2
+        },
+        {
+            "req": "Negated neutral should still be neutral",
+            "is_exps_exist": true,
+            "num_seeds": 24,
+            "num_seed_fail": 22,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                        "pred": "1",
+                        "label": "1",
+                        "conf": "0.0 1.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This commercial is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a perfect sales tool.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.0 0.0 1.0"
+                        },
+                        {
+                            "sent": "This is not a picture that Maik, the firebrand turned savvy ad man, would be more envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.1 0.0 0.9"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not a nervy, risky film, and Villeneuve has inspired Croze to give herself over completely to the tormented persona of Bibi.",
+                        "pred": "1",
+                        "label": "1",
+                        "conf": "0.1 0.9 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not a nervy, risky film, and Villeneuve has inspired Croze to give herself over completely to the tormented female persona of Bibi.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.3 0.0 0.7"
+                        },
+                        {
+                            "sent": "This is not a nervy, risky film, and Villeneuve has inspired Croze to give herself over over completely to the tormented persona of Bibi.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "This is not an hour and a half of daydreaming.",
+                        "pred": "0",
+                        "label": "1",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not an hour and a half of idle daydreaming.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.5 0.5"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not SO De Palma.",
+                        "pred": "0",
+                        "label": "1",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This guy is not SO De Palma.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.8 0.2"
+                        },
+                        {
+                            "sent": "This president is not SO De Palma.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.7 0.3"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 117,
+            "num_exp_fail": 100,
+            "num_pass2fail": 5,
+            "num_fail2pass": 3
+        },
+        {
+            "req": "Negation of negative at the end, should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 50,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 100,
+            "num_exp_fail": 100,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Short sentences with sentiment-laden adjectives",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 1,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "This movie is maddening.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This movie is maddening funny.",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.0 0.0 1.0"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "Sushi for the connoisseurs of the macabre.",
+                        "pred": "2",
+                        "label": "0",
+                        "conf": "0.1 0.0 0.9"
+                    },
+                    "to": [
+                        {
+                            "sent": "Sushi for the connoisseurs of the word macabre.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 104,
+            "num_exp_fail": 4,
+            "num_pass2fail": 1,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Parsing negative sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 49,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 100,
+            "num_exp_fail": 100,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "parsing sentiment in (question, yes) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 5,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Do I think that \" Behind the snow games and lovable Siberian huskies (plus one sheep dog), the picture hosts a parka-wrapped dose of heart . \"? yes",
+                        "pred": "2",
+                        "label": "2",
+                        "conf": "0.3 0.0 0.7"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that in \" Behind the snow games and lovable Siberian huskies (plus one sheep dog), the picture hosts a parka-wrapped dose of heart . \"? yes",
+                            "pred": "0",
+                            "label": "2",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" Everybody loves a David and Goliath story, and this one is told almost entirely from David's point of view . \"? yes",
+                        "pred": "2",
+                        "label": "2",
+                        "conf": "0.3 0.0 0.7"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" Everybody loves even a David and Goliath story, and this one is told almost entirely from David's point of view . \"? yes",
+                            "pred": "0",
+                            "label": "2",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers winning performances and some effecting moments . \"? yes",
+                        "pred": "2",
+                        "label": "2",
+                        "conf": "0.0 0.0 1.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers few winning performances and some effecting moments . \"? yes",
+                            "pred": "0",
+                            "label": "2",
+                            "conf": "0.8 0.0 0.2"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I agree that \" Opera on film is never satisfactory . \"? yes",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I agree that \" Opera on film is never more satisfactory . \"? yes",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.0 0.0 1.0"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "Do I think that \" A sad, superior human comedy played out on the back roads of life . \"? yes",
+                        "pred": "1",
+                        "label": "2",
+                        "conf": "0.0 1.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" or A sad, superior human comedy played out on the back roads of life . \"? yes",
+                            "pred": "2",
+                            "label": "2",
+                            "conf": "0.3 0.0 0.7"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 181,
+            "num_exp_fail": 81,
+            "num_pass2fail": 4,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Parsing positive sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 29,
+            "pass->fail": [],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "Do I agree that \" There's enough science to make it count as educational, and enough beauty to make it unforgettable . \"? no",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 0.6 0.4"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I agree that \" There's enough science to make it even count as educational, and enough beauty to make it unforgettable . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" This deeply spiritual film taps into the meaning and consolation in afterlife communications . \"? no",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 0.9 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" This deeply spiritual film taps into the meaning and consolation in afterlife radio communications . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I think that \" This deeply spiritual film taps back into the meaning and consolation in afterlife communications . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" Everyone's insecure in Lovely and Amazing, a poignant and wryly amusing film about mothers, daughters and their relationships . \"? no",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 0.8 0.2"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" Everyone here's insecure in Lovely and Amazing, a poignant and wryly amusing film about mothers, daughters and their relationships . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I think that \" Everyone's more insecure in Lovely and Amazing, a poignant and wryly amusing film about mothers, daughters and their relationships . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" The cast is uniformly excellent and relaxed . \"? no",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 1.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" at The cast is uniformly excellent and relaxed . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" Though in some ways similar to Catherine Breillat's Fat Girl, Rain is the far superior film . \"? no",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 0.9 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" Though in some ways similar to Catherine Breillat's Fat Girl, Rain is the far longer superior film . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" Try as you might to scrutinize the ethics of Kaufman's approach, somehow it all comes together to create a very compelling, sensitive, intelligent and almost cohesive piece of film entertainment . \"? no",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 1.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" Try as you might to scrutinize the ethics of Kaufman's approach, somehow it all comes together to create a single very compelling, sensitive, intelligent and almost cohesive piece of film entertainment . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I agree that \" One of those unassuming films that sneaks up on you and stays with you long after you have left the theatre . \"? no",
+                        "pred": "2",
+                        "label": "0",
+                        "conf": "0.3 0.0 0.7"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I agree that \" One minute of those unassuming films that sneaks up on you and stays with you long after you have left the theatre . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 0,
+            "num_fail2pass": 9
+        },
+        {
+            "req": "Sentiment change over time, present should prevail",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 16,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "I liked it much as to say that \" A taut, sobering film . \", on the other hand now I don't like it.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.7 0.0 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "I liked it much as to say that \" A taut, sobering film . \", on at the other hand now I don't like it.",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.3 0.0 0.7"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "I liked it much as to say that \" It challenges, this nervy oddity, like modern art should . \", although now I don't like it.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.4 0.6 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I liked it as much as to say that \" It challenges, this nervy oddity, like modern art should . \", although now I don't like it.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I liked it much as to say that \" Even if the Naipaul original remains the real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                        "pred": "2",
+                        "label": "0",
+                        "conf": "0.3 0.0 0.7"
+                    },
+                    "to": [
+                        {
+                            "sent": "I even liked it much as to say that \" Even if the Naipaul original remains the real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I liked it much as to say that \" The screenplay never lets us forget that Bourne was once an amoral assassin just like the ones who are pursuing him ... There is never really a true \" us \" versus \" them \" . \", although now I hate it.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.1 0.9 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I liked it so much as to say that \" The screenplay never lets us forget that Bourne was once an amoral assassin just like the ones who are pursuing him ... There is never really a true \" us \" versus \" them \" . \", although now I hate it.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "I liked it much as to say that \" The screenplay never lets us forget now that Bourne was once an amoral assassin just like the ones who are pursuing him ... There is never really a true \" us \" versus \" them \" . \", although now I hate it.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 1,
+            "num_fail2pass": 4
+        },
+        {
+            "req": "Author sentiment is more important than of others",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 16,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Many people agree with that \" Without September 11, Collateral Damage would have been just another bad movie . \", but I think that \" It never quite makes it to the boiling point, but manages to sustain a good simmer for most of its running time . \"",
+                        "pred": "2",
+                        "label": "2",
+                        "conf": "0.3 0.0 0.7"
+                    },
+                    "to": [
+                        {
+                            "sent": "Many people agree with that \" Without September 11, Collateral Damage would have been just another bad movie . \", but I think that \" It never quite makes it to the boiling point, but manages to sustain even a good simmer for most of its running time . \"",
+                            "pred": "0",
+                            "label": "2",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [],
+            "num_exps": 162,
+            "num_exp_fail": 62,
+            "num_pass2fail": 1,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Negated negative should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 45,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "This is not a truly, truly bad movie.",
+                        "pred": "2",
+                        "label": "None",
+                        "conf": "0.1 0.0 0.9"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not a great truly, truly bad movie.",
+                            "pred": "0",
+                            "label": "None",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not an exercise not in biography but in hero worship.",
+                        "pred": "2",
+                        "label": "None",
+                        "conf": "0.1 0.0 0.9"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not an intellectual exercise not in biography but in hero worship.",
+                            "pred": "0",
+                            "label": "None",
+                            "conf": "0.9 0.0 0.1"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "This is not a fragmented film, once a good idea that was followed by the bad idea to turn it into a movie.",
+                        "pred": "0",
+                        "label": "None",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not a fragmented film, once a good idea that was followed by the bad idea to turn it into a great movie.",
+                            "pred": "2",
+                            "label": "None",
+                            "conf": "0.3 0.0 0.7"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not cruel, misanthropic stuff with only weak claims to surrealism and black comedy.",
+                        "pred": "0",
+                        "label": "None",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not cruel, misanthropic stuff with only weak claims back to surrealism and black comedy.",
+                            "pred": "1",
+                            "label": "None",
+                            "conf": "0.5 0.5 0.0"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 135,
+            "num_exp_fail": 100,
+            "num_pass2fail": 2,
+            "num_fail2pass": 2
+        },
+        {
+            "req": "Short sentences with neutral adjectives and nouns",
+            "is_exps_exist": true,
+            "num_seeds": 20,
+            "num_seed_fail": 16,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Pumpkin wants to have it both ways.",
+                        "pred": "1",
+                        "label": "1",
+                        "conf": "0.0 0.5 0.5"
+                    },
+                    "to": [
+                        {
+                            "sent": "Pumpkin wants to have it snow both ways.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "1.0 0.0 0.0"
+                        },
+                        {
+                            "sent": "Pumpkin wants to have it swing both ways.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.1 0.0 0.9"
+                        },
+                        {
+                            "sent": "Pumpkin wants to have it rain both ways.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "Pumpkin wants to have it both ways tonight.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.2 0.0 0.8"
+                        },
+                        {
+                            "sent": "Pumpkin wants to have it both two ways.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.3 0.0 0.7"
+                        },
+                        {
+                            "sent": "Pumpkin wants to have it both three ways.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.2 0.0 0.8"
+                        },
+                        {
+                            "sent": "Pumpkin wants to have it both four ways.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.1 0.0 0.9"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Or both.",
+                        "pred": "1",
+                        "label": "1",
+                        "conf": "0.0 0.7 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "Or both things.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.3 0.0 0.7"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "` Snow Dogs' has both.",
+                        "pred": "1",
+                        "label": "1",
+                        "conf": "0.0 0.5 0.5"
+                    },
+                    "to": [
+                        {
+                            "sent": "n ` Snow Dogs' has both.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "or ` Snow Dogs' has both.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "` Snow Dogs' has both hands.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.2 0.0 0.8"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "Here's my advice, Kev.",
+                        "pred": "2",
+                        "label": "1",
+                        "conf": "0.1 0.0 0.9"
+                    },
+                    "to": [
+                        {
+                            "sent": "Here in's my advice, Kev.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.6 0.4"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 58,
+            "num_exp_fail": 56,
+            "num_pass2fail": 11,
+            "num_fail2pass": 1
+        }
+    ],
+    "textattack/roberta-base-SST-2": [
+        {
+            "req": "Negated positive with neutral content in the middle",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 34,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "I don't agree with, given If you're looking for a tale of Brits behaving badly, watch Snatch again., Ryan Gosling ... is at 22 a powerful young actor.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.7 0.0 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "I don't agree with, given If you're looking for a tale short of Brits behaving badly, watch Snatch again., Ryan Gosling ... is at 22 a powerful young actor.",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.3 0.7 0.0"
+                        },
+                        {
+                            "sent": "I don't agree with, given If you're looking for a tale of Brits behaving badly now, watch Snatch again., Ryan Gosling ... is at 22 a powerful young actor.",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.5 0.5 0.0"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "I don't agree with, given If you're looking for a tale of Brits behaving badly, watch Snatch again., It's good to see Michael Caine whipping out the dirty words and punching people in the stomach again.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.4 0.6 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I don't agree with, given If you're looking for a tale full of Brits behaving badly, watch Snatch again., It's good to see Michael Caine whipping out the dirty words and punching people in the stomach again.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I wouldn't say, given The main problem being that it's only a peek., Quietly engaging.",
+                        "pred": "2",
+                        "label": "0",
+                        "conf": "0.3 0.0 0.7"
+                    },
+                    "to": [
+                        {
+                            "sent": "I wouldn't say, given The main problem being that while it's only a peek., Quietly engaging.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "I wouldn't say, given The main problem being that while it's only a peek., Quietly engaging.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "I wouldn't say, given The main problem being that it's only a peek., Quietly more engaging.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I don't agree with, given If you're looking for a tale of Brits behaving badly, watch Snatch again., Munch's screenplay is tenderly observant of his characters.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.4 0.6 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I don't agree with, given If you're looking for a tale full of Brits behaving badly, watch Snatch again., Munch's screenplay is tenderly observant of his characters.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "I don't agree with, given now If you're looking for a tale of Brits behaving badly, watch Snatch again., Munch's screenplay is tenderly observant of his characters.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I wouldn't say, given If you're looking for a tale of Brits behaving badly, watch Snatch again., Any movie that makes hard work seem heroic deserves a look.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.1 0.9 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I wouldn't say, given If you're looking for a tale of Brits behaving badly, watch Snatch again., Any movie that makes hard work seem heroic deserves even a look.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "I wouldn't say, given If you're looking for a tale of Brits behaving badly, watch Snatch again., Any movie that makes hard work seem more heroic deserves a look.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I do not think, given It's actually too sincere -- the crime movie equivalent of a chick flick., If you're not, you'll still have a good time . \"",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 1.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "or I do not think, given It's actually too sincere -- the crime movie equivalent of a chick flick ., If you're not, you'll still have a good time . \"",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I wouldn't say, given The main problem being that it's only a peek., After seeing ` Analyze That ,' I feel better already.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.4 0.6 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I wouldn't say, given The main problem being that it there's only a peek., After seeing ` Analyze That ,' I feel better already.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "I wouldn't say, given The main technical problem being that it's only a peek., After seeing ` Analyze That ,' I feel better already.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "I wouldn't say, given The main problem being that it's only a small peek., After seeing ` Analyze That ,' I feel better already.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "I wouldn't say, given The main problem being that it's only a short peek., After seeing ` Analyze That ,' I feel better already.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "I wouldn't say, given The main problem being that tho it's only a peek., After seeing ` Analyze That ,' I feel better already.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 2,
+            "num_fail2pass": 14
+        },
+        {
+            "req": "Negated neutral should still be neutral",
+            "is_exps_exist": true,
+            "num_seeds": 24,
+            "num_seed_fail": 22,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                        "pred": "1",
+                        "label": "1",
+                        "conf": "0.4 0.6 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This graphic is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "This is not a perfect picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "This is not a revolutionary picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "1.0 0.0 0.0"
+                        },
+                        {
+                            "sent": "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a perfect sales tool.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.1 0.0 0.9"
+                        },
+                        {
+                            "sent": "This is not a picture that Maik, the firebrand turned savvy ad man, would even be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns even it into a sales tool.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.3 0.0 0.7"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "This is not a good movie in spurts, but when it doesn't work, it's at important times.",
+                        "pred": "0",
+                        "label": "1",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not a good movie in spurts, but when it doesn't work, it's there at important times.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.5 0.5 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "That is not made almost impossible by events that set the plot in motion.",
+                        "pred": "2",
+                        "label": "1",
+                        "conf": "0.1 0.0 0.9"
+                    },
+                    "to": [
+                        {
+                            "sent": "or That is not made almost impossible by events that set the plot in motion.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.8 0.2"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not really just another genre picture.",
+                        "pred": "0",
+                        "label": "1",
+                        "conf": "0.8 0.0 0.2"
+                    },
+                    "to": [
+                        {
+                            "sent": "n This is not really just another genre picture.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.2 0.8 0.0"
+                        },
+                        {
+                            "sent": "This is not really in just another genre picture.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.3 0.7 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is notn't a retooled genre piece, the tale of a guy and his gun, but an amiably idiosyncratic work.",
+                        "pred": "2",
+                        "label": "1",
+                        "conf": "0.0 0.0 1.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is notn't a retooled genre piece, the tale of a guy and his gun, but an old amiably idiosyncratic work.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.2 0.8 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not nothing but familiar territory.",
+                        "pred": "2",
+                        "label": "1",
+                        "conf": "0.3 0.0 0.7"
+                    },
+                    "to": [
+                        {
+                            "sent": "n This is not nothing but familiar territory.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 1.0 0.0"
+                        },
+                        {
+                            "sent": "This is not nothing but familiar territory folks.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 1.0 0.0"
+                        },
+                        {
+                            "sent": "This is not nothing but familiar familiar territory.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.3 0.7 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not an hour and a half of daydreaming.",
+                        "pred": "0",
+                        "label": "1",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "This book is not an hour and a half of daydreaming.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.1 0.9 0.0"
+                        },
+                        {
+                            "sent": "This chapter is not an hour and a half of daydreaming.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.3 0.7 0.0"
+                        },
+                        {
+                            "sent": "This series is not an hour and a half of daydreaming.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.7 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not NOT a retread of \" Dead Poets' Society . \"",
+                        "pred": "0",
+                        "label": "1",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "This book is not NOT a retread of \" Dead Poets' Society . \"",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.8 0.2"
+                        },
+                        {
+                            "sent": "This is not NOT a retread version of \" Dead Poets' Society . \"",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.6 0.4"
+                        },
+                        {
+                            "sent": "This is not NOT a retread post of \" Dead Poets' Society . \"",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.7 0.3"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 125,
+            "num_exp_fail": 100,
+            "num_pass2fail": 6,
+            "num_fail2pass": 14
+        },
+        {
+            "req": "Negation of negative at the end, should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 50,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 100,
+            "num_exp_fail": 100,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Short sentences with sentiment-laden adjectives",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 2,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Undoubtedly the scariest movie ever made about tattoos.",
+                        "pred": "2",
+                        "label": "2",
+                        "conf": "0.2 0.0 0.8"
+                    },
+                    "to": [
+                        {
+                            "sent": "Undoubtedly in the scariest movie ever made about tattoos.",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.0 0.8 0.2"
+                        },
+                        {
+                            "sent": "Undoubtedly the scariest movie people ever made about tattoos.",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.2 0.8 0.0"
+                        },
+                        {
+                            "sent": "Undoubtedly the scariest movie poster ever made about tattoos.",
+                            "pred": "0",
+                            "label": "2",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Undoubtedly the scariest movie trailer ever made about tattoos.",
+                            "pred": "0",
+                            "label": "2",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "Undoubtedly the scariest movie franchise ever made about tattoos.",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.0 0.6 0.4"
+                        },
+                        {
+                            "sent": "Undoubtedly the seventh scariest movie ever made about tattoos.",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.5 0.5 0.0"
+                        },
+                        {
+                            "sent": "Undoubtedly the scariest movie ever made about facial tattoos.",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.0 0.8 0.2"
+                        },
+                        {
+                            "sent": "Undoubtedly the scariest movie ever made about racist tattoos.",
+                            "pred": "0",
+                            "label": "2",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "Undoubtedly the scariest movie ever made about vampire tattoos.",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.0 0.8 0.2"
+                        },
+                        {
+                            "sent": "Undoubtedly the scariest movie ever made about gorilla tattoos.",
+                            "pred": "0",
+                            "label": "2",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This movie is maddening.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This movie is maddening funny.",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.0 0.0 1.0"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "Sushi for the connoisseurs of the macabre.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 0.7 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "Sushi for the connoisseurs of the word macabre.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 114,
+            "num_exp_fail": 14,
+            "num_pass2fail": 11,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Parsing negative sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 50,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 100,
+            "num_exp_fail": 100,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "parsing sentiment in (question, yes) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 1,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers winning performances and some effecting moments . \"? yes",
+                        "pred": "2",
+                        "label": "2",
+                        "conf": "0.0 0.0 1.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers few winning performances and some effecting moments . \"? yes",
+                            "pred": "0",
+                            "label": "2",
+                            "conf": "0.9 0.0 0.1"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" Maybe it's asking too much, but if a movie is truly going to inspire me, I want a little more than this . \"? yes",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.8 0.0 0.2"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" Maybe it's asking too much, but if a great movie is truly going to inspire me, I want a little more than this . \"? yes",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.4 0.6 0.0"
+                        },
+                        {
+                            "sent": "Do I think that \" Maybe it's asking too much, but if a movie is truly going to inspire me, I want even a little more than this . \"? yes",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.0 0.8 0.2"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I agree that \" Opera on film is never satisfactory . \"? yes",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I agree that \" Opera on film is never more satisfactory . \"? yes",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.2 0.0 0.8"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" A sad, superior human comedy played out on the back roads of life . \"? yes",
+                        "pred": "2",
+                        "label": "2",
+                        "conf": "0.0 0.0 1.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" A sad, superior human comedy played out on the back roads end of life . \"? yes",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.0 0.6 0.4"
+                        },
+                        {
+                            "sent": "Do I think that \" A sad, superior human comedy played out on the back roads of public life . \"? yes",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.0 0.6 0.4"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [],
+            "num_exps": 116,
+            "num_exp_fail": 16,
+            "num_pass2fail": 6,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Parsing positive sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 36,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama that tries to tell of the unspeakable . \"? no",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.7 0.0 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama film that tries to tell of the unspeakable . \"? no",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.5 0.5 0.0"
+                        },
+                        {
+                            "sent": "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama movie that tries to tell of the unspeakable . \"? no",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.5 0.5 0.0"
+                        },
+                        {
+                            "sent": "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama film that tries to tell of the unspeakable . \"? no",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.5 0.5 0.0"
+                        },
+                        {
+                            "sent": "Do I agree that \" True tale of courage--and complicity -- at Auschwitz is a harrowing drama movie that tries to tell of the unspeakable . \"? no",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.5 0.5 0.0"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "Do I agree that \" Thumbs up to Paxton for not falling into the Hollywood trap and making a vanity project with nothing new to offer . \"? no",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.3 0.7 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I agree that \" Thumbs up here to Paxton for not falling into the Hollywood trap and making a vanity project with nothing new to offer . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I agree that \" Thumbs up there to Paxton for not falling into the Hollywood trap and making a vanity project with nothing new to offer . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I agree that \" Thumbs up to Paxton now for not falling into the Hollywood trap and making a vanity project with nothing new to offer . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" ... could easily be called the best Korean film of 2002 . \"? no",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.4 0.6 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" ... could easily even be called the best Korean film of 2002 . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I think that \" ... could easily even be called the best Korean film of 2002 . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I think that \" ... could as easily be called the best Korean film of 2002 . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I think that \" ... could easily be called the best Korean film single of 2002 . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I agree that \" But it could be, by its art and heart, a necessary one . \"? no",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 0.9 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I agree that \" But it could be, by its art and heart, a mere necessary one . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" The overall effect is awe and affection -- and a strange urge to get on a board and, uh, shred, dude . \"? no",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.5 0.5 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" The overall net effect is awe and affection -- and a strange urge to get on a board and, uh, shred, dude . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I think that \" The overall end effect is awe and affection -- and a strange urge to get on a board and, uh, shred, dude . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "Do I think that \" The overall movie effect is awe and affection -- and a strange urge to get on a board and, uh, shred, dude . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "Do I think that \" The overall effect is awe and affection -- and a strange urge to get on a message board and, uh, shred, dude . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "Do I think that \" The overall effect is awe and affection -- and a strange urge to get on a poster board and, uh, shred, dude . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "Do I think that \" The overall effect is awe and affection -- and a strange urge to get on a board board and, uh, shred, dude . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I think that \" The overall effect is awe and affection -- and a strange urge to get on a pirate board and, uh, shred, dude . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "Do I think that \" The overall effect is awe and affection -- and a strange urge to get over on a board and, uh, shred, dude . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I think that \" The overall effect is awe and affection -- and a strange urge to get behind on a board and, uh, shred, dude . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "Do I think that \" The overall effect is awe and affection -- and a strange urge to get straight on a board and, uh, shred, dude . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 4,
+            "num_fail2pass": 18
+        },
+        {
+            "req": "Sentiment change over time, present should prevail",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 27,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Last time, I agreed with saying that \" It's predictable, but it jumps through the expected hoops with style and even some depth . \", although now I hate it.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.7 0.0 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "Last full time, I agreed with saying that \" It's predictable, but it jumps through the expected hoops with style and even some depth . \", although now I hate it.",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.4 0.6 0.0"
+                        },
+                        {
+                            "sent": "Last time, I agreed with saying that \" It's predictable, but it jumps clean through the expected hoops with style and even some depth . \", although now I hate it.",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.3 0.7 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Last time, I didn't like it saying that \" Why \" they \" were here and what \" they \" wanted and quite honestly, I didn't care . \", but now I like it.",
+                        "pred": "2",
+                        "label": "2",
+                        "conf": "0.3 0.0 0.7"
+                    },
+                    "to": [
+                        {
+                            "sent": "Last time, I didn't like in it saying that \" Why \" they \" were here and what \" they \" wanted and quite honestly, I didn't care . \", but now I like it.",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.0 0.8 0.2"
+                        },
+                        {
+                            "sent": "Last time, I didn't like it saying that \" Why so \" they \" were here and what \" they \" wanted and quite honestly, I didn't care . \", but now I like it.",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.0 0.5 0.5"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "I liked it much as to say that \" Even if the Naipaul original remains the real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.4 0.6 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I liked it much as to say that \" Even if the Naipaul epic original remains the real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "I liked it much as to say that \" Even if the Naipaul comic original remains the real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "I liked it much as to say that \" Even if the Naipaul original remains the ultimate real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "I liked it much as to say that \" Even if the Naipaul original remains the single real masterpiece, the movie possesses its own languorous charm . \", although now I hate it.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "I liked it much as to say that \" Even if the Naipaul original remains the real masterpiece, the current movie possesses its own languorous charm . \", although now I hate it.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I used to disagree with saying that \" It made me realize that we really haven't had a good cheesy B-movie playing in theaters since...well ... since last week's Reign of Fire . \", on the other hand now I like it.",
+                        "pred": "1",
+                        "label": "2",
+                        "conf": "0.0 0.9 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "I used to disagree with saying that \" It made me realize that while we really haven't had a good cheesy B-movie playing in theaters since...well ... since last week's Reign of Fire . \", on the other hand now I like it.",
+                            "pred": "2",
+                            "label": "2",
+                            "conf": "0.2 0.0 0.8"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 4,
+            "num_fail2pass": 6
+        },
+        {
+            "req": "Author sentiment is more important than of others",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 14,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 169,
+            "num_exp_fail": 69,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Negated negative should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 45,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "This is not a truly, truly bad movie.",
+                        "pred": "2",
+                        "label": "None",
+                        "conf": "0.0 0.0 1.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not a normal truly, truly bad movie.",
+                            "pred": "0",
+                            "label": "None",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not a shameless sham, calculated to cash in on the popularity of its stars.",
+                        "pred": "2",
+                        "label": "None",
+                        "conf": "0.3 0.0 0.7"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not a mere shameless sham, calculated to cash in on the popularity of its stars.",
+                            "pred": "0",
+                            "label": "None",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "This is not rote drivel aimed at Mom and Dad's wallet.",
+                        "pred": "0",
+                        "label": "None",
+                        "conf": "0.8 0.0 0.2"
+                    },
+                    "to": [
+                        {
+                            "sent": "This paper is not rote drivel aimed at Mom and Dad's wallet.",
+                            "pred": "1",
+                            "label": "None",
+                            "conf": "0.3 0.7 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not one baaaaaaaaad movie.",
+                        "pred": "0",
+                        "label": "None",
+                        "conf": "0.7 0.0 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "This movie is not one baaaaaaaaad movie.",
+                            "pred": "1",
+                            "label": "None",
+                            "conf": "0.0 0.5 0.5"
+                        },
+                        {
+                            "sent": "This film is not one baaaaaaaaad movie.",
+                            "pred": "2",
+                            "label": "None",
+                            "conf": "0.3 0.0 0.7"
+                        },
+                        {
+                            "sent": "This series is not one baaaaaaaaad movie.",
+                            "pred": "2",
+                            "label": "None",
+                            "conf": "0.2 0.0 0.8"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not not an easy film.",
+                        "pred": "0",
+                        "label": "None",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not not an ordinary easy film.",
+                            "pred": "1",
+                            "label": "None",
+                            "conf": "0.0 0.9 0.1"
+                        },
+                        {
+                            "sent": "This is not not an average easy film.",
+                            "pred": "1",
+                            "label": "None",
+                            "conf": "0.4 0.6 0.0"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 144,
+            "num_exp_fail": 100,
+            "num_pass2fail": 2,
+            "num_fail2pass": 6
+        },
+        {
+            "req": "Short sentences with neutral adjectives and nouns",
+            "is_exps_exist": true,
+            "num_seeds": 20,
+            "num_seed_fail": 18,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Pumpkin wants to have it both ways.",
+                        "pred": "1",
+                        "label": "1",
+                        "conf": "0.0 0.8 0.2"
+                    },
+                    "to": [
+                        {
+                            "sent": "Pumpkin wants to have it rain both ways.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "` Snow Dogs' has both.",
+                        "pred": "2",
+                        "label": "1",
+                        "conf": "0.1 0.0 0.9"
+                    },
+                    "to": [
+                        {
+                            "sent": "or ` Snow Dogs' has both.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.8 0.2"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Or both.",
+                        "pred": "2",
+                        "label": "1",
+                        "conf": "0.2 0.0 0.8"
+                    },
+                    "to": [
+                        {
+                            "sent": "Or both things.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.7 0.3"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 58,
+            "num_exp_fail": 43,
+            "num_pass2fail": 1,
+            "num_fail2pass": 2
+        }
+    ],
+    "distilbert-base-uncased-finetuned-sst-2-english": [
+        {
+            "req": "Negated positive with neutral content in the middle",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 44,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "I wouldn't say, given The main problem being that it's only a peek., Great dragons!",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I wouldn't say, given The main problem being that while it's only a peek., Great dragons!",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.0 0.7 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I don't agree with, given The main problem being that it's only a peek., Has a lot of the virtues of Eastwood at his best.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.8 0.0 0.2"
+                    },
+                    "to": [
+                        {
+                            "sent": "I don't agree with, given The main problem being that it's only a peek., Has a lot of the virtues outside of Eastwood at his best.",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.0 0.9 0.1"
+                        },
+                        {
+                            "sent": "I don't agree with, given The main problem being that it's only a peek., Has a lot of the virtues there of Eastwood at his best.",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.3 0.0 0.7"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "I do not think, given The main problem being that it's only a peek., That Storytelling has value cannot be denied.",
+                        "pred": "2",
+                        "label": "0",
+                        "conf": "0.3 0.0 0.7"
+                    },
+                    "to": [
+                        {
+                            "sent": "I do not think, given The main narrative problem being that it's only a peek., That Storytelling has value cannot be denied.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        },
+                        {
+                            "sent": "I do not think, given The main problem being in that it's only a peek., That Storytelling has value cannot be denied.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I don't agree with, given The main problem being that it's only a peek., It's funny.",
+                        "pred": "2",
+                        "label": "0",
+                        "conf": "0.0 0.0 1.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I don't agree with, given in The main problem being that it's only a peek., It's funny.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I don't agree with, given It's actually too sincere -- the crime movie equivalent of a chick flick., A compelling allegory about the last days of Germany's democratic Weimar Republic.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 0.7 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "I don't agree with, given as It's actually too sincere -- the crime movie equivalent of a chick flick., A compelling allegory about the last days of Germany's democratic Weimar Republic.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "I don't agree with, given as It's actually too sincere -- the crime movie equivalent of a chick flick., A compelling allegory about the last days of Germany's democratic Weimar Republic.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "I don't agree with, given It's actually too sincere -- the crime movie equivalent of a chick flick., A compelling family allegory about the last days of Germany's democratic Weimar Republic.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "I don't agree with, given It's actually too sincere -- the crime movie equivalent equivalent of a chick flick., A compelling allegory about the last days of Germany's democratic Weimar Republic.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        },
+                        {
+                            "sent": "I don't agree with, given as It's actually too sincere -- the crime movie equivalent of a chick flick., A compelling allegory about the last days of Germany's democratic Weimar Republic.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "I don't agree with, given as It's actually too sincere -- the crime movie equivalent of a chick flick., A compelling allegory about the last days of Germany's democratic Weimar Republic.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "I don't agree with, given here It's actually too sincere -- the crime movie equivalent of a chick flick., A compelling allegory about the last days of Germany's democratic Weimar Republic.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "1.0 0.0 0.0"
+                        },
+                        {
+                            "sent": "I don't agree with, given It's actually far too sincere -- the crime movie equivalent of a chick flick., A compelling allegory about the last days of Germany's democratic Weimar Republic.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I do not think, given It's actually too sincere -- the crime movie equivalent of a chick flick., Well-made but mush-hearted.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 0.7 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "I do not think, given as It's actually too sincere -- the crime movie equivalent of a chick flick., Well-made but mush-hearted.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "I do not think, given It's actually too sincere -- the crime movie equivalent of in a chick flick., Well-made but mush-hearted.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "I do not think, given It's actually too sincere -- the crime movie equivalent kind of a chick flick., Well-made but mush-hearted.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "I do not think, given It's actually too sincere -- the crime movie equivalent here of a chick flick., Well-made but mush-hearted.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "1.0 0.0 0.0"
+                        },
+                        {
+                            "sent": "I do not think, given It's actually too sincere -- the crime movie equivalent equivalent of a chick flick., Well-made but mush-hearted.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "1.0 0.0 0.0"
+                        },
+                        {
+                            "sent": "I do not think, given It's actually far too sincere -- the crime movie equivalent of a chick flick., Well-made but mush-hearted.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        },
+                        {
+                            "sent": "I do not think, given It's actually too damned sincere -- the crime movie equivalent of a chick flick., Well-made but mush-hearted.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 158,
+            "num_exp_fail": 100,
+            "num_pass2fail": 3,
+            "num_fail2pass": 18
+        },
+        {
+            "req": "Negated neutral should still be neutral",
+            "is_exps_exist": true,
+            "num_seeds": 24,
+            "num_seed_fail": 22,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "This is not nothing but familiar territory.",
+                        "pred": "1",
+                        "label": "1",
+                        "conf": "0.4 0.6 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not nothing but familiar old territory.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not not Chabrol's best, but even his lesser works outshine the best some directors can offer.",
+                        "pred": "1",
+                        "label": "1",
+                        "conf": "0.2 0.8 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not not Chabrol's best, but even his lesser works outshine even the best some directors can offer.",
+                            "pred": "2",
+                            "label": "1",
+                            "conf": "0.1 0.0 0.9"
+                        },
+                        {
+                            "sent": "This is not not Chabrol's best, but even his lesser works outshine the best even some directors can offer.",
+                            "pred": "0",
+                            "label": "1",
+                            "conf": "0.7 0.0 0.3"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "This is not really just another genre picture.",
+                        "pred": "0",
+                        "label": "1",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "This series is not really just another genre picture.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.2 0.8 0.0"
+                        },
+                        {
+                            "sent": "This is not really in just another genre picture.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.2 0.8 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not a picture that Maik, the firebrand turned savvy ad man, would be envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                        "pred": "0",
+                        "label": "1",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not a picture that Maik, the firebrand turned savvy ad man, would be more envious of: it hijacks the heat of revolution and turns it into a sales tool.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 1.0 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not a harrowing movie about how parents know where all the buttons are, and how to push them.",
+                        "pred": "0",
+                        "label": "1",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not a harrowing movie about how teen parents know where all the buttons are, and how to push them.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.3 0.7 0.0"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 111,
+            "num_exp_fail": 100,
+            "num_pass2fail": 3,
+            "num_fail2pass": 4
+        },
+        {
+            "req": "Negation of negative at the end, should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 49,
+            "pass->fail": [],
+            "fail->pass": [],
+            "num_exps": 107,
+            "num_exp_fail": 100,
+            "num_pass2fail": 0,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Short sentences with sentiment-laden adjectives",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 0,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Pray has really done his subject justice.",
+                        "pred": "2",
+                        "label": "2",
+                        "conf": "0.0 0.0 1.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Pray has really over done his subject justice.",
+                            "pred": "0",
+                            "label": "2",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Sushi for the connoisseurs of the macabre.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "Sushi for the future connoisseurs of the macabre.",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.0 0.0 1.0"
+                        },
+                        {
+                            "sent": "Sushi for the connoisseurs of the cuisine macabre.",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.1 0.0 0.9"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This movie is maddening.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This movie is maddening funny.",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.0 0.0 1.0"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [],
+            "num_exps": 104,
+            "num_exp_fail": 4,
+            "num_pass2fail": 4,
+            "num_fail2pass": 0
+        },
+        {
+            "req": "Parsing negative sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 50,
+            "pass->fail": [],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "Do I agree that \" One of the most incoherent features in recent memory . \"? no",
+                        "pred": "0",
+                        "label": "None",
+                        "conf": "0.8 0.0 0.2"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I agree that \" One collection of the most incoherent features in recent memory . \"? no",
+                            "pred": "2",
+                            "label": "None",
+                            "conf": "0.2 0.0 0.8"
+                        },
+                        {
+                            "sent": "Do I agree that \" One selection of the most incoherent features in recent memory . \"? no",
+                            "pred": "1",
+                            "label": "None",
+                            "conf": "0.2 0.8 0.0"
+                        },
+                        {
+                            "sent": "Do I agree that \" One of the most incoherent features in recent human memory . \"? no",
+                            "pred": "1",
+                            "label": "None",
+                            "conf": "0.2 0.8 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" Don't let your festive spirit go this far . \"? no",
+                        "pred": "0",
+                        "label": "None",
+                        "conf": "0.8 0.0 0.2"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" Don't let your festive annual spirit go this far . \"? no",
+                            "pred": "1",
+                            "label": "None",
+                            "conf": "0.0 0.6 0.4"
+                        },
+                        {
+                            "sent": "Do I think that \" Don't let in your festive spirit go this far . \"? no",
+                            "pred": "2",
+                            "label": "None",
+                            "conf": "0.0 0.0 1.0"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 105,
+            "num_exp_fail": 100,
+            "num_pass2fail": 0,
+            "num_fail2pass": 5
+        },
+        {
+            "req": "parsing sentiment in (question, yes) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 3,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Do I think that \" Maybe it's asking too much, but if a movie is truly going to inspire me, I want a little more than this . \"? yes",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" Maybe it's asking too much, but if a great movie is truly going to inspire me, I want a little more than this . \"? yes",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.1 0.0 0.9"
+                        },
+                        {
+                            "sent": "Do I think that \" Maybe it's asking too much, but if a movie is truly going to inspire me, I want a little more than this experience . \"? yes",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.4 0.6 0.0"
+                        },
+                        {
+                            "sent": "Do I think that \" Maybe it's asking so much too, but if a movie is truly going to inspire me, I want a little more than this . \"? yes",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.1 0.9 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers winning performances and some effecting moments . \"? yes",
+                        "pred": "2",
+                        "label": "2",
+                        "conf": "0.0 0.0 1.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" This story of a determined woman's courage to find her husband in a war zone offers few winning performances and some effecting moments . \"? yes",
+                            "pred": "1",
+                            "label": "2",
+                            "conf": "0.0 0.8 0.2"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "Do I think that \" A perverse little truffle, dainty psychological terror on the outside with a creamy filling of familial jealousy and unrepentant domestic psychopathy . \"? yes",
+                        "pred": "0",
+                        "label": "2",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" A perverse little truffle, dainty psychological terror on the outside world with a creamy filling of familial jealousy and unrepentant domestic psychopathy . \"? yes",
+                            "pred": "2",
+                            "label": "2",
+                            "conf": "0.3 0.0 0.7"
+                        },
+                        {
+                            "sent": "Do I think that \" A perverse little truffle, dainty psychological terror sweet on the outside with a creamy filling of familial jealousy and unrepentant domestic psychopathy . \"? yes",
+                            "pred": "2",
+                            "label": "2",
+                            "conf": "0.2 0.0 0.8"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 148,
+            "num_exp_fail": 48,
+            "num_pass2fail": 4,
+            "num_fail2pass": 2
+        },
+        {
+            "req": "Parsing positive sentiment in (question, no) form",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 45,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "Do I think that \" If you're burnt out on It's a Wonderful Life marathons and bored with A Christmas Carol, it might just be the movie you're looking for . \"? no",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.8 0.0 0.2"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" If you're burnt out on It's a Wonderful Life marathons and bored with A Christmas Carol, it might just be the perfect movie you're looking for . \"? no",
+                            "pred": "2",
+                            "label": "0",
+                            "conf": "0.0 0.0 1.0"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "Do I think that \" The film's sharp, often mischievous sense of humor will catch some off guard ... \"? no",
+                        "pred": "2",
+                        "label": "0",
+                        "conf": "0.1 0.0 0.9"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" or The film's sharp, often mischievous sense of humor will catch some off guard ... \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "1.0 0.0 0.0"
+                        },
+                        {
+                            "sent": "Do I think that \" as The film's sharp, often mischievous sense of humor will catch some off guard ... \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.9 0.0 0.1"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "Do I think that \" Though in some ways similar to Catherine Breillat's Fat Girl, Rain is the far superior film . \"? no",
+                        "pred": "2",
+                        "label": "0",
+                        "conf": "0.0 0.0 1.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "Do I think that \" Though in some ways similar to Catherine Breillat's Fat Girl, Rain is the far longer superior film . \"? no",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "1.0 0.0 0.0"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 166,
+            "num_exp_fail": 100,
+            "num_pass2fail": 1,
+            "num_fail2pass": 3
+        },
+        {
+            "req": "Sentiment change over time, present should prevail",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 37,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "I liked it much as to say that \" Cedar somewhat defuses this provocative theme by submerging it in a hoary love triangle . \", on the other hand now I hate it.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "I liked it much as to say that \" Cedar somewhat defuses this provocative theme by submerging it deep in a hoary love triangle . \", on the other hand now I hate it.",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.0 1.0 0.0"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "I liked it much as to say that \" What it lacks in substance it makes up for in heart . \", but now I hate it.",
+                        "pred": "0",
+                        "label": "0",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "I liked it much as to say that \" What it lacks here in substance it makes up for in heart . \", but now I hate it.",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.0 0.9 0.1"
+                        },
+                        {
+                            "sent": "I liked it much as to say that \" What it lacks here in substance it makes up for in heart . \", but now I hate it.",
+                            "pred": "1",
+                            "label": "0",
+                            "conf": "0.0 0.9 0.1"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "I liked it much as to say that \" Still, the updated Dickensian sensibility of writer Craig Bartlett's story is appealing . \", but now I don't like it.",
+                        "pred": "1",
+                        "label": "0",
+                        "conf": "0.0 0.7 0.3"
+                    },
+                    "to": [
+                        {
+                            "sent": "I liked it much as to say that \" Still, the updated Dickensian sensibility outside of writer Craig Bartlett's story is appealing . \", but now I don't like it.",
+                            "pred": "0",
+                            "label": "0",
+                            "conf": "0.8 0.0 0.2"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 189,
+            "num_exp_fail": 100,
+            "num_pass2fail": 3,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Author sentiment is more important than of others",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 20,
+            "pass->fail": [],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "They think that \" Weird . \", but I think that \" A bodice-ripper for intellectuals . \"",
+                        "pred": "1",
+                        "label": "2",
+                        "conf": "0.0 0.8 0.2"
+                    },
+                    "to": [
+                        {
+                            "sent": "They think that \" Weird . \", but inside I think that \" A bodice-ripper for intellectuals . \"",
+                            "pred": "2",
+                            "label": "2",
+                            "conf": "0.0 0.0 1.0"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 200,
+            "num_exp_fail": 100,
+            "num_pass2fail": 0,
+            "num_fail2pass": 1
+        },
+        {
+            "req": "Negated negative should be positive or neutral",
+            "is_exps_exist": true,
+            "num_seeds": 50,
+            "num_seed_fail": 44,
+            "pass->fail": [
+                {
+                    "from": {
+                        "sent": "This is not rote drivel aimed at Mom and Dad's wallet.",
+                        "pred": "2",
+                        "label": "None",
+                        "conf": "0.1 0.0 0.9"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not rote drivel aimed straight at Mom and Dad's wallet.",
+                            "pred": "0",
+                            "label": "None",
+                            "conf": "0.8 0.0 0.2"
+                        }
+                    ]
+                }
+            ],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "This is not no \" Waterboy! \"",
+                        "pred": "0",
+                        "label": "None",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "This mascot is not no \" Waterboy! \"",
+                            "pred": "2",
+                            "label": "None",
+                            "conf": "0.1 0.0 0.9"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not Sandler running on empty, repeating what he's already done way too often.",
+                        "pred": "0",
+                        "label": "None",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This guy is not Sandler running on empty, repeating what he's already done way too often.",
+                            "pred": "1",
+                            "label": "None",
+                            "conf": "0.4 0.6 0.0"
+                        },
+                        {
+                            "sent": "This president is not Sandler running on empty, repeating what he's already done way too often.",
+                            "pred": "2",
+                            "label": "None",
+                            "conf": "0.2 0.0 0.8"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "sent": "This is not a fragmented film, once a good idea that was followed by the bad idea to turn it into a movie.",
+                        "pred": "0",
+                        "label": "None",
+                        "conf": "1.0 0.0 0.0"
+                    },
+                    "to": [
+                        {
+                            "sent": "This is not a fragmented film, once a good idea that was followed by the bad idea to turn it into a great movie.",
+                            "pred": "2",
+                            "label": "None",
+                            "conf": "0.1 0.0 0.9"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 147,
+            "num_exp_fail": 100,
+            "num_pass2fail": 1,
+            "num_fail2pass": 4
+        },
+        {
+            "req": "Short sentences with neutral adjectives and nouns",
+            "is_exps_exist": true,
+            "num_seeds": 20,
+            "num_seed_fail": 20,
+            "pass->fail": [],
+            "fail->pass": [
+                {
+                    "from": {
+                        "sent": "This is SO De Palma.",
+                        "pred": "0",
+                        "label": "1",
+                        "conf": "0.9 0.0 0.1"
+                    },
+                    "to": [
+                        {
+                            "sent": "This song is SO De Palma.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.8 0.2"
+                        },
+                        {
+                            "sent": "This house is SO De Palma.",
+                            "pred": "1",
+                            "label": "1",
+                            "conf": "0.0 0.9 0.1"
+                        }
+                    ]
+                }
+            ],
+            "num_exps": 58,
+            "num_exp_fail": 56,
+            "num_pass2fail": 0,
+            "num_fail2pass": 2
+        }
+    ]
+}
