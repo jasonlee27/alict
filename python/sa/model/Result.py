@@ -130,7 +130,6 @@ class Result:
         for r in model_results:
             if r['lc'] in Macros.CHECKLIST_LC_LIST[8:10]:
                 lc = Macros.LC_MAP[str(Macros.CHECKLIST_LC_LIST[8:10])]
-                print(lc)
                 if lc not in temp_dict.keys():
                     temp_dict[lc] = {
                         'req': lc,
@@ -425,6 +424,52 @@ class Result:
         for model in result_dict.keys():
             model_result = result_dict[model]
             results[model] = cls.analyze_model_checklist(model_result)
+        # end for
+        Utils.write_json(results, saveto, pretty_format=True)
+        return results
+
+    @classmethod
+    def analyze_seed_performance(cls,
+                                 seed_result_file,
+                                 bl_result_file,
+                                 model_name_file=Macros.sa_models_file,
+                                 saveto=None):
+        # get the our generated seed performance
+        result_dict = cls.parse_results(seed_result_file, model_name_file)
+
+        # get the checklist performance
+        bl_result_dict = cls.parse_checklist_results(bl_result_file, model_name_file)
+        
+        results = dict()
+        for model in result_dict.keys():
+            model_result = result_dict[model]
+            model_bl_result = bl_result_dict[model]
+            results[model] = list()
+            for res in model_result:
+                lc = res['req']
+                bl_res = [r for r in model_bl_result if lc in r['req']][0]
+                    
+                num_pass_ours = len(res['pass'])
+                num_fail_ours = len(res['fail'])
+                num_tot_ours = num_pass_ours+num_fail_ours
+                fr_ours = round(100.0*(num_fail_ours*1./num_tot_ours), 3)
+
+                num_pass_bl = len(bl_res['pass'])
+                num_fail_bl = len(bl_res['fail'])
+                num_tot_bl = num_pass_bl+num_fail_bl
+                fr_bl = round(100.0*(num_fail_bl*1./num_tot_bl), 3)
+                results[model].append({
+                    'lc': lc,
+                    'num_total_ours': num_tot_ours,
+                    'num_pass_ours': num_pass_ours,
+                    'num_fail_ours': num_fail_ours,
+                    'failrate_ours': fr_ours,
+                    'num_total_bl': num_tot_bl,
+                    'num_pass_bl': num_pass_bl,
+                    'num_fail_bl': num_fail_bl,
+                    'failrate_bl': fr_bl
+                })
+            # end for
         # end for
         Utils.write_json(results, saveto, pretty_format=True)
         return results

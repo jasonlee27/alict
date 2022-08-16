@@ -261,7 +261,7 @@ class Template:
             inputs_per_req = new_input_dicts[t_i]
             lc_desc = inputs_per_req["requirement"]["description"]
             req_cksum = Utils.get_cksum(lc_desc)
-            cksum_map_str += f"{lc_desc}\t{req_cksum}"
+            cksum_map_str += f"{lc_desc}\t{req_cksum}\n"
             inputs = inputs_per_req["inputs"]
             print_str = '>>>>> REQUIREMENT:'+inputs_per_req["requirement"]["description"]
             logger.print(print_str)

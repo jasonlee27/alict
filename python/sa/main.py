@@ -14,10 +14,10 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
-                        'requirement', 'template', 'testsuite', 'seedgen'
-                        'testmodel', 'retrain', 'analyze', 'retrain_analyze',
-                        'explain_nlp', 'selfbleu', 'humanstudy', 'humanstudy_results',
-                        'coverage_sent_gen', 'tables'
+                        'requirement', 'template', 'testsuite', 'seedgen',
+                        'testmodel', 'testmodel_seed', 'retrain', 'analyze',
+                        'analyze_seed', 'retrain_analyze', 'explain_nlp', 'selfbleu',
+                        'humanstudy', 'humanstudy_results', 'coverage_sent_gen', 'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
@@ -83,17 +83,16 @@ def run_templates():
 def run_seedgen():
     from .testsuite.Seedgen import Seedgen
     nlp_task = args.nlp_task
-    # search_dataset_name = args.search_dataset
+    search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds # -1 means acceptance of every seeds
-    selection_method = args.syntax_selection
-    log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    # selection_method = args.syntax_selection
+    log_dir = Macros.log_dir / f"seeds_{nlp_task}_{search_dataset_name}"
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "seed_generation.log"
     Seedgen.get_seeds(
         num_seeds=num_seeds,
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
-        selection_method=selection_method,
         log_file=log_file
     )
     return
@@ -131,6 +130,28 @@ def run_testmodel():
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "test_orig_model.log"
     Testmodel_main(
+        nlp_task,
+        search_dataset_name,
+        selection_method,
+        test_baseline,
+        test_type,
+        log_file,
+        local_model_name=local_model_name
+    )
+    return
+
+def run_seed_testmodel():
+    from .model.Testmodel import main_seed
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    test_baseline = args.test_baseline
+    test_type = args.test_type
+    local_model_name = args.local_model_name
+    log_dir = Macros.log_dir / f"seeds_{nlp_task}_{search_dataset_name}"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / "test_orig_model.log"
+    main_seed(
         nlp_task,
         search_dataset_name,
         selection_method,
@@ -187,6 +208,24 @@ def run_analyze():
             save_to
         )
     # end if
+    return
+
+def run_analyze_seed():
+    from .model.Result import Result
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    test_baseline = args.test_baseline
+    res_dir = Macros.result_dir / f"seeds_{nlp_task}_{search_dataset_name}"
+    result_file = res_dir / 'test_results.txt'
+    bl_result_file = res_dir / 'test_results_checklist.txt'
+    save_to = res_dir / 'test_result_analysis.json'
+    Result.analyze_seed_performance(
+        result_file,
+        bl_result_file,
+        model_name_file=Macros.sa_models_file,
+        saveto=save_to
+    )
     return
 
 def run_retrain_analyze():
@@ -307,8 +346,10 @@ func_map = {
         'seedgen': run_seedgen,
         'testsuite': run_testsuites,
         'testmodel': run_testmodel,
+        'testmodel_seed': run_seed_testmodel,
         'retrain': run_retrain,
         'analyze': run_analyze,
+        'analyze_seed': run_analyze_seed,
         'retrain_analyze': run_retrain_analyze,
         'explain_nlp': run_explainNLP,
         'selfbleu': run_selfbleu,

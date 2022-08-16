@@ -86,18 +86,17 @@ class Testmodel:
     def _run_seed_testsuite(cls,
                             task: str,
                             dataset_name: str,
-                            selection_method: str,
                             logger,
                             local_model_name=None):
         logger.print(f"***** TASK: {task} *****")
-        res_dir = Macros.result_dir/ f"seeds_{task}_{dataset}"
+        res_dir = Macros.result_dir/ f"seeds_{task}_{dataset_name}"
         cksum_vals = [
             os.path.basename(test_file).split("_")[-1].split(".")[0]
             for test_file in os.listdir(res_dir)
             if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
         ]
         for cksum_val in cksum_vals:
-            testsuite_file = res_dir / f"{task}_testsuite_seeds_{test_cksum}.pkl"
+            testsuite_file = res_dir / f"{task}_testsuite_seeds_{cksum_val}.pkl"
             testsuite = cls.load_testsuite(testsuite_file)
             if local_model_name is None:
                 # # Run Google nlp model
@@ -169,7 +168,6 @@ class Testmodel:
         elif test_baseline==False and test_seed:
             cls._run_seed_testsuite(task,
                                     dataset_name,
-                                    selection_method,
                                     logger,
                                     local_model_name=local_model_name)
         elif test_baseline==False and test_seed==False:
@@ -298,7 +296,7 @@ def main_seed(task,
               local_model_name=None):
     logger = Logger(logger_file=log_file,
                     logger_name='testseed')
-    test_result_dir = Macros.result_dir/ f"seeds_{task}_{dataset}"
+    test_result_dir = Macros.result_dir/ f"seeds_{task}_{dataset_name}"
     if local_model_name is None:
         Testmodel.run_testsuite(task,
                                 dataset_name,
