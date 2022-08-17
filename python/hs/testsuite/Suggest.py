@@ -64,7 +64,10 @@ class Suggest:
         return set([inp['masked_input'][0] for inp in gen_inputs])
 
     @classmethod
-    def get_word_suggestion(cls, editor: Editor, gen_inputs, num_target=10):
+    def get_word_suggestion(cls,
+                            editor: Editor,
+                            gen_inputs,
+                            num_target=10):
         results = dict()
         masked_inputs = cls.get_masked_inputs(gen_inputs)
         for m_inp in masked_inputs:
@@ -348,10 +351,19 @@ class Suggest:
         new_input_results = list()
         
         gen_inputs = cls.get_new_inputs(
-            nlp, generator, gen_inputs, num_target=num_target, selection_method=selection_method, logger=logger
+            nlp,
+            editor,
+            generator,
+            gen_inputs,
+            num_target=num_target,
+            selection_method=selection_method,
+            logger=logger
         )
         for g_i in range(len(gen_inputs)):
-            eval_results = cls.eval_word_suggest(nlp, gen_inputs[g_i], seed_label, requirement)
+            eval_results = cls.eval_word_suggest(nlp,
+                                                 gen_inputs[g_i],
+                                                 seed_label,
+                                                 requirement)
             if any(eval_results):
                 del gen_inputs[g_i]["words_suggest"]
                 new_input_results.extend(eval_results)

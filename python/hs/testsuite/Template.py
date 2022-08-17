@@ -12,6 +12,7 @@ import spacy
 
 from pathlib import Path
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
+from checklist.editor import Editor
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -57,6 +58,7 @@ class Template:
         # end if
 
         pcfg_ref = RefPCFG()
+        editor = Editor()
         for selected in cls.SEARCH_FUNC[task](reqs, dataset, nlp):
             exp_inputs = dict()
             print_str = '>>>>> REQUIREMENT:'+selected["requirement"]["description"]
@@ -80,6 +82,7 @@ class Template:
                 if any(gen_inputs):
                     new_input_results = Suggest.get_exp_inputs(
                         nlp,
+                        editor,
                         generator,
                         gen_inputs,
                         seed_label,
@@ -114,7 +117,13 @@ class Template:
         return results
     
     @classmethod
-    def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None, selection_method=None, logger=None):
+    def get_new_inputs(cls,
+                       input_file,
+                       nlp_task,
+                       dataset_name,
+                       n=None,
+                       selection_method=None,
+                       logger=None):
         # if os.path.exists(input_file):
         #     return Utils.read_json(input_file)
         # # end if
@@ -149,7 +158,12 @@ class Template:
         return
     
     @classmethod
-    def get_pos(cls, mask_input: str, mask_pos: List[str], cfg_seed: Dict, words_sug: List[str], exp_input:str):
+    def get_pos(cls,
+                mask_input: str,
+                mask_pos: List[str],
+                cfg_seed: Dict,
+                words_sug: List[str],
+                exp_input:str):
         tokens = Utils.tokenize(mask_input)
         _tokens = list()
         tokens_pos = list()
@@ -181,7 +195,11 @@ class Template:
         return Utils.tokenize(exp_input), tokens_pos
 
     @classmethod
-    def get_templates_by_synonyms(cls, nlp, tokens: List[str], tokens_pos: List[str], prev_synonyms):
+    def get_templates_by_synonyms(cls,
+                                  nlp,
+                                  tokens: List[str],
+                                  tokens_pos: List[str],
+                                  prev_synonyms):
         template = list()
         for t, tpos in zip(tokens, tokens_pos):
             newt = re.sub(r'\..*', '', t)
@@ -227,7 +245,12 @@ class Template:
         }, prev_synonyms
 
     @classmethod
-    def get_templates(cls, num_seeds, nlp_task, dataset_name, selection_method, log_file):
+    def get_templates(cls,
+                      num_seeds,
+                      nlp_task,
+                      dataset_name,
+                      selection_method,
+                      log_file):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
         # Write the template results

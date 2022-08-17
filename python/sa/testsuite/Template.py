@@ -6,12 +6,14 @@ from typing import *
 import re, os
 import nltk
 import copy
+# import time
 # import random
 import numpy
 import spacy
 
 from pathlib import Path
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
+from checklist.editor import Editor
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -62,25 +64,32 @@ class Template:
         # end if
 
         pcfg_ref = RefPCFG()
+        editor = Editor()
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
             exp_inputs = dict()
             print_str = '>>>>> REQUIREMENT:'+selected["requirement"]["description"]
             num_selected_inputs = len(selected["selected_inputs"])
             logger.print(f"{print_str}\n\t{num_selected_inputs} inputs are selected.")
+            print(print_str)
             index = 1
             num_seed_for_exp = 0
             tot_num_exp = 0
             for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
                 logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score} :: ", end='')
                 index += 1
+                # gen_st = time.time()
                 generator = Generator(seed, pcfg_ref)
                 gen_inputs = generator.masked_input_generator()
                 logger.print(f"{len(gen_inputs)} syntax expansions :: ", end='')
                 new_input_results = list()
                 tot_num_exp += len(gen_inputs)
+                # gen_ft = time.time()
+                # print(f"{index} :: Generator<{round(gen_ft-gen_st,2)} seconds>:: ")
                 if any(gen_inputs):
+                    # sug_st = time.time()
                     new_input_results = Suggest.get_exp_inputs(
                         nlp,
+                        editor,
                         generator,
                         gen_inputs,
                         seed_label,
@@ -89,6 +98,8 @@ class Template:
                         selection_method=selection_method,
                         logger=logger
                     )
+                    # sug_ft = time.time()
+                    # print(f"{index} :: Suggest<{round(sug_ft-sug_st,2)} seconds>:: ")
                 # end if
                 logger.print(f"{len(new_input_results)} word suggestion by req")
                 exp_inputs[seed] = {
@@ -107,6 +118,7 @@ class Template:
             Utils.write_json(results, save_to, pretty_format=True)
             print_str = '<<<<< REQUIREMENT:'+selected["requirement"]["description"]
             logger.print(print_str)
+            print(print_str)
         # end for
         
         # # write raw new inputs
@@ -115,7 +127,13 @@ class Template:
         return results
     
     @classmethod
-    def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None, selection_method=None, logger=None):
+    def get_new_inputs(cls,
+                       input_file,
+                       nlp_task,
+                       dataset_name,
+                       n=None,
+                       selection_method=None,
+                       logger=None):
         # if os.path.exists(input_file):
         #     return Utils.read_json(input_file)
         # # end if
@@ -150,7 +168,12 @@ class Template:
         return
     
     @classmethod
-    def get_pos(cls, mask_input: str, mask_pos: List[str], cfg_seed: Dict, words_sug: List[str], exp_input:str):
+    def get_pos(cls,
+                mask_input: str,
+                mask_pos: List[str],
+                cfg_seed: Dict,
+                words_sug: List[str],
+                exp_input:str):
         tokens = Utils.tokenize(mask_input)
         _tokens = list()
         tokens_pos = list()
@@ -182,7 +205,11 @@ class Template:
         return Utils.tokenize(exp_input), tokens_pos
 
     @classmethod
-    def get_templates_by_synonyms(cls, nlp, tokens: List[str], tokens_pos: List[str], prev_synonyms):
+    def get_templates_by_synonyms(cls,
+                                  nlp,
+                                  tokens: List[str],
+                                  tokens_pos: List[str],
+                                  prev_synonyms):
         template = list()
         for t, tpos in zip(tokens, tokens_pos):
             newt = re.sub(r'\..*', '', t)
@@ -228,7 +255,12 @@ class Template:
         }, prev_synonyms
 
     @classmethod
-    def get_templates(cls, num_seeds, nlp_task, dataset_name, selection_method, log_file):
+    def get_templates(cls,
+                      num_seeds,
+                      nlp_task,
+                      dataset_name,
+                      selection_method,
+                      log_file):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
         # Write the template results

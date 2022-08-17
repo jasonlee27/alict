@@ -15,7 +15,7 @@ from pathlib import Path
 from nltk.parse.generate import generate, demo_grammar
 from nltk import CFG
 
-from checklist.editor import Editor
+# from checklist.editor import Editor
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -33,7 +33,7 @@ class Generator:
             seed_input=seed,
             pcfg_ref=pcfg_ref,
         )
-        self.editor = Editor()
+        # self.editor = Editor()
         
     def masked_input_generator(self):
         seed_input = self.expander.seed_input

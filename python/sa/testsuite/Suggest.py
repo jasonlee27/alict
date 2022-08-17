@@ -9,6 +9,7 @@ import re, os
 import nltk
 # import spacy
 import copy
+# import time
 import random
 import numpy as np
 
@@ -64,16 +65,28 @@ class Suggest:
         return set([inp['masked_input'][0] for inp in gen_inputs])
 
     @classmethod
-    def get_word_suggestion(cls, editor: Editor, gen_inputs, num_target=10):
+    def get_word_suggestion(cls,
+                            editor: Editor,
+                            gen_inputs,
+                            num_target=10):
         results = dict()
+        # mi_st = time.time()
         masked_inputs = cls.get_masked_inputs(gen_inputs)
-        for m_inp in masked_inputs:
+        # mi_ft = time.time()
+        # print(f"cls.get_word_suggestion::get_masked_inputs:<{round(mi_ft-mi_st,2)} seconds>::")
+        # for_st = time.time()
+        for m_inp_i, m_inp in enumerate(masked_inputs):
+            # ws_st = time.time()
             word_suggest = editor.suggest(m_inp, return_score=True, remove_duplicates=True)
             word_suggest = sorted(word_suggest, key=lambda x: x[-1], reverse=True)[:num_target]
             word_suggest = [ws for ws in word_suggest if cls.is_word_suggestion_avail(ws[0])]
             word_suggest = cls.remove_duplicates(word_suggest)
             results[m_inp] = word_suggest
+            # ws_ft = time.time()
+            # print(f"cls.get_word_suggestion::masked_inputs{m_inp_i}::{m_inp}::<{round(ws_ft-ws_st,2)} seconds>::")
         # end for
+        # for_ft = time.time()
+        # print(f"cls.get_word_suggestion::masked_inputs::for_loop<{round(for_ft-for_st,2)} seconds>::")
         return results
     
     @classmethod
@@ -186,10 +199,11 @@ class Suggest:
         # end if
         search_obj = SearchOperator(_requirement)
         search_res = search_obj.search([('1', new_input, label)])
-        if len(search_res)>0:
-            return True
-        # end if
-        return False
+        return any(search_res)
+        # if len(search_res)>0:
+        #     return True
+        # # end if
+        # return False
 
     @classmethod
     def eval_sug_words_by_exp_req(cls, nlp, word_suggest, requirement):
@@ -262,9 +276,20 @@ class Suggest:
         return sent_probs
     
     @classmethod
-    def get_new_inputs(cls, nlp, generator, gen_inputs, selection_method, num_target=10, logger=None):
-        editor = generator.editor
+    def get_new_inputs(cls,
+                       nlp,
+                       editor,
+                       generator,
+                       gen_inputs,
+                       selection_method,
+                       num_target=10,
+                       logger=None):
+        # editor = generator.editor
+        # ws_st = time.time()
         word_suggestions = cls.get_word_suggestion(editor, gen_inputs, num_target=3*num_target)
+        # ws_ft = time.time()
+        # print(f"cls.get_new_inputs::cls.get_word_suggestion<{round(ws_ft-ws_st,2)} seconds>:: ")
+        # mw_st = time.time()
         for g_i in range(len(gen_inputs)):
             gen_input = gen_inputs[g_i]
             masked_input, mask_pos = gen_input['masked_input']
@@ -303,6 +328,8 @@ class Suggest:
             # end if
             gen_inputs[g_i] = gen_input
         # end for
+        # mw_ft = time.time()
+        # print(f"cls.get_new_inputs::match_word_n_pos<{round(mw_ft-mw_st,2)} seconds>:: ")
         gen_inputs = [g for g in gen_inputs if g['words_suggest'] is not None]
         num_words_suggest = sum([len(g['words_suggest']) for g in gen_inputs])
         logger.print(f"{num_words_suggest} words suggestions :: ", end='')
@@ -340,15 +367,34 @@ class Suggest:
         return results
 
     @classmethod
-    def get_exp_inputs(cls, nlp, generator, gen_inputs, seed_label, requirement, selection_method, num_target=10, logger=None):
+    def get_exp_inputs(cls,
+                       nlp,
+                       editor,
+                       generator,
+                       gen_inputs,
+                       seed_label,
+                       requirement,
+                       selection_method,
+                       num_target=10,
+                       logger=None):
         # get the word suggesteion at the expended grammar elements
         new_input_results = list()
         
         gen_inputs = cls.get_new_inputs(
-            nlp, generator, gen_inputs, num_target=num_target, selection_method=selection_method, logger=logger
+            nlp,
+            editor,
+            generator,
+            gen_inputs,
+            num_target=num_target,
+            selection_method=selection_method,
+            logger=logger
         )
+        # ews_st = time.time()
         for g_i in range(len(gen_inputs)):
-            eval_results = cls.eval_word_suggest(nlp, gen_inputs[g_i], seed_label, requirement)
+            eval_results = cls.eval_word_suggest(nlp,
+                                                 gen_inputs[g_i],
+                                                 seed_label,
+                                                 requirement)
             if any(eval_results):
                 del gen_inputs[g_i]["words_suggest"]
                 new_input_results.extend(eval_results)
@@ -357,6 +403,8 @@ class Suggest:
                 # print(".", end="")
             # end if
         # end for
+        # ews_ft = time.time()
+        # print(f"cls.get_exp_inputs::eval_word_suggest<{round(ews_ft-ews_st,2)} seconds>:: ")
         # print()
         return new_input_results
 

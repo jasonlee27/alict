@@ -68,13 +68,21 @@ class Testmodel:
                     
                     for mname, model in Model.load_models(task):
                         logger.print(f">>>>> MODEL: {mname}")
-                        Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples, logger=logger)
+                        Model.run(testsuite,
+                                  model,
+                                  cls.model_func_map[task],
+                                  n=None,
+                                  logger=logger)
                         logger.print(f"<<<<< MODEL: {mname}")
                     # end for
                 else:
                     logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
                     model = Model.load_local_model(task, local_model_name)
-                    Model.run(testsuite, model, cls.model_func_map[task], logger=logger)
+                    Model.run(testsuite,
+                              model,
+                              cls.model_func_map[task],
+                              n=None,
+                              logger=logger)
                     logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                 # end if
             # end for
@@ -106,13 +114,21 @@ class Testmodel:
                 
                 for mname, model in Model.load_models(task):
                     logger.print(f">>>>> MODEL: {mname}")
-                    Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples, logger=logger)
+                    Model.run(testsuite,
+                              model,
+                              cls.model_func_map[task],
+                              n=None,
+                              logger=logger)
                     logger.print(f"<<<<< MODEL: {mname}")
                 # end for
             else:
                 logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
                 model = Model.load_local_model(task, local_model_name)
-                Model.run(testsuite, model, cls.model_func_map[task], logger=logger)
+                Model.run(testsuite,
+                          model,
+                          cls.model_func_map[task],
+                          n=None,
+                          logger=logger)
                 logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
             # end if
         # end for
@@ -137,14 +153,22 @@ class Testmodel:
             
             for mname, model in Model.load_models(task):
                 logger.print(f">>>>> MODEL: {mname}")
-                Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples, logger=logger)
+                Model.run(testsuite,
+                          model,
+                          cls.model_func_map[task],
+                          n=None,
+                          logger=logger)
                 logger.print(f"<<<<< MODEL: {mname}")
             # end for
             logger.print("**********")
         else:
             logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
             model = Model.load_local_model(task, local_model_name)
-            Model.run(testsuite, model, cls.model_func_map[task], n=Macros.nsamples, logger=logger)
+            Model.run(testsuite,
+                      model,
+                      cls.model_func_map[task],
+                      n=None,
+                      logger=logger)
             logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
         # end if
         return
