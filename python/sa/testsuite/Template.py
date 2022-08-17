@@ -74,7 +74,8 @@ class Template:
             index = 1
             num_seed_for_exp = 0
             tot_num_exp = 0
-            for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
+            seeds = selected["selected_inputs"][:n] if n>0 else selected["selected_inputs"]
+            for _id, seed, seed_label, seed_score in seeds:
                 logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score} :: ", end='')
                 index += 1
                 # gen_st = time.time()

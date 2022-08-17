@@ -24,8 +24,8 @@ parser.add_argument('--nlp_task', type=str, default='sa',
                     help='nlp task of focus')
 parser.add_argument('--search_dataset', type=str, default='sst',
                     help='name of dataset for searching testcases that meets the requirement')
-parser.add_argument('--num_seeds', type=int, default=Macros.max_num_seeds,
-                    help='number of seed inputs found in search dataset')
+parser.add_argument('--num_seeds', type=int, default=-1,
+                    help='number of seed inputs found in search dataset. It uses all seeds if negative value')
 parser.add_argument('--syntax_selection', type=str, default='random',
                     choices=['prob', 'random', 'bertscore', 'noselect'],
                     help='method for selection of syntax suggestions')
