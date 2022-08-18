@@ -75,7 +75,7 @@ class SelfBleu:
     
 
 def read_our_seeds(task, search_dataset_name, selection_method):
-    seed_file = Macros.result_dir / f"seed_input_{task}_{search_dataset_name}.json"
+    seed_file = Macros.result_dir / f"seed_inputs_{task}_{search_dataset_name}.json"
     seed_dict = Utils.read_json(seed_file)
     texts_lcs = dict()
     texts_all = list()
