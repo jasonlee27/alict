@@ -1,3 +1,7 @@
+
+from typing import *
+from pathlib import Path
+
 import os
 import json
 
@@ -81,16 +85,21 @@ def load_model(task_id):
     return model, tokenizer, key_list
 
 
-def load_test_suite(task_id):
-    data_dir = './data/SST2-Data/SST2-Data/stanfordSentimentTreebank/stanfordSentimentTreebank'
-    train_data_file = os.path.join(data_dir, 'datasetSentences.txt')
+def load_test_suite(task_id,
+                    our_sents_file,
+                    checklist_sent_file):
+    this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__)))
+    data_dir = this_dir / 'data'
+    sst2_dir = data_dir / 'archive/SST2-Data/SST2-Data/stanfordSentimentTreebank/stanfordSentimentTreebank'
+    train_data_file = os.path.join(str(sst2_dir), 'datasetSentences.txt')
     with open(train_data_file, 'r') as f:
         train_dataset = f.readlines()
         train_dataset = [d.replace('\n', '').split('\t')[1] for d in train_dataset[1:]]
-    with open('data/our_sents.txt', 'r') as f:
+    # with open('data/our_sents.txt', 'r') as f:
+    with open(str(data_dir / our_sents_file), 'r') as f:
         our_dataset = f.readlines()
         our_dataset = [d.replace('\n', '') for d in our_dataset]
-    with open('data/checklist_sents.txt', 'r') as f:
+    with open(str(data_dir / checklist_sent_file), 'r') as f:
         checklist_data = f.readlines()
         checklist_data = [d.replace('\n', '') for d in checklist_data]
 

@@ -19,32 +19,37 @@ function gen_requirements() {
 function gen_templates() {
         # write templates in json
         (cd ${_DIR}
-
          # generate templates from sst dataset
-         # CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main --run template --search_dataset sst --syntax_selection random > /dev/null 2>&1
+         CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main \
+                             --run template \
+                             --search_dataset sst \
+                             --syntax_selection random # > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection bertscore > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection noselect
 
          # generate tempaltes from checklist testcase
-         CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main \
-                             --run template \
-                             --search_dataset checklist \
-                             --syntax_selection random # > /dev/null 2>&1
+         # CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main \
+         #                     --run template \
+         #                     --search_dataset checklist \
+         #                     --syntax_selection random # > /dev/null 2>&1
         )
 }
 
 function gen_testsuite() {
         # write test cases into Checklist Testsuite format
         (cd ${_DIR}
-         # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection random
+         python -m python.sa.main \
+                --run testsuite \
+                --search_dataset sst \
+                --syntax_selection random
          # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection bertscore
          # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection noselect
 
          # write test cases into Checklist Testsuite format from checklist testcases
-         python -m python.sa.main \
-                --run testsuite \
-                --search_dataset checklist \
-                --syntax_selection random
+         # python -m python.sa.main \
+         #        --run testsuite \
+         #        --search_dataset checklist \
+         #        --syntax_selection random
         )
 }
 
@@ -161,6 +166,16 @@ function analyze_eval_models() {
         )
 }
 
+function analyze_eval_models_seed() {
+        (cd ${_DIR}
+         # evaluate NLP models with generated seed with baseline(checklist) testsuites
+         python -m python.sa.main \
+                --run analyze_seed \
+                --search_dataset sst \
+                --syntax_selection random
+        )
+}
+
 function analyze_retrained_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
@@ -216,12 +231,37 @@ function humanstudy_results() {
 # ==========
 # Coverage Exp
 
-function coverage_sent_gen() {
+function gen_coverage_data() {
         (cd ${_DIR}
          python -m python.sa.main \
-                --run coverage_sent_gen \
+                --run coverage_data \
                 --search_dataset sst \
                 --syntax_selection random
+        )
+}
+
+function compute_coverage() {
+        COV_DIR=${PYTHON_DIR}/sa/coverage
+        DATA_DIR=${COV_DIR}/data
+        search_dataset="sst"
+        syntax_selection="random"
+        (cd ${PYTHON_DIR}/sa/coverage
+
+         for file in $(find ${DATA_DIR} -name "seed_sa_${search_dataset}_*.txt" | sort); do
+                 filename=$(basename "${file}")
+                 filename="${filename%%.*}"
+                 echo ${filename}
+                 lc_cksum="${filename##*_}"
+         
+                 ours=${DATA_DIR}/"seed_sa_sst_${lc_cksum}.txt"
+                 bls=${DATA_DIR}/"checklist_sa_sst_${lc_cksum}.txt"
+                 CUDA_VISIBLE_DEVICES=6,7 python test_coverage.py \
+                                     --our_sents ${ours} \
+                                     --bl_sents ${bls} \
+                                     --search_dataset ${search_dataset} \
+                                     --syntax_selection ${syntax_selection} \
+                                     --lc_cksum ${lc_cksum}
+         done
         )
 }
 
@@ -253,15 +293,17 @@ function main_sst() {
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
         # gen_seeds
         # eval_models # run testsuite.run on our and checklist generated testsets
-        eval_models_seed
-        # analyze_eval_models # to generate test_results_analysis.json and test_results_checklist_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json 
+        # eval_models_seed
+        # analyze_eval_models # to generate test_results_analysis.json and test_results_checklist_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json
+        # analyze_eval_models_seed
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # analyze_retrained_models # to generate debug_results file
         # selfbleu # to compute the selfbleu
         # explain_nlp # to run the explainNLP
         # humanstudy # sample sentences for manual study
         # humanstudy_results # get results of manual study into human_study.json
-        # coverage_sent_gen # get sentences for coverage experiment
+        # gen_coverage_data # get sentences for coverage experiment
+        compute_coverage
         # make_tables
 
 

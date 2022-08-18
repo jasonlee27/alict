@@ -116,17 +116,17 @@ class Coveragedata:
         # end if
 
         # write testcase sentences
-        save_dir = Macros.python_dir / 'coverage' / 'data'
+        save_dir = Macros.python_dir / task /'coverage' / 'data'
         for key in our_sents.keys():
             cksum_val = Utils.get_cksum(key)
-            sent_str = '\n'.join(our_sents[key])
-            Utils.write_txt(sent_str, save_dir / f'seed_{task}_{dataset_name}_{cksum}.txt')
+            sent_str = '\n'.join([s[1] for s in our_sents[key]])
+            Utils.write_txt(sent_str, save_dir / f'seed_{task}_{dataset_name}_{cksum_val}.txt')
         # end for
 
         for key in bl_sents.keys():
             cksum_val = Utils.get_cksum(key)
-            sent_str = '\n'.join(bl_sents[key])
-            Utils.write_txt(sent_str, save_dir / f'checklist_{task}_{dataset_name}_{cksum}.txt')
+            sent_str = '\n'.join([s[1] for s in bl_sents[key]])
+            Utils.write_txt(sent_str, save_dir / f'checklist_{task}_{dataset_name}_{cksum_val}.txt')
         # end for
         return
 
@@ -148,16 +148,16 @@ class Coveragedata:
         # end if
 
         # write testcase sentences
-        save_dir = Macros.python_dir / 'coverage' / 'data'
+        save_dir = Macros.python_dir / task / 'coverage' / 'data'
         for key in our_sents.keys():
             cksum_val = Utils.get_cksum(key)
             sent_str = '\n'.join(our_sents[key])
-            Utils.write_txt(sent_str, save_dir / f'seed_{task}_{dataset_name}_{cksum}.txt')
+            Utils.write_txt(sent_str, save_dir / f'seed_{task}_{dataset_name}_{cksum_val}.txt')
         # end for
 
         for key in bl_sents.keys():
             cksum_val = Utils.get_cksum(key)
             sent_str = '\n'.join(bl_sents[key])
-            Utils.write_txt(sent_str, save_dir / f'checklist_{task}_{dataset_name}_{cksum}.txt')
+            Utils.write_txt(sent_str, save_dir / f'checklist_{task}_{dataset_name}_{cksum_val}.txt')
         # end for
         return

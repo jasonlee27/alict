@@ -320,7 +320,7 @@ def run_coverage_data():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     Coveragedata.write_target_seed_sents(nlp_task,
-                                         search_dataest_name)
+                                         search_dataset_name)
     # Coveragedata.write_target_exp_sents(nlp_task,
     #                                     search_dataest_name,
     #                                     selection_method)

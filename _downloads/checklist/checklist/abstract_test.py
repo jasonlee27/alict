@@ -169,7 +169,7 @@ class AbstractTest(ABC):
         self.run_idxs = None
         idxs = list(range(len(self.data)))
         if n is not None:
-            idxs = np.random.choice(idxs, min(n, len(idxs)), replace=False)
+            # idxs = np.random.choice(idxs, min(n, len(idxs)), replace=False)
             self.run_idxs = idxs
         if type(self.data[0]) in [list, np.array, np.ndarray]:
             all = [(i, y) for i in idxs for y in self.data[i]]
@@ -497,7 +497,7 @@ class AbstractTest(ABC):
             _print()
             _print('Example passes:')
             # passs = np.random.choice(passs, min(passs.shape[0], n), replace=False)
-            passs = np.random.choice(passs, max(passs.shape[0], n), replace=False)
+            # passs = np.random.choice(passs, passs.shape[0], replace=False)
             for p in passs:
                 d_idx = p if self.run_idxs is None else self.run_idxs[p]
                 # should be format_fn
@@ -512,7 +512,8 @@ class AbstractTest(ABC):
         _print()
         _print('Example fails:')
         # fails = np.random.choice(fails, min(fails.shape[0], n), replace=False)
-        fails = np.random.choice(fails, max(fails.shape[0], n), replace=False)
+        # fails = np.random.choice(fails, fails.shape[0], replace=False)
+        print(len(passs), len(fails))
         for f in fails:
             d_idx = f if self.run_idxs is None else self.run_idxs[f]
             # should be format_fn
