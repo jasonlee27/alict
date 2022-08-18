@@ -148,9 +148,10 @@ class Template:
             print(cls.NUM_PROCESSES)
             input_dicts = pool.starmap(cls.generate_inputs, args)
         # end with
+        results.extend(input_dicts)
         
         # write raw new inputs for each requirement
-        Utils.write_json(input_dicts, input_file, pretty_format=True)
+        Utils.write_json(results, input_file, pretty_format=True)
         return input_dicts
 
     @classmethod
