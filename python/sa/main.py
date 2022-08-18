@@ -270,17 +270,6 @@ def run_selfbleu():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    model_name = args.model_name
-    testcase_file = Macros.retrain_dataset_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_testcase.json"
-    eval_testcase_file = Macros.checklist_sa_testcase_file
-    if not os.path.exists(str(testcase_file)):
-        from .retrain.Retrain import Retrain
-        Retrain.get_sst_testcase_for_retrain(nlp_task, selection_method)
-    # end if
-    if not os.path.exists(str(eval_testcase_file)):
-        from .retrain.Retrain import Retrain
-        Retrain.get_checklist_testcase_for_retrain(nlp_task)
-    # end if
     selfbleu_main(nlp_task, search_dataset_name, selection_method)
     return
 
