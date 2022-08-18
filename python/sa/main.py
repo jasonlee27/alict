@@ -266,11 +266,13 @@ def run_explainNLP():
     return
 
 def run_selfbleu():
-    from .exp.SelfBleu import main as selfbleu_main
+    from .exp.SelfBleu import main_seed as selfbleu_main_seed
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    selfbleu_main(nlp_task, search_dataset_name, selection_method)
+    selfbleu_main_seed(nlp_task,
+                       search_dataset_name,
+                       selection_method)
     return
 
 # ==========

@@ -1,5 +1,9 @@
+# experiment for selfbleu score
+# A higher Self-BLEU score implies less diversity of the document
+
 import os
 import nltk
+import time
 import multiprocessing
 
 from multiprocessing import Pool
@@ -8,8 +12,9 @@ from nltk.translate.bleu_score import SmoothingFunction
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from ..utils.Logger import Logger
 
-NUM_PROCESSES_IN_USE=os.cpu_count()
+NUM_PROCESSES_IN_USE = 3 # os.cpu_count()
 
 
 class SelfBleu:
@@ -151,19 +156,27 @@ def read_checklist_testcases(task, search_dataset_name, selection_method):
 #     return texts_all, texts_lcs
 
 
-def main(task,
-         search_dataset_name,
-         selection_method):
+def main_seed(task,
+              search_dataset_name,
+              selection_method):
+    logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.log"
+    logger = Logger(logger_file=logger_file,
+                    logger_name='seed_selfbleu_log')
     _, texts_ours = read_our_seeds(task,
                                    search_dataset_name,
                                    selection_method)
     scores = dict()
     for lc in texts_ours.keys():
+        st = time.time()
+        logger.print(f"OURS::{lc}", end='::')
         sbleu = SelfBleu(texts=texts_ours[lc])
         scores[lc] = {
             'num_data': sbleu.num_data,
             'score': sbleu.get_score()
         }
+        ft = time.time()
+        logger.print(f"{round(ft-st,2)}secs", end='::')
+        logger.print(f"num_data:{scores[lc]['num_data']}::score:{scores[lc]['score']}")
     # end for
 
     _, texts_checklist = read_checklist_testcases(task,
@@ -171,11 +184,16 @@ def main(task,
                                                   selection_method)
     scores_baseline = dict()
     for lc in texts_checklist.keys():
+        st = time.time()
+        logger.print(f"BL::{lc}", end='::')
         sbleu = SelfBleu(texts=texts_checklist[lc])
         scores_baseline[lc] = {
             'num_data': sbleu.num_data,
             'score': sbleu.get_score()
         }
+        ft = time.time()
+        logger.print(f"{round(ft-st,2)}secs", end='::')
+        logger.print(f"num_data:{scores_baseline[lc]['num_data']}::score:{scores_baseline[lc]['score']}")
     # end for
 
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
