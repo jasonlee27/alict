@@ -690,4 +690,19 @@ class Search:
         # end for
         return
 
+    @classmethod
+    def search_sentiment_analysis_per_req(cls, req, dataset):
+        func = cls.SEARCH_FUNC[Macros.sa_task][dataset]
+        selected = func(req)
+            
+        if req["transform"] is not None and \
+           dataset!=Macros.datasets[Macros.sa_task][1]:
+            transform_obj = TransformOperator(req)
+            selected = transform_obj.transform(selected)
+        # end if            
+        return {
+            "requirement": req,
+            "selected_inputs": selected
+        }
+
 

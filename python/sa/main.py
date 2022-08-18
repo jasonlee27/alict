@@ -17,7 +17,7 @@ parser.add_argument('--run', type=str, required=True,
                         'requirement', 'template', 'testsuite', 'seedgen',
                         'testmodel', 'testmodel_seed', 'retrain', 'analyze',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'selfbleu',
-                        'humanstudy', 'humanstudy_results', 'coverage_sent_gen', 'tables'
+                        'humanstudy', 'humanstudy_results', 'coverage_data', 'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
@@ -64,6 +64,8 @@ def run_requirements():
 
 def run_templates():
     from .testsuite.Template import Template
+    from torch.multiprocessing import Pool, Process, set_start_method
+    set_start_method('spawn')
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
@@ -312,14 +314,16 @@ def run_humanstudy_result():
 # ==========
 # Coverage Exp
 
-def run_generate_coverage_sents():
-    from .exp.Coverage import Coverage
+def run_coverage_data():
+    from .coverage.extract_data import Coveragedata
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    Coverage.write_testcase_to_txt(nlp_task,
-                                   search_dataset_name,
-                                   selection_method)
+    Coveragedata.write_target_seed_sents(nlp_task,
+                                         search_dataest_name)
+    # Coveragedata.write_target_exp_sents(nlp_task,
+    #                                     search_dataest_name,
+    #                                     selection_method)
     return
 
 # ==========
@@ -355,7 +359,7 @@ func_map = {
         'selfbleu': run_selfbleu,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
-        'coverage_sent_gen': run_generate_coverage_sents,
+        'coverage_data': run_coverage_data,
         'tables': run_make_tables
     }
 }

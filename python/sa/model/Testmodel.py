@@ -71,7 +71,6 @@ class Testmodel:
                         Model.run(testsuite,
                                   model,
                                   cls.model_func_map[task],
-                                  n=None,
                                   logger=logger)
                         logger.print(f"<<<<< MODEL: {mname}")
                     # end for
@@ -81,7 +80,6 @@ class Testmodel:
                     Model.run(testsuite,
                               model,
                               cls.model_func_map[task],
-                              n=None,
                               logger=logger)
                     logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                 # end if
@@ -117,7 +115,6 @@ class Testmodel:
                     Model.run(testsuite,
                               model,
                               cls.model_func_map[task],
-                              n=None,
                               logger=logger)
                     logger.print(f"<<<<< MODEL: {mname}")
                 # end for
@@ -127,7 +124,6 @@ class Testmodel:
                 Model.run(testsuite,
                           model,
                           cls.model_func_map[task],
-                          n=None,
                           logger=logger)
                 logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
             # end if
@@ -156,7 +152,6 @@ class Testmodel:
                 Model.run(testsuite,
                           model,
                           cls.model_func_map[task],
-                          n=None,
                           logger=logger)
                 logger.print(f"<<<<< MODEL: {mname}")
             # end for
@@ -167,7 +162,6 @@ class Testmodel:
             Model.run(testsuite,
                       model,
                       cls.model_func_map[task],
-                      n=None,
                       logger=logger)
             logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
         # end if

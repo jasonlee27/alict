@@ -15,6 +15,7 @@ import numpy as np
 
 from pathlib import Path
 from scipy.special import softmax
+from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 # from nltk.tokenize import word_tokenize as tokenize
 
 import checklist
@@ -332,8 +333,8 @@ class Suggest:
         # print(f"cls.get_new_inputs::match_word_n_pos<{round(mw_ft-mw_st,2)} seconds>:: ")
         gen_inputs = [g for g in gen_inputs if g['words_suggest'] is not None]
         num_words_suggest = sum([len(g['words_suggest']) for g in gen_inputs])
-        logger.print(f"{num_words_suggest} words suggestions :: ", end='')
-        return gen_inputs
+        # logger.print(f"{num_words_suggest} words suggestions :: ", end='')
+        return gen_inputs, num_words_suggest
 
     @classmethod
     def eval_word_suggest(cls, nlp, gen_input, label: str, requirement):
@@ -380,7 +381,7 @@ class Suggest:
         # get the word suggesteion at the expended grammar elements
         new_input_results = list()
         
-        gen_inputs = cls.get_new_inputs(
+        gen_inputs, num_words_orig_suggest = cls.get_new_inputs(
             nlp,
             editor,
             generator,
@@ -406,7 +407,7 @@ class Suggest:
         # ews_ft = time.time()
         # print(f"cls.get_exp_inputs::eval_word_suggest<{round(ews_ft-ews_st,2)} seconds>:: ")
         # print()
-        return new_input_results
+        return new_input_results, num_words_orig_suggest
 
         
 

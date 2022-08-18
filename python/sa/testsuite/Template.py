@@ -10,6 +10,7 @@ import copy
 # import random
 import numpy
 import spacy
+import multiprocessing
 
 from pathlib import Path
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
@@ -26,9 +27,13 @@ from .Synonyms import Synonyms
 from .Search import Search
 from .Suggest import Suggest
 
+import torch.multiprocessing
+torch.multiprocessing.set_sharing_strategy('file_system')
 
 class Template:
 
+    NUM_PROCESSES = 3 # multiprocessing.cpu_count()
+    
     POS_MAP = {
         "NNP": "NP",
         "NNPS": "NPS",
@@ -42,90 +47,71 @@ class Template:
     #     Macros.qqp_task: 
     # }
     SEARCH_FUNC = {
-        Macros.sa_task: Search.search_sentiment_analysis
+        Macros.sa_task: Search.search_sentiment_analysis_per_req
     }
     
     @classmethod
-    def generate_inputs(cls, task, dataset, n=None, save_to=None, selection_method=None, logger=None):
-        logger.print("Analyzing CFG ...")
-        reqs = Requirements.get_requirements(task)
+    def generate_inputs(cls,
+                        task,
+                        req,
+                        pcfg_ref,
+                        editor,
+                        dataset,
+                        n=None,
+                        selection_method=None,
+                        logger=None):
+        selected = cls.SEARCH_FUNC[task](req, dataset)
+        cksum_val = Utils.get_cksum(selected['requirement']['description'])
+        num_selected_inputs = len(selected['selected_inputs'])
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        results = list()
-        if os.path.exists(save_to):
-            results = Utils.read_json(save_to)
-            _reqs = list()
-            for req in reqs:
-                if not any([True for r in results if r["requirement"]["description"]==req["description"]]):
-                    _reqs.append(req)
-                # end if
-            # end for
-            reqs = _reqs
-        # end if
-
-        pcfg_ref = RefPCFG()
-        editor = Editor()
-        for selected in cls.SEARCH_FUNC[task](reqs, dataset):
-            exp_inputs = dict()
-            print_str = '>>>>> REQUIREMENT:'+selected["requirement"]["description"]
-            num_selected_inputs = len(selected["selected_inputs"])
-            logger.print(f"{print_str}\n\t{num_selected_inputs} inputs are selected.")
-            print(print_str)
-            index = 1
-            num_seed_for_exp = 0
-            tot_num_exp = 0
-            seeds = selected["selected_inputs"][:n] if n>0 else selected["selected_inputs"]
-            for _id, seed, seed_label, seed_score in seeds:
-                logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label}, {seed_score} :: ", end='')
-                index += 1
-                # gen_st = time.time()
-                generator = Generator(seed, pcfg_ref)
-                gen_inputs = generator.masked_input_generator()
-                logger.print(f"{len(gen_inputs)} syntax expansions :: ", end='')
-                new_input_results = list()
-                tot_num_exp += len(gen_inputs)
-                # gen_ft = time.time()
-                # print(f"{index} :: Generator<{round(gen_ft-gen_st,2)} seconds>:: ")
-                if any(gen_inputs):
-                    # sug_st = time.time()
-                    new_input_results = Suggest.get_exp_inputs(
-                        nlp,
-                        editor,
-                        generator,
-                        gen_inputs,
-                        seed_label,
-                        selected["requirement"],
-                        num_target=Macros.num_suggestions_on_exp_grammer_elem,
-                        selection_method=selection_method,
-                        logger=logger
-                    )
-                    # sug_ft = time.time()
-                    # print(f"{index} :: Suggest<{round(sug_ft-sug_st,2)} seconds>:: ")
-                # end if
-                logger.print(f"{len(new_input_results)} word suggestion by req")
-                exp_inputs[seed] = {
-                    "cfg_seed": generator.expander.cfg_seed,
-                    "exp_inputs": new_input_results,
-                    "label": seed_label,
-                    "label_score": seed_score
-                }
-            # end for
-            logger.print(f"Total {tot_num_exp} syntactical expansion identified in the requirement out of {num_selected_inputs} seeds")
-            results.append({
-                "requirement": selected["requirement"],
-                "inputs": exp_inputs
-            })
-            # write raw new inputs for each requirement
-            Utils.write_json(results, save_to, pretty_format=True)
-            print_str = '<<<<< REQUIREMENT:'+selected["requirement"]["description"]
-            logger.print(print_str)
-            print(print_str)
+        print_str = f">>>>> REQUIREMENT::{cksum_val}"+selected['requirement']['description']
+        logger.print(f"{print_str}\n\t{num_selected_inputs} inputs are selected.")
+        index = 0
+        num_seed_for_exp = 0
+        tot_num_exp = 0
+        exp_inputs = dict()
+        seeds = selected['selected_inputs'][:n] if n>0 else selected['selected_inputs']
+        for _id, seed, seed_label, seed_score in seeds:
+            index += 1
+            # gen_st = time.time()
+            generator = Generator(seed, pcfg_ref)
+            gen_inputs = generator.masked_input_generator()
+            new_input_results = list()
+            tot_num_exp += len(gen_inputs)
+            # gen_ft = time.time()
+            # print(f"{index} :: Generator<{round(gen_ft-gen_st,2)} seconds>:: ")
+            if any(gen_inputs):
+                # sug_st = time.time()
+                new_input_results, num_words_orig_suggest = Suggest.get_exp_inputs(
+                    nlp,
+                    editor,
+                    generator,
+                    gen_inputs,
+                    seed_label,
+                    selected['requirement'],
+                    num_target=Macros.num_suggestions_on_exp_grammer_elem,
+                    selection_method=selection_method,
+                    logger=logger
+                )
+                # sug_ft = time.time()
+                # print(f"{index} :: Suggest<{round(sug_ft-sug_st,2)} seconds>:: ")
+            # end if
+            exp_inputs[seed] = {
+                'cfg_seed': generator.expander.cfg_seed,
+                'exp_inputs': new_input_results,
+                'label': seed_label,
+                'label_score': seed_score
+            }
+            logger.print(f"\tREQUIREMENT::{cksum_val}::SELECTED_SEED_{index}: {_id}, {seed}, {seed_label}, {seed_score} :: {len(gen_inputs)} syntax expansions :: {num_words_orig_suggest} words suggestions :: {len(new_input_results)} expansions generated")
         # end for
-        
-        # # write raw new inputs
-        Utils.write_json(results, save_to, pretty_format=True)
-        logger.print('**********')
-        return results
+        logger.print(f"\tREQUIREMENT::{cksum_val}::Total {tot_num_exp} syntactical expansions identified in the requirement out of {num_selected_inputs} seeds")
+        print_str = '<<<<< REQUIREMENT:'+selected["requirement"]["description"]
+        logger.print(print_str)
+        return {
+            'requirement': selected["requirement"],
+            'inputs': exp_inputs
+        }
     
     @classmethod
     def get_new_inputs(cls,
@@ -138,14 +124,34 @@ class Template:
         # if os.path.exists(input_file):
         #     return Utils.read_json(input_file)
         # # end if
-        return cls.generate_inputs(
-            task=nlp_task,
-            dataset=dataset_name,
-            n=n,
-            save_to=input_file,
-            selection_method=selection_method,
-            logger=logger
-        )
+        logger.print("Analyzing CFG ...")
+        reqs = Requirements.get_requirements(nlp_task)
+        editor = Editor()
+        pcfg_ref = RefPCFG()
+        results = list()
+        args = list()
+        if os.path.exists(input_file):
+            results = Utils.read_json(input_file)
+            # _reqs = list()
+            for req in reqs:
+                if not any([True for r in results if r["requirement"]["description"]==req["description"]]):
+                    # _reqs.append(req)
+                    args.append(
+                        (nlp_task, req, pcfg_ref, editor, dataset_name, n, selection_method, logger)
+                    )
+                # end if
+            # end for
+            # reqs = _reqs
+        # end if
+        
+        with multiprocessing.Pool(processes=cls.NUM_PROCESSES) as pool:
+            print(cls.NUM_PROCESSES)
+            input_dicts = pool.starmap(cls.generate_inputs, args)
+        # end with
+        
+        # write raw new inputs for each requirement
+        Utils.write_json(input_dicts, input_file, pretty_format=True)
+        return input_dicts
 
     @classmethod
     def find_pos_from_cfg_seed(cls, token, cfg_seed):
@@ -272,8 +278,8 @@ class Template:
 
         logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg
-        nlp = spacy.load('en_core_web_md')
-        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+        # nlp = spacy.load('en_core_web_trf')
+        # nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         task = nlp_task
         
         new_input_dicts = cls.get_new_inputs(
