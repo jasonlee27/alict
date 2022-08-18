@@ -266,7 +266,7 @@ def run_explainNLP():
     return
 
 def run_selfbleu():
-    from .utils.SelfBleu import main as selfbleu_main
+    from .exp.SelfBleu import main as selfbleu_main
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
