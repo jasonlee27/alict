@@ -206,6 +206,15 @@ function selfbleu() {
         )
 }
 
+function pdrulediv() {
+        (cd ${_DIR}
+         python -m python.sa.main \
+                --run pdrule_div \
+                --search_dataset sst \
+                --syntax_selection random
+        )
+}
+
 # ==========
 # Human study
 
@@ -299,11 +308,12 @@ function main_sst() {
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # analyze_retrained_models # to generate debug_results file
         # selfbleu # to compute the selfbleu
+        pdrulediv # to compute the diversity of grammatic structure of sentence
         # explain_nlp # to run the explainNLP
         # humanstudy # sample sentences for manual study
         # humanstudy_results # get results of manual study into human_study.json
         # gen_coverage_data # get sentences for coverage experiment
-        compute_coverage
+        # compute_coverage
         # make_tables
 
 

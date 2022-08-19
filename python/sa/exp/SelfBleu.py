@@ -9,6 +9,7 @@ import multiprocessing
 from multiprocessing import Pool
 # from functools import partial
 from nltk.translate.bleu_score import SmoothingFunction
+from ..testsuite.Search import ChecklistTestsuite
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -126,7 +127,7 @@ def read_checklist_testcases(task, search_dataset_name, selection_method):
     for seeds in seed_dict:
         lc = seeds['requirement']['description']
         sents = ChecklistTestsuite.get_sents(
-            testsuite_file,
+            Macros.checklist_sa_dataset_file,
             lc
         )
         _sents = [s[1] for s in sents]
@@ -162,10 +163,14 @@ def main_seed(task,
     logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.log"
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_selfbleu_log')
+    Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
+    result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.json"
     _, texts_ours = read_our_seeds(task,
                                    search_dataset_name,
                                    selection_method)
+    result = dict()
     scores = dict()
+    scores_baseline = dict()
     for lc in texts_ours.keys():
         st = time.time()
         logger.print(f"OURS::{lc}", end='::')
@@ -174,6 +179,11 @@ def main_seed(task,
             'num_data': sbleu.num_data,
             'score': sbleu.get_score()
         }
+        result = {
+            'ours': scores,
+            'checklist': scores_baseline
+        }
+        Utils.write_json(result, result_file, pretty_format=True)
         ft = time.time()
         logger.print(f"{round(ft-st,2)}secs", end='::')
         logger.print(f"num_data:{scores[lc]['num_data']}::score:{scores[lc]['score']}")
@@ -182,7 +192,6 @@ def main_seed(task,
     _, texts_checklist = read_checklist_testcases(task,
                                                   search_dataset_name,
                                                   selection_method)
-    scores_baseline = dict()
     for lc in texts_checklist.keys():
         st = time.time()
         logger.print(f"BL::{lc}", end='::')
@@ -191,13 +200,16 @@ def main_seed(task,
             'num_data': sbleu.num_data,
             'score': sbleu.get_score()
         }
+        result = {
+            'ours': scores,
+            'checklist': scores_baseline
+        }
+        Utils.write_json(result, result_file, pretty_format=True)
         ft = time.time()
         logger.print(f"{round(ft-st,2)}secs", end='::')
         logger.print(f"num_data:{scores_baseline[lc]['num_data']}::score:{scores_baseline[lc]['score']}")
     # end for
 
-    Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
-    result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.json"
     result = {
         'ours': scores,
         'checklist': scores_baseline

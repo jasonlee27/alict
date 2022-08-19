@@ -17,7 +17,8 @@ parser.add_argument('--run', type=str, required=True,
                         'requirement', 'template', 'testsuite', 'seedgen',
                         'testmodel', 'testmodel_seed', 'retrain', 'analyze',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'selfbleu',
-                        'humanstudy', 'humanstudy_results', 'coverage_data', 'tables'
+                        'pdrule_div', 'humanstudy', 'humanstudy_results', 'coverage_data',
+                        'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
@@ -266,13 +267,23 @@ def run_explainNLP():
     return
 
 def run_selfbleu():
-    from .exp.SelfBleu import main_seed as selfbleu_main_seed
+    from .exp.SelfBleu import main_seed
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    selfbleu_main_seed(nlp_task,
-                       search_dataset_name,
-                       selection_method)
+    main_seed(nlp_task,
+              search_dataset_name,
+              selection_method)
+    return
+
+def run_pdrule_div():
+    from .exp.ProductionruleMetric import main_seed
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    main_seed(nlp_task,
+              search_dataset_name,
+              selection_method)
     return
 
 # ==========
@@ -348,6 +359,7 @@ func_map = {
         'retrain_analyze': run_retrain_analyze,
         'explain_nlp': run_explainNLP,
         'selfbleu': run_selfbleu,
+        'pdrule_div': run_pdrule_div,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
         'coverage_data': run_coverage_data,
