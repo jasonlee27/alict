@@ -1,11 +1,42 @@
 import os
 import torch
+import argparse
 import numpy as np
-from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-if not os.path.isdir('res'):
-    os.mkdir('res')
+from typing import *
+from pathlib import Path
+from tqdm import tqdm
+
+
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--nlp_task', type=str, default='sa',
+                    choices=['sa'],
+                    help='nlp task of focus')
+parser.add_argument('--search_dataset', type=str, default='sst',
+                    help='name of dataset for searching testcases that meets the requirement')
+parser.add_argument('--syntax_selection', type=str, default='random',
+                    choices=['prob', 'random', 'bertscore', 'noselect'],
+                    help='method for selection of syntax suggestions')
+parser.add_argument('--lc_cksum', type=str, default='',
+                    help='cksum value for lc')
+args = parser.parse_args()
+
+nlp_task = args.nlp_task
+search_dataset_name = args.search_dataset
+selection_method = args.syntax_selection
+lc_cksum = args.lc_cksum
+
+storage_dir: Path = Path('/glusterfs/data/jxl115330/s2lct')
+result_dir: Path = storage_dir / "_results"
+cov_dir: Path = result_dir / f"seeds_{nlp_task}_{search_dataset_name}" / 'coverage'
+new_log_dir: Path = cov_dir / 'new_log' / lc_cksum
+res_dir: Path = cov_dir / 'res' / lc_cksum
+
+res_dir.mkdir(parents=True, exist_ok=True)
+
+# if not os.path.isdir('res'):
+#     os.mkdir('res')
 
 def measure_coverage(upper_covered, lower_covered):
     sum_num, upper_num, lower_num = 0, 0, 0
@@ -18,12 +49,12 @@ def measure_coverage(upper_covered, lower_covered):
 
 for task_id in range(3):
     task_name = str(task_id)
-    our_file = 'new_log/ours_feature_' + task_name + '_0.pkl'
-    base_file = 'new_log/baseline_feature_' + task_name + '_0.pkl'
+    our_file = new_log_dir / f"ours_feature_{task_name}_0.pkl"
+    base_file = new_log_dir / f"baseline_feature_{task_name}_0.pkl"
 
-    our_cov1, our_cov2, _, _ = torch.load(our_file)
-    base_cov1, base_cov2, _, _ = torch.load(base_file)
-    min_val, max_val = torch.load('new_log/train_feature_' + task_name + '.pkl')
+    our_cov1, our_cov2, _, _ = torch.load(str(our_file))
+    base_cov1, base_cov2, _, _ = torch.load(str(base_file))
+    min_val, max_val = torch.load(str(new_log_dir / f"train_feature_{task_name}.pkl"))
 
     for k in our_cov1:
         if our_cov1[k].shape != min_val[k].shape:
@@ -33,11 +64,13 @@ for task_id in range(3):
             base_cov2[k] = base_cov2[k].mean(1)
     res = []
     for i in tqdm(range(1, 100)):
-        our_file = 'new_log/ours_feature_' + task_name + '_' + str(i) + '.pkl'
-        base_file = 'new_log/baseline_feature_' + task_name + '_' + str(i) + '.pkl'
+        our_file = new_log_dir / f"ours_feature_{task_name}_{str(i)}.pkl"
+        base_file = new_log_dir / f"baseline_feature_{task_name}_{str(i)}.pkl"
+        # our_file = 'new_log/ours_feature_' + task_name + '_' + str(i) + '.pkl'
+        # base_file = 'new_log/baseline_feature_' + task_name + '_' + str(i) + '.pkl'
 
-        our_new_cov1, our_new_cov2, _, _ = torch.load(our_file)
-        base_new_cov1, base_new_cov2, _, _ = torch.load(base_file)
+        our_new_cov1, our_new_cov2, _, _ = torch.load(str(our_file))
+        base_new_cov1, base_new_cov2, _, _ = torch.load(str(base_file))
 
         for k in our_cov1:
             if our_cov1[k].size() != our_new_cov1[k].size():
@@ -61,4 +94,6 @@ for task_id in range(3):
     plt.plot(res[:, 1], 'r')
     plt.plot(res[:, 3], 'b')
     plt.show()
-    np.savetxt('res/' + str(task_id) + '.csv', res, delimiter=',')
+    plt.savefig(str(res_dir / f"{str(task_id)}.png"))
+    np.savetxt(str(res_dir / f"{str(task_id)}.csv"), res, delimiter=',')
+    # np.savetxt('res/' + str(task_id) + '.csv', res, delimiter=',')

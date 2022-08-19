@@ -20,7 +20,7 @@ function gen_templates() {
         # write templates in json
         (cd ${_DIR}
          # generate templates from sst dataset
-         CUDA_VISIBLE_DEVICES=5,6 python -m python.sa.main \
+         CUDA_VISIBLE_DEVICES=1,2,3 python -m python.sa.main \
                              --run template \
                              --search_dataset sst \
                              --syntax_selection random # > /dev/null 2>&1
@@ -270,6 +270,10 @@ function compute_coverage() {
                                      --search_dataset ${search_dataset} \
                                      --syntax_selection ${syntax_selection} \
                                      --lc_cksum ${lc_cksum}
+                 python post_coverage.py \
+                        --search_dataset ${search_dataset} \
+                        --syntax_selection ${syntax_selection} \
+                        --lc_cksum ${lc_cksum}
          done
         )
 }
@@ -298,7 +302,7 @@ function make_tables() {
 
 function main_sst() {
         # gen_requirements # to generate test_type_sa.json and requirement_sa.json
-        # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
+        gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
         # gen_seeds
         # eval_models # run testsuite.run on our and checklist generated testsets
@@ -308,7 +312,7 @@ function main_sst() {
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # analyze_retrained_models # to generate debug_results file
         # selfbleu # to compute the selfbleu
-        pdrulediv # to compute the diversity of grammatic structure of sentence
+        # pdrulediv # to compute the diversity of grammatic structure of sentence
         # explain_nlp # to run the explainNLP
         # humanstudy # sample sentences for manual study
         # humanstudy_results # get results of manual study into human_study.json
