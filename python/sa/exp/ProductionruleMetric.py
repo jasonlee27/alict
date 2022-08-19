@@ -97,30 +97,54 @@ class ProductionruleMetric:
         # end for
         return exp_graphs
     
+    # @classmethod
+    # def get_our_cfg_graph(cls,
+    #                       task,
+    #                       dataset_name,
+    #                       selection_method):
+    #     data_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json"
+    #     exp_dicts = Utils.read_json(data_file)
+    #     seed_graph_dict = dict()
+    #     exp_graph_dict = dict()
+    #     for exp in exp_dicts:
+    #         lc = exp['requirement']['description']
+    #         seeds = exp['inputs']
+    #         seed_graphs = list()
+    #         exp_graphs = list()
+    #         for seed in seeds.keys():
+    #             cfg_seed = seeds[seed]['cfg_seed']
+    #             exps = seeds[seed]['exp_inputs']
+    #             seed_graph = cls.get_seed_graph(cfg_seed)
+    #             seed_graphs.append(seed_graph)
+    #             exp_graphs = cls.get_exp_graph(seed_graph, exps)
+    #             exp_graphs.extend(exp_graphs)
+    #         # end for
+    #         seed_graph_dict[lc] = seed_graphs
+    #         exp_graph_dict[lc] = exp_graphs
+    #     # end for
+    #     return seed_graph_dict, exp_graph_dict
+
     @classmethod
     def get_our_cfg_graph(cls,
                           task,
                           dataset_name,
                           selection_method):
-        data_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json"
+        data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}.json"
         exp_dicts = Utils.read_json(data_file)
         seed_graph_dict = dict()
         exp_graph_dict = dict()
         for exp in exp_dicts:
             lc = exp['requirement']['description']
-            seeds = exp['inputs']
+            seeds = exp['seeds']
             seed_graphs = list()
             exp_graphs = list()
-            for seed in seeds.keys():
-                cfg_seed = seeds[seed]['cfg_seed']
-                exps = seeds[seed]['exp_inputs']
+            for seed in seeds:
+                tree_dict = BeneparCFG.get_seed_cfg(seed[1])
+                cfg_seed = tree_dict['rule']
                 seed_graph = cls.get_seed_graph(cfg_seed)
                 seed_graphs.append(seed_graph)
-                exp_graphs = cls.get_exp_graph(seed_graph, exps)
-                exp_graphs.extend(exp_graphs)
             # end for
             seed_graph_dict[lc] = seed_graphs
-            exp_graph_dict[lc] = exp_graphs
         # end for
         return seed_graph_dict, exp_graph_dict
     
@@ -167,6 +191,7 @@ def main_seed(task,
     scores = dict()
     scores_baseline = dict()
     for lc in seed_graphs.keys():
+        print(lc)
         st = time.time()
         logger.print(f"OURS::{lc}", end='::')
         pdr = ProductionruleMetric(cfgs=seed_graphs[lc])
@@ -190,6 +215,7 @@ def main_seed(task,
         selection_method
     )
     for lc in checklist_graphs.keys():
+        print(lc)
         st = time.time()
         logger.print(f"BL::{lc}", end='::')
         pdr = ProductionruleMetric(cfgs=checklist_graphs[lc])

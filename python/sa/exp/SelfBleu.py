@@ -6,6 +6,7 @@ import nltk
 import time
 import multiprocessing
 
+from tqdm import tqdm
 from multiprocessing import Pool
 # from functools import partial
 from nltk.translate.bleu_score import SmoothingFunction
@@ -64,7 +65,7 @@ class SelfBleu:
         weight = tuple((1. / ngram for _ in range(ngram)))
         pool = Pool(processes=NUM_PROCESSES_IN_USE)
         result = list()
-        for d_i in range(self.num_data):
+        for d_i in tqdm(range(self.num_data)):
             hypothesis = reference[d_i]
             other = reference[:d_i] + reference[d_i+1:]
             result.append(pool.apply_async(self.calc_bleu, args=(other, hypothesis, weight)))

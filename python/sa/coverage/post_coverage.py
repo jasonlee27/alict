@@ -68,25 +68,28 @@ for task_id in range(3):
         base_file = new_log_dir / f"baseline_feature_{task_name}_{str(i)}.pkl"
         # our_file = 'new_log/ours_feature_' + task_name + '_' + str(i) + '.pkl'
         # base_file = 'new_log/baseline_feature_' + task_name + '_' + str(i) + '.pkl'
+        if os.path.exists(str(our_file)) and os.path.exists(str(base_file)):
+            our_new_cov1, our_new_cov2, _, _ = torch.load(str(our_file))
+            base_new_cov1, base_new_cov2, _, _ = torch.load(str(base_file))
 
-        our_new_cov1, our_new_cov2, _, _ = torch.load(str(our_file))
-        base_new_cov1, base_new_cov2, _, _ = torch.load(str(base_file))
-
-        for k in our_cov1:
-            if our_cov1[k].size() != our_new_cov1[k].size():
-                our_cov1[k] += our_new_cov1[k].mean(1)
-                our_cov2[k] += our_new_cov2[k].mean(1)
-                base_cov1[k] += base_new_cov1[k].mean(1)
-                base_cov2[k] += base_new_cov2[k].mean(1)
-            else:
-                our_cov1[k] += our_new_cov1[k]
-                our_cov2[k] += our_new_cov2[k]
-                base_cov1[k] += base_new_cov1[k]
-                base_cov2[k] += base_new_cov2[k]
-
-        our_c1, our_c2 = measure_coverage(our_cov1, our_cov2)
-        base_c1, base_c2 = measure_coverage(base_cov1, base_cov2)
-        res.append([our_c1, our_c2, base_c1, base_c2 ])
+            for k in our_cov1:
+                if our_cov1[k].size() != our_new_cov1[k].size():
+                    our_cov1[k] += our_new_cov1[k].mean(1)
+                    our_cov2[k] += our_new_cov2[k].mean(1)
+                    base_cov1[k] += base_new_cov1[k].mean(1)
+                    base_cov2[k] += base_new_cov2[k].mean(1)
+                else:
+                    our_cov1[k] += our_new_cov1[k]
+                    our_cov2[k] += our_new_cov2[k]
+                    base_cov1[k] += base_new_cov1[k]
+                    base_cov2[k] += base_new_cov2[k]
+                # end if
+            # end for
+            our_c1, our_c2 = measure_coverage(our_cov1, our_cov2)
+            base_c1, base_c2 = measure_coverage(base_cov1, base_cov2)
+            res.append([our_c1, our_c2, base_c1, base_c2 ])
+        # end if
+    # end for
     res = np.array(res)
     plt.plot(res[:, 0], 'r')
     plt.plot(res[:, 2], 'b')

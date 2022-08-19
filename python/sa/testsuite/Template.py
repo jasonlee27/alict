@@ -85,7 +85,7 @@ class Template:
             # print(f"{index} :: Suggest<{round(sug_ft-sug_st,2)} seconds>:: ")
         # end if
         ft = time.time()
-        logger.print(f"\tREQUIREMENT::{cksum_val}::SELECTED_SEED_{index}::{seed_id}, {seed}, {seed_label}, {seed_score}::{num_syntax_exps} syntax expansions::{num_words_orig_suggest} words suggestions::{len(new_input_results)} expansions generated::{round(ft-st,2)}sec")
+        logger.print(f"\tREQUIREMENT::{cksum_val}::SELECTED_SEED_{index}::{seed_id}, {seed}, {seed_label}, {seed_score}::{num_syntax_exps} syntax expansions::{num_words_orig_suggest} words suggestions::{len(new_input_results)} expansions generated::{round(ft-st,2)}sec{os.getpid()}")
         return {
             'seed': seed,
             'cfg_seed': generator.expander.cfg_seed,
@@ -208,7 +208,7 @@ class Template:
         args = list()
         if os.path.exists(input_file):
             results = Utils.read_json(input_file)
-            # _reqs = list()
+            _reqs = list()
             for req in reqs:
                 if not any([True for r in results if r["requirement"]["description"]==req["description"]]):
                     _reqs.append(req)
@@ -220,11 +220,14 @@ class Template:
             reqs = _reqs
         # end if
 
-        # with multiprocessing.Pool(processes=cls.NUM_PROCESSES) as pool:
-        #     results.append(pool.apply_async(cls.generate_inputs, args=args))
-        #     # input_dicts = pool.starmap(cls.generate_inputs, args)
-        # # end with
-
+        # sort reqs from smallest number of seeds to largest
+        for req in reqs:
+            selected = cls.SEARCH_FUNC[nlp_task](req, dataset_name)
+            req['num_seeds'] = len(selected['selected_inputs'])
+            del selected
+        # end for
+        reqs = sorted(reqs, key=lambda x: x['num_seeds'])
+        
         for req in reqs:
             results.append(
                 cls.generate_inputs(nlp_task,
