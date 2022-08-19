@@ -7,9 +7,9 @@ from typing import *
 
 import re, os
 import nltk
-# import spacy
+import spacy
 import copy
-# import time
+import time
 import random
 import numpy as np
 
@@ -340,6 +340,21 @@ class Suggest:
     def eval_word_suggest(cls, nlp, gen_input, label: str, requirement):
         results = list()
         masked_input, mask_pos = gen_input['masked_input']
+        # for w_sug in gen_input['words_suggest']:
+        #     input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
+        #     # check sentence and expansion requirements
+        #     if cls.eval_sug_words_by_req(input_candid, requirement, label):
+        #         if cls.eval_sug_words_by_exp_req(nlp, w_sug, requirement):
+        #             results.append((masked_input,
+        #                             gen_input['cfg_from'],
+        #                             gen_input['cfg_to'],
+        #                             mask_pos,
+        #                             w_sug,
+        #                             input_candid,
+        #                             label))
+        #         # end if
+        #     # end if
+        # # end for
         if not gen_input['words_suggest']:
             results.append((masked_input,
                             gen_input['cfg_from'],
@@ -369,7 +384,6 @@ class Suggest:
 
     @classmethod
     def get_exp_inputs(cls,
-                       nlp,
                        editor,
                        generator,
                        gen_inputs,
@@ -380,7 +394,8 @@ class Suggest:
                        logger=None):
         # get the word suggesteion at the expended grammar elements
         new_input_results = list()
-        
+        nlp = spacy.load('en_core_web_md')
+        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         gen_inputs, num_words_orig_suggest = cls.get_new_inputs(
             nlp,
             editor,
