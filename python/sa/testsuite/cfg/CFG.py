@@ -141,7 +141,7 @@ class BeneparCFG:
     @classmethod
     def get_seed_cfgs(cls, tokenized_seed_inputs):
         cfg_dict = None
-        parser = cls.load_parser()
+        parser = benepar.Parser(cls.benepar_parser_model)
         input_sents = list()
         cfg_dicts = list()
         for s in tokenized_seed_inputs:

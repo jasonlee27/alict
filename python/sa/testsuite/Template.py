@@ -13,6 +13,7 @@ import numpy
 import multiprocessing
 
 from pathlib import Path
+from tqdm import tqdm
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 from checklist.editor import Editor
 
@@ -63,7 +64,6 @@ class Template:
                             seed_score,
                             pcfg_ref,
                             selection_method,
-                            cfg_res_file,
                             logger):
         st = time.time()
         generator = Generator(seed, pcfg_ref)
@@ -94,28 +94,13 @@ class Template:
         }
         ft = time.time()
         logger.print(f"\tREQUIREMENT::{cksum_val}::SELECTED_SEED_{index}::{seed_id}, {seed}, {seed_label}, {seed_score}::{num_syntax_exps} syntax expansions::{num_words_orig_suggest} words suggestions::{len(new_input_results)} expansions generated::{round(ft-st,2)}sec::pid{os.getpid()}")
-        template_results = Utils.read_json(cfg_res_file)
-        ind = [
-            tr_i
-            for tr_i, tr in enumerate(template_results)
-            if tr['requirement']['description']==req['description']
-        ]
-        if any(ind):
-            ind = ind[0]
-            template_results[ind]['inputs'][seed] = exp_inputs
-        else:
-            template_results.append({
-                'requirement': req,
-                'inputs': {
-                    seed: exp_inputs
-                }
-            })
-        # end if
-        # write raw new inputs for each requirement
-        # print(len(template_results))
-        Utils.write_json(template_results, cfg_res_file, pretty_format=True)
-        exp_inputs['seed'] = seed
-        return exp_inputs
+        return {
+            'seed': seed,
+            'cfg_seed': generator.expander.cfg_seed,
+            'exp_inputs': new_input_results,
+            'label': seed_label,
+            'label_score': seed_score
+        }
     
     @classmethod
     def generate_inputs(cls,
@@ -141,36 +126,75 @@ class Template:
         exp_inputs = dict()
         exp_results = list()
         seeds = selected['selected_inputs'][:n] if n>0 else selected['selected_inputs']
-        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
-        args = list()
         cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}.json"
+
+        template_results = Utils.read_json(cfg_res_file)
+        template_results_saved = [
+            r for r in template_results
+            if r["requirement"]["description"]==req["description"]
+        ]
+        args = list()
         for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-            args.append((editor,
-                         selected['requirement'],
-                         cksum_val,
-                         index+1,
-                         _id,
-                         seed,
-                         seed_label,
-                         seed_score,
-                         pcfg_ref,
-                         selection_method,
-                         cfg_res_file,
-                         logger))
+            if seed not in template_results_saved[0]['inputs'].keys():
+                args.append((editor,
+                             selected['requirement'],
+                             cksum_val,
+                             index+1,
+                             _id,
+                             seed,
+                             seed_label,
+                             seed_score,
+                             pcfg_ref,
+                             selection_method,
+                             logger))
+            # end if
         # end for
-        exp_results = pool.starmap_async(cls.generate_exp_inputs,
-                                         args,
-                                         chunksize=len(seeds)//cls.NUM_PROCESSES).get()
-        for r in exp_results:
-            # r = _r.get()
-            seed = r['seed']
-            exp_inputs[seed] = {
-                'cfg_seed': r['cfg_seed'],
-                'exp_inputs': r['exp_inputs'],
-                'label': r['label'],
-                'label_score': r['label_score']
-            }
-            tot_num_exp += len(exp_inputs[seed]['exp_inputs'])
+        batch_size = 50
+        num_batches = len(args) // batch_size
+        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
+        for b_i in tqdm(range(num_batches)):
+            batch_from = b_i*batch_size
+            batch_to = (b_i+1)*batch_size if b_i+1<num_batches else len(args)
+            batch_args = args[batch_from:batch_to]
+            
+            exp_results = pool.starmap_async(cls.generate_exp_inputs,
+                                             batch_args,
+                                             chunksize=len(seeds)//cls.NUM_PROCESSES).get()
+            
+            template_results = Utils.read_json(cfg_res_file)
+            ind = [
+                tr_i
+                for tr_i, tr in enumerate(template_results)
+                if tr['requirement']['description']==req['description']
+            ]
+            
+            for r in exp_results:
+                # r = _r.get()
+                if any(ind):
+                    _ind = ind[0]
+                    template_results[_ind]['inputs'][r['seed']] = {
+                        'cfg_seed': r['cfg_seed'],
+                        'exp_inputs': r['exp_inputs'],
+                        'label': r['label'],
+                        'label_score': r['label_score']
+                    }
+                else:
+                    template_results.append({
+                        'requirement': req,
+                        'inputs': {
+                            r['seed']: {
+                                'cfg_seed': r['cfg_seed'],
+                                'exp_inputs': r['exp_inputs'],
+                                'label': r['label'],
+                                'label_score': r['label_score']
+                            }
+                        }
+                    })
+                # end if
+            # end for
+            tot_num_exp += len(exp_inputs)
+            # write batch results into result file
+            Utils.write_json(template_results, cfg_res_file, pretty_format=True)            
         # end for
         pool.close()
         pool.join()
@@ -203,22 +227,26 @@ class Template:
             template_results = Utils.read_json(input_file)
             _reqs = list()
             for req in reqs:
-                if not any([True for r in template_results if r["requirement"]["description"]==req["description"]]):
+                req_saved = [
+                    r for r in template_results
+                    if r["requirement"]["description"]==req["description"]
+                ]
+                selected = cls.SEARCH_FUNC[nlp_task](req, dataset_name)
+                req['num_seeds'] = len(selected['selected_inputs'])
+                if not any(req_saved):
                     _reqs.append(req)
-                    # args.append(
-                    #     (nlp_task, req, pcfg_ref, editor, dataset_name, n, selection_method, logger)
-                    # )
+                else:
+                    num_exps_saved = len(req_saved[0]['inputs'].keys())
+                    if num_exps_saved<req['num_seeds']:
+                        _reqs.append(req)
+                    # end if
                 # end if
+                del selected
             # end for
             reqs = _reqs
         # end if
         
         # sort reqs from smallest number of seeds to largest
-        for req in reqs:
-            selected = cls.SEARCH_FUNC[nlp_task](req, dataset_name)
-            req['num_seeds'] = len(selected['selected_inputs'])
-            del selected
-        # end for
         reqs = sorted(reqs, key=lambda x: x['num_seeds'])
         for req in reqs:
             cls.cur_req = req
