@@ -34,7 +34,7 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 
 class Template:
 
-    NUM_PROCESSES = 3 # multiprocessing.cpu_count()
+    NUM_PROCESSES = 2 # multiprocessing.cpu_count()
     
     POS_MAP = {
         "NNP": "NP",
@@ -52,6 +52,80 @@ class Template:
         Macros.sa_task: Search.search_sentiment_analysis_per_req
     }
 
+
+    @classmethod
+    def get_seed_of_interest(cls, cfg_res_file, cur_req, orig_seeds):
+        template_results = Utils.read_json(cfg_res_file)
+        template_results_saved = [
+            r for r in template_results
+            if r["requirement"]["description"]==cur_req["description"]
+        ]
+        seeds = list()
+        for index, (_id, seed, seed_label, seed_score) in enumerate(orig_seeds):
+            if seed not in template_results_saved[0]['inputs'].keys():
+                seeds.append((_id, seed, seed_label, seed_score))
+            # end if
+        # end for
+        return seeds
+    
+    @classmethod
+    def generate_masked_inputs(cls, seeds, pcfg_ref, logger=None):
+        st = time.time()
+        masked_input_res = dict()
+        for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
+            generator = Generator(seed, pcfg_ref)
+            gen_inputs = generator.masked_input_generator()
+            masked_input_res[seed] = {
+                'label': seed_label
+                'masked_inputs': list()
+            }
+            if any(gen_inputs):
+                for gen_input in gen_inputs:
+                    masked_input_res[seed]['masked_inputs'].append({
+                        'cfg_from': gen_input['cfg_from'],
+                        'cfg_to': gen_input['cfg_to'],
+                        'masked_input': gen_input['masked_input'] # (_masked_input, mask_pos)
+                    })
+                # end for
+            # end if
+        # end for
+        ft = time.time()
+        if logger is None:
+            logger.print(f"Template.generate_masked_inputs::{round(ft-st,3)}sec")
+        # end if
+        return masked_input_res
+
+    @classmethod
+    def get_word_suggestions(cls,
+                             masked_inputs,
+                             editor,
+                             num_target=Macros.num_suggestions_on_exp_grammer_elem,
+                             logger=None):
+        # collect all masked sents
+        masked_sents: Dict = dict()
+        for index, seed in enumerate(masked_inputs.keys()):
+            for m in masked_inputs[seed]['masked_inputs']:
+                key = m['masked_input'][0]
+                if key not in masked_sents.keys():
+                    masked_sents[m['masked_input'][0]] = {
+                        'inputs': list(),
+                        'word_sug': list()
+                    }
+                # end if
+                if (seed, m['masked_input'][1]) not in masked_sents[key]['inputs']:
+                    masked_sents[key]['inputs'].append((
+                        seed, m['masked_input'][1]
+                    ))
+            # end for
+        # end for
+
+        # get word suggestions
+        masked_sents = Sugget.get_word_suggestions_over_seeds(editor,
+                                                              masked_sents,
+                                                              num_target=3*num_target,
+                                                              logger=logger)
+        return masked_sents
+    
     @classmethod
     def generate_exp_inputs(cls,
                             editor,
@@ -107,100 +181,110 @@ class Template:
                         task,
                         req,
                         pcfg_ref,
-                        editor,
+                        # editor,
                         dataset,
                         n=None,
                         selection_method=None,
                         logger=None):
         st = time.time()
+        # generate seeds
         selected = cls.SEARCH_FUNC[task](req, dataset)
+        seeds = selected['selected_inputs'][:n] if n>0 else selected['selected_inputs']
+        cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}.json"
+        seeds = cls.get_seed_of_interest(cfg_res_file, req, seeds)
+
         cksum_val = Utils.get_cksum(selected['requirement']['description'])
         num_selected_inputs = len(selected['selected_inputs'])
         print_str = f">>>>> REQUIREMENT::{cksum_val}::"+selected['requirement']['description']
-        logger.print(f"{print_str}\n\t{num_selected_inputs} inputs are selected.")
-        # nlp = spacy.load('en_core_web_md')
-        # nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+        logger.print(f"{print_str}\n\t{len(seeds)} inputs are selected out of {num_selected_inputs}.")
         index = 0
         num_seed_for_exp = 0
         tot_num_exp = 0
         exp_inputs = dict()
         exp_results = list()
-        seeds = selected['selected_inputs'][:n] if n>0 else selected['selected_inputs']
-        cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}.json"
 
-        template_results = Utils.read_json(cfg_res_file)
-        template_results_saved = [
-            r for r in template_results
-            if r["requirement"]["description"]==req["description"]
-        ]
-        args = list()
-        for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-            if seed not in template_results_saved[0]['inputs'].keys():
-                args.append((editor,
-                             selected['requirement'],
-                             cksum_val,
-                             index+1,
-                             _id,
-                             seed,
-                             seed_label,
-                             seed_score,
-                             pcfg_ref,
-                             selection_method,
-                             logger))
-            # end if
-        # end for
-        batch_size = 50
-        num_batches = len(args) // batch_size
-        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
-        for b_i in tqdm(range(num_batches)):
-            batch_from = b_i*batch_size
-            batch_to = (b_i+1)*batch_size if b_i+1<num_batches else len(args)
-            batch_args = args[batch_from:batch_to]
+        # anlyze cfg and get masked input for all seeds of interest
+        masked_inputs = cls.generate_masked_inputs(seeds, pcfg_ref, logger=logger)
+
+        # get the suggested words for the masked inputs using bert:
+        masked_inputs_w_word_sug = cls.get_word_suggestions(masked_inputs,
+                                                            editor,
+                                                            logger=logger)
+        
+        # validate word suggestion
+        exp_resuls = Suggest.validate_word_suggestions(masked_inputs_w_word_sug,
+                                                       editor,
+                                                       req,
+                                                       selection_method=selection_method)
+        
+        # args = list()
+        # for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
+        #     if seed not in template_results_saved[0]['inputs'].keys():
+        #         args.append((editor,
+        #                      selected['requirement'],
+        #                      cksum_val,
+        #                      index+1,
+        #                      _id,
+        #                      seed,
+        #                      seed_label,
+        #                      seed_score,
+        #                      pcfg_ref,
+        #                      selection_method,
+        #                      logger))
+        #     # end if
+        # # end for
+        # batch_size = 50
+        # num_batches = len(args) // batch_size
+        # pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
+        # for b_i in tqdm(range(num_batches)):
+        #     batch_from = b_i*batch_size
+        #     batch_to = (b_i+1)*batch_size if b_i+1<num_batches else len(args)
+        #     batch_args = args[batch_from:batch_to]
             
-            exp_results = pool.starmap_async(cls.generate_exp_inputs,
-                                             batch_args,
-                                             chunksize=len(seeds)//cls.NUM_PROCESSES).get()
+        #     exp_results = pool.starmap_async(cls.generate_exp_inputs,
+        #                                      batch_args,
+        #                                      chunksize=len(seeds)//cls.NUM_PROCESSES).get()
             
-            template_results = Utils.read_json(cfg_res_file)
-            ind = [
-                tr_i
-                for tr_i, tr in enumerate(template_results)
-                if tr['requirement']['description']==req['description']
-            ]
+        #     template_results = Utils.read_json(cfg_res_file)
+        #     ind = [
+        #         tr_i
+        #         for tr_i, tr in enumerate(template_results)
+        #         if tr['requirement']['description']==req['description']
+        #     ]
             
-            for r in exp_results:
-                # r = _r.get()
-                if any(ind):
-                    _ind = ind[0]
-                    template_results[_ind]['inputs'][r['seed']] = {
-                        'cfg_seed': r['cfg_seed'],
-                        'exp_inputs': r['exp_inputs'],
-                        'label': r['label'],
-                        'label_score': r['label_score']
-                    }
-                else:
-                    template_results.append({
-                        'requirement': req,
-                        'inputs': {
-                            r['seed']: {
-                                'cfg_seed': r['cfg_seed'],
-                                'exp_inputs': r['exp_inputs'],
-                                'label': r['label'],
-                                'label_score': r['label_score']
-                            }
-                        }
-                    })
-                # end if
-            # end for
-            tot_num_exp += len(exp_inputs)
-            # write batch results into result file
-            Utils.write_json(template_results, cfg_res_file, pretty_format=True)            
-        # end for
-        pool.close()
-        pool.join()
-        ft = time.time()
-        logger.print(f"\tREQUIREMENT::{cksum_val}::Total {tot_num_exp} syntactical expansions identified in the requirement out of {num_selected_inputs} seeds")
-        logger.print(f"<<<<< REQUIREMENT::{cksum_val}::"+selected["requirement"]["description"]+f"{round(ft-st,2)}sec")
+        #     for r in exp_results:
+        #         # r = _r.get()
+        #         if any(ind):
+        #             _ind = ind[0]
+        #             template_results[_ind]['inputs'][r['seed']] = {
+        #                 'cfg_seed': r['cfg_seed'],
+        #                 'exp_inputs': r['exp_inputs'],
+        #                 'label': r['label'],
+        #                 'label_score': r['label_score']
+        #             }
+        #         else:
+        #             template_results.append({
+        #                 'requirement': req,
+        #                 'inputs': {
+        #                     r['seed']: {
+        #                         'cfg_seed': r['cfg_seed'],
+        #                         'exp_inputs': r['exp_inputs'],
+        #                         'label': r['label'],
+        #                         'label_score': r['label_score']
+        #                     }
+        #                 }
+        #             })
+        #         # end if
+        #     # end for
+        #     tot_num_exp += len(exp_inputs)
+        #     # write batch results into result file
+        #     Utils.write_json(template_results, cfg_res_file, pretty_format=True)            
+        # # end for
+        # pool.close()
+        # pool.join()
+        # ft = time.time()
+        # logger.print(f"\tREQUIREMENT::{cksum_val}::Total {tot_num_exp} syntactical expansions identified in the requirement out of {num_selected_inputs} seeds")
+        # logger.print(f"<<<<< REQUIREMENT::{cksum_val}::"+selected["requirement"]["description"]+f"{round(ft-st,2)}sec")
         return {
             'requirement': selected["requirement"],
             'inputs': exp_inputs

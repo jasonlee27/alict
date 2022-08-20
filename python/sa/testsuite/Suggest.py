@@ -89,6 +89,36 @@ class Suggest:
         # for_ft = time.time()
         # print(f"cls.get_word_suggestion::masked_inputs::for_loop<{round(for_ft-for_st,2)} seconds>::")
         return results
+
+    @classmethod
+    def get_word_suggestions_over_seeds(cls,
+                                        masked_sents: Dict,
+                                        editor: Editor,
+                                        num_target=10,
+                                        logger=None):
+        def get_word_sug(editor, s):
+            word_suggest = editor.suggest(s,
+                                          return_score=True,
+                                          remove_duplicates=True)
+            word_suggest = sorted(word_suggest,
+                                  key=lambda x: x[-1],
+                                  reverse=True)[:num_target]
+            word_suggest = [
+                ws for ws in word_suggest
+                if cls.is_word_suggestion_avail(ws[0])
+            ]
+            word_suggest = cls.remove_duplicates(word_suggest)
+            return word_suggest
+        st = time.time()
+        results = list()
+        for masked_sent in masked_sents.keys():
+            masked_sents[masked_sent]['word_sug'] = get_word_sug(editor, masked_sent)
+        # end for
+        ft = time.time()
+        if logger is None:
+            logger.print(f"Suggest.get_word_suggestions_over_seeds::{round(ft-st,3)}sec")
+        # end if
+        return masked_sents
     
     @classmethod
     def match_word_n_pos(cls, nlp, word_suggest, masked_input: str, mask_pos: List):

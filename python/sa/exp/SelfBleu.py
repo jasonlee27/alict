@@ -1,6 +1,8 @@
 # experiment for selfbleu score
 # A higher Self-BLEU score implies less diversity of the document
 
+# OURS::Sentiment change over time, present should prevail::75294sents::around6secperonesent::125.49hourstocomplete(sequentially)
+
 import os
 import nltk
 import time
@@ -16,13 +18,14 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 
-NUM_PROCESSES_IN_USE = 3 # os.cpu_count()
+NUM_PROCESSES_IN_USE = 15 # os.cpu_count()
 
 
 class SelfBleu:
-    def __init__(self, text_file=None, texts=None, gram=3):
+    def __init__(self, text_file=None, texts=None, logger=None, gram=3):
         # the json file used for retraining sa models
         self.texts = None
+        self.logger = logger
         self.score = 0.
         self.cnt = 0
         if texts is not None and text_file is None:
@@ -53,11 +56,16 @@ class SelfBleu:
         return self.reference
 
     def calc_bleu(self, reference, hypothesis, weight):
+        st = time.time()
+        # self.logger.print(hypothesis, end='::')
         # print(multiprocessing.current_process())
-        return nltk.translate.bleu_score.sentence_bleu(
+        score = nltk.translate.bleu_score.sentence_bleu(
             reference, hypothesis, weight,
             smoothing_function=SmoothingFunction().method1
         )
+        ft = time.time()
+        self.logger.print(f"score{score}::{round(ft-st,3)}sec::pcs{os.getpid()}")
+        return score
 
     def get_score(self, reference=None):
         ngram = self.gram
@@ -68,25 +76,26 @@ class SelfBleu:
         result = list()
         self.score = 0.
         self.cnt = 0
-        def callback(res):
-            self.score += res
-            self.cnt += 1
-            return
-        
+        # def callback(score):
+        #     self.score += score
+        #     self.cnt += 1
+        #     return
         pool = Pool(processes=NUM_PROCESSES_IN_USE)
         for d_i in tqdm(range(self.num_data)):
             hypothesis = reference[d_i]
             other = reference[:d_i] + reference[d_i+1:]
+            # score = self.calc_bleu(other, hypothesis, weight)
+            # self.score += score
+            # self.cnt += 1
             result.append(pool.apply_async(self.calc_bleu,
-                                           args=(other, hypothesis, weight),
-                                           callback=callback))
+                                           args=(other, hypothesis, weight)))
         # end for
         # score = 0.
         # cnt = 0
-        # for i in tqdm(result):
-        #     score += i.get()
-        #     cnt += 1
-        # # end for
+        for i in tqdm(result):
+            self.score += i.get()
+            self.cnt += 1
+        # end for
         pool.close()
         pool.join()
         print(f'get_score done {self.score}, {self.cnt}')
@@ -186,8 +195,9 @@ def main_seed(task,
     scores_baseline = dict()
     for lc in texts_ours.keys():
         st = time.time()
-        logger.print(f"OURS::{lc}", end='::')
-        sbleu = SelfBleu(texts=texts_ours[lc])
+        # logger.print(f"OURS::{lc}", end='::')
+        logger.print(f"OURS::{lc}")
+        sbleu = SelfBleu(texts=texts_ours[lc], logger=logger)
         scores[lc] = {
             'num_data': sbleu.num_data,
             'score': sbleu.get_score()
@@ -201,14 +211,14 @@ def main_seed(task,
         logger.print(f"{round(ft-st,2)}secs", end='::')
         logger.print(f"num_data:{scores[lc]['num_data']}::score:{scores[lc]['score']}")
     # end for
-
+    
     _, texts_checklist = read_checklist_testcases(task,
                                                   search_dataset_name,
                                                   selection_method)
     for lc in texts_checklist.keys():
         st = time.time()
         logger.print(f"BL::{lc}", end='::')
-        sbleu = SelfBleu(texts=texts_checklist[lc])
+        sbleu = SelfBleu(texts=texts_checklist[lc], logger=logger)
         scores_baseline[lc] = {
             'num_data': sbleu.num_data,
             'score': sbleu.get_score()
