@@ -30,6 +30,7 @@ from .Suggest import Suggest
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 
+
 class Template:
 
     NUM_PROCESSES = 3 # multiprocessing.cpu_count()
@@ -62,6 +63,7 @@ class Template:
                             seed_score,
                             pcfg_ref,
                             selection_method,
+                            cfg_res_file,
                             logger):
         st = time.time()
         generator = Generator(seed, pcfg_ref)
@@ -84,15 +86,36 @@ class Template:
             # sug_ft = time.time()
             # print(f"{index} :: Suggest<{round(sug_ft-sug_st,2)} seconds>:: ")
         # end if
-        ft = time.time()
-        logger.print(f"\tREQUIREMENT::{cksum_val}::SELECTED_SEED_{index}::{seed_id}, {seed}, {seed_label}, {seed_score}::{num_syntax_exps} syntax expansions::{num_words_orig_suggest} words suggestions::{len(new_input_results)} expansions generated::{round(ft-st,2)}sec{os.getpid()}")
-        return {
-            'seed': seed,
+        exp_inputs = {
             'cfg_seed': generator.expander.cfg_seed,
             'exp_inputs': new_input_results,
             'label': seed_label,
             'label_score': seed_score
         }
+        ft = time.time()
+        logger.print(f"\tREQUIREMENT::{cksum_val}::SELECTED_SEED_{index}::{seed_id}, {seed}, {seed_label}, {seed_score}::{num_syntax_exps} syntax expansions::{num_words_orig_suggest} words suggestions::{len(new_input_results)} expansions generated::{round(ft-st,2)}sec::pid{os.getpid()}")
+        template_results = Utils.read_json(cfg_res_file)
+        ind = [
+            tr_i
+            for tr_i, tr in enumerate(template_results)
+            if tr['requirement']['description']==req['description']
+        ]
+        if any(ind):
+            ind = ind[0]
+            template_results[ind]['inputs'][seed] = exp_inputs
+        else:
+            template_results.append({
+                'requirement': req,
+                'inputs': {
+                    seed: exp_inputs
+                }
+            })
+        # end if
+        # write raw new inputs for each requirement
+        # print(len(template_results))
+        Utils.write_json(template_results, cfg_res_file, pretty_format=True)
+        exp_inputs['seed'] = seed
+        return exp_inputs
     
     @classmethod
     def generate_inputs(cls,
@@ -116,61 +139,31 @@ class Template:
         num_seed_for_exp = 0
         tot_num_exp = 0
         exp_inputs = dict()
-        seeds = selected['selected_inputs'][:n] if n>0 else selected['selected_inputs']
-
-        # with multiprocessing.Pool(processes=cls.NUM_PROCESSES) as pool:
-        #     # input_dicts = pool.starmap(cls.generate_inputs, args)
-        # # end with
         exp_results = list()
-        with multiprocessing.Pool(processes=cls.NUM_PROCESSES) as pool:
-            args = list()
-            for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-                args.append((editor,
-                             selected['requirement'],
-                             cksum_val,
-                             index+1,
-                             _id,
-                             seed,
-                             seed_label,
-                             seed_score,
-                             pcfg_ref,
-                             selection_method,
-                             logger))
-            # end for
-            exp_results = pool.starmap(cls.generate_exp_inputs,
-                                       args,
-                                       chunksize=len(seeds)//cls.NUM_PROCESSES)
-        # end with
-        # pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
-        # for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-        #     args = (editor,
-        #             selected['requirement'],
-        #             cksum_val,
-        #             index+1,
-        #             _id,
-        #             seed,
-        #             seed_label,
-        #             seed_score,
-        #             pcfg_ref,
-        #             selection_method,
-        #             logger)
-        #     exp_results.append(pool.apply_async(cls.generate_exp_inputs, args=args))
-        #     # exp_results = cls.generate_exp_inputs(
-        #     #     editor,
-        #     #     cksum_val,
-        #     #     index,
-        #     #     _id,
-        #     #     seed,
-        #     #     seed_label,
-        #     #     seed_score,
-        #     #     pcfg_ref,
-        #     #     selection_method,
-        #     #     logger
-        #     # )
-        # # end for
+        seeds = selected['selected_inputs'][:n] if n>0 else selected['selected_inputs']
+        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
+        args = list()
+        cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}.json"
+        for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
+            args.append((editor,
+                         selected['requirement'],
+                         cksum_val,
+                         index+1,
+                         _id,
+                         seed,
+                         seed_label,
+                         seed_score,
+                         pcfg_ref,
+                         selection_method,
+                         cfg_res_file,
+                         logger))
+        # end for
+        exp_results = pool.starmap_async(cls.generate_exp_inputs,
+                                         args,
+                                         chunksize=len(seeds)//cls.NUM_PROCESSES).get()
         for r in exp_results:
+            # r = _r.get()
             seed = r['seed']
-            # exp_inputs[seed] = r.get()
             exp_inputs[seed] = {
                 'cfg_seed': r['cfg_seed'],
                 'exp_inputs': r['exp_inputs'],
@@ -179,8 +172,8 @@ class Template:
             }
             tot_num_exp += len(exp_inputs[seed]['exp_inputs'])
         # end for
-        # pool.close()
-        # pool.join()
+        pool.close()
+        pool.join()
         ft = time.time()
         logger.print(f"\tREQUIREMENT::{cksum_val}::Total {tot_num_exp} syntactical expansions identified in the requirement out of {num_selected_inputs} seeds")
         logger.print(f"<<<<< REQUIREMENT::{cksum_val}::"+selected["requirement"]["description"]+f"{round(ft-st,2)}sec")
@@ -204,13 +197,13 @@ class Template:
         reqs = Requirements.get_requirements(nlp_task)
         editor = Editor()
         pcfg_ref = RefPCFG()
-        results = list()
+        # results = list()
         args = list()
         if os.path.exists(input_file):
-            results = Utils.read_json(input_file)
+            template_results = Utils.read_json(input_file)
             _reqs = list()
             for req in reqs:
-                if not any([True for r in results if r["requirement"]["description"]==req["description"]]):
+                if not any([True for r in template_results if r["requirement"]["description"]==req["description"]]):
                     _reqs.append(req)
                     # args.append(
                     #     (nlp_task, req, pcfg_ref, editor, dataset_name, n, selection_method, logger)
@@ -219,7 +212,7 @@ class Template:
             # end for
             reqs = _reqs
         # end if
-
+        
         # sort reqs from smallest number of seeds to largest
         for req in reqs:
             selected = cls.SEARCH_FUNC[nlp_task](req, dataset_name)
@@ -227,18 +220,17 @@ class Template:
             del selected
         # end for
         reqs = sorted(reqs, key=lambda x: x['num_seeds'])
-        
         for req in reqs:
-            results.append(
-                cls.generate_inputs(nlp_task,
-                                    req,
-                                    pcfg_ref,
-                                    editor,
-                                    dataset_name,
-                                    n,
-                                    selection_method,
-                                    logger)
-            )
+            cls.cur_req = req
+            req_results = cls.generate_inputs(nlp_task,
+                                              req,
+                                              pcfg_ref,
+                                              editor,
+                                              dataset_name,
+                                              n,
+                                              selection_method,
+                                              logger)
+            # template_results.append(req_results)
             # write raw new inputs for each requirement
             Utils.write_json(results, input_file, pretty_format=True)
         # end for
@@ -383,9 +375,9 @@ class Template:
         #     selection_method=selection_method,
         #     logger=logger
         # )
-        
+        cfg_res_file = Macros.result_dir/f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
         new_input_dicts = cls.get_new_inputs(
-            Macros.result_dir/f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json",
+            cfg_res_file,
             task,
             dataset_name,
             n=num_seeds,

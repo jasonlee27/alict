@@ -340,30 +340,7 @@ class Suggest:
     def eval_word_suggest(cls, nlp, gen_input, label: str, requirement):
         results = list()
         masked_input, mask_pos = gen_input['masked_input']
-        # for w_sug in gen_input['words_suggest']:
-        #     input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
-        #     # check sentence and expansion requirements
-        #     if cls.eval_sug_words_by_req(input_candid, requirement, label):
-        #         if cls.eval_sug_words_by_exp_req(nlp, w_sug, requirement):
-        #             results.append((masked_input,
-        #                             gen_input['cfg_from'],
-        #                             gen_input['cfg_to'],
-        #                             mask_pos,
-        #                             w_sug,
-        #                             input_candid,
-        #                             label))
-        #         # end if
-        #     # end if
-        # # end for
-        if not gen_input['words_suggest']:
-            results.append((masked_input,
-                            gen_input['cfg_from'],
-                            gen_input['cfg_to'],
-                            mask_pos,
-                            None,
-                            None,
-                            label))
-        else:
+        if gen_input['words_suggest']:
             for w_sug in gen_input['words_suggest']:
                 input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
                 # check sentence and expansion requirements
@@ -373,13 +350,38 @@ class Suggest:
                                         gen_input['cfg_from'],
                                         gen_input['cfg_to'],
                                         mask_pos,
-                                        w_sug,
+                                    w_sug,
                                         input_candid,
                                         label))
                     # end if
                 # end if
             # end for
         # end if
+        # if not gen_input['words_suggest']:
+        #     results.append((masked_input,
+        #                     gen_input['cfg_from'],
+        #                     gen_input['cfg_to'],
+        #                     mask_pos,
+        #                     None,
+        #                     None,
+        #                     label))
+        # else:
+        #     for w_sug in gen_input['words_suggest']:
+        #         input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
+        #         # check sentence and expansion requirements
+        #         if cls.eval_sug_words_by_req(input_candid, requirement, label):
+        #             if cls.eval_sug_words_by_exp_req(nlp, w_sug, requirement):
+        #                 results.append((masked_input,
+        #                                 gen_input['cfg_from'],
+        #                                 gen_input['cfg_to'],
+        #                                 mask_pos,
+        #                                 w_sug,
+        #                                 input_candid,
+        #                                 label))
+        #             # end if
+        #         # end if
+        #     # end for
+        # # end if
         return results
 
     @classmethod

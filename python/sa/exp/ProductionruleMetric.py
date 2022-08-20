@@ -23,6 +23,7 @@ class ProductionruleMetric:
         self.cfgs = cfgs
         self.reference = None
         self.num_data = len(self.cfgs)
+        self.scores = list()
 
     def depDistance(self, hyp_graph, ref_graphs):
         # count occurences of each type of relationship
@@ -50,21 +51,27 @@ class ProductionruleMetric:
         pool = Pool(processes=NUM_PROCESSES_IN_USE)
         result = list()
         reference = self.cfgs
+        self.scores = list()
+        def callback(res):
+            self.scores.append(res)
+            return
         for d_i in range(self.num_data):
             hypothesis = reference[d_i]
             other = reference[:d_i] + reference[d_i+1:]
-            result.append(pool.apply_async(self.depDistance, args=(hypothesis, other)))
+            result.append(pool.apply_async(self.depDistance,
+                                           args=(hypothesis, other),
+                                           callback=callback))
         # end for
-        scores = list()
+        # scores = list()
         cnt = 1
-        for r in result:
-            scores.extend(r.get())
-        # end for
-        cnt = len(scores)
-        scores = list(normalize([scores])[0])
+        # for r in result:
+        #     scores.extend(r.get())
+        # # end for
+        # cnt = len(self.scores)
+        scores = list(normalize([self.scores])[0])
         pool.close()
         pool.join()
-        return float("{:.3f}".format(sum(scores) / len(scores)))
+        return float("{:.3f}".format(sum(self.scores) / len(self.scores)))
 
     @classmethod
     def get_seed_graph(cls, cfg_seed):
@@ -138,12 +145,19 @@ class ProductionruleMetric:
             seeds = exp['seeds']
             seed_graphs = list()
             exp_graphs = list()
-            for seed in seeds:
-                tree_dict = BeneparCFG.get_seed_cfg(seed[1])
+            inputs = [Utils.tokenize(s[1]) for s in seeds]
+            tree_dicts = BeneparCFG.get_seed_cfgs(inputs)
+            for tree_dict in tree_dicts:
                 cfg_seed = tree_dict['rule']
                 seed_graph = cls.get_seed_graph(cfg_seed)
                 seed_graphs.append(seed_graph)
             # end for
+            # for seed in seeds:
+            #     tree_dict = BeneparCFG.get_seed_cfg(seed[1])
+            #     cfg_seed = tree_dict['rule']
+            #     seed_graph = cls.get_seed_graph(cfg_seed)
+            #     seed_graphs.append(seed_graph)
+            # # end for
             seed_graph_dict[lc] = seed_graphs
         # end for
         return seed_graph_dict, exp_graph_dict
