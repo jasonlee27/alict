@@ -12,6 +12,7 @@ import copy
 import time
 import random
 import numpy as np
+import multiprocessing
 
 from pathlib import Path
 from scipy.special import softmax
@@ -33,6 +34,7 @@ NUM_TOPK = 5
 class Suggest:
 
     MASK = Macros.MASK
+    NUM_PROCESSES = Macros.num_processes
 
     @classmethod
     def is_word_suggestion_avail(cls, word_suggest):
@@ -89,42 +91,6 @@ class Suggest:
         # for_ft = time.time()
         # print(f"cls.get_word_suggestion::masked_inputs::for_loop<{round(for_ft-for_st,2)} seconds>::")
         return results
-
-    @classmethod
-    def get_word_suggestions_over_seeds(cls,
-                                        editor: Editor,
-                                        masked_sents: Dict,
-                                        num_target=10,
-                                        selection_method=None,
-                                        logger=None):
-        def get_word_sug(editor, s, num_target, selection_method):
-            word_suggest = editor.suggest(s,
-                                          return_score=True,
-                                          remove_duplicates=True)[:3*num_target]
-            word_suggest = [
-                ws for ws in word_suggest
-                if cls.is_word_suggestion_avail(ws[0])
-            ]
-            word_suggest = cls.remove_duplicates(word_suggest)
-            return word_suggest
-        st = time.time()
-        results = list()
-        for ms_i, masked_sent in enumerate(masked_sents.keys()):
-            st_2 = time.time()
-            masked_sents[masked_sent]['word_sug'] = get_word_sug(editor,
-                                                                 masked_sent,
-                                                                 num_target=num_target,
-                                                                 selection_method=selection_method)
-            ft_2 = time.time()
-            if logger is not None:
-                logger.print(f"\tSuggest.get_word_suggestions_over_seeds::MASKED_SENT_{ms_i}::{round(ft_2-st_2,3)}sec")
-            # end if
-        # end for
-        ft = time.time()
-        if logger is None:
-            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::{round(ft-st,3)}sec")
-        # end if
-        return masked_sents
     
     @classmethod
     def match_word_n_pos(cls, nlp, word_suggest, masked_input: str, mask_pos: List):
@@ -462,12 +428,75 @@ class Suggest:
         # print()
         return new_input_results, num_words_orig_suggest
 
+
+    @classmethod
+    def get_word_sug_parallel(cls,
+                              editor,
+                              ms_i,
+                              masked_sent,
+                              num_target,
+                              no_mask_key,
+                              logger):
+        st = time.time()
+        pcs_id = multiprocessing.current_process().ident
+        gpu_id = multiprocessing.current_process().name.split('-')[-1]
+        word_suggest = list()
+        if masked_sent!=no_mask_key:
+            word_suggest = editor.suggest(masked_sent,
+                                          return_score=True,
+                                          remove_duplicates=True)[:3*num_target]
+            word_suggest = [
+                ws for ws in word_suggest
+                if cls.is_word_suggestion_avail(ws[0])
+            ]
+            word_suggest = cls.remove_duplicates(word_suggest)
+        # end if
+        ft = time.time()
+        if logger is not None:
+            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::MASKED_SENT_{ms_i}::{masked_sent}::{round(ft-st,3)}sec::pcs{pcs_id}::gpu{gpu_id}")
+        # end if
+        return {
+            'masked_sent': masked_sent,
+            'word_sug': word_suggest
+        }
+        
+    @classmethod
+    def get_word_suggestions_over_seeds(cls,
+                                        editor: Editor,
+                                        masked_sents: Dict,
+                                        num_target=10,
+                                        selection_method=None,
+                                        no_mask_key='<no_mask>',
+                                        logger=None):
+        st = time.time()
+        results = list()
+        args = list()
+        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
+        for ms_i, masked_sent in enumerate(masked_sents.keys()):
+            args.append((editor, ms_i, masked_sent, num_target, no_mask_key, logger))
+        # end for
+
+        results = pool.starmap_async(cls.get_word_sug_parallel,
+                                     args,
+                                     chunksize=len(masked_sents.keys())//cls.NUM_PROCESSES).get()
+        for r in results:
+            masked_sents[r['masked_sent']]['word_sug'] = r['word_sug']
+        # end for
+        pool.close()
+        pool.join()
+        ft = time.time()
+        if logger is None:
+            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::{round(ft-st,3)}sec")
+        # end if
+        return masked_sents
+
     @classmethod
     def eval_word_suggestions_over_seeds(cls,
                                          masked_inputs_w_word_sug,
                                          req,
                                          num_target=Macros.num_suggestions_on_exp_grammer_elem,
                                          selection_method=None,
+                                         no_mask_key='<no_mask>',
                                          logger=None):
         st = time.time()
         nlp = spacy.load('en_core_web_md')
@@ -478,43 +507,45 @@ class Suggest:
             seed_objs = masked_inputs_w_word_sug[masked_sent]['inputs']
             for seed, seed_label, seed_score, cfg_seed, cfg_from, cfg_to, mask_pos in seed_objs:
                 results = list()
-                matched_words_sug = cls.match_word_n_pos(
-                    nlp,
-                    word_sug,
-                    masked_sent,
-                    mask_pos
-                )
-                if selection_method.lower()=='random':
-                    if len(matched_words_sug)>num_target:
-                        idxs = np.random.choice(len(matched_words_sug), num_target, replace=False)
-                        word_suggest = [matched_words_sug[i][0] for i in idxs]
-                    else:
+                if masked_sent!=no_mask_key:
+                    matched_words_sug = cls.match_word_n_pos(
+                        nlp,
+                        word_sug,
+                        masked_sent,
+                        mask_pos
+                    )
+                    if selection_method.lower()=='random':
+                        if len(matched_words_sug)>num_target:
+                            idxs = np.random.choice(len(matched_words_sug), num_target, replace=False)
+                            word_suggest = [matched_words_sug[i][0] for i in idxs]
+                        else:
+                            word_suggest = [ws[0] for ws in matched_words_sug]
+                        # end if
+                    elif selection_method.lower()=='bertscore':
+                        if len(matched_words_sug)>num_target:
+                            word_suggest = sorted(matched_words_sug,
+                                                  key=lambda x: x[-1],
+                                                  reverse=True)[:num_target]
+                        # end if
+                        word_suggest = [ws[0] for ws in matched_words_sug]
+                    else: # noselect
                         word_suggest = [ws[0] for ws in matched_words_sug]
                     # end if
-                elif selection_method.lower()=='bertscore':
-                    if len(matched_words_sug)>num_target:
-                        word_suggest = sorted(matched_words_sug,
-                                              key=lambda x: x[-1],
-                                              reverse=True)[:num_target]
-                    # end if
-                    word_suggest = [ws[0] for ws in matched_words_sug]
-                else: # noselect
-                    word_suggest = [ws[0] for ws in matched_words_sug]
-                # end if
-                for w_sug in word_suggest:
-                    input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
-                    # check sentence and expansion requirements
-                    if cls.eval_sug_words_by_req(input_candid, req, seed_label):
-                        if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
-                            results.append((masked_sent,
-                                            cfg_from,
-                                            cfg_to,
-                                            mask_pos,
-                                            w_sug,
-                                            input_candid))
+                    for w_sug in word_suggest:
+                        input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
+                        # check sentence and expansion requirements
+                        if cls.eval_sug_words_by_req(input_candid, req, seed_label):
+                            if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
+                                results.append((masked_sent,
+                                                cfg_from,
+                                                cfg_to,
+                                                mask_pos,
+                                                w_sug,
+                                                input_candid))
+                            # end if
                         # end if
-                    # end if
-                # end for
+                    # end for                    
+                # end if
                 if seed not in exp_results.keys():
                     exp_results[seed] = {
                         'cfg_seed': cfg_seed,

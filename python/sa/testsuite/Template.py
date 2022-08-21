@@ -34,7 +34,7 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 
 class Template:
 
-    NUM_PROCESSES = 2 # multiprocessing.cpu_count()
+    NUM_PROCESSES = Macros.num_processes # multiprocessing.cpu_count()
     
     POS_MAP = {
         "NNP": "NP",
@@ -78,35 +78,65 @@ class Template:
             # end for
         # end if
         return req_ind_in_result, seeds
-    
+
+    @classmethod
+    def generate_seed_cfg_parallel(cls,
+                                   index,
+                                   seed,
+                                   seed_label,
+                                   seed_score,
+                                   pcfg_ref,
+                                   logger):
+        st_2 = time.time()
+        pcs_id = multiprocessing.current_process().ident
+        gpu_id = multiprocessing.current_process().name.split('-')[-1]
+        generator = Generator(seed, pcfg_ref)
+        gen_inputs = generator.masked_input_generator()
+        masked_input_res = {
+            'seed': seed,
+            'cfg_seed': generator.expander.cfg_seed,
+            'label': seed_label,
+            'label_score': seed_score,
+            'masked_inputs': list()
+        }
+        
+        if any(gen_inputs):
+            for gen_input in gen_inputs:
+                masked_input_res['masked_inputs'].append({
+                    'cfg_from': gen_input['cfg_from'],
+                    'cfg_to': gen_input['cfg_to'],
+                    'masked_input': gen_input['masked_input'] # (_masked_input, mask_pos)
+                })
+            # end for
+        # end if
+        ft_2 = time.time()
+        if logger is not None:
+            logger.print(f"\tTemplate.generate_masked_inputs::SEED_{index}::{seed}|{seed_label}::{round(ft_2-st_2,3)}sec::pcs{pcs_id}::gpu{gpu_id}")
+        # end if
+        return masked_input_res
+        
     @classmethod
     def generate_masked_inputs(cls, seeds, pcfg_ref, logger=None):
         st = time.time()
         masked_input_res = dict()
+        args = list()
+        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
         for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-            st_2 = time.time()
-            generator = Generator(seed, pcfg_ref)
-            gen_inputs = generator.masked_input_generator()
-            masked_input_res[seed] = {
-                'cfg_seed': generator.expander.cfg_seed,
-                'label': seed_label,
-                'label_score': seed_score,
-                'masked_inputs': list()
+            args.append((index, seed, seed_label, seed_score, pcfg_ref, logger))
+        # end for    
+        results = pool.starmap_async(cls.generate_seed_cfg_parallel,
+                                     args,
+                                     chunksize=len(seeds)//cls.NUM_PROCESSES).get()
+        for r in results:
+            masked_input_res[r['seed']] = {
+                'cfg_seed': r['cfg_seed'],
+                'label': r['label'],
+                'label_score': r['label_score'],
+                'masked_inputs': r['masked_inputs']
             }
-            if any(gen_inputs):
-                for gen_input in gen_inputs:
-                    masked_input_res[seed]['masked_inputs'].append({
-                        'cfg_from': gen_input['cfg_from'],
-                        'cfg_to': gen_input['cfg_to'],
-                        'masked_input': gen_input['masked_input'] # (_masked_input, mask_pos)
-                    })
-                # end for
-            # end if
-            ft_2 = time.time()
-            if logger is not None:
-                logger.print(f"\tTemplate.generate_masked_inputs::SEED_{index}::{round(ft_2-st_2,3)}sec")
-            # end if
         # end for
+        pool.close()
+        pool.join()
         ft = time.time()
         if logger is not None:
             logger.print(f"\tTemplate.generate_masked_inputs::{round(ft-st,3)}sec")
@@ -123,22 +153,42 @@ class Template:
         st = time.time()
         # collect all masked sents
         masked_sents: Dict = dict()
+        no_mask_key = '<no_mask>'
         for index, seed in enumerate(masked_inputs.keys()):
             seed_label = masked_inputs[seed]['label']
             label_score = masked_inputs[seed]['label_score']
             cfg_seed = masked_inputs[seed]['cfg_seed']
-            for m in masked_inputs[seed]['masked_inputs']:
-                cfg_from = m['cfg_from']
-                cfg_to = m['cfg_to']
-                key = m['masked_input'][0] # m['masked_input'] = (_masked_input, mask_pos)
-                if key not in masked_sents.keys():
-                    masked_sents[key] = {
+            if not any(masked_inputs[seed]['masked_inputs']):
+                if no_mask_key not in masked_sents.keys():
+                    masked_sents[no_mask_key] = {
                         'inputs': list(),
                         'word_sug': list()
                     }
                 # end if
-                if (seed, m['masked_input'][1]) not in masked_sents[key]['inputs']:
-                    masked_sents[key]['inputs'].append((
+                masked_sent_obj = (
+                    seed,
+                    seed_label,
+                    label_score,
+                    cfg_seed,
+                    None,
+                    None,
+                    None
+                )
+                if masked_sent_obj not in masked_sents[no_mask_key]['inputs']:
+                    masked_sents[no_mask_key]['inputs'].append(masked_sent_obj)
+                # end if
+            else:
+                for m in masked_inputs[seed]['masked_inputs']:
+                    cfg_from = m['cfg_from']
+                    cfg_to = m['cfg_to']
+                    key = m['masked_input'][0] # m['masked_input'] = (_masked_input, mask_pos)
+                    if key not in masked_sents.keys():
+                        masked_sents[key] = {
+                            'inputs': list(),
+                            'word_sug': list()
+                        }
+                    # end if
+                    masked_sent_obj = (
                         seed,
                         seed_label,
                         label_score,
@@ -146,8 +196,12 @@ class Template:
                         cfg_from,
                         cfg_to,
                         m['masked_input'][1]
-                    ))
-            # end for
+                    )
+                    if masked_sent_obj not in masked_sents[key]['inputs']:
+                        masked_sents[key]['inputs'].append(masked_sent_obj)
+                    # end if
+                # end for
+            # end if
         # end for
 
         # get word suggestions
@@ -155,6 +209,7 @@ class Template:
                                                                masked_sents,
                                                                num_target=num_target,
                                                                selection_method=selection_method,
+                                                               no_mask_key=no_mask_key,
                                                                logger=logger)
         ft = time.time()
         if logger is not None:
@@ -259,11 +314,10 @@ class Template:
         
         # validate word suggestion
         exp_results = Suggest.eval_word_suggestions_over_seeds(masked_inputs_w_word_sug,
-                                                              req,
-                                                              num_target=num_target,
-                                                              selection_method=selection_method,
-                                                              logger=logger)
-        
+                                                               req,
+                                                               num_target=num_target,
+                                                               selection_method=selection_method,
+                                                               logger=logger)
         if req_i==-2: # file not exists
             template_results = list()
             template_results.append({
