@@ -92,9 +92,10 @@ class Suggest:
 
     @classmethod
     def get_word_suggestions_over_seeds(cls,
-                                        masked_sents: Dict,
                                         editor: Editor,
+                                        masked_sents: Dict,
                                         num_target=10,
+                                        selection_method=None,
                                         logger=None):
         def get_word_sug(editor, s, num_target, selection_method):
             word_suggest = editor.suggest(s,
@@ -108,15 +109,20 @@ class Suggest:
             return word_suggest
         st = time.time()
         results = list()
-        for masked_sent in masked_sents.keys():
+        for ms_i, masked_sent in enumerate(masked_sents.keys()):
+            st_2 = time.time()
             masked_sents[masked_sent]['word_sug'] = get_word_sug(editor,
                                                                  masked_sent,
                                                                  num_target=num_target,
                                                                  selection_method=selection_method)
+            ft_2 = time.time()
+            if logger is not None:
+                logger.print(f"\tSuggest.get_word_suggestions_over_seeds::MASKED_SENT_{ms_i}::{round(ft_2-st_2,3)}sec")
+            # end if
         # end for
         ft = time.time()
         if logger is None:
-            logger.print(f"Suggest.get_word_suggestions_over_seeds::{round(ft-st,3)}sec")
+            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::{round(ft-st,3)}sec")
         # end if
         return masked_sents
     
@@ -456,10 +462,14 @@ class Suggest:
         # print()
         return new_input_results, num_words_orig_suggest
 
+    @classmethod
     def eval_word_suggestions_over_seeds(cls,
                                          masked_inputs_w_word_sug,
                                          req,
-                                         selection_method=None):
+                                         num_target=Macros.num_suggestions_on_exp_grammer_elem,
+                                         selection_method=None,
+                                         logger=None):
+        st = time.time()
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         exp_results = dict()
@@ -493,7 +503,6 @@ class Suggest:
                 # end if
                 for w_sug in word_suggest:
                     input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
-                    
                     # check sentence and expansion requirements
                     if cls.eval_sug_words_by_req(input_candid, req, seed_label):
                         if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
@@ -506,14 +515,22 @@ class Suggest:
                         # end if
                     # end if
                 # end for
-                exp_results[seed] = {
-                    'cfg_seed': cfg_seed,
-                    'label': seed_label,
-                    'label_score': seed_score,
-                    'exp_inputs': results
-                }
+                if seed not in exp_results.keys():
+                    exp_results[seed] = {
+                        'cfg_seed': cfg_seed,
+                        'label': seed_label,
+                        'label_score': seed_score,
+                        'exp_inputs': results
+                    }
+                else:
+                    exp_results[seed]['exp_inputs'].extend(results)
+                # end if
             # end for
         # end for
+        ft = time.time()
+        if logger is not None:
+            logger.print(f"\tSuggest.eval_word_suggestions_over_seeds::{round(ft-st,3)}sec")
+        # end if
         return exp_results
         
 

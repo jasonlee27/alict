@@ -84,9 +84,11 @@ class Template:
         st = time.time()
         masked_input_res = dict()
         for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
+            st_2 = time.time()
             generator = Generator(seed, pcfg_ref)
             gen_inputs = generator.masked_input_generator()
             masked_input_res[seed] = {
+                'cfg_seed': generator.expander.cfg_seed,
                 'label': seed_label,
                 'label_score': seed_score,
                 'masked_inputs': list()
@@ -94,17 +96,20 @@ class Template:
             if any(gen_inputs):
                 for gen_input in gen_inputs:
                     masked_input_res[seed]['masked_inputs'].append({
-                        'cfg_seed': generator.expander.cfg_seed,
                         'cfg_from': gen_input['cfg_from'],
                         'cfg_to': gen_input['cfg_to'],
                         'masked_input': gen_input['masked_input'] # (_masked_input, mask_pos)
                     })
                 # end for
             # end if
+            ft_2 = time.time()
+            if logger is not None:
+                logger.print(f"\tTemplate.generate_masked_inputs::SEED_{index}::{round(ft_2-st_2,3)}sec")
+            # end if
         # end for
         ft = time.time()
-        if logger is None:
-            logger.print(f"Template.generate_masked_inputs::{round(ft-st,3)}sec")
+        if logger is not None:
+            logger.print(f"\tTemplate.generate_masked_inputs::{round(ft-st,3)}sec")
         # end if
         return masked_input_res
 
@@ -113,16 +118,18 @@ class Template:
                              masked_inputs,
                              editor,
                              num_target=Macros.num_suggestions_on_exp_grammer_elem,
+                             selection_method=None,
                              logger=None):
+        st = time.time()
         # collect all masked sents
         masked_sents: Dict = dict()
         for index, seed in enumerate(masked_inputs.keys()):
             seed_label = masked_inputs[seed]['label']
-            seed_score = masked_inputs[seed]['seed_score']
+            label_score = masked_inputs[seed]['label_score']
             cfg_seed = masked_inputs[seed]['cfg_seed']
-            cfg_from = masked_inputs[seed]['cfg_from']
-            cfg_to = masked_inputs[seed]['cfg_to']
             for m in masked_inputs[seed]['masked_inputs']:
+                cfg_from = m['cfg_from']
+                cfg_to = m['cfg_to']
                 key = m['masked_input'][0] # m['masked_input'] = (_masked_input, mask_pos)
                 if key not in masked_sents.keys():
                     masked_sents[key] = {
@@ -134,7 +141,7 @@ class Template:
                     masked_sents[key]['inputs'].append((
                         seed,
                         seed_label,
-                        seed_score,
+                        label_score,
                         cfg_seed,
                         cfg_from,
                         cfg_to,
@@ -144,10 +151,15 @@ class Template:
         # end for
 
         # get word suggestions
-        masked_sents = Sugget.get_word_suggestions_over_seeds(editor,
-                                                              masked_sents,
-                                                              num_target=num_target,
-                                                              logger=logger)
+        masked_sents = Suggest.get_word_suggestions_over_seeds(editor,
+                                                               masked_sents,
+                                                               num_target=num_target,
+                                                               selection_method=selection_method,
+                                                               logger=logger)
+        ft = time.time()
+        if logger is not None:
+            logger.print(f"\tTemplate.get_word_suggestions::{round(ft-st,3)}sec")
+        # end if
         return masked_sents
     
     @classmethod
@@ -214,7 +226,8 @@ class Template:
         # generate seeds
         selected = cls.SEARCH_FUNC[task](req, dataset)
         seeds = selected['selected_inputs'][:n] if n>0 else selected['selected_inputs']
-        cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}.json"
+        # cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}.json"
+        cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset}_{selection_method}.json"
         req_i, seeds = cls.get_seed_of_interest(cfg_res_file, req, seeds)
         if not any(seeds):
             return
@@ -222,7 +235,9 @@ class Template:
         cksum_val = Utils.get_cksum(selected['requirement']['description'])
         num_selected_inputs = len(selected['selected_inputs'])
         print_str = f">>>>> REQUIREMENT::{cksum_val}::"+selected['requirement']['description']
-        logger.print(f"{print_str}\n\t{len(seeds)} inputs are selected out of {num_selected_inputs}.")
+        if logger is not None:
+            logger.print(f"{print_str}\n\t{len(seeds)} inputs are selected out of {num_selected_inputs}.")
+        # end if
         index = 0
         num_seed_for_exp = 0
         tot_num_exp = 0
@@ -230,42 +245,49 @@ class Template:
         exp_results = list()
 
         # anlyze cfg and get masked input for all seeds of interest
-        masked_inputs = cls.generate_masked_inputs(seeds, pcfg_ref, logger=logger)
+        masked_inputs = cls.generate_masked_inputs(seeds,
+                                                   pcfg_ref,
+                                                   logger=logger)
 
         # get the suggested words for the masked inputs using bert:
+        num_target=Macros.num_suggestions_on_exp_grammer_elem
         masked_inputs_w_word_sug = cls.get_word_suggestions(masked_inputs,
                                                             editor,
+                                                            num_target=num_target,
+                                                            selection_method=selection_method,
                                                             logger=logger)
         
         # validate word suggestion
-        exp_resuls = Suggest.eval_word_suggestions_over_seeds(masked_inputs_w_word_sug,
-                                                              editor,
+        exp_results = Suggest.eval_word_suggestions_over_seeds(masked_inputs_w_word_sug,
                                                               req,
-                                                              selection_method=selection_method)
+                                                              num_target=num_target,
+                                                              selection_method=selection_method,
+                                                              logger=logger)
         
         if req_i==-2: # file not exists
             template_results = list()
             template_results.append({
                 'requirement': req,
-                'inputs': exp_results
+                'inputs': dict()
             })
+            req_i = -1
         elif req_i==-1: # file exists but has no results about the lc under analysis
             template_results = Utils.read_json(cfg_res_file)
             template_results.append({
                 'requirement': req,
-                'inputs': exp_results
+                'inputs': dict()
             })
         else:
             template_results = Utils.read_json(cfg_res_file)
-            for seed in exp_results.keys():
-                template_results[req_i]['inputs'][seed] = {
-                    'cfg_seed': exp_results[seed]['cfg_seed'],
-                    'exp_inputs': exp_results[seed]['exp_inputs'],
-                    'label': exp_results[seed]['label'],
-                    'label_score': exp_results[seed]['label_score']
-                }
-            # end for
         # end if
+        for seed in exp_results.keys():
+            template_results[req_i]['inputs'][seed] = {
+                'cfg_seed': exp_results[seed]['cfg_seed'],
+                'exp_inputs': exp_results[seed]['exp_inputs'],
+                'label': exp_results[seed]['label'],
+                'label_score': exp_results[seed]['label_score']
+            }
+        # end for
 
         # write batch results into result file
         Utils.write_json(template_results, cfg_res_file, pretty_format=True)
@@ -362,7 +384,7 @@ class Template:
         editor = Editor()
         pcfg_ref = RefPCFG()
         # results = list()
-        args = list()
+        # args = list()
         # if os.path.exists(input_file):
         #     template_results = Utils.read_json(input_file)
         #     _reqs = list()
@@ -386,17 +408,17 @@ class Template:
         #     reqs = _reqs
         # # end if
         
-        # sort reqs from smallest number of seeds to largest
-        reqs = sorted(reqs, key=lambda x: x['num_seeds'])
+        # # sort reqs from smallest number of seeds to largest
+        # reqs = sorted(reqs, key=lambda x: x['num_seeds'])
         for req in reqs:
             cls.generate_inputs(nlp_task,
                                 req,
                                 pcfg_ref,
                                 editor,
                                 dataset_name,
-                                n,
-                                selection_method,
-                                logger)
+                                n=n,
+                                selection_method=selection_method,
+                                logger=logger)
             # template_results.append(req_results)
             # write raw new inputs for each requirement
             # Utils.write_json(results, input_file, pretty_format=True)
@@ -523,8 +545,8 @@ class Template:
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
         # Write the template results
-        res_dir = Macros.result_dir / f"templates2_{nlp_task}_{dataset_name}_{selection_method}"
-        # res_dir = Macros.result_dir/ f"templates_{nlp_task}_{dataset_name}_{selection_method}"
+        # res_dir = Macros.result_dir / f"templates2_{nlp_task}_{dataset_name}_{selection_method}"
+        res_dir = Macros.result_dir/ f"templates_{nlp_task}_{dataset_name}_{selection_method}"
         res_dir.mkdir(parents=True, exist_ok=True)
         logger = Logger(logger_file=log_file,
                         logger_name='template')
@@ -543,7 +565,9 @@ class Template:
         #     selection_method=selection_method,
         #     logger=logger
         # )
-        cfg_res_file = Macros.result_dir/f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
+        cfg_res_file = Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json"
+        # cfg_res_file = Macros.result_dir/f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
+        
         new_input_dicts = cls.get_new_inputs(
             cfg_res_file,
             task,
