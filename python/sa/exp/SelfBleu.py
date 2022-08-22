@@ -18,7 +18,7 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 
-NUM_PROCESSES_IN_USE = 15 # os.cpu_count()
+NUM_PROCESSES_IN_USE = 40 # os.cpu_count()
 
 
 class SelfBleu:
@@ -190,47 +190,58 @@ def main_seed(task,
     _, texts_ours = read_our_seeds(task,
                                    search_dataset_name,
                                    selection_method)
-    result = dict()
+    if os.path.exists(str(result_file)):
+        result = Utils.read_json(result_file)
+    else:
+        result = {
+            'ours': dict(),
+            'checklist': dict()
+        }
+    # end if
     scores = dict()
     scores_baseline = dict()
     for lc in texts_ours.keys():
-        st = time.time()
-        # logger.print(f"OURS::{lc}", end='::')
-        logger.print(f"OURS::{lc}")
-        sbleu = SelfBleu(texts=texts_ours[lc], logger=logger)
-        scores[lc] = {
-            'num_data': sbleu.num_data,
-            'score': sbleu.get_score()
-        }
-        result = {
-            'ours': scores,
-            'checklist': scores_baseline
-        }
-        Utils.write_json(result, result_file, pretty_format=True)
-        ft = time.time()
-        logger.print(f"{round(ft-st,2)}secs", end='::')
-        logger.print(f"num_data:{scores[lc]['num_data']}::score:{scores[lc]['score']}")
+        if lc not in result['ours'].keys():
+            st = time.time()
+            # logger.print(f"OURS::{lc}", end='::')
+            logger.print(f"OURS::{lc}")
+            sbleu = SelfBleu(texts=texts_ours[lc], logger=logger)
+            scores[lc] = {
+                'num_data': sbleu.num_data,
+                'score': sbleu.get_score()
+            }
+            result = {
+                'ours': scores,
+                'checklist': scores_baseline
+            }
+            Utils.write_json(result, result_file, pretty_format=True)
+            ft = time.time()
+            logger.print(f"{round(ft-st,2)}secs", end='::')
+            logger.print(f"num_data:{scores[lc]['num_data']}::score:{scores[lc]['score']}")
+        # end if
     # end for
     
     _, texts_checklist = read_checklist_testcases(task,
                                                   search_dataset_name,
                                                   selection_method)
     for lc in texts_checklist.keys():
-        st = time.time()
-        logger.print(f"BL::{lc}", end='::')
-        sbleu = SelfBleu(texts=texts_checklist[lc], logger=logger)
-        scores_baseline[lc] = {
-            'num_data': sbleu.num_data,
-            'score': sbleu.get_score()
-        }
-        result = {
-            'ours': scores,
-            'checklist': scores_baseline
-        }
-        Utils.write_json(result, result_file, pretty_format=True)
-        ft = time.time()
-        logger.print(f"{round(ft-st,2)}secs", end='::')
-        logger.print(f"num_data:{scores_baseline[lc]['num_data']}::score:{scores_baseline[lc]['score']}")
+        if lc not in result['checklist'].keys():
+            st = time.time()
+            logger.print(f"BL::{lc}", end='::')
+            sbleu = SelfBleu(texts=texts_checklist[lc], logger=logger)
+            scores_baseline[lc] = {
+                'num_data': sbleu.num_data,
+                'score': sbleu.get_score()
+            }
+            result = {
+                'ours': scores,
+                'checklist': scores_baseline
+            }
+            Utils.write_json(result, result_file, pretty_format=True)
+            ft = time.time()
+            logger.print(f"{round(ft-st,2)}secs", end='::')
+            logger.print(f"num_data:{scores_baseline[lc]['num_data']}::score:{scores_baseline[lc]['score']}")
+        # end if
     # end for
 
     result = {

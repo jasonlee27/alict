@@ -21,7 +21,7 @@ try:
 except RuntimeError:
     pass
 
-NUM_PROCESSES = Macros.num_processes
+NUM_PROCESSES = 15 # Macros.num_processes
 
 def get_cfg_rules_per_sent(sent):
     tree_dict = BeneparCFG.get_seed_cfg(sent)
@@ -72,23 +72,33 @@ class ProductionruleCoverage:
     @classmethod
     def get_our_seed_cfg_rules(cls,
                                task,
-                               dataset_name):
+                               dataset_name,
+                               logger=None):
         data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}.json"
         res_file = Macros.result_dir / f"seed_cfg_rules_{task}_{dataset_name}.json"
         seed_dicts = Utils.read_json(data_file)
-        seed_rules = dict()
+        if os.path.exists(res_file):
+            seed_rules = Utils.read_json(res_file)
+        else:
+            seed_rules = dict()
+        # end if
         for seed in seed_dicts:
             lc = seed['requirement']['description']
-            seed_rules[lc] = dict()
-            args = [(s[1],) for s in seed['seeds']]
-            pool = Pool(processes=NUM_PROCESSES)
-            results = pool.starmap_async(get_cfg_rules_per_sent,
-                                         args,
-                                         chunksize=len(args) // NUM_PROCESSES).get()
-            for r in results:
-                seed_rules[lc][r['sent']] = r['cfg_rules']
-            # end for
-            Utils.write_json(seed_rules, res_file, pretty_format=True)
+            if lc not in seed_rules.keys():
+                if logger is not None:
+                    logger.print(f"OUR_SEED::{lc}::")
+                # end if
+                seed_rules[lc] = dict()
+                args = [(s[1],) for s in seed['seeds']]
+                pool = Pool(processes=NUM_PROCESSES)
+                results = pool.starmap_async(get_cfg_rules_per_sent,
+                                             args,
+                                             chunksize=len(args) // NUM_PROCESSES).get()
+                for r in results:
+                    seed_rules[lc][r['sent']] = r['cfg_rules']
+                # end for
+                Utils.write_json(seed_rules, res_file, pretty_format=True)
+            # end if
         # end for
         return seed_rules
 
@@ -96,55 +106,76 @@ class ProductionruleCoverage:
     def get_our_exp_cfg_rules(cls,
                               task,
                               dataset_name,
-                              selection_method):
+                              selection_method,
+                              logger=None):
         data_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json"
         res_file = Macros.result_dir / f"exp_cfg_rules_{task}_{dataset_name}_{selection_method}.json"
         exp_dicts = Utils.read_json(data_file)
-        exp_rules = dict()
+        if os.path.exists(str(res_file)):
+            exp_rules = Utils.read_json(res_file)
+        else:
+            exp_rules = dict()
+        # end if
         for exp in exp_dicts:
             lc = exp['requirement']['description']
-            exp_rules[lc] = dict()
-            args = list()
-            for seed in exp['inputs'].keys():
-                exp_inputs = [(e[5],) for e in exp['inputs'][seed]['exp_inputs']]
-                exp_inputs.append((seed,))
-                args.extend(exp_inputs)
-            # end for
-            pool = Pool(processes=NUM_PROCESSES)
-            results = pool.starmap_async(get_cfg_rules_per_sent,
-                                         args,
-                                         chunksize=len(args) // NUM_PROCESSES).get()
-            for r in results:
-                exp_rules[lc][r['sent']] = r['cfg_rules']
-            # end for
-            Utils.write_json(exp_rules, res_file, pretty_format=True)
+            if logger is not None:
+                logger.print(f"OUR_EXP::{lc}::")
+            # end if
+            if lc not in exp_rules.keys():
+                exp_rules[lc] = dict()
+                args = list()
+                for seed in exp['inputs'].keys():
+                    exp_inputs = [(e[5],) for e in exp['inputs'][seed]['exp_inputs']]
+                    exp_inputs.append((seed,))
+                    args.extend(exp_inputs)
+                # end for
+                pool = Pool(processes=NUM_PROCESSES)
+                results = pool.starmap_async(get_cfg_rules_per_sent,
+                                             args,
+                                             chunksize=len(args) // NUM_PROCESSES).get()
+                for r in results:
+                    exp_rules[lc][r['sent']] = r['cfg_rules']
+                # end for
+                Utils.write_json(exp_rules, res_file, pretty_format=True)
+            # end if
         # end for
         return exp_rules
     
     @classmethod
     def get_bl_cfg_rules(cls,
                          task,
-                         dataset_name):
+                         dataset_name,
+                         logger=None):
         data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}.json"
         res_file = Macros.result_dir / f"bl_cfg_rules_{task}_checklist.json"
         seed_dicts = Utils.read_json(data_file)
-        bl_rules = dict()
+
+        if os.path.exists(str(res_file)):
+            bl_rules = Utils.read_json(res_file)
+        else:
+            bl_rules = dict()
+        # end if
         for seed in seed_dicts:
             lc = exp['requirement']['description']
-            bl_rules[lc] = dict()
-            sents = ChecklistTestsuite.get_sents(
-                Macros.checklist_sa_dataset_file,
-                lc
-            )
-            args = [s[1] for s in sents]
-            pool = Pool(processes=NUM_PROCESSES)
-            results = pool.map_async(cls.get_cfg_rules_per_sent,
-                                     args,
-                                     chunksize=len(args) // NUM_PROCESSES).get()
-            for r in results:
-                bl_rules[lc][r['sent']] = r['cfg_rules']
-            # end for
-            Utils.write_json(bl_rules, res_file, pretty_format=True)
+            if lc not in bl_rules.keys():
+                if logger is not None:
+                    logger.print(f"BL::{lc}::")
+                # end if
+                bl_rules[lc] = dict()
+                sents = ChecklistTestsuite.get_sents(
+                    Macros.checklist_sa_dataset_file,
+                    lc
+                )
+                args = [s[1] for s in sents]
+                pool = Pool(processes=NUM_PROCESSES)
+                results = pool.map_async(cls.get_cfg_rules_per_sent,
+                                         args,
+                                         chunksize=len(args) // NUM_PROCESSES).get()
+                for r in results:
+                    bl_rules[lc][r['sent']] = r['cfg_rules']
+                # end for
+                Utils.write_json(bl_rules, res_file, pretty_format=True)
+            # end if
         # end for
         return bl_graph_dict
     
@@ -160,26 +191,33 @@ def main_seed(task,
     result_file = Macros.pdr_cov_result_dir / f"seeds_{task}_{search_dataset_name}_pdr_coverage.json"
     seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
         task,
-        search_dataset_name
+        search_dataset_name,
+        logger=logger
     )
     checklist_rules = ProductionruleCoverage.get_bl_cfg_rules(
         task,
-        search_dataset_name
+        search_dataset_name,
+        logger=logger
     )
-    result = dict()
-    scores = dict()
+    if os.path.exists(str(result_file)):
+        scores = Utils.read_json(result_file)
+    else:
+        scores = dict()
+    # end if
     
     for lc in tqdm(seed_rules.keys()):
-        logger.print(f"OURS::{lc}", end='::')
-        pdr_obj = ProductionruleCoverage(lc=lc,
-                                         our_cfg_rules=seed_rules[lc],
-                                         bl_cfg_rules=checklist_rules[lc])
-        scores[lc] = {
-            'our_num_data': pdr_obj.our_num_data,
-            'bl_num_data': pdr_obj.bl_num_data,
-            'coverage_score': pdr_obj.get_score()
-        }
-        Utils.write_json(scores, result_file, pretty_format=True)
+        if lc not in scores.keys():
+            logger.print(f"OURS::{lc}", end='::')
+            pdr_obj = ProductionruleCoverage(lc=lc,
+                                             our_cfg_rules=seed_rules[lc],
+                                             bl_cfg_rules=checklist_rules[lc])
+            scores[lc] = {
+                'our_num_data': pdr_obj.our_num_data,
+                'bl_num_data': pdr_obj.bl_num_data,
+                'coverage_score': pdr_obj.get_score()
+            }
+            Utils.write_json(scores, result_file, pretty_format=True)
+        # end if
     # end for
     ft = time.time()
     logger.print(f"ProductionruleCoverage.main_seed::{round(ft-st,3)}sec")
