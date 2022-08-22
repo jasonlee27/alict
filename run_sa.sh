@@ -20,7 +20,7 @@ function gen_templates() {
         # write templates in json
         (cd ${_DIR}
          # generate templates from sst dataset
-         CUDA_VISIBLE_DEVICES=1,2,3 python -m python.sa.main \
+         CUDA_VISIBLE_DEVICES=3,4,5 python -m python.sa.main \
                              --run template \
                              --search_dataset sst \
                              --syntax_selection random # > /dev/null 2>&1
@@ -206,10 +206,10 @@ function selfbleu() {
         )
 }
 
-function pdrulediv() {
+function pdrulecoverage() {
         (cd ${_DIR}
          python -m python.sa.main \
-                --run pdrule_div \
+                --run pdrule_cov \
                 --search_dataset sst \
                 --syntax_selection random
         )
@@ -262,8 +262,8 @@ function compute_coverage() {
                  echo ${filename}
                  lc_cksum="${filename##*_}"
          
-                 ours=${DATA_DIR}/"seed_sa_sst_${lc_cksum}.txt"
-                 bls=${DATA_DIR}/"checklist_sa_sst_${lc_cksum}.txt"
+                 ours=${DATA_DIR}/"seed_sa_${search_dataset}_${lc_cksum}.txt"
+                 bls=${DATA_DIR}/"checklist_sa_${search_dataset}_${lc_cksum}.txt"
                  CUDA_VISIBLE_DEVICES=6,7 python test_coverage.py \
                                      --our_sents ${ours} \
                                      --bl_sents ${bls} \
@@ -312,7 +312,7 @@ function main_sst() {
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # analyze_retrained_models # to generate debug_results file
         # selfbleu # to compute the selfbleu
-        # pdrulediv # to compute the diversity of grammatic structure of sentence
+        # pdrulecoverage # to compute the diversity of grammatic structure of sentence
         # explain_nlp # to run the explainNLP
         # humanstudy # sample sentences for manual study
         # humanstudy_results # get results of manual study into human_study.json

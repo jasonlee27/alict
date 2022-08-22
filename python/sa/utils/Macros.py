@@ -92,6 +92,9 @@ class Macros:
     # Self-Bleu
     selfbleu_result_dir: Path = result_dir / 'selfbleu'
     
+    # Production Rule Coverage
+    pdr_cov_result_dir: Path = result_dir / 'pdr_cov'
+    
     # SST2
     sst2_dir: Path = dataset_dir / "sst2"
     sst2_sa_trainset_file: Path = retrain_dataset_dir / "sa_sst2_trainset.json"

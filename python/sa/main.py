@@ -17,7 +17,7 @@ parser.add_argument('--run', type=str, required=True,
                         'requirement', 'template', 'testsuite', 'seedgen',
                         'testmodel', 'testmodel_seed', 'retrain', 'analyze',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'selfbleu',
-                        'pdrule_div', 'humanstudy', 'humanstudy_results', 'coverage_data',
+                        'pdrule_cov', 'humanstudy', 'humanstudy_results', 'coverage_data',
                         'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
@@ -56,6 +56,8 @@ parser.add_argument('--which', type=str, default=None, nargs='+',
                     help='tables/plots that you are interested in making')
 
 args = parser.parse_args()
+random.seed(27)
+
 def run_requirements():
     from .requirement.Requirements import Requirements
     nlp_task = args.nlp_task
@@ -73,8 +75,8 @@ def run_templates():
     selection_method = args.syntax_selection
     log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
     log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / "template2_generation.log"
-    # log_file = log_dir / "template_generation.log"
+    # log_file = log_dir / "template2_generation.log"
+    log_file = log_dir / "template_generation.log"
     Template.get_templates(
         num_seeds=num_seeds,
         nlp_task=nlp_task,
@@ -277,8 +279,8 @@ def run_selfbleu():
               selection_method)
     return
 
-def run_pdrule_div():
-    from .exp.ProductionruleMetric import main_seed
+def run_pdrule_cov():
+    from .exp.ProductionruleCoverage import main_seed
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
@@ -360,7 +362,7 @@ func_map = {
         'retrain_analyze': run_retrain_analyze,
         'explain_nlp': run_explainNLP,
         'selfbleu': run_selfbleu,
-        'pdrule_div': run_pdrule_div,
+        'pdrule_cov': run_pdrule_cov,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
         'coverage_data': run_coverage_data,
