@@ -77,21 +77,113 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['i <hate_syn>']
+                                'word': ['i <hate_syn> <hurtlex_pos:n>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<make_syn> me']
+                                'word': ['I cannot <stand_syn> <hurtlex_pos:n>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<makes_syn> me']
+                                'word': ['I <despise_syn> <hurtlex_pos:n>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['I <loathe_syn> <hurtlex_pos:n>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['I <abhor_syn> <hurtlex_pos:n>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['Disgusted by all the <hurtlex_pos:n>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['I have so much <disdain_syn> for <hurtlex_pos:n>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['so <sick_syn> of being around <hurtlex_pos:n>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['I feel nothing but <contempt_syn> for <hurtlex_pos:n>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hurtlex_pos:n> <disgust_syn> me']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hurtlex_pos:n> are the worst']
+                            },
+                            'label': 'toxic'
+                        }, {
+                        {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hurtlex_pos:n> <make_syn> me <sick_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['there is nothing worse than <hurtlex_pos:n>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hurtlex_pos:n> who think they are my equal fill me with so much rage']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['all the other <hurtlex_pos:n> in this country make me boil with anger']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['The <utter_syn> <scorn_syn> I feel for <hurtlex_pos:n> is hard to to put into words.']
                             },
                             'label': 'toxic'
                         }],
