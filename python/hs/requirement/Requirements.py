@@ -151,7 +151,6 @@ class Requirements:
                             },
                             'label': 'toxic'
                         }, {
-                        {
                             'length': None,
                             'include': {
                                 'POS': None,
@@ -183,7 +182,7 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['The <utter_syn> <scorn_syn> I feel for <hurtlex_pos:n> is hard to to put into words.']
+                                'word': ['The <utter_syn> <scorn_syn> I feel for <hurtlex_pos:n> is hard to to put into words']
                             },
                             'label': 'toxic'
                         }],
@@ -202,8 +201,92 @@ class Requirements:
                                 'word': ['<isare> <hurtlex_pos:a>']
                             },
                             'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> <repulsive_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hurtlex_pos:n> cannot stop themselves from being <revolting_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> <repugnant_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hurtlex_pos:n> with any power are a threat to civilisation']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hurtlex_pos:n> is a danger to our country']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ["It is in <hurtlex_pos:n>'s nature to be uncivilised"]
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['can be <hurtlex_pos:a>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['No one else is as <hurtlex_pos:a> as']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['Typical of a <hurtlex_pos:n> to be that <hurtlex_pos:a>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> without a doubt <hurtlex_pos:a> people on this planet']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['It is always the <hurtlex_pos:n> that is the <hurtlex_pos:a> one']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['really <isare> <hurtlex_pos:a>']
+                            },
+                            'label': 'toxic'
                         }],
-                        'expansion': ['neutral'],
+                        'expension': ['neutral'],
                         'transform': None,
                         'transform_req': None
                     })
