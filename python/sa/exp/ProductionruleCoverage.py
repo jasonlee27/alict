@@ -15,7 +15,31 @@ from ..utils.Logger import Logger
 from ..testsuite.cfg.CFG import BeneparCFG
 from ..testsuite.Search import ChecklistTestsuite
 
-NUM_PROCESSES = Macros.num_processes # os.cpu_count()
+import torch.multiprocessing
+try:
+    multiprocessing.set_start_method('spawn')
+except RuntimeError:
+    pass
+
+NUM_PROCESSES = Macros.num_processes
+
+def get_cfg_rules_per_sent(sent):
+    tree_dict = BeneparCFG.get_seed_cfg(sent)
+    cfg_rules = tree_dict['rule']
+    rules = list()
+    for lhs in cfg_rules.keys():
+        rhss = cfg_rules[lhs]
+        for rhs in rhss:
+            rhs_pos = rhs['pos']
+            if rhs_pos!=rhs['word'][0]:
+                rules.append(f"{lhs}->{rhs_pos}")
+            # end if
+        # end for
+    # end for
+    return {
+        'sent': sent,
+        'cfg_rules': list(set(rules))
+    }
 
 class ProductionruleCoverage:
     
@@ -44,23 +68,6 @@ class ProductionruleCoverage:
         # end for
         bl_rule_set = list(set(bl_rule_set))
         return len(our_rule_set), len(bl_rule_set)
-
-    @classmethod
-    def get_cfg_rules_per_sent(cls, sent):
-        tree_dict = BeneparCFG.get_seed_cfg(sent)
-        cfg_rules = tree_dict['rule']
-        rules = list()
-        for lhs in cfg_rules.keys():
-            rhss = cfg_rules[lhs]
-            for rhs in rhss:
-                rhs_pos = rhs['pos']
-                rules.append(f"{lhs}->{rhs_pos}")
-            # end for
-        # end for
-        return {
-            'sent': sent,
-            'cfg_rules': list(set(rules))
-        }
     
     @classmethod
     def get_our_seed_cfg_rules(cls,
@@ -70,14 +77,14 @@ class ProductionruleCoverage:
         res_file = Macros.result_dir / f"seed_cfg_rules_{task}_{dataset_name}.json"
         seed_dicts = Utils.read_json(data_file)
         seed_rules = dict()
-        for seed in exp_dicts:
+        for seed in seed_dicts:
             lc = seed['requirement']['description']
             seed_rules[lc] = dict()
-            args = [s[1] for s in exp['seeds']]
+            args = [(s[1],) for s in seed['seeds']]
             pool = Pool(processes=NUM_PROCESSES)
-            results = pool.map_async(cls.get_cfg_rules_per_sent,
-                                     args,
-                                     chunksize=len(args) // NUM_PROCESSES).get()
+            results = pool.starmap_async(get_cfg_rules_per_sent,
+                                         args,
+                                         chunksize=len(args) // NUM_PROCESSES).get()
             for r in results:
                 seed_rules[lc][r['sent']] = r['cfg_rules']
             # end for
@@ -87,9 +94,9 @@ class ProductionruleCoverage:
 
     @classmethod
     def get_our_exp_cfg_rules(cls,
-                               task,
-                               dataset_name,
-                               selection_method):
+                              task,
+                              dataset_name,
+                              selection_method):
         data_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json"
         res_file = Macros.result_dir / f"exp_cfg_rules_{task}_{dataset_name}_{selection_method}.json"
         exp_dicts = Utils.read_json(data_file)
@@ -99,14 +106,14 @@ class ProductionruleCoverage:
             exp_rules[lc] = dict()
             args = list()
             for seed in exp['inputs'].keys():
-                exp_inputs = [e[5] for e in exp['inputs'][seed]['exp_inputs']]
-                exp_inputs.append(seed)
+                exp_inputs = [(e[5],) for e in exp['inputs'][seed]['exp_inputs']]
+                exp_inputs.append((seed,))
                 args.extend(exp_inputs)
             # end for
             pool = Pool(processes=NUM_PROCESSES)
-            results = pool.map_async(cls.get_cfg_rules_per_sent,
-                                     args,
-                                     chunksize=len(args) // NUM_PROCESSES).get()
+            results = pool.starmap_async(get_cfg_rules_per_sent,
+                                         args,
+                                         chunksize=len(args) // NUM_PROCESSES).get()
             for r in results:
                 exp_rules[lc][r['sent']] = r['cfg_rules']
             # end for
@@ -146,9 +153,9 @@ def main_seed(task,
               search_dataset_name,
               selection_method):
     st = time.time()
-    logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_pdrdiv.log"
+    logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_pdrcov.log"
     logger = Logger(logger_file=logger_file,
-                    logger_name='seed_pdrdiv_log')
+                    logger_name='seed_pdrcov_log')
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
     result_file = Macros.pdr_cov_result_dir / f"seeds_{task}_{search_dataset_name}_pdr_coverage.json"
     seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
