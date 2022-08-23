@@ -301,6 +301,118 @@ class Requirements:
                                 'word': ['<isare> <hurtlex_pos:n&cat:an_or>']
                             },
                             'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> <scum_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> <worthless_syn> <dirt_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> <filth_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> refuse']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> <garbage_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> lesser beings']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> no better than <hurtlex_pos:n&cat:an_or>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['your <hurtlex_pos:n> lives are <worthless_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['your <hurtlex_pos:n> lives are absolutely nothing']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['that is fitting for <hurtlex_pos:n> <vermin_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> a waste space']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> a <virus_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> <cancer_syn>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> a plague to society']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<isare> subhuman creatures']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['swarms of <hurtlex_pos:n> <infest_syn> our government']
+                            },
+                            'label': 'toxic'
                         }],
                         'expansion': ['neutral'],
                         'transform': None,
