@@ -102,8 +102,12 @@ class SelfBleu:
         return float("{:.3f}".format(self.score / self.cnt))
     
 
-def read_our_seeds(task, search_dataset_name, selection_method):
-    seed_file = Macros.result_dir / f"seed_inputs_{task}_{search_dataset_name}.json"
+def read_our_seeds(task, search_dataset_name, selection_method, num_seeds):
+    if num_seeds<0:
+        seed_file = Macros.result_dir / f"seed_input_{task}_{search_dataset_name}.json"
+    else:
+        seed_file = Macros.result_dir / f"seed_input_{task}_{search_dataset_name}_{num_seeds}seeds.json"
+    # end if
     seed_dict = Utils.read_json(seed_file)
     texts_lcs = dict()
     texts_all = list()
@@ -141,8 +145,12 @@ def read_our_seeds(task, search_dataset_name, selection_method):
     # # end for
     return texts_all, texts_lcs
 
-def read_checklist_testcases(task, search_dataset_name, selection_method):
-    seed_file = Macros.result_dir / f"seed_input_{task}_{search_dataset_name}.json"
+def read_checklist_testcases(task, search_dataset_name, selection_method, num_seeds):
+    if num_seeds<0:
+        seed_file = Macros.result_dir / f"seed_input_{task}_{search_dataset_name}.json"
+    else:
+        seed_file = Macros.result_dir / f"seed_input_{task}_{search_dataset_name}_{num_seeds}seeds.json"
+    # end if
     seed_dict = Utils.read_json(seed_file)
     texts_lcs = dict()
     texts_all = list()
@@ -181,12 +189,18 @@ def read_checklist_testcases(task, search_dataset_name, selection_method):
 
 def main_seed(task,
               search_dataset_name,
-              selection_method):
-    logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.log"
+              selection_method
+              num_seeds):
+    if num_seeds<0:
+        logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.log"
+        result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.json"
+    else:
+        logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.log"
+        result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.json"
+    # end if
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_selfbleu_log')
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
-    result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.json"
     _, texts_ours = read_our_seeds(task,
                                    search_dataset_name,
                                    selection_method)

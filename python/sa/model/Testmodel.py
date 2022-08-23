@@ -34,12 +34,13 @@ class Testmodel:
                        task: str,
                        dataset_name: str,
                        selection_method: str,
+                       test_result_dir: Path,
                        logger,
                        local_model_name=None):
         logger.print(f"***** TASK: {task} *****")
         cksum_vals = [
             os.path.basename(test_file).split("_")[-1].split(".")[0]
-            for test_file in os.listdir(Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}")
+            for test_file in os.listdir(test_result_dir)
             if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
         ]
         # cksum_vals = [v for v in cksum_vals if v in ['d3af59d', 'a416a87', '22f987a']]
@@ -53,10 +54,10 @@ class Testmodel:
             #     ] if os.path.exists(Macros.result_dir / f"test_results_{task}_{dataset_name}" / f)
             # ]
             testsuite_files = [
-                Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}" / f for f in [
+                test_result_dir / f for f in [
                     f"{task}_testsuite_seeds_{cksum_val}.pkl",
                     f"{task}_testsuite_exps_{cksum_val}.pkl",
-                ] if os.path.exists(Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}" / f)
+                ] if os.path.exists(test_result_dir / f)
             ]
             for testsuite_file in testsuite_files:
                 testsuite = cls.load_testsuite(testsuite_file)
@@ -92,17 +93,18 @@ class Testmodel:
     def _run_seed_testsuite(cls,
                             task: str,
                             dataset_name: str,
+                            test_result_dir: Path,
                             logger,
                             local_model_name=None):
         logger.print(f"***** TASK: {task} *****")
-        res_dir = Macros.result_dir/ f"seeds_{task}_{dataset_name}"
+        # res_dir = Macros.result_dir / f"seeds_{task}_{dataset_name}"
         cksum_vals = [
             os.path.basename(test_file).split("_")[-1].split(".")[0]
-            for test_file in os.listdir(res_dir)
+            for test_file in os.listdir(test_result_dir)
             if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
         ]
         for cksum_val in cksum_vals:
-            testsuite_file = res_dir / f"{task}_testsuite_seeds_{cksum_val}.pkl"
+            testsuite_file = test_result_dir / f"{task}_testsuite_seeds_{cksum_val}.pkl"
             testsuite = cls.load_testsuite(testsuite_file)
             if local_model_name is None:
                 # # Run Google nlp model
@@ -135,6 +137,7 @@ class Testmodel:
     def _run_bl_testsuite(cls,
                           task,
                           bl_name,
+                          test_result_dir,
                           logger,
                           local_model_name=None):
         logger.print(f"***** TASK: {task} *****")
@@ -174,6 +177,7 @@ class Testmodel:
                       selection_method: str,
                       test_baseline: bool,
                       test_seed: bool,
+                      test_result_dir: Path,
                       logger,
                       local_model_name: str = None):
         # run models on checklist introduced testsuite format
@@ -181,17 +185,20 @@ class Testmodel:
         if test_baseline:
             cls._run_bl_testsuite(task,
                                   'checklist',
+                                  test_result_dir,
                                   logger,
                                   local_model_name=local_model_name)
         elif test_baseline==False and test_seed:
             cls._run_seed_testsuite(task,
                                     dataset_name,
+                                    test_result_dir,
                                     logger,
                                     local_model_name=local_model_name)
         elif test_baseline==False and test_seed==False:
             cls._run_testsuite(task,
                                dataset_name,
                                selection_method,
+                               test_result_dir,
                                logger,
                                local_model_name=local_model_name)
         # end if
@@ -260,13 +267,18 @@ def main(task,
          local_model_name=None):
     logger = Logger(logger_file=log_file,
                     logger_name='testmodel')
-    test_result_dir = Macros.result_dir / f"test_results_{task}_{dataset_name}_{selection_method}"
+    if num_seeds<0:
+        test_result_dir = Macros.result_dir/ f"test_results_{task}_{dataset_name}_{selection_method}"
+    else:
+        test_result_dir = Macros.result_dir/ f"test_results_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
+    # end if
     if local_model_name is None:
         Testmodel.run_testsuite(task,
                                 dataset_name,
                                 selection_method,
                                 test_baseline,
                                 test_seed,
+                                test_result_dir,
                                 logger)
         if test_baseline:
             test_result_file = test_result_dir / 'test_results_checklist.txt'
@@ -286,6 +298,7 @@ def main(task,
                                 selection_method,
                                 test_baseline,
                                 test_seed,
+                                test_result_dir,
                                 logger,
                                 local_model_name=local_model_name)
         if test_baseline:
@@ -301,12 +314,12 @@ def main(task,
         #     Testmodel.run_on_diff_dataset(task, dataset_name, test_type, logger)
         # # end if
     # end if
-    
     return
 
 def main_seed(task,
               dataset_name,
               selection_method,
+              num_seeds,
               test_baseline,
               log_file,
               test_seed=True,
@@ -314,13 +327,18 @@ def main_seed(task,
               local_model_name=None):
     logger = Logger(logger_file=log_file,
                     logger_name='testseed')
-    test_result_dir = Macros.result_dir/ f"seeds_{task}_{dataset_name}"
+    if num_seeds<0:
+        test_result_dir = Macros.result_dir/ f"seeds_{task}_{dataset_name}"
+    else:
+        test_result_dir = Macros.result_dir/ f"seeds_{task}_{dataset_name}_{num_seeds}seeds"
+    # end if
     if local_model_name is None:
         Testmodel.run_testsuite(task,
                                 dataset_name,
                                 selection_method,
                                 test_baseline,
                                 test_seed,
+                                test_result_dir,
                                 logger)
         if test_baseline:
             test_result_file = test_result_dir / 'test_results_checklist.txt'
@@ -334,6 +352,7 @@ def main_seed(task,
                                 selection_method,
                                 test_baseline,
                                 test_seed,
+                                test_result_dir,
                                 logger,
                                 local_model_name=local_model_name)
         if test_baseline:

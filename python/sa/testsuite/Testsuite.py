@@ -117,9 +117,16 @@ class Testsuite:
     @classmethod
     def get_templates(cls, nlp_task, dataset, selection_method, num_seeds, logger):
         task = nlp_task
+        if num_seeds<0:
+            template_out_dir = f"templates2_{nlp_task}_{dataset}_{selection_method}"
+            cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}.json"
+        else:
+            template_out_dir = f"templates2_{nlp_task}_{dataset}_{selection_method}_{num_seeds}seeds"
+            cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}_{num_seeds}seeds.json"
+        # end if
         # selection_method = 'RANDOM' if is_random_select else 'PROB'
         new_input_dicts = Template.get_new_inputs(
-            Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset}_{selection_method}.json",
+            Macros.result_dir / cfg_res_file_name,
             task,
             dataset,
             n=num_seeds,
@@ -132,7 +139,7 @@ class Testsuite:
         transform_reqs = list()
         for t_i in range(len(new_input_dicts)):
             req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
-            res_dir = Macros.result_dir/ f"templates_{task}_{dataset}_{selection_method}"
+            res_dir = Macros.result_dir/ template_out_dir
             # if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))):
             #     Template.get_templates(
             #         num_seeds=num_seeds,
@@ -371,9 +378,14 @@ class Testsuite:
                                seed_template_dicts,
                                exp_template_dicts,
                                transform_reqs,
+                               num_seeds,
                                logger):
         # selection_method = 'RANDOM' if is_random_select else 'PROB'
-        res_dir = Macros.result_dir / f"test_results_{task}_{dataset}_{selection_method}"
+        if num_seeds<0:
+            res_dir = Macros.result_dir / f"test_results_{task}_{dataset}_{selection_method}"
+        else:
+            res_dir = Macros.result_dir / f"test_results_{task}_{dataset}_{selection_method}_{num_seeds}seeds"
+        # end if
         res_dir.mkdir(parents=True, exist_ok=True)
         cls.write_seed_testsuite(task,
                                  dataset,
@@ -410,7 +422,16 @@ class Testsuite:
         logger.print('Generate Testsuites from Templates ...')
         for task, seed, exp, seed_temp, exp_temp, transform_reqs \
             in cls.get_templates(nlp_task, dataset, selection_method, num_seeds, logger):
-            Testsuite.write_editor_templates(task, dataset, selection_method, seed, exp, seed_temp, exp_temp, transform_reqs, logger)
+            Testsuite.write_editor_templates(task,
+                                             dataset,
+                                             selection_method,
+                                             seed,
+                                             exp,
+                                             seed_temp,
+                                             exp_temp,
+                                             transform_reqs,
+                                             num_seeds,
+                                             logger)
         # end for
         return
 

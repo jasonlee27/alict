@@ -274,15 +274,14 @@ class Template:
                         pcfg_ref,
                         editor,
                         dataset,
-                        n=None,
+                        cfg_res_file,
+                        num_seeds=None,
                         selection_method=None,
                         logger=None):
         st = time.time()
         # generate seeds
         selected = cls.SEARCH_FUNC[task](req, dataset)
-        seeds = selected['selected_inputs'][:n] if n>0 else selected['selected_inputs']
-        # cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}.json"
-        cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset}_{selection_method}.json"
+        seeds = selected['selected_inputs'][:num_seeds] if num_seeds>0 else selected['selected_inputs']
         req_i, seeds = cls.get_seed_of_interest(cfg_res_file, req, seeds)
         if not any(seeds):
             return
@@ -427,7 +426,8 @@ class Template:
                        input_file,
                        nlp_task,
                        dataset_name,
-                       n=None,
+                       cfg_res_file,
+                       num_seeds=None,
                        selection_method=None,
                        logger=None):
         # if os.path.exists(input_file):
@@ -470,7 +470,8 @@ class Template:
                                 pcfg_ref,
                                 editor,
                                 dataset_name,
-                                n=n,
+                                cfg_res_file,
+                                num_seeds=num_seeds,
                                 selection_method=selection_method,
                                 logger=logger)
             # template_results.append(req_results)
@@ -600,33 +601,34 @@ class Template:
         assert dataset_name in Macros.datasets[nlp_task]
         # Write the template results
         # res_dir = Macros.result_dir / f"templates2_{nlp_task}_{dataset_name}_{selection_method}"
-        res_dir = Macros.result_dir/ f"templates_{nlp_task}_{dataset_name}_{selection_method}"
+        if num_seeds<0:
+            template_out_dir = f"templates2_{nlp_task}_{dataset_name}_{selection_method}"
+            cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
+            # cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
+        else:
+            template_out_dir = f"templates2_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
+            cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            # cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+        # end if
+        res_dir = Macros.result_dir / template_out_dir
         res_dir.mkdir(parents=True, exist_ok=True)
         logger = Logger(logger_file=log_file,
                         logger_name='template')
-
+        
         logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg
         # nlp = spacy.load('en_core_web_trf')
         # nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        task = nlp_task
 
-        # new_input_dicts = cls.get_new_inputs(
-        #     Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json",
-        #     task,
-        #     dataset_name,
-        #     n=num_seeds,
-        #     selection_method=selection_method,
-        #     logger=logger
-        # )
-        cfg_res_file = Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json"
+        cfg_res_file = Macros.result_dir / cfg_res_file_name
         # cfg_res_file = Macros.result_dir/f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
         
         new_input_dicts = cls.get_new_inputs(
             cfg_res_file,
-            task,
+            nlp_task,
             dataset_name,
-            n=num_seeds,
+            cfg_res_file,
+            num_seeds=num_seeds,
             selection_method=selection_method,
             logger=logger
         )

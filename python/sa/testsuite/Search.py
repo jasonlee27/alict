@@ -20,6 +20,7 @@ from .Transform import TransformOperator
 from ..requirement.Requirements import Requirements
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
+random.seed(Macros.SEED)
 
 # get pos/neg/neu words from SentiWordNet
 SENT_WORDS = Sentiwordnet.get_sent_words()

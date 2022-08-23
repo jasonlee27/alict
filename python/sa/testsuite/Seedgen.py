@@ -115,7 +115,7 @@ class Seedgen:
     def generate_inputs(cls,
                         task,
                         dataset,
-                        n=Macros.max_num_seeds,
+                        num_seeds=Macros.max_num_seeds,
                         save_to=None,
                         logger=None):
         reqs = Requirements.get_requirements(task)
@@ -133,13 +133,14 @@ class Seedgen:
             # end for
             reqs = _reqs
         # end if
+
         for selected in cls.SEARCH_FUNC[task](reqs, dataset):
             exp_inputs = dict()
             print_str = '>>>>> REQUIREMENT:'+selected['requirement']['description']
             num_selected_inputs = len(selected["selected_inputs"])
             logger.print(f"{print_str}\n\t{num_selected_inputs} inputs are selected.")
             index = 1
-            seeds = selected["selected_inputs"][:n] if n>0 else selected["selected_inputs"]
+            seeds = selected["selected_inputs"][:num_seeds] if num_seeds>0 else selected["selected_inputs"]
             seed_inputs = list()
             for _id, seed, seed_label, seed_score in seeds:
                 index += 1
@@ -154,9 +155,13 @@ class Seedgen:
             results.append(seed_dict)
             
             # write seed inputs into checklist testsuite format
-            res_dir = Macros.result_dir/ f"seeds_{task}_{dataset}"
+            if num_seeds<0:
+                res_dir = Macros.result_dir / f"seeds_{task}_{dataset}"
+            else:
+                res_dir = Macros.result_dir / f"seeds_{task}_{dataset}_{num_seeds}seeds"
+            # end if
             res_dir.mkdir(parents=True, exist_ok=True)
-            cksum_val = cls.write_seed_testsuite(task, dataset, seed_dict, n, res_dir, logger)
+            cksum_val = cls.write_seed_testsuite(task, dataset, seed_dict, num_seeds, res_dir, logger)
             cksum_map_str += f"{selected['requirement']['description']}\t{cksum_val}\n"
 
             # write raw new inputs for each requirement
@@ -173,14 +178,14 @@ class Seedgen:
         return results
     
     @classmethod
-    def get_new_inputs(cls, input_file, nlp_task, dataset_name, n=None, logger=None):
+    def get_new_inputs(cls, input_file, nlp_task, dataset_name, num_seeds=None, logger=None):
         # if os.path.exists(input_file):
         #     return Utils.read_json(input_file)
         # # end if
         return cls.generate_inputs(
             task=nlp_task,
             dataset=dataset_name,
-            n=n,
+            num_seeds=num_seeds,
             save_to=input_file,
             logger=logger
         )
@@ -201,11 +206,16 @@ class Seedgen:
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         task = nlp_task
+        if num_seeds<0:
+            seed_res_file_name = f"seed_inputs_{task}_{dataset_name}.json"
+        else:
+            seed_res_file_name = f"seed_inputs_{task}_{dataset_name}_{num_seeds}seeds.json"
+        # end if
         new_input_dicts = cls.get_new_inputs(
-            Macros.result_dir/f"seed_inputs_{task}_{dataset_name}.json",
+            Macros.result_dir / seed_res_file_name,
             task,
             dataset_name,
-            n=num_seeds,
+            num_seeds=num_seeds,
             logger=logger
         )
         return

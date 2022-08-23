@@ -56,7 +56,7 @@ parser.add_argument('--which', type=str, default=None, nargs='+',
                     help='tables/plots that you are interested in making')
 
 args = parser.parse_args()
-random.seed(27)
+random.seed(Macros.SEED)
 
 def run_requirements():
     from .requirement.Requirements import Requirements
@@ -73,7 +73,11 @@ def run_templates():
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
     selection_method = args.syntax_selection
-    log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+    # end if    
     log_dir.mkdir(parents=True, exist_ok=True)
     # log_file = log_dir / "template2_generation.log"
     log_file = log_dir / "template_generation.log"
@@ -92,7 +96,11 @@ def run_seedgen():
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds # -1 means acceptance of every seeds
     # selection_method = args.syntax_selection
-    log_dir = Macros.log_dir / f"seeds_{nlp_task}_{search_dataset_name}"
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{num_seeds}seeds"
+    # end if
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "seed_generation.log"
     Seedgen.get_seeds(
@@ -109,7 +117,11 @@ def run_testsuites():
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
     selection_method = args.syntax_selection
-    log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+    # end if
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "testsuite_generation.log"
     Testsuite.write_testsuites(
@@ -132,7 +144,11 @@ def run_testmodel():
     # # end if
     test_type = args.test_type
     local_model_name = args.local_model_name
-    log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+    # end if
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "test_orig_model.log"
     Testmodel_main(
@@ -151,10 +167,15 @@ def run_seed_testmodel():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
+    num_seeds = args.num_seeds
     test_baseline = args.test_baseline
     test_type = args.test_type
     local_model_name = args.local_model_name
-    log_dir = Macros.log_dir / f"seeds_{nlp_task}_{search_dataset_name}"
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"seeds_{nlp_task}_{search_dataset_name}"
+    else:
+        log_dir = Macros.log_dir / f"seeds_{nlp_task}_{search_dataset_name}_{num_seeds}seeds"
+    # end if
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "test_orig_model.log"
     main_seed(
@@ -195,18 +216,30 @@ def run_analyze():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     test_baseline = args.test_baseline
+    num_seeds = args.num_seeds
     if test_baseline:
-        result_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results_checklist.txt'
-        save_to = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_checklist_analysis.json'
+        if num_seeds<0:
+            result_dir = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}"
+        else:
+            result_dir = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+        # end if
+        result_file = result_dir / 'test_results_checklist.txt'
+        save_to = result_dir / 'test_result_checklist_analysis.json'
         Result.analyze_checklist(
             result_file,
             Macros.sa_models_file,
             save_to
         )
     else:
-        result_file = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results.txt'
-        template_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
-        save_to = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_result_analysis.json'
+        if num_seeds<0:
+            result_dir = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}"
+            template_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
+        else:
+            result_dir = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+            template_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
+        # end if
+        result_file = result_dir / 'test_results.txt'
+        save_to = result_dir / 'test_result_analysis.json'
         Result.analyze(
             result_file,
             Macros.sa_models_file,
@@ -222,7 +255,12 @@ def run_analyze_seed():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     test_baseline = args.test_baseline
-    res_dir = Macros.result_dir / f"seeds_{nlp_task}_{search_dataset_name}"
+    num_seeds = args.num_seeds
+    if num_seeds<0:
+        res_dir = Macros.result_dir / f"seeds_{nlp_task}_{search_dataset_name}"
+    else:
+        res_dir = Macros.result_dir / f"seeds_{nlp_task}_{search_dataset_name}_{num_seeds}seeds"
+    # end if
     result_file = res_dir / 'test_results.txt'
     bl_result_file = res_dir / 'test_results_checklist.txt'
     save_to = res_dir / 'test_result_analysis.json'
@@ -274,9 +312,11 @@ def run_selfbleu():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
+    num_seeds = args.num_seeds
     main_seed(nlp_task,
               search_dataset_name,
-              selection_method)
+              selection_method,
+              num_seeds)
     return
 
 def run_pdrule_cov():
@@ -284,9 +324,11 @@ def run_pdrule_cov():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
+    num_seeds = args.num_seeds
     main_seed(nlp_task,
               search_dataset_name,
-              selection_method)
+              selection_method,
+              num_seeds)
     return
 
 # ==========

@@ -23,7 +23,7 @@ class Macros:
     FMT_PER = "{:.1%}"
     FMT_FLOAT = "{:,.2f}"
     
-    SEED = 27
+    SEED = 26 #26, 27(done), 28
     MASK = "{mask}"
 
     num_processes = 3
