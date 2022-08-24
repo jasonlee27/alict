@@ -10,7 +10,7 @@ class Macros:
     this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__))) # nlptest/python/utils
     root_dir: Path = this_dir.parent.parent.parent # nlptest/
     python_dir: Path = this_dir.parent.parent # nlptest/python
-    storage_dir: Path = Path("/disk/weilab_jaeseonglee/projects/s2lct")
+    storage_dir: Path = Path("/glusterfs/data/jxl115330/s2lct")
     result_dir: Path = storage_dir / "_results" # /glusterfs/data/jxl115330/nlptest/_results
     # result_dir: Path = root_dir / "_results" # nlptest/_results
     
@@ -26,7 +26,7 @@ class Macros:
     SEED = 26 #26, 27(done), 28
     MASK = "{mask}"
 
-    num_processes = 3
+    num_processes = 2
 
     ## NLP dataset
     sa_task = 'sa'

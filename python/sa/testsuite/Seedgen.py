@@ -192,33 +192,78 @@ class Seedgen:
 
     @classmethod
     def get_seeds(cls,
-                  num_seeds,
                   nlp_task,
                   dataset_name,
-                  log_file):
+                  num_seeds,
+                  log_file=None):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
-        # Write the template results
-        logger = Logger(logger_file=log_file,
-                        logger_name='template')
-        logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name} *****")
-        # Search inputs from searching dataset and expand the inputs using ref_cfg
-        nlp = spacy.load('en_core_web_md')
-        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        task = nlp_task
+        if log_file is not None:
+            # Write the template results
+            logger = Logger(logger_file=log_file,
+                            logger_name='template')
+            logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name} *****")
+        # end if
         if num_seeds<0:
+            cfg_res_file_name = f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}.json"
             seed_res_file_name = f"seed_inputs_{task}_{dataset_name}.json"
         else:
+            cfg_res_file_name = f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
             seed_res_file_name = f"seed_inputs_{task}_{dataset_name}_{num_seeds}seeds.json"
         # end if
-        new_input_dicts = cls.get_new_inputs(
-            Macros.result_dir / seed_res_file_name,
-            task,
-            dataset_name,
-            num_seeds=num_seeds,
-            logger=logger
-        )
-        return
+        cfg_results = Utils.read_json(Macros.result_dir / cfg_res_file_name)
+        # seed_inputs.append([_id, seed, seed_label])
+        seed_results = dict()
+        for cfg_res in cfg_results:
+            lc = cfg_res['requirement']['description']
+            seed_inputs = list()
+            index = 0
+            for seed in cfg_res['inputs'].keys():
+                seed_label = cfg_res['inputs'][seed]['label']
+                seed_inputs.append([index, seed, seed_label])
+                index += 1
+            # end for
+            seed_results[seed] = seed_inputs
+            
+            # write raw new inputs for each requirement
+            Utils.write_json(seed_results,
+                             Macros.result_dir / seed_res_file_name,
+                             pretty_format=True)
+        # end for
+        return 
+            
+        
+        
+        
+    # @classmethod
+    # def get_seeds(cls,
+    #               num_seeds,
+    #               nlp_task,
+    #               dataset_name,
+    #               log_file):
+    #     assert nlp_task in Macros.nlp_tasks
+    #     assert dataset_name in Macros.datasets[nlp_task]
+    #     # Write the template results
+    #     logger = Logger(logger_file=log_file,
+    #                     logger_name='template')
+    #     logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name} *****")
+    #     # Search inputs from searching dataset and expand the inputs using ref_cfg
+    #     nlp = spacy.load('en_core_web_md')
+    #     nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+    #     task = nlp_task
+    #     if num_seeds<0:
+    #         seed_res_file_name = f"seed_inputs_{task}_{dataset_name}.json"
+    #     else:
+    #         seed_res_file_name = f"seed_inputs_{task}_{dataset_name}_{num_seeds}seeds.json"
+    #     # end if
+    #     new_input_dicts = cls.get_new_inputs(
+    #         Macros.result_dir / seed_res_file_name,
+    #         task,
+    #         dataset_name,
+    #         num_seeds=num_seeds,
+    #         logger=logger
+    #     )
+    #     return
 
 
 # Write templates

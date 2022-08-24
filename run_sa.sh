@@ -20,10 +20,11 @@ function gen_templates() {
         # write templates in json
         (cd ${_DIR}
          # generate templates from sst dataset
-         CUDA_VISIBLE_DEVICES=3,4,5 python -m python.sa.main \
+         CUDA_VISIBLE_DEVICES=1,3,4 python -m python.sa.main \
                              --run template \
                              --search_dataset sst \
-                             --syntax_selection random # > /dev/null 2>&1
+                             --syntax_selection random \
+                             --num_seeds 50 # > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection bertscore > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run template --search_dataset sst --syntax_selection noselect
 
@@ -208,10 +209,10 @@ function selfbleu() {
 
 function pdrulecoverage() {
         (cd ${_DIR}
-         python -m python.sa.main \
-                --run pdrule_cov \
-                --search_dataset sst \
-                --syntax_selection random
+         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
+                             --run pdrule_cov \
+                             --search_dataset sst \
+                             --syntax_selection random
         )
 }
 

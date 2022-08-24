@@ -196,7 +196,7 @@ def main_seed(task,
         result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.json"
     else:
         logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.log"
-        result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.json"
+        result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_{num_seeds}seeds_selfbleu.json"
     # end if
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_selfbleu_log')

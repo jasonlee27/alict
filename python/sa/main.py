@@ -80,7 +80,7 @@ def run_templates():
     # end if    
     log_dir.mkdir(parents=True, exist_ok=True)
     # log_file = log_dir / "template2_generation.log"
-    log_file = log_dir / "template_generation.log"
+    log_file = log_dir / "template2_generation.log"
     Template.get_templates(
         num_seeds=num_seeds,
         nlp_task=nlp_task,

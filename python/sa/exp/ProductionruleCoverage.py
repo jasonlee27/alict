@@ -41,6 +41,26 @@ def get_cfg_rules_per_sent(sent):
         'cfg_rules': list(set(rules))
     }
 
+def get_pdr_per_sent(cfg_seed):
+    for lhs in cfg_seed.keys():
+        rhss = cfg_rules[lhs]
+        for rhs in rhss:
+            rhs_pos = rhs['pos']
+            if type(rhs_pos)==str:
+                if rhs_pos!=rhs['word'][0]:
+                    rules.append(f"{lhs}->{rhs_pos}")
+                # end if
+            else:
+                rules.append(f"{lhs}->{rhs_pos}")
+            # end if
+        # end for
+    # end for
+    return {
+        'sent': sent,
+        'cfg_rules': list(set(rules))
+    }
+
+
 class ProductionruleCoverage:
     
     def __init__(self,
@@ -73,33 +93,96 @@ class ProductionruleCoverage:
     def get_our_seed_cfg_rules(cls,
                                task,
                                dataset_name,
+                               selection_method,
+                               num_seeds,
                                logger=None):
-        data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}.json"
-        res_file = Macros.result_dir / f"seed_cfg_rules_{task}_{dataset_name}.json"
-        seed_dicts = Utils.read_json(data_file)
-        if os.path.exists(res_file):
-            seed_rules = Utils.read_json(res_file)
+        if num_seeds<0:
+            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}.json"
         else:
-            seed_rules = dict()
+            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
-        for seed in seed_dicts:
-            lc = seed['requirement']['description']
-            if lc not in seed_rules.keys():
+        if os.path.exists(res_file):
+            seed_rules = dict()
+            cfg_results = Utils.read_json(cfg_res_file)
+            for cfg_res in cfg_results:
+                lc = cfg_res['requirement']['description']
+                seed_inputs = list()
+                seed_rules[lc] = dict()
                 if logger is not None:
                     logger.print(f"OUR_SEED::{lc}::")
                 # end if
-                seed_rules[lc] = dict()
-                args = [(s[1],) for s in seed['seeds']]
-                pool = Pool(processes=NUM_PROCESSES)
-                results = pool.starmap_async(get_cfg_rules_per_sent,
-                                             args,
-                                             chunksize=len(args) // NUM_PROCESSES).get()
-                for r in results:
-                    seed_rules[lc][r['sent']] = r['cfg_rules']
+                
+                for seed in cfg_res['inputs'].keys():
+                    cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
+                    seed_rules[lc][seed] = get_pdr_per_sent(cfg_seed)
                 # end for
                 Utils.write_json(seed_rules, res_file, pretty_format=True)
+            # end for
+        else:
+            if num_seeds<0:
+                data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}.json"
+                res_file = Macros.result_dir / f"seed_cfg_rules_{task}_{dataset_name}.json"
+            else:
+                data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}_{num_seeds}seeds.json"
+                res_file = Macros.result_dir / f"seed_cfg_rules_{task}_{dataset_name}_{num_seeds}seeds.json"
             # end if
-        # end for
+            seed_dicts = Utils.read_json(data_file)
+            if os.path.exists(res_file):
+                seed_rules = Utils.read_json(res_file)
+            else:
+                seed_rules = dict()
+            # end if
+            for seed in seed_dicts:
+                lc = seed['requirement']['description']
+                if lc not in seed_rules.keys():
+                    if logger is not None:
+                        logger.print(f"OUR_SEED::{lc}::")
+                    # end if
+                    seed_rules[lc] = dict()
+                    args = [(s[1],) for s in seed['seeds']]
+                    pool = Pool(processes=NUM_PROCESSES)
+                    results = pool.starmap_async(get_cfg_rules_per_sent,
+                                                 args,
+                                                 chunksize=len(args) // NUM_PROCESSES).get()
+                    for r in results:
+                        seed_rules[lc][r['sent']] = r['cfg_rules']
+                    # end for
+                    Utils.write_json(seed_rules, res_file, pretty_format=True)
+                # end if
+            # end for
+        # end if
+        
+        # if num_seeds<0:
+        #     data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}.json"
+        #     res_file = Macros.result_dir / f"seed_cfg_rules_{task}_{dataset_name}.json"
+        # else:
+        #     data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}_{num_seeds}seeds.json"
+        #     res_file = Macros.result_dir / f"seed_cfg_rules_{task}_{dataset_name}_{num_seeds}seeds.json"
+        # # end if
+        # seed_dicts = Utils.read_json(data_file)
+        # if os.path.exists(res_file):
+        #     seed_rules = Utils.read_json(res_file)
+        # else:
+        #     seed_rules = dict()
+        # # end if
+        # for seed in seed_dicts:
+        #     lc = seed['requirement']['description']
+        #     if lc not in seed_rules.keys():
+        #         if logger is not None:
+        #             logger.print(f"OUR_SEED::{lc}::")
+        #         # end if
+        #         seed_rules[lc] = dict()
+        #         args = [(s[1],) for s in seed['seeds']]
+        #         pool = Pool(processes=NUM_PROCESSES)
+        #         results = pool.starmap_async(get_cfg_rules_per_sent,
+        #                                      args,
+        #                                      chunksize=len(args) // NUM_PROCESSES).get()
+        #         for r in results:
+        #             seed_rules[lc][r['sent']] = r['cfg_rules']
+        #         # end for
+        #         Utils.write_json(seed_rules, res_file, pretty_format=True)
+        #     # end if
+        # # end for
         return seed_rules
 
     @classmethod
@@ -107,9 +190,15 @@ class ProductionruleCoverage:
                               task,
                               dataset_name,
                               selection_method,
+                              num_seeds,
                               logger=None):
-        data_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json"
-        res_file = Macros.result_dir / f"exp_cfg_rules_{task}_{dataset_name}_{selection_method}.json"
+        if num_seeds<0:
+            data_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json"
+            res_file = Macros.result_dir / f"exp_cfg_rules_{task}_{dataset_name}_{selection_method}.json"
+        else:
+            data_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            res_file = Macros.result_dir / f"exp_cfg_rules_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+        # end if
         exp_dicts = Utils.read_json(data_file)
         if os.path.exists(str(res_file)):
             exp_rules = Utils.read_json(res_file)
@@ -123,18 +212,18 @@ class ProductionruleCoverage:
             # end if
             if lc not in exp_rules.keys():
                 exp_rules[lc] = dict()
-                args = list()
                 for seed in exp['inputs'].keys():
-                    exp_inputs = [(e[5],) for e in exp['inputs'][seed]['exp_inputs']]
-                    exp_inputs.append((seed,))
-                    args.extend(exp_inputs)
-                # end for
-                pool = Pool(processes=NUM_PROCESSES)
-                results = pool.starmap_async(get_cfg_rules_per_sent,
-                                             args,
-                                             chunksize=len(args) // NUM_PROCESSES).get()
-                for r in results:
-                    exp_rules[lc][r['sent']] = r['cfg_rules']
+                    cfg_seed = exp['inputs'][seed]
+                    pdr_seed = get_pdr_per_sent(cfg_seed)
+                    pdrs = list()
+                    for exp in exp['inputs'][seed]['exp_inputs']:
+                        pdr_exp = pdr_seed.copy()
+                        cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
+                        pdr_exp.remove(cfg_from)
+                        pdr_exp.append(cfg_to)
+                        pdrs.append(pdr_exp)
+                    # end for
+                    exp_rules[lc][seed] = pdrs
                 # end for
                 Utils.write_json(exp_rules, res_file, pretty_format=True)
             # end if
@@ -182,13 +271,19 @@ class ProductionruleCoverage:
 
 def main_seed(task,
               search_dataset_name,
-              selection_method):
+              selection_method,
+              num_seeds):
     st = time.time()
-    logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_pdrcov.log"
+    if num_seeds<0:
+        logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_pdrcov.log"
+        result_file = Macros.pdr_cov_result_dir / f"seeds_{task}_{search_dataset_name}_pdrcov.json"
+    else:
+        logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_{num_seeds}seeds_pdrcov.log"
+        result_file = Macros.pdr_cov_result_dir / f"seeds_{task}_{search_dataset_name}_{num_seeds}seeds_pdrcov.json"
+    # end if
+    Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_pdrcov_log')
-    Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
-    result_file = Macros.pdr_cov_result_dir / f"seeds_{task}_{search_dataset_name}_pdr_coverage.json"
     seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
         task,
         search_dataset_name,

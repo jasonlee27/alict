@@ -603,11 +603,11 @@ class Template:
         # res_dir = Macros.result_dir / f"templates2_{nlp_task}_{dataset_name}_{selection_method}"
         if num_seeds<0:
             template_out_dir = f"templates2_{nlp_task}_{dataset_name}_{selection_method}"
-            cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
+            cfg_res_file_name = f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}.json"
             # cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
         else:
             template_out_dir = f"templates2_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
-            cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            cfg_res_file_name = f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
             # cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
         res_dir = Macros.result_dir / template_out_dir
