@@ -102,18 +102,23 @@ class SelfBleu:
         return float("{:.3f}".format(self.score / self.cnt))
     
 
-def read_our_seeds(task, search_dataset_name, selection_method, num_seeds):
+def read_our_seeds(task, search_dataset_name, selection_method, num_seeds, num_trials):
     if num_seeds<0:
-        seed_file = Macros.result_dir / f"seed_input_{task}_{search_dataset_name}.json"
+        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}.json"
     else:
-        seed_file = Macros.result_dir / f"seed_input_{task}_{search_dataset_name}_{num_seeds}seeds.json"
+        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
     # end if
+    # if num_seeds<0:
+    #     seed_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{search_dataset_name}.json"
+    # else:
+    #     seed_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{search_dataset_name}_{num_seeds}seeds.json"
+    # # end if
     seed_dict = Utils.read_json(seed_file)
     texts_lcs = dict()
     texts_all = list()
     for seeds in seed_dict:
         lc = seeds['requirement']['description']
-        seed_sents = [s[1] for s in seeds['seeds']]
+        seed_sents = [s for s in seeds['inputs'].keys()]
         texts_lcs[lc] = seed_sents
         texts_all.extend(seed_sents)
     # end for
@@ -145,11 +150,31 @@ def read_our_seeds(task, search_dataset_name, selection_method, num_seeds):
     # # end for
     return texts_all, texts_lcs
 
-def read_checklist_testcases(task, search_dataset_name, selection_method, num_seeds):
+def read_our_exps(task, search_dataset_name, selection_method, num_seeds, num_trials):
     if num_seeds<0:
-        seed_file = Macros.result_dir / f"seed_input_{task}_{search_dataset_name}.json"
+        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}.json"
     else:
-        seed_file = Macros.result_dir / f"seed_input_{task}_{search_dataset_name}_{num_seeds}seeds.json"
+        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+    # end if
+    seed_dict = Utils.read_json(seed_file)
+    texts_lcs = dict()
+    texts_all = list()
+    for seeds in seed_dict:
+        lc = seeds['requirement']['description']
+        exp_sents = list()
+        for s in seeds['inputs'].keys():
+            exp_sents.extend([e[5] for e in seeds['inputs'][s]['exp_inputs']])
+        # end for
+        texts_lcs[lc] = exp_sents
+        texts_all.extend(exp_sents)
+    # end for
+    return texts_all, texts_lcs
+
+def read_checklist_testcases(task, search_dataset_name, selection_method, num_seeds, num_trials):
+    if num_seeds<0:
+        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}.json"
+    else:
+        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
     # end if
     seed_dict = Utils.read_json(seed_file)
     texts_lcs = dict()
@@ -189,21 +214,25 @@ def read_checklist_testcases(task, search_dataset_name, selection_method, num_se
 
 def main_seed(task,
               search_dataset_name,
-              selection_method
-              num_seeds):
+              selection_method,
+              num_seeds,
+              num_trials):
+    num_trials = '' if num_trials==1 else str(num_trials)
     if num_seeds<0:
-        logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.log"
-        result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.json"
+        logger_file = Macros.log_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_selfbleu.log"
+        result_file = Macros.selfbleu_result_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_selfbleu.json"
     else:
-        logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.log"
-        result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_{num_seeds}seeds_selfbleu.json"
+        logger_file = Macros.log_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_{num_seeds}seeds_selfbleu.log"
+        result_file = Macros.selfbleu_result_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_{num_seeds}seeds_selfbleu.json"
     # end if
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_selfbleu_log')
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
     _, texts_ours = read_our_seeds(task,
                                    search_dataset_name,
-                                   selection_method)
+                                   selection_method,
+                                   num_seeds,
+                                   num_trials)
     if os.path.exists(str(result_file)):
         result = Utils.read_json(result_file)
     else:
@@ -237,7 +266,9 @@ def main_seed(task,
     
     _, texts_checklist = read_checklist_testcases(task,
                                                   search_dataset_name,
-                                                  selection_method)
+                                                  selection_method,
+                                                  num_seeds,
+                                                  num_trials)
     for lc in texts_checklist.keys():
         if lc not in result['checklist'].keys():
             st = time.time()

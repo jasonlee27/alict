@@ -26,7 +26,7 @@ class Macros:
     SEED = 26 #26, 27(done), 28
     MASK = "{mask}"
 
-    num_processes = 2
+    num_processes = 1
 
     ## NLP dataset
     sa_task = 'sa'

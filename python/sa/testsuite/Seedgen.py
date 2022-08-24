@@ -195,6 +195,7 @@ class Seedgen:
                   nlp_task,
                   dataset_name,
                   num_seeds,
+                  num_trials,
                   log_file=None):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
@@ -204,12 +205,13 @@ class Seedgen:
                             logger_name='template')
             logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name} *****")
         # end if
+        _num_trials = '' if num_trials==1 else str(num_trials)
         if num_seeds<0:
-            cfg_res_file_name = f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}.json"
-            seed_res_file_name = f"seed_inputs_{task}_{dataset_name}.json"
+            cfg_res_file_name = f"cfg_expanded_inputs{_num_trials}_{nlp_task}_{dataset_name}_{selection_method}.json"
+            seed_res_file_name = f"seed_inputs{_num_trials}_{task}_{dataset_name}.json"
         else:
-            cfg_res_file_name = f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
-            seed_res_file_name = f"seed_inputs_{task}_{dataset_name}_{num_seeds}seeds.json"
+            cfg_res_file_name = f"cfg_expanded_inputs{_num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            seed_res_file_name = f"seed_inputs{_num_trials}_{task}_{dataset_name}_{num_seeds}seeds.json"
         # end if
         cfg_results = Utils.read_json(Macros.result_dir / cfg_res_file_name)
         # seed_inputs.append([_id, seed, seed_label])

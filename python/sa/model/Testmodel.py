@@ -260,6 +260,8 @@ class Testmodel:
 def main(task,
          dataset_name,
          selection_method,
+         num_seeds,
+         num_trials,
          test_baseline,
          test_type,
          log_file,
@@ -267,10 +269,11 @@ def main(task,
          local_model_name=None):
     logger = Logger(logger_file=log_file,
                     logger_name='testmodel')
+    _num_trials = '' if num_trials==1 else str(num_trials)
     if num_seeds<0:
-        test_result_dir = Macros.result_dir/ f"test_results_{task}_{dataset_name}_{selection_method}"
+        test_result_dir = Macros.result_dir/ f"test_results{_num_trials}_{task}_{dataset_name}_{selection_method}"
     else:
-        test_result_dir = Macros.result_dir/ f"test_results_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
+        test_result_dir = Macros.result_dir/ f"test_results{_num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
     # end if
     if local_model_name is None:
         Testmodel.run_testsuite(task,
@@ -320,6 +323,7 @@ def main_seed(task,
               dataset_name,
               selection_method,
               num_seeds,
+              num_trials,
               test_baseline,
               log_file,
               test_seed=True,
@@ -327,10 +331,11 @@ def main_seed(task,
               local_model_name=None):
     logger = Logger(logger_file=log_file,
                     logger_name='testseed')
+    _num_trials = '' if num_trials==1 else str(num_trials)
     if num_seeds<0:
-        test_result_dir = Macros.result_dir/ f"seeds_{task}_{dataset_name}"
+        test_result_dir = Macros.result_dir/ f"seeds{_num_trials}_{task}_{dataset_name}"
     else:
-        test_result_dir = Macros.result_dir/ f"seeds_{task}_{dataset_name}_{num_seeds}seeds"
+        test_result_dir = Macros.result_dir/ f"seeds{_num_trials}_{task}_{dataset_name}_{num_seeds}seeds"
     # end if
     if local_model_name is None:
         Testmodel.run_testsuite(task,

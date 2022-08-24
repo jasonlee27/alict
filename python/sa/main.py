@@ -27,6 +27,8 @@ parser.add_argument('--search_dataset', type=str, default='sst',
                     help='name of dataset for searching testcases that meets the requirement')
 parser.add_argument('--num_seeds', type=int, default=-1,
                     help='number of seed inputs found in search dataset. It uses all seeds if negative value')
+parser.add_argument('--num_trials', type=int, default=1,
+                    help='number of trials for the experiment')
 parser.add_argument('--syntax_selection', type=str, default='random',
                     choices=['prob', 'random', 'bertscore', 'noselect'],
                     help='method for selection of syntax suggestions')
@@ -72,7 +74,9 @@ def run_templates():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
     selection_method = args.syntax_selection
+    _num_trials = '' if num_trials==1 else str(num_trials)
     if num_seeds<0:
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
     else:
@@ -80,12 +84,13 @@ def run_templates():
     # end if    
     log_dir.mkdir(parents=True, exist_ok=True)
     # log_file = log_dir / "template2_generation.log"
-    log_file = log_dir / "template2_generation.log"
+    log_file = log_dir / "template{num_trials}_generation.log"
     Template.get_templates(
-        num_seeds=num_seeds,
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
         selection_method=selection_method,
+        num_seeds=num_seeds,
+        num_trials=num_trials,
         log_file=log_file
     )
     return
@@ -95,6 +100,7 @@ def run_seedgen():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds # -1 means acceptance of every seeds
+    num_trials = args.num_trials
     # selection_method = args.syntax_selection
     if num_seeds<0:
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}"
@@ -104,9 +110,10 @@ def run_seedgen():
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "seed_generation.log"
     Seedgen.get_seeds(
-        num_seeds=num_seeds,
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
+        num_seeds=num_seeds,
+        num_trials=num_trials,
         log_file=log_file
     )
     return
@@ -116,6 +123,7 @@ def run_testsuites():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
     selection_method = args.syntax_selection
     if num_seeds<0:
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
@@ -123,12 +131,13 @@ def run_testsuites():
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
     # end if
     log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / "testsuite_generation.log"
+    log_file = log_dir / "testsuite{num_trials}_generation.log"
     Testsuite.write_testsuites(
         nlp_task=nlp_task,
         dataset=search_dataset_name,
         selection_method=selection_method,
         num_seeds=num_seeds,
+        num_trials=num_trials,
         log_file=log_file
     )
     return
@@ -138,6 +147,8 @@ def run_testmodel():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
+    num_seeds = args.num_seeds
+    num_trials = args.num_trials
     test_baseline = args.test_baseline
     # if test_baseline:
     #     selection_method = 'checklist'
@@ -155,6 +166,8 @@ def run_testmodel():
         nlp_task,
         search_dataset_name,
         selection_method,
+        num_seeds,
+        num_trials,
         test_baseline,
         test_type,
         log_file,
@@ -168,6 +181,7 @@ def run_seed_testmodel():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     num_seeds = args.num_seeds
+    num_trials = args.num_trials
     test_baseline = args.test_baseline
     test_type = args.test_type
     local_model_name = args.local_model_name
@@ -182,6 +196,8 @@ def run_seed_testmodel():
         nlp_task,
         search_dataset_name,
         selection_method,
+        num_seeds,
+        num_trials,
         test_baseline,
         test_type,
         log_file,
@@ -217,11 +233,12 @@ def run_analyze():
     selection_method = args.syntax_selection
     test_baseline = args.test_baseline
     num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
     if test_baseline:
         if num_seeds<0:
-            result_dir = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}"
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
         else:
-            result_dir = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
         # end if
         result_file = result_dir / 'test_results_checklist.txt'
         save_to = result_dir / 'test_result_checklist_analysis.json'
@@ -232,11 +249,11 @@ def run_analyze():
         )
     else:
         if num_seeds<0:
-            result_dir = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}"
-            template_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
+            template_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}.json"
         else:
-            result_dir = Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
-            template_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+            template_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
         result_file = result_dir / 'test_results.txt'
         save_to = result_dir / 'test_result_analysis.json'
@@ -256,10 +273,11 @@ def run_analyze_seed():
     selection_method = args.syntax_selection
     test_baseline = args.test_baseline
     num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
     if num_seeds<0:
-        res_dir = Macros.result_dir / f"seeds_{nlp_task}_{search_dataset_name}"
+        res_dir = Macros.result_dir / f"seeds{num_trials}_{nlp_task}_{search_dataset_name}"
     else:
-        res_dir = Macros.result_dir / f"seeds_{nlp_task}_{search_dataset_name}_{num_seeds}seeds"
+        res_dir = Macros.result_dir / f"seeds{num_trials}_{nlp_task}_{search_dataset_name}_{num_seeds}seeds"
     # end if
     result_file = res_dir / 'test_results.txt'
     bl_result_file = res_dir / 'test_results_checklist.txt'
@@ -313,10 +331,12 @@ def run_selfbleu():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     num_seeds = args.num_seeds
+    num_trials = args.num_trials
     main_seed(nlp_task,
               search_dataset_name,
               selection_method,
-              num_seeds)
+              num_seeds,
+              num_trials)
     return
 
 def run_pdrule_cov():
@@ -325,6 +345,7 @@ def run_pdrule_cov():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     num_seeds = args.num_seeds
+    num_trials = args.num_trials
     main_seed(nlp_task,
               search_dataset_name,
               selection_method,

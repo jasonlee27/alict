@@ -591,23 +591,20 @@ class Template:
 
     @classmethod
     def get_templates(cls,
-                      num_seeds,
                       nlp_task,
                       dataset_name,
                       selection_method,
+                      num_seeds,
+                      num_trials,
                       log_file):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
-        # Write the template results
-        # res_dir = Macros.result_dir / f"templates2_{nlp_task}_{dataset_name}_{selection_method}"
         if num_seeds<0:
-            template_out_dir = f"templates2_{nlp_task}_{dataset_name}_{selection_method}"
-            cfg_res_file_name = f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}.json"
-            # cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
+            template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset_name}_{selection_method}"
+            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}.json"
         else:
-            template_out_dir = f"templates2_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
-            cfg_res_file_name = f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
-            # cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
+            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
         res_dir = Macros.result_dir / template_out_dir
         res_dir.mkdir(parents=True, exist_ok=True)

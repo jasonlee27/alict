@@ -115,14 +115,14 @@ class Testsuite:
         }
     
     @classmethod
-    def get_templates(cls, nlp_task, dataset, selection_method, num_seeds, logger):
+    def get_templates(cls, nlp_task, dataset, selection_method, num_seeds, num_trials, logger):
         task = nlp_task
         if num_seeds<0:
-            template_out_dir = f"templates2_{nlp_task}_{dataset}_{selection_method}"
-            cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}.json"
+            template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset}_{selection_method}"
+            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{task}_{dataset}_{selection_method}.json"
         else:
-            template_out_dir = f"templates2_{nlp_task}_{dataset}_{selection_method}_{num_seeds}seeds"
-            cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}_{num_seeds}seeds.json"
+            template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset}_{selection_method}_{num_seeds}seeds"
+            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{task}_{dataset}_{selection_method}_{num_seeds}seeds.json"
         # end if
         # selection_method = 'RANDOM' if is_random_select else 'PROB'
         # new_input_dicts = Template.get_new_inputs(
@@ -381,12 +381,13 @@ class Testsuite:
                                exp_template_dicts,
                                transform_reqs,
                                num_seeds,
+                               num_trials,
                                logger):
         # selection_method = 'RANDOM' if is_random_select else 'PROB'
         if num_seeds<0:
-            res_dir = Macros.result_dir / f"test_results2_{task}_{dataset}_{selection_method}"
+            res_dir = Macros.result_dir / f"test_results{num_trials}_{task}_{dataset}_{selection_method}"
         else:
-            res_dir = Macros.result_dir / f"test_results2_{task}_{dataset}_{selection_method}_{num_seeds}seeds"
+            res_dir = Macros.result_dir / f"test_results{num_trials}_{task}_{dataset}_{selection_method}_{num_seeds}seeds"
         # end if
         res_dir.mkdir(parents=True, exist_ok=True)
         cls.write_seed_testsuite(task,
@@ -418,12 +419,12 @@ class Testsuite:
         return
 
     @classmethod
-    def write_testsuites(cls, nlp_task, dataset, selection_method, num_seeds, log_file):
+    def write_testsuites(cls, nlp_task, dataset, selection_method, num_seeds, num_trials, log_file):
         logger = Logger(logger_file=log_file,
                         logger_name='testsuite')
         logger.print('Generate Testsuites from Templates ...')
         for task, seed, exp, seed_temp, exp_temp, transform_reqs \
-            in cls.get_templates(nlp_task, dataset, selection_method, num_seeds, logger):
+            in cls.get_templates(nlp_task, dataset, selection_method, num_seeds, num_trials, logger):
             Testsuite.write_editor_templates(task,
                                              dataset,
                                              selection_method,
@@ -433,6 +434,7 @@ class Testsuite:
                                              exp_temp,
                                              transform_reqs,
                                              num_seeds,
+                                             num_trials,
                                              logger)
         # end for
         return

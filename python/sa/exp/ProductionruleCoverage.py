@@ -95,11 +95,12 @@ class ProductionruleCoverage:
                                dataset_name,
                                selection_method,
                                num_seeds,
+                               num_trials,
                                logger=None):
         if num_seeds<0:
-            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}.json"
+            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}.json"
         else:
-            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs2_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
         if os.path.exists(res_file):
             seed_rules = dict()
@@ -120,11 +121,11 @@ class ProductionruleCoverage:
             # end for
         else:
             if num_seeds<0:
-                data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}.json"
-                res_file = Macros.result_dir / f"seed_cfg_rules_{task}_{dataset_name}.json"
+                data_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{dataset_name}.json"
+                res_file = Macros.result_dir / f"seed_cfg_rules{num_trials}_{task}_{dataset_name}.json"
             else:
-                data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}_{num_seeds}seeds.json"
-                res_file = Macros.result_dir / f"seed_cfg_rules_{task}_{dataset_name}_{num_seeds}seeds.json"
+                data_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{dataset_name}_{num_seeds}seeds.json"
+                res_file = Macros.result_dir / f"seed_cfg_rules{num_trials}_{task}_{dataset_name}_{num_seeds}seeds.json"
             # end if
             seed_dicts = Utils.read_json(data_file)
             if os.path.exists(res_file):
@@ -191,13 +192,14 @@ class ProductionruleCoverage:
                               dataset_name,
                               selection_method,
                               num_seeds,
+                              num_trials,
                               logger=None):
         if num_seeds<0:
-            data_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json"
-            res_file = Macros.result_dir / f"exp_cfg_rules_{task}_{dataset_name}_{selection_method}.json"
+            data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}.json"
+            res_file = Macros.result_dir / f"exp_cfg_rules{num_trials}_{task}_{dataset_name}_{selection_method}.json"
         else:
-            data_file = Macros.result_dir / f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
-            res_file = Macros.result_dir / f"exp_cfg_rules_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            res_file = Macros.result_dir / f"exp_cfg_rules{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
         exp_dicts = Utils.read_json(data_file)
         if os.path.exists(str(res_file)):
@@ -234,9 +236,16 @@ class ProductionruleCoverage:
     def get_bl_cfg_rules(cls,
                          task,
                          dataset_name,
+                         num_seeds,
+                         num_trials,
                          logger=None):
-        data_file = Macros.result_dir / f"seed_inputs_{task}_{dataset_name}.json"
-        res_file = Macros.result_dir / f"bl_cfg_rules_{task}_checklist.json"
+        if num_seeds<0:
+            data_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{dataset_name}.json"
+            res_file = Macros.result_dir / f"bl_cfg_rules{num_trials}_{task}_checklist.json"
+        else:
+            data_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{dataset_name}_{num_seeds}seeds.json"
+            res_file = Macros.result_dir / f"bl_cfg_rules{num_trials}_{task}_checklist_{num_seeds}seeds.json"
+        # end if
         seed_dicts = Utils.read_json(data_file)
 
         if os.path.exists(str(res_file)):
@@ -272,14 +281,16 @@ class ProductionruleCoverage:
 def main_seed(task,
               search_dataset_name,
               selection_method,
-              num_seeds):
+              num_seeds,
+              num_trials):
     st = time.time()
+    num_trials = '' if num_trials==1 else str(num_trials)
     if num_seeds<0:
-        logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_pdrcov.log"
-        result_file = Macros.pdr_cov_result_dir / f"seeds_{task}_{search_dataset_name}_pdrcov.json"
+        logger_file = Macros.log_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_pdrcov.log"
+        result_file = Macros.pdr_cov_result_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_pdrcov.json"
     else:
-        logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_{num_seeds}seeds_pdrcov.log"
-        result_file = Macros.pdr_cov_result_dir / f"seeds_{task}_{search_dataset_name}_{num_seeds}seeds_pdrcov.json"
+        logger_file = Macros.log_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_{num_seeds}seeds_pdrcov.log"
+        result_file = Macros.pdr_cov_result_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_{num_seeds}seeds_pdrcov.json"
     # end if
     Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
     logger = Logger(logger_file=logger_file,
@@ -287,11 +298,15 @@ def main_seed(task,
     seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
         task,
         search_dataset_name,
+        num_seeds,
+        num_trials,
         logger=logger
     )
     checklist_rules = ProductionruleCoverage.get_bl_cfg_rules(
         task,
         search_dataset_name,
+        num_seeds,
+        num_trials,
         logger=logger
     )
     if os.path.exists(str(result_file)):
