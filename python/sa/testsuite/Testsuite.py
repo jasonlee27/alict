@@ -125,18 +125,20 @@ class Testsuite:
             cfg_res_file_name = f"cfg_expanded_inputs2_{task}_{dataset}_{selection_method}_{num_seeds}seeds.json"
         # end if
         # selection_method = 'RANDOM' if is_random_select else 'PROB'
-        new_input_dicts = Template.get_new_inputs(
-            Macros.result_dir / cfg_res_file_name,
-            task,
-            dataset,
-            n=num_seeds,
-            logger=logger
-        )
+        # new_input_dicts = Template.get_new_inputs(
+        #     Macros.result_dir / cfg_res_file_name,
+        #     task,
+        #     dataset,
+        #     num_seeds=num_seeds,
+        #     selection_method=selection_method,
+        #     logger=logger
+        # )
         seeds_per_task = list()
         exps_per_task = list()
         seed_templates_per_task = list()
         exp_templates_per_task = list()
         transform_reqs = list()
+        new_input_dicts = Utils.read_json(Macros.result_dir / cfg_res_file_name)
         for t_i in range(len(new_input_dicts)):
             req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
             res_dir = Macros.result_dir/ template_out_dir
@@ -382,9 +384,9 @@ class Testsuite:
                                logger):
         # selection_method = 'RANDOM' if is_random_select else 'PROB'
         if num_seeds<0:
-            res_dir = Macros.result_dir / f"test_results_{task}_{dataset}_{selection_method}"
+            res_dir = Macros.result_dir / f"test_results2_{task}_{dataset}_{selection_method}"
         else:
-            res_dir = Macros.result_dir / f"test_results_{task}_{dataset}_{selection_method}_{num_seeds}seeds"
+            res_dir = Macros.result_dir / f"test_results2_{task}_{dataset}_{selection_method}_{num_seeds}seeds"
         # end if
         res_dir.mkdir(parents=True, exist_ok=True)
         cls.write_seed_testsuite(task,

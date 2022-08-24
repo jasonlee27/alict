@@ -423,10 +423,9 @@ class Template:
     
     @classmethod
     def get_new_inputs(cls,
-                       input_file,
+                       cfg_res_file,
                        nlp_task,
                        dataset_name,
-                       cfg_res_file,
                        num_seeds=None,
                        selection_method=None,
                        logger=None):
@@ -627,7 +626,6 @@ class Template:
             cfg_res_file,
             nlp_task,
             dataset_name,
-            cfg_res_file,
             num_seeds=num_seeds,
             selection_method=selection_method,
             logger=logger
