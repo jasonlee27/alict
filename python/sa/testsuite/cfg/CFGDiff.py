@@ -105,7 +105,8 @@ class CFGDiff:
                 # end for
                 return lhs, tuple(rhs), tuple(words)
             else:
-                search = re.search(f"\(([^\s\(]+)\s([^\s\)]+)\)", seed_tree._.parse_string)
+                # search = re.search(f"\(([^\s\(]+)\s([^\s\)]+)\)", seed_tree._.parse_string)
+                search = re.search(f"\(([^s\(]+)\s([^\(\)]+)\)", seed_tree._.parse_string)
                 rhs.append(search.group(1))
                 return lhs, tuple(rhs), str(seed_tree)
             # end if            
