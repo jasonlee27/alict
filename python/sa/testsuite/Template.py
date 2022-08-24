@@ -623,7 +623,7 @@ class Template:
         cfg_res_file = Macros.result_dir / cfg_res_file_name
         # cfg_res_file = Macros.result_dir/f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
         
-        new_input_dicts = cls.get_new_inputs(
+        cls.get_new_inputs(
             cfg_res_file,
             nlp_task,
             dataset_name,
@@ -635,6 +635,7 @@ class Template:
 
         # Make templates by synonyms
         logger.print("Generate Templates ...")
+        new_input_dicts = Utils.read_json(cfg_res_file)
         prev_synonyms = dict()
         cksum_map_str = ""
         for t_i in range(len(new_input_dicts)):
@@ -650,7 +651,7 @@ class Template:
             seed_templates, exp_templates = list(), list()
             for s_i, seed_input in enumerate(inputs.keys()):
                 logger.print(f"\tSEED {s_i}: {seed_input}")
-                    
+                
                 cfg_seed = inputs[seed_input]["cfg_seed"]
                 label_seed = inputs[seed_input]["label"]
                 exp_inputs = inputs[seed_input]["exp_inputs"]
@@ -668,7 +669,7 @@ class Template:
                             exp_seed_inputs.append({
                                 "input": inp[5],
                                 "place_holder": Utils.tokenize(inp[5]),
-                                "label": inp[6]
+                                "label": label_seed
                             })
                         # end if
                     # end for
