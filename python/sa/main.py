@@ -349,7 +349,8 @@ def run_pdrule_cov():
     main_seed(nlp_task,
               search_dataset_name,
               selection_method,
-              num_seeds)
+              num_seeds,
+              num_trials)
     return
 
 # ==========

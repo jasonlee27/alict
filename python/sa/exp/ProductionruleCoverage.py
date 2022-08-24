@@ -21,7 +21,7 @@ try:
 except RuntimeError:
     pass
 
-NUM_PROCESSES = 15 # Macros.num_processes
+NUM_PROCESSES = 3 # Macros.num_processes
 
 def get_cfg_rules_per_sent(sent):
     tree_dict = BeneparCFG.get_seed_cfg(sent)
@@ -42,8 +42,9 @@ def get_cfg_rules_per_sent(sent):
     }
 
 def get_pdr_per_sent(cfg_seed):
+    rules = list()
     for lhs in cfg_seed.keys():
-        rhss = cfg_rules[lhs]
+        rhss = cfg_seed[lhs]
         for rhs in rhss:
             rhs_pos = rhs['pos']
             if type(rhs_pos)==str:
@@ -55,10 +56,7 @@ def get_pdr_per_sent(cfg_seed):
             # end if
         # end for
     # end for
-    return {
-        'sent': sent,
-        'cfg_rules': list(set(rules))
-    }
+    return  list(set(rules))
 
 
 class ProductionruleCoverage:
@@ -98,11 +96,13 @@ class ProductionruleCoverage:
                                num_trials,
                                logger=None):
         if num_seeds<0:
-            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}.json"
+            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}.json"
+            res_file = Macros.pdr_cov_result_dir / f"seed_cfg_rules{num_trials}_{task}_{dataset_name}.json"
         else:
-            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            res_file = Macros.pdr_cov_result_dir / f"seed_cfg_rules{num_trials}_{task}_{dataset_name}.json"
         # end if
-        if os.path.exists(res_file):
+        if os.path.exists(cfg_res_file):
             seed_rules = dict()
             cfg_results = Utils.read_json(cfg_res_file)
             for cfg_res in cfg_results:
@@ -119,6 +119,7 @@ class ProductionruleCoverage:
                 # end for
                 Utils.write_json(seed_rules, res_file, pretty_format=True)
             # end for
+            print(res_file)
         else:
             if num_seeds<0:
                 data_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{dataset_name}.json"
@@ -196,10 +197,10 @@ class ProductionruleCoverage:
                               logger=None):
         if num_seeds<0:
             data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}.json"
-            res_file = Macros.result_dir / f"exp_cfg_rules{num_trials}_{task}_{dataset_name}_{selection_method}.json"
+            res_file = Macros.pdr_cov_result_dir / f"exp_cfg_rules{num_trials}_{task}_{dataset_name}_{selection_method}.json"
         else:
             data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
-            res_file = Macros.result_dir / f"exp_cfg_rules{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            res_file = Macros.pdr_cov_result_dir / f"exp_cfg_rules{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
         exp_dicts = Utils.read_json(data_file)
         if os.path.exists(str(res_file)):
@@ -236,16 +237,21 @@ class ProductionruleCoverage:
     def get_bl_cfg_rules(cls,
                          task,
                          dataset_name,
+                         selection_method,
                          num_seeds,
                          num_trials,
                          logger=None):
         if num_seeds<0:
-            data_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{dataset_name}.json"
-            res_file = Macros.result_dir / f"bl_cfg_rules{num_trials}_{task}_checklist.json"
+            data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}.json"
+            res_file = Macros.pdr_cov_result_dir / f"bl_cfg_rules{num_trials}_{task}_checklist.json"
         else:
-            data_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{dataset_name}_{num_seeds}seeds.json"
-            res_file = Macros.result_dir / f"bl_cfg_rules{num_trials}_{task}_checklist_{num_seeds}seeds.json"
+            data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            res_file = Macros.pdr_cov_result_dir / f"bl_cfg_rules{num_trials}_{task}_checklist_{num_seeds}seeds.json"
         # end if
+        if os.path.exists(res_file):
+            return Utils.read_json(res_file)
+        # end if
+        
         seed_dicts = Utils.read_json(data_file)
 
         if os.path.exists(str(res_file)):
@@ -254,7 +260,7 @@ class ProductionruleCoverage:
             bl_rules = dict()
         # end if
         for seed in seed_dicts:
-            lc = exp['requirement']['description']
+            lc = seed['requirement']['description']
             if lc not in bl_rules.keys():
                 if logger is not None:
                     logger.print(f"BL::{lc}::")
@@ -266,7 +272,7 @@ class ProductionruleCoverage:
                 )
                 args = [s[1] for s in sents]
                 pool = Pool(processes=NUM_PROCESSES)
-                results = pool.map_async(cls.get_cfg_rules_per_sent,
+                results = pool.map_async(get_cfg_rules_per_sent,
                                          args,
                                          chunksize=len(args) // NUM_PROCESSES).get()
                 for r in results:
@@ -298,6 +304,7 @@ def main_seed(task,
     seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
         task,
         search_dataset_name,
+        selection_method,
         num_seeds,
         num_trials,
         logger=logger
@@ -305,6 +312,7 @@ def main_seed(task,
     checklist_rules = ProductionruleCoverage.get_bl_cfg_rules(
         task,
         search_dataset_name,
+        selection_method,
         num_seeds,
         num_trials,
         logger=logger
