@@ -22,7 +22,6 @@ from ..requirement.Requirements import Requirements
 from .cfg.CFGConverter import CFGConverter
 from .Suggest import Suggest
 
-random.seed(Macros.SEED)
 
 class Generator:
 

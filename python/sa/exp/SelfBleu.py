@@ -6,6 +6,7 @@
 import os
 import nltk
 import time
+import random
 import multiprocessing
 
 from tqdm import tqdm
@@ -19,10 +20,15 @@ from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 
 NUM_PROCESSES_IN_USE = 40 # os.cpu_count()
-
+NUM_TRIALS = 3
 
 class SelfBleu:
-    def __init__(self, text_file=None, texts=None, logger=None, gram=3):
+    def __init__(self,
+                 text_file=None,
+                 texts=None,
+                 num_data=None,
+                 logger=None,
+                 gram=3):
         # the json file used for retraining sa models
         self.texts = None
         self.logger = logger
@@ -41,7 +47,7 @@ class SelfBleu:
         self.sample_size = 500
         self.reference = None
         self.is_first = True
-        self.num_data = len(self.texts)
+        self.num_data = num_data if len(texts)>num_data else len(texts)
 
     def get_reference(self):
         reference = list()
@@ -73,52 +79,64 @@ class SelfBleu:
             reference = self.get_reference()
         # end if
         weight = tuple((1. / ngram for _ in range(ngram)))
-        result = list()
-        self.score = 0.
-        self.cnt = 0
-        # def callback(score):
-        #     self.score += score
-        #     self.cnt += 1
-        #     return
-        pool = Pool(processes=NUM_PROCESSES_IN_USE)
-        for d_i in tqdm(range(self.num_data)):
-            hypothesis = reference[d_i]
-            other = reference[:d_i] + reference[d_i+1:]
-            # score = self.calc_bleu(other, hypothesis, weight)
-            # self.score += score
-            # self.cnt += 1
-            result.append(pool.apply_async(self.calc_bleu,
-                                           args=(other, hypothesis, weight)))
+
+        for tr in range(NUM_TRIALS):
+            random.seed(tr)
+            result = list()
+            self.score = 0.
+            self.cnt = 0
+            # def callback(score):
+            #     self.score += score
+            #     self.cnt += 1
+            #     return
+            ref_idxs = list(range(len(reference)))
+            random.shuffle(ref_idxs)
+            reference_sample = [reference[r_i] for r_i in ref_idxs[:self.num_data]]
+            
+            pool = Pool(processes=NUM_PROCESSES_IN_USE)
+            for d_i in tqdm(range(len(reference_sample))):
+                hypothesis = reference_sample[d_i]
+                other = reference_sample[:d_i] + reference_sample[d_i+1:]
+                # score = self.calc_bleu(other, hypothesis, weight)
+                # self.score += score
+                # self.cnt += 1
+                result.append(pool.apply_async(self.calc_bleu,
+                                               args=(other, hypothesis, weight)))
+            # end for
+            # score = 0.
+            # cnt = 0
+            for i in tqdm(result):
+                self.score += i.get()
+                self.cnt += 1
+            # end for
+            raw_scores.append(self.score / self.cnt)
+            pool.close()
+            pool.join()
         # end for
-        # score = 0.
-        # cnt = 0
-        for i in tqdm(result):
-            self.score += i.get()
-            self.cnt += 1
-        # end for
-        pool.close()
-        pool.join()
-        print(f'get_score done {self.score}, {self.cnt}')
-        return float("{:.3f}".format(self.score / self.cnt))
+        avg_score = Utils.avg(raw_scores)
+        med_score = Utils.median(raw_scores)
+        std_score = Utils.stdev(raw_scores)
+        print(f'get_score done avg:{avg_score}, med:{med_score}, std:{std_score}, cnt:{self.cnt}')
+        return {
+            'avg': avg_score,
+            'median': med_score,
+            'stdev': std_score
+        }
     
 
-def read_our_seeds(task, search_dataset_name, selection_method, num_seeds, num_trials):
-    if num_seeds<0:
-        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}.json"
-    else:
-        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
-    # end if
+def read_our_seeds(task, search_dataset_name):
     # if num_seeds<0:
-    #     seed_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{search_dataset_name}.json"
+    #     seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}.json"
     # else:
-    #     seed_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{search_dataset_name}_{num_seeds}seeds.json"
+    #     seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
     # # end if
+    seed_file = Macros.result_dir / f"seed_inputs_{task}_{search_dataset_name}.json"
     seed_dict = Utils.read_json(seed_file)
     texts_lcs = dict()
     texts_all = list()
     for seeds in seed_dict:
         lc = seeds['requirement']['description']
-        seed_sents = [s for s in seeds['inputs'].keys()]
+        seed_sents = [s[1] for s in seeds['seeds']]
         texts_lcs[lc] = seed_sents
         texts_all.extend(seed_sents)
     # end for
@@ -150,7 +168,11 @@ def read_our_seeds(task, search_dataset_name, selection_method, num_seeds, num_t
     # # end for
     return texts_all, texts_lcs
 
-def read_our_exps(task, search_dataset_name, selection_method, num_seeds, num_trials):
+def read_our_exps(task,
+                  search_dataset_name,
+                  selection_method,
+                  num_seeds,
+                  num_trials):
     if num_seeds<0:
         seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}.json"
     else:
@@ -170,12 +192,8 @@ def read_our_exps(task, search_dataset_name, selection_method, num_seeds, num_tr
     # end for
     return texts_all, texts_lcs
 
-def read_checklist_testcases(task, search_dataset_name, selection_method, num_seeds, num_trials):
-    if num_seeds<0:
-        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}.json"
-    else:
-        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
-    # end if
+def read_checklist_testcases(task, search_dataset_name):
+    seed_file = Macros.result_dir / f"seed_inputs_{task}_{search_dataset_name}.json"
     seed_dict = Utils.read_json(seed_file)
     texts_lcs = dict()
     texts_all = list()
@@ -217,22 +235,22 @@ def main_seed(task,
               selection_method,
               num_seeds,
               num_trials):
-    num_trials = '' if num_trials==1 else str(num_trials)
-    if num_seeds<0:
-        logger_file = Macros.log_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_selfbleu.log"
-        result_file = Macros.selfbleu_result_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_selfbleu.json"
-    else:
-        logger_file = Macros.log_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_{num_seeds}seeds_selfbleu.log"
-        result_file = Macros.selfbleu_result_dir / f"seeds{num_trials}_{task}_{search_dataset_name}_{num_seeds}seeds_selfbleu.json"
-    # end if
+    logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.log"
+    result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.json"
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_selfbleu_log')
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
+    
+    _, texts_checklist = read_checklist_testcases(task,
+                                                  search_dataset_name)
     _, texts_ours = read_our_seeds(task,
-                                   search_dataset_name,
-                                   selection_method,
-                                   num_seeds,
-                                   num_trials)
+                                   search_dataset_name)
+    # _, texts_ours = read_our_exps(task,
+    #                               search_dataset_name,
+    #                               selection_method,
+    #                               num_seeds,
+    #                               num_trials)
+
     if os.path.exists(str(result_file)):
         result = Utils.read_json(result_file)
     else:
@@ -248,7 +266,9 @@ def main_seed(task,
             st = time.time()
             # logger.print(f"OURS::{lc}", end='::')
             logger.print(f"OURS::{lc}")
-            sbleu = SelfBleu(texts=texts_ours[lc], logger=logger)
+            sbleu = SelfBleu(texts=texts_ours[lc],
+                             num_data=len(texts_checklist[lc]),
+                             logger=logger)
             scores[lc] = {
                 'num_data': sbleu.num_data,
                 'score': sbleu.get_score()
@@ -264,16 +284,13 @@ def main_seed(task,
         # end if
     # end for
     
-    _, texts_checklist = read_checklist_testcases(task,
-                                                  search_dataset_name,
-                                                  selection_method,
-                                                  num_seeds,
-                                                  num_trials)
     for lc in texts_checklist.keys():
         if lc not in result['checklist'].keys():
             st = time.time()
             logger.print(f"BL::{lc}", end='::')
-            sbleu = SelfBleu(texts=texts_checklist[lc], logger=logger)
+            sbleu = SelfBleu(texts=texts_checklist[lc],
+                             num_data=len(texts_checklist[lc]),
+                             logger=logger)
             scores_baseline[lc] = {
                 'num_data': sbleu.num_data,
                 'score': sbleu.get_score()

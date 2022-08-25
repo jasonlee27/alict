@@ -23,7 +23,8 @@ class Macros:
     FMT_PER = "{:.1%}"
     FMT_FLOAT = "{:,.2f}"
     
-    SEED = 26 #26, 27(done), 28
+    # SEED = 26 #26(trial2), 27(trial1), 28(trial3)
+    RAND_SEED = {1: 27, 2: 26, 3: 28} #26(trial2), 27(trial1), 28(trial3)
     MASK = "{mask}"
 
     num_processes = 1

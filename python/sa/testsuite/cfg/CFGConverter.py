@@ -20,8 +20,6 @@ from .CFGDiff import CFGDiff
 from .RefPCFG import RefPCFG
 
 
-random.seed(Macros.SEED)
-
 class CFGConverter:
 
     def __init__(self, seed_input, pcfg_ref, ref_corpus='treebank'):

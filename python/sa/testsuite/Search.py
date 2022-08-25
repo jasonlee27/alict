@@ -20,7 +20,6 @@ from .Transform import TransformOperator
 from ..requirement.Requirements import Requirements
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
-random.seed(Macros.SEED)
 
 # get pos/neg/neu words from SentiWordNet
 SENT_WORDS = Sentiwordnet.get_sent_words()
@@ -52,7 +51,6 @@ WORD2POS_MAP = {
 #     'country': basic['country'],
 # }
 
-random.seed(27)
 
 class SearchOperator: 
     
@@ -683,7 +681,7 @@ class Search:
                dataset!=Macros.datasets[Macros.sa_task][1]:
                 transform_obj = TransformOperator(req)
                 selected = transform_obj.transform(selected)
-            # end if            
+            # end if
             yield {
                 "requirement": req,
                 "selected_inputs": selected
@@ -705,5 +703,3 @@ class Search:
             "requirement": req,
             "selected_inputs": selected
         }
-
-

@@ -317,6 +317,7 @@ class Template:
                                                                num_target=num_target,
                                                                selection_method=selection_method,
                                                                logger=logger)
+                  
         if req_i==-2: # file not exists
             template_results = list()
             template_results.append({
@@ -341,7 +342,7 @@ class Template:
                 'label_score': exp_results[seed]['label_score']
             }
         # end for
-
+        
         # write batch results into result file
         Utils.write_json(template_results, cfg_res_file, pretty_format=True)
         ft = time.time()

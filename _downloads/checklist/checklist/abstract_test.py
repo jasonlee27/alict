@@ -513,7 +513,6 @@ class AbstractTest(ABC):
         _print('Example fails:')
         # fails = np.random.choice(fails, min(fails.shape[0], n), replace=False)
         # fails = np.random.choice(fails, fails.shape[0], replace=False)
-        print(len(passs), len(fails))
         for f in fails:
             d_idx = f if self.run_idxs is None else self.run_idxs[f]
             # should be format_fn

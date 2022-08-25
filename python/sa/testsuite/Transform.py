@@ -128,7 +128,6 @@ QUESTIONIZE_PHRASE_TEMPLATE = {
     "answer": []
 }
 
-random.seed(27)
 
 class TransformOperator:
 

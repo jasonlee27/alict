@@ -21,9 +21,10 @@ try:
 except RuntimeError:
     pass
 
-NUM_PROCESSES = 3 # Macros.num_processes
+NUM_PROCESSES = 2 # Macros.num_processes
 
 def get_cfg_rules_per_sent(sent):
+    st = time.time()
     tree_dict = BeneparCFG.get_seed_cfg(sent)
     cfg_rules = tree_dict['rule']
     rules = list()
@@ -36,6 +37,8 @@ def get_cfg_rules_per_sent(sent):
             # end if
         # end for
     # end for
+    ft = time.time()
+    # print(f"{sent}::{round(ft-st,2)}sec")
     return {
         'sent': sent,
         'cfg_rules': list(set(rules))
@@ -119,7 +122,6 @@ class ProductionruleCoverage:
                 # end for
                 Utils.write_json(seed_rules, res_file, pretty_format=True)
             # end for
-            print(res_file)
         else:
             if num_seeds<0:
                 data_file = Macros.result_dir / f"seed_inputs{num_trials}_{task}_{dataset_name}.json"
@@ -248,12 +250,8 @@ class ProductionruleCoverage:
             data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
             res_file = Macros.pdr_cov_result_dir / f"bl_cfg_rules{num_trials}_{task}_checklist_{num_seeds}seeds.json"
         # end if
-        if os.path.exists(res_file):
-            return Utils.read_json(res_file)
-        # end if
-        
+    
         seed_dicts = Utils.read_json(data_file)
-
         if os.path.exists(str(res_file)):
             bl_rules = Utils.read_json(res_file)
         else:

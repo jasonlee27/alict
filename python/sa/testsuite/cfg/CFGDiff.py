@@ -21,8 +21,6 @@ from .CFG import BeneparCFG # , TreebankCFG
 from .RefPCFG import RefPCFG
 
 
-random.seed(Macros.SEED)
-
 COMP_LENGTH = 3
 NUM_TOPK = 5
 PHRASE_LEVEL_WORD_MAX_LEN = 5

@@ -1,12 +1,14 @@
+from typing import *
+from pathlib import Path
 
 import re, os
 import sys
 import json
 import string
 import hashlib
+import statistics
 import contractions
 
-from pathlib import Path
 from nltk.corpus import treebank
 from checklist.test_suite import TestSuite
 from nltk.tokenize import word_tokenize
@@ -156,3 +158,17 @@ class Utils:
     @classmethod
     def replace_abbreviation(cls, sent):
         pass
+
+    @classmethod
+    def avg(cls, nums: list):
+        return "{:.3f}".format(sum(nums) / len(nums))
+
+    @classmethod
+    def median(cls, nums: list):
+        return "{:.3f}".format(statistics.median(nums))
+
+    @classmethod
+    def stdev(cls, nums: list):
+        return "{:.3f}".format(statistics.stdev(nums))
+
+    

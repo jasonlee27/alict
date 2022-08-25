@@ -58,7 +58,8 @@ parser.add_argument('--which', type=str, default=None, nargs='+',
                     help='tables/plots that you are interested in making')
 
 args = parser.parse_args()
-random.seed(Macros.SEED)
+rand_seed_num = Macros.RAND_SEED[args.num_trials]
+random.seed(rand_seed_num)
 
 def run_requirements():
     from .requirement.Requirements import Requirements
@@ -84,7 +85,7 @@ def run_templates():
     # end if    
     log_dir.mkdir(parents=True, exist_ok=True)
     # log_file = log_dir / "template2_generation.log"
-    log_file = log_dir / "template{num_trials}_generation.log"
+    log_file = log_dir / f"template{num_trials}_generation.log"
     Template.get_templates(
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
@@ -114,6 +115,7 @@ def run_seedgen():
         dataset_name=search_dataset_name,
         num_seeds=num_seeds,
         num_trials=num_trials,
+        rand_seed_num=rand_seed_num,
         log_file=log_file
     )
     return
@@ -138,6 +140,7 @@ def run_testsuites():
         selection_method=selection_method,
         num_seeds=num_seeds,
         num_trials=num_trials,
+        rand_seed_num=rand_seed_num,
         log_file=log_file
     )
     return
@@ -171,6 +174,7 @@ def run_testmodel():
         test_baseline,
         test_type,
         log_file,
+        rand_seed_num=rand_seed_num,
         local_model_name=local_model_name
     )
     return

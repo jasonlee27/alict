@@ -134,7 +134,14 @@ class Requirements:
                         ],
                         "expansion": ["neutral"],
                         "transform": "add temporal_awareness",
-                        "transform_req": None
+                        "transform_req": [
+                            {
+                                "label": "positive"
+                            },
+                            {
+                                "label": "negative"
+                            }
+                        ]
                     })
                 elif d.lower()=="negated negative should be positive or neutral":
                     # AUX : auxilary verb

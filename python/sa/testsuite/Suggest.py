@@ -28,7 +28,6 @@ from ..utils.Utils import Utils
 # from .cfg.CFG import BeneparCFG
 from .Search import SearchOperator, SENT_DICT
 
-random.seed(Macros.SEED)
 NUM_TOPK = 5
 
 class Suggest:
@@ -544,7 +543,7 @@ class Suggest:
                                                 input_candid))
                             # end if
                         # end if
-                    # end for                    
+                    # end for
                 # end if
                 if seed not in exp_results.keys():
                     exp_results[seed] = {

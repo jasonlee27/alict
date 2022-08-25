@@ -27,7 +27,6 @@ from .Search import Search
 # from .Transform import TransformOperator
 from .Template import Template
 
-random.seed(Macros.SEED)
 
 class Testsuite:
 

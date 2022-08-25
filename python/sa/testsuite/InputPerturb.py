@@ -50,7 +50,6 @@ class InputPerturb:
         return CFG.fromstring(cfg_str)
 
     def gen_random_sentence(self, cfg_str, num_sents=23, max_length=10):
-        random.seed(Macros.SEED)
         grammar = self.get_cfg_grammar(cfg_str)
         print("\n***** INPUT CFG GRAMMAR *****")
         print(cfg_str)
