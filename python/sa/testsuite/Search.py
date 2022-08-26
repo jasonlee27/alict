@@ -564,14 +564,10 @@ class ChecklistTestsuite:
     def get_sents(cls, testsuite_file, req_desc):
         tsuite, tsuite_dict = Utils.read_testsuite(testsuite_file)
         test_names = list(set(tsuite_dict['test_name']))
+        sents = list()
         for tn in list(set(tsuite_dict['test_name'])):
             # checklist_test_name = tn.split('::')[-1]
-            if (tn in Macros.LC_MAP.keys() and \
-                req_desc == Macros.LC_MAP[tn]) or \
-                (tn.startswith(Macros.CHECKLIST_LC_LIST[8]) and \
-                 req_desc == Macros.OUR_LC_LIST[8]) or \
-                 (tn in Macros.LC_MAP.keys() and \
-                  req_desc.endswith('sentiment in (question, no) form')):
+            if tn in Macros.LC_MAP.keys() and req_desc == Macros.LC_MAP[tn]:
                 # sents: List of sent
                 # label: 0(neg), 1(neu) and 2(pos)
                 sents = tsuite.tests[tn].data

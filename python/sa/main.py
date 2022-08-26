@@ -114,8 +114,6 @@ def run_seedgen():
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
         num_seeds=num_seeds,
-        num_trials=num_trials,
-        rand_seed_num=rand_seed_num,
         log_file=log_file
     )
     return
@@ -140,7 +138,6 @@ def run_testsuites():
         selection_method=selection_method,
         num_seeds=num_seeds,
         num_trials=num_trials,
-        rand_seed_num=rand_seed_num,
         log_file=log_file
     )
     return
@@ -174,7 +171,6 @@ def run_testmodel():
         test_baseline,
         test_type,
         log_file,
-        rand_seed_num=rand_seed_num,
         local_model_name=local_model_name
     )
     return

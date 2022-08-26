@@ -253,35 +253,24 @@ class Requirements:
                         "transform": "questionize yes",
                         "transform_req": None
                     })
-                elif d.lower()=="parsing positive sentiment in (question, no) form":
+                elif d.lower()=="parsing sentiment in (question, no) form":
                     reqs.append({
                         "capability": cap,
                         "description": d,
                         "search": [
                             {
-                                "label": "positive"
+                                "label": "positive",
                             },
-                        ],
-                        "expansion": ["neutral"],
-                        "transform": "questionize no",
-                        "transform_req": [
                             {
-                                "label": "negative"
+                                "label": "negative",
                             }
-                        ]
-                    })
-                elif d.lower()=="parsing negative sentiment in (question, no) form":
-                    reqs.append({
-                        "capability": cap,
-                        "description": d,
-                        "search": [
-                            {
-                                "label": "negative"
-                            },
                         ],
                         "expansion": ["neutral"],
                         "transform": "questionize no",
                         "transform_req": [
+                            {
+                                "label": "negative"
+                            },
                             {
                                 "label": ['positive', 'neutral']
                             }

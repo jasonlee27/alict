@@ -245,10 +245,10 @@ class ProductionruleCoverage:
                          logger=None):
         if num_seeds<0:
             data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}.json"
-            res_file = Macros.pdr_cov_result_dir / f"bl_cfg_rules{num_trials}_{task}_checklist.json"
+            res_file = Macros.pdr_cov_result_dir / f"bl_cfg_rules_{task}_checklist.json"
         else:
             data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
-            res_file = Macros.pdr_cov_result_dir / f"bl_cfg_rules{num_trials}_{task}_checklist_{num_seeds}seeds.json"
+            res_file = Macros.pdr_cov_result_dir / f"bl_cfg_rules_{task}_checklist.json"
         # end if
     
         seed_dicts = Utils.read_json(data_file)

@@ -110,10 +110,9 @@ class Macros:
         'Hard: Negation of positive with neutral stuff in the middle (should be negative)',
         'simple negations: I thought x was negative, but it was not (should be neutral or positive)',
         'my opinion is what matters',
-        'Q & A: yes',
-        'Q & A: yes (neutral)',
+        'Q & A: yes', #'Q & A: yes (neutral)',
         'Q & A: no'
-    ] # length=11
+    ] # length=10
 
     OUR_LC_LIST = [
         'Short sentences with sentiment-laden adjectives',
@@ -125,9 +124,8 @@ class Macros:
         'Negation of negative at the end, should be positive or neutral',
         'Author sentiment is more important than of others',
         'parsing sentiment in (question, yes) form',
-        'Parsing positive sentiment in (question, no) form',
-        'Parsing negative sentiment in (question, no) form'
-    ] # length=11
+        'Parsing sentiment in (question, no) form',
+    ] # length=10
 
     LC_MAP = {
         CHECKLIST_LC_LIST[0]: OUR_LC_LIST[0],
@@ -138,6 +136,6 @@ class Macros:
         CHECKLIST_LC_LIST[5]: OUR_LC_LIST[5],
         CHECKLIST_LC_LIST[6]: OUR_LC_LIST[6],
         CHECKLIST_LC_LIST[7]: OUR_LC_LIST[7],
-        str(CHECKLIST_LC_LIST[8:10]): OUR_LC_LIST[8], # Q & A: yes -> parsing sentiment in (question, yes) form
-        CHECKLIST_LC_LIST[10]: str(OUR_LC_LIST[9:]) # Q & A: no -> parsing positive/negative sentiment in (question, yes) form
+        CHECKLIST_LC_LIST[8]: OUR_LC_LIST[8],
+        CHECKLIST_LC_LIST[9]: OUR_LC_LIST[9]
     }

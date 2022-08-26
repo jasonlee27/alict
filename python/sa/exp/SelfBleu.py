@@ -79,7 +79,7 @@ class SelfBleu:
             reference = self.get_reference()
         # end if
         weight = tuple((1. / ngram for _ in range(ngram)))
-
+        raw_scores = list()
         for tr in range(NUM_TRIALS):
             random.seed(tr)
             result = list()
