@@ -31,12 +31,15 @@ from .Template import Template
 class Testsuite:
 
     @classmethod
-    def map_labels(cls, task: str, label):
+    def map_labels(cls, task: str, label, lc_desc):
         if task==Macros.sa_task:
             if type(label)==list:
-                label_not= [v for k, v in Macros.sa_label_map.items() if k not in label]
-                is_not_label = lambda x, pred, *args: pred != label_not[0]
-                return is_not_label
+                if lc_desc==Macros.OUR_LC_LIST[-1]:
+                    return Macros.sa_label_map[label[0]]
+                else:
+                    label_not= [v for k, v in Macros.sa_label_map.items() if k not in label]
+                    is_not_label = lambda x, pred, *args: pred != label_not[0]
+                    return is_not_label
             # end if
             return Macros.sa_label_map[label]
         # end if
@@ -80,10 +83,10 @@ class Testsuite:
                                     labels=template["label"],
                                     save=True)
             # end if
-        elif t is not None and len(t.data)<Macros.max_num_sents:
+        else:
             if callable(template["label"]):
                 t += editor.template(template["sent"],
-                                    save=True)
+                                     save=True)
             else:
                 t += editor.template(template["sent"],
                                      labels=template["label"],
@@ -93,7 +96,7 @@ class Testsuite:
         return t
     
     @classmethod
-    def get_template(cls, template, task):
+    def get_template(cls, template, task, lc_desc):
         template_list = list()
         template_values = dict()
         input_sent = template["input"]
@@ -110,7 +113,8 @@ class Testsuite:
         return {
             "sent": Utils.detokenize(template_list), #" ".join(template_list),
             "values": template_values,
-            "label": cls.map_labels(task, template["label"])
+            "label": cls.map_labels(task, template["label"], lc_desc),
+            'is_multiple_label_types': True if lc_desc==Macros.OUR_LC_LIST[-1] else False
         }
     
     @classmethod
@@ -139,8 +143,9 @@ class Testsuite:
         transform_reqs = list()
         new_input_dicts = Utils.read_json(Macros.result_dir / cfg_res_file_name)
         for t_i in range(len(new_input_dicts)):
-            req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
-            res_dir = Macros.result_dir/ template_out_dir
+            lc_desc = new_input_dicts[t_i]["requirement"]["description"]
+            req_cksum = Utils.get_cksum(lc_desc)
+            res_dir = Macros.result_dir / template_out_dir
             # if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))):
             #     Template.get_templates(
             #         num_seeds=num_seeds,
@@ -149,13 +154,13 @@ class Testsuite:
             #         selection_method=selection_method
             #     )
             # # end if
-
+            
             transform_reqs.append(new_input_dicts[t_i]["requirement"]["transform"])
-
+            
             seed_res = list()
             seeds = Utils.read_json(res_dir / f"seeds_{req_cksum}.json")
             for sd in seeds:
-                sd_res = cls.get_template(sd, task)
+                sd_res = cls.get_template(sd, task, lc_desc)
                 seed_res.append(sd_res)
             # end for
             seeds_per_task.append({
@@ -168,7 +173,7 @@ class Testsuite:
             if exps is not None:
                 exp_res = list()
                 for e in exps:
-                    e_res = cls.get_template(e, task)
+                    e_res = cls.get_template(e, task, lc_desc)
                     exp_res.append(e_res)
                 # end for
                 exps_per_task.append({
@@ -217,23 +222,35 @@ class Testsuite:
                              res_dir,
                              logger):
         for t_i, templates_per_req in enumerate(seed_dicts):
-            test_cksum = Utils.get_cksum(templates_per_req["description"])
+            lc_desc = templates_per_req["description"]
+            test_cksum = Utils.get_cksum(lc_desc)
             if not os.path.exists(str(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')):
-                logger.print(f"{task}::SEED::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
+                logger.print(f"{task}::SEED::<{lc_desc}>::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
                 for template in templates_per_req["templates"]:
                     t = cls.add_template(t, editor, template)
                 # end for
-                
-                if callable(templates_per_req["templates"][0]['label']):
-                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
+
+                if lc_desc==Macros.OUR_LC_LIST[-1] and \
+                   templates_per_req["templates"][0]['is_multiple_label_types']: # Parsing sentiment in (question, no) form
+                    allow_for_neutral = lambda x, pred, _, label, _2 : pred!=0 if label==1 else pred==label
+                    test = MFT(t.data,
+                               Expect.single(allow_for_neutral),
+                               labels=t.labels,
+                               templates=t.templates)
                 else:
-                    test = MFT(**t)
+                    if callable(templates_per_req["templates"][0]['label']):
+                        test = MFT(t.data,
+                                   Expect.single(templates_per_req["templates"][0]['label']),
+                                   templates=t.templates)
+                    else:
+                        test = MFT(**t)
+                    # end if
                 # end if
                 suite.add(test,
-                          name=f"{task}::SEED::"+templates_per_req["description"],
+                          name=f"{task}::SEED::{lc_desc}",
                           capability=templates_per_req["capability"]+"::SEED",
                           description=templates_per_req["description"])
                 num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
@@ -260,7 +277,8 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(exp_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_exps_{test_cksum}.pkl')):
-                logger.print(f"{task}::EXP::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
+                lc_desc = templates_per_req["description"]
+                logger.print(f"{task}::EXP::<{lc_desc}>::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -301,7 +319,8 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(seed_template_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')):
-                logger.print(f"{task}::SEED_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
+                lc_desc = templates_per_req["description"]
+                logger.print(f"{task}::SEED_TEMPS::<{lc_desc}>::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -341,7 +360,8 @@ class Testsuite:
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_exp_templates_{test_cksum}.pkl')) and \
                any(templates_per_req["templates"]):
-                logger.print(f"{task}::EXP_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
+                lc_desc = templates_per_req["description"]
+                logger.print(f"{task}::EXP_TEMPS::<{lc_desc}>::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
