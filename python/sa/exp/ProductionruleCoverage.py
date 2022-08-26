@@ -250,7 +250,6 @@ class ProductionruleCoverage:
             data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
             res_file = Macros.pdr_cov_result_dir / f"bl_cfg_rules_{task}_checklist.json"
         # end if
-    
         seed_dicts = Utils.read_json(data_file)
         if os.path.exists(str(res_file)):
             bl_rules = Utils.read_json(res_file)
@@ -260,6 +259,7 @@ class ProductionruleCoverage:
         for seed in seed_dicts:
             lc = seed['requirement']['description']
             if lc not in bl_rules.keys():
+                print(lc)
                 if logger is not None:
                     logger.print(f"BL::{lc}::")
                 # end if
@@ -279,7 +279,7 @@ class ProductionruleCoverage:
                 Utils.write_json(bl_rules, res_file, pretty_format=True)
             # end if
         # end for
-        return bl_graph_dict
+        return bl_rules
     
 
 def main_seed(task,
@@ -299,14 +299,14 @@ def main_seed(task,
     Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_pdrcov_log')
-    seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
-        task,
-        search_dataset_name,
-        selection_method,
-        num_seeds,
-        num_trials,
-        logger=logger
-    )
+    # seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
+    #     task,
+    #     search_dataset_name,
+    #     selection_method,
+    #     num_seeds,
+    #     num_trials,
+    #     logger=logger
+    # )
     checklist_rules = ProductionruleCoverage.get_bl_cfg_rules(
         task,
         search_dataset_name,
@@ -315,6 +315,7 @@ def main_seed(task,
         num_trials,
         logger=logger
     )
+    raise()
     if os.path.exists(str(result_file)):
         scores = Utils.read_json(result_file)
     else:

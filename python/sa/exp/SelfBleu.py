@@ -125,47 +125,19 @@ class SelfBleu:
     
 
 def read_our_seeds(task, search_dataset_name):
-    # if num_seeds<0:
-    #     seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}.json"
-    # else:
-    #     seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
-    # # end if
-    seed_file = Macros.result_dir / f"seed_inputs_{task}_{search_dataset_name}.json"
-    seed_dict = Utils.read_json(seed_file)
+    seed_res_dir_name = f"seeds_{task}_{search_dataset_name}"
+    seed_dir = Macros.result_dir / seed_res_dir_name
+    cksums = Utils.read_txt(seed_dir / 'cksum_map.txt')
     texts_lcs = dict()
     texts_all = list()
-    for seeds in seed_dict:
-        lc = seeds['requirement']['description']
-        seed_sents = [s[1] for s in seeds['seeds']]
+    for l in cksums:
+        lc, cksum_val = l.split('\t')[0].strip(), l.split('\t')[1].strip()
+        seed_file = seed_dir / f"seed_{cksum_val}.json"
+        seed_dict = Utils.read_json(seed_file)
+        seed_sents = [s[1] for s in seed_dict['seeds']]
         texts_lcs[lc] = seed_sents
         texts_all.extend(seed_sents)
     # end for
-    
-    # for l in Utils.read_txt(seed_dir / 'cksum_map.txt'):
-    #     l_split = l.strip().split('\t')
-    #     lc, cksum_val = l_split[0], l_split[1]
-    #     seeds = Utils.read_json(template_dir / f"seeds_{cksum_val}.json")
-    #     texts = list()
-    #     for s in seeds:
-    #         texts_all.append(s['input'])
-    #         texts.append(s['input'])
-    #     # end for
-    #     exps_file = template_dir / f"exps_{cksum_val}.json"
-    #     if os.path.exists(str(exps_file)):
-    #         exps = Utils.read_json(exps_file)
-    #         for e in exps:
-    #             texts_all.append(e['input'])
-    #             texts.append(e['input'])
-    #         # end for
-    #     # end if
-    #     if lc==Macros.OUR_LC_LIST[9]:
-    #         texts_lcs['Parsing sentiment in (question, no) form'] = texts
-    #     elif lc==Macros.OUR_LC_LIST[10]:
-    #         texts_lcs['Parsing sentiment in (question, no) form'].extend(texts)
-    #     else:
-    #         texts_lcs[lc] = texts
-    #     # end if
-    # # end for
     return texts_all, texts_lcs
 
 def read_our_exps(task,
@@ -193,12 +165,13 @@ def read_our_exps(task,
     return texts_all, texts_lcs
 
 def read_checklist_testcases(task, search_dataset_name):
-    seed_file = Macros.result_dir / f"seed_inputs_{task}_{search_dataset_name}.json"
-    seed_dict = Utils.read_json(seed_file)
+    seed_res_dir_name = f"seeds_{task}_{search_dataset_name}"
+    seed_dir = Macros.result_dir / seed_res_dir_name
+    cksums = Utils.read_txt(seed_dir / 'cksum_map.txt')
     texts_lcs = dict()
     texts_all = list()
-    for seeds in seed_dict:
-        lc = seeds['requirement']['description']
+    for l in cksums:
+        lc, cksum_val = l.split('\t')[0].strip(), l.split('\t')[1].strip()
         sents = ChecklistTestsuite.get_sents(
             Macros.checklist_sa_dataset_file,
             lc
@@ -208,26 +181,6 @@ def read_checklist_testcases(task, search_dataset_name):
         texts_all.extend(_sents)
     # end for
     return texts_all, texts_lcs
-# def read_checklist_testcases():
-#     LC_LIST = Macros.CHECKLIST_LC_LIST
-#     tsuite, tsuite_dict = Utils.read_testsuite(Macros.checklist_sa_dataset_file)
-#     test_names = list(set(tsuite_dict['test_name']))
-#     texts_all = list()
-#     texts_lcs = dict()
-#     num_data = 0
-#     for test_name in test_names:
-#         if test_name in LC_LIST:
-#             if test_name==Macros.CHECKLIST_LC_LIST[8]:
-#                 texts_lcs['Q & A: yes'] = tsuite.tests[test_name].data
-#             elif test_name==Macros.CHECKLIST_LC_LIST[9]:
-#                 texts_lcs['Q & A: yes'].extend(tsuite.tests[test_name].data)
-#             else:
-#                 texts_lcs[test_name] = tsuite.tests[test_name].data
-#             # end if
-#             texts_all.extend(tsuite.tests[test_name].data)
-#         # end if
-#     # end for
-#     return texts_all, texts_lcs
 
 
 def main_seed(task,
@@ -264,7 +217,6 @@ def main_seed(task,
     for lc in texts_ours.keys():
         if lc not in result['ours'].keys():
             st = time.time()
-            # logger.print(f"OURS::{lc}", end='::')
             logger.print(f"OURS::{lc}")
             sbleu = SelfBleu(texts=texts_ours[lc],
                              num_data=len(texts_checklist[lc]),

@@ -43,27 +43,27 @@ class Coverage:
                     if test_name in Macros.OUR_LC_LIST:
                         target_test_name = test_name
                         texts, labels, _types = list(), list(), list()
-                        if test_name in Macros.OUR_LC_LIST[9:]:
-                            target_test_name = str(Macros.OUR_LC_LIST[9:])
-                            if target_test_name not in test_data.keys():
-                                test_data[target_test_name] = {
-                                    'sents': tsuite.tests[tn].data,
-                                    # 'labels': tsuite.tests[tn].labels
-                                }
-                            else:
-                                test_data[target_test_name]['sents'].extend(tsuite.tests[tn].data)
-                                # test_data[test_name]['labels'].extend(tsuite.tests[tn].labels)
-                            # end if                            
+                        # if test_name in Macros.OUR_LC_LIST[9:]:
+                        #     target_test_name = str(Macros.OUR_LC_LIST[9:])
+                        #     if target_test_name not in test_data.keys():
+                        #         test_data[target_test_name] = {
+                        #             'sents': tsuite.tests[tn].data,
+                        #             # 'labels': tsuite.tests[tn].labels
+                        #         }
+                        #     else:
+                        #         test_data[target_test_name]['sents'].extend(tsuite.tests[tn].data)
+                        #         # test_data[test_name]['labels'].extend(tsuite.tests[tn].labels)
+                        #     # end if                            
+                        # else:
+                        if test_name not in test_data.keys():
+                            test_data[test_name] = {
+                                'sents': tsuite.tests[tn].data,
+                                # 'labels': tsuite.tests[tn].labels
+                            }
                         else:
-                            if test_name not in test_data.keys():
-                                test_data[test_name] = {
-                                    'sents': tsuite.tests[tn].data,
-                                    # 'labels': tsuite.tests[tn].labels
-                                }
-                            else:
-                                test_data[test_name]['sents'].extend(tsuite.tests[tn].data)
-                                # test_data[test_name]['labels'].extend(tsuite.tests[tn].labels)
-                            # end if
+                            test_data[test_name]['sents'].extend(tsuite.tests[tn].data)
+                            # test_data[test_name]['labels'].extend(tsuite.tests[tn].labels)
+                        # end if
                         # end if
                     # end if
                 # end for
@@ -99,22 +99,22 @@ class Coverage:
         num_data = 0
         for test_name in test_names:
             if test_name in Macros.CHECKLIST_LC_LIST:
-                if test_name in Macros.CHECKLIST_LC_LIST[8:10]:
-                    target_test_name = str(Macros.CHECKLIST_LC_LIST[8:10])
-                    if target_test_name not in test_data.keys():
-                        test_data[target_test_name] = {
-                            'sents': tsuite.tests[test_name].data,
-                            # 'labels': tsuite.tests[test_name].labels
-                        }
-                    else:
-                        test_data[target_test_name]['sents'].extend(tsuite.tests[test_name].data)
-                    # end if
-                else:
-                    sents = tsuite.tests[test_name].data
-                    test_data[test_name] = {
-                        'sents': tsuite.tests[test_name].data,
-                        # 'labels': tsuite.tests[test_name].labels
-                    }
+                # if test_name in Macros.CHECKLIST_LC_LIST[8:10]:
+                #     target_test_name = str(Macros.CHECKLIST_LC_LIST[8:10])
+                #     if target_test_name not in test_data.keys():
+                #         test_data[target_test_name] = {
+                #             'sents': tsuite.tests[test_name].data,
+                #             # 'labels': tsuite.tests[test_name].labels
+                #         }
+                #     else:
+                #         test_data[target_test_name]['sents'].extend(tsuite.tests[test_name].data)
+                #     # end if
+                # else:
+                sents = tsuite.tests[test_name].data
+                test_data[test_name] = {
+                    'sents': tsuite.tests[test_name].data,
+                    # 'labels': tsuite.tests[test_name].labels
+                }
                 # end if
             # end if
         # end for

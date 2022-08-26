@@ -128,30 +128,30 @@ class Result:
         model_results = cls.get_model_checklist_results_from_string(result_str, model_name)
         temp_dict = dict()
         for r in model_results:
-            if r['lc'] in Macros.CHECKLIST_LC_LIST[8:10]:
-                lc = Macros.LC_MAP[str(Macros.CHECKLIST_LC_LIST[8:10])]
-                if lc not in temp_dict.keys():
-                    temp_dict[lc] = {
-                        'req': lc,
-                        'pass': r['pass'],
-                        'fail': r['fail']
-                    }
-                else:
-                    temp_dict[lc]['pass'].extend(r['pass'])
-                    temp_dict[lc]['fail'].extend(r['fail'])
-                    results.append({
-                        'req': lc,
-                        'pass': temp_dict[lc]['pass'],
-                        'fail': temp_dict[lc]['fail']
-                    })
-                # end if
-            else:
-                lc = Macros.LC_MAP[r['lc']]
-                results.append({
-                    'req': lc,
-                    'pass': r['pass'],
-                    'fail': r['fail']
-                })
+            # if r['lc'] in Macros.CHECKLIST_LC_LIST[8:10]:
+            #     lc = Macros.LC_MAP[str(Macros.CHECKLIST_LC_LIST[8:10])]
+            #     if lc not in temp_dict.keys():
+            #         temp_dict[lc] = {
+            #             'req': lc,
+            #             'pass': r['pass'],
+            #             'fail': r['fail']
+            #         }
+            #     else:
+            #         temp_dict[lc]['pass'].extend(r['pass'])
+            #         temp_dict[lc]['fail'].extend(r['fail'])
+            #         results.append({
+            #             'req': lc,
+            #             'pass': temp_dict[lc]['pass'],
+            #             'fail': temp_dict[lc]['fail']
+            #         })
+            #     # end if
+            # else:
+            lc = Macros.LC_MAP[r['lc']]
+            results.append({
+                'req': lc,
+                'pass': r['pass'],
+                'fail': r['fail']
+            })
             # end if
         # end for
         return results
