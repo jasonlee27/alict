@@ -150,42 +150,42 @@ class Tables:
         output_file.save()
         return
 
-    # @classmethod
-    # def make_numbers_selfbleu(cls,
-    #                           results_dir: Path,
-    #                           tables_dir: Path,
-    #                           task: str,
-    #                           search_dataset_name: str,
-    #                           selection_method: str):
-    #     output_file = latex.File(tables_dir / 'selfbleu-numbers.tex')
-    #     selfbleu_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
-    #     selfbleu_res = Utils.read_json(selfbleu_file)
-    #     our_scores = selfbleu_res['ours']
-    #     for lc_i, lc in enumerate(our_scores.keys()):
-    #         output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_desc", lc))
-    #         output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_num_data", our_scores[lc]['num_data']))
-    #         output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_score", our_scores[lc]['score']))
-    #     # end for
+    @classmethod
+    def make_numbers_selfbleu(cls,
+                              results_dir: Path,
+                              tables_dir: Path,
+                              task: str,
+                              search_dataset_name: str,
+                              selection_method: str):
+        output_file = latex.File(tables_dir / 'selfbleu-numbers.tex')
+        selfbleu_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
+        selfbleu_res = Utils.read_json(selfbleu_file)
+        our_scores = selfbleu_res['ours']
+        for lc_i, lc in enumerate(our_scores.keys()):
+            output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_desc", lc))
+            output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_num_data", our_scores[lc]['num_data']))
+            output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_score", our_scores[lc]['score']))
+        # end for
 
-    #     checklist_scores = selfbleu_res['checklist']
-    #     ours_lc_list = list(our_scores.keys())
-    #     for lc in checklist_scores.keys():
-    #         if lc==Macros.CHECKLIST_LC_LIST[8]:
-    #             our_lc_i = ours_lc_list.index(Macros.CHECKLIST_LC_LIST[8])
-    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
-    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
-    #         elif lc==Macros.CHECKLIST_LC_LIST[10]:
-    #             our_lc_i = ours_lc_list.index('Parsing sentiment in (question, no) form')
-    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
-    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
-    #         else:
-    #             our_lc_i = ours_lc_list.index(Macros.LC_MAP[lc])
-    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
-    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
-    #         # end if
-    #     # end for
-    #     output_file.save()
-    #     return
+        checklist_scores = selfbleu_res['checklist']
+        ours_lc_list = list(our_scores.keys())
+        for lc in checklist_scores.keys():
+            if lc==Macros.CHECKLIST_LC_LIST[8]:
+                our_lc_i = ours_lc_list.index(Macros.CHECKLIST_LC_LIST[8])
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
+            elif lc==Macros.CHECKLIST_LC_LIST[10]:
+                our_lc_i = ours_lc_list.index('Parsing sentiment in (question, no) form')
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
+            else:
+                our_lc_i = ours_lc_list.index(Macros.LC_MAP[lc])
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
+                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
+            # end if
+        # end for
+        output_file.save()
+        return
 
     # @classmethod
     # def make_table_selfbleu(cls,
@@ -464,8 +464,7 @@ class Tables:
             # end for
             
             for m_i, model_name in enumerate(result.keys()):
-
-                if f"model{m_i}" is not in num_seeds_tot.keys():
+                if f"model{m_i}" not in num_seeds_tot.keys():
                     num_seeds_tot[f"model{m_i}"] = dict()
                     num_exps_tot[f"model{m_i}"] = dict()
                     num_seed_fail_rate[f"model{m_i}"] = dict()
@@ -479,8 +478,7 @@ class Tables:
                 temp_num_pass2fail = 0
                 for res_i, res in enumerate(result[model_name]):
                     desc, _res_lc_i = lc_ids[res['req'].lower()]
-                    
-                    if _res_lc_i is not in num_seeds_tot[f"model{m_i}"].keys():
+                    if _res_lc_i not in num_seeds_tot[f"model{m_i}"].keys():
                         num_seeds_tot[f"model{m_i}"][_res_lc_i] = list()
                         num_exps_tot[f"model{m_i}"][_res_lc_i] = list()
                         num_seed_fail_rate[f"model{m_i}"][_res_lc_i] = list()
