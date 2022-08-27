@@ -384,15 +384,23 @@ def run_humanstudy_result():
 # Coverage Exp
 
 def run_coverage_data():
-    from .coverage.extract_data import Coveragedata
+    # from .coverage.extract_data import Coveragedata
+    from .exp.Coveragedata import main_write
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    Coveragedata.write_target_seed_sents(nlp_task,
-                                         search_dataset_name)
-    # Coveragedata.write_target_exp_sents(nlp_task,
-    #                                     search_dataest_name,
-    #                                     selection_method)
+    num_seeds = args.num_seeds
+    num_trials = args.num_trials
+    # Coveragedata.write_target_seed_sents(nlp_task,
+    #                                      search_dataset_name)
+    # # Coveragedata.write_target_exp_sents(nlp_task,
+    # #                                     search_dataest_name,
+    # #                                     selection_method)
+    main_write(nlp_task,
+               search_dataset_name,
+               selection_method,
+               num_seeds,
+               num_trials)
     return
 
 # ==========
