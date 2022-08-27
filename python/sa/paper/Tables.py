@@ -70,8 +70,10 @@ class Tables:
                 task = options.pop('task', 'sa')
                 search_dataset = options.pop('search_dataset_name', 'sst')
                 selection_method = options.pop('selection_method', 'random')
-                cls.make_numbers_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
-                cls.make_table_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+                num_seeds = options.pop('num_seeds', 50)
+                num_trials = options.pop('num_trials', 3)
+                cls.make_numbers_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
+                cls.make_table_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
             else:
                 cls.logger.warning(f"Unknown table {item}")
             # end if
@@ -447,22 +449,22 @@ class Tables:
         req_file = req_dir / 'requirements_desc.txt'
         output_file = latex.File(tables_dir / f"test-results-{num_trials}-{num_seeds}-numbers.tex")
         lcs = Utils.read_txt(req_file)
+        lc_ids = dict()
+        for l_i, l in enumerate(lcs):
+            desc = l.split('::')[0].strip()
+            lc_ids[desc.lower()] = (desc,l_i)
+            desc = cls.replace_latex_symbol(desc)
+            lc_descs[l_i] = desc
+        # end for
 
         # baseline_result_file = res_dir / 'test_result_checklist_analysis.json'
         # baseline_result = Utils.read_json(baseline_result_file)
         
         for num_trial in range(num_trials):
-            _num_trial = '' if num_trial==0 else str(num_trial)
+            _num_trial = '' if num_trial==0 else str(num_trial+1)
             res_dir = result_dir / f"test_results{_num_trial}_{task}_{search_dataset}_{selection_method}_{num_seeds}seeds"
             result_file = res_dir / 'test_result_analysis.json'
             result = Utils.read_json(result_file)
-            for l_i, l in enumerate(lcs):
-                desc = l.split('::')[0]
-                lc_ids[desc.lower()] = (desc,l_i)
-                desc = cls.replace_latex_symbol(desc)
-                lc_descs[l_i] = desc
-            # end for
-            
             for m_i, model_name in enumerate(result.keys()):
                 if f"model{m_i}" not in num_seeds_tot.keys():
                     num_seeds_tot[f"model{m_i}"] = dict()
@@ -477,6 +479,7 @@ class Tables:
                 temp_num_seed_fail, temp_num_exp_fail = 0,0
                 temp_num_pass2fail = 0
                 for res_i, res in enumerate(result[model_name]):
+                    print(result_file, res['req'].lower())
                     desc, _res_lc_i = lc_ids[res['req'].lower()]
                     if _res_lc_i not in num_seeds_tot[f"model{m_i}"].keys():
                         num_seeds_tot[f"model{m_i}"][_res_lc_i] = list()
