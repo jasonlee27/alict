@@ -29,7 +29,7 @@ class Synonyms:
 
     @classmethod
     def get_word_pos(cls, nlp, word: str):
-        doc = nlp(w)
+        doc = nlp(word)
         return str(doc[0]), doc[0].tag_
         # try:
         #     tree = BeneparCFG.get_word_pos(word)
