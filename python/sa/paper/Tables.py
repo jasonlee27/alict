@@ -46,20 +46,20 @@ class Tables:
             if item == "lc-req":
                 cls.make_numbers_lc_requirement(Macros.result_dir, tables_dir)
                 cls.make_table_lc_requirement(Macros.result_dir, tables_dir)
-            elif item == "selfbleu": # deprecated
-                task = options.pop('task', 'sa')
-                search_dataset = options.pop('search_dataset_name', 'sst')
-                selection_method = options.pop('selection_method', 'random')
-                cls.make_numbers_selfbleu(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
-                cls.make_table_selfbleu(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
-            elif item == "retrain-debug": # deprecated
-                task = options.pop('task', 'sa')
-                search_dataset = options.pop('search_dataset_name', 'sst')
-                selection_method = options.pop('selection_method', 'random')
-                epochs = options.pop('epochs', 5)
-                model_name = options.pop('model_name')
-                cls.make_numbers_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method, epochs, model_name)
-                cls.make_table_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method, epochs, model_name)
+            # elif item == "selfbleu": # deprecated
+            #     task = options.pop('task', 'sa')
+            #     search_dataset = options.pop('search_dataset_name', 'sst')
+            #     selection_method = options.pop('selection_method', 'random')
+            #     cls.make_numbers_selfbleu(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+            #     cls.make_table_selfbleu(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+            # elif item == "retrain-debug": # deprecated
+            #     task = options.pop('task', 'sa')
+            #     search_dataset = options.pop('search_dataset_name', 'sst')
+            #     selection_method = options.pop('selection_method', 'random')
+            #     epochs = options.pop('epochs', 5)
+            #     model_name = options.pop('model_name')
+            #     cls.make_numbers_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method, epochs, model_name)
+            #     cls.make_table_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method, epochs, model_name)
             elif item == "manual-study":
                 task = options.pop('task', 'sa')
                 search_dataset = options.pop('search_dataset_name', 'sst')
@@ -150,210 +150,210 @@ class Tables:
         output_file.save()
         return
 
-    @classmethod
-    def make_numbers_selfbleu(cls,
-                              results_dir: Path,
-                              tables_dir: Path,
-                              task: str,
-                              search_dataset_name: str,
-                              selection_method: str):
-        output_file = latex.File(tables_dir / 'selfbleu-numbers.tex')
-        selfbleu_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
-        selfbleu_res = Utils.read_json(selfbleu_file)
-        our_scores = selfbleu_res['ours']
-        for lc_i, lc in enumerate(our_scores.keys()):
-            output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_desc", lc))
-            output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_num_data", our_scores[lc]['num_data']))
-            output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_score", our_scores[lc]['score']))
-        # end for
+    # @classmethod
+    # def make_numbers_selfbleu(cls,
+    #                           results_dir: Path,
+    #                           tables_dir: Path,
+    #                           task: str,
+    #                           search_dataset_name: str,
+    #                           selection_method: str):
+    #     output_file = latex.File(tables_dir / 'selfbleu-numbers.tex')
+    #     selfbleu_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
+    #     selfbleu_res = Utils.read_json(selfbleu_file)
+    #     our_scores = selfbleu_res['ours']
+    #     for lc_i, lc in enumerate(our_scores.keys()):
+    #         output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_desc", lc))
+    #         output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_num_data", our_scores[lc]['num_data']))
+    #         output_file.append_macro(latex.Macro(f"selfbleu_our_lc_{lc_i}_score", our_scores[lc]['score']))
+    #     # end for
 
-        checklist_scores = selfbleu_res['checklist']
-        ours_lc_list = list(our_scores.keys())
-        for lc in checklist_scores.keys():
-            if lc==Macros.CHECKLIST_LC_LIST[8]:
-                our_lc_i = ours_lc_list.index(Macros.CHECKLIST_LC_LIST[8])
-                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
-                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
-            elif lc==Macros.CHECKLIST_LC_LIST[10]:
-                our_lc_i = ours_lc_list.index('Parsing sentiment in (question, no) form')
-                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
-                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
-            else:
-                our_lc_i = ours_lc_list.index(Macros.LC_MAP[lc])
-                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
-                output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
-            # end if
-        # end for
-        output_file.save()
-        return
+    #     checklist_scores = selfbleu_res['checklist']
+    #     ours_lc_list = list(our_scores.keys())
+    #     for lc in checklist_scores.keys():
+    #         if lc==Macros.CHECKLIST_LC_LIST[8]:
+    #             our_lc_i = ours_lc_list.index(Macros.CHECKLIST_LC_LIST[8])
+    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
+    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
+    #         elif lc==Macros.CHECKLIST_LC_LIST[10]:
+    #             our_lc_i = ours_lc_list.index('Parsing sentiment in (question, no) form')
+    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
+    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
+    #         else:
+    #             our_lc_i = ours_lc_list.index(Macros.LC_MAP[lc])
+    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_num_data", checklist_scores[lc]['num_data']))
+    #             output_file.append_macro(latex.Macro("selfbleu_checklist_lc_{our_lc_i}_score", checklist_scores[lc]['score']))
+    #         # end if
+    #     # end for
+    #     output_file.save()
+    #     return
 
-    @classmethod
-    def make_table_selfbleu(cls,
-                            results_dir: Path,
-                            tables_dir: Path,
-                            task: str,
-                            search_dataset_name: str,
-                            selection_method: str):
-        output_file = latex.File(tables_dir / "selfbleu-table.tex")
+    # @classmethod
+    # def make_table_selfbleu(cls,
+    #                         results_dir: Path,
+    #                         tables_dir: Path,
+    #                         task: str,
+    #                         search_dataset_name: str,
+    #                         selection_method: str):
+    #     output_file = latex.File(tables_dir / "selfbleu-table.tex")
         
-        # Header
-        output_file.append(r"\begin{table*}[t]")
-        output_file.append(r"\begin{small}")
-        output_file.append(r"\begin{center}")
-        output_file.append(r"\caption{\SelfBleuTableCaption}")
-        output_file.append(r"\begin{tabular}{p{5cm}||p{3cm}||p{3cm}}||p{3cm}||p{3cm}}")
-        output_file.append(r"\toprule")
+    #     # Header
+    #     output_file.append(r"\begin{table*}[t]")
+    #     output_file.append(r"\begin{small}")
+    #     output_file.append(r"\begin{center}")
+    #     output_file.append(r"\caption{\SelfBleuTableCaption}")
+    #     output_file.append(r"\begin{tabular}{p{5cm}||p{3cm}||p{3cm}}||p{3cm}||p{3cm}}")
+    #     output_file.append(r"\toprule")
 
-        # Content
-        output_file.append(r"\tLc & \tOurNumData & \tOurSelfBleuScore & \tChecklistNumData & \tChecklistSelfBleuScore \\")
-        output_file.append(r"\midrule")
+    #     # Content
+    #     output_file.append(r"\tLc & \tOurNumData & \tOurSelfBleuScore & \tChecklistNumData & \tChecklistSelfBleuScore \\")
+    #     output_file.append(r"\midrule")
 
-        selfbleu_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
-        selfbleu_res = Utils.read_json(selfbleu_file)
-        our_scores = selfbleu_res['ours']
-        for lc_i, lc in enumerate(our_scores.keys()):
-            output_file.append("\multirow{3}{*}{\parbox{5cm}{" + \
-                               f"LC{lc_i+1}: " + latex.Macro(f"selfbleu_our_lc_{lc_i}_desc").use() + "}}")
-            output_file.append(" & " + latex.Macro(f"selfbleu_our_lc_{lc_i}_num_data").use() + r"\\")
-            output_file.append(" & " + latex.Macro(f"selfbleu_our_lc_{lc_i}_score").use() + r"\\")
-            output_file.append(" & " + latex.Macro(f"selfbleu_checklist_lc_{lc_i}_num_data").use() + r"\\")
-            output_file.append(" & " + latex.Macro(f"selfbleu_checklist_lc_{lc_i}_score").use() + r"\\")
-            output_file.append(r"\\")
-            output_file.append(r"\hline")
-        # end for
+    #     selfbleu_file = Macros.selfbleu_result_dir / "{task}_{search_dataset_name}_{selection_method}_testcase_selfbleu.json"
+    #     selfbleu_res = Utils.read_json(selfbleu_file)
+    #     our_scores = selfbleu_res['ours']
+    #     for lc_i, lc in enumerate(our_scores.keys()):
+    #         output_file.append("\multirow{3}{*}{\parbox{5cm}{" + \
+    #                            f"LC{lc_i+1}: " + latex.Macro(f"selfbleu_our_lc_{lc_i}_desc").use() + "}}")
+    #         output_file.append(" & " + latex.Macro(f"selfbleu_our_lc_{lc_i}_num_data").use() + r"\\")
+    #         output_file.append(" & " + latex.Macro(f"selfbleu_our_lc_{lc_i}_score").use() + r"\\")
+    #         output_file.append(" & " + latex.Macro(f"selfbleu_checklist_lc_{lc_i}_num_data").use() + r"\\")
+    #         output_file.append(" & " + latex.Macro(f"selfbleu_checklist_lc_{lc_i}_score").use() + r"\\")
+    #         output_file.append(r"\\")
+    #         output_file.append(r"\hline")
+    #     # end for
 
-        # Footer
-        output_file.append(r"\bottomrule")
-        output_file.append(r"\end{tabular}")
-        output_file.append(r"\end{center}")
-        output_file.append(r"\end{small}")
-        output_file.append(r"\vspace{\SelfBleuTableVSpace}")
-        output_file.append(r"\end{table*}")
-        output_file.save()
-        return
+    #     # Footer
+    #     output_file.append(r"\bottomrule")
+    #     output_file.append(r"\end{tabular}")
+    #     output_file.append(r"\end{center}")
+    #     output_file.append(r"\end{small}")
+    #     output_file.append(r"\vspace{\SelfBleuTableVSpace}")
+    #     output_file.append(r"\end{table*}")
+    #     output_file.save()
+    #     return
 
-    @classmethod
-    def make_numbers_retrain(cls,
-                             results_dir: Path,
-                             tables_dir: Path,
-                             task: str,
-                             search_dataset_name: str,
-                             selection_method: str,
-                             epochs: int,
-                             retrain_model_name: str):
-        CH_TO_OUR_MAP = {
-            Macros.CHECKLIST_LC_LIST[0].replace(',', ' '): Macros.OUR_LC_LIST[0],
-            Macros.CHECKLIST_LC_LIST[1].replace(',', ' '): Macros.OUR_LC_LIST[1],
-            Macros.CHECKLIST_LC_LIST[2].replace(',', ' '): Macros.OUR_LC_LIST[2],
-            Macros.CHECKLIST_LC_LIST[4].replace(',', ' '): Macros.OUR_LC_LIST[4],
-            Macros.CHECKLIST_LC_LIST[5].replace(',', ' '): Macros.OUR_LC_LIST[5],
-            Macros.CHECKLIST_LC_LIST[7].replace(',', ' '): Macros.OUR_LC_LIST[7],
-            str(Macros.CHECKLIST_LC_LIST[8:10]).replace(',', ' '): Macros.OUR_LC_LIST[8]
-        }
+    # @classmethod
+    # def make_numbers_retrain(cls,
+    #                          results_dir: Path,
+    #                          tables_dir: Path,
+    #                          task: str,
+    #                          search_dataset_name: str,
+    #                          selection_method: str,
+    #                          epochs: int,
+    #                          retrain_model_name: str):
+    #     CH_TO_OUR_MAP = {
+    #         Macros.CHECKLIST_LC_LIST[0].replace(',', ' '): Macros.OUR_LC_LIST[0],
+    #         Macros.CHECKLIST_LC_LIST[1].replace(',', ' '): Macros.OUR_LC_LIST[1],
+    #         Macros.CHECKLIST_LC_LIST[2].replace(',', ' '): Macros.OUR_LC_LIST[2],
+    #         Macros.CHECKLIST_LC_LIST[4].replace(',', ' '): Macros.OUR_LC_LIST[4],
+    #         Macros.CHECKLIST_LC_LIST[5].replace(',', ' '): Macros.OUR_LC_LIST[5],
+    #         Macros.CHECKLIST_LC_LIST[7].replace(',', ' '): Macros.OUR_LC_LIST[7],
+    #         str(Macros.CHECKLIST_LC_LIST[8:10]).replace(',', ' '): Macros.OUR_LC_LIST[8]
+    #     }
 
-        # OUR_TO_CH_MAP = {
-        #     Macros.OUR_LC_LIST[0].replace(',', ' '): Macros.CHECKLIST_LC_LIST[0],
-        #     Macros.OUR_LC_LIST[1].replace(',', ' '): Macros.CHECKLIST_LC_LIST[1],
-        #     Macros.OUR_LC_LIST[2].replace(',', ' '): Macros.CHECKLIST_LC_LIST[2],
-        #     Macros.OUR_LC_LIST[4].replace(',', ' '): Macros.CHECKLIST_LC_LIST[4],
-        #     Macros.OUR_LC_LIST[5].replace(',', ' '): Macros.CHECKLIST_LC_LIST[5],
-        #     Macros.OUR_LC_LIST[7].replace(',', ' '): Macros.CHECKLIST_LC_LIST[7],
-        #     Macros.OUR_LC_LIST[8].replace(',', ' '): [Macros.CHECKLIST_LC_LIST[8],
-        #                                               Macros.CHECKLIST_LC_LIST[9]]
-        # }
+    #     # OUR_TO_CH_MAP = {
+    #     #     Macros.OUR_LC_LIST[0].replace(',', ' '): Macros.CHECKLIST_LC_LIST[0],
+    #     #     Macros.OUR_LC_LIST[1].replace(',', ' '): Macros.CHECKLIST_LC_LIST[1],
+    #     #     Macros.OUR_LC_LIST[2].replace(',', ' '): Macros.CHECKLIST_LC_LIST[2],
+    #     #     Macros.OUR_LC_LIST[4].replace(',', ' '): Macros.CHECKLIST_LC_LIST[4],
+    #     #     Macros.OUR_LC_LIST[5].replace(',', ' '): Macros.CHECKLIST_LC_LIST[5],
+    #     #     Macros.OUR_LC_LIST[7].replace(',', ' '): Macros.CHECKLIST_LC_LIST[7],
+    #     #     Macros.OUR_LC_LIST[8].replace(',', ' '): [Macros.CHECKLIST_LC_LIST[8],
+    #     #                                               Macros.CHECKLIST_LC_LIST[9]]
+    #     # }
         
-        output_file = latex.File(tables_dir / 'retrain-debug-numbers.tex')
+    #     output_file = latex.File(tables_dir / 'retrain-debug-numbers.tex')
 
-        retrain_model_name = retrain_model_name.replace("/", "_")
-        retrain_debug_file = Macros.home_result_dir / 'retrain' / f"debug_comparison_{retrain_model_name}.csv"
-        retrain_debug_res = Utils.read_sv(retrain_debug_file, delimeter=',', is_first_attributes=True)
+    #     retrain_model_name = retrain_model_name.replace("/", "_")
+    #     retrain_debug_file = Macros.home_result_dir / 'retrain' / f"debug_comparison_{retrain_model_name}.csv"
+    #     retrain_debug_res = Utils.read_sv(retrain_debug_file, delimeter=',', is_first_attributes=True)
         
-        attributes = retrain_debug_res['attributes']
-        empty_l_i = retrain_debug_res['lines'].index(['', '', '', '', '', '', ''])
-        for l_i, l in enumerate(retrain_debug_res['lines']):
-            if l_i<empty_l_i:
-                for att_i, att_val in enumerate(l):
-                    att = attributes[att_i].strip()
-                    if att=='eval_lc':
-                        _att_val = CH_TO_OUR_MAP[att_val]
-                        output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", _att_val))
-                    else:
-                        output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", att_val))
-                    # end if
-                # end for
-            elif l_i>empty_l_i:
-                for att_i, att_val in enumerate(l):
-                    att = attributes[att_i].strip()
-                    if att=='retrained_lc':
-                        _att_val = CH_TO_OUR_MAP[att_val]
-                        output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", _att_val))
-                    else:
-                        output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", att_val))
-                    # end if
-                # end for
-            # end if
-        # end for
-        output_file.save()
-        return
+    #     attributes = retrain_debug_res['attributes']
+    #     empty_l_i = retrain_debug_res['lines'].index(['', '', '', '', '', '', ''])
+    #     for l_i, l in enumerate(retrain_debug_res['lines']):
+    #         if l_i<empty_l_i:
+    #             for att_i, att_val in enumerate(l):
+    #                 att = attributes[att_i].strip()
+    #                 if att=='eval_lc':
+    #                     _att_val = CH_TO_OUR_MAP[att_val]
+    #                     output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", _att_val))
+    #                 else:
+    #                     output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", att_val))
+    #                 # end if
+    #             # end for
+    #         elif l_i>empty_l_i:
+    #             for att_i, att_val in enumerate(l):
+    #                 att = attributes[att_i].strip()
+    #                 if att=='retrained_lc':
+    #                     _att_val = CH_TO_OUR_MAP[att_val]
+    #                     output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", _att_val))
+    #                 else:
+    #                     output_file.append_macro(latex.Macro(f"retrain_debug_{att}_{l_i}", att_val))
+    #                 # end if
+    #             # end for
+    #         # end if
+    #     # end for
+    #     output_file.save()
+    #     return
 
-    @classmethod
-    def make_table_retrain(cls,
-                           results_dir: Path,
-                           tables_dir: Path,
-                           task: str,
-                           search_dataset_name: str,
-                           selection_method: str,
-                           epochs: int,
-                           retrain_model_name: str):
-        output_file = latex.File(tables_dir / "retrain-debug-table.tex")
+    # @classmethod
+    # def make_table_retrain(cls,
+    #                        results_dir: Path,
+    #                        tables_dir: Path,
+    #                        task: str,
+    #                        search_dataset_name: str,
+    #                        selection_method: str,
+    #                        epochs: int,
+    #                        retrain_model_name: str):
+    #     output_file = latex.File(tables_dir / "retrain-debug-table.tex")
 
-        retrain_model_name = retrain_model_name.replace("/", "_")
-        retrain_debug_file = Macros.home_result_dir / 'retrain' / f"debug_comparison_{retrain_model_name}.csv"
-        retrain_debug_res = Utils.read_sv(retrain_debug_file, delimeter=',', is_first_attributes=True)
+    #     retrain_model_name = retrain_model_name.replace("/", "_")
+    #     retrain_debug_file = Macros.home_result_dir / 'retrain' / f"debug_comparison_{retrain_model_name}.csv"
+    #     retrain_debug_res = Utils.read_sv(retrain_debug_file, delimeter=',', is_first_attributes=True)
         
-        # Header
-        output_file.append(r"\begin{table*}[t]")
-        output_file.append(r"\begin{small}")
-        output_file.append(r"\begin{center}")
-        output_file.append(r"\caption{\RetrainDebugTableCaption}")
-        output_file.append(r"\begin{tabular}{p{2cm}|p{2cm}|p{2cm}|c|c|c|c|c}")
-        output_file.append(r"\toprule")
+    #     # Header
+    #     output_file.append(r"\begin{table*}[t]")
+    #     output_file.append(r"\begin{small}")
+    #     output_file.append(r"\begin{center}")
+    #     output_file.append(r"\caption{\RetrainDebugTableCaption}")
+    #     output_file.append(r"\begin{tabular}{p{2cm}|p{2cm}|p{2cm}|c|c|c|c|c}")
+    #     output_file.append(r"\toprule")
 
-        # Content
-        output_file.append(r"\tApproach & \tRetrainlc & \tEvallc & \tNumfailpass & \tNumfailbeforeretrain & \tNumpassbeforeretrain & \tNumfailafterretrain & \tNumpassafterretrain \\")
-        output_file.append(r"\midrule")
+    #     # Content
+    #     output_file.append(r"\tApproach & \tRetrainlc & \tEvallc & \tNumfailpass & \tNumfailbeforeretrain & \tNumpassbeforeretrain & \tNumfailafterretrain & \tNumpassafterretrain \\")
+    #     output_file.append(r"\midrule")
 
-        attributes = retrain_debug_res['attributes']
-        empty_l_i = retrain_debug_res['lines'].index(['', '', '', '', '', '', ''])
-        for l_i, l in enumerate(retrain_debug_res['lines']):
-            if l_i!=empty_l_i:
-                for att_i, att_val in enumerate(l):
-                    att = attributes[att_i].strip()
-                    if att_i==0:
-                        output_file.append("\multirow{2}{*}{\parbox{2cm}{" + \
-                                           latex.Macro(f"retrain_debug_{att}_{l_i}").use()+ "}}")
-                    elif att_i in [1,2]:
-                        output_file.append(" & \multirow{2}{*}{\parbox{2cm}{" + \
-                                           latex.Macro(f"retrain_debug_{att}_{l_i}").use() + "}}")
-                    else:
-                        output_file.append(" & " + latex.Macro(f"retrain_debug_{att}_{l_i}").use())
-                    # end if
-                # end for
-                output_file.append(r"\\")
-                output_file.append(r"& & & & & \\")
-                output_file.append(r"\hline")
-            # end if
-        # end for
+    #     attributes = retrain_debug_res['attributes']
+    #     empty_l_i = retrain_debug_res['lines'].index(['', '', '', '', '', '', ''])
+    #     for l_i, l in enumerate(retrain_debug_res['lines']):
+    #         if l_i!=empty_l_i:
+    #             for att_i, att_val in enumerate(l):
+    #                 att = attributes[att_i].strip()
+    #                 if att_i==0:
+    #                     output_file.append("\multirow{2}{*}{\parbox{2cm}{" + \
+    #                                        latex.Macro(f"retrain_debug_{att}_{l_i}").use()+ "}}")
+    #                 elif att_i in [1,2]:
+    #                     output_file.append(" & \multirow{2}{*}{\parbox{2cm}{" + \
+    #                                        latex.Macro(f"retrain_debug_{att}_{l_i}").use() + "}}")
+    #                 else:
+    #                     output_file.append(" & " + latex.Macro(f"retrain_debug_{att}_{l_i}").use())
+    #                 # end if
+    #             # end for
+    #             output_file.append(r"\\")
+    #             output_file.append(r"& & & & & \\")
+    #             output_file.append(r"\hline")
+    #         # end if
+    #     # end for
 
-        # Footer
-        output_file.append(r"\bottomrule")
-        output_file.append(r"\end{tabular}")
-        output_file.append(r"\end{center}")
-        output_file.append(r"\end{small}")
-        output_file.append(r"\vspace{\RetrainDebugTableVSpace}")
-        output_file.append(r"\end{table*}")
-        output_file.save()
-        return
+    #     # Footer
+    #     output_file.append(r"\bottomrule")
+    #     output_file.append(r"\end{tabular}")
+    #     output_file.append(r"\end{center}")
+    #     output_file.append(r"\end{small}")
+    #     output_file.append(r"\vspace{\RetrainDebugTableVSpace}")
+    #     output_file.append(r"\end{table*}")
+    #     output_file.save()
+    #     return
     
     @classmethod
     def make_numbers_manual_study(cls,
@@ -433,76 +433,115 @@ class Tables:
                                   tables_dir,
                                   task,
                                   search_dataset,
-                                  selection_method):
-        result_file = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}" / 'test_result_analysis.json'
-        baseline_result_file = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}" / 'test_result_checklist_analysis.json'        
-        output_file = latex.File(tables_dir / 'test-results-numbers.tex')
-        result = Utils.read_json(result_file)
-        lc_orig_ids, lc_ids = dict(), dict()
-        baseline_result = Utils.read_json(baseline_result_file)
+                                  selection_method,
+                                  num_seeds,
+                                  num_trials):
+        lc_descs = dict()
+        num_seeds_tot = dict()
+        num_exps_tot = dict()
+        num_seed_fail_rate = dict()
+        num_exp_fail_rate = dict()
+        num_pass2fail = dict()
+
         req_dir = result_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
-        for l_i, l in enumerate(Utils.read_txt(req_file)):
-            desc = l.split('::')[0]
-            lc_ids[desc.lower()] = (desc,l_i)
+        output_file = latex.File(tables_dir / f"test-results-{num_trials}-{num_seeds}-numbers.tex")
+        lcs = Utils.read_txt(req_file)
+
+        # baseline_result_file = res_dir / 'test_result_checklist_analysis.json'
+        # baseline_result = Utils.read_json(baseline_result_file)
+        
+        for num_trial in range(num_trials):
+            _num_trial = '' if num_trial==0 else str(num_trial)
+            res_dir = result_dir / f"test_results{_num_trial}_{task}_{search_dataset}_{selection_method}_{num_seeds}seeds"
+            result_file = res_dir / 'test_result_analysis.json'
+            result = Utils.read_json(result_file)
+            for l_i, l in enumerate(lcs):
+                desc = l.split('::')[0]
+                lc_ids[desc.lower()] = (desc,l_i)
+                desc = cls.replace_latex_symbol(desc)
+                lc_descs[l_i] = desc
+            # end for
+            
+            for m_i, model_name in enumerate(result.keys()):
+
+                if f"model{m_i}" is not in num_seeds_tot.keys():
+                    num_seeds_tot[f"model{m_i}"] = dict()
+                    num_exps_tot[f"model{m_i}"] = dict()
+                    num_seed_fail_rate[f"model{m_i}"] = dict()
+                    num_exp_fail_rate[f"model{m_i}"] = dict()
+                    num_pass2fail[f"model{m_i}"] = dict()
+                # end if
+                
+                # model_name = model_name.replace('/', '-')
+                temp_num_seeds, temp_num_exps = 0,0
+                temp_num_seed_fail, temp_num_exp_fail = 0,0
+                temp_num_pass2fail = 0
+                for res_i, res in enumerate(result[model_name]):
+                    desc, _res_lc_i = lc_ids[res['req'].lower()]
+                    
+                    if _res_lc_i is not in num_seeds_tot[f"model{m_i}"].keys():
+                        num_seeds_tot[f"model{m_i}"][_res_lc_i] = list()
+                        num_exps_tot[f"model{m_i}"][_res_lc_i] = list()
+                        num_seed_fail_rate[f"model{m_i}"][_res_lc_i] = list()
+                        num_exp_fail_rate[f"model{m_i}"][_res_lc_i] = list()
+                        num_pass2fail[f"model{m_i}"][_res_lc_i] = list()
+                    # end if
+                    num_seeds_tot[f"model{m_i}"][_res_lc_i].append(res['num_seeds'])
+                    num_exps_tot[f"model{m_i}"][_res_lc_i].append(res['num_exps'] if res['is_exps_exist'] else 0)
+                    num_seed_fail_rate[f"model{m_i}"][_res_lc_i].append(cls.FMT_FLOAT.format(res['num_seed_fail']*100./res['num_seeds']))
+                    num_exp_fail_rate[f"model{m_i}"][_res_lc_i].append(cls.FMT_FLOAT.format(res['num_exp_fail']*100./res['num_exps']) if res['is_exps_exist'] else 0.)
+                    num_pass2fail[f"model{m_i}"][_res_lc_i].append(res['num_pass2fail'] if res['is_exps_exist'] else 0.)
+                # end for
+            # end for
         # end for
-        
-        # for m_i, model_name in enumerate(baseline_result.keys()):
-        #     # model_name = model_name.replace('/', '-')
-        #     for res_i, res in enumerate(baseline_result[model_name]):
-        #         if res['req']==str(Macros.OUR_LC_LIST[9:]):
-        #             desc = 'Parsing positive and negative sentiment in (question, no) form'
-        #             desc, lc_i = lc_ids[desc.lower()]
-        #         else:
-        #             desc, lc_i = lc_ids[res['req'].lower()]
-        #         # end if
-        #         desc = cls.replace_latex_symbol(desc)
-        #         lc_orig_ids[desc] = lc_i
-        #         if m_i==0:
-        #             output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}", desc))
-        #         # end if
-        #         if m_i==0:
-        #             output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-sents",
-        #                                                  res['num_tcs']))
-        #         # end if
-        #         output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail",
-        #                                              cls.FMT_FLOAT.format(res['num_tc_fail']*100./res['num_tcs'])))
-        #     # end for
-        # # end for
-        
-        for m_i, model_name in enumerate(result.keys()):
-            # model_name = model_name.replace('/', '-')
+
+        for m_i, m_name in enumerate(num_seeds_tot.keys()):
             temp_num_seeds, temp_num_exps = 0,0
             temp_num_seed_fail, temp_num_exp_fail = 0,0
             temp_num_pass2fail = 0
-            for res_i, res in enumerate(result[model_name]):
-                desc, _res_i = lc_ids[res['req'].lower()]
-                desc = cls.replace_latex_symbol(desc)
+
+            # num_seeds_tot[f"model{m_i}"] = dict()
+            # num_exps_tot[f"model{m_i}"] = dict()
+            # num_seed_fail_rate[f"model{m_i}"] = dict()
+            # num_exp_fail_rate[f"model{m_i}"] = dict()
+            # num_pass2fail[f"model{m_i}"] = dict()
+
+            for lc_i in num_seeds_tot[m_name].keys():
                 if m_i==0:
-                    output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}", desc))
-                    output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-seeds",
-                                                         res['num_seeds']))
-                    if res['is_exps_exist']:
-                        output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-exps",
-                                                             res['num_exps']))
-                    else:
-                        output_file.append_macro(latex.Macro(f"test-results-lc{_res_i}-num-exps", '-'))
-                    # end if
+                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}", lc_descs[lc_i]))
+                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-seeds",
+                                                         num_seeds_tot[m_name][lc_i]))
+
+                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-avg",
+                                                         Utils.avg(num_exps_tot[m_name][lc_i])))
+                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-med",
+                                                         Utils.median(num_exps_tot[m_name][lc_i])))
+                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-std",
+                                                         Utils.stdev(num_exps_tot[m_name][lc_i])))
                 # end if
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail-avg",
+                                                     Utils.avg(num_seed_fail_rate[m_name][lc_i])))
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail-med",
+                                                     Utils.median(num_seed_fail_rate[m_name][lc_i])))
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail-std",
+                                                     Utils.stdev(num_seed_fail_rate[m_name][lc_i])))
+
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail-avg",
+                                                     Utils.avg(num_exp_fail_rate[m_name][lc_i])))
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail-med",
+                                                     Utils.median(num_exp_fail_rate[m_name][lc_i])))
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail-std",
+                                                     Utils.stdev(num_exp_fail_rate[m_name][lc_i])))
                 
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-seed-fail",
-                                                     cls.FMT_FLOAT.format(res['num_seed_fail']*100./res['num_seeds'])))
-                if res['is_exps_exist']:
-                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-exp-fail",
-                                                         cls.FMT_FLOAT.format(res['num_exp_fail']*100./res['num_exps'])))
-                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-pass-to-fail",
-                                                         res['num_pass2fail']))
-                else:
-                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-exp-fail", '-'))
-                    output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{_res_i}-num-pass-to-fail", '-'))
-                # end if
-            # end if
-        # end for
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-avg",
+                                                     Utils.avg(num_pass2fail[m_name][lc_i])))
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-med",
+                                                     Utils.median(num_pass2fail[m_name][lc_i])))
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-std",
+                                                     Utils.stdev(num_pass2fail[m_name][lc_i])))
+            # end for
+        # end_for
         output_file.save()
         return
 
@@ -512,15 +551,20 @@ class Tables:
                                 tables_dir,
                                 task,
                                 search_dataset,
-                                selection_method):
-        output_file = latex.File(tables_dir / "test-results-table.tex")
-
-        result_file = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}" / 'test_result_analysis.json'
-        baseline_result_file = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}" / 'test_result_checklist_analysis.json'
+                                selection_method,
+                                num_seeds,
+                                num_trials):
+        output_file = latex.File(tables_dir / f"test-results-{num_trials}-{num_seeds}-numbers.tex")
+        res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}_{num_seeds}seeds"
+        result_file = res_dir / 'test_result_analysis.json'
+        
+        # result_file = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}" / 'test_result_analysis.json'
+        
+        # baseline_result_file = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}" / 'test_result_checklist_analysis.json'
         
         result = Utils.read_json(result_file)
-        baseline_result = Utils.read_json(baseline_result_file)
-        model_names = list(baseline_result.keys())
+        # baseline_result = Utils.read_json(baseline_result_file)
+        model_names = list(result.keys())
         lcs_len = len(result[model_names[0]])
         
         # Header
@@ -538,8 +582,14 @@ class Tables:
         output_file.append(r"\midrule")
         
         # Content
+        output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-avg",
+                                             Utils.avg(num_exps_tot[m_name][lc_i])))
+        output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-med",
+                                             Utils.median(num_exps_tot[m_name][lc_i])))
+        output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-std",
+                                             Utils.stdev(num_exps_tot[m_name][lc_i])))
         for lc_i in range(lcs_len):
-            lc_prefix_str = f"LC{lc_i+1}: "
+            lc_prefix_str = f"LC{lc_i}: "
             # end if
             output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8cm}{" + \
                                lc_prefix_str + latex.Macro(f"test-results-lc{lc_i}").use() + "}}")
@@ -548,13 +598,17 @@ class Tables:
             # output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
 
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
-                               latex.Macro(f"test-results-lc{lc_i}-num-seeds").use() + "}")
+                               latex.Macro(f"test-results-lc{lc_i}-num-seeds").use() + "}")            
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
-                               latex.Macro(f"test-results-lc{lc_i}-num-exps").use() + "}")
+                               latex.Macro(f"test-results-lc{lc_i}-num-exps-avg").use() + \
+                               "\pm" + latex.Macro(f"test-results-lc{lc_i}-num-exps-std").use() + "}")
             
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-seed-fail").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-exp-fail").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-seed-fail-avg").use() + \
+                               "\pm" + latex.Macro(f"test-results-model0-lc{lc_i}-num-seed-fail-std").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-exp-fail-avg").use() + \
+                               "\pm" + latex.Macro(f"test-results-model0-lc{lc_i}-num-exp-fail-std").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail-avg").use() + \
+                               "\pm" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail-std").use() + r"\\")
             
             for m_i in range(1,len(model_names)):
                 if m_i==1:
@@ -562,9 +616,12 @@ class Tables:
                 else:
                     m_name = 'dstBERT'
                 # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail").use())
-                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail").use())
-                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail-avg").use() + \
+                                   "\pm" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail-std").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail-avg").use()+ \
+                                   "\pm" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail-std").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-avg").use() + \
+                                   "\pm" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-std").use() + r"\\")
             # end for
             output_file.append(r"\hline")
         # end for
