@@ -304,8 +304,8 @@ def main_seed(task,
         logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_pdrcov.log"
         result_file = Macros.pdr_cov_result_dir / f"seeds_{task}_{search_dataset_name}_pdrcov.json"
     else:
-        logger_file = Macros.log_dir / f"seeds{_num_trials}_{task}_{search_dataset_name}_{num_seeds}seeds_pdrcov.log"
-        result_file = Macros.pdr_cov_result_dir / f"seeds{_num_trials}_{task}_{search_dataset_name}_{num_seeds}seeds_pdrcov.json"
+        logger_file = Macros.log_dir / f"seeds_over{_num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_pdrcov.log"
+        result_file = Macros.pdr_cov_result_dir / f"seeds_over{_num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_pdrcov.json"
     # end if
     Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
     logger = Logger(logger_file=logger_file,
@@ -374,10 +374,10 @@ def main_seed(task,
                     # sample bl pdrs to make same number of pdrs with ours
                     pdr1, pdr2 = dict(), dict()
                     if len(seed_sents)<len(bl_sents):
-                        num_sample = len(seed_sents)
-                        r_idxs = list(range(num_sample))
+                        num_samples = len(seed_sents)
+                        r_idxs = list(range(len(bl_sents)))
                         random.shuffle(r_idxs)
-                        bl_sents_sample = [bl_sents[r_i] for r_i in r_idxs[:num_sample]]
+                        bl_sents_sample = [bl_sents[r_i] for r_i in r_idxs[:num_samples]]
                         pdr1 = {
                             s: _seed_rules[s]
                             for s in seed_sents
@@ -387,10 +387,10 @@ def main_seed(task,
                             for s in bl_sents_sample
                         }
                     else:
-                        num_sample = len(seed_sents)
-                        r_idxs = list(range(num_sample))
+                        num_samples = len(seed_sents)
+                        r_idxs = list(range(len(seed_sents)))
                         random.shuffle(r_idxs)
-                        seed_sents_sample = [seed_sents[r_i] for r_i in r_idxs[:num_sample]]
+                        seed_sents_sample = [seed_sents[r_i] for r_i in r_idxs[:num_samples]]
                         pdr1 = {
                             s: _seed_rules[s]
                             for s in seed_sents_sample
@@ -407,8 +407,8 @@ def main_seed(task,
                     cov_score_ours, cov_score_bl = pdr_obj.get_score()
                     scores[lc]['ours']['coverage_scores'].append(cov_score_ours)
                     scores[lc]['bl']['coverage_scores'].append(cov_score_bl)
+                    print()
                 # end for
-                print()
                 scores[lc]['ours']['avg_score'] = Utils.avg(scores[lc]['ours']['coverage_scores'])
                 scores[lc]['ours']['med_score'] = Utils.median(scores[lc]['ours']['coverage_scores'])
                 scores[lc]['ours']['std_score'] = Utils.stdev(scores[lc]['ours']['coverage_scores'])
