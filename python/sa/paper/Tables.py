@@ -72,6 +72,7 @@ class Tables:
                 selection_method = options.pop('selection_method', 'random')
                 num_seeds = options.pop('num_seeds', 50)
                 num_trials = options.pop('num_trials', 3)
+                print(num_seeds)
                 cls.make_numbers_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
                 cls.make_table_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
             else:
@@ -479,7 +480,6 @@ class Tables:
                 temp_num_seed_fail, temp_num_exp_fail = 0,0
                 temp_num_pass2fail = 0
                 for res_i, res in enumerate(result[model_name]):
-                    print(result_file, res['req'].lower())
                     desc, _res_lc_i = lc_ids[res['req'].lower()]
                     if _res_lc_i not in num_seeds_tot[f"model{m_i}"].keys():
                         num_seeds_tot[f"model{m_i}"][_res_lc_i] = list()
@@ -490,8 +490,8 @@ class Tables:
                     # end if
                     num_seeds_tot[f"model{m_i}"][_res_lc_i].append(res['num_seeds'])
                     num_exps_tot[f"model{m_i}"][_res_lc_i].append(res['num_exps'] if res['is_exps_exist'] else 0)
-                    num_seed_fail_rate[f"model{m_i}"][_res_lc_i].append(cls.FMT_FLOAT.format(res['num_seed_fail']*100./res['num_seeds']))
-                    num_exp_fail_rate[f"model{m_i}"][_res_lc_i].append(cls.FMT_FLOAT.format(res['num_exp_fail']*100./res['num_exps']) if res['is_exps_exist'] else 0.)
+                    num_seed_fail_rate[f"model{m_i}"][_res_lc_i].append(res['num_seed_fail']*100./res['num_seeds'])
+                    num_exp_fail_rate[f"model{m_i}"][_res_lc_i].append(res['num_exp_fail']*100./res['num_exps'] if res['is_exps_exist'] else 0.)
                     num_pass2fail[f"model{m_i}"][_res_lc_i].append(res['num_pass2fail'] if res['is_exps_exist'] else 0.)
                 # end for
             # end for
@@ -512,35 +512,35 @@ class Tables:
                 if m_i==0:
                     output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}", lc_descs[lc_i]))
                     output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-seeds",
-                                                         num_seeds_tot[m_name][lc_i]))
+                                                         num_seeds_tot[m_name][lc_i][0]))
 
                     output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-avg",
-                                                         Utils.avg(num_exps_tot[m_name][lc_i])))
+                                                         Utils.avg(num_exps_tot[m_name][lc_i], decimal=2)))
                     output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-med",
-                                                         Utils.median(num_exps_tot[m_name][lc_i])))
+                                                         Utils.median(num_exps_tot[m_name][lc_i], decimal=2)))
                     output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-std",
-                                                         Utils.stdev(num_exps_tot[m_name][lc_i])))
+                                                         Utils.stdev(num_exps_tot[m_name][lc_i], decimal=2)))
                 # end if
                 output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail-avg",
-                                                     Utils.avg(num_seed_fail_rate[m_name][lc_i])))
+                                                     Utils.avg(num_seed_fail_rate[m_name][lc_i], decimal=2)))
                 output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail-med",
-                                                     Utils.median(num_seed_fail_rate[m_name][lc_i])))
+                                                     Utils.median(num_seed_fail_rate[m_name][lc_i], decimal=2)))
                 output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-seed-fail-std",
-                                                     Utils.stdev(num_seed_fail_rate[m_name][lc_i])))
+                                                     Utils.stdev(num_seed_fail_rate[m_name][lc_i], decimal=2)))
 
                 output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail-avg",
-                                                     Utils.avg(num_exp_fail_rate[m_name][lc_i])))
+                                                     Utils.avg(num_exp_fail_rate[m_name][lc_i], decimal=2)))
                 output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail-med",
-                                                     Utils.median(num_exp_fail_rate[m_name][lc_i])))
+                                                     Utils.median(num_exp_fail_rate[m_name][lc_i], decimal=2)))
                 output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-exp-fail-std",
-                                                     Utils.stdev(num_exp_fail_rate[m_name][lc_i])))
+                                                     Utils.stdev(num_exp_fail_rate[m_name][lc_i], decimal=2)))
                 
                 output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-avg",
-                                                     Utils.avg(num_pass2fail[m_name][lc_i])))
+                                                     Utils.avg(num_pass2fail[m_name][lc_i], decimal=2)))
                 output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-med",
-                                                     Utils.median(num_pass2fail[m_name][lc_i])))
+                                                     Utils.median(num_pass2fail[m_name][lc_i], decimal=2)))
                 output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-std",
-                                                     Utils.stdev(num_pass2fail[m_name][lc_i])))
+                                                     Utils.stdev(num_pass2fail[m_name][lc_i], decimal=2)))
             # end for
         # end_for
         output_file.save()
@@ -555,7 +555,7 @@ class Tables:
                                 selection_method,
                                 num_seeds,
                                 num_trials):
-        output_file = latex.File(tables_dir / f"test-results-{num_trials}-{num_seeds}-numbers.tex")
+        output_file = latex.File(tables_dir / f"test-results-{num_trials}-{num_seeds}-table.tex")
         res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}_{num_seeds}seeds"
         result_file = res_dir / 'test_result_analysis.json'
         
@@ -583,12 +583,6 @@ class Tables:
         output_file.append(r"\midrule")
         
         # Content
-        output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-avg",
-                                             Utils.avg(num_exps_tot[m_name][lc_i])))
-        output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-med",
-                                             Utils.median(num_exps_tot[m_name][lc_i])))
-        output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-std",
-                                             Utils.stdev(num_exps_tot[m_name][lc_i])))
         for lc_i in range(lcs_len):
             lc_prefix_str = f"LC{lc_i}: "
             # end if

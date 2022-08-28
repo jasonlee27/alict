@@ -414,7 +414,9 @@ def run_make_tables():
         'search_dataset_name': args.search_dataset,
         'selection_method': args.syntax_selection,
         'epochs': args.epochs,
-        'model_name': args.model_name
+        'model_name': args.model_name,
+        'num_seeds': args.num_seeds,
+        'num_trials': args.num_trials,
     }
     Tables.make_tables(**options)
     return
