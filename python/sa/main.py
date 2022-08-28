@@ -18,7 +18,7 @@ parser.add_argument('--run', type=str, required=True,
                         'testmodel', 'testmodel_seed', 'retrain', 'analyze',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'selfbleu',
                         'pdrule_cov', 'humanstudy', 'humanstudy_results', 'coverage_data',
-                        'tables'
+                        'tables', 'plots'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
@@ -420,6 +420,21 @@ def run_make_tables():
     }
     Tables.make_tables(**options)
     return
+
+def run_make_plots():
+    from .paper.Plots import Plots
+    options = {
+        'which': args.which,
+        'task': args.nlp_task,
+        'search_dataset_name': args.search_dataset,
+        'selection_method': args.syntax_selection,
+        'epochs': args.epochs,
+        'model_name': args.model_name,
+        'num_seeds': args.num_seeds,
+        'num_trials': args.num_trials,
+    }
+    Plots.make_plots(**options)
+    return
     
 
 func_map = {
@@ -440,7 +455,8 @@ func_map = {
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
         'coverage_data': run_coverage_data,
-        'tables': run_make_tables
+        'tables': run_make_tables,
+        'plots': run_make_plots
     }
 }
 
