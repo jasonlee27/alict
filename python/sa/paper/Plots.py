@@ -56,8 +56,9 @@ class Plots:
             if item == "selfbleu":
                 cls.selfbleu_ours_plot(Macros.result_dir, figs_dir)
                 cls.selfbleu_bl_plot(Macros.result_dir, figs_dir)
-            # elif item == "pdr":
-            #     pass
+            elif item == "pdr":
+                cls.pdr_ours_plot(Macros.result_dir, figs_dir)
+                cls.pdr_bl_plot(Macros.result_dir, figs_dir)
             else:
                 raise(f"Unknown plot {item}")
             # end if
@@ -194,4 +195,129 @@ class Plots:
         # Put a legend to the right of the current axis
         ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         fig.savefig(figs_dir / "selfbleu-bl-lineplot.eps")
+        return
+
+    @classmethod
+    def pdr_ours_plot(cls, results_dir: Path, figs_dir: Path):
+        data_lod: List[dict] = list()
+        x_ticks = {0:50, 1:100, 2:200}
+        num_seeds = list(x_ticks.keys())
+
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        for l_i, l in enumerate(Utils.read_txt(req_file)):
+            lc_desc = l.strip().split('::')[0].lower()
+            for ns in x_ticks.values():
+                result_file = results_dir / 'pdr_cov' / f"seeds_over3_sa_sst_random_{ns}seeds_pdrcov.json"
+                result = Utils.read_json(result_file)
+                for s_i, score in enumerate(result[lc_desc]['ours']['coverage_scores']):
+                    result_lc_ours = {
+                        'sample': s_i,
+                        'lc': f"LC{l_i+1}",
+                        'num_seed': ns,
+                        'scores': score
+                        # 'avg': result[lc_desc]['ours']['avg_score'],
+                        # 'med': result[lc_desc]['ours']['med_score'],
+                        # 'std': result[lc_desc]['ours']['std_score']
+                    }
+                    data_lod.append(result_lc_ours)
+                # end for
+            # end for
+        # end for
+
+        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+
+        # Plotting part
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+
+        hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+        markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+
+        ax = sns.lineplot(data=df, x="num_seed", y="scores",
+                          hue="lc",
+                          hue_order=hue_order,
+                          style="lc",
+                          err_style="bars", # or "band"
+                          markers=markers,
+                          markersize=9,
+                          markeredgewidth=0,
+                          dashes=True,
+                          ci='sd',
+                          ax=ax)
+        plt.xticks(list(x_ticks.values()))
+        ax.set_ylim(0, 700)
+        ax.set_xlabel("Number of seeds")
+        ax.set_ylabel("Number of Production Rules Covered")
+        
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+
+        # Put a legend to the right of the current axis
+        ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        # fig.tight_layout()
+        fig.savefig(figs_dir / "pdr-ours-lineplot.eps")
+        return
+
+    @classmethod
+    def pdr_bl_plot(cls, results_dir: Path, figs_dir: Path):
+        data_lod: List[dict] = list()
+        # num_seeds = [0,50,100,200] # x-axis
+        x_ticks = {0:50, 1:100, 2:200}
+        num_seeds = list(x_ticks.keys())
+
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        for l_i, l in enumerate(Utils.read_txt(req_file)):
+            lc_desc = l.strip().split('::')[0].lower()
+            for ns in x_ticks.values():
+                result_file = results_dir / 'pdr_cov' / f"seeds_over3_sa_sst_random_{ns}seeds_pdrcov.json"
+                result = Utils.read_json(result_file)
+                for score in result[lc_desc]['bl']['coverage_scores']:
+                    result_lc_bl = {
+                        'lc': f"LC{l_i+1}",
+                        'num_seed': ns,
+                        'scores': score
+                        # 'avg': result[lc_desc]['ours']['avg_score'],
+                        # 'med': result[lc_desc]['ours']['med_score'],
+                        # 'std': result[lc_desc]['ours']['std_score']
+                    }
+                    data_lod.append(result_lc_bl)
+                # end for
+            # end for
+        # end for
+
+        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+
+        # Plotting part
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+
+        hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+        markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+
+        ax = sns.lineplot(data=df, x="num_seed", y="scores",
+                          hue="lc",
+                          hue_order=hue_order,
+                          style="lc",
+                          err_style="bars", # or "bars"
+                          markers=markers,
+                          markersize=9,
+                          markeredgewidth=0,
+                          dashes=True,
+                          ci='sd',
+                          ax=ax)
+        plt.xticks(list(x_ticks.values()))
+        ax.set_ylim(0, 700)
+        ax.set_xlabel("Number of seeds")
+        ax.set_ylabel("Number of Production Rules Covered")
+
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+
+        # Put a legend to the right of the current axis
+        ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        fig.savefig(figs_dir / "pdr-bl-lineplot.eps")
         return
