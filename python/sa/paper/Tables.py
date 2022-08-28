@@ -599,9 +599,9 @@ class Tables:
             
             output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model0-lc{lc_i}-num-seed-fail-avg").use() + \
                                "\pm" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model0-lc{lc_i}-num-seed-fail-std").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-exp-fail-avg").use() + \
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model0-lc{lc_i}-num-exp-fail-avg").use() + \
                                "\pm" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model0-lc{lc_i}-num-exp-fail-std").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail-avg").use() + \
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model0-lc{lc_i}-num-pass-to-fail-avg").use() + \
                                "\pm" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model0-lc{lc_i}-num-pass-to-fail-std").use() + r"\\")
             
             for m_i in range(1,len(model_names)):
