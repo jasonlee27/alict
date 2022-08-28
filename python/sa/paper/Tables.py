@@ -72,7 +72,6 @@ class Tables:
                 selection_method = options.pop('selection_method', 'random')
                 num_seeds = options.pop('num_seeds', 50)
                 num_trials = options.pop('num_trials', 3)
-                print(num_seeds)
                 cls.make_numbers_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
                 cls.make_table_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
             else:
