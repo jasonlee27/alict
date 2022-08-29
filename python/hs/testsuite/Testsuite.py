@@ -2,14 +2,17 @@
 # the checklist Testing model framework
 # and test model.
 
+from typing import *
+
 import re, os
 import copy
 import spacy
 import random
 import numpy as np
 
-from typing import *
 from pathlib import Path
+
+from nltk.tokenize import word_tokenize as tokenize
 
 from checklist.editor import Editor
 from checklist.test_types import MFT, INV, DIR
@@ -24,17 +27,19 @@ from .Search import Search
 # from .Transform import TransformOperator
 from .Template import Template
 
-random.seed(Macros.SEED)
 
 class Testsuite:
 
     @classmethod
-    def map_labels(cls, task: str, label):
+    def map_labels(cls, task: str, label, lc_desc):
         if task==Macros.hs_task:
             if type(label)==list:
-                label_not= [v for k, v in Macros.hs_label_map.items() if k not in label]
-                is_not_label = lambda x, pred, *args: pred != label_not[0]
-                return is_not_label
+                if lc_desc==Macros.OUR_LC_LIST[-1]:
+                    return Macros.hs_label_map[label[0]]
+                else:
+                    label_not= [v for k, v in Macros.hs_label_map.items() if k not in label]
+                    is_not_label = lambda x, pred, *args: pred != label_not[0]
+                    return is_not_label
             # end if
             return Macros.hs_label_map[label]
         # end if
@@ -78,10 +83,10 @@ class Testsuite:
                                     labels=template["label"],
                                     save=True)
             # end if
-        elif t is not None and len(t.data)<Macros.max_num_sents:
+        else:
             if callable(template["label"]):
                 t += editor.template(template["sent"],
-                                    save=True)
+                                     save=True)
             else:
                 t += editor.template(template["sent"],
                                      labels=template["label"],
@@ -91,7 +96,7 @@ class Testsuite:
         return t
     
     @classmethod
-    def get_template(cls, template, task):
+    def get_template(cls, template, task, lc_desc):
         template_list = list()
         template_values = dict()
         input_sent = template["input"]
@@ -108,29 +113,39 @@ class Testsuite:
         return {
             "sent": Utils.detokenize(template_list), #" ".join(template_list),
             "values": template_values,
-            "label": cls.map_labels(task, template["label"])
+            "label": cls.map_labels(task, template["label"], lc_desc),
+            'is_multiple_label_types': True if lc_desc==Macros.OUR_LC_LIST[-1] else False
         }
     
     @classmethod
-    def get_templates(cls, nlp_task, dataset, selection_method, num_seeds, logger):
+    def get_templates(cls, nlp_task, dataset, selection_method, num_seeds, num_trials, logger):
         task = nlp_task
+        if num_seeds<0:
+            template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset}_{selection_method}"
+            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{task}_{dataset}_{selection_method}.json"
+        else:
+            template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset}_{selection_method}_{num_seeds}seeds"
+            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{task}_{dataset}_{selection_method}_{num_seeds}seeds.json"
+        # end if
         # selection_method = 'RANDOM' if is_random_select else 'PROB'
-        new_input_dicts = Template.get_new_inputs(
-            Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset}_{selection_method}.json",
-            task,
-            dataset,
-            n=num_seeds,
-            selection_method=selection_method,
-            logger=logger
-        )
+        # new_input_dicts = Template.get_new_inputs(
+        #     Macros.result_dir / cfg_res_file_name,
+        #     task,
+        #     dataset,
+        #     num_seeds=num_seeds,
+        #     selection_method=selection_method,
+        #     logger=logger
+        # )
         seeds_per_task = list()
         exps_per_task = list()
         seed_templates_per_task = list()
         exp_templates_per_task = list()
         transform_reqs = list()
+        new_input_dicts = Utils.read_json(Macros.result_dir / cfg_res_file_name)
         for t_i in range(len(new_input_dicts)):
-            req_cksum = Utils.get_cksum(new_input_dicts[t_i]["requirement"]["description"])
-            res_dir = Macros.result_dir/ f"templates_{task}_{dataset}_{selection_method}"
+            lc_desc = new_input_dicts[t_i]["requirement"]["description"]
+            req_cksum = Utils.get_cksum(lc_desc)
+            res_dir = Macros.result_dir / template_out_dir
             # if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))):
             #     Template.get_templates(
             #         num_seeds=num_seeds,
@@ -139,13 +154,13 @@ class Testsuite:
             #         selection_method=selection_method
             #     )
             # # end if
-
+            
             transform_reqs.append(new_input_dicts[t_i]["requirement"]["transform"])
-
+            
             seed_res = list()
             seeds = Utils.read_json(res_dir / f"seeds_{req_cksum}.json")
             for sd in seeds:
-                sd_res = cls.get_template(sd, task)
+                sd_res = cls.get_template(sd, task, lc_desc)
                 seed_res.append(sd_res)
             # end for
             seeds_per_task.append({
@@ -158,7 +173,7 @@ class Testsuite:
             if exps is not None:
                 exp_res = list()
                 for e in exps:
-                    e_res = cls.get_template(e, task)
+                    e_res = cls.get_template(e, task, lc_desc)
                     exp_res.append(e_res)
                 # end for
                 exps_per_task.append({
@@ -207,23 +222,35 @@ class Testsuite:
                              res_dir,
                              logger):
         for t_i, templates_per_req in enumerate(seed_dicts):
-            test_cksum = Utils.get_cksum(templates_per_req["description"])
+            lc_desc = templates_per_req["description"]
+            test_cksum = Utils.get_cksum(lc_desc)
             if not os.path.exists(str(res_dir / f'{task}_testsuite_seeds_{test_cksum}.pkl')):
-                logger.print(f"{task}::SEED::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
+                logger.print(f"{task}::SEED::<{lc_desc}>::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
                 for template in templates_per_req["templates"]:
                     t = cls.add_template(t, editor, template)
                 # end for
-                
-                if callable(templates_per_req["templates"][0]['label']):
-                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
+
+                if lc_desc==Macros.OUR_LC_LIST[-1] and \
+                   templates_per_req["templates"][0]['is_multiple_label_types']: # Parsing sentiment in (question, no) form
+                    allow_for_neutral = lambda x, pred, _, label, _2 : pred!=0 if label==1 else pred==label
+                    test = MFT(t.data,
+                               Expect.single(allow_for_neutral),
+                               labels=t.labels,
+                               templates=t.templates)
                 else:
-                    test = MFT(**t)
+                    if callable(templates_per_req["templates"][0]['label']):
+                        test = MFT(t.data,
+                                   Expect.single(templates_per_req["templates"][0]['label']),
+                                   templates=t.templates)
+                    else:
+                        test = MFT(**t)
+                    # end if
                 # end if
                 suite.add(test,
-                          name=f"{task}::SEED::"+templates_per_req["description"],
+                          name=f"{task}::SEED::{lc_desc}",
                           capability=templates_per_req["capability"]+"::SEED",
                           description=templates_per_req["description"])
                 num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
@@ -250,7 +277,8 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(exp_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_exps_{test_cksum}.pkl')):
-                logger.print(f"{task}::EXP::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
+                lc_desc = templates_per_req["description"]
+                logger.print(f"{task}::EXP::<{lc_desc}>::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -291,7 +319,8 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(seed_template_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_seed_templates_{test_cksum}.pkl')):
-                logger.print(f"{task}::SEED_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
+                lc_desc = templates_per_req["description"]
+                logger.print(f"{task}::SEED_TEMPS::<{lc_desc}>::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -331,7 +360,8 @@ class Testsuite:
             test_cksum = Utils.get_cksum(templates_per_req["description"])
             if not os.path.exists(str(res_dir / f'{task}_testsuite_exp_templates_{test_cksum}.pkl')) and \
                any(templates_per_req["templates"]):
-                logger.print(f"{task}::EXP_TEMPS::<"+templates_per_req["description"]+f">::{test_cksum}::", end='')
+                lc_desc = templates_per_req["description"]
+                logger.print(f"{task}::EXP_TEMPS::<{lc_desc}>::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -369,9 +399,15 @@ class Testsuite:
                                seed_template_dicts,
                                exp_template_dicts,
                                transform_reqs,
+                               num_seeds,
+                               num_trials,
                                logger):
         # selection_method = 'RANDOM' if is_random_select else 'PROB'
-        res_dir = Macros.result_dir / f"test_results_{task}_{dataset}_{selection_method}"
+        if num_seeds<0:
+            res_dir = Macros.result_dir / f"test_results{num_trials}_{task}_{dataset}_{selection_method}"
+        else:
+            res_dir = Macros.result_dir / f"test_results{num_trials}_{task}_{dataset}_{selection_method}_{num_seeds}seeds"
+        # end if
         res_dir.mkdir(parents=True, exist_ok=True)
         cls.write_seed_testsuite(task,
                                  dataset,
@@ -402,13 +438,23 @@ class Testsuite:
         return
 
     @classmethod
-    def write_testsuites(cls, nlp_task, dataset, selection_method, num_seeds, log_file):
+    def write_testsuites(cls, nlp_task, dataset, selection_method, num_seeds, num_trials, log_file):
         logger = Logger(logger_file=log_file,
                         logger_name='testsuite')
         logger.print('Generate Testsuites from Templates ...')
         for task, seed, exp, seed_temp, exp_temp, transform_reqs \
-            in cls.get_templates(nlp_task, dataset, selection_method, num_seeds, logger):
-            Testsuite.write_editor_templates(task, dataset, selection_method, seed, exp, seed_temp, exp_temp, transform_reqs, logger)
+            in cls.get_templates(nlp_task, dataset, selection_method, num_seeds, num_trials, logger):
+            Testsuite.write_editor_templates(task,
+                                             dataset,
+                                             selection_method,
+                                             seed,
+                                             exp,
+                                             seed_temp,
+                                             exp_temp,
+                                             transform_reqs,
+                                             num_seeds,
+                                             num_trials,
+                                             logger)
         # end for
         return
 

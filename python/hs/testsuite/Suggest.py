@@ -7,13 +7,16 @@ from typing import *
 
 import re, os
 import nltk
-# import spacy
+import spacy
 import copy
+import time
 import random
 import numpy as np
+import multiprocessing
 
 from pathlib import Path
 from scipy.special import softmax
+from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 # from nltk.tokenize import word_tokenize as tokenize
 
 import checklist
@@ -25,12 +28,12 @@ from ..utils.Utils import Utils
 # from .cfg.CFG import BeneparCFG
 from .Search import SearchOperator, SENT_DICT
 
-random.seed(Macros.SEED)
 NUM_TOPK = 5
 
 class Suggest:
 
     MASK = Macros.MASK
+    NUM_PROCESSES = Macros.num_processes
 
     @classmethod
     def is_word_suggestion_avail(cls, word_suggest):
@@ -69,14 +72,23 @@ class Suggest:
                             gen_inputs,
                             num_target=10):
         results = dict()
+        # mi_st = time.time()
         masked_inputs = cls.get_masked_inputs(gen_inputs)
-        for m_inp in masked_inputs:
+        # mi_ft = time.time()
+        # print(f"cls.get_word_suggestion::get_masked_inputs:<{round(mi_ft-mi_st,2)} seconds>::")
+        # for_st = time.time()
+        for m_inp_i, m_inp in enumerate(masked_inputs):
+            # ws_st = time.time()
             word_suggest = editor.suggest(m_inp, return_score=True, remove_duplicates=True)
             word_suggest = sorted(word_suggest, key=lambda x: x[-1], reverse=True)[:num_target]
             word_suggest = [ws for ws in word_suggest if cls.is_word_suggestion_avail(ws[0])]
             word_suggest = cls.remove_duplicates(word_suggest)
             results[m_inp] = word_suggest
+            # ws_ft = time.time()
+            # print(f"cls.get_word_suggestion::masked_inputs{m_inp_i}::{m_inp}::<{round(ws_ft-ws_st,2)} seconds>::")
         # end for
+        # for_ft = time.time()
+        # print(f"cls.get_word_suggestion::masked_inputs::for_loop<{round(for_ft-for_st,2)} seconds>::")
         return results
     
     @classmethod
@@ -177,7 +189,7 @@ class Suggest:
         return False
     
     @classmethod
-    def eval_sug_words_by_req(cls, new_input, requirement, label, nlp):
+    def eval_sug_words_by_req(cls, new_input, requirement, label):
         if requirement['transform_req'] is not None:
             _requirement = {
                 'capability': requirement['capability'],
@@ -187,15 +199,13 @@ class Suggest:
         else:
             _requirement = requirement
         # end if
-        temp = Utils.tokenize(new_input) if type(new_input)==str else new_input
         search_obj = SearchOperator(_requirement)
-        search_res = search_obj.search([{
-            'post_id': '1',
-            'tokens': Utils.tokenize(new_input) if type(new_input)==str else new_input,
-            'label': label
-        }], nlp)
-        # search_res = search_obj.search([('1', new_input, label)], nlp)
+        search_res = search_obj.search([('1', new_input, label)])
         return any(search_res)
+        # if len(search_res)>0:
+        #     return True
+        # # end if
+        # return False
 
     @classmethod
     def eval_sug_words_by_exp_req(cls, nlp, word_suggest, requirement):
@@ -209,7 +219,7 @@ class Suggest:
             for r in requirement['expansion']:
                 is_req_met = False
                 if len(r.split())>1:
-                    is_req_met = ws in SENT_DICT[r.join('_')]
+                    is_req_met = ws in SENT_DICT[r]
                 else:
                     if r in list(Macros.sa_label_map.keys()):
                         sentiment_list = [key for key in SENT_DICT.keys() if ws in SENT_DICT[key]]
@@ -268,9 +278,20 @@ class Suggest:
         return sent_probs
     
     @classmethod
-    def get_new_inputs(cls, nlp, generator, gen_inputs, selection_method, num_target=10, logger=None):
-        editor = generator.editor
+    def get_new_inputs(cls,
+                       nlp,
+                       editor,
+                       generator,
+                       gen_inputs,
+                       selection_method,
+                       num_target=10,
+                       logger=None):
+        # editor = generator.editor
+        # ws_st = time.time()
         word_suggestions = cls.get_word_suggestion(editor, gen_inputs, num_target=3*num_target)
+        # ws_ft = time.time()
+        # print(f"cls.get_new_inputs::cls.get_word_suggestion<{round(ws_ft-ws_st,2)} seconds>:: ")
+        # mw_st = time.time()
         for g_i in range(len(gen_inputs)):
             gen_input = gen_inputs[g_i]
             masked_input, mask_pos = gen_input['masked_input']
@@ -309,20 +330,22 @@ class Suggest:
             # end if
             gen_inputs[g_i] = gen_input
         # end for
-        gen_inputs = [g for g in gen_inputs if any(g['words_suggest'])]
+        # mw_ft = time.time()
+        # print(f"cls.get_new_inputs::match_word_n_pos<{round(mw_ft-mw_st,2)} seconds>:: ")
+        gen_inputs = [g for g in gen_inputs if g['words_suggest'] is not None]
         num_words_suggest = sum([len(g['words_suggest']) for g in gen_inputs])
-        logger.print(f"{num_words_suggest} words suggestions :: ", end='')
-        return gen_inputs
+        # logger.print(f"{num_words_suggest} words suggestions :: ", end='')
+        return gen_inputs, num_words_suggest
 
     @classmethod
     def eval_word_suggest(cls, nlp, gen_input, label: str, requirement):
         results = list()
         masked_input, mask_pos = gen_input['masked_input']
-        if any(gen_input['words_suggest']):
+        if gen_input['words_suggest']:
             for w_sug in gen_input['words_suggest']:
                 input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
                 # check sentence and expansion requirements
-                if cls.eval_sug_words_by_req(input_candid, requirement, label, nlp):
+                if cls.eval_sug_words_by_req(input_candid, requirement, label):
                     if cls.eval_sug_words_by_exp_req(nlp, w_sug, requirement):
                         results.append((masked_input,
                                         gen_input['cfg_from'],
@@ -334,7 +357,8 @@ class Suggest:
                     # end if
                 # end if
             # end for
-        # else:
+        # end if
+        # if not gen_input['words_suggest']:
         #     results.append((masked_input,
         #                     gen_input['cfg_from'],
         #                     gen_input['cfg_to'],
@@ -342,15 +366,40 @@ class Suggest:
         #                     None,
         #                     None,
         #                     label))
-        # end if
+        # else:
+        #     for w_sug in gen_input['words_suggest']:
+        #         input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
+        #         # check sentence and expansion requirements
+        #         if cls.eval_sug_words_by_req(input_candid, requirement, label):
+        #             if cls.eval_sug_words_by_exp_req(nlp, w_sug, requirement):
+        #                 results.append((masked_input,
+        #                                 gen_input['cfg_from'],
+        #                                 gen_input['cfg_to'],
+        #                                 mask_pos,
+        #                                 w_sug,
+        #                                 input_candid,
+        #                                 label))
+        #             # end if
+        #         # end if
+        #     # end for
+        # # end if
         return results
 
     @classmethod
-    def get_exp_inputs(cls, nlp, generator, gen_inputs, seed_label, requirement, selection_method, num_target=10, logger=None):
+    def get_exp_inputs(cls,
+                       editor,
+                       generator,
+                       gen_inputs,
+                       seed_label,
+                       requirement,
+                       selection_method,
+                       num_target=10,
+                       logger=None):
         # get the word suggesteion at the expended grammar elements
         new_input_results = list()
-        
-        gen_inputs = cls.get_new_inputs(
+        nlp = spacy.load('en_core_web_md')
+        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+        gen_inputs, num_words_orig_suggest = cls.get_new_inputs(
             nlp,
             editor,
             generator,
@@ -359,6 +408,7 @@ class Suggest:
             selection_method=selection_method,
             logger=logger
         )
+        # ews_st = time.time()
         for g_i in range(len(gen_inputs)):
             eval_results = cls.eval_word_suggest(nlp,
                                                  gen_inputs[g_i],
@@ -372,9 +422,146 @@ class Suggest:
                 # print(".", end="")
             # end if
         # end for
+        # ews_ft = time.time()
+        # print(f"cls.get_exp_inputs::eval_word_suggest<{round(ews_ft-ews_st,2)} seconds>:: ")
         # print()
-        return new_input_results
+        return new_input_results, num_words_orig_suggest
 
+
+    @classmethod
+    def get_word_sug_parallel(cls,
+                              editor,
+                              ms_i,
+                              masked_sent,
+                              num_target,
+                              no_mask_key,
+                              logger):
+        st = time.time()
+        pcs_id = multiprocessing.current_process().ident
+        gpu_id = multiprocessing.current_process().name.split('-')[-1]
+        word_suggest = list()
+        if masked_sent!=no_mask_key:
+            word_suggest = editor.suggest(masked_sent,
+                                          return_score=True,
+                                          remove_duplicates=True)[:3*num_target]
+            word_suggest = [
+                ws for ws in word_suggest
+                if cls.is_word_suggestion_avail(ws[0])
+            ]
+            word_suggest = cls.remove_duplicates(word_suggest)
+        # end if
+        ft = time.time()
+        if logger is not None:
+            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::MASKED_SENT_{ms_i}::{masked_sent}::{round(ft-st,3)}sec::pcs{pcs_id}::gpu{gpu_id}")
+        # end if
+        return {
+            'masked_sent': masked_sent,
+            'word_sug': word_suggest
+        }
+        
+    @classmethod
+    def get_word_suggestions_over_seeds(cls,
+                                        editor: Editor,
+                                        masked_sents: Dict,
+                                        num_target=10,
+                                        selection_method=None,
+                                        no_mask_key='<no_mask>',
+                                        logger=None):
+        st = time.time()
+        results = list()
+        args = list()
+        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
+        for ms_i, masked_sent in enumerate(masked_sents.keys()):
+            args.append((editor, ms_i, masked_sent, num_target, no_mask_key, logger))
+        # end for
+
+        results = pool.starmap_async(cls.get_word_sug_parallel,
+                                     args,
+                                     chunksize=len(masked_sents.keys())//cls.NUM_PROCESSES).get()
+        for r in results:
+            masked_sents[r['masked_sent']]['word_sug'] = r['word_sug']
+        # end for
+        pool.close()
+        pool.join()
+        ft = time.time()
+        if logger is None:
+            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::{round(ft-st,3)}sec")
+        # end if
+        return masked_sents
+
+    @classmethod
+    def eval_word_suggestions_over_seeds(cls,
+                                         masked_inputs_w_word_sug,
+                                         req,
+                                         num_target=Macros.num_suggestions_on_exp_grammer_elem,
+                                         selection_method=None,
+                                         no_mask_key='<no_mask>',
+                                         logger=None):
+        st = time.time()
+        nlp = spacy.load('en_core_web_md')
+        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+        exp_results = dict()
+        for masked_sent in masked_inputs_w_word_sug.keys():
+            word_sug = masked_inputs_w_word_sug[masked_sent]['word_sug']
+            seed_objs = masked_inputs_w_word_sug[masked_sent]['inputs']
+            for seed, seed_label, seed_score, cfg_seed, cfg_from, cfg_to, mask_pos in seed_objs:
+                results = list()
+                if masked_sent!=no_mask_key:
+                    matched_words_sug = cls.match_word_n_pos(
+                        nlp,
+                        word_sug,
+                        masked_sent,
+                        mask_pos
+                    )
+                    if selection_method.lower()=='random':
+                        if len(matched_words_sug)>num_target:
+                            idxs = np.random.choice(len(matched_words_sug), num_target, replace=False)
+                            word_suggest = [matched_words_sug[i][0] for i in idxs]
+                        else:
+                            word_suggest = [ws[0] for ws in matched_words_sug]
+                        # end if
+                    elif selection_method.lower()=='bertscore':
+                        if len(matched_words_sug)>num_target:
+                            word_suggest = sorted(matched_words_sug,
+                                                  key=lambda x: x[-1],
+                                                  reverse=True)[:num_target]
+                        # end if
+                        word_suggest = [ws[0] for ws in matched_words_sug]
+                    else: # noselect
+                        word_suggest = [ws[0] for ws in matched_words_sug]
+                    # end if
+                    for w_sug in word_suggest:
+                        input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
+                        # check sentence and expansion requirements
+                        if cls.eval_sug_words_by_req(input_candid, req, seed_label):
+                            if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
+                                results.append((masked_sent,
+                                                cfg_from,
+                                                cfg_to,
+                                                mask_pos,
+                                                w_sug,
+                                                input_candid))
+                            # end if
+                        # end if
+                    # end for
+                # end if
+                if seed not in exp_results.keys():
+                    exp_results[seed] = {
+                        'cfg_seed': cfg_seed,
+                        'label': seed_label,
+                        'label_score': seed_score,
+                        'exp_inputs': results
+                    }
+                else:
+                    exp_results[seed]['exp_inputs'].extend(results)
+                # end if
+            # end for
+        # end for
+        ft = time.time()
+        if logger is not None:
+            logger.print(f"\tSuggest.eval_word_suggestions_over_seeds::{round(ft-st,3)}sec")
+        # end if
+        return exp_results
         
 
 # def main():

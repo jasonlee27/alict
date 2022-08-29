@@ -139,6 +139,26 @@ class BeneparCFG:
         return cfg_dict
 
     @classmethod
+    def get_seed_cfgs(cls, tokenized_seed_inputs):
+        cfg_dict = None
+        parser = benepar.Parser(cls.benepar_parser_model)
+        input_sents = list()
+        cfg_dicts = list()
+        for s in tokenized_seed_inputs:
+            input_sents.append(benepar.InputSentence(s))
+        # end for
+        docs = parser.parse_sents(input_sents)
+        for d in docs:
+            tree = list(d.sents)[0]
+            cfg = {
+                "tree": tree,
+                "rule": cls.get_cfg_per_tree(tree, {})
+            }
+            cfg_dicts.append(cfg)
+        # end for
+        return cfg_dict
+
+    @classmethod
     def get_word_pos(cls, word):
         parser = cls.load_parser()
         tree = cls.get_tree(parser, word)

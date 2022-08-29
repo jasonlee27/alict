@@ -6,11 +6,14 @@ from typing import *
 import re, os
 import nltk
 import copy
+import time
 # import random
 import numpy
 import spacy
+import multiprocessing
 
 from pathlib import Path
+from tqdm import tqdm
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 from checklist.editor import Editor
 
@@ -25,116 +28,457 @@ from .Synonyms import Synonyms
 from .Search import Search
 from .Suggest import Suggest
 
+import torch.multiprocessing
+torch.multiprocessing.set_sharing_strategy('file_system')
+
 
 class Template:
 
+    NUM_PROCESSES = Macros.num_processes # multiprocessing.cpu_count()
+    
     POS_MAP = {
         "NNP": "NP",
         "NNPS": "NPS",
         "PRP": "PP",
         "PRP$": "PP$"
     }
-
+    
     SEARCH_FUNC = {
-        Macros.hs_task: Search.search_hatespeech
+        Macros.hs_task: Search.search_hatespeech_per_req
     }
+
+
+    @classmethod
+    def get_seed_of_interest(cls, cfg_res_file, cur_req, orig_seeds):
+        if not os.path.exists(str(cfg_res_file)):
+            return -2, orig_seeds
+        # end if
+        template_results = Utils.read_json(cfg_res_file)
+        seeds = list()
+        req_ind_in_result = -2
+        if any(template_results):
+            template_results_saved = [
+                (r_i, r) for r_i, r in enumerate(template_results)
+                if r["requirement"]["description"]==cur_req["description"]
+            ]
+            if not any(template_results_saved):
+                return -1, orig_seeds
+            # end if
+            req_ind_in_result = template_results_saved[0][0]
+            seeds = list()
+            for index, (_id, seed, seed_label, seed_score) in enumerate(orig_seeds):
+                if seed not in template_results_saved[0][1]['inputs'].keys():
+                    seeds.append((_id, seed, seed_label, seed_score))
+                # end if
+            # end for
+        # end if
+        return req_ind_in_result, seeds
+
+    @classmethod
+    def generate_seed_cfg_parallel(cls,
+                                   index,
+                                   seed,
+                                   seed_label,
+                                   seed_score,
+                                   pcfg_ref,
+                                   logger):
+        st_2 = time.time()
+        pcs_id = multiprocessing.current_process().ident
+        gpu_id = multiprocessing.current_process().name.split('-')[-1]
+        generator = Generator(seed, pcfg_ref)
+        gen_inputs = generator.masked_input_generator()
+        masked_input_res = {
+            'seed': seed,
+            'cfg_seed': generator.expander.cfg_seed,
+            'label': seed_label,
+            'label_score': seed_score,
+            'masked_inputs': list()
+        }
+        
+        if any(gen_inputs):
+            for gen_input in gen_inputs:
+                masked_input_res['masked_inputs'].append({
+                    'cfg_from': gen_input['cfg_from'],
+                    'cfg_to': gen_input['cfg_to'],
+                    'masked_input': gen_input['masked_input'] # (_masked_input, mask_pos)
+                })
+            # end for
+        # end if
+        ft_2 = time.time()
+        if logger is not None:
+            logger.print(f"\tTemplate.generate_masked_inputs::SEED_{index}::{seed}|{seed_label}::{round(ft_2-st_2,3)}sec::pcs{pcs_id}::gpu{gpu_id}")
+        # end if
+        return masked_input_res
+        
+    @classmethod
+    def generate_masked_inputs(cls, seeds, pcfg_ref, logger=None):
+        st = time.time()
+        masked_input_res = dict()
+        args = list()
+        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
+        for index, (_id, seed, seed_label) in enumerate(seeds):
+            args.append((index, seed, seed_label, 0., pcfg_ref, logger))
+        # end for    
+        results = pool.starmap_async(cls.generate_seed_cfg_parallel,
+                                     args,
+                                     chunksize=len(seeds)//cls.NUM_PROCESSES).get()
+        for r in results:
+            masked_input_res[r['seed']] = {
+                'cfg_seed': r['cfg_seed'],
+                'label': r['label'],
+                'label_score': r['label_score'],
+                'masked_inputs': r['masked_inputs']
+            }
+        # end for
+        pool.close()
+        pool.join()
+        ft = time.time()
+        if logger is not None:
+            logger.print(f"\tTemplate.generate_masked_inputs::{round(ft-st,3)}sec")
+        # end if
+        return masked_input_res
+
+    @classmethod
+    def get_word_suggestions(cls,
+                             masked_inputs,
+                             editor,
+                             num_target=Macros.num_suggestions_on_exp_grammer_elem,
+                             selection_method=None,
+                             logger=None):
+        st = time.time()
+        # collect all masked sents
+        masked_sents: Dict = dict()
+        no_mask_key = '<no_mask>'
+        for index, seed in enumerate(masked_inputs.keys()):
+            seed_label = masked_inputs[seed]['label']
+            label_score = masked_inputs[seed]['label_score']
+            cfg_seed = masked_inputs[seed]['cfg_seed']
+            if not any(masked_inputs[seed]['masked_inputs']):
+                if no_mask_key not in masked_sents.keys():
+                    masked_sents[no_mask_key] = {
+                        'inputs': list(),
+                        'word_sug': list()
+                    }
+                # end if
+                masked_sent_obj = (
+                    seed,
+                    seed_label,
+                    label_score,
+                    cfg_seed,
+                    None,
+                    None,
+                    None
+                )
+                if masked_sent_obj not in masked_sents[no_mask_key]['inputs']:
+                    masked_sents[no_mask_key]['inputs'].append(masked_sent_obj)
+                # end if
+            else:
+                for m in masked_inputs[seed]['masked_inputs']:
+                    cfg_from = m['cfg_from']
+                    cfg_to = m['cfg_to']
+                    key = m['masked_input'][0] # m['masked_input'] = (_masked_input, mask_pos)
+                    if key not in masked_sents.keys():
+                        masked_sents[key] = {
+                            'inputs': list(),
+                            'word_sug': list()
+                        }
+                    # end if
+                    masked_sent_obj = (
+                        seed,
+                        seed_label,
+                        label_score,
+                        cfg_seed,
+                        cfg_from,
+                        cfg_to,
+                        m['masked_input'][1]
+                    )
+                    if masked_sent_obj not in masked_sents[key]['inputs']:
+                        masked_sents[key]['inputs'].append(masked_sent_obj)
+                    # end if
+                # end for
+            # end if
+        # end for
+
+        # get word suggestions
+        masked_sents = Suggest.get_word_suggestions_over_seeds(editor,
+                                                               masked_sents,
+                                                               num_target=num_target,
+                                                               selection_method=selection_method,
+                                                               no_mask_key=no_mask_key,
+                                                               logger=logger)
+        ft = time.time()
+        if logger is not None:
+            logger.print(f"\tTemplate.get_word_suggestions::{round(ft-st,3)}sec")
+        # end if
+        return masked_sents
     
     @classmethod
-    def generate_inputs(cls, task, dataset, n=None, save_to=None, selection_method=None, logger=None):
-        logger.print("Analyzing CFG ...")
-        reqs = Requirements.get_requirements(task)
-        nlp = spacy.load('en_core_web_md')
-        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        results = list()
-        if os.path.exists(save_to):
-            results = Utils.read_json(save_to)
-            _reqs = list()
-            for req in reqs:
-                if not any([True for r in results if r["requirement"]["description"]==req["description"]]):
-                    _reqs.append(req)
-                # end if
-            # end for
-            reqs = _reqs
+    def generate_exp_inputs(cls,
+                            editor,
+                            req,
+                            cksum_val,
+                            index,
+                            seed_id,
+                            seed,
+                            seed_label,
+                            seed_score,
+                            pcfg_ref,
+                            selection_method,
+                            logger):
+        st = time.time()
+        generator = Generator(seed, pcfg_ref)
+        gen_inputs = generator.masked_input_generator()
+        num_syntax_exps = len(gen_inputs)
+        new_input_results = list()
+        num_words_orig_suggest = 0
+        if any(gen_inputs):
+            # sug_st = time.time()
+            new_input_results, num_words_orig_suggest = Suggest.get_exp_inputs(
+                editor,
+                generator,
+                gen_inputs,
+                seed_label,
+                req,
+                num_target=Macros.num_suggestions_on_exp_grammer_elem,
+                selection_method=selection_method,
+                logger=logger
+            )
+            # sug_ft = time.time()
+            # print(f"{index} :: Suggest<{round(sug_ft-sug_st,2)} seconds>:: ")
         # end if
-
-        pcfg_ref = RefPCFG()
-        editor = Editor()
-        for selected in cls.SEARCH_FUNC[task](reqs, dataset, nlp):
-            exp_inputs = dict()
-            print_str = '>>>>> REQUIREMENT:'+selected["requirement"]["description"]
-            num_selected_inputs = len(selected["selected_inputs"])
-            logger.print(f"{print_str}\n\t{num_selected_inputs} inputs are selected.")
-            index = 1
-            num_seed_for_exp = 0
-            tot_num_exp = 0
-            # for _id, seed, seed_label, seed_score in selected["selected_inputs"][:Macros.max_num_seeds]:
-            for _id, seed, seed_label in selected["selected_inputs"][:Macros.max_num_seeds]:
-                if type(seed)==list:
-                    seed = Utils.detokenize(seed)
-                # end if
-                logger.print(f"\tSELECTED_SEED {index}: {_id}, {seed}, {seed_label} :: ", end='')
-                index += 1
-                generator = Generator(seed, pcfg_ref)
-                gen_inputs = generator.masked_input_generator()
-                logger.print(f"{len(gen_inputs)} syntax expansions :: ", end='')
-                new_input_results = list()
-                tot_num_exp += len(gen_inputs)
-                if any(gen_inputs):
-                    new_input_results = Suggest.get_exp_inputs(
+        exp_inputs = {
+            'cfg_seed': generator.expander.cfg_seed,
+            'exp_inputs': new_input_results,
+            'label': seed_label,
+            'label_score': seed_score
+        }
+        ft = time.time()
+        logger.print(f"\tREQUIREMENT::{cksum_val}::SELECTED_SEED_{index}::{seed_id}, {seed}, {seed_label}, {seed_score}::{num_syntax_exps} syntax expansions::{num_words_orig_suggest} words suggestions::{len(new_input_results)} expansions generated::{round(ft-st,2)}sec::pid{os.getpid()}")
+        return {
+            'seed': seed,
+            'cfg_seed': generator.expander.cfg_seed,
+            'exp_inputs': new_input_results,
+            'label': seed_label,
+            'label_score': seed_score
+        }
+    
+    @classmethod
+    def generate_inputs(cls,
                         nlp,
+                        task,
+                        req,
+                        pcfg_ref,
                         editor,
-                        generator,
-                        gen_inputs,
-                        seed_label,
-                        selected["requirement"],
-                        num_target=Macros.num_suggestions_on_exp_grammer_elem,
-                        selection_method=selection_method,
-                        logger=logger
-                    )
-                # end if
-                
-                logger.print(f"{len(new_input_results)} word suggestion by req")
-                exp_inputs[seed] = {
-                    "cfg_seed": generator.expander.cfg_seed,
-                    "exp_inputs": new_input_results,
-                    "label": seed_label
-                }
-            # end for
-            logger.print(f"Total {tot_num_exp} syntactical expansion identified in the requirement out of {num_selected_inputs} seeds")
-            results.append({
-                "requirement": selected["requirement"],
-                "inputs": exp_inputs
+                        dataset,
+                        cfg_res_file,
+                        num_seeds=None,
+                        selection_method=None,
+                        logger=None):
+        st = time.time()
+        # generate seeds
+        selected = cls.SEARCH_FUNC[task](req, dataset, nlp)
+        seeds = selected['selected_inputs'][:num_seeds] if num_seeds>0 else selected['selected_inputs']
+        req_i, seeds = cls.get_seed_of_interest(cfg_res_file, req, seeds)
+        if not any(seeds):
+            return
+        # end if
+        cksum_val = Utils.get_cksum(selected['requirement']['description'])
+        num_selected_inputs = len(selected['selected_inputs'])
+        print_str = f">>>>> REQUIREMENT::{cksum_val}::"+selected['requirement']['description']
+        if logger is not None:
+            logger.print(f"{print_str}\n\t{len(seeds)} inputs are selected out of {num_selected_inputs}.")
+        # end if
+        index = 0
+        num_seed_for_exp = 0
+        tot_num_exp = 0
+        exp_inputs = dict()
+        exp_results = list()
+
+        # anlyze cfg and get masked input for all seeds of interest
+        masked_inputs = cls.generate_masked_inputs(seeds,
+                                                   pcfg_ref,
+                                                   logger=logger)
+
+        # get the suggested words for the masked inputs using bert:
+        num_target=Macros.num_suggestions_on_exp_grammer_elem
+        masked_inputs_w_word_sug = cls.get_word_suggestions(masked_inputs,
+                                                            editor,
+                                                            num_target=num_target,
+                                                            selection_method=selection_method,
+                                                            logger=logger)
+        
+        # validate word suggestion
+        exp_results = Suggest.eval_word_suggestions_over_seeds(masked_inputs_w_word_sug,
+                                                               req,
+                                                               num_target=num_target,
+                                                               selection_method=selection_method,
+                                                               logger=logger)
+                  
+        if req_i==-2: # file not exists
+            template_results = list()
+            template_results.append({
+                'requirement': req,
+                'inputs': dict()
             })
-            # write raw new inputs for each requirement
-            Utils.write_json(results, save_to, pretty_format=True)
-            print_str = '<<<<< REQUIREMENT:'+selected["requirement"]["description"]
-            logger.print(print_str)
+            req_i = -1
+        elif req_i==-1: # file exists but has no results about the lc under analysis
+            template_results = Utils.read_json(cfg_res_file)
+            template_results.append({
+                'requirement': req,
+                'inputs': dict()
+            })
+        else:
+            template_results = Utils.read_json(cfg_res_file)
+        # end if
+        for seed in exp_results.keys():
+            template_results[req_i]['inputs'][seed] = {
+                'cfg_seed': exp_results[seed]['cfg_seed'],
+                'exp_inputs': exp_results[seed]['exp_inputs'],
+                'label': exp_results[seed]['label'],
+                'label_score': exp_results[seed]['label_score']
+            }
         # end for
         
-        # # write raw new inputs
-        Utils.write_json(results, save_to, pretty_format=True)
-        logger.print('**********')
-        return results
+        # write batch results into result file
+        Utils.write_json(template_results, cfg_res_file, pretty_format=True)
+        ft = time.time()
+        logger.print(f"<<<<< REQUIREMENT::{cksum_val}::"+selected["requirement"]["description"]+f"{round(ft-st,2)}sec")
+        
+        # args = list()
+        # for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
+        #     if seed not in template_results_saved[0]['inputs'].keys():
+        #         args.append((editor,
+        #                      selected['requirement'],
+        #                      cksum_val,
+        #                      index+1,
+        #                      _id,
+        #                      seed,
+        #                      seed_label,
+        #                      seed_score,
+        #                      pcfg_ref,
+        #                      selection_method,
+        #                      logger))
+        #     # end if
+        # # end for
+        # batch_size = 50
+        # num_batches = len(args) // batch_size
+        # pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
+        # for b_i in tqdm(range(num_batches)):
+        #     batch_from = b_i*batch_size
+        #     batch_to = (b_i+1)*batch_size if b_i+1<num_batches else len(args)
+        #     batch_args = args[batch_from:batch_to]
+            
+        #     exp_results = pool.starmap_async(cls.generate_exp_inputs,
+        #                                      batch_args,
+        #                                      chunksize=len(seeds)//cls.NUM_PROCESSES).get()
+            
+        #     template_results = Utils.read_json(cfg_res_file)
+        #     ind = [
+        #         tr_i
+        #         for tr_i, tr in enumerate(template_results)
+        #         if tr['requirement']['description']==req['description']
+        #     ]
+            
+        #     for r in exp_results:
+        #         # r = _r.get()
+        #         if any(ind):
+        #             _ind = ind[0]
+        #             template_results[_ind]['inputs'][r['seed']] = {
+        #                 'cfg_seed': r['cfg_seed'],
+        #                 'exp_inputs': r['exp_inputs'],
+        #                 'label': r['label'],
+        #                 'label_score': r['label_score']
+        #             }
+        #         else:
+        #             template_results.append({
+        #                 'requirement': req,
+        #                 'inputs': {
+        #                     r['seed']: {
+        #                         'cfg_seed': r['cfg_seed'],
+        #                         'exp_inputs': r['exp_inputs'],
+        #                         'label': r['label'],
+        #                         'label_score': r['label_score']
+        #                     }
+        #                 }
+        #             })
+        #         # end if
+        #     # end for
+        #     tot_num_exp += len(exp_inputs)
+        #     # write batch results into result file
+        #     Utils.write_json(template_results, cfg_res_file, pretty_format=True)            
+        # # end for
+        # pool.close()
+        # pool.join()
+        # ft = time.time()
+        # logger.print(f"\tREQUIREMENT::{cksum_val}::Total {tot_num_exp} syntactical expansions identified in the requirement out of {num_selected_inputs} seeds")
+        # logger.print(f"<<<<< REQUIREMENT::{cksum_val}::"+selected["requirement"]["description"]+f"{round(ft-st,2)}sec")
+        # return {
+        #     'requirement': selected["requirement"],
+        #     'inputs': exp_inputs
+        # }
+        return
     
     @classmethod
     def get_new_inputs(cls,
-                       input_file,
+                       nlp,
+                       cfg_res_file,
                        nlp_task,
                        dataset_name,
-                       n=None,
+                       num_seeds=None,
                        selection_method=None,
                        logger=None):
         # if os.path.exists(input_file):
         #     return Utils.read_json(input_file)
         # # end if
-        return cls.generate_inputs(
-            task=nlp_task,
-            dataset=dataset_name,
-            n=n,
-            save_to=input_file,
-            selection_method=selection_method,
-            logger=logger
-        )
+        logger.print("Analyzing CFG ...")
+        reqs = Requirements.get_requirements(nlp_task)
+        editor = Editor()
+        pcfg_ref = RefPCFG()
+        # results = list()
+        # args = list()
+        # if os.path.exists(input_file):
+        #     template_results = Utils.read_json(input_file)
+        #     _reqs = list()
+        #     for req in reqs:
+        #         req_saved = [
+        #             r for r in template_results
+        #             if r["requirement"]["description"]==req["description"]
+        #         ]
+        #         selected = cls.SEARCH_FUNC[nlp_task](req, dataset_name)
+        #         req['num_seeds'] = len(selected['selected_inputs'])
+        #         if not any(req_saved):
+        #             _reqs.append(req)
+        #         else:
+        #             num_exps_saved = len(req_saved[0]['inputs'].keys())
+        #             if num_exps_saved<req['num_seeds']:
+        #                 _reqs.append(req)
+        #             # end if
+        #         # end if
+        #         del selected
+        #     # end for
+        #     reqs = _reqs
+        # # end if
+        
+        # # sort reqs from smallest number of seeds to largest
+        # reqs = sorted(reqs, key=lambda x: x['num_seeds'])
+        for req in reqs:
+            cls.generate_inputs(nlp,
+                                nlp_task,
+                                req,
+                                pcfg_ref,
+                                editor,
+                                dataset_name,
+                                cfg_res_file,
+                                num_seeds=num_seeds,
+                                selection_method=selection_method,
+                                logger=logger)
+            # template_results.append(req_results)
+            # write raw new inputs for each requirement
+            # Utils.write_json(results, input_file, pretty_format=True)
+        # end for
+        # Utils.write_json(results, input_file, pretty_format=True)
+        # return input_dicts
+        return
 
     @classmethod
     def find_pos_from_cfg_seed(cls, token, cfg_seed):
@@ -246,36 +590,47 @@ class Template:
 
     @classmethod
     def get_templates(cls,
-                      num_seeds,
                       nlp_task,
                       dataset_name,
                       selection_method,
+                      num_seeds,
+                      num_trials,
                       log_file):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
-        # Write the template results
-        res_dir = Macros.result_dir/ f"templates_{nlp_task}_{dataset_name}_{selection_method}"
+        if num_seeds<0:
+            template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset_name}_{selection_method}"
+            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}.json"
+        else:
+            template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
+            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+        # end if
+        res_dir = Macros.result_dir / template_out_dir
         res_dir.mkdir(parents=True, exist_ok=True)
         logger = Logger(logger_file=log_file,
                         logger_name='template')
-
+        
         logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg
-        nlp = spacy.load('en_core_web_md')
+        nlp = spacy.load('en_core_web_trf')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        task = nlp_task
+
+        cfg_res_file = Macros.result_dir / cfg_res_file_name
+        # cfg_res_file = Macros.result_dir/f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
         
-        new_input_dicts = cls.get_new_inputs(
-            Macros.result_dir/f"cfg_expanded_inputs_{task}_{dataset_name}_{selection_method}.json",
-            task,
+        cls.get_new_inputs(
+            nlp,
+            cfg_res_file,
+            nlp_task,
             dataset_name,
-            n=num_seeds,
+            num_seeds=num_seeds,
             selection_method=selection_method,
             logger=logger
         )
 
         # Make templates by synonyms
         logger.print("Generate Templates ...")
+        new_input_dicts = Utils.read_json(cfg_res_file)
         prev_synonyms = dict()
         cksum_map_str = ""
         for t_i in range(len(new_input_dicts)):
@@ -283,17 +638,15 @@ class Template:
             inputs_per_req = new_input_dicts[t_i]
             lc_desc = inputs_per_req["requirement"]["description"]
             req_cksum = Utils.get_cksum(lc_desc)
-            cksum_map_str += f"{lc_desc}\t{req_cksum}"
-            if t_i<len(new_input_dicts)-1:
-                cksum_map_str += "\n"
-            # end if
+            cksum_map_str += f"{lc_desc}\t{req_cksum}\n"
             inputs = inputs_per_req["inputs"]
             print_str = '>>>>> REQUIREMENT:'+inputs_per_req["requirement"]["description"]
+            logger.print(print_str)
             seed_inputs, exp_seed_inputs = list(), list()
             seed_templates, exp_templates = list(), list()
             for s_i, seed_input in enumerate(inputs.keys()):
                 logger.print(f"\tSEED {s_i}: {seed_input}")
-                    
+                
                 cfg_seed = inputs[seed_input]["cfg_seed"]
                 label_seed = inputs[seed_input]["label"]
                 exp_inputs = inputs[seed_input]["exp_inputs"]
@@ -311,7 +664,7 @@ class Template:
                             exp_seed_inputs.append({
                                 "input": inp[5],
                                 "place_holder": Utils.tokenize(inp[5]),
-                                "label": inp[6]
+                                "label": label_seed
                             })
                         # end if
                     # end for

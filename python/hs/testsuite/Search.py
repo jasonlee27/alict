@@ -124,6 +124,8 @@ class SearchOperator:
         selected = list()
         word_dict = dict()
         target_words = word_cond.split()
+        _sents = sents.copy()
+        sents_tmp = list()
         for tw in target_words:
             search = re.search("\<([^\<\>]+)\>", tw)
             if search:
@@ -149,13 +151,22 @@ class SearchOperator:
                 # find word
                 word_dict[tw] = [tw.lower()]
             # end if
+            for w in word_dict[tw]:
+                for s in _sents:
+                    if w in s['tokens'] and s not in sents_tmp:
+                        sents_tmp.append(s)
+                    # end if
+                # end for
+            # end for
+            _sents = sents_tmp.copy()
+            sents_tmp = list()
         # end for
         # perturb the words for searching in the dataset
         word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
         search_words = [list(wp.values()) for wp in word_product]
-        
+
         # find any sentences with any search_words
-        for s in sents:
+        for s in _sents:
             for sw in search_words:
                 if Utils.is_a_in_x(sw, s['tokens']):
                     selected.append(s)
@@ -256,13 +267,14 @@ class SearchOperator:
             params = [params]
         # end if
         selected_indices = list()
+        _sents = sents.copy()
         for param in params:
             word_include = param["word"]
             tpos_include = param["POS"]
             
             if word_include is not None:
                 for w in word_include: # AND relationship
-                    _sents = self._search_by_word_include(sents, w, nlp)
+                    _sents = self._search_by_word_include(_sents, w, nlp)
                 # end for
             # end if
         
@@ -500,4 +512,16 @@ class Search:
         # end for
         return
 
-
+    @classmethod
+    def search_hatespeech_per_req(cls, req, dataset, nlp):
+        func = cls.SEARCH_FUNC[Macros.hs_task][dataset]
+        selected = func(req, nlp)
+        if req["transform"] is not None and \
+           dataset!=Macros.datasets[Macros.hs_task][1]:
+            transform_obj = TransformOperator(req)
+            selected = transform_obj.transform(selected)
+        # end if            
+        return {
+            "requirement": req,
+            "selected_inputs": selected
+        }

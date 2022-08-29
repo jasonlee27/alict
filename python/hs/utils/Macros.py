@@ -22,8 +22,10 @@ class Macros:
     FMT_PER = "{:.1%}"
     FMT_FLOAT = "{:,.2f}"
     
-    SEED = 27
+    RAND_SEED = {1: 27, 2: 26, 3: 28} #26(trial2), 27(trial1), 28(trial3)
     MASK = "{mask}"
+
+    num_processes = 1
 
     ## hate speech setting
     hs_task = 'hs'
@@ -49,7 +51,7 @@ class Macros:
     # Testsuite
     num_cfg_exp_elem = -1 # number of syntax suggestions used in Generator
     num_suggestions_on_exp_grammer_elem = 20 # number of word suggestions used in Suggest
-    nsamples = 11000 # 500
+    nsamples = 1000000 # 500
     max_num_seeds = 50 # maximum number of selected sentences
     max_num_sents = 100000 # number of testcase sentences
     max_num_sents_for_perturb = 1000 # number of sentences for perturbation
