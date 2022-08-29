@@ -1,0 +1,149 @@
+%%% defs-code.tex
+%%% Utility Commands for Code Listings
+%%% Version 1.0.2
+
+%%%==========
+%%% COPIED FROM vkuncak/doc/vmcai09/defs.tex
+\definecolor{gray}{RGB}{211,211,211}
+\newcommand{\jbasicstyle}{\small\sffamily} % Style of code
+\newcommand{\textcode}[1]{{#1}}
+\newcommand{\jnumberstyle}{\scriptsize}
+\newcommand{\Hilight}{\makebox[0pt][l]{\color{gray}\rule[-3pt]{0.80\linewidth}{9pt}}}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\makeatletter
+\newenvironment{btHighlight}[1][]
+{\begingroup\tikzset{bt@Highlight@par/.style={#1}}\begin{lrbox}{\@tempboxa}}
+{\end{lrbox}\bt@HL@box[bt@Highlight@par]{\@tempboxa}\endgroup}
+
+\newcommand\btHL[1][]{%
+  \begin{btHighlight}[#1]\bgroup\aftergroup\bt@HL@endenv%
+}
+\def\bt@HL@endenv{%
+  \end{btHighlight}%
+  \egroup
+}
+\newcommand{\bt@HL@box}[2][]{%
+  \tikz[#1]{%
+    \pgfpathrectangle{\pgfpoint{1pt}{0pt}}{\pgfpoint{\wd #2}{\ht #2}}%
+    \pgfusepath{use as bounding box}%
+    \node[anchor=base west, fill=orange!30,outer sep=0pt,inner xsep=1pt, inner ysep=0pt, rounded corners=1pt, minimum height=\ht\strutbox,#1]{\raisebox{1pt}{\strut}\strut\usebox{#2}};
+  }%
+}
+
+\newenvironment{btHighlightLine}[1][]
+{\begingroup\tikzset{bt@HighlightLine@par/.style={#1}}\begin{lrbox}{\@tempboxa}}
+{\end{lrbox}\bt@HLLine@box[bt@HighlightLine@par]{\@tempboxa}\endgroup}
+
+\newcommand\btHLLine[1][]{%
+  \begin{btHighlightLine}[#1]\bgroup\aftergroup\bt@HLLine@endenv%
+}
+\def\bt@HLLine@endenv{%
+  \end{btHighlightLine}%
+  \egroup
+}
+\newcommand{\bt@HLLine@box}[2][]{%
+  \tikz[#1]{%
+    \pgfpathrectangle{\pgfpoint{0pt}{-1pt}}{\pgfpoint{\wd #2}{\ht #2}}%
+    \pgfusepath{use as bounding box}%
+    \node[anchor=base west, fill=orange!30,outer sep=0pt,inner xsep=0pt, inner ysep=0pt, minimum height=\ht\strutbox+3pt, minimum width=4.1cm,#1] (line-bg) {};
+    \node[right = 0 of line-bg.west, outer sep=0pt, inner xsep=0pt, inner ysep=0pt]{\raisebox{0pt}{\strut}\strut\usebox{#2}};
+  }%
+}
+\makeatother
+
+% Disable tikz's error message complaining redefining dollor-sign.  WARNING: this may indeed cause problems but hopefully not
+\makeatletter
+\global\let\tikz@ensure@dollar@catcode=\relax
+\makeatother
+
+
+\lstdefinelanguage{pseudo}
+{
+  morekeywords={},
+  keywordstyle=\bfseries,
+  lineskip=-0.1em,
+  numbers=left, % none for no numbers
+  numberstyle=\jnumberstyle,
+  numbersep=4pt,
+  basicstyle=\jbasicstyle,
+  breaklines=true,
+  breakautoindent=true,
+  tabsize=2,
+  columns=fullflexible,
+  morecomment=*[l][\textsl]{//},
+  mathescape=true,
+  xleftmargin=10pt,
+%  mathescape=false,
+}
+
+\lstdefinelanguage{todo-comment}
+{
+  morekeywords={},
+  keywordstyle=\bfseries,
+  lineskip=-0.1em,
+  numbers=none,
+  basicstyle=\jbasicstyle,
+  breaklines=true,
+  breakautoindent=true,
+  tabsize=2,
+  columns=fullflexible,
+  morecomment=*[l][\textsl]{//},
+  mathescape=true,
+  xleftmargin=-10pt,
+%  mathescape=false,
+}
+
+\lstdefinelanguage{json-pretty}
+{
+  basicstyle=\normalfont\ttfamily,
+  numbers=none,
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=true,
+  breaklines=true,
+  %% frame=single,
+  %% backgroundcolor=\color{gray},
+  literate=
+    *{0}{{{\color{numb}0}}}{1}
+     {1}{{{\color{numb}1}}}{1}
+     {2}{{{\color{numb}2}}}{1}
+     {3}{{{\color{numb}3}}}{1}
+     {4}{{{\color{numb}4}}}{1}
+     {5}{{{\color{numb}5}}}{1}
+     {6}{{{\color{numb}6}}}{1}
+     {7}{{{\color{numb}7}}}{1}
+     {8}{{{\color{numb}8}}}{1}
+     {9}{{{\color{numb}9}}}{1}
+     {:}{{{\color{punct}{:}}}}{1}
+     {,}{{{\color{punct}{,}}}}{1}
+     {\{}{{{\color{delim}{\{}}}}{1}
+     {\}}{{{\color{delim}{\}}}}}{1}
+     {[}{{{\color{delim}{[}}}}{1}
+     {]}{{{\color{delim}{]}}}}{1},
+}
+
+\lstdefinelanguage{python-pretty}
+{
+  language=python,
+  numbers=left,
+  basicstyle=\jbasicstyle,
+  numberstyle=\jnumberstyle,
+  breaklines=true,
+  columns=fullflexible,
+  xleftmargin=16pt,
+  showstringspaces=false,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue}
+}
+
+\lstset{escapeinside={(*@}{@*)}}
+
+\newcommand{\JsonIn}[1]{{\lstinline[language=json-pretty, basicstyle=\small\ttfamily]@#1@}}
+
+%%%==========

@@ -1,0 +1,35 @@
+\begin{algorithm}
+  \caption{Syntax expansion identification algorithm.}
+  \label{alg:diff}
+  \begin{algorithmic}[1]
+    \State \textbf{Input:} Parse trees of seed sentences $S$,
+    reference context-free grammar $R$
+    \State \textbf{Output:} Set of masked sentences $M$
+    \For {each part tree $s$ from $S$}
+      \For {each production $s\_prod$ from $s$}
+        \State $s\_lhs = s\_prod.lhs$
+        \State $s\_rhs = s\_prod.rhs$
+        \For {each $r\_rhs$ from $R[s\_lhs]$}
+          \If {$s\_rhs \subset r\_rhs$}
+            \State $M = M \cup insertMask($r\_rhs-s\_rhs$, s)$
+          \EndIf
+        \EndFor
+      \EndFor
+    \EndFor
+    \State \Return $random(M, k)$
+  \end{algorithmic}
+\end{algorithm}
+
+
+%            \State $parent = seed\_prod.parent$
+%            \State $prob = ref\_prob$
+%            \While {$parent$ is not empty}
+%              \For {$par\_rhs$, $par\_prob$ from $R[parent.lhs]$}
+%                \If {$parent.rhs == par\_rhs$}
+%                  \State $prob = prob \cdot par\_prob$
+%                  \State $parent = parent.parent$
+%                  \State break
+%                \EndIf
+%              \EndFor  
+%            \EndWhile
+%            \State $P.add([ref\_prod, prob])$
