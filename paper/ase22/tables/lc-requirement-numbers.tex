@@ -22,15 +22,12 @@
 \DefMacro{lc_7_desc}{Negated positive with neutral content in the middle}
 \DefMacro{lc_7_search}{\textbf{Search}~pos\_sent=\{length: <20; label: pos\}, neutral\_sent=\{length: <20; label: neutral\}}
 \DefMacro{lc_7_transform}{\textbf{Transform}~seed=\{[`I wouldn't say,', `I do not think,', `I don't agree with,']+[neutral\_sent]+[`,']+[pos\_sent]\}}
-\DefMacro{lc_8_desc}{Author sentiment is more important than others}
+\DefMacro{lc_8_desc}{Author sentiment is more important than of others}
 \DefMacro{lc_8_search}{\textbf{Search}~pos\_sent=\{label:pos\}, neg\_sent=\{label: neg\}}
 \DefMacro{lc_8_transform}{\textbf{Transform}~seed=\{[temp1]+[pos\_sent]+[temp2]+[neg\_sent]\} | \{[temp1]+[neg\_sent]+[temp2]+[pos\_sent]\} where temp1=\{[`Some people think that', `Many people agree with that', `They think that', `You agree with that'], temp2=[`but I think that']\}}
 \DefMacro{lc_9_desc}{Parsing sentiment in (question, yes) form}
 \DefMacro{lc_9_search}{\textbf{Search}~pos\_sent=\{label: pos\}, neg\_sent=\{label: neg\}}
 \DefMacro{lc_9_transform}{\textbf{Transform}~seed=\{[`Do I think that', `Do I agree that']+[pos\_sent | neg\_sent]+[`? yes']\}}
-\DefMacro{lc_10_desc}{Parsing positive sentiment in (question, no) form}
-\DefMacro{lc_10_search}{\textbf{Search}~pos\_sent=\{label: pos\}}
-\DefMacro{lc_10_transform}{\textbf{Transform}~seed=\{[`Do I think that', `Do I agree that']+[pos\_sent]+[`? no']\}}
-\DefMacro{lc_11_desc}{Parsing negative sentiment in (question, no) form}
-\DefMacro{lc_11_search}{\textbf{Search}~neg\_sent=\{label: neg\}}
-\DefMacro{lc_11_transform}{\textbf{Transform}~seed=\{[`Do I think that', `Do I agree that']+[neg\_sent]+[`? no']\}}
+\DefMacro{lc_10_desc}{Parsing sentiment in (question, no) form}
+\DefMacro{lc_10_search}{\textbf{Search}~pos\_sent=\{label:pos\}, neg\_sent=\{label:neg\}}
+\DefMacro{lc_10_transform}{\textbf{Transform}~seed=\{[`Do I think that', `Do I agree that']+[pos\_sent \ neg\_sent]+[`? no']\}}
