@@ -1,0 +1,21 @@
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{figs/coverage.pdf}
+    \vspace{-4mm}
+    \caption{Coverage results of \tool and \Cklst test cases.}
+    \label{fig:coverage}
+\end{figure}
+
+Next, Figure \ref{fig:coverage} shows the coverage results of \tool and \Cklst test cases. The red line represents \tool coverage and the black line represents \Cklst coverage. Each column in Figure \ref{fig:coverage} represents the results for one NLP model. The first row is the \textit{BoundCov} results and the second row is the \textit{SActCov} results.
+
+We made three observations.
+First, for \emph{all} experimental settings (i.e., NLP model and coverage metric), \tool achieves higher coverage than \Cklst. Recall that a higher coverage implies the test cases are more diverse and do not have a similar statistical distribution to the model training data. As a result, a test suite with greater coverage complements the model training data distribution (\ie holdout testing data) better.
+For example, for the first NLP model under test, \tool can achieve a higher coverage than \Cklst with only half the number of test cases.
+This result confirms that \tool can generate more diverse test cases to complement the holdout dataset for testing NLP models.
+
+Second, as the number of test cases increases, the test suite can achieve better coverage. Such observation is intuitive. However, generating a more extensive test suite is not easy, particularly  for \Cklst, which is a manually template-based approach.
+
+Third, for each NLP model, there is no fixed relationship between \textit{BoundCov} and \textit{SActCov}. In other words, while a test suite may produce higher \textit{BoundCov} for some models, the same test suite may get higher \textit{SActCov} for other NLP models.
+Recall that \textit{BoundCov} measures both the upper and lower corner neurons and \textit{SActCov} measures only the upper corner neurons. 
+Such observation implies that the upper and lower corner neurons are distributed unevenly, and measuring only one of them is not enough.

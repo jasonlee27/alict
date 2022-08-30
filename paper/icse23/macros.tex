@@ -1,0 +1,271 @@
+
+%%% macros.tex
+%%% Import packages, define utility commands and define macros
+%%% Version 1.2.0
+
+%%%----------
+%%% Imports
+
+%%% Text Formatting
+\usepackage{microtype}
+\usepackage{xspace}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[normalem]{ulem} % normalem do not replace \emph to underline
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{adjustbox}
+
+%%% Reference, Citation and Link
+\usepackage{hyperref}
+%\usepackage{url}
+\usepackage{breakurl}
+%\usepackage{cite}
+
+%%% Tables
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{ragged2e}
+
+%%% Plots
+\usepackage{caption}
+%\usepackage{subcaption}
+%\usepackage{subfloat}
+%\usepackage{wrapfig}
+\usepackage{subfig}
+
+% Code
+\usepackage{algorithm}
+\usepackage{algpseudocode} 
+\usepackage{listings}
+
+% Tikz Figs
+\usepackage{tikz}
+%\usepackage{pgf-umlsd} % for flow diagram
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{positioning}
+%\usetikzlibrary{shapes}
+
+%%% Miscellaneous
+%\usepackage{flushend} % balance the end of double column document
+\usepackage{datetime} % for getting current date time
+
+\input{defs-logic} % for logic symbols
+\input{defs-code} % for code listings
+
+%%%----------
+%%% Utility Commands
+\newcommand{\XSpace}[1]{}
+\newcommand{\XComment}[1]{}
+\newcommand{\Fix}[1]{\textcolor{red}{#1}}
+%\newcommand{\CR}[2]{\textcolor{blue}{#1}\textcolor{brown}{\sout{#2}}}
+\newcommand{\CR}[2]{#1}
+\newcommand{\EditAdd}[1]{\textcolor{green}{[#1]}}
+\newcommand{\EditRm}[1]{\textcolor{red}{[\sout{#1}]}}
+\newcommand{\EditMod}[2]{\textcolor{red}{[\sout{#1}]}\textcolor{green}{[#2]}}
+\newcommand{\DefMacro}[2]{\expandafter\newcommand\csname rmk-#1\endcsname{#2}}
+\newcommand{\UseMacro}[1]{\csname rmk-#1\endcsname}
+\newcommand{\CfgStmtTableCaptionVSpace}{-5pt}
+\newcommand{\ResultTableCaptionVSpace}{-5pt}
+\newcommand{\ReqTableVSpace}{-5pt}
+\newcommand{\SelfBleuTableVSpace}{-5pt}
+\newcommand{\RetrainDebugTableVSpace}{-5pt}
+\newcommand{\TestResultsTableVSpace}{-5pt}
+
+\newcommand{\romnum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+
+\newcommand{\jl}[1]{\textcolor{teal}{JL: #1}}
+\newcommand{\sw}[1]{\textcolor{purple}{Shiyi: #1}}
+\newcommand{\wy}[1]{\textcolor{blue}{WY: #1}}
+\newcommand{\cm}[1]{\textcolor{red}{Simin: #1}}
+\newcommand{\TODO}[1]{\textcolor{red}{TODO: #1}}
+
+\newcommand{\MyPara}[1]{\vspace{0pt}\noindent\textbf{#1}.}
+\newcommand{\MyParaOnly}[1]{\noindent\textbf{#1}}
+\newcommand{\reducedstrut}{\vrule width 0pt height .9\ht\strutbox depth .9\dp\strutbox\relax}
+\newcommand{\InputWithSpace}[1]{\bgroup\def\arraystretch{1.2}\input{#1}\egroup}
+\newcommand{\Code}[1]{{\ifmmode{\mathtt{#1}}\else$\mathtt{#1}$\fi}}
+\newcommand{\CodeIn}[1]{{\ifmmode{\mathtt{#1}}\else$\mathtt{#1}$\fi}}
+\newcommand{\ColorBack}[1]{%
+  \begingroup
+  \setlength{\fboxsep}{0pt}%
+  \colorbox{purple!20}{\reducedstrut#1\/}%
+  \endgroup
+}
+
+% for table headers
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+\newcolumntype{R}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\def\clap#1{\hbox to 0pt{\hss#1\hss}}
+
+%%% TEXT
+\newcommand{\Title}{Programming Language Representation with Semantic-level Structure}
+
+\newcommand{\TreeSitterURL}{https://github.com/tree-sitter/tree-sitter}
+\newcommand{\Dxp}{DeepXplore}
+\newcommand{\Denas}{DENAS}
+
+\newcommand{\tool}{S$^2$LCT\xspace}
+
+% Sorted alphabetically, ignoring case
+\newcommand{\Model}{Auto-CHECKLIST\xspace}
+\newcommand{\Lc}{Linguistic capability\xspace}
+\newcommand{\lc}{linguistic capability\xspace}
+\newcommand{\lcs}{linguistic capabilities\xspace}
+\newcommand{\Cfg}{Context-free grammar\xspace}
+\newcommand{\cfg}{context-free grammar\xspace}
+\newcommand{\Pcfg}{Probabilistic context-free grammar\xspace}
+\newcommand{\pcfg}{probabilistic context-free grammar\xspace}
+\newcommand{\lm}{langugae model\xspace}
+\newcommand{\lms}{langugae models\xspace}
+\newcommand{\Lm}{Langugae Model\xspace}
+\newcommand{\dl}{deep learning\xspace}
+\newcommand{\Dl}{Deep Learning\xspace}
+\newcommand{\ml}{machine learning\xspace}
+\newcommand{\ML}{Machine Learning\xspace}
+\newcommand{\nl}{natural language\xspace}
+\newcommand{\Nl}{Natural language\xspace}
+\newcommand{\nlp}{natural language processing\xspace}
+\newcommand{\Nlp}{Natural language processing\xspace}
+\newcommand{\Sa}{Sentiment analysis\xspace}
+\newcommand{\sa}{sentiment analysis\xspace}
+\newcommand{\se}{software engineering\xspace}
+\newcommand{\Se}{Software Engineering\xspace}
+\newcommand{\sota}{state-of-the-art\xspace}
+%\newcommand{\Sw}{Software\xspace}
+%\newcommand{\sw}{software\xspace}
+\newcommand{\pos}{part-of-speech\xspace}
+\newcommand{\ho}{holdout\xspace}
+\newcommand{\ie}{i.e.\xspace}
+\newcommand{\eg}{e.g.\xspace}
+\newcommand{\etal}{et al.\xspace}
+
+\newcommand{\Req}{Requirement\xspace}
+\newcommand{\req}{requirement\xspace}
+\newcommand{\Prodr}{Production rule\xspace}
+\newcommand{\prodr}{production rule\xspace}
+\newcommand{\prodrs}{production rules\xspace}
+\newcommand{\lhs}{left-hand side\xspace}
+\newcommand{\rhs}{right-hand side\xspace}
+\newcommand{\mask}{\{MASK\}}
+\newcommand{\SareqExOne}{``Short sentences with neutral adjectives and nouns''\xspace}
+\newcommand{\SareqExTwo}{``Negated positive with neutral content in the middle''\xspace}
+\newcommand{\Sent}{Sentence\xspace}
+\newcommand{\sent}{sentence\xspace}
+\newcommand{\sents}{sentences\xspace}
+\newcommand{\reqs}{requirements\xspace}
+\newcommand{\Pstv}{Positive\xspace}
+\newcommand{\pstv}{positive\xspace}
+\newcommand{\Neu}{Neutral\xspace}
+\newcommand{\neu}{neutral\xspace}
+\newcommand{\Ngtv}{Negative\xspace}
+\newcommand{\ngtv}{negative\xspace}
+\newcommand{\Noun}{Noun\xspace}
+\newcommand{\noun}{noun\xspace}
+\newcommand{\nns}{nouns\xspace}
+\newcommand{\Vb}{Verb\xspace}
+\newcommand{\vb}{verb\xspace}
+\newcommand{\vbs}{verbs\xspace}
+\newcommand{\Adj}{Adjective\xspace}
+\newcommand{\adj}{adjective\xspace}
+\newcommand{\adjs}{adjectives\xspace}
+\newcommand{\selfbleu}{Self-BLEU\xspace}
+
+\newcommand{\Nn}{neural network\xspace}
+\newcommand{\nn}{neural network\xspace}
+\newcommand{\Bert}{BERT-base\xspace}
+\newcommand{\BertAcc}{92.43\%\xspace}
+\newcommand{\Roberta}{RoBERTa-base\xspace}
+\newcommand{\RobertaAcc}{94.04\%\xspace}
+\newcommand{\Dbert}{DistilBERT-base\xspace}
+\newcommand{\DbertAcc}{91.3\%\xspace}
+
+\newcommand{\Cklst}{CHECKLIST\xspace}
+\newcommand{\Trb}{Treebank\xspace}
+\newcommand{\trb}{treebank\xspace}
+\newcommand{\Wsj}{Wall Street Journal\xspace}
+\newcommand{\Nltk}{NLTK\xspace}
+\newcommand{\Spacy}{Spacy\xspace}
+\newcommand{\Wrdnt}{WordNet\xspace}
+\newcommand{\Swn}{SentiWordNet\xspace}
+\newcommand{\Sstt}{SST-2\xspace}
+\newcommand{\spacy}{SpaCy\xspace}
+\newcommand{\bertsamodel}{textattack/bert-base-uncased-SST-2\xspace}
+\newcommand{\robertasamodel}{textattack/bert-base-uncased-SST-2\xspace}
+\newcommand{\disbertsamodel}{distilbert-base-uncased\xspace}
+
+
+%% Table
+\newcommand{\tStatement}{\textbf{Statement Types}}
+\newcommand{\tModel}{\textbf{Models}}
+\newcommand{\tMetric}{\textbf{Metrics}}
+\newcommand{\tLc}{\textbf{Linguistic capability}}
+\newcommand{\tRules}{\textbf{Search rule and transformation template}}
+\newcommand{\tOurNumData}{\textbf{\sharp~Data (\tool)}}
+\newcommand{\tChecklistNumData}{\textbf{\sharp~Data (\Cklst)}}
+\newcommand{\tOurSelfBleuScore}{\textbf{\selfbleu score (\tool)}}
+\newcommand{\tChecklistSelfBleuScore}{\textbf{\selfbleu score (\Cklst)}}
+\newcommand{\tApproach}{\textbf{Approach}}
+\newcommand{\tRetrainlc}{\textbf{RetrainLC}}
+\newcommand{\tEvallc}{\textbf{EvalLC}}
+\newcommand{\tNumfailpass}{\textbf{\#Fail2Pass}}
+\newcommand{\tNumfailbeforeretrain}{\textbf{\#Fail(BeforeRetrain)}}
+\newcommand{\tNumpassbeforeretrain}{\textbf{\#Pass(BeforeRetrain)}}
+\newcommand{\tNumfailafterretrain}{\textbf{\#Fail(AfterRetrain)}}
+\newcommand{\tNumpassafterretrain}{\textbf{\#Pass(AfterRetrain)}}
+\newcommand{\tSentType}{\textbf{Type}}
+\newcommand{\tNumTestCases}{\textbf{\#Test\_Cases}}
+\newcommand{\tAvgLabelCons}{\textbf{Label\_Consistency}}
+\newcommand{\tAvgLCRel}{\textbf{Sent\_Relevancy}}
+\newcommand{\tNumBlSents}{\textbf{Cklst \#TCs}}
+\newcommand{\tNumBlFail}{\textbf{Cklst \#Fails[\%]}}
+\newcommand{\tNumSeeds}{\textbf{\tool\#Seeds}}
+\newcommand{\tNumSeedFail}{\textbf{\tool Seed Fails[\%]}}
+\newcommand{\tNumExps}{\textbf{\tool\#Exps}}
+\newcommand{\tNumExpFail}{\textbf{\tool Exp Fails[\%]}}
+\newcommand{\tNumPasstoFail}{\textbf{\tool\#PassToFail}}
+
+%% Fig Caption
+\newcommand{\OverviewFigCaption}{Overview of \tool.\label{fig:overview}}
+\newcommand{\SearchRequirementExampleFigCaption}{Search requirement
+on the linguistic capability of \SareqExOne.\label{fig:SearchReqEx}}
+\newcommand{\TransformRequirementExampleSubFigCaption}{Transform requirement\label{fig:TransformReqSubEx}}
+\newcommand{\TransformTemplateExampleSubFigCaption}{Transform template\label{fig:TransformTempSubEx}}
+\newcommand{\TransformRequirementExampleFigCaption}{Transform
+requirement (\ref{fig:TransformReqSubEx}) and its template
+(\ref{fig:TransformTempSubEx}) on the linguistic capability of \SareqExTwo.\label{fig:TransformReqEx}}
+\newcommand{\ProdDiffAlgCaption}{Pseudocode of Production differentiation\label{code:ProdDiffAlg}}
+\newcommand{\RunningExCaption}{Example of sentence expansion.\label{fig:ExpEx}}
+\newcommand{\CklstTemplateFigCaption}{Example of \Cklst templates on the \lc of \SareqExThree.\label{code:TempEx}}
+
+\newcommand{\SareqExThree}{``Sentiment change over time, present should prevail"}
+
+%% Table Caption
+\newcommand{\ReqTableCaption}{Search rules and transformation templates for linguistic capabilities.\label{tab:specification}\vspace{\ReqTableVSpace}}
+\newcommand{\ResultTableCaption}{Results on \Nlp tasks
+of \Ccd, \Ctr, \Cref respectively.\label{table:Result}\vspace{-5pt}}
+\newcommand{\SelfBleuTableCaption}{\selfbleu scores over testcases
+from \tool and \Chlst}
+\newcommand{\RetrainDebugTableCaption}{Result of retraining on
+each \lc and the evaluation of the retrained model.\label{table:RetrainDebug}}
+\newcommand{\ManualStudyTableCaption}{Manual
+study results of label consistency and \lc relevancy of \tool generated
+test cases compared to human annotations.\label{table:ManualStudy}}
+\newcommand{\TestResultsTableCaption}{Results of \Bert, \Roberta and
+\Dbert \sa models on \tool test cases. \Bert, \Roberta and
+\Dbert models are denoted as BERT, RoBERTa and dstBERT, respectively.\label{table:TestResult}}
+
+%%% NUMBRERS
+\input{tables/lc-requirement-numbers}
+%% \input{tables/selfbleu-numbers}
+%% \input{tables/retrain-debug-numbers}
+\input{tables/manual-study-numbers}
+\input{tables/test-results-numbers}
+\input{tables/test-results-3-50-numbers}
+\input{tables/test-results-3-100-numbers}
+\input{tables/test-results-3-200-numbers}
