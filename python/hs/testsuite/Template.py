@@ -117,8 +117,9 @@ class Template:
         args = list()
         pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
         for index, (_id, seed, seed_label) in enumerate(seeds):
-            args.append((index, seed, seed_label, 0., pcfg_ref, logger))
-        # end for    
+            _seed = Utils.detokenize(seed) if type(seed)==list else seed
+            args.append((index, _seed, seed_label, 0., pcfg_ref, logger))
+        # end for
         results = pool.starmap_async(cls.generate_seed_cfg_parallel,
                                      args,
                                      chunksize=len(seeds)//cls.NUM_PROCESSES).get()
@@ -309,6 +310,7 @@ class Template:
         
         # validate word suggestion
         exp_results = Suggest.eval_word_suggestions_over_seeds(masked_inputs_w_word_sug,
+                                                               nlp,
                                                                req,
                                                                num_target=num_target,
                                                                selection_method=selection_method,

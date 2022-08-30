@@ -240,7 +240,7 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ["It is in <hurtlex_pos:n>'s nature to be uncivilised"]
+                                'word': ["It is in <hurtlex_pos:n> 's nature to be uncivilised"]
                             },
                             'label': 'toxic'
                         }, {

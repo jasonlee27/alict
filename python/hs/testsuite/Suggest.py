@@ -189,7 +189,7 @@ class Suggest:
         return False
     
     @classmethod
-    def eval_sug_words_by_req(cls, new_input, requirement, label):
+    def eval_sug_words_by_req(cls, new_input, nlp, requirement, label):
         if requirement['transform_req'] is not None:
             _requirement = {
                 'capability': requirement['capability'],
@@ -200,7 +200,12 @@ class Suggest:
             _requirement = requirement
         # end if
         search_obj = SearchOperator(_requirement)
-        search_res = search_obj.search([('1', new_input, label)])
+        # search_res = search_obj.search([('1', new_input, label)], nlp)
+        search_res = search_obj.search([{
+            'post_id': '1',
+            'tokens': Utils.tokenize(new_input),
+            'label': label
+        }], nlp)
         return any(search_res)
         # if len(search_res)>0:
         #     return True
@@ -492,14 +497,15 @@ class Suggest:
     @classmethod
     def eval_word_suggestions_over_seeds(cls,
                                          masked_inputs_w_word_sug,
+                                         nlp,
                                          req,
                                          num_target=Macros.num_suggestions_on_exp_grammer_elem,
                                          selection_method=None,
                                          no_mask_key='<no_mask>',
                                          logger=None):
         st = time.time()
-        nlp = spacy.load('en_core_web_md')
-        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+        # nlp = spacy.load('en_core_web_md')
+        # nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         exp_results = dict()
         for masked_sent in masked_inputs_w_word_sug.keys():
             word_sug = masked_inputs_w_word_sug[masked_sent]['word_sug']
@@ -533,15 +539,14 @@ class Suggest:
                     for w_sug in word_suggest:
                         input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
                         # check sentence and expansion requirements
-                        if cls.eval_sug_words_by_req(input_candid, req, seed_label):
-                            if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
-                                results.append((masked_sent,
-                                                cfg_from,
-                                                cfg_to,
-                                                mask_pos,
-                                                w_sug,
-                                                input_candid))
-                            # end if
+                        # if cls.eval_sug_words_by_req(input_candid, nlp, req, seed_label):
+                        if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
+                            results.append((masked_sent,
+                                            cfg_from,
+                                            cfg_to,
+                                            mask_pos,
+                                            w_sug,
+                                            input_candid))
                         # end if
                     # end for
                 # end if

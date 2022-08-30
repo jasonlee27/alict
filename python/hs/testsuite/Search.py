@@ -133,6 +133,7 @@ class SearchOperator:
                 if tw.startswith('<') and tw.endswith('>'):
                     # search any words in the values in the target template
                     target_template = tw.strip('<>')
+                    
                     if target_template.endswith('_syn'):
                         _tw = target_template.split('_syn')[0]
                         _tw_syns = self.get_synonyms(nlp, _tw)
