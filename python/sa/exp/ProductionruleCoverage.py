@@ -235,6 +235,8 @@ class ProductionruleCoverage:
                     for exp in exp['inputs'][seed]['exp_inputs']:
                         pdr_exp = pdr_seed.copy()
                         cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
+                        cfg_from.replace(f" -> ", "->")
+                        cfg_to.replace(f" -> ", "->")
                         pdr_exp.remove(cfg_from)
                         pdr_exp.append(cfg_to)
                         pdrs.append(pdr_exp)
@@ -319,6 +321,14 @@ def main_seed(task,
         parse_all_sents=False,
         logger=logger
     )
+    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+        task,
+        search_dataset_name,
+        selection_method,
+        num_seeds,
+        num_trials,
+        logger=logger
+    )
     checklist_rules = ProductionruleCoverage.get_bl_cfg_rules(
         task,
         search_dataset_name,
@@ -371,35 +381,57 @@ def main_seed(task,
                     _bl_rules = checklist_rules[lc]
                     bl_sents = list(_bl_rules.keys())
                     seed_sents = list(_seed_rules.keys())
-                    # sample bl pdrs to make same number of pdrs with ours
-                    pdr1, pdr2 = dict(), dict()
-                    if len(seed_sents)<len(bl_sents):
-                        num_samples = len(seed_sents)
-                        r_idxs = list(range(len(bl_sents)))
-                        random.shuffle(r_idxs)
-                        bl_sents_sample = [bl_sents[r_i] for r_i in r_idxs[:num_samples]]
-                        pdr1 = {
-                            s: _seed_rules[s]
-                            for s in seed_sents
-                        }
-                        pdr2 = {
-                            s: _bl_rules[s]
-                            for s in bl_sents_sample
-                        }
-                    else:
-                        num_samples = len(seed_sents)
-                        r_idxs = list(range(len(seed_sents)))
-                        random.shuffle(r_idxs)
-                        seed_sents_sample = [seed_sents[r_i] for r_i in r_idxs[:num_samples]]
-                        pdr1 = {
-                            s: _seed_rules[s]
-                            for s in seed_sents_sample
-                        }
-                        pdr2 = {
-                            s: _bl_rules[s]
-                            for s in bl_sents
-                        }
+                    _exp_rules, exp_sents = None, None
+                    if exp_rules is not None:
+                        exp_rules_per_trial = exp_rules[num_trial]
+                        _exp_rules = exp_rules_per_trial[lc]
+                        exp_sents = list(_exp_sents.keys())
                     # end if
+                    
+                    # sample bl pdrs to make same number of pdrs with ours
+                    pdr1 = {
+                        s: _seed_rules[s]
+                        for s in seed_sents
+                    }
+                    if exp_sents is not None:
+                        for e in exp_sents:
+                            if e not in prd1.keys():
+                                pdr1[e] = _exp_rules[e]
+                            # end if
+                        # end for
+                    # end if
+                    pdr2 = {
+                        s: _seed_rules[s]
+                        for s in bl_sents
+                    }
+                    # pdr1, pdr2 = dict(), dict()
+                    # if len(seed_sents)<len(bl_sents):
+                    #     num_samples = len(seed_sents)
+                    #     r_idxs = list(range(len(bl_sents)))
+                    #     random.shuffle(r_idxs)
+                    #     bl_sents_sample = [bl_sents[r_i] for r_i in r_idxs[:num_samples]]
+                    #     pdr1 = {
+                    #         s: _seed_rules[s]
+                    #         for s in seed_sents
+                    #     }
+                    #     pdr2 = {
+                    #         s: _bl_rules[s]
+                    #         for s in bl_sents_sample
+                    #     }
+                    # else:
+                    #     num_samples = len(seed_sents)
+                    #     r_idxs = list(range(len(seed_sents)))
+                    #     random.shuffle(r_idxs)
+                    #     seed_sents_sample = [seed_sents[r_i] for r_i in r_idxs[:num_samples]]
+                    #     pdr1 = {
+                    #         s: _seed_rules[s]
+                    #         for s in seed_sents_sample
+                    #     }
+                    #     pdr2 = {
+                    #         s: _bl_rules[s]
+                    #         for s in bl_sents
+                    #     }
+                    # # end if
                     pdr_obj = ProductionruleCoverage(lc=lc,
                                                      our_cfg_rules=pdr1,
                                                      bl_cfg_rules=pdr2)
