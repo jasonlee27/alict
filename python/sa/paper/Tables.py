@@ -615,7 +615,7 @@ class Tables:
                 if m_i==1:
                     m_name = 'RoBERTa'
                 else:
-                    m_name = 'DistilBERT'
+                    m_name = 'dstBERT'
                 # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
                 output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model{m_i}-lc{lc_i}-num-seed-fail-avg").use() + \
                                    "\pm" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model{m_i}-lc{lc_i}-num-seed-fail-std").use())
