@@ -59,7 +59,8 @@ class Plots:
             elif item == 'pdr':
                 cls.pdr_ours_plot(Macros.result_dir, figs_dir)
                 cls.pdr_bl_plot(Macros.result_dir, figs_dir)
-            elif item == 'test-results'
+            elif item == 'test-results':
+                cls.failrate_all_over_seeds_plot(Macros.result_dir, figs_dir)
                 cls.failrate_seed_over_seeds_plot(Macros.result_dir, figs_dir)
                 cls.failrate_exp_over_seeds_plot(Macros.result_dir, figs_dir)
                 cls.pass2fail_over_seeds_plot(Macros.result_dir, figs_dir)
@@ -113,11 +114,12 @@ class Plots:
         hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
         markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
 
-        ax = sns.lineplot(data=df, x="num_seed", y="scores",
-                          hue="lc",
+        ax = sns.lineplot(data=df, x='num_seed', y='scores',
+                          hue='lc',
                           hue_order=hue_order,
-                          style="lc",
-                          err_style="bars", # or "band"
+                          style='lc',
+                          estimator='median',
+                          err_style=None, # or "band"
                           markers=markers,
                           markersize=9,
                           markeredgewidth=0,
@@ -176,11 +178,12 @@ class Plots:
         hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
         markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
 
-        ax = sns.lineplot(data=df, x="num_seed", y="scores",
-                          hue="lc",
+        ax = sns.lineplot(data=df, x='num_seed', y='scores',
+                          hue='lc',
                           hue_order=hue_order,
-                          style="lc",
-                          err_style="bars", # or "bars"
+                          style='lc',
+                          estimator='median',
+                          err_style=None, # or "bars"
                           markers=markers,
                           markersize=9,
                           markeredgewidth=0,
@@ -238,11 +241,12 @@ class Plots:
         hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
         markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
 
-        ax = sns.lineplot(data=df, x="num_seed", y="scores",
-                          hue="lc",
+        ax = sns.lineplot(data=df, x='num_seed', y='scores',
+                          hue='lc',
                           hue_order=hue_order,
-                          style="lc",
-                          err_style="bars", # or "band"
+                          style='lc',
+                          estimator='median',
+                          err_style=None, # or "band"
                           markers=markers,
                           markersize=9,
                           markeredgewidth=0,
@@ -250,7 +254,7 @@ class Plots:
                           ci='sd',
                           ax=ax)
         plt.xticks(list(x_ticks.values()))
-        ax.set_ylim(0, 700)
+        ax.set_ylim(-50, 1200)
         ax.set_xlabel("Number of seeds")
         ax.set_ylabel("Number of Production Rules Covered")
         
@@ -301,11 +305,12 @@ class Plots:
         hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
         markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
 
-        ax = sns.lineplot(data=df, x="num_seed", y="scores",
-                          hue="lc",
+        ax = sns.lineplot(data=df, x='num_seed', y='scores',
+                          hue='lc',
                           hue_order=hue_order,
-                          style="lc",
-                          err_style="bars", # or "bars"
+                          style='lc',
+                          estimator='median',
+                          err_style=None, # or "bars"
                           markers=markers,
                           markersize=9,
                           markeredgewidth=0,
@@ -313,7 +318,7 @@ class Plots:
                           ci='sd',
                           ax=ax)
         plt.xticks(list(x_ticks.values()))
-        ax.set_ylim(0, 700)
+        ax.set_ylim(-50, 1200)
         ax.set_xlabel("Number of seeds")
         ax.set_ylabel("Number of Production Rules Covered")
 
@@ -327,6 +332,95 @@ class Plots:
         return
 
     @classmethod
+    def failrate_all_over_seeds_plot(cls,
+                                     results_dir: Path,
+                                     figs_dir: Path,
+                                     task=Macros.sa_task,
+                                     search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                                     selection_method='random'):
+        # num_seeds = [0,50,100,200] # x-axis
+        num_trials = 3
+        x_ticks = {0:50, 1:100, 2:200}
+        num_seeds = list(x_ticks.keys())
+        data_lod = dict()
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        lc_index_dict = dict()
+        hue_order, markers = list(), list()
+        for l_i, l in enumerate(Utils.read_txt(req_file)):
+            lc_desc = l.strip().split('::')[0].lower()
+            lc_index_dict[lc_desc] = f"LC{l_i+1}"
+            marker = f"${l_i+1}$"
+            hue_order.append(lc_index_dict[lc_desc])
+            markers.append(marker)
+        # end for
+
+        for ns_i, ns in x_ticks.items():
+            for num_trial in range(num_trials):
+                _num_trial = '' if num_trial==0 else str(num_trial+1)
+                seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
+                seed_dict = Utils.read_json(seed_file)
+                for model_name, results_per_model in seed_dict.items():
+                    if model_name not in data_lod.keys():
+                        data_lod[model_name] = list()
+                    # end if
+                    for lc_i, lc_result in enumerate(results_per_model):
+                        lc = lc_result['req']
+                        lc_key = lc.lower()
+                        lc_index = lc_index_dict[lc_key]
+                        num_seeds = lc_result['num_seeds']
+                        num_seed_fail = lc_result['num_seed_fail']
+                        num_exps = lc_result['num_exps']
+                        num_exp_fail = lc_result['num_exp_fail']
+                        fr = (num_exp_fail+num_seed_fail)*1./(num_exps+num_seeds)
+                        num_pass2fail = lc_result['num_pass2fail']
+                        data_lod[model_name].append({
+                            'lc': lc_index,
+                            'num_seed': ns,
+                            'failrate_all': fr,
+                        })
+                    # end for
+                # end for
+            # end for
+        # end for
+
+        for model_name, _data_lod in data_lod.items():
+            # data_lod: List[dict] = list()
+            _model_name = model_name.split('/')[-1]
+            _data_lod = sorted(_data_lod, key=lambda x: int(x['lc'].split('LC')[-1]))
+            df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(_data_lod))
+            
+            # Plotting part
+            fig: plt.Figure = plt.figure()
+            ax: plt.Axes = fig.subplots()
+            ax = sns.lineplot(data=df, x='num_seed', y='failrate_all',
+                              hue='lc',
+                              hue_order=hue_order,
+                              style='lc',
+                              estimator='median',
+                              err_style=None, # or "bars"
+                              markers=markers,
+                              markersize=9,
+                              markeredgewidth=0,
+                              dashes=True,
+                              ci='sd',
+                              ax=ax)
+            plt.xticks(list(x_ticks.values()))
+            ax.set_ylim(-0.1, 1.2)
+            ax.set_xlabel("Number of seeds")
+            ax.set_ylabel("Failure rate on S$^2$LCT test cases")
+            
+            # Shrink current axis by 20%
+            box = ax.get_position()
+            ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+            
+            # Put a legend to the right of the current axis
+            ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+            fig.savefig(figs_dir / f"failrate-combined-{_model_name}-lineplot.eps")
+        # end for
+        return
+    
+    @classmethod
     def failrate_seed_over_seeds_plot(cls,
                                       results_dir: Path,
                                       figs_dir: Path,
@@ -338,10 +432,19 @@ class Plots:
         x_ticks = {0:50, 1:100, 2:200}
         num_seeds = list(x_ticks.keys())
         data_lod = dict()
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        lc_index_dict = {
+            l.strip().split('::')[0].lower(): f"LC{l_i+1}"
+            for l_i, l in enumerate(Utils.read_txt(req_file))
+        }
+        hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+        markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+
         for ns_i, ns in x_ticks.items():
             for num_trial in range(num_trials):
                 _num_trial = '' if num_trial==0 else str(num_trial+1)
-                seed_file = Macros.result_dir / f"test_results_{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
+                seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
                 seed_dict = Utils.read_json(seed_file)
                 for model_name, results_per_model in seed_dict.items():
                     if model_name not in data_lod.keys():
@@ -350,6 +453,7 @@ class Plots:
                     for lc_i, lc_result in enumerate(results_per_model):
                         lc = lc_result['req']
                         lc_key = lc.lower()
+                        lc_index = lc_index_dict[lc_key]
                         num_seeds = lc_result['num_seeds']
                         num_seed_fail = lc_result['num_seed_fail']
                         seed_fr = num_seed_fail*1./num_seeds
@@ -358,33 +462,31 @@ class Plots:
                         exp_fr = num_exp_fail*1./num_exps
                         num_pass2fail = lc_result['num_pass2fail']
                         data_lod[model_name].append({
-                            'lc': f"LC{lc_i+1}",
+                            'lc': lc_index,
                             'num_seed': ns,
-                            'failrate_seed': seed_fr,
-                            'failrate_exp': exp_fr,
-                            'num_pass2fail': num_pass2fail
+                            'failrate_seed': seed_fr
                         })
                     # end for
                 # end for
             # end for
         # end for
 
-        for model_name, _data_lod for data_lod.items():
+        for model_name, _data_lod in data_lod.items():
             # data_lod: List[dict] = list()
+            _model_name = model_name.split('/')[-1]
+            _data_lod = sorted(_data_lod, key=lambda x: int(x['lc'].split('LC')[-1]))
             df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(_data_lod))
             
             # Plotting part
             fig: plt.Figure = plt.figure()
             ax: plt.Axes = fig.subplots()
             
-            hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-            markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-
-            ax = sns.lineplot(data=df, x="num_seed", y="failrate_seed",
-                              hue="lc",
+            ax = sns.lineplot(data=df, x='num_seed', y='failrate_seed',
+                              hue='lc',
                               hue_order=hue_order,
-                              style="lc",
-                              err_style="bars", # or "bars"
+                              style='lc',
+                              estimator='median',
+                              err_style=None, # or "bars"
                               markers=markers,
                               markersize=9,
                               markeredgewidth=0,
@@ -392,9 +494,9 @@ class Plots:
                               ci='sd',
                               ax=ax)
             plt.xticks(list(x_ticks.values()))
-            ax.set_ylim(0, 700)
+            ax.set_ylim(-0.1, 1.2)
             ax.set_xlabel("Number of seeds")
-            ax.set_ylabel("Number of Production Rules Covered")
+            ax.set_ylabel("Failure rate on S$^2$LCT seed test cases")
             
             # Shrink current axis by 20%
             box = ax.get_position()
@@ -402,21 +504,35 @@ class Plots:
             
             # Put a legend to the right of the current axis
             ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-            fig.savefig(figs_dir / f"failrate-seed-{model_name}-lineplot.eps")
+            fig.savefig(figs_dir / f"failrate-seed-{_model_name}-lineplot.eps")
         # end for
         return
 
-        @classmethod
-    def failrate_exp_over_seeds_plot(cls, results_dir: Path, figs_dir: Path):
+    @classmethod
+    def failrate_exp_over_seeds_plot(cls,
+                                     results_dir: Path,
+                                     figs_dir: Path,
+                                     task=Macros.sa_task,
+                                     search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                                     selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
         x_ticks = {0:50, 1:100, 2:200}
         num_seeds = list(x_ticks.keys())
         data_lod = dict()
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        lc_index_dict = {
+            l.strip().split('::')[0].lower(): f"LC{l_i+1}"
+            for l_i, l in enumerate(Utils.read_txt(req_file))
+        }
+        hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+        markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+        
         for ns_i, ns in x_ticks.items():
             for num_trial in range(num_trials):
                 _num_trial = '' if num_trial==0 else str(num_trial+1)
-                seed_file = Macros.result_dir / f"test_results_{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
+                seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
                 seed_dict = Utils.read_json(seed_file)
                 for model_name, results_per_model in seed_dict.items():
                     if model_name not in data_lod.keys():
@@ -425,6 +541,7 @@ class Plots:
                     for lc_i, lc_result in enumerate(results_per_model):
                         lc = lc_result['req']
                         lc_key = lc.lower()
+                        lc_index = lc_index_dict[lc_key]
                         num_seeds = lc_result['num_seeds']
                         num_seed_fail = lc_result['num_seed_fail']
                         seed_fr = num_seed_fail*1./num_seeds
@@ -433,33 +550,31 @@ class Plots:
                         exp_fr = num_exp_fail*1./num_exps
                         num_pass2fail = lc_result['num_pass2fail']
                         data_lod[model_name].append({
-                            'lc': f"LC{lc_i+1}",
+                            'lc': lc_index,
                             'num_seed': ns,
-                            'failrate_seed': seed_fr,
-                            'failrate_exp': exp_fr,
-                            'num_pass2fail': num_pass2fail
+                            'failrate_exp': exp_fr
                         })
                     # end for
                 # end for
             # end for
         # end for
 
-        for model_name, _data_lod for data_lod.items():
+        for model_name, _data_lod in data_lod.items():
             # data_lod: List[dict] = list()
+            _model_name = model_name.split('/')[-1]
+            _data_lod = sorted(_data_lod, key=lambda x: int(x['lc'].split('LC')[-1]))
             df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(_data_lod))
             
             # Plotting part
             fig: plt.Figure = plt.figure()
             ax: plt.Axes = fig.subplots()
             
-            hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-            markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-
-            ax = sns.lineplot(data=df, x="num_seed", y="failrate_exp",
-                              hue="lc",
+            ax = sns.lineplot(data=df, x='num_seed', y='failrate_exp',
+                              hue='lc',
                               hue_order=hue_order,
-                              style="lc",
-                              err_style="bars", # or "bars"
+                              style='lc',
+                              estimator='median',
+                              err_style=None, # or "bars"
                               markers=markers,
                               markersize=9,
                               markeredgewidth=0,
@@ -467,9 +582,9 @@ class Plots:
                               ci='sd',
                               ax=ax)
             plt.xticks(list(x_ticks.values()))
-            ax.set_ylim(0, 700)
+            ax.set_ylim(-0.1, 1.2)
             ax.set_xlabel("Number of seeds")
-            ax.set_ylabel("Number of Production Rules Covered")
+            ax.set_ylabel("Failure rate on S$^2$LCT expanded test cases")
             
             # Shrink current axis by 20%
             box = ax.get_position()
@@ -477,21 +592,35 @@ class Plots:
             
             # Put a legend to the right of the current axis
             ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-            fig.savefig(figs_dir / f"failrate-exp-{model_name}-lineplot.eps")
+            fig.savefig(figs_dir / f"failrate-exp-{_model_name}-lineplot.eps")
         # end for
         return
     
     @classmethod
-    def pass2fail_over_seeds_plot(cls, results_dir: Path, figs_dir: Path):
+    def pass2fail_over_seeds_plot(cls,
+                                  results_dir: Path,
+                                  figs_dir: Path,
+                                  task=Macros.sa_task,
+                                  search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                                  selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
         x_ticks = {0:50, 1:100, 2:200}
         num_seeds = list(x_ticks.keys())
         data_lod = dict()
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        lc_index_dict = {
+            l.strip().split('::')[0].lower(): f"LC{l_i+1}"
+            for l_i, l in enumerate(Utils.read_txt(req_file))
+        }
+        hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+        markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+
         for ns_i, ns in x_ticks.items():
             for num_trial in range(num_trials):
                 _num_trial = '' if num_trial==0 else str(num_trial+1)
-                seed_file = Macros.result_dir / f"test_results_{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
+                seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
                 seed_dict = Utils.read_json(seed_file)
                 for model_name, results_per_model in seed_dict.items():
                     if model_name not in data_lod.keys():
@@ -500,6 +629,7 @@ class Plots:
                     for lc_i, lc_result in enumerate(results_per_model):
                         lc = lc_result['req']
                         lc_key = lc.lower()
+                        lc_index = lc_index_dict[lc_key]
                         num_seeds = lc_result['num_seeds']
                         num_seed_fail = lc_result['num_seed_fail']
                         seed_fr = num_seed_fail*1./num_seeds
@@ -508,10 +638,8 @@ class Plots:
                         exp_fr = num_exp_fail*1./num_exps
                         num_pass2fail = lc_result['num_pass2fail']
                         data_lod[model_name].append({
-                            'lc': f"LC{lc_i+1}",
+                            'lc': lc_index,
                             'num_seed': ns,
-                            'failrate_seed': seed_fr,
-                            'failrate_exp': exp_fr,
                             'num_pass2fail': num_pass2fail
                         })
                     # end for
@@ -519,22 +647,22 @@ class Plots:
             # end for
         # end for
 
-        for model_name, _data_lod for data_lod.items():
+        for model_name, _data_lod in data_lod.items():
             # data_lod: List[dict] = list()
+            _model_name = model_name.split('/')[-1]
+            _data_lod = sorted(_data_lod, key=lambda x: int(x['lc'].split('LC')[-1]))
             df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(_data_lod))
             
             # Plotting part
             fig: plt.Figure = plt.figure()
             ax: plt.Axes = fig.subplots()
-            
-            hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-            markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
 
-            ax = sns.lineplot(data=df, x="num_seed", y="num_pass2fail",
-                              hue="lc",
+            ax = sns.lineplot(data=df, x='num_seed', y='num_pass2fail',
+                              hue='lc',
                               hue_order=hue_order,
-                              style="lc",
-                              err_style="bars", # or "bars"
+                              style='lc',
+                              estimator='median',
+                              err_style=None, # or "bars"
                               markers=markers,
                               markersize=9,
                               markeredgewidth=0,
@@ -542,9 +670,9 @@ class Plots:
                               ci='sd',
                               ax=ax)
             plt.xticks(list(x_ticks.values()))
-            ax.set_ylim(0, 700)
+            ax.set_ylim(-20, 350)
             ax.set_xlabel("Number of seeds")
-            ax.set_ylabel("Number of Production Rules Covered")
+            ax.set_ylabel("Number of Pass2fail")
             
             # Shrink current axis by 20%
             box = ax.get_position()
@@ -552,6 +680,6 @@ class Plots:
             
             # Put a legend to the right of the current axis
             ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-            fig.savefig(figs_dir / f"pass2fail-{model_name}-lineplot.eps")
+            fig.savefig(figs_dir / f"pass2fail-{_model_name}-lineplot.eps")
         # end for
         return
