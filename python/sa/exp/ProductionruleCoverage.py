@@ -364,7 +364,7 @@ def main_seed(task,
     else:
         for lc in tqdm(checklist_rules.keys()):
             lc_key = lc.lower()
-            if lc not in scores.keys():
+            if lc_key not in scores.keys():
                 scores[lc_key] = {
                     'ours': {
                         'coverage_scores': list()
@@ -454,7 +454,6 @@ def main_seed(task,
     # end if
     return
 
-
 def main_seed_sample(task,
                      search_dataset_name,
                      selection_method,
@@ -522,7 +521,7 @@ def main_seed_sample(task,
         logger.print(f"ProductionruleCoverage.main_seed::{round(ft-st,3)}sec")
     else:
         for lc in tqdm(checklist_rules.keys()):
-            if lc not in scores.keys():
+            if lc_key not in scores.keys():
                 lc_key = lc.lower()
                 scores[lc_key] = {
                     'ours': {
@@ -586,6 +585,121 @@ def main_seed_sample(task,
                 scores[lc_key]['bl']['avg_score'] = Utils.avg(scores[lc_key]['bl']['coverage_scores'])
                 scores[lc_key]['bl']['med_score'] = Utils.median(scores[lc_key]['bl']['coverage_scores'])
                 scores[lc_key]['bl']['std_score'] = Utils.stdev(scores[lc_key]['bl']['coverage_scores'])
+                Utils.write_json(scores, result_file, pretty_format=True)
+            # end if
+        # end for
+    # end if
+    return
+
+
+def main_seed_exp(task,
+                  search_dataset_name,
+                  selection_method,
+                  num_seeds,
+                  num_trials):
+    st = time.time()
+    _num_trials = '' if num_trials==1 else str(num_trials)
+    if num_seeds<0:
+        logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_pdrcov.log"
+        result_file = Macros.pdr_cov_result_dir / f"seeds_exps_{task}_{search_dataset_name}_pdrcov.json"
+    else:
+        logger_file = Macros.log_dir / f"seeds_exps_over{_num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_pdrcov.log"
+        result_file = Macros.pdr_cov_result_dir / f"seeds_exps_over{_num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_pdrcov.json"
+    # end if
+    Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
+    logger = Logger(logger_file=logger_file,
+                    logger_name='seed_exp_pdrcov_log')
+    seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
+        task,
+        search_dataset_name,
+        selection_method,
+        num_seeds,
+        num_trials,
+        parse_all_sents=False,
+        logger=logger
+    )
+    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+        task,
+        search_dataset_name,
+        selection_method,
+        num_seeds,
+        num_trials,
+        logger=logger
+    )
+    if os.path.exists(str(result_file)):
+        scores = Utils.read_json(result_file)
+    else:
+        scores = dict()
+    # end if
+
+    if type(seed_rules)==dict:
+        for lc in tqdm(seed_rules.keys()):
+            if lc not in scores.keys():
+                logger.print(f"OURS::{lc}", end='::')
+                pdr_obj = ProductionruleCoverage(lc=lc,
+                                                 our_cfg_rules=seed_rules[lc],
+                                                 bl_cfg_rules=checklist_rules[lc])
+                scores[lc] = {
+                    'our_num_data': pdr_obj.our_num_data,
+                    'bl_num_data': pdr_obj.bl_num_data,
+                    'coverage_score': pdr_obj.get_score()
+                }
+                Utils.write_json(scores, result_file, pretty_format=True)
+            # end if
+        # end for
+        ft = time.time()
+        logger.print(f"ProductionruleCoverage.main_seed::{round(ft-st,3)}sec")
+    else:
+        for lc in tqdm(checklist_rules.keys()):
+            lc_key = lc.lower()
+            if lc_key not in scores.keys():
+                scores[lc_key] = {
+                    'ours_seed': {
+                        'coverage_scores': list()
+                    },
+                    'ours_seed_exp': {
+                        'coverage_scores': list()
+                    }
+                }
+                if logger is not None:
+                    logger.print(f"OURS::{lc}")
+                # end if
+                for num_trial in range(len(seed_rules)):
+                    random.seed(num_trial)
+                    seed_rules_per_trial = seed_rules[num_trial]
+                    _seed_rules = seed_rules_per_trial[lc]
+                    seed_sents = list(_seed_rules.keys())
+                    exp_rules_per_trial = exp_rules[num_trial]
+                    _exp_rules = exp_rules_per_trial[lc]
+                    for ss, sr in _seed_rules.items():
+                        _exp_rules[ss] = sr
+                    # end for
+                    exp_sents = list(_exp_rules.keys())
+                    
+                    # sample bl pdrs to make same number of pdrs with ours
+                    pdr1 = {
+                        s: _seed_rules[s]
+                        for s in seed_sents
+                    }
+                    pdr2 = {
+                        s: _exp_rules[e]
+                        for e in exp_sents
+                    }
+                    pdr_obj = ProductionruleCoverage(lc=lc,
+                                                     our_cfg_rules=pdr1,
+                                                     bl_cfg_rules=pdr2)
+                    scores[lc_key]['num_data_seed'] = pdr_obj.our_num_data
+                    scores[lc_key]['num_data_seed_exp'] = pdr_obj.bl_num_data
+                    cov_score_ours, cov_score_bl = pdr_obj.get_score()
+                    scores[lc_key]['ours_seed']['coverage_scores'].append(cov_score_ours)
+                    scores[lc_key]['ours_seed_exp']['coverage_scores'].append(cov_score_bl)
+                # end for
+                scores[lc_key]['ours_seed']['avg_score'] = Utils.avg(scores[lc_key]['ours_seed']['coverage_scores'])
+                scores[lc_key]['ours_seed']['med_score'] = Utils.median(scores[lc_key]['ours_seed']['coverage_scores'])
+                scores[lc_key]['ours_seed']['std_score'] = Utils.stdev(scores[lc_key]['ours_seed']['coverage_scores'])
+                scores[lc_key]['ours_seed_exp']['avg_score'] = Utils.avg(scores[lc_key]['ours_seed_exp']['coverage_scores'])
+                scores[lc_key]['ours_seed_exp']['med_score'] = Utils.median(scores[lc_key]['ours_seed_exp']['coverage_scores'])
+                scores[lc_key]['ours_seed_exp']['std_score'] = Utils.stdev(scores[lc_key]['ours_seed_exp']['coverage_scores'])
                 Utils.write_json(scores, result_file, pretty_format=True)
             # end if
         # end for

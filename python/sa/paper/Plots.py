@@ -11,7 +11,7 @@ import seaborn as sns
 
 from seutil import IOUtils
 
-
+from ..exp.ProductionruleCoverage import ProductionruleCoverage
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
@@ -362,15 +362,14 @@ class Plots:
                           selection_method='random'):
         data_lod: List[dict] = list()
         # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = {0:50, 1:100, 2:200}
+        x_ticks = {0:50} # , 1:100, 2:200}
         num_seeds = list(x_ticks.keys())
-
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
         for l_i, l in enumerate(Utils.read_txt(req_file)):
             lc_desc = l.strip().split('::')[0].lower()
             for ns in x_ticks.values():
-                result_file = results_dir / 'pdr_cov' / f"seeds_sample_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
+                result_file = results_dir / 'pdr_cov' / f"seeds_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
                 result = Utils.read_json(result_file)
                 for score in result[lc_desc]['bl']['coverage_scores']:
                     result_lc_bl = {
