@@ -436,7 +436,6 @@ class Tables:
         output_file.save()
         return
 
-    
     @classmethod
     def make_numbers_test_results(cls,
                                   result_dir,
@@ -585,6 +584,85 @@ class Tables:
         # end_for
         output_file.save()
         return
+
+    @classmethod
+    def make_table_test_results(cls,
+                                result_dir,
+                                tables_dir,
+                                task,
+                                search_dataset,
+                                selection_method,
+                                num_seeds,
+                                num_trials):
+        output_file = latex.File(tables_dir / f"test-results-{num_trials}-{num_seeds}-table.tex")
+        res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}_{num_seeds}seeds"
+        result_file = res_dir / 'test_result_analysis.json'
+        
+        # result_file = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}" / 'test_result_analysis.json'
+        
+        # baseline_result_file = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}" / 'test_result_checklist_analysis.json'
+        
+        result = Utils.read_json(result_file)
+        # baseline_result = Utils.read_json(baseline_result_file)
+        model_names = list(result.keys())
+        lcs_len = len(result[model_names[0]])
+        
+        # Header
+        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{small}")
+        output_file.append(r"\begin{center}")
+        output_file.append(r"\caption{\TestResultsTableCaption}")
+        output_file.append(r"\resizebox{0.9\textwidth}{!}{")
+        # output_file.append(r"\begin{tabular}{p{4cm}||p{1cm}p{2cm}p{1cm}p{2cm}p{1cm}p{2cm}p{2cm}}")
+        output_file.append(r"\begin{tabular}{p{8cm}||cclll}")
+        output_file.append(r"\toprule")
+        
+        # output_file.append(r"\tLc & \parbox{1cm}{\tNumBlSents} & \parbox{1cm}{\tNumBlFail} & \parbox{1cm}{\tNumSeeds} & \parbox{1.5cm}{\tNumSeedFail} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\tNumExpFail} & \parbox{1.5cm}{\tNumPasstoFail}\\")
+        output_file.append(r"\tLc & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1cm}{\centering\tNumFail} & \parbox{1cm}{\centering\tFailRate} & \parbox{1cm}{\centering\tNumPasstoFail}\\")
+        output_file.append(r"\midrule")
+        
+        # Content
+        for lc_i in range(lcs_len):
+            lc_prefix_str = f"LC{lc_i+1}: "
+            # end if
+            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8cm}{" + \
+                               lc_prefix_str + latex.Macro(f"test-results-{num_trials}-{num_seeds}-lc{lc_i}").use() + "}}")
+            # output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
+            #                    latex.Macro(f"test-results-bl-lc{lc_i}-num-sents").use() + "}")
+            # output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
+
+            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
+                               latex.Macro(f"test-results-{num_trials}-{num_seeds}-lc{lc_i}-num-seeds").use() + "}")            
+            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
+                               latex.Macro(f"test-results-{num_trials}-{num_seeds}-lc{lc_i}-num-exps-med").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model0-lc{lc_i}-num-all-fail-med").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model0-lc{lc_i}-num-all-failrate-med").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model0-lc{lc_i}-num-pass-to-fail-med").use())
+            
+            for m_i in range(1,len(model_names)):
+                if m_i==1:
+                    m_name = 'RoBERTa'
+                else:
+                    m_name = 'dstBERT'
+                # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model{m_i}-lc{lc_i}-num-all-fail-med").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model{m_i}-lc{lc_i}-num-all-failrate-med").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model{m_i}-lc{lc_i}-num-pass-to-fail-med").use() + r"\\")
+            # end for
+            output_file.append(r"\hline")
+        # end for
+        # Footer
+        output_file.append(r"\bottomrule")
+        output_file.append(r"\end{tabular}}")
+        output_file.append(r"\end{center}")
+        output_file.append(r"\end{small}")
+        output_file.append(r"\vspace{\TestResultsTableVSpace}")
+        output_file.append(r"\end{table*}")
+        output_file.save()
+        return
+
+
+
     
     @classmethod
     def make_table_test_results(cls,
@@ -619,7 +697,7 @@ class Tables:
         output_file.append(r"\toprule")
         
         # output_file.append(r"\tLc & \parbox{1cm}{\tNumBlSents} & \parbox{1cm}{\tNumBlFail} & \parbox{1cm}{\tNumSeeds} & \parbox{1.5cm}{\tNumSeedFail} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\tNumExpFail} & \parbox{1.5cm}{\tNumPasstoFail}\\")
-        output_file.append(r"\tLc & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\")
+        output_file.append(r"\tLc & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumSeedFail} & \parbox{1.5cm}{\centering\tNumExpFail} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\")
         output_file.append(r"\midrule")
         
         # Content

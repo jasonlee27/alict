@@ -582,7 +582,7 @@ class Plots:
 
         # Put a legend to the right of the current axis
         # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-        # fig.tight_layout()
+        fig.tight_layout()
         fig.savefig(figs_dir / "pdr-ours-50seeds-barplot.eps")
         return
     
@@ -1106,11 +1106,6 @@ class Plots:
         # end for
         return
 
-
-
-
-
-
     @classmethod
     def numfail_agg_over_seeds_plot(cls,
                                     results_dir: Path,
@@ -1138,7 +1133,15 @@ class Plots:
                 seed_dict = Utils.read_json(seed_file)
                 for model_name, results_per_model in seed_dict.items():
                     _model_name = model_name.split('/')[-1]
-                    model_names.append(_model_name)
+                    if _model_name.startswith('bert-base'):
+                        model_names.append('BERT')
+                        _model_name = 'BERT'
+                    elif _model_name.startswith('roberta-base'):
+                        model_names.append('RoBERTa')
+                        _model_name = 'RoBERTa'
+                    else:
+                        model_names.append('DistilBERT')
+                        _model_name = 'DistilBERT'
                     # end if
                     for lc_i, lc_result in enumerate(results_per_model):
                         lc = lc_result['req']
@@ -1183,6 +1186,7 @@ class Plots:
                           markersize=9,
                           markeredgewidth=0,
                           dashes=True,
+                          palette='Set1',
                           ci='sd',
                           ax=ax)
         plt.xticks(list(x_ticks.values()))
@@ -1199,7 +1203,6 @@ class Plots:
         fig.tight_layout()
         fig.savefig(figs_dir / f"numfail-agg-lineplot.eps")
         return
-
 
     @classmethod
     def pass2fail_agg_over_seeds_plot(cls,
@@ -1228,7 +1231,15 @@ class Plots:
                 seed_dict = Utils.read_json(seed_file)
                 for model_name, results_per_model in seed_dict.items():
                     _model_name = model_name.split('/')[-1]
-                    model_names.append(_model_name)
+                    if _model_name.startswith('bert-base'):
+                        model_names.append('BERT')
+                        _model_name = 'BERT'
+                    elif _model_name.startswith('roberta-base'):
+                        model_names.append('RoBERTa')
+                        _model_name = 'RoBERTa'
+                    else:
+                        model_names.append('DistilBERT')
+                        _model_name = 'DistilBERT'
                     # end if
                     for lc_i, lc_result in enumerate(results_per_model):
                         lc = lc_result['req']
@@ -1272,6 +1283,7 @@ class Plots:
                           markers=True,
                           markersize=9,
                           markeredgewidth=0,
+                          palette="Set1",
                           dashes=True,
                           ci='sd',
                           ax=ax)
