@@ -352,7 +352,7 @@ class Plots:
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'num_seed': ns,
-                    'scores': score
+                    'scores': bl_score
                     # 'avg': result[lc_desc]['ours']['avg_score'],
                     # 'med': result[lc_desc]['ours']['med_score'],
                     # 'std': result[lc_desc]['ours']['std_score']
@@ -380,17 +380,13 @@ class Plots:
 
         hue_order = ['CHECKLIST', 'S$^2$LCT']
 
+        from numpy import median
         ax = sns.barplot(data=df, x='lc', y='scores',
                          hue='type',
                          hue_order=hue_order,
-                         style='type',
-                         estimator='median',
-                         err_style='bars', # or "band"
-                         dashes=True,
-                         ci='sd',
-                         ax=ax)
-        plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
-        ax.set_ylim(-50, 1200)
+                         estimator=median)
+        # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
+        ax.set_ylim(-50, 700)
         ax.set_xlabel("Linguistic Capabilities")
         ax.set_ylabel("Number of Production Rules Covered")
         
@@ -399,7 +395,7 @@ class Plots:
         ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
 
         # Put a legend to the right of the current axis
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         # fig.tight_layout()
         fig.savefig(figs_dir / "pdr-ours-barplot.eps")
         return
