@@ -363,8 +363,9 @@ def main_seed(task,
         logger.print(f"ProductionruleCoverage.main_seed::{round(ft-st,3)}sec")
     else:
         for lc in tqdm(checklist_rules.keys()):
+            lc_key = lc.lower()
             if lc not in scores.keys():
-                scores[lc] = {
+                scores[lc_key] = {
                     'ours': {
                         'coverage_scores': list()
                     },
@@ -436,17 +437,17 @@ def main_seed(task,
                     pdr_obj = ProductionruleCoverage(lc=lc,
                                                      our_cfg_rules=pdr1,
                                                      bl_cfg_rules=pdr2)
-                    scores[lc]['num_data'] = pdr_obj.our_num_data
+                    scores[lc_key]['num_data'] = pdr_obj.our_num_data
                     cov_score_ours, cov_score_bl = pdr_obj.get_score()
-                    scores[lc]['ours']['coverage_scores'].append(cov_score_ours)
-                    scores[lc]['bl']['coverage_scores'].append(cov_score_bl)
+                    scores[lc_key]['ours']['coverage_scores'].append(cov_score_ours)
+                    scores[lc_key]['bl']['coverage_scores'].append(cov_score_bl)
                 # end for
-                scores[lc]['ours']['avg_score'] = Utils.avg(scores[lc]['ours']['coverage_scores'])
-                scores[lc]['ours']['med_score'] = Utils.median(scores[lc]['ours']['coverage_scores'])
-                scores[lc]['ours']['std_score'] = Utils.stdev(scores[lc]['ours']['coverage_scores'])
-                scores[lc]['bl']['avg_score'] = Utils.avg(scores[lc]['bl']['coverage_scores'])
-                scores[lc]['bl']['med_score'] = Utils.median(scores[lc]['bl']['coverage_scores'])
-                scores[lc]['bl']['std_score'] = Utils.stdev(scores[lc]['bl']['coverage_scores'])
+                scores[lc_key]['ours']['avg_score'] = Utils.avg(scores[lc_key]['ours']['coverage_scores'])
+                scores[lc_key]['ours']['med_score'] = Utils.median(scores[lc_key]['ours']['coverage_scores'])
+                scores[lc_key]['ours']['std_score'] = Utils.stdev(scores[lc_key]['ours']['coverage_scores'])
+                scores[lc_key]['bl']['avg_score'] = Utils.avg(scores[lc_key]['bl']['coverage_scores'])
+                scores[lc_key]['bl']['med_score'] = Utils.median(scores[lc_key]['bl']['coverage_scores'])
+                scores[lc_key]['bl']['std_score'] = Utils.stdev(scores[lc_key]['bl']['coverage_scores'])
                 Utils.write_json(scores, result_file, pretty_format=True)
             # end if
         # end for
@@ -522,7 +523,8 @@ def main_seed_sample(task,
     else:
         for lc in tqdm(checklist_rules.keys()):
             if lc not in scores.keys():
-                scores[lc] = {
+                lc_key = lc.lower()
+                scores[lc_key] = {
                     'ours': {
                         'coverage_scores': list()
                     },
@@ -573,17 +575,17 @@ def main_seed_sample(task,
                     pdr_obj = ProductionruleCoverage(lc=lc,
                                                      our_cfg_rules=pdr1,
                                                      bl_cfg_rules=pdr2)
-                    scores[lc]['num_data'] = pdr_obj.our_num_data
+                    scores[lc_key]['num_data'] = pdr_obj.our_num_data
                     cov_score_ours, cov_score_bl = pdr_obj.get_score()
-                    scores[lc]['ours']['coverage_scores'].append(cov_score_ours)
-                    scores[lc]['bl']['coverage_scores'].append(cov_score_bl)
+                    scores[lc_key]['ours']['coverage_scores'].append(cov_score_ours)
+                    scores[lc_key]['bl']['coverage_scores'].append(cov_score_bl)
                 # end for
-                scores[lc]['ours']['avg_score'] = Utils.avg(scores[lc]['ours']['coverage_scores'])
-                scores[lc]['ours']['med_score'] = Utils.median(scores[lc]['ours']['coverage_scores'])
-                scores[lc]['ours']['std_score'] = Utils.stdev(scores[lc]['ours']['coverage_scores'])
-                scores[lc]['bl']['avg_score'] = Utils.avg(scores[lc]['bl']['coverage_scores'])
-                scores[lc]['bl']['med_score'] = Utils.median(scores[lc]['bl']['coverage_scores'])
-                scores[lc]['bl']['std_score'] = Utils.stdev(scores[lc]['bl']['coverage_scores'])
+                scores[lc_key]['ours']['avg_score'] = Utils.avg(scores[lc_key]['ours']['coverage_scores'])
+                scores[lc_key]['ours']['med_score'] = Utils.median(scores[lc_key]['ours']['coverage_scores'])
+                scores[lc_key]['ours']['std_score'] = Utils.stdev(scores[lc_key]['ours']['coverage_scores'])
+                scores[lc_key]['bl']['avg_score'] = Utils.avg(scores[lc_key]['bl']['coverage_scores'])
+                scores[lc_key]['bl']['med_score'] = Utils.median(scores[lc_key]['bl']['coverage_scores'])
+                scores[lc_key]['bl']['std_score'] = Utils.stdev(scores[lc_key]['bl']['coverage_scores'])
                 Utils.write_json(scores, result_file, pretty_format=True)
             # end if
         # end for
