@@ -17,7 +17,7 @@ from ...utils.Macros import Macros
 from ...utils.Utils import Utils
 from .CFG import BeneparCFG # , TreebankCFG
 from .CFGDiff import CFGDiff
-from .RefPCFG import RefPCFG
+# from .RefPCFG import RefPCFG
 
 
 class CFGConverter:

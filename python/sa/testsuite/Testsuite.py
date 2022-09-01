@@ -142,6 +142,8 @@ class Testsuite:
         exp_templates_per_task = list()
         transform_reqs = list()
         new_input_dicts = Utils.read_json(Macros.result_dir / cfg_res_file_name)
+        print(Macros.result_dir / cfg_res_file_name)
+        print(new_input_dicts is None)
         for t_i in range(len(new_input_dicts)):
             lc_desc = new_input_dicts[t_i]["requirement"]["description"]
             req_cksum = Utils.get_cksum(lc_desc)

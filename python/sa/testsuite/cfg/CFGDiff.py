@@ -18,7 +18,7 @@ from nltk import CFG
 from ...utils.Macros import Macros
 from ...utils.Utils import Utils
 from .CFG import BeneparCFG # , TreebankCFG
-from .RefPCFG import RefPCFG
+# from .RefPCFG import RefPCFG
 
 
 COMP_LENGTH = 3

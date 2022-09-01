@@ -116,7 +116,6 @@ class ProductionruleCoverage:
                     lc_desc = cfg_res['requirement']['description']
                     if lc_desc not in seed_rules.keys():
                         req_cksum = Utils.get_cksum(lc_desc)
-                        seed_inputs = list()
                         seed_rules[lc_desc] = dict()
                         if logger is not None:
                             logger.print(f"OUR_SEED::{lc_desc}")
@@ -208,45 +207,47 @@ class ProductionruleCoverage:
                               num_seeds,
                               num_trials,
                               logger=None):
-        if num_seeds<0:
-            data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}.json"
-            res_file = Macros.pdr_cov_result_dir / f"exp_cfg_rules{num_trials}_{task}_{dataset_name}_{selection_method}.json"
-        else:
-            data_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+
+        exp_rules_over_trials = list()
+        for t in range(int(num_trials)):
+            num_trial = '' if t==0 else str(t+1)
+            cfg_res_file = Macros.result_dir / f"cfg_expanded_inputs{num_trial}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
             res_file = Macros.pdr_cov_result_dir / f"exp_cfg_rules{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
-        # end if
-        exp_dicts = Utils.read_json(data_file)
-        if os.path.exists(str(res_file)):
-            exp_rules = Utils.read_json(res_file)
-        else:
+            cfg_results = Utils.read_json(cfg_res_file)
             exp_rules = dict()
-        # end if
-        for exp in exp_dicts:
-            lc = exp['requirement']['description']
-            if logger is not None:
-                logger.print(f"OUR_EXP::{lc}::")
             # end if
-            if lc not in exp_rules.keys():
-                exp_rules[lc] = dict()
-                for seed in exp['inputs'].keys():
-                    cfg_seed = exp['inputs'][seed]
-                    pdr_seed = get_pdr_per_sent(cfg_seed)
-                    pdrs = list()
-                    for exp in exp['inputs'][seed]['exp_inputs']:
-                        pdr_exp = pdr_seed.copy()
-                        cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
-                        cfg_from.replace(f" -> ", "->")
-                        cfg_to.replace(f" -> ", "->")
-                        pdr_exp.remove(cfg_from)
-                        pdr_exp.append(cfg_to)
-                        pdrs.append(pdr_exp)
+            for cfg_res in cfg_results:
+                lc_desc = cfg_res['requirement']['description']
+                if lc_desc not in exp_rules.keys():
+                    req_cksum = Utils.get_cksum(lc_desc)
+                    exp_rules[lc_desc] = dict()
+                    if logger is not None:
+                        logger.print(f"OUR_SEED::{lc_desc}")
+                    # end if
+                    
+                    for seed in cfg_res['inputs'].keys():
+                        cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
+                        pdr_seed = get_pdr_per_sent(cfg_seed)
+                        for exp in cfg_res['inputs'][seed]['exp_inputs']:
+                            pdr_exp = pdr_seed.copy()
+                            cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
+                            cfg_from = cfg_from.replace(f" -> ", '->')
+                            lhs, rhs = cfg_from.split('->')
+                            if len(eval(rhs))==1:
+                                cfg_from = f"{lhs}->{eval(rhs)[0]}"
+                            # end if
+                            cfg_to = cfg_to.replace(f" -> ", '->')
+                            pdr_exp.remove(cfg_from)
+                            pdr_exp.append(cfg_to)
+                            exp_rules[lc_desc][exp_sent] = pdr_exp
+                        # end for
                     # end for
-                    exp_rules[lc][seed] = pdrs
-                # end for
-                Utils.write_json(exp_rules, res_file, pretty_format=True)
-            # end if
+                    Utils.write_json(exp_rules, res_file, pretty_format=True)
+                # end if
+            # end for
+            exp_rules_over_trials.append(exp_rules)
         # end for
-        return exp_rules
+        return exp_rules_over_trials
     
     @classmethod
     def get_bl_cfg_rules(cls,
@@ -385,7 +386,7 @@ def main_seed(task,
                     if exp_rules is not None:
                         exp_rules_per_trial = exp_rules[num_trial]
                         _exp_rules = exp_rules_per_trial[lc]
-                        exp_sents = list(_exp_sents.keys())
+                        exp_sents = list(_exp_rules.keys())
                     # end if
                     
                     # sample bl pdrs to make same number of pdrs with ours
@@ -395,13 +396,13 @@ def main_seed(task,
                     }
                     if exp_sents is not None:
                         for e in exp_sents:
-                            if e not in prd1.keys():
+                            if e not in pdr1.keys():
                                 pdr1[e] = _exp_rules[e]
                             # end if
                         # end for
                     # end if
                     pdr2 = {
-                        s: _seed_rules[s]
+                        s: _bl_rules[s]
                         for s in bl_sents
                     }
                     # pdr1, pdr2 = dict(), dict()
@@ -439,7 +440,6 @@ def main_seed(task,
                     cov_score_ours, cov_score_bl = pdr_obj.get_score()
                     scores[lc]['ours']['coverage_scores'].append(cov_score_ours)
                     scores[lc]['bl']['coverage_scores'].append(cov_score_bl)
-                    print()
                 # end for
                 scores[lc]['ours']['avg_score'] = Utils.avg(scores[lc]['ours']['coverage_scores'])
                 scores[lc]['ours']['med_score'] = Utils.median(scores[lc]['ours']['coverage_scores'])
@@ -543,7 +543,6 @@ def main_seed_sample(task,
                     
                     # sample bl pdrs to make same number of pdrs with ours
                     pdr1, pdr2 = dict(), dict()
-                    print(len(seed_sents), len(bl_sents))
                     if len(seed_sents)<len(bl_sents):
                         num_samples = len(seed_sents)
                         r_idxs = list(range(len(bl_sents)))

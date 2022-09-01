@@ -46,8 +46,7 @@ class Template:
     SEARCH_FUNC = {
         Macros.hs_task: Search.search_hatespeech_per_req
     }
-
-
+    
     @classmethod
     def get_seed_of_interest(cls, cfg_res_file, cur_req, orig_seeds):
         if not os.path.exists(str(cfg_res_file)):
@@ -66,14 +65,15 @@ class Template:
             # end if
             req_ind_in_result = template_results_saved[0][0]
             seeds = list()
-            for index, (_id, seed, seed_label, seed_score) in enumerate(orig_seeds):
-                if seed not in template_results_saved[0][1]['inputs'].keys():
-                    seeds.append((_id, seed, seed_label, seed_score))
+            for index, (_id, seed, seed_label) in enumerate(orig_seeds):
+                _seed = Utils.detokenize(seed) if type(seed)==list else seed
+                if _seed not in template_results_saved[0][1]['inputs'].keys():
+                    seeds.append((_id, _seed, seed_label))
                 # end if
             # end for
         # end if
         return req_ind_in_result, seeds
-
+    
     @classmethod
     def generate_seed_cfg_parallel(cls,
                                    index,

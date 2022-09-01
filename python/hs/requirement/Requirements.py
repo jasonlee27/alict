@@ -286,7 +286,7 @@ class Requirements:
                             },
                             'label': 'toxic'
                         }],
-                        'expension': ['neutral'],
+                        'expansion': ['neutral'],
                         'transform': None,
                         'transform_req': None
                     })

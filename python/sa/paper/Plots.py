@@ -54,11 +54,13 @@ class Plots:
 
         for item in which:
             if item == 'selfbleu':
-                cls.selfbleu_ours_plot(Macros.result_dir, figs_dir)
-                cls.selfbleu_bl_plot(Macros.result_dir, figs_dir)
+                cls.selfbleu_ours_sample_plot(Macros.result_dir, figs_dir)
+                cls.selfbleu_bl_sample_plot(Macros.result_dir, figs_dir)
             elif item == 'pdr':
                 cls.pdr_ours_plot(Macros.result_dir, figs_dir)
-                cls.pdr_bl_plot(Macros.result_dir, figs_dir)
+                # cls.pdr_bl_plot(Macros.result_dir, figs_dir)
+                cls.pdr_ours_sample_plot(Macros.result_dir, figs_dir)
+                cls.pdr_bl_sample_plot(Macros.result_dir, figs_dir)
             elif item == 'test-results':
                 cls.failrate_all_over_seeds_plot(Macros.result_dir, figs_dir)
                 cls.failrate_seed_over_seeds_plot(Macros.result_dir, figs_dir)
@@ -78,7 +80,7 @@ class Plots:
         return string
 
     @classmethod
-    def selfbleu_ours_plot(cls, results_dir: Path, figs_dir: Path):
+    def selfbleu_ours_sample_plot(cls, results_dir: Path, figs_dir: Path):
         data_lod: List[dict] = list()
         x_ticks = {0:50, 1:100, 2:200}
         num_seeds = list(x_ticks.keys())
@@ -142,7 +144,7 @@ class Plots:
         return
 
     @classmethod
-    def selfbleu_bl_plot(cls, results_dir: Path, figs_dir: Path):
+    def selfbleu_bl_sample_plot(cls, results_dir: Path, figs_dir: Path):
         data_lod: List[dict] = list()
         # num_seeds = [0,50,100,200] # x-axis
         x_ticks = {0:50, 1:100, 2:200}
@@ -205,7 +207,7 @@ class Plots:
         return
 
     @classmethod
-    def pdr_ours_plot(cls, results_dir: Path, figs_dir: Path):
+    def pdr_ours_sample_plot(cls, results_dir: Path, figs_dir: Path):
         data_lod: List[dict] = list()
         x_ticks = {0:50, 1:100, 2:200}
         num_seeds = list(x_ticks.keys())
@@ -215,7 +217,7 @@ class Plots:
         for l_i, l in enumerate(Utils.read_txt(req_file)):
             lc_desc = l.strip().split('::')[0].lower()
             for ns in x_ticks.values():
-                result_file = results_dir / 'pdr_cov' / f"seeds_over3_sa_sst_random_{ns}seeds_pdrcov.json"
+                result_file = results_dir / 'pdr_cov' / f"seeds_sample_over3_sa_sst_random_{ns}seeds_pdrcov.json"
                 result = Utils.read_json(result_file)
                 for s_i, score in enumerate(result[lc_desc]['ours']['coverage_scores']):
                     result_lc_ours = {
@@ -269,7 +271,7 @@ class Plots:
         return
 
     @classmethod
-    def pdr_bl_plot(cls, results_dir: Path, figs_dir: Path):
+    def pdr_bl_sample_plot(cls, results_dir: Path, figs_dir: Path):
         data_lod: List[dict] = list()
         # num_seeds = [0,50,100,200] # x-axis
         x_ticks = {0:50, 1:100, 2:200}
@@ -280,7 +282,7 @@ class Plots:
         for l_i, l in enumerate(Utils.read_txt(req_file)):
             lc_desc = l.strip().split('::')[0].lower()
             for ns in x_ticks.values():
-                result_file = results_dir / 'pdr_cov' / f"seeds_over3_sa_sst_random_{ns}seeds_pdrcov.json"
+                result_file = results_dir / 'pdr_cov' / f"seeds_sample_over3_sa_sst_random_{ns}seeds_pdrcov.json"
                 result = Utils.read_json(result_file)
                 for score in result[lc_desc]['bl']['coverage_scores']:
                     result_lc_bl = {
@@ -330,6 +332,86 @@ class Plots:
         ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         fig.savefig(figs_dir / "pdr-bl-lineplot.eps")
         return
+
+
+    @classmethod
+    def pdr_ours_plot(cls, results_dir: Path, figs_dir: Path):
+        data_lod: List[dict] = list()
+        x_ticks = {0:50} # , 1:100, 2:200}
+        num_seeds = list(x_ticks.keys())
+
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        for l_i, l in enumerate(Utils.read_txt(req_file)):
+            lc_desc = l.strip().split('::')[0].lower()
+            for ns in x_ticks.values():
+                result_file = results_dir / 'pdr_cov' / f"seeds_over3_sa_sst_random_{ns}seeds_pdrcov.json"
+                result = Utils.read_json(result_file)
+                bl_score = result[lc_desc]['bl']['coverage_scores'][0]
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'CHECKLIST',
+                    'num_seed': ns,
+                    'scores': score
+                    # 'avg': result[lc_desc]['ours']['avg_score'],
+                    # 'med': result[lc_desc]['ours']['med_score'],
+                    # 'std': result[lc_desc]['ours']['std_score']
+                })
+                for score in result[lc_desc]['ours']['coverage_scores']:
+                    result_lc_ours = {
+                        'lc': f"LC{l_i+1}",
+                        'type': 'S$^2$LCT',
+                        'num_seed': ns,
+                        'scores': score
+                        # 'avg': result[lc_desc]['ours']['avg_score'],
+                        # 'med': result[lc_desc]['ours']['med_score'],
+                        # 'std': result[lc_desc]['ours']['std_score']
+                    }
+                    data_lod.append(result_lc_ours)
+                # end for
+            # end for
+        # end for
+
+        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+
+        # Plotting part
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+
+        hue_order = ['CHECKLIST', 'S$^2$LCT']
+
+        ax = sns.barplot(data=df, x='lc', y='scores',
+                         hue='type',
+                         hue_order=hue_order,
+                         style='type',
+                         estimator='median',
+                         err_style='bars', # or "band"
+                         dashes=True,
+                         ci='sd',
+                         ax=ax)
+        plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
+        ax.set_ylim(-50, 1200)
+        ax.set_xlabel("Linguistic Capabilities")
+        ax.set_ylabel("Number of Production Rules Covered")
+        
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+
+        # Put a legend to the right of the current axis
+        ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        # fig.tight_layout()
+        fig.savefig(figs_dir / "pdr-ours-barplot.eps")
+        return
+
+
+
+
+
+
+
+
+    
 
     @classmethod
     def failrate_all_over_seeds_plot(cls,
