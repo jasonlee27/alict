@@ -370,7 +370,7 @@ class Plots:
         for l_i, l in enumerate(Utils.read_txt(req_file)):
             lc_desc = l.strip().split('::')[0].lower()
             for ns in x_ticks.values():
-                result_file = results_dir / 'pdr_cov' / f"seeds_sample_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
+                result_file = results_dir / 'pdr_cov' / f"seeds_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
                 result = Utils.read_json(result_file)
                 for score in result[lc_desc]['bl']['coverage_scores']:
                     result_lc_bl = {
