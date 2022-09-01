@@ -521,6 +521,7 @@ def main_seed_sample(task,
         logger.print(f"ProductionruleCoverage.main_seed::{round(ft-st,3)}sec")
     else:
         for lc in tqdm(checklist_rules.keys()):
+            lc_key = lc.lower()
             if lc_key not in scores.keys():
                 lc_key = lc.lower()
                 scores[lc_key] = {
@@ -634,6 +635,7 @@ def main_seed_exp(task,
 
     if type(seed_rules)==dict:
         for lc in tqdm(seed_rules.keys()):
+            lc_key = lc.lower()
             if lc not in scores.keys():
                 logger.print(f"OURS::{lc}", end='::')
                 pdr_obj = ProductionruleCoverage(lc=lc,
@@ -650,7 +652,7 @@ def main_seed_exp(task,
         ft = time.time()
         logger.print(f"ProductionruleCoverage.main_seed::{round(ft-st,3)}sec")
     else:
-        for lc in tqdm(checklist_rules.keys()):
+        for lc in tqdm(seed_rules[0].keys()):
             lc_key = lc.lower()
             if lc_key not in scores.keys():
                 scores[lc_key] = {
@@ -682,14 +684,18 @@ def main_seed_exp(task,
                         for s in seed_sents
                     }
                     pdr2 = {
-                        s: _exp_rules[e]
+                        e: _exp_rules[e]
                         for e in exp_sents
                     }
                     pdr_obj = ProductionruleCoverage(lc=lc,
                                                      our_cfg_rules=pdr1,
                                                      bl_cfg_rules=pdr2)
                     scores[lc_key]['num_data_seed'] = pdr_obj.our_num_data
-                    scores[lc_key]['num_data_seed_exp'] = pdr_obj.bl_num_data
+                    if 'num_data_seed_exp' not in scores[lc_key].keys():
+                        scores[lc_key]['num_data_seed_exp'] = [pdr_obj.bl_num_data]
+                    else:
+                        scores[lc_key]['num_data_seed_exp'].append(pdr_obj.bl_num_data)
+                    # end if
                     cov_score_ours, cov_score_bl = pdr_obj.get_score()
                     scores[lc_key]['ours_seed']['coverage_scores'].append(cov_score_ours)
                     scores[lc_key]['ours_seed_exp']['coverage_scores'].append(cov_score_bl)
