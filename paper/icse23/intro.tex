@@ -8,43 +8,86 @@
 % has elements of \ml (ML). Especially, 
 
 
-\Nlp (NLP) applications are growing exponentially.  As a result,
-trustworthiness in the quality of NLP applications has become critical
-for its practical use in the real world.  Therefore, quality assurance
-of NLP applications is essential in the software
-development process.  
-Researchers aim to improve the current practices of testing NLP models
-from three perspectives: (i) \emph{test input generation}, (ii)
-\emph{automated test oracle}, and (iii) \emph{meaningful quality
-  metrics}.
+\Nlp (NLP) applications are growing rapidly.  As a result,
+trustworthiness in how the quality of NLP applications is assessed becomes critical
+for its practical use in the real world.  
+Traditionally, the quality of NLP models is
+assessed using aggregated metrics. In particular, accuracy (i.e., the fraction of outputs that the
+model correctly predicts) is the most widely used metric for assessing
+the quality of classification models:
+higher accuracy suggests better quality of a model.
+However, all NLP models have their strengths and weaknesses; 
+using a single, aggregated metric (i.e., accuracy) makes it difficult for the users to assess the capabilities of NLP models.
+Such a metric fails to validate how well a model supports linguistic capabilities~\cite{geva2019we,gururangan2018annotation} (e.g., when the model always fails on certain type of inputs).
+% Not to
+% mention localizing and fixing the bugs found from the \ho
+% set (i.e., testing dataset, as opposed to training dataset). Therefore, this forced aggregation method not only fails to
+% validate the linguistic capability of the model, but it also makes the localization of the
+% causes of the inaccuracy more costly~\cite{wu2019errudite}.
 
-\noindent \textbf{Test input generation.} Currently, most testing of
-an NLP model uses existing, large textual corpus as the testing
-dataset to evaluate the model. This practice often overestimates
-the model performances from the \ho
-dataset~\cite{patel2018mlevalforsoftware, recht2019imagenetbias,
-  marcoACL2020checklist}.  The overestimation comes from the
-discrepancy between the distribution of the used dataset and the actual data
-distribution in real world. Oftentimes, the \ho dataset is not
-representative and is likely to introduce specific biases, leading to the
-decreased robustness of NLP models. In this regard, prior works
-have proposed techniques for testing the robustness of NLP models by crafting
-adversarial examples and attacking a model with them intentionally (i.e., adversarial testing)
-\cite{ribeiro2018sear,belinkov2018breaknmt,
-  rychalska2019wildnlp,iyyer2018adversarial}.
-
-\noindent \textbf{Automated test oracle.} The current testing practice
-requires manual efforts to label the test oracles of the \ho
-data. The manual work is costly in terms of time consumption and its
-impact on the market price. Therefore, it necessitates automated test
-oracle generation for improving the testing process of NLP
+To address this limitation, methodologies to assess an NLP model on a set of
+  linguistic capabilities have been introduced~\cite{marcoACL2020checklist,rottger2020hatecheck}. 
+A \lc
+explains a functionality of the input and output behavior for the
+NLP model under test. Typically, it describes certain type of inputs
+and outputs observed in real world for the target NLP task.
+% , ranging
+% from simple to complicated behaviors.
+Testing the linguistic capabilities allows the model developers to better understand the capabilities and potential issues of the NLP
 models. 
-% validity of the automation is ensured by the
-% correctness of test oracle.
-However, automatically generating test oracles may not always
-be feasible; predicting the correct test oracles remains one of main
-challenges. Along with this, motivated by software metamorphic testing 
-approach~\cite{segura2016metamorphictest}, we address the challenge by specifying linguistic rules determined by input-output relations, and we only accept validated test oracles by the rules. 
+For example,  \Cklst~\cite{marcoACL2020checklist}, a behavioral testing framework for evaluating NLP models, defines a linguistic capability called ``Negated neutral should still be neutral'' to measure how accurately a \sa model understands that the negated neutral input has neutral sentiment
+\cite{marcoACL2020checklist}. 
+It requires the \sa model to
+output neutral sentiment on the negated neutral inputs. 
+Such evaluation methodology avoids the overestimation of the model performance as it measures the model performance on each functionality.
+% ,and the separate model performance
+% explain distribution of the performance over the linguistic capabilities
+In the end, testing through linguistic capabilities provides not only the overall model performance, but also the malfunction facets of the model.  
+  
+ However, existing linguistic capability-based testing approaches rely on manually generated input templates, which need to be preset before generating tests. 
+ As a result, these templates are limited in their sentence
+structures. This restricts existing approaches' ability to comprehensively test linguistic capabilities. 
+  
+%  For example, \. \Cklst defines
+% task-relevant linguistic capabilities and generates test cases for
+% each \lc.
+
+
+% Therefore, quality assurance
+% of NLP applications is essential in the software
+% development process.  
+% Researchers aim to improve the current practices of testing NLP models
+% from three perspectives: (i) \emph{test input generation}, (ii)
+% \emph{automated test oracle}, and (iii) \emph{meaningful quality
+%   metrics}.
+
+% \noindent \textbf{Test input generation.} Currently, most testing of
+% an NLP model uses existing, large textual corpus as the testing
+% dataset to evaluate the model. This practice often overestimates
+% the model performances from the \ho
+% dataset~\cite{patel2018mlevalforsoftware, recht2019imagenetbias,
+%   marcoACL2020checklist}.  The overestimation comes from the
+% discrepancy between the distribution of the used dataset and the actual data
+% distribution in real world. Oftentimes, the \ho dataset is not
+% representative and is likely to introduce specific biases, leading to the
+% decreased robustness of NLP models. In this regard, prior works
+% have proposed techniques for testing the robustness of NLP models by crafting
+% adversarial examples and attacking a model with them intentionally (i.e., adversarial testing)
+% \cite{ribeiro2018sear,belinkov2018breaknmt,
+%   rychalska2019wildnlp,iyyer2018adversarial}.
+
+% \noindent \textbf{Automated test oracle.} The current testing practice
+% requires manual efforts to label the test oracles of the \ho
+% data. The manual work is costly in terms of time consumption and its
+% impact on the market price. Therefore, it necessitates automated test
+% oracle generation for improving the testing process of NLP
+% models. 
+% % validity of the automation is ensured by the
+% % correctness of test oracle.
+% However, automatically generating test oracles may not always
+% be feasible; predicting the correct test oracles remains one of main
+% challenges. Along with this, motivated by software metamorphic testing 
+% approach~\cite{segura2016metamorphictest}, we address the challenge by specifying linguistic rules determined by input-output relations, and we only accept validated test oracles by the rules. 
 % \TODO{Describe and Add citations to metamorphic testing techniques
 %   here}\jl{done.}
 
@@ -53,22 +96,12 @@ approach~\cite{segura2016metamorphictest}, we address the challenge by specifyin
 %  In addition, the inconsistency between test input and
 % its oracle causes biases. Such biases increase the discrepancy of
 % distribution between the dataset and real-world data.
-\noindent \textbf{Meaningful quality metrics.}  
-Traditionally, the quality of NLP models are
-represented by numbers in quality metrics. Especially, accuracy (i.e., the fraction of outputs that the
-model correctly predicts) is the most widely used metric for assessing
-the quality of classification models. 
-Generally, higher accuracy number suggests better quality of a model.
-However, all NLP models have their strengths and weaknesses, and 
-forcing aggregation statistics into a single number (i.e., accuracy) makes it difficult for the users to assess the capabilities of NLP models.  Not to
-mention localizing and fixing the bugs found from the \ho
-set (i.e., testing dataset, as opposed to training dataset). Therefore, this forced aggregation method not only fails to
-validate the linguistic capability of the model, but it also makes the localization of the
-causes of the inaccuracy more costly~\cite{wu2019errudite}.
+% \noindent \textbf{Meaningful quality metrics.}  
+
 % Therefore behavioral testing
 % approach provides the better ability to examine the inaccuracy and
 % find the bugs in the model.
-To address this limitation,
+
 % several approaches have been proposed to
 % evaluate different aspects of the NLP models, such as , model coverage
 % \cite{rottger2020hatecheck}, and fairness
@@ -77,66 +110,33 @@ To address this limitation,
 % testing set. The fairness and robustness testing only focus on only
 % one model capability resulting in its limited comprehensiveness. In
 % addition,
-Ribeiro~\etal introduced \Cklst, a behavioral testing framework for
-evaluating NLP model on multiple linguistic
-capabilities~\cite{marcoACL2020checklist}. \Cklst defines
-task-relevant linguistic capabilities and generates test cases for
-each \lc.
 
-However, none of the above approaches satisfy all three requirements
-at the same time. First, the adversarial testing approaches merely
-focus on evaluating model robustness. They measure how sensitive the models
-are to input perturbations while do not
-evaluate linguistic functionalities.
-Second, the metamorphic testing approach requires understanding the characteristics of metamorphic relations between inputs
-and outputs. However, finding these remains one of the most challenging
-problems~\cite{segura2016metamorphictest}. In addition, metamorphic
-relation in textual data in the NLP domain has not been explored despite
-its importance.
-Third, \Cklst relies on manually generated input templates,
-which need to be preset before test input generation. Consequently,
-\Cklst templates are distributed in a limited range of their
-structures. This restricts \Cklst's ability to comprehensively test
-the linguistic capabilities.
 
-Despite \Cklst's limitations, assessing the quality of NLP models
-through the linguistic capabilities is a promising direction. Each \lc
-explains the functionality of the input and output behavior for the
-NLP model under test. Typically, it describes certain type of inputs
-and outputs observed in real world for the target NLP task, ranging
-from simple to complicated behaviors. Testing the linguistic capabilities allows the model developers to better understand the capabilities and potential issues of the NLP
-models. For example, a linguistic capability of ``Negated neutral
-should still be neutral'' measures how accurately the \sa model
-understands that the negated neutral input has neutral sentiment
-\cite{marcoACL2020checklist}, requiring the \sa model to
-output neutral sentiment on the negated neutral inputs.  Such evaluation
-methodology on the specified functionalities avoids the
-overestimation of the model performance as it measures
-the model performance on each functionality.
-% ,and the separate model performance
-% explain distribution of the performance over the linguistic capabilities
-In the end, testing through linguistic capabilities provides not only
-the overall model performance, but also the malfunction facets of the
-model.
+% However, none of the above approaches satisfy all three requirements
+% at the same time. First, the adversarial testing approaches merely
+% focus on evaluating model robustness. They measure how sensitive the models
+% are to input perturbations while do not
+% evaluate linguistic functionalities.
+% Second, the metamorphic testing approach requires understanding the characteristics of metamorphic relations between inputs
+% and outputs. However, finding these remains one of the most challenging
+% problems~\cite{segura2016metamorphictest}. In addition, metamorphic
+% relation in textual data in the NLP domain has not been explored despite
+% its importance.
+% Third, 
 
-To satisfy all three requirements mentioned above, we present \tool,
-an automated evaluation method for comprehensive behavioral
-testing of NLP models on \sa task.  There are three main challenges
-that \tool overcomes to satisfy all three aforementioned requirements.
-\begin{description}
-\item[{\bf C1}] The test suite should cover diverse syntactic structures;
-\item[{\bf C2}] Each test case should be automatically categorized into a \lc;
-\item[{\bf C3}] The label of each test case should be automatically
+% Despite \Cklst's limitations, assessing the quality of NLP models
+% through the linguistic capabilities is a promising direction. 
+
+To address this issue, we present \tool,
+an automated linguistic capability-based testing framework for NLP models.  
+The goal of \tool is to generate a diverse linguistic capability-based test suite for a given model, both in terms of covering diverse linguistic structures and diverse model behaviors.
+To achieve the goal, \tool needs to address two challenges.
+\textit{(i) Capability-based Assessment.} Each test case should be automatically categorized into a \lc;
+and \textit{(ii) Automated Test Oracle.} The label of each test case should be automatically
   and accurately defined.
-\end{description}
+% \end{description}
 
-\noindent \textbf{C1.} The first challenge comes with the second and third challenges of maintaining the linguistic capability and label of the test sentence while making the syntactic structure of the sentence diverse. 
-To address this challenge, \tool establishes specifications for evaluating
-a linguistic capability and searches suitable sentences that satisfy
-the specification from existing public dataset. In this process, \tool
-generates new inputs by mutating the searched sentences, used as seed
-inputs. \tool expands the grammar structure of a seed input and determines its
-available \pos to maintain structural naturalness.
+%\noindent \textbf{C1.} The first challenge comes with the second and third challenges of maintaining the linguistic capability and label of the test sentence while making the syntactic structure of the sentence diverse. To address this challenge, \tool establishes specifications for evaluating a linguistic capability and searches suitable sentences that satisfy the specification from existing public dataset. In this process, \tool generates new inputs by mutating the searched sentences, used as seed inputs. \tool expands the grammar structure of a seed input and determines its available \pos to maintain structural naturalness.
 
 % After that, to hold contextual naturalness of the mutated
 % inputs, the fuzzer completes the expanded new structures via
@@ -145,12 +145,12 @@ available \pos to maintain structural naturalness.
 % word suggestion. Further, we address the manual input generation
 % process by automating the process mentioned above. 
 
-\noindent \textbf{C2.} Suitability of test sentences for evaluating NLP
-model on a \lc is determined by its relevancy to the
-\lc. Relevancy between a test sentence and its \lc is challenging to be maintained when transforming and expanding the test sentence.
+\noindent \textbf{Capability-based Assessment.} The suitability of test sentences for evaluating NLP
+models on a \lc is determined by its relevancy to this
+\lc. It is challenging to maintain relevancy between a test sentence and its \lc when transforming and expanding the test sentence.
 This is because the \lc is defined on a specific 
-mixture of syntax and semantics of the sentence, and there exists no automatic way to check the consistency of each sentence with the semantics specified in the corresponding \lc due to the inherent ambiguity of natural language sentences. To address this difficulty, \tool implements search rules
-and the transformation templates of \lcs. In addition, it analyzes the parse
+mixture of syntax and semantics of the sentence. Due to the inherent ambiguity of natural language sentences, there exists no automatic way to check the consistency of each sentence with the semantics specified in the corresponding \lc. To address this difficulty, \tool defines specifications (search rules
+and transformation templates) of \lcs, and analyzes the parse
 tree of the seed sentence to identify possible expansion.
 %% \tool adopts behavioral model testing method by
 %% introducing multiple behaviors from \lcs on \sa tasks and generating
@@ -160,13 +160,22 @@ tree of the seed sentence to identify possible expansion.
 %% performance. Therefore assigning appropriate \lc for each test case
 %% alleviates overestimation of model testing results.
 
-\noindent \textbf{C3.} Last challenge is on automated test oracle.  For NLP tasks, test oracle is
-determined by understanding the meaning of texts. This requires domain knowledge of different NLP tasks.
+\noindent \textbf{Automated Test Oracle.}   For NLP model testing, test oracle is usually determined by understanding the semantics of texts and requires domain knowledge of different NLP tasks.
+Thus, the current testing practice requires manual efforts to create the test oracles of the \ho data. The manual work is costly in terms of time consumption. Therefore, it necessitates automated test oracle generation for improving the testing process of NLP models. 
+% % validity of the automation is ensured by the
+% % correctness of test oracle.
+ However, automatically generating the  test oracles remains one of the main challenges in NLP software testing~\cite{huang2022aeon}. 
+ A few metamorphic testing approaches have been proposed in image recognition domain, but they require understanding the characteristics of metamorphic relations between inputs and outputs, which require domain expertise and non-trivial manual efforts ~\cite{segura2016metamorphictest}. In addition, it is even more challenging to design metamorphic relations in textual data because the semantics of nature language sentences can be greatly changed even by a slight perturbation to the sentences.
+ %Along with this, motivated by software metamorphic testing approach~\cite{segura2016metamorphictest}, we address the challenge by specifying linguistic rules determined by input-output relations, and we only accept validated test oracles by the rules. 
+
+
+
 % Therefore, generation of test case ought to ensure the
 %correctness of its oracle allocation.
-In this work, as a first step, we consider \sa as the NLP task for the models under test. \tool obtains the
+In this work, as a first step, we consider \sa as the NLP task for the models under test. 
+\tool obtains the
 appropriate test oracle by implementing domain-specific
-knowledge on the word sentiment dataset and word suggestion model for validation of generated sentence and its oracle.
+knowledge on the word sentiment dataset and word suggestion model for validating the generated sentence and its oracle.
 
 We demonstrate the generality of \tool and its utility as a NLP model evaluation
 tool by evaluating three well-known \sa models: \Bert~\cite{devlin2019bert},
@@ -178,12 +187,12 @@ tool by evaluating three well-known \sa models: \Bert~\cite{devlin2019bert},
 We made the following contributions in this work:
 
 \begin{itemize}[topsep=3pt,itemsep=3pt,partopsep=0ex,parsep=0ex,leftmargin=*]
-\item We design and implement an automated testing tool, \tool, and compared it with \Cklst. We find that the test cases generated by \tool achieves higher coverage than \Cklst when used for testing sentiment analysis models.
+\item We design and implement an automated testing tool, \tool, and compared it with \Cklst. We find that the test cases generated by \tool achieve 100\% higher coverage than \Cklst when used for testing sentiment analysis models. 
 %
 \item We perform a manual study to
-measure the correctness of the sentiment labels and their \lcs produced by \tool. We find that \tool generates test cases that consistently label their sentiment correctly as human understanding.
+measure the correctness of the sentiment labels and their \lcs produced by \tool. We find that \tool generates test cases that consistently label their sentiment correctly as human.
 %
-\item We analyze the root causes of the misclassification in the sentiment analysis models, guided by \tool testing result. We find that seed and expanded test cases, produced by \tool, are usefulness of \tool for understanding bugs in the models.
+\item We analyze the root causes of misclassification in the sentiment analysis models, guided by \tool testing result. We find that seeds and expanded test cases produced by \tool are rather useful in helping developers understand bugs in the model.
 \end{itemize}
 
 

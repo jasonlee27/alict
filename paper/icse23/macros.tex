@@ -7,12 +7,16 @@
 %%% Imports
 
 %%% Text Formatting
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{textcomp}
 \usepackage{microtype}
 \usepackage{xspace}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage[normalem]{ulem} % normalem do not replace \emph to underline
-\usepackage{amsmath}
+\usepackage{breakcites}
 \usepackage{enumitem}
 \usepackage{adjustbox}
 
@@ -37,7 +41,7 @@
 
 % Code
 \usepackage{algorithm}
-\usepackage{algpseudocode} 
+% \usepackage{algpseudocode} 
 \usepackage{listings}
 
 % Tikz Figs
@@ -58,6 +62,8 @@
 
 %%%----------
 %%% Utility Commands
+\newcommand{\Cong}[1]{\textbf{\color{blue}Cong:{ #1} }}
+
 \newcommand{\XSpace}[1]{}
 \newcommand{\XComment}[1]{}
 \newcommand{\Fix}[1]{\textcolor{red}{#1}}
@@ -174,7 +180,10 @@
 \newcommand{\Adj}{Adjective\xspace}
 \newcommand{\adj}{adjective\xspace}
 \newcommand{\adjs}{adjectives\xspace}
+\newcommand{\bleu}{BLEU\xspace}
 \newcommand{\selfbleu}{Self-BLEU\xspace}
+\newcommand{\Pdr}{Production Rule Coverage\xspace}
+\newcommand{\pdr}{production rule coverage\xspace}
 
 \newcommand{\Nn}{neural network\xspace}
 \newcommand{\nn}{neural network\xspace}
@@ -198,7 +207,7 @@
 \newcommand{\bertsamodel}{textattack/bert-base-uncased-SST-2\xspace}
 \newcommand{\robertasamodel}{textattack/bert-base-uncased-SST-2\xspace}
 \newcommand{\disbertsamodel}{distilbert-base-uncased\xspace}
-
+\newcommand{\Ptf}{Pass-to-Fail\xspace}
 
 %% Table
 \newcommand{\tStatement}{\textbf{Statement Types}}
@@ -221,27 +230,34 @@
 \newcommand{\tSentType}{\textbf{Type}}
 \newcommand{\tNumTestCases}{\textbf{\#Test\_Cases}}
 \newcommand{\tAvgLabelCons}{\textbf{Label\_Consistency}}
-\newcommand{\tAvgLCRel}{\textbf{Sent\_Relevancy}}
+\newcommand{\tAvgLCRel}{\textbf{LC\_Relevancy}}
 \newcommand{\tNumBlSents}{\textbf{Cklst \#TCs}}
 \newcommand{\tNumBlFail}{\textbf{Cklst \#Fails[\%]}}
 \newcommand{\tNumSeeds}{\textbf{\tool\#Seeds}}
-\newcommand{\tNumSeedFail}{\textbf{\tool Seed Fails[\%]}}
 \newcommand{\tNumExps}{\textbf{\tool\#Exps}}
-\newcommand{\tNumExpFail}{\textbf{\tool Exp Fails[\%]}}
+\newcommand{\tNumFail}{\textbf{\tool \#Fail}}
+\newcommand{\tFailRate}{\textbf{\tool Fail rate[\%]}}
 \newcommand{\tNumPasstoFail}{\textbf{\tool\#PassToFail}}
 
 %% Fig Caption
-\newcommand{\OverviewFigCaption}{Overview of \tool.\label{fig:overview}}
+\newcommand{\OverviewFigCaption}{Overview of \tool.\label{fig:overview}\vspace{-5pt}}
 \newcommand{\SearchRequirementExampleFigCaption}{Search requirement
-on the linguistic capability of \SareqExOne.\label{fig:SearchReqEx}}
-\newcommand{\TransformRequirementExampleSubFigCaption}{Transform requirement\label{fig:TransformReqSubEx}}
-\newcommand{\TransformTemplateExampleSubFigCaption}{Transform template\label{fig:TransformTempSubEx}}
+on the linguistic capability of \SareqExOne.\label{fig:SearchReqEx}\vspace{-5pt}}
+\newcommand{\TransformRequirementExampleSubFigCaption}{Transform requirement.\label{fig:TransformReqSubEx}\vspace{-5pt}}
+\newcommand{\TransformTemplateExampleSubFigCaption}{Transform template.\label{fig:TransformTempSubEx}\vspace{-5pt}}
 \newcommand{\TransformRequirementExampleFigCaption}{Transform
 requirement (\ref{fig:TransformReqSubEx}) and its template
-(\ref{fig:TransformTempSubEx}) on the linguistic capability of \SareqExTwo.\label{fig:TransformReqEx}}
-\newcommand{\ProdDiffAlgCaption}{Pseudocode of Production differentiation\label{code:ProdDiffAlg}}
-\newcommand{\RunningExCaption}{Example of sentence expansion.\label{fig:ExpEx}}
-\newcommand{\CklstTemplateFigCaption}{Example of \Cklst templates on the \lc of \SareqExThree.\label{code:TempEx}}
+(\ref{fig:TransformTempSubEx}) on the linguistic capability of \SareqExTwo.\label{fig:TransformReqEx}\vspace{-5pt}}
+\newcommand{\ProdDiffAlgCaption}{Pseudocode of Production differentiation\label{code:ProdDiffAlg}\vspace{-5pt}}
+\newcommand{\RunningExCaption}{Example of sentence expansion.\label{fig:ExpEx}\vspace{-5pt}}
+\newcommand{\CklstTemplateFigCaption}{Example of \Cklst templates on the \lc of \SareqExThree.\label{code:TempEx}\vspace{-5pt}}
+\newcommand{\PdrSelfbleuFigCaption}{Results of \selfbleu(left) and \Pdr(right) of \tool and \Cklst test cases.\label{fig:PdrSelfbleu}\vspace{-10pt}}
+\newcommand{\PdrBarplotFigCaption}{Results of \pdr between \tool with 50 seeds and \Cklst test cases.\label{fig:PdrBarplot}\vspace{-5pt}}
+\newcommand{\PdrFigCaption}{Results of \pdr between \tool (seed and expanded cases) and \Cklst.\label{fig:Pdr}\vspace{-5pt}}
+
+\newcommand{\NumFailModelsSubFigCaption}{Number of fail cases from \tool test cases over numbers of seeds.\label{fig:NumFail}\vspace{-5pt}}
+\newcommand{\FailRateModelsSubFigCaption}{Number of Pass-to-Fail cases from \tool test cases over numbers of seeds.\label{fig:FailRate}\vspace{-5pt}}
+\newcommand{\FailModelsFigCaption}{Number of failure (left) and \Ptf(right) results of NLP models on \tool test cases over numbers of seeds.\label{fig:FailModels}\vspace{-5pt}}
 
 \newcommand{\SareqExThree}{``Sentiment change over time, present should prevail"}
 
@@ -257,7 +273,7 @@ each \lc and the evaluation of the retrained model.\label{table:RetrainDebug}}
 study results of label consistency and \lc relevancy of \tool generated
 test cases compared to human annotations.\label{table:ManualStudy}}
 \newcommand{\TestResultsTableCaption}{Results of \Bert, \Roberta and
-\Dbert \sa models on \tool test cases. \Bert, \Roberta and
+\Dbert \sa models on \tool test cases using 50 seeds. \Bert, \Roberta and
 \Dbert models are denoted as BERT, RoBERTa and dstBERT, respectively.\label{table:TestResult}}
 
 %%% NUMBRERS
