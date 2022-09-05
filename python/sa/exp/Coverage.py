@@ -151,5 +151,4 @@ class Coverage:
         Utils.write_txt(res_sst_text, sst_save_file)
         Utils.write_txt(res_checklist_text, checklist_save_file)
         return
-
     
