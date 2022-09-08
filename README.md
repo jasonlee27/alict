@@ -1,5 +1,21 @@
-# nlptest: Project Description
+# S<sup>2</sup>LCT
 
+This repository contains code for testing NLP Models as described in the following paper:
+>[S<sup>2</sup>LCT: Specification- and Syntax-based Automated Testing Linguistic Capabilities of NLP Models]
+>Simin Chen, Cong Liu, Wei Yang, Shiyi Wei
+
+S<sup>2</sup>LCT is an automated linguistic capability-based testing framework for NLP models. In this implementation, we generate testcases for sentiment analysis task. Seed test cases are generated from SST dataset(https://nlp.stanford.edu/sentiment/).
+In the future, multiple tasks and multiple searching datasets are implemented for the S<sup>2</sup>LCT.
+
+## Prerequisites
+This application is written for ```Python>3.7.11```. All requirements are listed in ```requirements.txt```, and they are installed by pip with the following command.
+```bash
+pip install -p requirements.txt
+```
+## Usage
+
+
+<!-- 
 ## Goal
 The project is to generate comprehensive sets of test cases for evaluating NLP models on multiple linguistic capabilities of the NLP task.
 
@@ -30,4 +46,4 @@ Given the limitations mentioned in the Problem section, we focus on improving co
 I manually extracted the requirements of two linguistic capabilities for semantic analysis reported in CHECKLIST paper.
 4. For each requirement from step 4, I search relevant inputs that meet the requirement from widely used sentiment analysis dataset(Stanford Treebank dataset, link: https://nlp.stanford.edu/sentiment/index.html) and word sentiments dataset(SentiWordNe, link: https://github.com/aesuli/SentiWordNet)
 
-
+ -->
