@@ -52,32 +52,44 @@ class Template:
         Macros.sa_task: Search.search_sentiment_analysis_per_req
     }
 
-
     @classmethod
-    def get_seed_of_interest(cls, cfg_res_file, cur_req, orig_seeds):
+    def get_seed_of_interest(cls,
+                             cur_req,
+                             cfg_res_file,
+                             orig_seeds):
         if not os.path.exists(str(cfg_res_file)):
-            return -2, orig_seeds
+            return orig_seeds
         # end if
+        # template_results = Utils.read_json(cfg_res_file)
         template_results = Utils.read_json(cfg_res_file)
         seeds = list()
-        req_ind_in_result = -2
-        if any(template_results):
-            template_results_saved = [
-                (r_i, r) for r_i, r in enumerate(template_results)
-                if r["requirement"]["description"]==cur_req["description"]
-            ]
-            if not any(template_results_saved):
-                return -1, orig_seeds
-            # end if
-            req_ind_in_result = template_results_saved[0][0]
-            seeds = list()
+        if any(template_results) and \
+           template_results["requirement"]["description"]==cur_req["description"]:
             for index, (_id, seed, seed_label, seed_score) in enumerate(orig_seeds):
-                if seed not in template_results_saved[0][1]['inputs'].keys():
+                if seed not in template_results['inputs'].keys():
                     seeds.append((_id, seed, seed_label, seed_score))
                 # end if
             # end for
         # end if
-        return req_ind_in_result, seeds
+        return seeds
+
+        # if any(template_results):
+        #     template_results_saved = [
+        #         (r_i, r) for r_i, r in enumerate(template_results)
+        #         if r["requirement"]["description"]==cur_req["description"]
+        #     ]
+        #     if not any(template_results_saved):
+        #         return -1, orig_seeds
+        #     # end if
+        #     req_ind_in_result = template_results_saved[0][0]
+        #     seeds = list()
+        #     for index, (_id, seed, seed_label, seed_score) in enumerate(orig_seeds):
+        #         if seed not in template_results_saved[0][1]['inputs'].keys():
+        #             seeds.append((_id, seed, seed_label, seed_score))
+        #         # end if
+        #     # end for
+        # # end if
+        # return req_ind_in_result, seeds
 
     @classmethod
     def generate_seed_cfg_parallel(cls,
@@ -274,19 +286,20 @@ class Template:
                         pcfg_ref,
                         editor,
                         dataset,
-                        cfg_res_file,
+                        res_dir, # cfg_res_file,
                         num_seeds=None,
                         selection_method=None,
                         logger=None):
         st = time.time()
         # generate seeds
+        cksum_val = Utils.get_cksum(selected['requirement']['description'])
+        cfg_res_file = res_dir / f"cfg_expanded_inputs_{cksum_val}.json"
         selected = cls.SEARCH_FUNC[task](req, dataset)
         seeds = selected['selected_inputs'][:num_seeds] if num_seeds>0 else selected['selected_inputs']
-        req_i, seeds = cls.get_seed_of_interest(cfg_res_file, req, seeds)
+        seeds = cls.get_seed_of_interest(req, cfg_res_file, seeds)
         if not any(seeds):
             return
         # end if
-        cksum_val = Utils.get_cksum(selected['requirement']['description'])
         num_selected_inputs = len(selected['selected_inputs'])
         print_str = f">>>>> REQUIREMENT::{cksum_val}::"+selected['requirement']['description']
         if logger is not None:
@@ -317,25 +330,18 @@ class Template:
                                                                num_target=num_target,
                                                                selection_method=selection_method,
                                                                logger=logger)
-                  
-        if req_i==-2: # file not exists
-            template_results = list()
-            template_results.append({
+
+        if not os.path.exists(str(cfg_res_file)):
+            template_results = {
                 'requirement': req,
                 'inputs': dict()
-            })
-            req_i = -1
-        elif req_i==-1: # file exists but has no results about the lc under analysis
-            template_results = Utils.read_json(cfg_res_file)
-            template_results.append({
-                'requirement': req,
-                'inputs': dict()
-            })
+            }
         else:
             template_results = Utils.read_json(cfg_res_file)
         # end if
+        
         for seed in exp_results.keys():
-            template_results[req_i]['inputs'][seed] = {
+            template_results['inputs'][seed] = {
                 'cfg_seed': exp_results[seed]['cfg_seed'],
                 'exp_inputs': exp_results[seed]['exp_inputs'],
                 'label': exp_results[seed]['label'],
@@ -347,84 +353,11 @@ class Template:
         Utils.write_json(template_results, cfg_res_file, pretty_format=True)
         ft = time.time()
         logger.print(f"<<<<< REQUIREMENT::{cksum_val}::"+selected["requirement"]["description"]+f"{round(ft-st,2)}sec")
-        
-        # args = list()
-        # for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-        #     if seed not in template_results_saved[0]['inputs'].keys():
-        #         args.append((editor,
-        #                      selected['requirement'],
-        #                      cksum_val,
-        #                      index+1,
-        #                      _id,
-        #                      seed,
-        #                      seed_label,
-        #                      seed_score,
-        #                      pcfg_ref,
-        #                      selection_method,
-        #                      logger))
-        #     # end if
-        # # end for
-        # batch_size = 50
-        # num_batches = len(args) // batch_size
-        # pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
-        # for b_i in tqdm(range(num_batches)):
-        #     batch_from = b_i*batch_size
-        #     batch_to = (b_i+1)*batch_size if b_i+1<num_batches else len(args)
-        #     batch_args = args[batch_from:batch_to]
-            
-        #     exp_results = pool.starmap_async(cls.generate_exp_inputs,
-        #                                      batch_args,
-        #                                      chunksize=len(seeds)//cls.NUM_PROCESSES).get()
-            
-        #     template_results = Utils.read_json(cfg_res_file)
-        #     ind = [
-        #         tr_i
-        #         for tr_i, tr in enumerate(template_results)
-        #         if tr['requirement']['description']==req['description']
-        #     ]
-            
-        #     for r in exp_results:
-        #         # r = _r.get()
-        #         if any(ind):
-        #             _ind = ind[0]
-        #             template_results[_ind]['inputs'][r['seed']] = {
-        #                 'cfg_seed': r['cfg_seed'],
-        #                 'exp_inputs': r['exp_inputs'],
-        #                 'label': r['label'],
-        #                 'label_score': r['label_score']
-        #             }
-        #         else:
-        #             template_results.append({
-        #                 'requirement': req,
-        #                 'inputs': {
-        #                     r['seed']: {
-        #                         'cfg_seed': r['cfg_seed'],
-        #                         'exp_inputs': r['exp_inputs'],
-        #                         'label': r['label'],
-        #                         'label_score': r['label_score']
-        #                     }
-        #                 }
-        #             })
-        #         # end if
-        #     # end for
-        #     tot_num_exp += len(exp_inputs)
-        #     # write batch results into result file
-        #     Utils.write_json(template_results, cfg_res_file, pretty_format=True)            
-        # # end for
-        # pool.close()
-        # pool.join()
-        # ft = time.time()
-        # logger.print(f"\tREQUIREMENT::{cksum_val}::Total {tot_num_exp} syntactical expansions identified in the requirement out of {num_selected_inputs} seeds")
-        # logger.print(f"<<<<< REQUIREMENT::{cksum_val}::"+selected["requirement"]["description"]+f"{round(ft-st,2)}sec")
-        # return {
-        #     'requirement': selected["requirement"],
-        #     'inputs': exp_inputs
-        # }
         return
     
     @classmethod
     def get_new_inputs(cls,
-                       cfg_res_file,
+                       red_dir, # cfg_res_file,
                        nlp_task,
                        dataset_name,
                        num_seeds=None,
@@ -437,49 +370,17 @@ class Template:
         reqs = Requirements.get_requirements(nlp_task)
         editor = Editor()
         pcfg_ref = RefPCFG()
-        # results = list()
-        # args = list()
-        # if os.path.exists(input_file):
-        #     template_results = Utils.read_json(input_file)
-        #     _reqs = list()
-        #     for req in reqs:
-        #         req_saved = [
-        #             r for r in template_results
-        #             if r["requirement"]["description"]==req["description"]
-        #         ]
-        #         selected = cls.SEARCH_FUNC[nlp_task](req, dataset_name)
-        #         req['num_seeds'] = len(selected['selected_inputs'])
-        #         if not any(req_saved):
-        #             _reqs.append(req)
-        #         else:
-        #             num_exps_saved = len(req_saved[0]['inputs'].keys())
-        #             if num_exps_saved<req['num_seeds']:
-        #                 _reqs.append(req)
-        #             # end if
-        #         # end if
-        #         del selected
-        #     # end for
-        #     reqs = _reqs
-        # # end if
-        
-        # # sort reqs from smallest number of seeds to largest
-        # reqs = sorted(reqs, key=lambda x: x['num_seeds'])
         for req in reqs:
             cls.generate_inputs(nlp_task,
                                 req,
                                 pcfg_ref,
                                 editor,
                                 dataset_name,
-                                cfg_res_file,
+                                res_dir, # cfg_res_file,
                                 num_seeds=num_seeds,
                                 selection_method=selection_method,
                                 logger=logger)
-            # template_results.append(req_results)
-            # write raw new inputs for each requirement
-            # Utils.write_json(results, input_file, pretty_format=True)
         # end for
-        # Utils.write_json(results, input_file, pretty_format=True)
-        # return input_dicts
         return
 
     @classmethod
@@ -602,26 +503,26 @@ class Template:
         assert dataset_name in Macros.datasets[nlp_task]
         if num_seeds<0:
             template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset_name}_{selection_method}"
-            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}.json"
+            # cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}.json"
         else:
             template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
-            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
+            # cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
         res_dir = Macros.result_dir / template_out_dir
         res_dir.mkdir(parents=True, exist_ok=True)
         logger = Logger(logger_file=log_file,
                         logger_name='template')
-        
-        logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
+
         # Search inputs from searching dataset and expand the inputs using ref_cfg
+        logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # nlp = spacy.load('en_core_web_trf')
         # nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
 
-        cfg_res_file = Macros.result_dir / cfg_res_file_name
+        # cfg_res_file = Macros.result_dir / cfg_res_file_name
         # cfg_res_file = Macros.result_dir/f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
         
         cls.get_new_inputs(
-            cfg_res_file,
+            res_dir, # cfg_res_file,
             nlp_task,
             dataset_name,
             num_seeds=num_seeds,
@@ -631,20 +532,22 @@ class Template:
 
         # Make templates by synonyms
         logger.print("Generate Templates ...")
-        new_input_dicts = Utils.read_json(cfg_res_file)
+        reqs = Requirements.get_requirements(nlp_task)
         prev_synonyms = dict()
         cksum_map_str = ""
-        for t_i in range(len(new_input_dicts)):
-            # for each testing linguistic capabilities,
-            inputs_per_req = new_input_dicts[t_i]
+        for t_i, req in enumerate(reqs):
+            req_cksum = Utils.get_cksum(req['requirement']['description'])
+            cfg_res_file = res_dir / f"cfg_expanded_inputs_{req_cksum}.json"
+            inputs_per_req = Utils.read_json(cfg_res_file)
             lc_desc = inputs_per_req["requirement"]["description"]
-            req_cksum = Utils.get_cksum(lc_desc)
+            # req_cksum = Utils.get_cksum(lc_desc)
             cksum_map_str += f"{lc_desc}\t{req_cksum}\n"
             inputs = inputs_per_req["inputs"]
             print_str = '>>>>> REQUIREMENT:'+inputs_per_req["requirement"]["description"]
             logger.print(print_str)
             seed_inputs, exp_seed_inputs = list(), list()
             seed_templates, exp_templates = list(), list()
+
             for s_i, seed_input in enumerate(inputs.keys()):
                 logger.print(f"\tSEED {s_i}: {seed_input}")
                 
@@ -716,7 +619,3 @@ class Template:
         # end for
         Utils.write_txt(cksum_map_str, res_dir / 'cksum_map.txt')
         return
-
-
-# Write templates
-# Template.get_templates(num_seeds=10)

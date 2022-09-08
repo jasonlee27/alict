@@ -122,10 +122,10 @@ class Testsuite:
         task = nlp_task
         if num_seeds<0:
             template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset}_{selection_method}"
-            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{task}_{dataset}_{selection_method}.json"
+            # cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{task}_{dataset}_{selection_method}.json"
         else:
             template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset}_{selection_method}_{num_seeds}seeds"
-            cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{task}_{dataset}_{selection_method}_{num_seeds}seeds.json"
+            # cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{task}_{dataset}_{selection_method}_{num_seeds}seeds.json"
         # end if
         # selection_method = 'RANDOM' if is_random_select else 'PROB'
         # new_input_dicts = Template.get_new_inputs(
@@ -142,8 +142,6 @@ class Testsuite:
         exp_templates_per_task = list()
         transform_reqs = list()
         new_input_dicts = Utils.read_json(Macros.result_dir / cfg_res_file_name)
-        print(Macros.result_dir / cfg_res_file_name)
-        print(new_input_dicts is None)
         for t_i in range(len(new_input_dicts)):
             lc_desc = new_input_dicts[t_i]["requirement"]["description"]
             req_cksum = Utils.get_cksum(lc_desc)

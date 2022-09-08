@@ -380,7 +380,7 @@ def main_seed(task,
                     random.seed(num_trial)
                     seed_rules_per_trial = seed_rules[num_trial]
                     _seed_rules = seed_rules_per_trial[lc]
-                    _bl_rules = checklist_rules[lc]
+                   _bl_rules = checklist_rules[lc]
                     bl_sents = list(_bl_rules.keys())
                     seed_sents = list(_seed_rules.keys())
                     _exp_rules, exp_sents = None, None

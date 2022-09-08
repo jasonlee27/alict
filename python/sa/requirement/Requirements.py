@@ -283,22 +283,3 @@ class Requirements:
                          req_file,
                          pretty_format=True)
         return reqs
-
-    # @classmethod
-    # def search_seed_with_requirements(cls, task, requirements):
-    #     if task not in datasets.keys():
-    #         raise f"{task} is not defined in this work"
-    #     # end if
-    #     requirements = cls.get_requirements(task)
-    #     dataset_dir = Macros.dataset_dir / datasets[task]
-    #     if task=="sentiment_analysis":
-
-
-# if __name__=="__main__":
-#     Requirements.convert_test_type_txt_to_json()
-#     for task in datasets.keys():
-#         reqs = Requirements.get_requirements(task)
-#     # end for
-    
-    
-# Requirements.convert_test_type_txt_to_json()
