@@ -503,10 +503,8 @@ class Template:
         assert dataset_name in Macros.datasets[nlp_task]
         if num_seeds<0:
             template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset_name}_{selection_method}"
-            # cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}.json"
         else:
             template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
-            # cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{nlp_task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
         res_dir = Macros.result_dir / template_out_dir
         res_dir.mkdir(parents=True, exist_ok=True)
@@ -517,9 +515,6 @@ class Template:
         logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # nlp = spacy.load('en_core_web_trf')
         # nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-
-        # cfg_res_file = Macros.result_dir / cfg_res_file_name
-        # cfg_res_file = Macros.result_dir/f"cfg_expanded_inputs2_{task}_{dataset_name}_{selection_method}.json"
         
         cls.get_new_inputs(
             res_dir, # cfg_res_file,

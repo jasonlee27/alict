@@ -127,91 +127,78 @@ class Testsuite:
             template_out_dir = f"templates{num_trials}_{nlp_task}_{dataset}_{selection_method}_{num_seeds}seeds"
             # cfg_res_file_name = f"cfg_expanded_inputs{num_trials}_{task}_{dataset}_{selection_method}_{num_seeds}seeds.json"
         # end if
-        # selection_method = 'RANDOM' if is_random_select else 'PROB'
-        # new_input_dicts = Template.get_new_inputs(
-        #     Macros.result_dir / cfg_res_file_name,
-        #     task,
-        #     dataset,
-        #     num_seeds=num_seeds,
-        #     selection_method=selection_method,
-        #     logger=logger
-        # )
+        res_dir = Macros.result_dir / template_out_dir
         seeds_per_task = list()
         exps_per_task = list()
         seed_templates_per_task = list()
         exp_templates_per_task = list()
         transform_reqs = list()
-        new_input_dicts = Utils.read_json(Macros.result_dir / cfg_res_file_name)
-        for t_i in range(len(new_input_dicts)):
-            lc_desc = new_input_dicts[t_i]["requirement"]["description"]
-            req_cksum = Utils.get_cksum(lc_desc)
-            res_dir = Macros.result_dir / template_out_dir
-            # if (not os.path.exists(str(res_dir / f"seeds_{req_cksum}.json"))):
-            #     Template.get_templates(
-            #         num_seeds=num_seeds,
-            #         nlp_task=nlp_task,
-            #         dataset=dataset,
-            #         selection_method=selection_method
-            #     )
-            # # end if
-            
-            transform_reqs.append(new_input_dicts[t_i]["requirement"]["transform"])
-            
-            seed_res = list()
-            seeds = Utils.read_json(res_dir / f"seeds_{req_cksum}.json")
-            for sd in seeds:
-                sd_res = cls.get_template(sd, task, lc_desc)
-                seed_res.append(sd_res)
-            # end for
-            seeds_per_task.append({
-                "capability": new_input_dicts[t_i]["requirement"]["capability"],
-                "description": new_input_dicts[t_i]["requirement"]["description"],
-                "templates": seed_res
-            })
-            
-            exps = Utils.read_json(res_dir / f"exps_{req_cksum}.json")
-            if exps is not None:
-                exp_res = list()
-                for e in exps:
-                    e_res = cls.get_template(e, task, lc_desc)
-                    exp_res.append(e_res)
+
+        for path in os.listdir(res_dir):
+            if path.startswith("cfg_expanded_inputs") and path.endswith(".json"):
+                new_input_dicts = Utils.read_json(res_dir / path)
+                req_cksum = re.search("cfg\_expanded\_inputs\_([a-zA-z0-9]+)\.json", path).group(1)
+                lc_desc = new_input_dicts[t_i]["requirement"]["description"]
+
+                transform_reqs.append(new_input_dicts[t_i]["requirement"]["transform"])
+                
+                seed_res = list()
+                seeds = Utils.read_json(res_dir / f"seeds_{req_cksum}.json")
+                for sd in seeds:
+                    sd_res = cls.get_template(sd, task, lc_desc)
+                    seed_res.append(sd_res)
                 # end for
-                exps_per_task.append({
+                seeds_per_task.append({
                     "capability": new_input_dicts[t_i]["requirement"]["capability"],
                     "description": new_input_dicts[t_i]["requirement"]["description"],
-                    "templates": exp_res
+                    "templates": seed_res
                 })
-            # end if
             
-            # seed_templates = Utils.read_json(res_dir / f"templates_seed_{req_cksum}.json")
-            # if seed_templates is not None:
-            #     seed_template_res = list()
-            #     for tp in seed_templates:
-            #         tp_res = cls.get_template(tp, task)
-            #         seed_template_res.append(tp_res)
-            #     # end for
-            #     seed_templates_per_task.append({
-            #         "capability": new_input_dicts[t_i]["requirement"]["capability"],
-            #         "description": new_input_dicts[t_i]["requirement"]["description"],
-            #         "templates": seed_template_res
-            #     })
-            # # end if
-
-            # exp_templates = Utils.read_json(res_dir / f"templates_exp_{req_cksum}.json")
-            # if exp_templates is not None:
-            #     exp_template_res = list()
-            #     for tp in exp_templates:
-            #         tp_res = cls.get_template(tp, task)
-            #         exp_template_res.append(tp_res)
-            #     # end for
-            #     exp_templates_per_task.append({
-            #         "capability": new_input_dicts[t_i]["requirement"]["capability"],
-            #         "description": new_input_dicts[t_i]["requirement"]["description"],
-            #         "templates": exp_template_res
-            #     })
-            # # end if
+                exps = Utils.read_json(res_dir / f"exps_{req_cksum}.json")
+                if exps is not None:
+                    exp_res = list()
+                    for e in exps:
+                        e_res = cls.get_template(e, task, lc_desc)
+                        exp_res.append(e_res)
+                    # end for
+                    exps_per_task.append({
+                        "capability": new_input_dicts[t_i]["requirement"]["capability"],
+                        "description": new_input_dicts[t_i]["requirement"]["description"],
+                        "templates": exp_res
+                    })
+                # end if
+                
+                # seed_templates = Utils.read_json(res_dir / f"templates_seed_{req_cksum}.json")
+                # if seed_templates is not None:
+                #     seed_template_res = list()
+                #     for tp in seed_templates:
+                #         tp_res = cls.get_template(tp, task)
+                #         seed_template_res.append(tp_res)
+                #     # end for
+                #     seed_templates_per_task.append({
+                #         "capability": new_input_dicts[t_i]["requirement"]["capability"],
+                #         "description": new_input_dicts[t_i]["requirement"]["description"],
+                #         "templates": seed_template_res
+                #     })
+                # # end if
+                
+                # exp_templates = Utils.read_json(res_dir / f"templates_exp_{req_cksum}.json")
+                # if exp_templates is not None:
+                #     exp_template_res = list()
+                #     for tp in exp_templates:
+                #         tp_res = cls.get_template(tp, task)
+                #         exp_template_res.append(tp_res)
+                #     # end for
+                #     exp_templates_per_task.append({
+                #         "capability": new_input_dicts[t_i]["requirement"]["capability"],
+                #         "description": new_input_dicts[t_i]["requirement"]["description"],
+                #         "templates": exp_template_res
+                #     })
+                # # end if
+                # end for
+                yield task, seeds_per_task, exps_per_task, seed_templates_per_task, exp_templates_per_task, transform_reqs
+            # end if
         # end for
-        yield task, seeds_per_task, exps_per_task, seed_templates_per_task, exp_templates_per_task, transform_reqs
         return
 
     @classmethod
