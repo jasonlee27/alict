@@ -14,7 +14,10 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-
+1. Seed generation
+2. Expanded case generation
+3. Testcase generation
+4. Run model on the generated tescases
 
 <!-- 
 ## Goal
