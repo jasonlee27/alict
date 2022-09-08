@@ -7,15 +7,14 @@ import os
 
 class Macros:
 
-    this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__))) # nlptest/python/utils
-    root_dir: Path = this_dir.parent.parent.parent # nlptest/
-    python_dir: Path = this_dir.parent.parent # nlptest/python
+    this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__)))
+    root_dir: Path = this_dir.parent.parent.parent 
+    python_dir: Path = this_dir.parent.parent
     storage_dir: Path = root_dir # Path("/glusterfs/data/jxl115330/s2lct")
-    result_dir: Path = storage_dir / "_results" # /glusterfs/data/jxl115330/nlptest/_results
-    # result_dir: Path = root_dir / "_results" # nlptest/_results
+    result_dir: Path = storage_dir / "_results"
     
-    download_dir: Path = storage_dir / "_downloads" # /glusterfs/data/jxl115330/nlptest/_downloads
-    log_dir: Path = storage_dir / "_logs" # /glusterfs/data/jxl115330/nlptest/_downloads
+    download_dir: Path = storage_dir / "_downloads"
+    log_dir: Path = storage_dir / "_logs"
     paper_dir = root_dir / "paper" / "ase22"
     dataset_dir = download_dir / "datasets"
 
@@ -23,7 +22,6 @@ class Macros:
     FMT_PER = "{:.1%}"
     FMT_FLOAT = "{:,.2f}"
     
-    # SEED = 26 #26(trial2), 27(trial1), 28(trial3)
     RAND_SEED = {1: 27, 2: 26, 3: 28} #26(trial2), 27(trial1), 28(trial3)
     MASK = "{mask}"
 
