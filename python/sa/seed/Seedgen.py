@@ -22,11 +22,11 @@ from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 from ..requirement.Requirements import Requirements
 
-from .cfg.RefPCFG import RefPCFG
-from .Generator import Generator
-from .Synonyms import Synonyms
-from .Search import Search
-from .Suggest import Suggest
+from ..synexp.cfg.RefPCFG import RefPCFG
+from ..synexp.Generator import Generator
+from ..semexp.Synonyms import Synonyms
+from ..seed.Search import Search
+from ..semexp.Suggest import Suggest
 
 
 class Seedgen:

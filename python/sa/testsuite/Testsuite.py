@@ -11,9 +11,6 @@ import random
 import numpy as np
 
 from pathlib import Path
-
-from nltk.tokenize import word_tokenize as tokenize
-
 from checklist.editor import Editor
 from checklist.test_types import MFT, INV, DIR
 from checklist.expect import Expect
@@ -23,8 +20,7 @@ from checklist.perturb import Perturb
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
-from .Search import Search
-# from .Transform import TransformOperator
+from ..seed.Search import Search
 from .Template import Template
 
 

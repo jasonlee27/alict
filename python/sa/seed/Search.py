@@ -16,8 +16,8 @@ from checklist.test_types import MFT, INV, DIR
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from .Transform import TransformOperator
 from ..requirement.Requirements import Requirements
+from .Transform import TransformOperator
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 
 

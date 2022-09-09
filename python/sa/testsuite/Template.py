@@ -11,6 +11,7 @@ import time
 import numpy
 # import spacy
 import multiprocessing
+import torch.multiprocessing
 
 from pathlib import Path
 from tqdm import tqdm
@@ -21,14 +22,12 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 from ..requirement.Requirements import Requirements
+from ..seed.Search import Search
+from ..synexp.Generator import Generator
+from ..synexp.cfg.RefPCFG import RefPCFG
+from ..semexp.Suggest import Suggest
+from ..semexp.Synonyms import Synonyms
 
-from .cfg.RefPCFG import RefPCFG
-from .Generator import Generator
-from .Synonyms import Synonyms
-from .Search import Search
-from .Suggest import Suggest
-
-import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 
 
@@ -128,14 +127,25 @@ class Template:
         return masked_input_res
         
     @classmethod
-    def generate_masked_inputs(cls, seeds, pcfg_ref, logger=None):
+    def generate_masked_inputs(cls, req_cksum, seeds, pcfg_ref, save_to, logger=None):
         st = time.time()
         masked_input_res = dict()
         args = list()
         pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
+
+        template_results = {
+            'requirement': dict(),
+            'inputs': dict()
+        }
+        if os.path.exists(save_to):
+            template_results = Utils.read_json(save_to)
+        # end if
+        
         for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-            args.append((index, seed, seed_label, seed_score, pcfg_ref, logger))
-        # end for    
+            if seed not in prev_results['inputs'].keys():
+                args.append((index, seed, seed_label, seed_score, pcfg_ref, logger))
+            # end if
+        # end for 
         results = pool.starmap_async(cls.generate_seed_cfg_parallel,
                                      args,
                                      chunksize=len(seeds)//cls.NUM_PROCESSES).get()
@@ -153,6 +163,22 @@ class Template:
         if logger is not None:
             logger.print(f"\tTemplate.generate_masked_inputs::{round(ft-st,3)}sec")
         # end if
+        
+        
+        for seed in exp_results.keys():
+            template_results['inputs'][seed] = {
+                'cfg_seed': exp_results[seed]['cfg_seed'],
+                'exp_inputs': exp_results[seed]['exp_inputs'],
+                'label': exp_results[seed]['label'],
+                'label_score': exp_results[seed]['label_score']
+            }
+        # end for
+        
+        # write batch results into result file
+        Utils.write_json(template_results, cfg_res_file, pretty_format=True)
+
+
+        
         return masked_input_res
 
     @classmethod
@@ -317,7 +343,7 @@ class Template:
                                                    logger=logger)
 
         # get the suggested words for the masked inputs using bert:
-        num_target=Macros.num_suggestions_on_exp_grammer_elem
+        num_target = Macros.num_suggestions_on_exp_grammer_elem
         masked_inputs_w_word_sug = cls.get_word_suggestions(masked_inputs,
                                                             editor,
                                                             num_target=num_target,
@@ -383,113 +409,113 @@ class Template:
         # end for
         return
 
-    @classmethod
-    def find_pos_from_cfg_seed(cls, token, cfg_seed):
-        # when tokenized token can be found in the leaves of cfg
-        for key, vals in cfg_seed.items():
-            for val in vals:
-                if val["pos"]==val["word"] and token==val["word"]:
-                    return key
-                # end if
-            # end for
-        # end for
-        # when tokenized token cannot be found in the leaves of cfg
-        for key, vals in cfg_seed.items():
-            for val in vals:
-                if type(val["word"])==list and token in val["word"]:
-                    tok_idx = val["word"].index(token)
-                    return val["pos"][tok_idx]
-                # end if
-            # end for
-        # end for
-        return
+    # @classmethod
+    # def find_pos_from_cfg_seed(cls, token, cfg_seed):
+    #     # when tokenized token can be found in the leaves of cfg
+    #     for key, vals in cfg_seed.items():
+    #         for val in vals:
+    #             if val["pos"]==val["word"] and token==val["word"]:
+    #                 return key
+    #             # end if
+    #         # end for
+    #     # end for
+    #     # when tokenized token cannot be found in the leaves of cfg
+    #     for key, vals in cfg_seed.items():
+    #         for val in vals:
+    #             if type(val["word"])==list and token in val["word"]:
+    #                 tok_idx = val["word"].index(token)
+    #                 return val["pos"][tok_idx]
+    #             # end if
+    #         # end for
+    #     # end for
+    #     return
     
-    @classmethod
-    def get_pos(cls,
-                mask_input: str,
-                mask_pos: List[str],
-                cfg_seed: Dict,
-                words_sug: List[str],
-                exp_input:str):
-        tokens = Utils.tokenize(mask_input)
-        _tokens = list()
-        tokens_pos = list()
-        tok_i, mask_tok_i = 0, 0
-        while tok_i<len(tokens):
-            if tokens[tok_i:tok_i+3]==['{', 'mask', '}']:
-                _tokens.append('{mask}')
-                tok_i += 3
-            else:
-                _tokens.append(tokens[tok_i])
-                tok_i += 1
-            # end if
-        # end for
-        tokens = _tokens
+    # @classmethod
+    # def get_pos(cls,
+    #             mask_input: str,
+    #             mask_pos: List[str],
+    #             cfg_seed: Dict,
+    #             words_sug: List[str],
+    #             exp_input:str):
+    #     tokens = Utils.tokenize(mask_input)
+    #     _tokens = list()
+    #     tokens_pos = list()
+    #     tok_i, mask_tok_i = 0, 0
+    #     while tok_i<len(tokens):
+    #         if tokens[tok_i:tok_i+3]==['{', 'mask', '}']:
+    #             _tokens.append('{mask}')
+    #             tok_i += 3
+    #         else:
+    #             _tokens.append(tokens[tok_i])
+    #             tok_i += 1
+    #         # end if
+    #     # end for
+    #     tokens = _tokens
         
-        for t in tokens:
-            if t=="{mask}":
-                if type(words_sug)==str:
-                    tpos = words_sug
-                elif ((type(words_sug)==list) or (type(words_sug)==tuple)):
-                    tpos = mask_pos[mask_tok_i]
-                    mask_tok_i += 1
-                # end if
-            else:
-                tpos = cls.find_pos_from_cfg_seed(t, cfg_seed)
-            # end if
-            tokens_pos.append(tpos)
-        # end for
-        return Utils.tokenize(exp_input), tokens_pos
+    #     for t in tokens:
+    #         if t=="{mask}":
+    #             if type(words_sug)==str:
+    #                 tpos = words_sug
+    #             elif ((type(words_sug)==list) or (type(words_sug)==tuple)):
+    #                 tpos = mask_pos[mask_tok_i]
+    #                 mask_tok_i += 1
+    #             # end if
+    #         else:
+    #             tpos = cls.find_pos_from_cfg_seed(t, cfg_seed)
+    #         # end if
+    #         tokens_pos.append(tpos)
+    #     # end for
+    #     return Utils.tokenize(exp_input), tokens_pos
 
-    @classmethod
-    def get_templates_by_synonyms(cls,
-                                  nlp,
-                                  tokens: List[str],
-                                  tokens_pos: List[str],
-                                  prev_synonyms):
-        template = list()
-        for t, tpos in zip(tokens, tokens_pos):
-            newt = re.sub(r'\..*', '', t)
-            newt = re.sub(r'\[.*\]', '', newt)
-            newt = re.sub(r'.*?:', '', newt)
-            newt = re.sub(r'\d+$', '', newt)
-            key = "{"+f"{newt}_{tpos}"+"}"
-            if key in prev_synonyms.keys():
-                if prev_synonyms[key] is None or len(prev_synonyms[key])==0:
-                    template.append(t)
-                else:
-                    template.append({
-                        key: prev_synonyms[key]
-                    })
-                # end if
-            else:
-                syns = Synonyms.get_synonyms(nlp, t, tpos)
-                if len(syns)>1:
-                    _syns = list()
-                    for s in syns:
-                        if len(s.split("_"))>1:
-                            _syns.append(" ".join(s.split("_")))
-                        else:
-                            _syns.append(s)
-                        # end if
-                    # end for
-                    syns_dict = {key: _syns}
-                    template.append(syns_dict)
-                    if key not in prev_synonyms.keys():
-                        prev_synonyms[key] = syns_dict[key]
-                    # end if
-                else:
-                    template.append(t)
-                    if key not in prev_synonyms.keys():
-                        prev_synonyms[key] = None
-                    # end if
-                # end if
-            # end if
-        # end for
-        return {
-            "input": Utils.detokenize(tokens),
-            "place_holder": template
-        }, prev_synonyms
+    # @classmethod
+    # def get_templates_by_synonyms(cls,
+    #                               nlp,
+    #                               tokens: List[str],
+    #                               tokens_pos: List[str],
+    #                               prev_synonyms):
+    #     template = list()
+    #     for t, tpos in zip(tokens, tokens_pos):
+    #         newt = re.sub(r'\..*', '', t)
+    #         newt = re.sub(r'\[.*\]', '', newt)
+    #         newt = re.sub(r'.*?:', '', newt)
+    #         newt = re.sub(r'\d+$', '', newt)
+    #         key = "{"+f"{newt}_{tpos}"+"}"
+    #         if key in prev_synonyms.keys():
+    #             if prev_synonyms[key] is None or len(prev_synonyms[key])==0:
+    #                 template.append(t)
+    #             else:
+    #                 template.append({
+    #                     key: prev_synonyms[key]
+    #                 })
+    #             # end if
+    #         else:
+    #             syns = Synonyms.get_synonyms(nlp, t, tpos)
+    #             if len(syns)>1:
+    #                 _syns = list()
+    #                 for s in syns:
+    #                     if len(s.split("_"))>1:
+    #                         _syns.append(" ".join(s.split("_")))
+    #                     else:
+    #                         _syns.append(s)
+    #                     # end if
+    #                 # end for
+    #                 syns_dict = {key: _syns}
+    #                 template.append(syns_dict)
+    #                 if key not in prev_synonyms.keys():
+    #                     prev_synonyms[key] = syns_dict[key]
+    #                 # end if
+    #             else:
+    #                 template.append(t)
+    #                 if key not in prev_synonyms.keys():
+    #                     prev_synonyms[key] = None
+    #                 # end if
+    #             # end if
+    #         # end if
+    #     # end for
+    #     return {
+    #         "input": Utils.detokenize(tokens),
+    #         "place_holder": template
+    #     }, prev_synonyms
 
     @classmethod
     def get_templates(cls,
