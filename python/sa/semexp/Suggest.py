@@ -493,6 +493,7 @@ class Suggest:
     def eval_word_suggestions_over_seeds(cls,
                                          masked_inputs_w_word_sug,
                                          req,
+                                         cfg_res_file,
                                          num_target=Macros.num_suggestions_on_exp_grammer_elem,
                                          selection_method=None,
                                          no_mask_key='<no_mask>',
@@ -500,72 +501,75 @@ class Suggest:
         st = time.time()
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        exp_results = dict()
+        # exp_results = dict()
+        template_results = Utils.read_json(cfg_res_file)
         for masked_sent in masked_inputs_w_word_sug.keys():
             word_sug = masked_inputs_w_word_sug[masked_sent]['word_sug']
             seed_objs = masked_inputs_w_word_sug[masked_sent]['inputs']
             for seed, seed_label, seed_score, cfg_seed, cfg_from, cfg_to, mask_pos in seed_objs:
-                results = list()
-                if masked_sent!=no_mask_key:
-                    matched_words_sug = cls.match_word_n_pos(
-                        nlp,
-                        word_sug,
-                        masked_sent,
-                        mask_pos
-                    )
-                    if selection_method.lower()=='random':
-                        if len(matched_words_sug)>num_target:
-                            idxs = np.random.choice(len(matched_words_sug), num_target, replace=False)
-                            word_suggest = [matched_words_sug[i][0] for i in idxs]
-                        else:
+                if seed not in template_results['inputs'].keys():
+                    results = list()
+                    if masked_sent!=no_mask_key:
+                        matched_words_sug = cls.match_word_n_pos(
+                            nlp,
+                            word_sug,
+                            masked_sent,
+                            mask_pos
+                        )
+                        if selection_method.lower()=='random':
+                            if len(matched_words_sug)>num_target:
+                                idxs = np.random.choice(len(matched_words_sug), num_target, replace=False)
+                                word_suggest = [matched_words_sug[i][0] for i in idxs]
+                            else:
+                                word_suggest = [ws[0] for ws in matched_words_sug]
+                            # end if
+                        elif selection_method.lower()=='bertscore':
+                            if len(matched_words_sug)>num_target:
+                                word_suggest = sorted(matched_words_sug,
+                                                      key=lambda x: x[-1],
+                                                      reverse=True)[:num_target]
+                            # end if
+                            word_suggest = [ws[0] for ws in matched_words_sug]
+                        else: # noselect
                             word_suggest = [ws[0] for ws in matched_words_sug]
                         # end if
-                    elif selection_method.lower()=='bertscore':
-                        if len(matched_words_sug)>num_target:
-                            word_suggest = sorted(matched_words_sug,
-                                                  key=lambda x: x[-1],
-                                                  reverse=True)[:num_target]
-                        # end if
-                        word_suggest = [ws[0] for ws in matched_words_sug]
-                    else: # noselect
-                        word_suggest = [ws[0] for ws in matched_words_sug]
-                    # end if
-                    for w_sug in word_suggest:
-                        input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
-                        # check sentence and expansion requirements
-                        if cls.eval_sug_words_by_req(input_candid, req, seed_label):
-                            if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
-                                results.append((masked_sent,
-                                                cfg_from,
-                                                cfg_to,
-                                                mask_pos,
-                                                w_sug,
-                                                input_candid))
+                        for w_sug in word_suggest:
+                            input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
+                            # check sentence and expansion requirements
+                            if cls.eval_sug_words_by_req(input_candid, req, seed_label):
+                                if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
+                                    results.append((masked_sent,
+                                                    cfg_from,
+                                                    cfg_to,
+                                                    mask_pos,
+                                                    w_sug,
+                                                    input_candid))
+                                # end if
                             # end if
-                        # end if
-                    # end for
+                        # end for
+                    # end if
+                    template_results['inputs'][seed]['exp_inputs'] = results
+                    del template_results['inputs'][seed]['masked_inputs']
+
+                    # write batch results into result file
+                    Utils.write_json(template_results, cfg_res_file, pretty_format=True)
                 # end if
-                if seed not in exp_results.keys():
-                    exp_results[seed] = {
-                        'cfg_seed': cfg_seed,
-                        'label': seed_label,
-                        'label_score': seed_score,
-                        'exp_inputs': results
-                    }
-                else:
-                    exp_results[seed]['exp_inputs'].extend(results)
-                # end if
+                
+                # if seed not in exp_results.keys():
+                #     exp_results[seed] = {
+                #         'cfg_seed': cfg_seed,
+                #         'label': seed_label,
+                #         'label_score': seed_score,
+                #         'exp_inputs': results
+                #     }
+                # else:
+                #     exp_results[seed]['exp_inputs'].extend(results)
+                # # end if
             # end for
         # end for
         ft = time.time()
         if logger is not None:
             logger.print(f"\tSuggest.eval_word_suggestions_over_seeds::{round(ft-st,3)}sec")
         # end if
-        return exp_results
-        
-
-# def main():
-#     return
-
-# if __name__=='__main__':
-#     main()
+        # return exp_results
+        return

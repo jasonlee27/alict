@@ -127,18 +127,18 @@ class Template:
         return masked_input_res
         
     @classmethod
-    def generate_masked_inputs(cls, req_cksum, seeds, pcfg_ref, save_to, logger=None):
+    def generate_masked_inputs(cls, req, seeds, pcfg_ref, cfg_res_file, logger=None):
         st = time.time()
         masked_input_res = dict()
         args = list()
         pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
 
         template_results = {
-            'requirement': dict(),
+            'requirement': req,
             'inputs': dict()
         }
-        if os.path.exists(save_to):
-            template_results = Utils.read_json(save_to)
+        if os.path.exists(cfg_res_file):
+            template_results = Utils.read_json(cfg_res_file)
         # end if
         
         for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
@@ -150,78 +150,55 @@ class Template:
                                      args,
                                      chunksize=len(seeds)//cls.NUM_PROCESSES).get()
         for r in results:
-            masked_input_res[r['seed']] = {
+            # masked_input_res[r['seed']] = {
+            #     'cfg_seed': r['cfg_seed'],
+            #     'label': r['label'],
+            #     'label_score': r['label_score'],
+            #     'masked_inputs': r['masked_inputs']
+            # }
+            template_results['inputs'][r['seed']] = {
                 'cfg_seed': r['cfg_seed'],
+                'masked_inputs': r['masked_inputs'],
+                'exp_inputs': list()
                 'label': r['label'],
-                'label_score': r['label_score'],
-                'masked_inputs': r['masked_inputs']
+                'label_score': r['label_score']
             }
         # end for
         pool.close()
-        pool.join()
+        pool.join()        
+    
+        # write batch results into result file
+        Utils.write_json(template_results, cfg_res_file, pretty_format=True)
+        
         ft = time.time()
         if logger is not None:
             logger.print(f"\tTemplate.generate_masked_inputs::{round(ft-st,3)}sec")
         # end if
-        
-        
-        for seed in exp_results.keys():
-            template_results['inputs'][seed] = {
-                'cfg_seed': exp_results[seed]['cfg_seed'],
-                'exp_inputs': exp_results[seed]['exp_inputs'],
-                'label': exp_results[seed]['label'],
-                'label_score': exp_results[seed]['label_score']
-            }
-        # end for
-        
-        # write batch results into result file
-        Utils.write_json(template_results, cfg_res_file, pretty_format=True)
-
-
-        
-        return masked_input_res
+        # return masked_input_res
+        return
 
     @classmethod
     def get_word_suggestions(cls,
                              masked_inputs,
+                             cfg_res_file,
                              editor,
                              num_target=Macros.num_suggestions_on_exp_grammer_elem,
                              selection_method=None,
                              logger=None):
         st = time.time()
+        template_results = Utils.read_json(cfg_res_file)
+        
         # collect all masked sents
         masked_sents: Dict = dict()
         no_mask_key = '<no_mask>'
-        for index, seed in enumerate(masked_inputs.keys()):
-            seed_label = masked_inputs[seed]['label']
-            label_score = masked_inputs[seed]['label_score']
-            cfg_seed = masked_inputs[seed]['cfg_seed']
-            if not any(masked_inputs[seed]['masked_inputs']):
-                if no_mask_key not in masked_sents.keys():
-                    masked_sents[no_mask_key] = {
-                        'inputs': list(),
-                        'word_sug': list()
-                    }
-                # end if
-                masked_sent_obj = (
-                    seed,
-                    seed_label,
-                    label_score,
-                    cfg_seed,
-                    None,
-                    None,
-                    None
-                )
-                if masked_sent_obj not in masked_sents[no_mask_key]['inputs']:
-                    masked_sents[no_mask_key]['inputs'].append(masked_sent_obj)
-                # end if
-            else:
-                for m in masked_inputs[seed]['masked_inputs']:
-                    cfg_from = m['cfg_from']
-                    cfg_to = m['cfg_to']
-                    key = m['masked_input'][0] # m['masked_input'] = (_masked_input, mask_pos)
-                    if key not in masked_sents.keys():
-                        masked_sents[key] = {
+        for index, seed in enumerate(template_results['inputs'].keys()):
+            seed_label = template_results['inputs'][seed]['label']
+            label_score = template_results['inputs'][seed]['label_score']
+            cfg_seed = template_results['inputs'][seed]['cfg_seed']
+            if 'masked_inputs' in template_results['inputs'][seed].keys():
+                if not any(template_results['inputs'][seed]['masked_inputs']):
+                    if no_mask_key not in masked_sents.keys():
+                        masked_sents[no_mask_key] = {
                             'inputs': list(),
                             'word_sug': list()
                         }
@@ -231,24 +208,50 @@ class Template:
                         seed_label,
                         label_score,
                         cfg_seed,
-                        cfg_from,
-                        cfg_to,
-                        m['masked_input'][1]
+                        None,
+                        None,
+                        None
                     )
-                    if masked_sent_obj not in masked_sents[key]['inputs']:
-                        masked_sents[key]['inputs'].append(masked_sent_obj)
+                    if masked_sent_obj not in masked_sents[no_mask_key]['inputs']:
+                        masked_sents[no_mask_key]['inputs'].append(masked_sent_obj)
                     # end if
-                # end for
+                else:
+                    for m in template_results['inputs'][seed]['masked_inputs']:
+                        cfg_from = m['cfg_from']
+                        cfg_to = m['cfg_to']
+                        key = m['masked_input'][0] # m['masked_input'] = (_masked_input, mask_pos)
+                        if key not in masked_sents.keys():
+                            masked_sents[key] = {
+                                'inputs': list(),
+                                'word_sug': list()
+                            }
+                        # end if
+                        masked_sent_obj = (
+                            seed,
+                            seed_label,
+                            label_score,
+                            cfg_seed,
+                            cfg_from,
+                            cfg_to,
+                            m['masked_input'][1]
+                        )
+                        if masked_sent_obj not in masked_sents[key]['inputs']:
+                            masked_sents[key]['inputs'].append(masked_sent_obj)
+                        # end if
+                    # end for
+                # end if
             # end if
         # end for
-
+        
         # get word suggestions
-        masked_sents = Suggest.get_word_suggestions_over_seeds(editor,
-                                                               masked_sents,
-                                                               num_target=num_target,
-                                                               selection_method=selection_method,
-                                                               no_mask_key=no_mask_key,
-                                                               logger=logger)
+        if any(masked_sents):
+            masked_sents = Suggest.get_word_suggestions_over_seeds(editor,
+                                                                   masked_sents,
+                                                                   num_target=num_target,
+                                                                   selection_method=selection_method,
+                                                                   no_mask_key=no_mask_key,
+                                                                   logger=logger)
+        # end if
         ft = time.time()
         if logger is not None:
             logger.print(f"\tTemplate.get_word_suggestions::{round(ft-st,3)}sec")
@@ -338,45 +341,48 @@ class Template:
         exp_results = list()
 
         # anlyze cfg and get masked input for all seeds of interest
-        masked_inputs = cls.generate_masked_inputs(seeds,
+        masked_inputs = cls.generate_masked_inputs(req,
+                                                   seeds,
                                                    pcfg_ref,
+                                                   cfg_res_file,
                                                    logger=logger)
 
         # get the suggested words for the masked inputs using bert:
         num_target = Macros.num_suggestions_on_exp_grammer_elem
         masked_inputs_w_word_sug = cls.get_word_suggestions(masked_inputs,
+                                                            cfg_res_file,
                                                             editor,
                                                             num_target=num_target,
                                                             selection_method=selection_method,
                                                             logger=logger)
-        
         # validate word suggestion
-        exp_results = Suggest.eval_word_suggestions_over_seeds(masked_inputs_w_word_sug,
-                                                               req,
-                                                               num_target=num_target,
-                                                               selection_method=selection_method,
-                                                               logger=logger)
+        Suggest.eval_word_suggestions_over_seeds(masked_inputs_w_word_sug,
+                                                 req,
+                                                 cfg_res_file,
+                                                 num_target=num_target,
+                                                 selection_method=selection_method,
+                                                 logger=logger)
 
-        if not os.path.exists(str(cfg_res_file)):
-            template_results = {
-                'requirement': req,
-                'inputs': dict()
-            }
-        else:
-            template_results = Utils.read_json(cfg_res_file)
-        # end if
+        # if not os.path.exists(str(cfg_res_file)):
+        #     template_results = {
+        #         'requirement': req,
+        #         'inputs': dict()
+        #     }
+        # else:
+        #     template_results = Utils.read_json(cfg_res_file)
+        # # end if
         
-        for seed in exp_results.keys():
-            template_results['inputs'][seed] = {
-                'cfg_seed': exp_results[seed]['cfg_seed'],
-                'exp_inputs': exp_results[seed]['exp_inputs'],
-                'label': exp_results[seed]['label'],
-                'label_score': exp_results[seed]['label_score']
-            }
-        # end for
+        # for seed in exp_results.keys():
+        #     template_results['inputs'][seed] = {
+        #         'cfg_seed': exp_results[seed]['cfg_seed'],
+        #         'exp_inputs': exp_results[seed]['exp_inputs'],
+        #         'label': exp_results[seed]['label'],
+        #         'label_score': exp_results[seed]['label_score']
+        #     }
+        # # end for
         
-        # write batch results into result file
-        Utils.write_json(template_results, cfg_res_file, pretty_format=True)
+        # # write batch results into result file
+        # Utils.write_json(template_results, cfg_res_file, pretty_format=True)
         ft = time.time()
         logger.print(f"<<<<< REQUIREMENT::{cksum_val}::"+selected["requirement"]["description"]+f"{round(ft-st,2)}sec")
         return
