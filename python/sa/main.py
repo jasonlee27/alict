@@ -84,7 +84,6 @@ def run_templates():
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
     # end if
     log_dir.mkdir(parents=True, exist_ok=True)
-    # log_file = log_dir / "template2_generation.log"
     log_file = log_dir / f"template{num_trials}_generation.log"
     Template.get_templates(
         nlp_task=nlp_task,

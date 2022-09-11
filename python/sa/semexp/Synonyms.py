@@ -8,7 +8,7 @@ import json
 import random
 
 # from nltk.corpus import wordnet
-from .cfg.CFG import BeneparCFG
+from ..synexp.cfg.CFG import BeneparCFG
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 

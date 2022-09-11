@@ -18,8 +18,8 @@ from pathlib import Path
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from ..semexp.Synonyms import Synonyms
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
-from .Synonyms import Synonyms
 
 
 # get pos/neg/neu words from SentiWordNet

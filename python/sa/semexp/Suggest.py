@@ -26,7 +26,7 @@ from checklist.perturb import Perturb
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 # from .cfg.CFG import BeneparCFG
-from .Search import SearchOperator, SENT_DICT
+from ..seed.Search import SearchOperator, SENT_DICT
 
 NUM_TOPK = 5
 
@@ -507,50 +507,70 @@ class Suggest:
             word_sug = masked_inputs_w_word_sug[masked_sent]['word_sug']
             seed_objs = masked_inputs_w_word_sug[masked_sent]['inputs']
             for seed, seed_label, seed_score, cfg_seed, cfg_from, cfg_to, mask_pos in seed_objs:
-                if seed not in template_results['inputs'].keys():
-                    results = list()
-                    if masked_sent!=no_mask_key:
-                        matched_words_sug = cls.match_word_n_pos(
-                            nlp,
-                            word_sug,
-                            masked_sent,
-                            mask_pos
-                        )
-                        if selection_method.lower()=='random':
-                            if len(matched_words_sug)>num_target:
-                                idxs = np.random.choice(len(matched_words_sug), num_target, replace=False)
-                                word_suggest = [matched_words_sug[i][0] for i in idxs]
-                            else:
-                                word_suggest = [ws[0] for ws in matched_words_sug]
-                            # end if
-                        elif selection_method.lower()=='bertscore':
-                            if len(matched_words_sug)>num_target:
-                                word_suggest = sorted(matched_words_sug,
-                                                      key=lambda x: x[-1],
-                                                      reverse=True)[:num_target]
-                            # end if
-                            word_suggest = [ws[0] for ws in matched_words_sug]
-                        else: # noselect
+                results = list()
+                if masked_sent!=no_mask_key:
+                    matched_words_sug = cls.match_word_n_pos(
+                        nlp,
+                        word_sug,
+                        masked_sent,
+                        mask_pos
+                    )
+                    if selection_method.lower()=='random':
+                        if len(matched_words_sug)>num_target:
+                            idxs = np.random.choice(len(matched_words_sug), num_target, replace=False)
+                            word_suggest = [matched_words_sug[i][0] for i in idxs]
+                        else:
                             word_suggest = [ws[0] for ws in matched_words_sug]
                         # end if
-                        for w_sug in word_suggest:
-                            input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
-                            # check sentence and expansion requirements
-                            if cls.eval_sug_words_by_req(input_candid, req, seed_label):
-                                if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
-                                    results.append((masked_sent,
-                                                    cfg_from,
-                                                    cfg_to,
-                                                    mask_pos,
-                                                    w_sug,
-                                                    input_candid))
-                                # end if
-                            # end if
-                        # end for
+                    elif selection_method.lower()=='bertscore':
+                        if len(matched_words_sug)>num_target:
+                            word_suggest = sorted(matched_words_sug,
+                                                  key=lambda x: x[-1],
+                                                  reverse=True)[:num_target]
+                        # end if
+                        word_suggest = [ws[0] for ws in matched_words_sug]
+                    else: # noselect
+                        word_suggest = [ws[0] for ws in matched_words_sug]
                     # end if
-                    template_results['inputs'][seed]['exp_inputs'] = results
-                    del template_results['inputs'][seed]['masked_inputs']
+                    for w_sug in word_suggest:
+                        input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
+                        # check sentence and expansion requirements
+                        if cls.eval_sug_words_by_req(input_candid, req, seed_label):
+                            if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
+                                results.append((masked_sent,
+                                                cfg_from,
+                                                cfg_to,
+                                                mask_pos,
+                                                w_sug,
+                                                input_candid))
+                            # end if
+                        # end if
+                    # end for
 
+                    # remove verified masked inputs
+                    m_inds = list()
+                    for m_i, m in enumerate(template_results['inputs'][seed]['masked_inputs']):
+                        if m['masked_input'][0] == masked_sent and \
+                           m['masked_input'][1] == mask_pos and \
+                           m['cfg_from'] == cfg_from and \
+                           m['cfg_to'] == cfg_to:
+                            m_inds.append(m_i)
+                        # end if
+                    # end for
+                    for ind in sorted(m_inds, reverse=True):
+                        del template_results['inputs'][seed]['masked_inputs'][ind]
+                    # end for
+                    if not any(template_results['inputs'][seed]['masked_inputs']):
+                        del template_results['inputs'][seed]['masked_inputs']
+                    # end if
+
+                    # add verified expanded cases into results
+                    if 'exp_inputs' not in template_results['inputs'][seed].keys():
+                        template_results['inputs'][seed]['exp_inputs'] = results
+                    else:
+                        template_results['inputs'][seed]['exp_inputs'].extend(results)
+                    # end if
+                    
                     # write batch results into result file
                     Utils.write_json(template_results, cfg_res_file, pretty_format=True)
                 # end if

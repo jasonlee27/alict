@@ -142,7 +142,7 @@ class Template:
         # end if
         
         for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-            if seed not in prev_results['inputs'].keys():
+            if seed not in template_results['inputs'].keys():
                 args.append((index, seed, seed_label, seed_score, pcfg_ref, logger))
             # end if
         # end for 
@@ -158,11 +158,13 @@ class Template:
             # }
             template_results['inputs'][r['seed']] = {
                 'cfg_seed': r['cfg_seed'],
-                'masked_inputs': r['masked_inputs'],
-                'exp_inputs': list()
+                'exp_inputs': list(),
                 'label': r['label'],
                 'label_score': r['label_score']
             }
+            if any(r['masked_inputs']):
+                template_results['inputs'][r['seed']]['masked_inputs'] = r['masked_inputs']
+            # end if
         # end for
         pool.close()
         pool.join()        
@@ -321,9 +323,9 @@ class Template:
                         logger=None):
         st = time.time()
         # generate seeds
+        selected = cls.SEARCH_FUNC[task](req, dataset)
         cksum_val = Utils.get_cksum(selected['requirement']['description'])
         cfg_res_file = res_dir / f"cfg_expanded_inputs_{cksum_val}.json"
-        selected = cls.SEARCH_FUNC[task](req, dataset)
         seeds = selected['selected_inputs'][:num_seeds] if num_seeds>0 else selected['selected_inputs']
         seeds = cls.get_seed_of_interest(req, cfg_res_file, seeds)
         if not any(seeds):
@@ -363,6 +365,7 @@ class Template:
                                                  selection_method=selection_method,
                                                  logger=logger)
 
+        template_results = Utils.read_json(cfg_res_file)            
         # if not os.path.exists(str(cfg_res_file)):
         #     template_results = {
         #         'requirement': req,
@@ -389,7 +392,7 @@ class Template:
     
     @classmethod
     def get_new_inputs(cls,
-                       red_dir, # cfg_res_file,
+                       res_dir, # cfg_res_file,
                        nlp_task,
                        dataset_name,
                        num_seeds=None,
@@ -563,11 +566,10 @@ class Template:
         prev_synonyms = dict()
         cksum_map_str = ""
         for t_i, req in enumerate(reqs):
-            req_cksum = Utils.get_cksum(req['requirement']['description'])
+            lc_desc = req['description']
+            req_cksum = Utils.get_cksum(lc_desc)
             cfg_res_file = res_dir / f"cfg_expanded_inputs_{req_cksum}.json"
             inputs_per_req = Utils.read_json(cfg_res_file)
-            lc_desc = inputs_per_req["requirement"]["description"]
-            # req_cksum = Utils.get_cksum(lc_desc)
             cksum_map_str += f"{lc_desc}\t{req_cksum}\n"
             inputs = inputs_per_req["inputs"]
             print_str = '>>>>> REQUIREMENT:'+inputs_per_req["requirement"]["description"]

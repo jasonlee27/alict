@@ -132,11 +132,12 @@ class Testsuite:
 
         for path in os.listdir(res_dir):
             if path.startswith("cfg_expanded_inputs") and path.endswith(".json"):
+                print(res_dir, path)
                 new_input_dicts = Utils.read_json(res_dir / path)
                 req_cksum = re.search("cfg\_expanded\_inputs\_([a-zA-z0-9]+)\.json", path).group(1)
-                lc_desc = new_input_dicts[t_i]["requirement"]["description"]
+                lc_desc = new_input_dicts["requirement"]["description"]
 
-                transform_reqs.append(new_input_dicts[t_i]["requirement"]["transform"])
+                transform_reqs.append(new_input_dicts["requirement"]["transform"])
                 
                 seed_res = list()
                 seeds = Utils.read_json(res_dir / f"seeds_{req_cksum}.json")
@@ -145,8 +146,8 @@ class Testsuite:
                     seed_res.append(sd_res)
                 # end for
                 seeds_per_task.append({
-                    "capability": new_input_dicts[t_i]["requirement"]["capability"],
-                    "description": new_input_dicts[t_i]["requirement"]["description"],
+                    "capability": new_input_dicts["requirement"]["capability"],
+                    "description": new_input_dicts["requirement"]["description"],
                     "templates": seed_res
                 })
             
@@ -158,8 +159,8 @@ class Testsuite:
                         exp_res.append(e_res)
                     # end for
                     exps_per_task.append({
-                        "capability": new_input_dicts[t_i]["requirement"]["capability"],
-                        "description": new_input_dicts[t_i]["requirement"]["description"],
+                        "capability": new_input_dicts["requirement"]["capability"],
+                        "description": new_input_dicts["requirement"]["description"],
                         "templates": exp_res
                     })
                 # end if
