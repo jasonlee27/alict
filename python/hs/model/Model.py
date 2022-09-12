@@ -15,7 +15,7 @@ from ..utils.Utils import Utils
 class Model:
     
     model_map = {
-        "sa": ("sentiment-analysis", Macros.sa_models_file)
+        "hs": ("text-classification", Macros.hs_models_file)
     }
 
     @classmethod

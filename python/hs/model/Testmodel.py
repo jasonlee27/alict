@@ -20,7 +20,7 @@ import shutil
 class Testmodel:
 
     model_func_map = {
-        "sa": Model.sentiment_pred_and_conf
+        "hs": Model.sentiment_pred_and_conf
     }
 
     @classmethod
@@ -263,7 +263,6 @@ def main(task,
          num_seeds,
          num_trials,
          test_baseline,
-         test_type,
          log_file,
          test_seed=False,
          local_model_name=None):
