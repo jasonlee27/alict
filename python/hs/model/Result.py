@@ -432,7 +432,7 @@ class Result:
     def analyze_seed_performance(cls,
                                  seed_result_file,
                                  bl_result_file,
-                                 model_name_file=Macros.sa_models_file,
+                                 model_name_file=Macros.hs_models_file,
                                  saveto=None):
         # get the our generated seed performance
         result_dict = cls.parse_results(seed_result_file, model_name_file)

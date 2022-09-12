@@ -101,8 +101,8 @@ def run_testmodel():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     num_seeds = args.num_seeds
-    num_trials = args.num_trials
     test_baseline = args.test_baseline
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
     if num_seeds<0:
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
     else:
@@ -127,6 +127,8 @@ def run_analyze():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     test_baseline = args.test_baseline
+    num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
     if test_baseline:
         if num_seeds<0:
             result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
@@ -148,7 +150,7 @@ def run_analyze():
             result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
             template_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
-        esult_file = result_dir / 'test_results.txt'
+        result_file = result_dir / 'test_results.txt'
         save_to = result_dir / 'test_result_analysis.json'
         Result.analyze(
             result_file,
