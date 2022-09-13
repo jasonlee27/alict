@@ -503,7 +503,7 @@ class Hatecheck:
             # end for
             if func_desc is not None:
                 sent = s['sent']
-                label = 0 if s['label']=='hateful' else 1
+                label = 1 if s['label']=='hateful' else 0
                 func_key = f"{func_desc[0]}::{func_desc[1]}"
                 if func_key not in _sents.keys():
                     _sents[func_key] = [{

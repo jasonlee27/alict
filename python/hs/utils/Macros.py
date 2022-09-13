@@ -31,7 +31,7 @@ class Macros:
     hs_task = 'hs'
     nlp_tasks = [hs_task]
     sa_label_map = {'negative': 0, 'positive': 2, 'neutral': 1}
-    hs_label_map = {'toxic': 0, 'non-toxic': 1}
+    hs_label_map = {'non-toxic': 0, 'toxic': 1}
     
     datasets = {
         hs_task: ['hatexplain', 'hatecheck'],
