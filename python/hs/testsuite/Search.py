@@ -13,7 +13,9 @@ import checklist
 import numpy as np
 
 from itertools import product
+from checklist.editor import Editor
 from checklist.test_types import MFT, INV, DIR
+from checklist.test_suite import TestSuite
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -470,6 +472,69 @@ class Hatecheck:
         # end for
         return sents
 
+    @classmethod
+    def add_template(cls, t, editor, template):
+        if t is None:
+            t = editor.template(template['sent'],
+                                labels=template['label'],
+                                save=True)
+        else:
+            t += editor.template(template['sent'],
+                                 labels=template['label'],
+                                 save=True)
+        # end if
+        return t
+
+    @classmethod
+    def write_testsuites(cls,
+                         hatecheck_data_file: Path = Macros.hatecheck_data_file,
+                         hatecheck_testsuite_file: Path = Macros.hatecheck_testsuite_file):
+        sents = cls.get_sents(hatecheck_data_file)
+        editor = Editor()
+        suite = TestSuite()
+        _sents = dict()
+        for s in sents:
+            func_desc = None
+            for key, val in cls.FUNCTIONALITY_MAP.items():
+                if val==s['func']:
+                    func_desc = (key, val)
+                    break
+                # end if
+            # end for
+            if func_desc is not None:
+                sent = s['sent']
+                label = 0 if s['label']=='hateful' else 1
+                func_key = f"{func_desc[0]}::{func_desc[1]}"
+                if func_key not in _sents.keys():
+                    _sents[func_key] = [{
+                        'sent': sent,
+                        'label': label
+                    }]
+                else:
+                    _sents[func_key].append({
+                        'sent': sent,
+                        'label': label
+                    })
+                # end if
+            # end if
+        # end for
+        for func_desc in _sents.keys():
+            t = None
+            for d in _sents[func_desc]:
+                t = cls.add_template(t, editor, d)
+            # end for
+            test = MFT(**t)
+            _func_desc, func_label = func_desc.split('::')
+            suite.add(test,
+                      name=func_desc,
+                      capability=func_label,
+                      description=_func_desc)
+        # end for
+        res_dir = Macros.hatecheck_testsuite_file.parent
+        res_dir.mkdir(parents=True, exist_ok=True)
+        suite.save(hatecheck_testsuite_file)
+        return
+    
     @classmethod
     def search(cls, req, nlp):
         sents = cls.get_sents(Macros.hatecheck_data_file)

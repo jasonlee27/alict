@@ -9,14 +9,14 @@ class Macros:
 
     this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__))) # s2lct/python/utils
     root_dir: Path = this_dir.parent.parent.parent # s2lct/
-    storage_dir: Path = Path("/glusterfs/data/jxl115330/s2lct")
-    result_dir: Path = storage_dir / "_results" # /glusterfs/data/jxl115330/s2lct/_results
+    storage_dir: Path = Path('/glusterfs/data/jxl115330/s2lct')
+    result_dir: Path = storage_dir / '_results' # /glusterfs/data/jxl115330/s2lct/_results
     # result_dir: Path = root_dir / "_results" # s2lct/_results
     
-    download_dir: Path = storage_dir / "_downloads" # /glusterfs/data/jxl115330/s2lct/_downloads
-    log_dir: Path = storage_dir / "_logs" # /glusterfs/data/jxl115330/s2lct/_logs
-    paper_dir = root_dir / "paper" / "ase22"
-    dataset_dir = download_dir / "datasets"
+    download_dir: Path = storage_dir / '_downloads' # /glusterfs/data/jxl115330/s2lct/_downloads
+    log_dir: Path = storage_dir / '_logs' # /glusterfs/data/jxl115330/s2lct/_logs
+    paper_dir = root_dir / 'paper' / 'ase22'
+    dataset_dir = download_dir / 'datasets'
 
     FMT_INT = "{:,d}"
     FMT_PER = "{:.1%}"
@@ -33,10 +33,11 @@ class Macros:
     sa_label_map = {'negative': 0, 'positive': 2, 'neutral': 1}
     hs_label_map = {'toxic': 0, 'non-toxic': 1}
     
-    # HateXplain dataset (hate speech detection dataset):
     datasets = {
         hs_task: ['hatexplain', 'hatecheck'],
     }
+    
+    # HateXplain dataset (hate speech detection dataset):
     hatexplain_data_file: Path = dataset_dir / 'hs' / 'HateXplain' / 'Data' / 'dataset.json'
     
     # Hurtlex lexicon dataset
@@ -44,9 +45,16 @@ class Macros:
 
     # Hatecheck dataset
     hatecheck_data_file: Path = dataset_dir / 'hs' / 'hatecheck' / 'hatecheck-data' / 'test_suite_annotations.csv'
+    hatecheck_testsuite_file: Path = result_dir / 'hatecheck' / 'hs_hatecheck_testsuite.pkl'
 
     # SentiWordNet
-    swn_data_file: Path = dataset_dir / "SentiWordNet" / "data" / "SentiWordNet_3.0.0.txt"
+    swn_data_file: Path = dataset_dir / 'SentiWordNet' / 'data' / 'SentiWordNet_3.0.0.txt'
+
+    BASELINES = {
+        datasets[hs_task][-1]: {
+            "testsuite_file": hatecheck_data_file
+        }
+    }
 
     # Testsuite
     num_cfg_exp_elem = -1 # number of syntax suggestions used in Generator

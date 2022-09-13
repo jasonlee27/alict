@@ -13,6 +13,7 @@ from ..testsuite.Testsuite import Testsuite
 
 from .Model import Model
 from .GoogleModel import GoogleModel
+from ..testsuite.Search import Hatecheck
 
 import os
 import shutil
@@ -28,6 +29,15 @@ class Testmodel:
         tsuite = suite().from_file(testsuite_file)
         # print(tsuite.info)
         return tsuite
+
+    @classmethod
+    def load_hatecheck_testsuite(cls,
+                                 hatecheck_data_file: Path = Macros.hatecheck_data_file,
+                                 hatecheck_testsuite_file: Path = Macros.hatecheck_testsuite_file):
+        if not os.path.exists(str(Macros.hatecheck_testsuite_file)):
+            Hatecheck.write_testsuites(hatecheck_data_file, hatecheck_testsuite_file)
+        # end if
+        return cls.load_testsuite(hatecheck_testsuite_file)
 
     @classmethod
     def _run_testsuite(cls,
@@ -142,8 +152,12 @@ class Testmodel:
                           local_model_name=None):
         logger.print(f"***** TASK: {task} *****")
         logger.print(f"***** Baseline: {bl_name} *****")
-        testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
-
+        if bl_name == Macros.datasets[Macros.hs_task][-1]: # hatecheck:
+            testsuite = cls.load_hatecheck_testsuite()
+        else:
+            testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
+        # end if
+        
         if local_model_name is None:
             # Run Google nlp model
             # print(f">>>>> MODEL: Google NLP model")
@@ -180,11 +194,11 @@ class Testmodel:
                       test_result_dir: Path,
                       logger,
                       local_model_name: str = None):
-        # run models on checklist introduced testsuite format
-        bl_name = None
+        # run models on checklist testsuite format
         if test_baseline:
+            bl_name = Macros.datasets[Macros.hs_task][-1]
             cls._run_bl_testsuite(task,
-                                  'checklist',
+                                  bl_name,
                                   test_result_dir,
                                   logger,
                                   local_model_name=local_model_name)
@@ -336,6 +350,7 @@ def main_seed(task,
     else:
         test_result_dir = Macros.result_dir/ f"seeds{_num_trials}_{task}_{dataset_name}_{num_seeds}seeds"
     # end if
+    baseline_name = Macros.datasets[Macros.hs_task][-1]
     if local_model_name is None:
         Testmodel.run_testsuite(task,
                                 dataset_name,
@@ -345,7 +360,7 @@ def main_seed(task,
                                 test_result_dir,
                                 logger)
         if test_baseline:
-            test_result_file = test_result_dir / 'test_results_checklist.txt'
+            test_result_file = test_result_dir / f"test_results_{baseline_name}.txt"
         else:
             test_result_file = test_result_dir / 'test_results.txt'
         # end if
@@ -360,7 +375,7 @@ def main_seed(task,
                                 logger,
                                 local_model_name=local_model_name)
         if test_baseline:
-            test_result_file = test_result_dir / 'test_results_checklist.txt'
+            test_result_file = test_result_dir / f"test_results_{baseline_name}.txt"
         else:
             test_result_file = test_result_dir / 'test_results.txt'
         # end if
