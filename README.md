@@ -2,10 +2,11 @@
 
 This repository contains code for testing NLP Models as described in the following paper:
 >[S<sup>2</sup>LCT: Specification- and Syntax-based Automated Testing Linguistic Capabilities of NLP Models]\
-> Simin Chen, Cong Liu, Wei Yang, Shiyi Wei
+> **Jaeseong Lee**, Simin Chen, Cong Liu, Wei Yang, Shiyi Wei
 
 S<sup>2</sup>LCT is an automated linguistic capability-based testing framework for NLP models. In this implementation, we generate testcases for sentiment analysis task. Seed test cases are generated from SST dataset(https://nlp.stanford.edu/sentiment/).
-In the future, multiple tasks and multiple searching datasets are implemented for the S<sup>2</sup>LCT.
+In the future, multiple tasks and multiple searching datasets are implemented for the S<sup>2</sup>LCT. \
+You can find more results of S<sup>2</sup>LCT at the project website(https://sites.google.com/view/dotjasons2lct/home).
 
 ## Prerequisites
 This application is written for ```Python>3.7.11```. All requirements are listed in ```requirements.txt```, and they are installed by pip with the following command.
