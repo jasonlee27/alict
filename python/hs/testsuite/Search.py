@@ -471,6 +471,7 @@ class Hatecheck:
                 sent = ",".join(d[sent_att_index:label_att_index+ind_diff])
             # end if
             label = d[label_att_index+ind_diff]
+            # (pred_res, conf, pred, label, str(x))
             sents.append({
                 'func': d[func_att_index],
                 'sent': re.sub('\\s+', ' ', sent.strip().lower()),
@@ -500,6 +501,7 @@ class Hatecheck:
         editor = Editor()
         suite = TestSuite()
         _sents = dict()
+        label_map = list(Macros.hs_label_map.keys())
         for s in sents:
             func_desc = None
             for key, val in cls.FUNCTIONALITY_MAP.items():
@@ -510,7 +512,7 @@ class Hatecheck:
             # end for
             if func_desc is not None:
                 sent = s['sent']
-                label = 1 if s['label']=='hateful' else 0
+                label = 1 if s['label']==label_map[1] else 0
                 func_key = f"{func_desc[0]}::{func_desc[1]}"
                 if func_key not in _sents.keys():
                     _sents[func_key] = [{
