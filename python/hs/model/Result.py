@@ -1,16 +1,14 @@
 # This script is to analyze the 
 # model test results
 
+import os, re
+
 from typing import *
 from pathlib import Path
 from scipy.stats import entropy
 
-# from checklist.test_suite import TestSuite as suite
-
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-
-import os, re
 
 
 class Result:
@@ -25,7 +23,7 @@ class Result:
         return model_results
 
     @classmethod
-    def get_model_checklist_results_from_string(cls, result_str, model_name):
+    def get_model_hatecheck_results_from_string(cls, result_str, model_name):
         p = re.compile(
             f">>>>> MODEL: {model_name}(.*?)?\n<<<<< MODEL: {model_name}",
             re.DOTALL
@@ -37,7 +35,7 @@ class Result:
             p = re.compile(pattern, re.DOTALL)
             req_search = p.search(m)
             lc = req_search.group(1).splitlines()[-1]
-            if lc in Macros.CHECKLIST_LC_LIST:
+            if lc in Macros.OUR_LC_LIST:
                 model_results.append({
                     'lc': lc,
                     'pass': cls.get_pass_sents_from_model_string(m),
@@ -123,9 +121,9 @@ class Result:
         return results
 
     @classmethod
-    def parse_model_on_checklist_results(cls, result_str, model_name, task):
+    def parse_model_on_hatecheck_results(cls, result_str, model_name, task):
         results = list()
-        model_results = cls.get_model_checklist_results_from_string(result_str, model_name)
+        model_results = cls.get_model_hatecheck_results_from_string(result_str, model_name)
         temp_dict = dict()
         for r in model_results:
             # if r['lc'] in Macros.CHECKLIST_LC_LIST[8:10]:
@@ -146,9 +144,9 @@ class Result:
             #         })
             #     # end if
             # else:
-            lc = Macros.LC_MAP[r['lc']]
+            # lc = Macros.LC_MAP[r['lc']]
             results.append({
-                'req': lc,
+                'req': r['lc'],
                 'pass': r['pass'],
                 'fail': r['fail']
             })
@@ -170,12 +168,12 @@ class Result:
         # end with
 
     @classmethod
-    def parse_checklist_results(cls, result_file, model_name_file):
+    def parse_hatecheck_results(cls, result_file, model_name_file):
         with open(result_file, "r") as f:
             line = f.read()
             task = cls.get_task_from_result_str(line)
             return {
-                model.strip(): cls.parse_model_on_checklist_results(
+                model.strip(): cls.parse_model_on_hatecheck_results(
                     line, model.strip(), task
                 )
                 for model in Utils.read_txt(model_name_file)
@@ -206,7 +204,7 @@ class Result:
         return seed_exp_map
 
     @classmethod
-    def analyze_model_checklist(cls, model_results):
+    def analyze_model_hatecheck(cls, model_results):
         reqs = sorted(set([r['req'] for r in model_results]))
         results = list()
         for r in reqs:
@@ -417,13 +415,13 @@ class Result:
         return results
     
     @classmethod
-    def analyze_checklist(cls, result_file, model_name_file, saveto):
-        # result_file: Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results_checklist.txt'
-        result_dict = cls.parse_checklist_results(result_file, model_name_file)
+    def analyze_hatecheck(cls, result_file, model_name_file, saveto):
+        # result_file: Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results_hatecheck.txt'
+        result_dict = cls.parse_hatecheck_results(result_file, model_name_file)
         results = dict()
         for model in result_dict.keys():
             model_result = result_dict[model]
-            results[model] = cls.analyze_model_checklist(model_result)
+            results[model] = cls.analyze_model_hatecheck(model_result)
         # end for
         Utils.write_json(results, saveto, pretty_format=True)
         return results
@@ -437,8 +435,8 @@ class Result:
         # get the our generated seed performance
         result_dict = cls.parse_results(seed_result_file, model_name_file)
 
-        # get the checklist performance
-        bl_result_dict = cls.parse_checklist_results(bl_result_file, model_name_file)
+        # get the hatecheck performance
+        bl_result_dict = cls.parse_hatecheck_results(bl_result_file, model_name_file)
         
         results = dict()
         for model in result_dict.keys():

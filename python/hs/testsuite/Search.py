@@ -464,10 +464,17 @@ class Hatecheck:
         orig_label_keys = list(Macros.hs_label_map)
         for d in data:
             # attributes: ,functionality,case_id,templ_id,test_case,label_gold,label_1,label_2,label_3,label_4,label_5,label_6,label_7,label_8,label_9,label_10,count_label_h,count_label_nh,label_annot_maj
+            ind_diff = 0
+            sent = d[sent_att_index]
+            if len(d)>19:
+                ind_diff = len(d)-19
+                sent = ",".join(d[sent_att_index:label_att_index+ind_diff])
+            # end if
+            label = d[label_att_index+ind_diff]
             sents.append({
                 'func': d[func_att_index],
-                'sent': re.sub('\\s+', ' ', d[sent_att_index].strip().lower()),
-                'label': orig_label_keys[0] if d[label_att_index]=='hateful' else orig_label_keys[1]
+                'sent': re.sub('\\s+', ' ', sent.strip().lower()),
+                'label': orig_label_keys[1] if label=='hateful' else orig_label_keys[0]
             })
         # end for
         return sents
@@ -526,9 +533,9 @@ class Hatecheck:
             test = MFT(**t)
             _func_desc, func_label = func_desc.split('::')
             suite.add(test,
-                      name=func_desc,
+                      name=_func_desc,
                       capability=func_label,
-                      description=_func_desc)
+                      description=func_desc)
         # end for
         res_dir = Macros.hatecheck_testsuite_file.parent
         res_dir.mkdir(parents=True, exist_ok=True)

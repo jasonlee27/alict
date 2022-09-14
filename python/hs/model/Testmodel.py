@@ -297,7 +297,7 @@ def main(task,
                                 test_result_dir,
                                 logger)
         if test_baseline:
-            test_result_file = test_result_dir / 'test_results_checklist.txt'
+            test_result_file = test_result_dir / 'test_results_hatecheck.txt'
         else:
             test_result_file = test_result_dir / 'test_results.txt'
         # end if
@@ -318,7 +318,7 @@ def main(task,
                                 logger,
                                 local_model_name=local_model_name)
         if test_baseline:
-            test_result_file = test_result_dir / 'test_results_checklist.txt'
+            test_result_file = test_result_dir / 'test_results_hatecheck.txt'
         else:
             test_result_file = test_result_dir / 'test_results.txt'
         # end if
