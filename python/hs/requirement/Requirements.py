@@ -77,112 +77,112 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['i <hate_syn> <hurtlex_pos:n>']
+                                'word': ['i <hate_syn> <hatecheck_ph>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['I cannot <stand_syn> <hurtlex_pos:n>']
+                                'word': ['I cannot <stand_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['I <despise_syn> <hatecheck_ph>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['I <despise_syn> <hurtlex_pos:n>']
+                                'word': ['I <loathe_syn> <hatecheck_ph>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['I <loathe_syn> <hurtlex_pos:n>']
+                                'word': ['I <abhor_syn> <hatecheck_ph>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['I <abhor_syn> <hurtlex_pos:n>']
+                                'word': ['Disgusted by all the <hatecheck_ph>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['Disgusted by all the <hurtlex_pos:n>']
+                                'word': ['I have so much <disdain_syn> for <hatecheck_ph>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['I have so much <disdain_syn> for <hurtlex_pos:n>']
+                                'word': ['so <sick_syn> of being around <hatecheck_ph>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['so <sick_syn> of being around <hurtlex_pos:n>']
+                                'word': ['I feel nothing but <contempt_syn> for <hatecheck_ph>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['I feel nothing but <contempt_syn> for <hurtlex_pos:n>']
+                                'word': ['<hatecheck_ph> <disgust_syn> me']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<hurtlex_pos:n> <disgust_syn> me']
+                                'word': ['<hatecheck_ph> are the worst']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<hurtlex_pos:n> are the worst']
+                                'word': ['<hatecheck_ph> <make_syn> me <sick_syn>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<hurtlex_pos:n> <make_syn> me <sick_syn>']
+                                'word': ['there is nothing worse than <hatecheck_ph>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['there is nothing worse than <hurtlex_pos:n>']
+                                'word': ['<hatecheck_ph> who think they are my equal fill me with so much rage']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<hurtlex_pos:n> who think they are my equal fill me with so much rage']
+                                'word': ['all the other <hatecheck_ph> in this country make me boil with anger']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['all the other <hurtlex_pos:n> in this country make me boil with anger']
-                            },
-                            'label': 'toxic'
-                        }, {
-                            'length': None,
-                            'include': {
-                                'POS': None,
-                                'word': ['The <utter_syn> <scorn_syn> I feel for <hurtlex_pos:n> is hard to to put into words']
+                                'word': ['The <utter_syn> <scorn_syn> I feel for <hatecheck_ph> is hard to to put into words']
                             },
                             'label': 'toxic'
                         }],
@@ -226,21 +226,21 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<hurtlex_pos:n> with any power are a threat to civilisation']
+                                'word': ['<hatecheck_ph> with any power are a threat to civilisation']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<hurtlex_pos:n> is a danger to our country']
+                                'word': ['<hatecheck_ph> is a danger to our country']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ["It is in <hurtlex_pos:n> 's nature to be uncivilised"]
+                                'word': ["It is in <hatecheck_ph> 's nature to be uncivilised"]
                             },
                             'label': 'toxic'
                         }, {
@@ -261,7 +261,7 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['Typical of a <hurtlex_pos:n> to be that <hurtlex_pos:a>']
+                                'word': ['Typical of a <hatecheck_ph> to be that <hurtlex_pos:a>']
                             },
                             'label': 'toxic'
                         }, {
@@ -275,7 +275,7 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['It is always the <hurtlex_pos:n> that is the <hurtlex_pos:a> one']
+                                'word': ['It is always the <hatecheck_ph> that is the <hurtlex_pos:a> one']
                             },
                             'label': 'toxic'
                         }, {
@@ -354,21 +354,21 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['your <hurtlex_pos:n> lives are <worthless_syn>']
+                                'word': ['your <hatecheck_ph> lives are <worthless_syn>']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['your <hurtlex_pos:n> lives are absolutely nothing']
+                                'word': ['your <hatecheck_ph> lives are absolutely nothing']
                             },
                             'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['that is fitting for <hurtlex_pos:n> <vermin_syn>']
+                                'word': ['that is fitting for <hatecheck_ph> <vermin_syn>']
                             },
                             'label': 'toxic'
                         }, {
@@ -410,7 +410,7 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['swarms of <hurtlex_pos:n> <infest_syn> our government']
+                                'word': ['swarms of <hatecheck_ph> <infest_syn> our government']
                             },
                             'label': 'toxic'
                         }],

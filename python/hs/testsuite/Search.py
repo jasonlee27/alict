@@ -24,7 +24,7 @@ from .Synonyms import Synonyms
 from ..requirement.Requirements import Requirements
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 from .hurtlex.Hurtlex import Hurtlex
-
+from .hatecheck.Hatecheck import Hatecheck as Hatecheck_ph
 
 # get pos/neg/neu words from SentiWordNet
 # SENT_WORDS = Sentiwordnet.get_sent_words()
@@ -119,6 +119,11 @@ class SearchOperator:
         words = [w['lemma'] for w in words]
         random.shuffle(words)
         return words
+
+    def get_hatecheck_ph_words(self):
+        ph_dict = Hatecheck_ph.get_placeholder_values()
+        words = [val for vals in ph_dict.values() for val in vals]
+        return words
     
     def _search_by_word_include(self, sents, word_cond, nlp):
         # if word condition searches a specific group of words
@@ -147,7 +152,10 @@ class SearchOperator:
                         target_type = target_template.split('hurtlex_')[1]
                         hurtlex_words = self.get_hurtlex_words(target_type)
                         word_dict[tw] = list(set(hurtlex_words))
-                    # elif target_template.startswith('hatexplain_'):
+                    elif target_template.startswith('hatecheck_ph'):
+                        hatecheck_ph_words = self.get_hatecheck_ph_words()
+                        print(hatecheck_ph_words)
+                        word_dict[tw] = list(set(hatecheck_ph_words))
                     # end if
                 # end if
             else:
