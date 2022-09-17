@@ -31,7 +31,8 @@ class Hatecheck:
         for d in data:
             ph_name = d[0].strip('[]')
             if ph_name in tgt_of_interest:
-                res[ph_name] = [g.strip() for g in d[1].strip('\"\"').split(',')]
+                values = ",".join(d[1:])
+                res[ph_name] = values.strip('\"\"').split(',')
             # end if
         # end for
         return res

@@ -154,7 +154,6 @@ class SearchOperator:
                         word_dict[tw] = list(set(hurtlex_words))
                     elif target_template.startswith('hatecheck_ph'):
                         hatecheck_ph_words = self.get_hatecheck_ph_words()
-                        print(hatecheck_ph_words)
                         word_dict[tw] = list(set(hatecheck_ph_words))
                     # end if
                 # end if
