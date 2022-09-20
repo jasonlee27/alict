@@ -430,30 +430,16 @@ class Hatecheck:
 
     # TODO: complete func mapping
     FUNCTIONALITY_MAP = {
-        Macros.OUR_LC_LIST[0]: 'derog_neg_emote_h',
-        Macros.OUR_LC_LIST[1]: 'derog_neg_attrib_h',
-        Macros.OUR_LC_LIST[2]: 'derog_dehum_h',
-        Macros.OUR_LC_LIST[3]: 'derog_neg_impl_h',
-        Macros.OUR_LC_LIST[4]: 'threat_dir_h',
-        Macros.OUR_LC_LIST[5]: 'threat_norm_h',
-        Macros.OUR_LC_LIST[6]: 'slur_h',
-        Macros.OUR_LC_LIST[7]: 'slur_homonym_nh',
-        Macros.OUR_LC_LIST[8]: 'slur_reclaimed_nh',
-        Macros.OUR_LC_LIST[9]: 'profanity_h',
-        Macros.OUR_LC_LIST[10]: 'profanity_nh',
-        Macros.OUR_LC_LIST[11]: 'ref_subs_clause_h',
-        Macros.OUR_LC_LIST[12]: 'ref_subs_sent_h',
-        Macros.OUR_LC_LIST[13]: 'negate_pos_h',
-        Macros.OUR_LC_LIST[14]: 'negate_neg_nh',
-        Macros.OUR_LC_LIST[15]: 'phrase_question_h',
-        Macros.OUR_LC_LIST[16]: 'phrase_option_h',
-        Macros.OUR_LC_LIST[17]: 'ident_neutral_nh',
-        Macros.OUR_LC_LIST[18]: 'ident_pos_nh',
-        Macros.OUR_LC_LIST[19]: 'counter_quote_nh',
-        Macros.OUR_LC_LIST[20]: 'counter_ref_nh',
-        Macros.OUR_LC_LIST[21]: 'target_obj_nh',
-        Macros.OUR_LC_LIST[22]: 'target_indiv_nh',
-        Macros.OUR_LC_LIST[23]: 'target_group_nh'
+        Macros.OUR_LC_LIST[0]: ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_neg_impl_h'],
+        Macros.OUR_LC_LIST[1]: ['threat_dir_h', 'threat_norm_h'],
+        Macros.OUR_LC_LIST[2]: ['slur_h', 'slur_homonym_nh', 'slur_reclaimed_nh'],
+        Macros.OUR_LC_LIST[3]: ['profanity_h', 'profanity_nh'],
+        Macros.OUR_LC_LIST[4]: ['ref_subs_clause_h', 'ref_subs_sent_h'],
+        Macros.OUR_LC_LIST[5]: ['negate_pos_h', 'negate_neg_nh'],
+        Macros.OUR_LC_LIST[6]: ['phrase_question_h', 'phrase_option_h'],
+        Macros.OUR_LC_LIST[7]: ['ident_neutral_nh', 'ident_pos_nh'],
+        Macros.OUR_LC_LIST[8]: ['counter_quote_nh', 'counter_ref_nh'],
+        Macros.OUR_LC_LIST[9]: ['target_obj_nh', 'target_indiv_nh', 'target_group_nh']
     }
 
     @classmethod
@@ -512,8 +498,8 @@ class Hatecheck:
         for s in sents:
             func_desc = None
             for key, val in cls.FUNCTIONALITY_MAP.items():
-                if val==s['func']:
-                    func_desc = (key, val)
+                if s['func'] in val:
+                    func_desc = (key, key)
                     break
                 # end if
             # end for
@@ -555,10 +541,10 @@ class Hatecheck:
     def search(cls, req, nlp):
         sents = cls.get_sents(Macros.hatecheck_data_file)
         req_desc = req['description']
-        sh_req_desc = cls.FUNCTIONALITY_MAP[req_desc]
+        sh_req_descs = cls.FUNCTIONALITY_MAP[req_desc]
         selected = list()
         for s_i, s in enumerate(sents):
-            if s['func']==sh_req_desc:
+            if s['func'] in sh_req_descs:
                 selected.append((s_i, s['sent'], s['label']))
         # end if
         random.shuffle(selected)

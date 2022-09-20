@@ -67,7 +67,7 @@ class Requirements:
         reqs = list()
         for cap, descs in cap_desc.items():
             for d in descs:
-                if d.lower()=='expression of strong negative emotions(explicit)':
+                if d.lower()=='derogation':
                     # Search: seed={label: 1(hate speech); include: “I {hate synonyms} {hurtlex nouns}”}
                     # Transform: N/A
                     reqs.append({
@@ -185,22 +185,6 @@ class Requirements:
                                 'word': ['The <utter_syn> <scorn_syn> I feel for <hatecheck_ph> is hard to to put into words']
                             },
                             'label': 'toxic'
-                        }],
-                        'expansion': ['neutral'],
-                        'transform': None,
-                        'transform_req': None
-                    })
-                elif d.lower()=='description using very negative attributes(explicit)':
-                    reqs.append({
-                        'capability': cap,
-                        'description': d,
-                        'search': [{
-                            'length': None,
-                            'include': {
-                                'POS': None,
-                                'word': ['<isare> <hurtlex_pos:a>']
-                            },
-                            'label': 'toxic'
                         }, {
                             'length': None,
                             'include': {
@@ -283,22 +267,6 @@ class Requirements:
                             'include': {
                                 'POS': None,
                                 'word': ['really <isare> <hurtlex_pos:a>']
-                            },
-                            'label': 'toxic'
-                        }],
-                        'expansion': ['neutral'],
-                        'transform': None,
-                        'transform_req': None
-                    })
-                elif d.lower()=='dehumanisation (explicit)':
-                    reqs.append({
-                        'capability': cap,
-                        'description': d,
-                        'search': [{
-                            'length': None,
-                            'include': {
-                                'POS': None,
-                                'word': ['<isare> <hurtlex_pos:n&cat:an_or>']
                             },
                             'label': 'toxic'
                         }, {
@@ -413,12 +381,180 @@ class Requirements:
                                 'word': ['swarms of <hatecheck_ph> <infest_syn> our government']
                             },
                             'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hatecheck_ph> belong in a zoo']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hatecheck_ph> who are sick should be taken to a vet, not a doctor']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['My dog is smarter than any <hatecheck_ph> could ever be']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['That monkey is more intelligent than all of you <hatecheck_ph> combined']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hatecheck_ph> should be dumped in a landfill']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['I would never eat food that has been touched by a <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['I care more about the dirt under my shoe than about <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['The life of any insect is more valuable than that of a <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['We should test new drugs on <hatecheck_ph> before testing them on animals']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['I don\'t see any difference between a dead rat and a dead <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['It baffles me why people care even the slightest about the lives of <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['The life of any insect is more valuable than that of a <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hatecheck_ph> should all be locked up in cages']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['Putting a <hatecheck_ph> in charge is the biggest mistake anyone can make']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['Allowing any more <hatecheck_ph> into government will ruin our country']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['Never trust a single word said by a <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['I would rather die than date a <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['I\'d rather have cancer than be anywhere near a <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['Never trust a single word said by a <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['If I woke up as a <hatecheck_ph>, I would kill myself']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['There is nothing in the world I like less than a <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hatecheck_ph> have no place in a civilised country like this']
+                            },
+                            'label': 'toxic'
                         }],
                         'expansion': ['neutral'],
                         'transform': None,
                         'transform_req': None
                     })
-                elif d.lower()=='implicit derogation':
+                elif d.lower()=='threatening language':
+                    pass
+                elif d.lower()=='slur usage':
+                    pass
+                elif d.lower()=='profanity usage':
+                    pass
+                elif d.lower()=='negation':
+                    pass
+                elif d.lower()=='phrasing':
+                    pass
+                elif d.lower()=='non-hate grp. ident.':
+                    pass
+                elif d.lower()=='counter speech':
+                    pass
+                elif d.lower()=='abuse against non-prot. targets':
                     pass
                 # end if
             # end for

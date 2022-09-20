@@ -69,29 +69,15 @@ class Macros:
     hs_models_file = download_dir / "models" / "hs_models.txt"
 
     OUR_LC_LIST = [
-        'Expression of strong negative emotions(explicit)',
-        'Description using very negative attributes(explicit)',
-        'Dehumanisation (explicit)',
-        'Implicit derogation',
-        'Direct threat',
-        'Threat as normative statement',
-        'Hate expressed using slur',
-        'Non-hateful homonyms of slurs',
-        'Reclaimed slurs',
-        'Hate expressed using profanity',
-        'Non-hateful use of profanity',
-        'Hate expressed through reference in subsequent clauses',
-        'Hate expressed through reference in subsequent sentences',
-        'Hate expressed using negated positive statement',
-        'Non-hate expressed using negated hateful statement',
-        'Hate phrased as a question',
-        'Hate phrased as an opinion',
-        'Neutral statements using protected group identifiers',
-        'Positive statements using protected group identifiers',
-        'Denouncements of hate that quote it',
-        'Denouncements of hate that make direct reference to it',
-        'Abuse targeted at objects',
-        'Abuse targeted at individuals',
-        'Abuse targeted at non-protected groups'
+        'Derogation',
+        'Threatening language',
+        'Slur usage',
+        'Profanity usage',
+        'Pronoun reference',
+        'Negation',
+        'Phrasing',
+        'Non-hate grp. ident.',
+        'Counter speech',
+        'Abuse against non-prot. targets'
     ]
     
