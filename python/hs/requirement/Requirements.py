@@ -68,8 +68,6 @@ class Requirements:
         for cap, descs in cap_desc.items():
             for d in descs:
                 if d.lower()=='derogation':
-                    # Search: seed={label: 1(hate speech); include: “I {hate synonyms} {hurtlex nouns}”}
-                    # Transform: N/A
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -196,7 +194,7 @@ class Requirements:
                             'length': None,
                             'include': {
                                 'POS': None,
-                                'word': ['<hurtlex_pos:n> cannot stop themselves from being <revolting_syn>']
+                                'word': ['<hatecheck_ph> cannot stop themselves from being <revolting_syn>']
                             },
                             'label': 'toxic'
                         }, {
@@ -541,11 +539,130 @@ class Requirements:
                         'transform_req': None
                     })
                 elif d.lower()=='threatening language':
-                    pass
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [{
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<kill_syn> <hatecheck_ph>']
+                            },
+                            'label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<murder_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<shoot_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<stab_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<rape_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hurt_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<snap_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<attack_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<torture_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<get rid of_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<eradicate_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<slaughter_syn> <hatecheck_ph>']
+                            },
+                            'Label': 'toxic'
+                        }, {
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hatecheck_ph>', '<die_syn>']
+                            },
+                            'Label': 'toxic'
+                        }]
+                    })
                 elif d.lower()=='slur usage':
-                    pass
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [{
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hatecheck_slur>']
+                            },
+                            'label': None
+                        }]
+                    })
                 elif d.lower()=='profanity usage':
-                    pass
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [{
+                            'length': None,
+                            'include': {
+                                'POS': None,
+                                'word': ['<hatecheck_profanity>']
+                            },
+                            'label': None
+                        }]
+                    })
+                elif d.lower()=='pronoun reference':
+                    
                 elif d.lower()=='negation':
                     pass
                 elif d.lower()=='phrasing':
