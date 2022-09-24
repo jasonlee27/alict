@@ -109,7 +109,10 @@ class CFGDiff:
                 return lhs, tuple(rhs), str(seed_tree)
             # end if            
         else:
-            search = re.search(r'\((\S+)\s(\S+)\)', seed_tree._.parse_string)
+            search = re.search(r'\((\S+)\s(.*)\)', seed_tree._.parse_string)
+            if search.group(2)==' ':
+                return search.group(1), None, None
+            # end if
             # return f"{search.group(1)} -> {tuple([search.group(2)])}"
             return search.group(1), tuple([search.group(2)]), str(seed_tree)
         # end if
@@ -127,6 +130,11 @@ class CFGDiff:
         # end if
         # traverse seed_tree and search target rule
         rule_lhs, rule_rhs, rule_words = self.get_rule_key(seed_tree)
+
+        if rule_rhs==None:
+            return parent_rule_list, sent_prob_wo_target
+        # end if
+        
         # rule_key = f"{rule_lhs} -> {rule_rhs}"
         if rule_lhs==target_lhs and rule_rhs==target_rhs and rule_words==target_words:
             # when we find the target rule in seed tree,
