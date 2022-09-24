@@ -1,0 +1,223 @@
+[
+    {
+        'lc': 'threatening language',
+        'spec': {
+            'search': [
+                {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<kill_syn> <hatecheck_ph>']
+                    },
+                    'label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<murder_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<shoot_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<stab_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<rape_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<hurt_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<snap_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<attack_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<torture_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<get rid of_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<eradicate_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<slaughter_syn> <hatecheck_ph>']
+                    },
+                    'Label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<hatecheck_ph>', '<die_syn>']
+                    },
+                    'Label': 'toxic'
+                }
+            ]
+        }
+    }, {
+        'lc': 'slur usage',
+        'spec': {
+            'search': [
+                {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<hatecheck_slur>']
+                    },
+                    'label': None
+                }
+            ]
+        }
+    }, {
+        'lc': 'profanity usage',
+        'spec': {
+            'search': [
+                {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<hatecheck_profanity>']
+                    },
+                    'label': None
+                }
+            ]
+        }
+    }, {
+        'lc': 'pronoun reference',
+        'spec': {
+            'search': [
+                {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<hatecheck_ph>']
+                    },
+                    'label': 'toxic'
+                }, {
+                    'length': None,
+                    'include': {
+                        'POS': None,
+                        'word': ['<hatecheck_ph>']
+                    },
+                    'label': 'non-toxic'
+                }
+            ],
+            "transform": [
+                '[people say, I heard that]+{toxic_sent}+[and]+[I hate them too, I also hate them]',
+                '[people say, I heard that]+{non_toxic_sent}+[but]+[ I hate them, I hate them]'
+                '[people say, I heard that]+{toxic_sent}+[but]+[I don\'t hate them, I like them]',
+                '[people say, I heard that]+{non_toxic_sent}+[and]+[I also don\'t hate them, I don\'t hate them too]'
+            ]
+        }
+    }, {
+        'lc': 'negation',
+        'spec': {
+            'search': [
+                {
+                    'label': 'toxic'
+                }, {
+                    'label': 'non-toxic'
+                }
+            ],
+            "transform": [
+                '[I don\'t think that , I don\'t agree with that]+{toxic_sent|non_toxic_sent}'
+            ]
+        }
+    }, {
+        'lc': 'phrasing',
+        'spec': {
+            'search': [
+                {
+                    'label': 'toxic'
+                }, {
+                    'label': 'non-toxic'
+                }
+            ],
+            "transform": [
+                '[Why do you agree with that]+{toxic_sent|non_toxic_sent}+[?]',
+                '[I think that, I believe that]+{toxic_sent|non_toxic_sent}'
+            ]
+        }
+    }, {
+        'lc': 'non-hate grp. ident.',
+        'spec': {
+            "search": [
+                {
+                    "include": {
+                        "word": ['<hatecheck_ph>']
+                    },
+                    "exclude": {
+                        "POS": ["positive adjs", "negative adjs", "positive nouns", "negative nouns", "positive verbs", "negative verbs"],
+                        "word": None
+                    },
+                    'label': 'non-toxic'
+                }, {
+                    "include": {
+                        "word": ['<hatecheck_ph>']
+                    },
+                    "exclude": {
+                        "POS": ["negative adjs", "negative nouns", "negative verbs"],
+                        'label': 'non-toxic'
+                    }
+                }
+            ]
+        }
+    }, {
+        'lc': 'counter speech',
+        'spec': {
+            'search': [
+                {
+                    'label': 'toxic'
+                }
+            ],
+            'transform': [
+                '[statements like]+{toxic_sent}+[are <hurtful_syn>]',
+                '[you should stop saying like]+{toxic_sent}'
+            ]
+        }
+    }
+]
+            
