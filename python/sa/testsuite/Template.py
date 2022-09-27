@@ -29,12 +29,12 @@ from ..semexp.Suggest import Suggest
 from ..semexp.Synonyms import Synonyms
 
 torch.multiprocessing.set_sharing_strategy('file_system')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class Template:
 
     NUM_PROCESSES = Macros.num_processes # multiprocessing.cpu_count()
-    
     POS_MAP = {
         "NNP": "NP",
         "NNPS": "NPS",
@@ -142,32 +142,32 @@ class Template:
         # end if
         
         for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-            if seed not in template_results['inputs'].keys():
-                args.append((index, seed, seed_label, seed_score, pcfg_ref, logger))
-            # end if
-        # end for 
-        results = pool.starmap_async(cls.generate_seed_cfg_parallel,
-                                     args,
-                                     chunksize=len(seeds)//cls.NUM_PROCESSES).get()
-        for r in results:
-            # masked_input_res[r['seed']] = {
-            #     'cfg_seed': r['cfg_seed'],
-            #     'label': r['label'],
-            #     'label_score': r['label_score'],
-            #     'masked_inputs': r['masked_inputs']
-            # }
-            template_results['inputs'][r['seed']] = {
-                'cfg_seed': r['cfg_seed'],
-                'exp_inputs': list(),
-                'label': r['label'],
-                'label_score': r['label_score']
-            }
-            if any(r['masked_inputs']):
-                template_results['inputs'][r['seed']]['masked_inputs'] = r['masked_inputs']
-            # end if
+            args.append((index, seed, seed_label, seed_score, pcfg_ref, logger))
         # end for
-        pool.close()
-        pool.join()        
+        if any(args):
+            results = pool.starmap_async(cls.generate_seed_cfg_parallel,
+                                         args,
+                                         chunksize=len(seeds)//cls.NUM_PROCESSES).get()
+            for r in results:
+                # masked_input_res[r['seed']] = {
+                #     'cfg_seed': r['cfg_seed'],
+                #     'label': r['label'],
+                #     'label_score': r['label_score'],
+                #     'masked_inputs': r['masked_inputs']
+                # }
+                template_results['inputs'][r['seed']] = {
+                    'cfg_seed': r['cfg_seed'],
+                    'exp_inputs': list(),
+                    'label': r['label'],
+                    'label_score': r['label_score']
+                }
+                if any(r['masked_inputs']):
+                    template_results['inputs'][r['seed']]['masked_inputs'] = r['masked_inputs']
+                # end if
+            # end for
+            pool.close()
+            pool.join()
+        # end if
     
         # write batch results into result file
         Utils.write_json(template_results, cfg_res_file, pretty_format=True)
@@ -181,11 +181,10 @@ class Template:
 
     @classmethod
     def get_word_suggestions(cls,
-                             masked_inputs,
                              cfg_res_file,
-                             editor,
                              num_target=Macros.num_suggestions_on_exp_grammer_elem,
                              selection_method=None,
+                             gpu_ids=None,
                              logger=None):
         st = time.time()
         template_results = Utils.read_json(cfg_res_file)
@@ -247,11 +246,11 @@ class Template:
         
         # get word suggestions
         if any(masked_sents):
-            masked_sents = Suggest.get_word_suggestions_over_seeds(editor,
-                                                                   masked_sents,
+            masked_sents = Suggest.get_word_suggestions_over_seeds(masked_sents,
                                                                    num_target=num_target,
                                                                    selection_method=selection_method,
                                                                    no_mask_key=no_mask_key,
+                                                                   cuda_device_inds=gpu_ids,
                                                                    logger=logger)
         # end if
         ft = time.time()
@@ -315,11 +314,11 @@ class Template:
                         task,
                         req,
                         pcfg_ref,
-                        editor,
                         dataset,
                         res_dir, # cfg_res_file,
                         num_seeds=None,
                         selection_method=None,
+                        gpu_ids=None,
                         logger=None):
         st = time.time()
         # generate seeds
@@ -328,9 +327,6 @@ class Template:
         cfg_res_file = res_dir / f"cfg_expanded_inputs_{cksum_val}.json"
         seeds = selected['selected_inputs'][:num_seeds] if num_seeds>0 else selected['selected_inputs']
         seeds = cls.get_seed_of_interest(req, cfg_res_file, seeds)
-        if not any(seeds):
-            return
-        # end if
         num_selected_inputs = len(selected['selected_inputs'])
         print_str = f">>>>> REQUIREMENT::{cksum_val}::"+selected['requirement']['description']
         if logger is not None:
@@ -343,19 +339,18 @@ class Template:
         exp_results = list()
 
         # anlyze cfg and get masked input for all seeds of interest
-        masked_inputs = cls.generate_masked_inputs(req,
-                                                   seeds,
-                                                   pcfg_ref,
-                                                   cfg_res_file,
-                                                   logger=logger)
+        cls.generate_masked_inputs(req,
+                                   seeds,
+                                   pcfg_ref,
+                                   cfg_res_file,
+                                   logger=logger)
 
         # get the suggested words for the masked inputs using bert:
         num_target = Macros.num_suggestions_on_exp_grammer_elem
-        masked_inputs_w_word_sug = cls.get_word_suggestions(masked_inputs,
-                                                            cfg_res_file,
-                                                            editor,
+        masked_inputs_w_word_sug = cls.get_word_suggestions(cfg_res_file,
                                                             num_target=num_target,
                                                             selection_method=selection_method,
+                                                            gpu_ids=gpu_ids,
                                                             logger=logger)
         # validate word suggestion
         Suggest.eval_word_suggestions_over_seeds(masked_inputs_w_word_sug,
@@ -397,23 +392,24 @@ class Template:
                        dataset_name,
                        num_seeds=None,
                        selection_method=None,
+                       gpu_ids=None,
                        logger=None):
         # if os.path.exists(input_file):
         #     return Utils.read_json(input_file)
         # # end if
         logger.print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(nlp_task)
-        editor = Editor()
+        # editor = Editor(cuda_device_ind=gpu_ids)
         pcfg_ref = RefPCFG()
         for req in reqs:
             cls.generate_inputs(nlp_task,
                                 req,
                                 pcfg_ref,
-                                editor,
                                 dataset_name,
                                 res_dir, # cfg_res_file,
                                 num_seeds=num_seeds,
                                 selection_method=selection_method,
+                                gpu_ids=gpu_ids,
                                 logger=logger)
         # end for
         return
@@ -533,6 +529,7 @@ class Template:
                       selection_method,
                       num_seeds,
                       num_trials,
+                      gpu_ids,
                       log_file):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
@@ -557,6 +554,7 @@ class Template:
             dataset_name,
             num_seeds=num_seeds,
             selection_method=selection_method,
+            gpu_ids=gpu_ids,
             logger=logger
         )
 
