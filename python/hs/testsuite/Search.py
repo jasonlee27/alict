@@ -53,19 +53,34 @@ class SearchOperator:
     def __init__(self, requirements):
         self.capability = requirements['capability']
         self.description = requirements['description']
-        self.search_reqs_list = requirements['search']
-        self.search_method = {
-            "length": self.search_by_len,
-            "include": self.search_by_include,
-            "exclude": self.search_by_exclude,
-            "label": self.search_by_label,
-        }
+        self.search_reqs_list = requirements.pop('search', None)
+        self.use_testcase = requirements.pop('use_testcase', None)
+        self.search_method = None
+        if self.search_reqs_list is not None:
+            self.search_method = {
+                "length": self.search_by_len,
+                "include": self.search_by_include,
+                "exclude": self.search_by_exclude,
+                "label": self.search_by_label,
+            }
+        # end if
 
     def search(self, sents, nlp):
         selected = list()
         if self.search_reqs_list is None:
             return sents
         # end if
+
+        if self.use_testcase is not None:
+            sents = list()
+            if self.use_testcase == 'hatecheck':
+                sents = Hatecheck.get_sents()
+                func = [lc.lower()==self.description for lc in Macros.OUR_LC_LIST][0]
+                sents = [s if func==s['func'] for s in sents]
+            # end if
+            return sents
+        # end if
+            
         for search_reqs in self.search_reqs_list:
             _sents = Utils.copy_list_of_dict(sents)
             for op, param in search_reqs.items():
@@ -416,7 +431,7 @@ class Hatexplain:
         sents = cls.get_sents(Macros.hatexplain_data_file, is_binary_class=True)
         req_obj = SearchOperator(req)
 
-        if req_obj.search_reqs_list is not None:
+        if req_obj.search_reqs_list is not None and req_obj.use_testcase is None:
             # selected = sorted([s for s in req_obj.search(sents, nlp)], key=lambda x: x['post_id'])
             selected = req_obj.search(sents, nlp)
         else:
