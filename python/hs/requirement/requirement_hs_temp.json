@@ -186,9 +186,9 @@
                         "word": ['<hatecheck_ph>']
                     },
                     "exclude": {
-                        "POS": ["negative adjs", "negative nouns", "negative verbs"],
-                        'label': 'non-toxic'
-                    }
+                        "POS": ["negative adjs", "negative nouns", "negative verbs"]
+                    },
+                    'label': 'non-toxic'
                 }
             ]
         }

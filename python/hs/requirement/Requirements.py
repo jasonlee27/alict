@@ -67,56 +67,294 @@ class Requirements:
         reqs = list()
         for cap, descs in cap_desc.items():
             for d in descs:
-                if d.lower()=='derogation':
+                if d.lower()=='derogation::expression of strong negative emotions (explicit)':
                     reqs.append({
                         'capability': cap,
                         'description': d,
                         'use_testcase': 'hatecheck'
                     })
-                elif d.lower()=='threatening language':
+                elif d.lower()=='derogation::description using very negative attributes (explicit)':
                     reqs.append({
                         'capability': cap,
                         'description': d,
                         'use_testcase': 'hatecheck'
                     })
-                elif d.lower()=='slur usage':
+                elif d.lower()=='derogation::dehumanisation (explicit)':
                     reqs.append({
                         'capability': cap,
                         'description': d,
-                        'search': [{
-                            'length': None,
-                            'include': {
-                                'POS': None,
-                                'word': ['<hatecheck_slur>']
-                            },
-                            'label': None
-                        }]
+                        'use_testcase': 'hatecheck'
                     })
-                elif d.lower()=='profanity usage':
+                elif d.lower()=='derogation::implicit derogation':
                     reqs.append({
                         'capability': cap,
                         'description': d,
-                        'search': [{
-                            'length': None,
-                            'include': {
-                                'POS': None,
-                                'word': ['<hatecheck_profanity>']
-                            },
-                            'label': None
-                        }]
+                        'use_testcase': 'hatecheck'
                     })
-                elif d.lower()=='pronoun reference':
-                    
-                elif d.lower()=='negation':
-                    pass
-                elif d.lower()=='phrasing':
-                    pass
-                elif d.lower()=='non-hate grp. ident.':
-                    pass
-                elif d.lower()=='counter speech':
-                    pass
-                elif d.lower()=='abuse against non-prot. targets':
-                    pass
+                elif d.lower()=='threatening language::direct threat':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'use_testcase': 'hatecheck'
+                    })
+                elif d.lower()=='threatening language::threat as normative statement':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'use_testcase': 'hatecheck'
+                    })
+                elif d.lower()=='slur usage::hate expressed using slur':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'include': {
+                                    'word': ['<hatecheck_slur>']
+                                },
+                                'label': 'toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                    })
+                elif d.lower()=='slur usage::non-hateful use of slur':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'include': {
+                                    'word': ['<hatecheck_slur>']
+                                },
+                                'label': 'non-toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                    })
+                elif d.lower()=='profanity usage::hate expressed using profanity':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'include': {
+                                    'word': ['<profanity>']
+                                },
+                                'label': 'toxic'
+                            }
+                        ],
+                        'expansion': ["neutral"],
+                    })
+                elif d.lower()=='profanity usage::non-hateful use of profanity':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'include': {
+                                    'word': ['<profanity>']
+                                },
+                                'label': 'non-toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                    })
+                elif d.lower()=='pronoun reference::hate expressed through reference in subsequent clauses':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'length': None,
+                                'include': {
+                                    'POS': None,
+                                    'word': ['<hatecheck_ph>']
+                                },
+                                'label': 'toxic'
+                            }, {
+                                'length': None,
+                                'include': {
+                                    'POS': None,
+                                    'word': ['<hatecheck_ph>']
+                                },
+                                'label': 'non-toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                        'transform': 'template_f12',
+                        'transform_req': [
+                            {
+                                'label': 'toxic'
+                            }
+                        ]
+                    })
+                elif d.lower()=='pronoun reference::hate expressed through reference in subsequent sentences':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'length': None,
+                                'include': {
+                                    'POS': None,
+                                    'word': ['<hatecheck_ph>']
+                                },
+                                'label': 'toxic'
+                            }, {
+                                'length': None,
+                                'include': {
+                                    'POS': None,
+                                    'word': ['<hatecheck_ph>']
+                                },
+                                'label': 'non-toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                        'transform': 'template_f13',
+                        'transform_req': [
+                            {
+                                'label': 'toxic'
+                            }
+                        ]
+                    })
+                elif d.lower()=='negation::hate expressed using negated positive statement':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'label': 'non-toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                        'transform': 'template_f14',
+                        'transform_req': [
+                            {
+                                'label': 'toxic'
+                            }
+                        ]
+                    })
+                elif d.lower()=='negation::non-hate expressed using negated hateful statement':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'label': 'toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                        'transform': 'template_f15',
+                        'transform_req': [
+                            {
+                                'label': 'non-toxic'
+                            }
+                        ]
+                    })
+                elif d.lower()=='phrasing::hate phrased as a question':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'label': 'toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                        'transform': 'template_f16',
+                        'transform_req': [
+                            {
+                                'label': 'toxic'
+                            }
+                        ]
+                    })
+                elif d.lower()=='phrasing::hate phrased as a opinion':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'label': 'toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                        'transform': 'template_f17',
+                        'transform_req': [
+                            {
+                                'label': 'toxic'
+                            }
+                        ]
+                    })
+                elif d.lower()=='non-hate grp. ident.::neutral statements using protected group identifiers':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'length': None,
+                                'include': {
+                                    'word': ['<hatecheck_ph>']
+                                },
+                                'exclude': {
+                                    'POS': ['positive adjs', 'negative adjs', 'positive nouns', 'negative nouns', 'positive verbs', 'negative verbs'],
+                                },
+                                'label': 'non-toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                    })
+                elif d.lower()=='non-hate grp. ident.::positive statements using protected group identifiers':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'length': None,
+                                'include': {
+                                    'word': ['<hatecheck_ph>']
+                                },
+                                'exclude': {
+                                    'POS': ['negative adjs', 'negative nouns', 'negative verbs'],
+                                },
+                                'label': 'non-toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                    })
+                elif d.lower()=='counter speech::denouncements of hate that quote it':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'label': 'toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                        'transform': 'template_f20',
+                        'transform_req': [
+                            {
+                                'label': 'non-toxic'
+                            }
+                        ]
+                    })
+                elif d.lower()=='counter speech::denouncements of hate that make direct reference to it':
+                    reqs.append({
+                        'capability': cap,
+                        'description': d,
+                        'search': [
+                            {
+                                'label': 'toxic'
+                            }
+                        ],
+                        'expansion': ['neutral'],
+                        'transform': 'template_f21',
+                        'transform_req': [
+                            {
+                                'label': 'non-toxic'
+                            }
+                        ]
+                    })
                 # end if
             # end for
         # end for
