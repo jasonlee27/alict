@@ -77,7 +77,7 @@
             ],
             "transform": [
                 '[people say, I heard that]+{toxic_sent}+[and]+[I hate them too, I also hate them]',
-                '[people say, I heard that]+{non_toxic_sent}+[but]+[ I hate them, I hate them]'
+                '[people say, I heard that]+{non_toxic_sent}+[but]+[I hate them]'
                 '[people say, I heard that]+{toxic_sent}+[but]+[I don\'t hate them, I like them]',
                 '[people say, I heard that]+{non_toxic_sent}+[and]+[I also don\'t hate them, I don\'t hate them too]'
             ]

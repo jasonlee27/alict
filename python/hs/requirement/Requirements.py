@@ -181,7 +181,7 @@ class Requirements:
                             }
                         ],
                         'expansion': ['neutral'],
-                        'transform': 'template_f12',
+                        'transform': 'template f12',
                         'transform_req': [
                             {
                                 'label': 'toxic'
@@ -210,7 +210,7 @@ class Requirements:
                             }
                         ],
                         'expansion': ['neutral'],
-                        'transform': 'template_f13',
+                        'transform': 'template f13',
                         'transform_req': [
                             {
                                 'label': 'toxic'
@@ -227,7 +227,7 @@ class Requirements:
                             }
                         ],
                         'expansion': ['neutral'],
-                        'transform': 'template_f14',
+                        'transform': 'template f14',
                         'transform_req': [
                             {
                                 'label': 'toxic'
@@ -244,7 +244,7 @@ class Requirements:
                             }
                         ],
                         'expansion': ['neutral'],
-                        'transform': 'template_f15',
+                        'transform': 'template f15',
                         'transform_req': [
                             {
                                 'label': 'non-toxic'
@@ -261,7 +261,7 @@ class Requirements:
                             }
                         ],
                         'expansion': ['neutral'],
-                        'transform': 'template_f16',
+                        'transform': 'template f16',
                         'transform_req': [
                             {
                                 'label': 'toxic'
@@ -278,7 +278,7 @@ class Requirements:
                             }
                         ],
                         'expansion': ['neutral'],
-                        'transform': 'template_f17',
+                        'transform': 'template f17',
                         'transform_req': [
                             {
                                 'label': 'toxic'
@@ -331,7 +331,7 @@ class Requirements:
                             }
                         ],
                         'expansion': ['neutral'],
-                        'transform': 'template_f20',
+                        'transform': 'template f20',
                         'transform_req': [
                             {
                                 'label': 'non-toxic'
@@ -348,7 +348,7 @@ class Requirements:
                             }
                         ],
                         'expansion': ['neutral'],
-                        'transform': 'template_f21',
+                        'transform': 'template f21',
                         'transform_req': [
                             {
                                 'label': 'non-toxic'
