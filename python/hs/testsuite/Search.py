@@ -139,6 +139,15 @@ class SearchOperator:
         ph_dict = Hatecheck_ph.get_placeholder_values()
         words = [val for vals in ph_dict.values() for val in vals]
         return words
+
+    def get_hatecheck_slur_words(self):
+        ph_dict = Hatecheck_ph.get_slur_words()
+        words = [val for vals in ph_dict.values() for val in vals]
+        return words
+
+    def get_hatecheck_profanity_words(self):
+        words = Hatecheck_ph.get_profanity_words()
+        return words
     
     def _search_by_word_include(self, sents, word_cond, nlp):
         # if word condition searches a specific group of words
@@ -155,7 +164,6 @@ class SearchOperator:
                 if tw.startswith('<') and tw.endswith('>'):
                     # search any words in the values in the target template
                     target_template = tw.strip('<>')
-                    
                     if target_template.endswith('_syn'):
                         _tw = target_template.split('_syn')[0]
                         _tw_syns = self.get_synonyms(nlp, _tw)
@@ -170,6 +178,12 @@ class SearchOperator:
                     elif target_template.startswith('hatecheck_ph'):
                         hatecheck_ph_words = self.get_hatecheck_ph_words()
                         word_dict[tw] = list(set(hatecheck_ph_words))
+                    elif arget_template.startswith('hatecheck_slur'):
+                        hatecheck_slur_words = self.get_hatecheck_slur_words()
+                        word_dict[tw] = list(set(hatecheck_slur_words))
+                    elif arget_template.startswith('hatecheck_slur'):
+                        hatecheck_profanity_words = self.get_hatecheck_profanity_words()
+                        word_dict[tw] = list(set(hatecheck_profanity_words))
                     # end if
                 # end if
             else:
@@ -287,15 +301,15 @@ class SearchOperator:
         return selected
         
     def search_by_include(self, sents, search_reqs, nlp):
-        params = search_reqs["include"]
+        params = search_reqs['include']
         if type(params)==dict:
             params = [params]
         # end if
         selected_indices = list()
         _sents = sents.copy()
         for param in params:
-            word_include = param["word"]
-            tpos_include = param["POS"]
+            word_include = param.pop('word', None)
+            tpos_include = param.pop('POS', None)
             
             if word_include is not None:
                 for w in word_include: # AND relationship
@@ -445,16 +459,26 @@ class Hatecheck:
 
     # TODO: complete func mapping
     FUNCTIONALITY_MAP = {
-        Macros.OUR_LC_LIST[0]: ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_neg_impl_h'],
-        Macros.OUR_LC_LIST[1]: ['threat_dir_h', 'threat_norm_h'],
-        Macros.OUR_LC_LIST[2]: ['slur_h', 'slur_homonym_nh', 'slur_reclaimed_nh'],
-        Macros.OUR_LC_LIST[3]: ['profanity_h', 'profanity_nh'],
-        Macros.OUR_LC_LIST[4]: ['ref_subs_clause_h', 'ref_subs_sent_h'],
-        Macros.OUR_LC_LIST[5]: ['negate_pos_h', 'negate_neg_nh'],
-        Macros.OUR_LC_LIST[6]: ['phrase_question_h', 'phrase_option_h'],
-        Macros.OUR_LC_LIST[7]: ['ident_neutral_nh', 'ident_pos_nh'],
-        Macros.OUR_LC_LIST[8]: ['counter_quote_nh', 'counter_ref_nh'],
-        Macros.OUR_LC_LIST[9]: ['target_obj_nh', 'target_indiv_nh', 'target_group_nh']
+        Macros.OUR_LC_LIST[0]: 'derog_neg_emote_h',
+        Macros.OUR_LC_LIST[1]: 'derog_neg_attrib_h',
+        Macros.OUR_LC_LIST[2]: 'derog_dehum_h',
+        Macros.OUR_LC_LIST[3]: 'derog_neg_impl_h',
+        Macros.OUR_LC_LIST[4]: 'threat_dir_h',
+        Macros.OUR_LC_LIST[5]: 'threat_norm_h',
+        Macros.OUR_LC_LIST[6]: 'slur_h',
+        Macros.OUR_LC_LIST[7]: ['slur_homonym_nh', 'slur_reclaimed_nh'],
+        Macros.OUR_LC_LIST[8]: 'profanity_h',
+        Macros.OUR_LC_LIST[9]: 'profanity_nh',
+        Macros.OUR_LC_LIST[10]: 'ref_subs_clause_h',
+        Macros.OUR_LC_LIST[11]: 'ref_subs_sent_h',
+        Macros.OUR_LC_LIST[12]: 'negate_pos_h',
+        Macros.OUR_LC_LIST[13]: 'negate_neg_nh',
+        Macros.OUR_LC_LIST[14]: 'phrase_question_h',
+        Macros.OUR_LC_LIST[15]: 'phrase_option_h',
+        Macros.OUR_LC_LIST[16]: 'ident_neutral_nh',
+        Macros.OUR_LC_LIST[17]: 'ident_pos_nh',
+        Macros.OUR_LC_LIST[18]: 'counter_quote_nh',
+        Macros.OUR_LC_LIST[19]: 'counter_ref_nh'
     }
 
     @classmethod
@@ -513,8 +537,9 @@ class Hatecheck:
         for s in sents:
             func_desc = None
             for key, val in cls.FUNCTIONALITY_MAP.items():
-                if s['func'] in val:
-                    func_desc = (key, key)
+                if (type(val)==list and s['func'] in val) or \
+                   (type(val)==str and s['func']==val):
+                    func_desc = (key, val)
                     break
                 # end if
             # end for
@@ -541,11 +566,11 @@ class Hatecheck:
                 t = cls.add_template(t, editor, d)
             # end for
             test = MFT(**t)
-            _func_desc, func_label = func_desc.split('::')
+            func_cat, _func_desc, func_label = func_desc.split('::')
             suite.add(test,
                       name=_func_desc,
-                      capability=func_label,
-                      description=func_desc)
+                      capability=func_cat,
+                      description=f"{_func_desc}::{func_label}")
         # end for
         res_dir = Macros.hatecheck_testsuite_file.parent
         res_dir.mkdir(parents=True, exist_ok=True)
@@ -584,13 +609,14 @@ class Search:
         func = cls.SEARCH_FUNC[Macros.hs_task][dataset]
         for req in requirements:
             selected = func(req, nlp)
-            if req["transform"] is not None:
+            tf_req = req.pop('transform', None)
+            if tf_req is not None:
                 transform_obj = TransformOperator(req)
                 selected = transform_obj.transform(selected)
             # end if
             yield {
-                "requirement": req,
-                "selected_inputs": selected
+                'requirement': req,
+                'selected_inputs': selected
             }
         # end for
         return
@@ -599,12 +625,13 @@ class Search:
     def search_hatespeech_per_req(cls, req, dataset, nlp):
         func = cls.SEARCH_FUNC[Macros.hs_task][dataset]
         selected = func(req, nlp)
-        if req["transform"] is not None and \
+        tf_req = req.pop('transform', None)
+        if tf_req is not None and \
            dataset!=Macros.datasets[Macros.hs_task][1]:
             transform_obj = TransformOperator(req)
             selected = transform_obj.transform(selected)
-        # end if            
+        # end if
         return {
-            "requirement": req,
-            "selected_inputs": selected
+            'requirement': req,
+            'selected_inputs': selected
         }

@@ -138,7 +138,7 @@ class Requirements:
                         'search': [
                             {
                                 'include': {
-                                    'word': ['<profanity>']
+                                    'word': ['<hatecheck_profanity>']
                                 },
                                 'label': 'toxic'
                             }
@@ -152,7 +152,7 @@ class Requirements:
                         'search': [
                             {
                                 'include': {
-                                    'word': ['<profanity>']
+                                    'word': ['<hatecheck_profanity>']
                                 },
                                 'label': 'non-toxic'
                             }
