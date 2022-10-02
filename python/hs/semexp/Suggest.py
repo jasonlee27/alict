@@ -26,7 +26,7 @@ from checklist.perturb import Perturb
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 # from .cfg.CFG import BeneparCFG
-from .Search import SearchOperator, SENT_DICT
+from ..seed.Search import SearchOperator, SENT_DICT
 
 NUM_TOPK = 5
 
@@ -392,6 +392,7 @@ class Suggest:
 
     @classmethod
     def get_exp_inputs(cls,
+                       nlp,
                        editor,
                        generator,
                        gen_inputs,
@@ -402,8 +403,6 @@ class Suggest:
                        logger=None):
         # get the word suggesteion at the expended grammar elements
         new_input_results = list()
-        nlp = spacy.load('en_core_web_md')
-        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         gen_inputs, num_words_orig_suggest = cls.get_new_inputs(
             nlp,
             editor,
@@ -435,7 +434,7 @@ class Suggest:
 
     @classmethod
     def get_word_sug_parallel(cls,
-                              editor,
+                              editors,
                               ms_i,
                               masked_sent,
                               num_target,
@@ -443,12 +442,13 @@ class Suggest:
                               logger):
         st = time.time()
         pcs_id = multiprocessing.current_process().ident
-        gpu_id = multiprocessing.current_process().name.split('-')[-1]
+        editor = editors[f"{gpu_id}"]
         word_suggest = list()
         if masked_sent!=no_mask_key:
             word_suggest = editor.suggest(masked_sent,
                                           return_score=True,
-                                          remove_duplicates=True)[:3*num_target]
+                                          remove_duplicates=True,
+                                          cuda_device_ind=gpu_id)[:3*num_target]
             word_suggest = [
                 ws for ws in word_suggest
                 if cls.is_word_suggestion_avail(ws[0])
@@ -471,13 +471,36 @@ class Suggest:
                                         num_target=10,
                                         selection_method=None,
                                         no_mask_key='<no_mask>',
+                                        cuda_device_inds=None,
                                         logger=None):
         st = time.time()
         results = list()
         args = list()
+        editors = {
+            f"{gpu_id}": Editor(cuda_device_ind=gpu_id)
+            for gpu_id in cuda_device_inds
+        }
+        num_sents_per_gpu = len(masked_sents.keys())//cls.NUM_PROCESSES
+        
         pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
         for ms_i, masked_sent in enumerate(masked_sents.keys()):
-            args.append((editor, ms_i, masked_sent, num_target, no_mask_key, logger))
+            start = 0
+            gpu_id = None
+            for c_i, g_i in enumerate(cuda_device_inds):
+                if c_i+1 == len(cuda_device_inds):
+                    end = len(masked_sents.keys())
+                else:
+                    end = start + num_sents_per_gpu
+                # end if
+                if ms_i in range(start, end):
+                    gpu_id = g_i
+                    break
+                # end if
+                start = end
+            # end for
+            args.append((
+                editors, ms_i, masked_sent, num_target, no_mask_key, gpu_id, logger
+            ))
         # end for
 
         results = pool.starmap_async(cls.get_word_sug_parallel,
@@ -497,20 +520,21 @@ class Suggest:
     @classmethod
     def eval_word_suggestions_over_seeds(cls,
                                          masked_inputs_w_word_sug,
-                                         nlp,
                                          req,
+                                         cfg_res_file,
                                          num_target=Macros.num_suggestions_on_exp_grammer_elem,
                                          selection_method=None,
                                          no_mask_key='<no_mask>',
                                          logger=None):
         st = time.time()
-        # nlp = spacy.load('en_core_web_md')
-        # nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        exp_results = dict()
+        nlp = spacy.load('en_core_web_md')
+        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+        # exp_results = dict()
+        template_results = Utils.read_json(cfg_res_file)
         for masked_sent in masked_inputs_w_word_sug.keys():
             word_sug = masked_inputs_w_word_sug[masked_sent]['word_sug']
             seed_objs = masked_inputs_w_word_sug[masked_sent]['inputs']
-            for seed, seed_label, seed_score, cfg_seed, cfg_from, cfg_to, mask_pos in seed_objs:
+            for seed, seed_label, cfg_seed, cfg_from, cfg_to, mask_pos in seed_objs:
                 results = list()
                 if masked_sent!=no_mask_key:
                     matched_words_sug = cls.match_word_n_pos(
@@ -540,25 +564,44 @@ class Suggest:
                         input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
                         # check sentence and expansion requirements
                         # if cls.eval_sug_words_by_req(input_candid, nlp, req, seed_label):
-                        if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
-                            results.append((masked_sent,
-                                            cfg_from,
-                                            cfg_to,
-                                            mask_pos,
-                                            w_sug,
-                                            input_candid))
+                        if cls.eval_sug_words_by_req(input_candid, req, seed_label):
+                            if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
+                                results.append((masked_sent,
+                                                cfg_from,
+                                                cfg_to,
+                                                mask_pos,
+                                                w_sug,
+                                                input_candid))
+                            # end if
                         # end if
                     # end for
-                # end if
-                if seed not in exp_results.keys():
-                    exp_results[seed] = {
-                        'cfg_seed': cfg_seed,
-                        'label': seed_label,
-                        'label_score': seed_score,
-                        'exp_inputs': results
-                    }
-                else:
-                    exp_results[seed]['exp_inputs'].extend(results)
+
+                    # remove verified masked inputs
+                    m_inds = list()
+                    for m_i, m in enumerate(template_results['inputs'][seed]['masked_inputs']):
+                        if m['masked_input'][0] == masked_sent and \
+                           m['masked_input'][1] == mask_pos and \
+                           m['cfg_from'] == cfg_from and \
+                           m['cfg_to'] == cfg_to:
+                            m_inds.append(m_i)
+                        # end if
+                    # end for
+                    for ind in sorted(m_inds, reverse=True):
+                        del template_results['inputs'][seed]['masked_inputs'][ind]
+                    # end for
+                    if not any(template_results['inputs'][seed]['masked_inputs']):
+                        del template_results['inputs'][seed]['masked_inputs']
+                    # end if
+
+                    # add verified expanded cases into results
+                    if 'exp_inputs' not in template_results['inputs'][seed].keys():
+                        template_results['inputs'][seed]['exp_inputs'] = results
+                    else:
+                        template_results['inputs'][seed]['exp_inputs'].extend(results)
+                    # end if
+                    
+                    # write batch results into result file
+                    Utils.write_json(template_results, cfg_res_file, pretty_format=True)
                 # end if
             # end for
         # end for

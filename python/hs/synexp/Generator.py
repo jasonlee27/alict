@@ -19,8 +19,8 @@ from checklist.editor import Editor
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..requirement.Requirements import Requirements
+from ..semexp.Suggest import Suggest
 from .cfg.CFGConverter import CFGConverter
-from .Suggest import Suggest
 
 
 class Generator:

@@ -19,9 +19,10 @@ from checklist.test_suite import TestSuite
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-from .Transform import TransformOperator
-from .Synonyms import Synonyms
+from ..semexp.Synonyms import Synonyms
 from ..requirement.Requirements import Requirements
+
+from .Transform import TransformOperator
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
 from .hurtlex.Hurtlex import Hurtlex
 from .hatecheck.Hatecheck import Hatecheck as Hatecheck_ph
@@ -67,20 +68,29 @@ class SearchOperator:
 
     def search(self, sents, nlp):
         selected = list()
-        if self.search_reqs_list is None:
+        if self.search_reqs_list is None and \
+           self.use_testcase is None:
             return sents
         # end if
-
-        if self.use_testcase is not None:
+        if self.search_reqs_list is None and \
+           self.use_testcase is not None:
             sents = list()
             if self.use_testcase == 'hatecheck':
-                sents = Hatecheck.get_sents()
-                func = [lc.lower()==self.description for lc in Macros.OUR_LC_LIST][0]
-                sents = [s if func==s['func'] for s in sents]
+                _sents = Hatecheck.get_sents()
+                func = [
+                    lc for lc in Macros.OUR_LC_LIST
+                    if lc==f"{self.capability}::{self.description}"
+                ][0]
+                for s_i, s in enumerate(_sents):
+                    if s['func']==Hatecheck.FUNCTIONALITY_MAP[func]:
+                        sents.append((
+                            s_i, s['sent'], s['label']
+                        ))
+                    # end if
             # end if
             return sents
         # end if
-            
+        
         for search_reqs in self.search_reqs_list:
             _sents = Utils.copy_list_of_dict(sents)
             for op, param in search_reqs.items():
@@ -178,10 +188,10 @@ class SearchOperator:
                     elif target_template.startswith('hatecheck_ph'):
                         hatecheck_ph_words = self.get_hatecheck_ph_words()
                         word_dict[tw] = list(set(hatecheck_ph_words))
-                    elif arget_template.startswith('hatecheck_slur'):
+                    elif target_template.startswith('hatecheck_slur'):
                         hatecheck_slur_words = self.get_hatecheck_slur_words()
                         word_dict[tw] = list(set(hatecheck_slur_words))
-                    elif arget_template.startswith('hatecheck_slur'):
+                    elif target_template.startswith('hatecheck_slur'):
                         hatecheck_profanity_words = self.get_hatecheck_profanity_words()
                         word_dict[tw] = list(set(hatecheck_profanity_words))
                     # end if
@@ -444,13 +454,7 @@ class Hatexplain:
     def search(cls, req, nlp):
         sents = cls.get_sents(Macros.hatexplain_data_file, is_binary_class=True)
         req_obj = SearchOperator(req)
-
-        if req_obj.search_reqs_list is not None and req_obj.use_testcase is None:
-            # selected = sorted([s for s in req_obj.search(sents, nlp)], key=lambda x: x['post_id'])
-            selected = req_obj.search(sents, nlp)
-        else:
-            selected = sents
-        # end if
+        selected = req_obj.search(sents, nlp)
         random.shuffle(selected)
         return selected
 

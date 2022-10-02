@@ -28,6 +28,8 @@ parser.add_argument('--num_trials', type=int, default=1,
 parser.add_argument('--syntax_selection', type=str, default='random',
                     choices=['prob', 'random', 'bertscore', 'noselect'],
                     help='method for selection of syntax suggestions')
+parser.add_argument('--gpu_ids', type=int, nargs="+", default=None,
+                    help='method for selection of syntax suggestions')
 parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
 parser.add_argument('--test_baseline', action='store_true',
@@ -54,6 +56,11 @@ def run_templates():
     num_seeds = args.num_seeds
     num_trials = '' if args.num_trials==1 else str(args.num_trials)
     _num_trials = '' if num_trials==1 else str(num_trials)
+    gpu_ids = args.gpu_ids
+    if gpu_ids is not None:
+        assert len(gpu_ids)==Macros.num_processes
+    # end if
+    
     if num_seeds<0:
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
     else:
@@ -67,6 +74,7 @@ def run_templates():
         selection_method=selection_method,
         num_seeds=num_seeds,
         num_trials=num_trials,
+        gpu_ids=gpu_ids,
         log_file=log_file
     )
     return

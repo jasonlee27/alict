@@ -495,7 +495,6 @@ class Suggest:
                 # end if
                 start = end
             # end for
-            print(gpu_id)
             args.append((
                 editors, ms_i, masked_sent, num_target, no_mask_key, gpu_id, logger
             ))

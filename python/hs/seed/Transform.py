@@ -18,8 +18,8 @@ from pathlib import Path
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
+from ..semexp.Synonyms import Synonyms
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
-from .Synonyms import Synonyms
 
 
 # get pos/neg/neu words from SentiWordNet
@@ -61,7 +61,7 @@ F12_HS_TEMPLATES = {
         'conj': ['and'],
         'postfix': ['i also do not hate them', 'i do not hate them too']
     }
-]
+}
 
 F13_HS_TEMPLATES = {
     'tx-to-tx': {
@@ -88,7 +88,7 @@ F13_HS_TEMPLATES = {
         'conj': ['.'],
         'postfix': ['i also do not hate them', 'i do not hate them too']
     }
-]
+}
 
 F14_TEMPLATES = {
     'prefix': ['I do not think that', 'I do not agree with that', 'I do not believe that'],
@@ -183,8 +183,8 @@ class TransformOperator:
 
     def perturb_template_f12(self, sents):
         # Pronoun reference::Hate expressed through reference in subsequent clauses
-        nh_sents = [s if s['label']==Macros.hs_label_map.keys()[0] for s in sents]
-        hs_sents = [s if s['label']==Macros.hs_label_map.keys()[1] for s in sents]
+        nh_sents = [s for s in sents if s[-1]==Macros.hs_label_map.keys()[0]]
+        hs_sents = [s for s in sents if s[-1]==Macros.hs_label_map.keys()[1]]
         f12_hs1_temp = F12_HS_TEMPLATES['tx-to-tx']
         f12_hs2_temp = F12_HS_TEMPLATES['nt-to-tx']
         f12_nh1_temp = F12_HS_TEMPLATES['tx-to-nt']
@@ -194,6 +194,7 @@ class TransformOperator:
         f12_nh1_new_label = Macros.hs_label_map.keys()[0]
         f12_nh2_new_label = Macros.hs_label_map.keys()[0]
         results = list()
+        result_ind = 0
         for s in hs_sents:
             f12_hs1_temp['sent'].append(s['sent'])
             f12_nh1_temp['sent'].append(s['sent'])
@@ -209,42 +210,38 @@ class TransformOperator:
         f12_nh2_word_product = [dict(zip(f12_nh2_temp, v)) for v in product(*f12_nh2_temp.values())]
         
         for wp in f12_hs1_word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': f12_hs1_new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), f12_hs1_new_label
+            ))
+            result_ind += 1
         # end for
 
         for wp in f12_hs2_word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': f12_hs2_new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), f12_hs2_new_label
+            ))
+            result_ind += 1
         # end for
 
         for wp in f12_nh1_word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': f12_nh1_new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), f12_nh1_new_label
+            ))
+            result_ind += 1
         # end for
 
         for wp in f12_nh2_word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': f12_nh2_new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), f12_nh2_new_label
+            ))
+            result_ind += 1
         # end for
         return results
 
     def perturb_template_f13(self, sents):
         # Pronoun reference::Hate expressed through reference in subsequent sentences
-        nh_sents = [s if s['label']==Macros.hs_label_map.keys()[0] for s in sents]
-        hs_sents = [s if s['label']==Macros.hs_label_map.keys()[1] for s in sents]
+        nh_sents = [s for s in sents if s['label']==Macros.hs_label_map.keys()[0]]
+        hs_sents = [s for s in sents if s['label']==Macros.hs_label_map.keys()[1]]
         f13_hs1_temp = F13_HS_TEMPLATES['tx-to-tx']
         f13_hs2_temp = F13_HS_TEMPLATES['nt-to-tx']
         f13_nh1_temp = F13_HS_TEMPLATES['tx-to-nt']
@@ -254,6 +251,7 @@ class TransformOperator:
         f13_nh1_new_label = Macros.hs_label_map.keys()[0]
         f13_nh2_new_label = Macros.hs_label_map.keys()[0]
         results = list()
+        result_ind = 0
         for s in hs_sents:
             f13_hs1_temp['sent'].append(s['sent'])
             f13_nh1_temp['sent'].append(s['sent'])
@@ -268,120 +266,116 @@ class TransformOperator:
         f13_nh1_word_product = [dict(zip(f13_nh1_temp, v)) for v in product(*f13_nh1_temp.values())]
         f13_nh2_word_product = [dict(zip(f13_nh2_temp, v)) for v in product(*f13_nh2_temp.values())]
         for wp in f13_hs1_word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': f13_hs1_new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), f13_hs1_new_label
+            ))
+            result_ind += 1
         # end for
 
         for wp in f13_hs2_word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': f13_hs2_new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), f13_hs2_new_label
+            ))
+            result_ind += 1
         # end for
 
         for wp in f13_nh1_word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': f13_nh1_new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), f13_nh1_new_label
+            ))
+            result_ind += 1
         # end for
 
         for wp in f13_nh2_word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': f13_nh2_new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), f13_nh2_new_label
+            ))
+            result_ind += 1
         # end for
         return results
 
     def perturb_template_f14(self, sents):
         # Negation::Hate expressed using negated positive statement
         results = list()
+        result_ind = 0
         new_label = Macros.hs_label_map.keys()[1]
         for s in sents:
             F14_TEMPLATES['sent'].append(s['sent'])
         # end for
         word_product = [dict(zip(F14_TEMPLATES, v)) for v in product(*F14_TEMPLATES.values())]
         for wp in word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), new_label
+            ))
+            result_ind += 1
         # end for
         return results
 
     def perturb_template_f15(self, sents):
         # Negation::Non-hate expressed using negated hateful statement
         results = list()
+        result_ind = 0
         new_label = Macros.hs_label_map.keys()[0]
         for s in sents:
             F15_TEMPLATES['sent'].append(s['sent'])
         # end for
         word_product = [dict(zip(F15_TEMPLATES, v)) for v in product(*F15_TEMPLATES.values())]
         for wp in word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), new_label
+            ))
+            result_ind += 1
         # end for
         return results
 
     def perturb_template_f16(self, sents):
         # Phrasing::Hate phrased as a question
         results = list()
+        result_ind = 0
         new_label = Macros.hs_label_map.keys()[1]
         for s in sents:
             F16_TEMPLATES['sent'].append(s['sent'])
         # end for
         word_product = [dict(zip(F16_TEMPLATES, v)) for v in product(*F16_TEMPLATES.values())]
         for wp in word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), new_label
+            ))
+            result_ind += 1
         # end for
         return results
 
     def perturb_template_f17(self, sents):
         # Phrasing::Hate phrased as a opinion
         results = list()
+        result_ind = 0
         new_label = Macros.hs_label_map.keys()[1]
         for s in sents:
             F17_TEMPLATES['sent'].append(s['sent'])
         # end for
         word_product = [dict(zip(F17_TEMPLATES, v)) for v in product(*F17_TEMPLATES.values())]
         for wp in word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), new_label
+            ))
+            result_ind += 1
         # end for
         return results
 
     def perturb_template_f20(self, sents):
         # Counter speech::Denouncements of hate that quote it
         results = list()
+        result_ind = 0
         new_label = Macros.hs_label_map.keys()[0]
         for s in sents:
             F20_TEMPLATES['sent'].append(s['sent'])
         # end for
         word_product = [dict(zip(F20_TEMPLATES, v)) for v in product(*F20_TEMPLATES.values())]
         for wp in word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), new_label
+            ))
+            result_ind += 1
         # end for
         return results
 
@@ -389,16 +383,16 @@ class TransformOperator:
     def perturb_template_f21(self, sents):
         # Counter speech::Denouncements of hate that make direct reference to it
         results = list()
+        result_ind = 0
         new_label = Macros.hs_label_map.keys()[0]
         for s in sents:
             F21_TEMPLATES['sent'].append(s['sent'])
         # end for
         word_product = [dict(zip(F21_TEMPLATES, v)) for v in product(*F21_TEMPLATES.values())]
         for wp in word_product:
-            results.append({
-                'func': s['func'],
-                'sent': " ".join(list(wp.values())),
-                'label': new_label
-            })
+            results.append((
+                result_ind, " ".join(list(wp.values())), new_label
+            ))
+            result_ind += 1
         # end for
         return results

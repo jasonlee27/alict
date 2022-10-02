@@ -29,7 +29,7 @@ from ..semexp.Suggest import Suggest
 from ..semexp.Synonyms import Synonyms
 
 torch.multiprocessing.set_sharing_strategy('file_system')
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class Template:
@@ -59,7 +59,6 @@ class Template:
         if not os.path.exists(str(cfg_res_file)):
             return orig_seeds
         # end if
-        # template_results = Utils.read_json(cfg_res_file)
         template_results = Utils.read_json(cfg_res_file)
         seeds = list()
         if any(template_results) and \
