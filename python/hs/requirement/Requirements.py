@@ -115,7 +115,7 @@ class Requirements:
                                 'label': 'toxic'
                             }
                         ],
-                        'expansion': ['neutral'],
+                        'expansion': ['neutral']
                     })
                 elif d.lower()=='slur usage::non-hateful use of slur':
                     reqs.append({
@@ -129,7 +129,7 @@ class Requirements:
                                 'label': 'non-toxic'
                             }
                         ],
-                        'expansion': ['neutral'],
+                        'expansion': ['neutral']
                     })
                 elif d.lower()=='profanity usage::hate expressed using profanity':
                     reqs.append({
@@ -143,7 +143,7 @@ class Requirements:
                                 'label': 'toxic'
                             }
                         ],
-                        'expansion': ["neutral"],
+                        'expansion': ["neutral"]
                     })
                 elif d.lower()=='profanity usage::non-hateful use of profanity':
                     reqs.append({
@@ -157,7 +157,7 @@ class Requirements:
                                 'label': 'non-toxic'
                             }
                         ],
-                        'expansion': ['neutral'],
+                        'expansion': ['neutral']
                     })
                 elif d.lower()=='pronoun reference::hate expressed through reference in subsequent clauses':
                     reqs.append({
