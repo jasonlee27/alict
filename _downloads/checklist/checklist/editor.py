@@ -251,7 +251,7 @@ def wrapped_random_choice(x, *args, **kwargs):
         return type(x)([x[i] for i in idxs])
 
 class Editor(object):
-    def __init__(self, language='english', model_name=None):
+    def __init__(self, language='english', model_name=None, cuda_device_ind=None):
         self.lexicons = {}
         self.data = {}
         self.tg_params = {
@@ -259,6 +259,9 @@ class Editor(object):
         }
         if model_name is not None:
             self.tg_params['model_name'] = model_name
+        if cuda_device_ind is not None:
+            self.tg_params['cuda_device_ind'] = cuda_device_ind
+        # end if
         self._load_lexicons(language)
         self.selected_suggestions = []
 

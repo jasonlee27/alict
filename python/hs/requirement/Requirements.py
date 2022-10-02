@@ -67,43 +67,43 @@ class Requirements:
         reqs = list()
         for cap, descs in cap_desc.items():
             for d in descs:
-                if d.lower()=='derogation::expression of strong negative emotions (explicit)':
+                if d.lower()=='expression of strong negative emotions (explicit)':
                     reqs.append({
                         'capability': cap,
                         'description': d,
                         'use_testcase': 'hatecheck'
                     })
-                elif d.lower()=='derogation::description using very negative attributes (explicit)':
+                elif d.lower()=='description using very negative attributes (explicit)':
                     reqs.append({
                         'capability': cap,
                         'description': d,
                         'use_testcase': 'hatecheck'
                     })
-                elif d.lower()=='derogation::dehumanisation (explicit)':
+                elif d.lower()=='dehumanisation (explicit)':
                     reqs.append({
                         'capability': cap,
                         'description': d,
                         'use_testcase': 'hatecheck'
                     })
-                elif d.lower()=='derogation::implicit derogation':
+                elif d.lower()=='implicit derogation':
                     reqs.append({
                         'capability': cap,
                         'description': d,
                         'use_testcase': 'hatecheck'
                     })
-                elif d.lower()=='threatening language::direct threat':
+                elif d.lower()=='direct threat':
                     reqs.append({
                         'capability': cap,
                         'description': d,
                         'use_testcase': 'hatecheck'
                     })
-                elif d.lower()=='threatening language::threat as normative statement':
+                elif d.lower()=='threat as normative statement':
                     reqs.append({
                         'capability': cap,
                         'description': d,
                         'use_testcase': 'hatecheck'
                     })
-                elif d.lower()=='slur usage::hate expressed using slur':
+                elif d.lower()=='hate expressed using slur':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -117,7 +117,7 @@ class Requirements:
                         ],
                         'expansion': ['neutral']
                     })
-                elif d.lower()=='slur usage::non-hateful use of slur':
+                elif d.lower()=='non-hateful use of slur':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -131,7 +131,7 @@ class Requirements:
                         ],
                         'expansion': ['neutral']
                     })
-                elif d.lower()=='profanity usage::hate expressed using profanity':
+                elif d.lower()=='hate expressed using profanity':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -145,7 +145,7 @@ class Requirements:
                         ],
                         'expansion': ["neutral"]
                     })
-                elif d.lower()=='profanity usage::non-hateful use of profanity':
+                elif d.lower()=='non-hateful use of profanity':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -159,7 +159,7 @@ class Requirements:
                         ],
                         'expansion': ['neutral']
                     })
-                elif d.lower()=='pronoun reference::hate expressed through reference in subsequent clauses':
+                elif d.lower()=='hate expressed through reference in subsequent clauses':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -188,7 +188,7 @@ class Requirements:
                             }
                         ]
                     })
-                elif d.lower()=='pronoun reference::hate expressed through reference in subsequent sentences':
+                elif d.lower()=='hate expressed through reference in subsequent sentences':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -217,7 +217,7 @@ class Requirements:
                             }
                         ]
                     })
-                elif d.lower()=='negation::hate expressed using negated positive statement':
+                elif d.lower()=='hate expressed using negated positive statement':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -234,7 +234,7 @@ class Requirements:
                             }
                         ]
                     })
-                elif d.lower()=='negation::non-hate expressed using negated hateful statement':
+                elif d.lower()=='non-hate expressed using negated hateful statement':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -251,7 +251,7 @@ class Requirements:
                             }
                         ]
                     })
-                elif d.lower()=='phrasing::hate phrased as a question':
+                elif d.lower()=='hate phrased as a question':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -268,7 +268,7 @@ class Requirements:
                             }
                         ]
                     })
-                elif d.lower()=='phrasing::hate phrased as a opinion':
+                elif d.lower()=='hate phrased as a opinion':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -285,7 +285,7 @@ class Requirements:
                             }
                         ]
                     })
-                elif d.lower()=='non-hate grp. ident.::neutral statements using protected group identifiers':
+                elif d.lower()=='neutral statements using protected group identifiers':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -303,7 +303,7 @@ class Requirements:
                         ],
                         'expansion': ['neutral'],
                     })
-                elif d.lower()=='non-hate grp. ident.::positive statements using protected group identifiers':
+                elif d.lower()=='positive statements using protected group identifiers':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -321,7 +321,7 @@ class Requirements:
                         ],
                         'expansion': ['neutral'],
                     })
-                elif d.lower()=='counter speech::denouncements of hate that quote it':
+                elif d.lower()=='denouncements of hate that quote it':
                     reqs.append({
                         'capability': cap,
                         'description': d,
@@ -338,7 +338,7 @@ class Requirements:
                             }
                         ]
                     })
-                elif d.lower()=='counter speech::denouncements of hate that make direct reference to it':
+                elif d.lower()=='denouncements of hate that make direct reference to it':
                     reqs.append({
                         'capability': cap,
                         'description': d,

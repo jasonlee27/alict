@@ -76,7 +76,9 @@ class TextGenerator(object):
     def __init__(self, url=None, model_name='roberta-base', prefix_sentence='', allow_word_pieces=False, **kwargs):
         self.url = url
         if url is None:
-            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            cuda_devices_ind = kwargs.pop('cuda_device_ind', None)
+            cuda_devices = f"cuda:{cuda_devices_ind}" if cuda_devices_ind is not None else "cuda"
+            self.device = torch.device(cuda_devices if torch.cuda.is_available() else "cpu")
             # self.tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
             # self.model = BertForMaskedLM.from_pretrained('bert-base-cased')
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
