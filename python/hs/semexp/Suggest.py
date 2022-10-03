@@ -350,7 +350,7 @@ class Suggest:
             for w_sug in gen_input['words_suggest']:
                 input_candid = cls.replace_mask_w_suggestion(masked_input, w_sug)
                 # check sentence and expansion requirements
-                if cls.eval_sug_words_by_req(input_candid, requirement, label):
+                if cls.eval_sug_words_by_req(input_candid, nlp, requirement, label):
                     if cls.eval_sug_words_by_exp_req(nlp, w_sug, requirement):
                         results.append((masked_input,
                                         gen_input['cfg_from'],
@@ -439,10 +439,15 @@ class Suggest:
                               masked_sent,
                               num_target,
                               no_mask_key,
+                              gpu_id,
                               logger):
         st = time.time()
         pcs_id = multiprocessing.current_process().ident
-        editor = editors[f"{gpu_id}"]
+        if gpu_id is not None:
+            editor = editors[f"{gpu_id}"]
+        else:
+            editor = editors
+        # end if
         word_suggest = list()
         if masked_sent!=no_mask_key:
             word_suggest = editor.suggest(masked_sent,
@@ -466,7 +471,6 @@ class Suggest:
         
     @classmethod
     def get_word_suggestions_over_seeds(cls,
-                                        editor: Editor,
                                         masked_sents: Dict,
                                         num_target=10,
                                         selection_method=None,
@@ -476,31 +480,42 @@ class Suggest:
         st = time.time()
         results = list()
         args = list()
-        editors = {
-            f"{gpu_id}": Editor(cuda_device_ind=gpu_id)
-            for gpu_id in cuda_device_inds
-        }
-        num_sents_per_gpu = len(masked_sents.keys())//cls.NUM_PROCESSES
+        if cuda_device_inds is not None:
+            editors = {
+                f"{gpu_id}": Editor(cuda_device_ind=gpu_id)
+                for gpu_id in cuda_device_inds
+            }
+            num_sents_per_gpu = len(masked_sents.keys())//cls.NUM_PROCESSES
+        else:
+            editor = Editor()
+            num_sents_per_gpu = len(masked_sents.keys())
+        # end if
         
         pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
         for ms_i, masked_sent in enumerate(masked_sents.keys()):
             start = 0
             gpu_id = None
-            for c_i, g_i in enumerate(cuda_device_inds):
-                if c_i+1 == len(cuda_device_inds):
-                    end = len(masked_sents.keys())
-                else:
-                    end = start + num_sents_per_gpu
-                # end if
-                if ms_i in range(start, end):
-                    gpu_id = g_i
-                    break
-                # end if
-                start = end
-            # end for
-            args.append((
-                editors, ms_i, masked_sent, num_target, no_mask_key, gpu_id, logger
-            ))
+            if cuda_device_inds is not None:
+                for c_i, g_i in enumerate(cuda_device_inds):
+                    if c_i+1 == len(cuda_device_inds):
+                        end = len(masked_sents.keys())
+                    else:
+                        end = start + num_sents_per_gpu
+                    # end if
+                    if ms_i in range(start, end):
+                        gpu_id = g_i
+                        break
+                    # end if
+                    start = end
+                # end for
+                args.append((
+                    editors, ms_i, masked_sent, num_target, no_mask_key, gpu_id, logger
+                ))
+            else:
+                args.append((
+                    editor, ms_i, masked_sent, num_target, no_mask_key, gpu_id, logger
+                ))
+            # end if
         # end for
 
         results = pool.starmap_async(cls.get_word_sug_parallel,
@@ -564,7 +579,7 @@ class Suggest:
                         input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
                         # check sentence and expansion requirements
                         # if cls.eval_sug_words_by_req(input_candid, nlp, req, seed_label):
-                        if cls.eval_sug_words_by_req(input_candid, req, seed_label):
+                        if cls.eval_sug_words_by_req(input_candid, nlp, req, seed_label):
                             if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
                                 results.append((masked_sent,
                                                 cfg_from,

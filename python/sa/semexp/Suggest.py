@@ -440,13 +440,16 @@ class Suggest:
                               logger):
         st = time.time()
         pcs_id = multiprocessing.current_process().ident
-        editor = editors[f"{gpu_id}"]
+        if gpu_id is not None:
+            editor = editors[f"{gpu_id}"]
+        else:
+            editor = editors
+        # end if
         word_suggest = list()
         if masked_sent!=no_mask_key:
             word_suggest = editor.suggest(masked_sent,
                                           return_score=True,
-                                          remove_duplicates=True,
-                                          cuda_device_ind=gpu_id)[:3*num_target]
+                                          remove_duplicates=True)[:3*num_target]
             word_suggest = [
                 ws for ws in word_suggest
                 if cls.is_word_suggestion_avail(ws[0])
@@ -455,7 +458,7 @@ class Suggest:
         # end if
         ft = time.time()
         if logger is not None:
-            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::MASKED_SENT_{ms_i}::{masked_sent}::{round(ft-st,3)}sec::pcs{pcs_id}::gpu{gpu_id}::{editor}")
+            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::MASKED_SENT_{ms_i}::{masked_sent}::{round(ft-st,3)}sec::pcs{pcs_id}::gpu{gpu_id}")
         # end if
         return {
             'masked_sent': masked_sent,
@@ -473,31 +476,43 @@ class Suggest:
         st = time.time()
         results = list()
         args = list()
-        editors = {
-            f"{gpu_id}": Editor(cuda_device_ind=gpu_id)
-            for gpu_id in cuda_device_inds
-        }
-        num_sents_per_gpu = len(masked_sents.keys())//cls.NUM_PROCESSES
-
+        editor, editors = None, None
+        if cuda_device_inds is not None:
+            editors = {
+                f"{gpu_id}": Editor(cuda_device_ind=gpu_id)
+                for gpu_id in range(len(cuda_device_inds))
+            }
+            num_sents_per_gpu = len(masked_sents.keys())//cls.NUM_PROCESSES
+        else:
+            editor = Editor()
+            num_sents_per_gpu = len(masked_sents.keys())
+        # end if
+        
         pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
         for ms_i, masked_sent in enumerate(masked_sents.keys()):
             start = 0
             gpu_id = None
-            for c_i, g_i in enumerate(cuda_device_inds):
-                if c_i+1 == len(cuda_device_inds):
-                    end = len(masked_sents.keys())
-                else:
-                    end = start + num_sents_per_gpu
-                # end if
-                if ms_i in range(start, end):
-                    gpu_id = g_i
-                    break
-                # end if
-                start = end
-            # end for
-            args.append((
-                editors, ms_i, masked_sent, num_target, no_mask_key, gpu_id, logger
-            ))
+            if cuda_device_inds is not None:
+                for c_i, g_i in enumerate(cuda_device_inds):
+                    if c_i+1 == len(cuda_device_inds):
+                        end = len(masked_sents.keys())
+                    else:
+                        end = start + num_sents_per_gpu
+                    # end if
+                    if ms_i in range(start, end):
+                        gpu_id = c_i
+                        break
+                    # end if
+                    start = end
+                # end for
+                args.append((
+                    editors, ms_i, masked_sent, num_target, no_mask_key, gpu_id, logger
+                ))
+            else:
+                args.append((
+                    editor, ms_i, masked_sent, num_target, no_mask_key, gpu_id, logger
+                ))
+            # end if
         # end for
 
         results = pool.starmap_async(cls.get_word_sug_parallel,

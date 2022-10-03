@@ -160,7 +160,7 @@ class Template:
         # collect all masked sents
         masked_sents: Dict = dict()
         no_mask_key = '<no_mask>'
-        for index, seed in enumerate(masked_inputs.keys()):
+        for index, seed in enumerate(template_results['inputs'].keys()):
             seed_label = template_results['inputs'][seed]['label']
             cfg_seed = template_results['inputs'][seed]['cfg_seed']
             if 'masked_inputs' in template_results['inputs'][seed].keys():
@@ -183,7 +183,7 @@ class Template:
                         masked_sents[no_mask_key]['inputs'].append(masked_sent_obj)
                     # end if
                 else:
-                    for m in masked_inputs[seed]['masked_inputs']:
+                    for m in template_results['inputs'][seed]['masked_inputs']:
                         cfg_from = m['cfg_from']
                         cfg_to = m['cfg_to']
                         key = m['masked_input'][0] # m['masked_input'] = (_masked_input, mask_pos)
