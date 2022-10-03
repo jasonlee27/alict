@@ -77,6 +77,7 @@ class Template:
         st_2 = time.time()
         pcs_id = multiprocessing.current_process().ident
         gpu_id = multiprocessing.current_process().name.split('-')[-1]
+        print(seed, type(seed))
         generator = Generator(seed, pcfg_ref)
         gen_inputs = generator.masked_input_generator()
         masked_input_res = {

@@ -99,6 +99,9 @@ class SearchOperator:
                 # end if
             # end for
             for s in _sents:
+                if type(s[1])==list:
+                    s[1] = Utils.detokenize(s[1])
+                # end if
                 if s not in selected:
                     selected.append(s)
                 # end if
@@ -466,7 +469,7 @@ class Hatecheck:
         Macros.OUR_LC_LIST[0]: 'derog_neg_emote_h',
         Macros.OUR_LC_LIST[1]: 'derog_neg_attrib_h',
         Macros.OUR_LC_LIST[2]: 'derog_dehum_h',
-        Macros.OUR_LC_LIST[3]: 'derog_neg_impl_h',
+        Macros.OUR_LC_LIST[3]: 'derog_impl_h',
         Macros.OUR_LC_LIST[4]: 'threat_dir_h',
         Macros.OUR_LC_LIST[5]: 'threat_norm_h',
         Macros.OUR_LC_LIST[6]: 'slur_h',

@@ -626,7 +626,7 @@ class Suggest:
         if logger is not None:
             logger.print(f"\tSuggest.eval_word_suggestions_over_seeds::{round(ft-st,3)}sec")
         # end if
-        return exp_results
+        return
         
 
 # def main():
