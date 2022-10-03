@@ -478,6 +478,7 @@ class Suggest:
         args = list()
         editor, editors = None, None
         if cuda_device_inds is not None:
+            assert len(cuda_device_inds)==cls.NUM_PROCESSES
             editors = {
                 f"{gpu_id}": Editor(cuda_device_ind=gpu_id)
                 for gpu_id in range(len(cuda_device_inds))

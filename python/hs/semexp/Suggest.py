@@ -190,7 +190,8 @@ class Suggest:
     
     @classmethod
     def eval_sug_words_by_req(cls, new_input, nlp, requirement, label):
-        if requirement['transform_req'] is not None:
+        transform_req = requirement.pop('transform_req', None)
+        if transform_req is not None:
             _requirement = {
                 'capability': requirement['capability'],
                 'description': requirement['description'],
@@ -215,13 +216,14 @@ class Suggest:
     @classmethod
     def eval_sug_words_by_exp_req(cls, nlp, word_suggest, requirement):
         word_suggest = [word_suggest] if type(word_suggest)==str else list(word_suggest)
-        if requirement['expansion'] is None:
+        expansion_req = requirement.pop('expansion', None)
+        if expansion_req is None:
             return True
         # end if
         all_reqs_met_over_words = list()
         for ws in word_suggest:
             all_reqs_met_over_reqs = list()
-            for r in requirement['expansion']:
+            for r in expansion_req:
                 is_req_met = False
                 if len(r.split())>1:
                     is_req_met = ws in SENT_DICT[r]
@@ -452,8 +454,7 @@ class Suggest:
         if masked_sent!=no_mask_key:
             word_suggest = editor.suggest(masked_sent,
                                           return_score=True,
-                                          remove_duplicates=True,
-                                          cuda_device_ind=gpu_id)[:3*num_target]
+                                          remove_duplicates=True)[:3*num_target]
             word_suggest = [
                 ws for ws in word_suggest
                 if cls.is_word_suggestion_avail(ws[0])
@@ -481,9 +482,10 @@ class Suggest:
         results = list()
         args = list()
         if cuda_device_inds is not None:
+            assert len(cuda_device_inds)==cls.NUM_PROCESSES
             editors = {
                 f"{gpu_id}": Editor(cuda_device_ind=gpu_id)
-                for gpu_id in cuda_device_inds
+                for gpu_id in range(len(cuda_device_inds))
             }
             num_sents_per_gpu = len(masked_sents.keys())//cls.NUM_PROCESSES
         else:
@@ -503,7 +505,7 @@ class Suggest:
                         end = start + num_sents_per_gpu
                     # end if
                     if ms_i in range(start, end):
-                        gpu_id = g_i
+                        gpu_id = c_i
                         break
                     # end if
                     start = end
