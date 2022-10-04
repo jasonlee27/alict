@@ -100,7 +100,9 @@ class SearchOperator:
             # end for
             for s in _sents:
                 if type(s[1])==list:
-                    s[1] = Utils.detokenize(s[1])
+                    s_list = list(s)
+                    s_list[1] = Utils.detokenize(s_list[1])
+                    s = tuple(s_list)
                 # end if
                 if s not in selected:
                     selected.append(s)
