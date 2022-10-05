@@ -196,7 +196,7 @@ class SearchOperator:
                     elif target_template.startswith('hatecheck_slur'):
                         hatecheck_slur_words = self.get_hatecheck_slur_words()
                         word_dict[tw] = list(set(hatecheck_slur_words))
-                    elif target_template.startswith('hatecheck_slur'):
+                    elif target_template.startswith('hatecheck_profanity'):
                         hatecheck_profanity_words = self.get_hatecheck_profanity_words()
                         word_dict[tw] = list(set(hatecheck_profanity_words))
                     # end if
