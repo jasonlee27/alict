@@ -74,7 +74,12 @@ class Utils:
         # read cfg json file
         if os.path.exists(str(json_file)):
             with open(json_file, 'r') as f:
-                return json.load(f)
+                try:
+                    res = json.load(f)
+                except json.decoder.JSONDecodeError as e:
+                    res = None
+                # end try
+                return res
             # end with
         # end if
         return
