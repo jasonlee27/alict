@@ -6,7 +6,6 @@ from typing import *
 
 import re, os
 import copy
-import json
 import spacy
 import random
 import numpy as np
@@ -134,7 +133,7 @@ class Testsuite:
             if os.path.exists(file_path):
                 try:
                     inputs_per_req = Utils.read_json(file_path)
-                except json.decoder.JSONDecodeError as e:
+                except Exception as e:
                     inputs_per_req = None
                 # end try
                 
@@ -149,7 +148,7 @@ class Testsuite:
                         exp_inputs = inputs[seed_input]["exp_inputs"]
                         seed_inputs.append({
                             "input": seed_input,
-                            "place_holder": Utils.tokenize(seed_input),
+                            "place_holder": Utils.tokenize(seed_input), 
                             "label": label_seed
                         })
                         if any(exp_inputs):
