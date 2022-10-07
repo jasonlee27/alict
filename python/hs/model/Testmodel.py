@@ -13,7 +13,7 @@ from ..testsuite.Testsuite import Testsuite
 
 from .Model import Model
 from .GoogleModel import GoogleModel
-from ..testsuite.Search import Hatecheck
+from ..seed.Search import Hatecheck
 
 import os
 import shutil
