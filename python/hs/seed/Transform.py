@@ -147,13 +147,16 @@ class TransformOperator:
         self.editor = editor # checklist.editor.Editor()
         self.capability = requirements['capability']
         self.description = requirements['description']
-        self.transform_reqs = requirements['transform']
-        self.transform_func = self.transform_reqs.split()[0]
+        self.transform_reqs = requirements.get('transform', None)
+        self.transform_func = None
         self.transform_props = None
-        if len(self.transform_reqs.split())>1:
-            self.transform_props = self.transform_reqs.split()[1]
+        if self.transform_reqs is not None:
+            self.transform_func = self.transform_reqs.split()[0]
+            if len(self.transform_reqs.split())>1:
+                self.transform_props = self.transform_reqs.split()[1]
+            # end if
         # end if
-
+        
     def transform(self, sents):
         transform_func_map = {
             'template': self.perturb_template
@@ -163,21 +166,21 @@ class TransformOperator:
 
     def perturb_template(self, sents, transform_props):
         if transform_props=='f12':
-            _sents = perturb_template_f12(sents)
+            _sents = self.perturb_template_f12(sents)
         elif transform_props=='f13':
-            _sents = perturb_template_f13(sents)
+            _sents = self.perturb_template_f13(sents)
         elif transform_props=='f14':
-            _sents = perturb_template_f14(sents)
+            _sents = self.perturb_template_f14(sents)
         elif transform_props=='f15':
-            _sents = perturb_template_f15(sents)
+            _sents = self.perturb_template_f15(sents)
         elif transform_props=='f16':
-            _sents = perturb_template_f16(sents)
+            _sents = self.perturb_template_f16(sents)
         elif transform_props=='f17':
-            _sents = perturb_template_f17(sents)
+            _sents = self.perturb_template_f17(sents)
         elif transform_props=='f20':
-            _sents = perturb_template_f20(sents)
+            _sents = self.perturb_template_f20(sents)
         elif transform_props=='f21':
-            _sents = perturb_template_f21(sents)
+            _sents = self.perturb_template_f21(sents)
         # end if
         return _sents
 

@@ -190,7 +190,7 @@ class Suggest:
     
     @classmethod
     def eval_sug_words_by_req(cls, new_input, nlp, requirement, label):
-        transform_req = requirement.pop('transform_req', None)
+        transform_req = requirement.get('transform_req', None)
         if transform_req is not None:
             _requirement = {
                 'capability': requirement['capability'],
@@ -216,7 +216,7 @@ class Suggest:
     @classmethod
     def eval_sug_words_by_exp_req(cls, nlp, word_suggest, requirement):
         word_suggest = [word_suggest] if type(word_suggest)==str else list(word_suggest)
-        expansion_req = requirement.pop('expansion', None)
+        expansion_req = requirement.get('expansion', None)
         if expansion_req is None:
             return True
         # end if

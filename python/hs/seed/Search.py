@@ -54,8 +54,8 @@ class SearchOperator:
     def __init__(self, requirements):
         self.capability = requirements['capability']
         self.description = requirements['description']
-        self.search_reqs_list = requirements.pop('search', None)
-        self.use_testcase = requirements.pop('use_testcase', None)
+        self.search_reqs_list = requirements.get('search', None)
+        self.use_testcase = requirements.get('use_testcase', None)
         self.search_method = None
         if self.search_reqs_list is not None:
             self.search_method = {
@@ -323,8 +323,8 @@ class SearchOperator:
         selected_indices = list()
         _sents = sents.copy()
         for param in params:
-            word_include = param.pop('word', None)
-            tpos_include = param.pop('POS', None)
+            word_include = param.get('word', None)
+            tpos_include = param.get('POS', None)
             
             if word_include is not None:
                 for w in word_include: # AND relationship
@@ -618,7 +618,7 @@ class Search:
         func = cls.SEARCH_FUNC[Macros.hs_task][dataset]
         for req in requirements:
             selected = func(req, nlp)
-            tf_req = req.pop('transform', None)
+            tf_req = req.get('transform', None)
             if tf_req is not None:
                 transform_obj = TransformOperator(req)
                 selected = transform_obj.transform(selected)
@@ -634,7 +634,7 @@ class Search:
     def search_hatespeech_per_req(cls, req, dataset, nlp):
         func = cls.SEARCH_FUNC[Macros.hs_task][dataset]
         selected = func(req, nlp)
-        tf_req = req.pop('transform', None)
+        tf_req = req.get('transform', None)
         if tf_req is not None and \
            dataset!=Macros.datasets[Macros.hs_task][1]:
             transform_obj = TransformOperator(req)

@@ -136,7 +136,7 @@ class Testsuite:
                 inputs = inputs_per_req["inputs"] if inputs_per_req is not None else dict()
                 seed_inputs, exp_seed_inputs = list(), list()
                 seed_templates, exp_templates = list(), list()
-                masked_inputs_exists = [inputs[k].pop("masked_inputs", None) for k in inputs.keys()]
+                masked_inputs_exists = [inputs[k].get("masked_inputs", None) for k in inputs.keys()]
                 if not any(masked_inputs_exists):
                     for s_i, seed_input in enumerate(inputs.keys()):
                         cfg_seed = inputs[seed_input]["cfg_seed"]
@@ -199,7 +199,7 @@ class Testsuite:
                 if new_input_dicts is not None:
                     req_cksum = re.search("cfg\_expanded\_inputs\_([a-zA-z0-9]+)\.json", path).group(1)
                     lc_desc = new_input_dicts["requirement"]["description"]
-                    transform_req = new_input_dicts["requirement"].pop("transform", None)
+                    transform_req = new_input_dicts["requirement"].get("transform", None)
                     transform_reqs.append(transform_req)
                       
                     seed_res = list()
