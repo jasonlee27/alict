@@ -71,37 +71,43 @@ class Requirements:
                     reqs.append({
                         'capability': cap,
                         'description': d,
-                        'use_testcase': 'hatecheck'
+                        'use_testcase': 'hatecheck',
+                        'expansion': ['neutral']
                     })
                 elif d.lower()=='description using very negative attributes (explicit)':
                     reqs.append({
                         'capability': cap,
                         'description': d,
-                        'use_testcase': 'hatecheck'
+                        'use_testcase': 'hatecheck',
+                        'expansion': ['neutral']
                     })
                 elif d.lower()=='dehumanisation (explicit)':
                     reqs.append({
                         'capability': cap,
                         'description': d,
-                        'use_testcase': 'hatecheck'
+                        'use_testcase': 'hatecheck',
+                        'expansion': ['neutral']
                     })
                 elif d.lower()=='implicit derogation':
                     reqs.append({
                         'capability': cap,
                         'description': d,
-                        'use_testcase': 'hatecheck'
+                        'use_testcase': 'hatecheck',
+                        'expansion': ['neutral']
                     })
                 elif d.lower()=='direct threat':
                     reqs.append({
                         'capability': cap,
                         'description': d,
-                        'use_testcase': 'hatecheck'
+                        'use_testcase': 'hatecheck',
+                        'expansion': ['neutral']
                     })
                 elif d.lower()=='threat as normative statement':
                     reqs.append({
                         'capability': cap,
                         'description': d,
-                        'use_testcase': 'hatecheck'
+                        'use_testcase': 'hatecheck',
+                        'expansion': ['neutral']
                     })
                 elif d.lower()=='hate expressed using slur':
                     reqs.append({
