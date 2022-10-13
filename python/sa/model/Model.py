@@ -49,7 +49,7 @@ class Model:
         # end for
 
     @classmethod
-    def batch_predict(cls, data: List[str], batch_size: int = 32):
+    def batch_predict(cls, data: List[str], batch_size: int = 16):
         preds = list()
         for d in cls.get_batch(data, batch_size):
             preds.extend(cls.model(d))
@@ -57,12 +57,12 @@ class Model:
         return preds
     
     @classmethod
-    def sentiment_pred_and_conf(cls, data: List[str]):
+    def sentiment_pred_and_conf(cls, data: List[str], batch_size=16):
         # distilbert-base-uncased-finetuned-sst-2-english: label [NEGATIVE, POSITIVE]
         # textattack/bert-base-uncased-SST-2: label [LABEL_0, LABEL_1]
         # textattack/bert-base-SST-2: label [LABEL_0, LABEL_1]
         # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
-        preds = cls.batch_predict(data)
+        preds = cls.batch_predict(data, batch_size=batch_size)
         pr = np.array([x['score'] if x['label']=='POSITIVE' or x['label']=='LABEL_1' else 1 - x['score'] for x in preds])
         pp = np.zeros((pr.shape[0], 3))
         margin_neutral = 1/3.

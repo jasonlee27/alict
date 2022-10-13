@@ -209,7 +209,8 @@ class Testmodel:
         # run models on other type of dataset
         def run(model, data):
             preds_all, pp_all = list(), list()
-            for batch in Model.get_batch(data, 32):
+            batch_size = 16
+            for batch in Model.get_batch(data, batch_size):
                 preds = model(batch)
                 pr = np.array([x['score'] if x['label']=='POSITIVE' or x['label']=='LABEL_1' else 1 - x['score'] for x in preds])
                 pp = np.zeros((pr.shape[0], 3))
