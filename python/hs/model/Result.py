@@ -7,6 +7,7 @@ from typing import *
 from pathlib import Path
 from scipy.stats import entropy
 
+from ..requirement.Requirements import Requirements
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 
@@ -182,24 +183,21 @@ class Result:
 
     @classmethod
     def get_seed_to_exp_map(cls, template_file):
-        templates = Utils.read_json(template_file)
+        t = Utils.read_json(template_file)
         seed_exp_map = dict()
-        for t in templates:
-            seed_exp_map[t['requirement']['description']] = dict()
-            for seed in t['inputs'].keys():
-                exp_list = list()
-                for exp in t['inputs'][seed]['exp_inputs']:
-                    if exp[5] is not None:
-                        tokens = Utils.tokenize(exp[5])
-                        sent = Utils.detokenize(tokens)
-                        exp_list.append(sent.replace(' ', ''))
-                    # end if
-                # end for
-                tokens = Utils.tokenize(seed)
-                _seed = Utils.detokenize(tokens)
-                _seed = _seed.replace(' ', '')
-                seed_exp_map[t['requirement']['description']][_seed] = exp_list
+        for seed in t['inputs'].keys():
+            exp_list = list()
+            for exp in t['inputs'][seed]['exp_inputs']:
+                if exp[5] is not None:
+                    tokens = Utils.tokenize(exp[5])
+                    sent = Utils.detokenize(tokens)
+                    exp_list.append(sent.replace(' ', ''))
+                # end if
             # end for
+            tokens = Utils.tokenize(seed)
+            _seed = Utils.detokenize(tokens)
+            _seed = _seed.replace(' ', '')
+            seed_exp_map[_seed] = exp_list
         # end for
         return seed_exp_map
 
@@ -403,9 +401,26 @@ class Result:
         return results
         
     @classmethod
-    def analyze(cls, result_file, model_name_file, template_file, saveto):
+    def analyze(cls,
+                nlp_task,
+                template_result_dir,
+                result_dir,
+                model_name_file,
+                saveto):
+        result_file = result_dir / 'test_results.txt'
         result_dict = cls.parse_results(result_file, model_name_file)
-        seed_exp_map = cls.get_seed_to_exp_map(template_file)
+        reqs = Requirements.get_requirements(nlp_task)
+        seed_exp_map = dict()
+        for req in reqs:
+            lc_desc = req['description']
+            cksum_val = Utils.get_cksum(lc_desc)
+            template_file = template_result_dir / f"cfg_expanded_inputs_{cksum_val}.json"
+            if os.path.exists(result_dir / f"{nlp_task}_testsuite_seeds_{cksum_val}.pkl") or \
+               os.path.exists(result_dir / f"{nlp_task}_testsuite_exps_{cksum_val}.pkl"):
+                seed_exp_map[lc_desc] = cls.get_seed_to_exp_map(template_file)
+            # end if
+        # end for
+                
         results = dict()
         for model in result_dict.keys():
             model_result = result_dict[model]
