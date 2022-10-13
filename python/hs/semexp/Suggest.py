@@ -616,12 +616,11 @@ class Suggest:
                     else:
                         template_results['inputs'][seed]['exp_inputs'].extend(results)
                     # end if
-                    
-                    # write batch results into result file
-                    Utils.write_json(template_results, cfg_res_file, pretty_format=True)
                 # end if
             # end for
         # end for
+        # write batch results into result file
+        Utils.write_json(template_results, cfg_res_file, pretty_format=True)
         ft = time.time()
         if logger is not None:
             logger.print(f"\tSuggest.eval_word_suggestions_over_seeds::{round(ft-st,3)}sec")

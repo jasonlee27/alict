@@ -359,7 +359,7 @@ class Template:
                                                  selection_method=selection_method,
                                                  logger=logger)
 
-        template_results = Utils.read_json(cfg_res_file)            
+        # template_results = Utils.read_json(cfg_res_file)            
         # if not os.path.exists(str(cfg_res_file)):
         #     template_results = {
         #         'requirement': req,
@@ -400,16 +400,19 @@ class Template:
         reqs = Requirements.get_requirements(nlp_task)
         # editor = Editor(cuda_device_ind=gpu_ids)
         pcfg_ref = RefPCFG()
-        for req in reqs:
-            cls.generate_inputs(nlp_task,
-                                req,
-                                pcfg_ref,
-                                dataset_name,
-                                res_dir, # cfg_res_file,
-                                num_seeds=num_seeds,
-                                selection_method=selection_method,
-                                gpu_ids=gpu_ids,
-                                logger=logger)
+        for r_i, req in enumerate(reqs):
+            print(r_i, req, len(reqs))
+            if req['description']!='Sentiment change over time, present should prevail':
+                cls.generate_inputs(nlp_task,
+                                    req,
+                                    pcfg_ref,
+                                    dataset_name,
+                                    res_dir, # cfg_res_file,
+                                    num_seeds=num_seeds,
+                                    selection_method=selection_method,
+                                    gpu_ids=gpu_ids,
+                                    logger=logger)
+            # end if
         # end for
         return
 

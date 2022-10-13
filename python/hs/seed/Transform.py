@@ -186,25 +186,25 @@ class TransformOperator:
 
     def perturb_template_f12(self, sents):
         # Pronoun reference::Hate expressed through reference in subsequent clauses
-        nh_sents = [s for s in sents if s[-1]==Macros.hs_label_map.keys()[0]]
-        hs_sents = [s for s in sents if s[-1]==Macros.hs_label_map.keys()[1]]
+        nh_sents = [s for s in sents if s[-1]==list(Macros.hs_label_map.keys())[0]]
+        hs_sents = [s for s in sents if s[-1]==list(Macros.hs_label_map.keys())[1]]
         f12_hs1_temp = F12_HS_TEMPLATES['tx-to-tx']
         f12_hs2_temp = F12_HS_TEMPLATES['nt-to-tx']
         f12_nh1_temp = F12_HS_TEMPLATES['tx-to-nt']
         f12_nh2_temp = F12_HS_TEMPLATES['nt-to-nt']
-        f12_hs1_new_label = Macros.hs_label_map.keys()[1]
-        f12_hs2_new_label = Macros.hs_label_map.keys()[1]
-        f12_nh1_new_label = Macros.hs_label_map.keys()[0]
-        f12_nh2_new_label = Macros.hs_label_map.keys()[0]
+        f12_hs1_new_label = list(Macros.hs_label_map.keys())[1]
+        f12_hs2_new_label = list(Macros.hs_label_map.keys())[1]
+        f12_nh1_new_label = list(Macros.hs_label_map.keys())[0]
+        f12_nh2_new_label = list(Macros.hs_label_map.keys())[0]
         results = list()
         result_ind = 0
         for s in hs_sents:
-            f12_hs1_temp['sent'].append(s['sent'])
-            f12_nh1_temp['sent'].append(s['sent'])
+            f12_hs1_temp['sent'].append(s[1])
+            f12_nh1_temp['sent'].append(s[1])
         # end for
         for s in nh_sents:
-            f12_hs2_temp['sent'].append(s['sent'])
-            f12_nh2_temp['sent'].append(s['sent'])
+            f12_hs2_temp['sent'].append(s[1])
+            f12_nh2_temp['sent'].append(s[1])
         # end for
         
         f12_hs1_word_product = [dict(zip(f12_hs1_temp, v)) for v in product(*f12_hs1_temp.values())]
@@ -243,25 +243,25 @@ class TransformOperator:
 
     def perturb_template_f13(self, sents):
         # Pronoun reference::Hate expressed through reference in subsequent sentences
-        nh_sents = [s for s in sents if s['label']==Macros.hs_label_map.keys()[0]]
-        hs_sents = [s for s in sents if s['label']==Macros.hs_label_map.keys()[1]]
+        nh_sents = [s for s in sents if s['label']==list(Macros.hs_label_map.keys())[0]]
+        hs_sents = [s for s in sents if s['label']==list(Macros.hs_label_map.keys())[1]]
         f13_hs1_temp = F13_HS_TEMPLATES['tx-to-tx']
         f13_hs2_temp = F13_HS_TEMPLATES['nt-to-tx']
         f13_nh1_temp = F13_HS_TEMPLATES['tx-to-nt']
         f13_nh2_temp = F13_HS_TEMPLATES['nt-to-nt']
-        f13_hs1_new_label = Macros.hs_label_map.keys()[1]
-        f13_hs2_new_label = Macros.hs_label_map.keys()[1]
-        f13_nh1_new_label = Macros.hs_label_map.keys()[0]
-        f13_nh2_new_label = Macros.hs_label_map.keys()[0]
+        f13_hs1_new_label = list(Macros.hs_label_map.keys())[1]
+        f13_hs2_new_label = list(Macros.hs_label_map.keys())[1]
+        f13_nh1_new_label = list(Macros.hs_label_map.keys())[0]
+        f13_nh2_new_label = list(Macros.hs_label_map.keys())[0]
         results = list()
         result_ind = 0
         for s in hs_sents:
-            f13_hs1_temp['sent'].append(s['sent'])
-            f13_nh1_temp['sent'].append(s['sent'])
+            f13_hs1_temp['sent'].append(s[1])
+            f13_nh1_temp['sent'].append(s[1])
         # end for
         for s in nh_sents:
-            f13_hs2_temp['sent'].append(s['sent'])
-            f13_nh2_temp['sent'].append(s['sent'])
+            f13_hs2_temp['sent'].append(s[1])
+            f13_nh2_temp['sent'].append(s[1])
         # end for
         
         f13_hs1_word_product = [dict(zip(f13_hs1_temp, v)) for v in product(*f13_hs1_temp.values())]
@@ -301,9 +301,9 @@ class TransformOperator:
         # Negation::Hate expressed using negated positive statement
         results = list()
         result_ind = 0
-        new_label = Macros.hs_label_map.keys()[1]
+        new_label = list(Macros.hs_label_map.keys())[1]
         for s in sents:
-            F14_TEMPLATES['sent'].append(s['sent'])
+            F14_TEMPLATES['sent'].append(s[1])
         # end for
         word_product = [dict(zip(F14_TEMPLATES, v)) for v in product(*F14_TEMPLATES.values())]
         for wp in word_product:
@@ -318,9 +318,9 @@ class TransformOperator:
         # Negation::Non-hate expressed using negated hateful statement
         results = list()
         result_ind = 0
-        new_label = Macros.hs_label_map.keys()[0]
+        new_label = list(Macros.hs_label_map.keys())[0]
         for s in sents:
-            F15_TEMPLATES['sent'].append(s['sent'])
+            F15_TEMPLATES['sent'].append(s[1])
         # end for
         word_product = [dict(zip(F15_TEMPLATES, v)) for v in product(*F15_TEMPLATES.values())]
         for wp in word_product:
@@ -335,9 +335,9 @@ class TransformOperator:
         # Phrasing::Hate phrased as a question
         results = list()
         result_ind = 0
-        new_label = Macros.hs_label_map.keys()[1]
+        new_label = list(Macros.hs_label_map.keys())[1]
         for s in sents:
-            F16_TEMPLATES['sent'].append(s['sent'])
+            F16_TEMPLATES['sent'].append(s[1])
         # end for
         word_product = [dict(zip(F16_TEMPLATES, v)) for v in product(*F16_TEMPLATES.values())]
         for wp in word_product:
@@ -352,9 +352,9 @@ class TransformOperator:
         # Phrasing::Hate phrased as a opinion
         results = list()
         result_ind = 0
-        new_label = Macros.hs_label_map.keys()[1]
+        new_label = list(Macros.hs_label_map.keys())[1]
         for s in sents:
-            F17_TEMPLATES['sent'].append(s['sent'])
+            F17_TEMPLATES['sent'].append(s[1])
         # end for
         word_product = [dict(zip(F17_TEMPLATES, v)) for v in product(*F17_TEMPLATES.values())]
         for wp in word_product:
@@ -369,9 +369,9 @@ class TransformOperator:
         # Counter speech::Denouncements of hate that quote it
         results = list()
         result_ind = 0
-        new_label = Macros.hs_label_map.keys()[0]
+        new_label = list(Macros.hs_label_map.keys())[0]
         for s in sents:
-            F20_TEMPLATES['sent'].append(s['sent'])
+            F20_TEMPLATES['sent'].append(s[1])
         # end for
         word_product = [dict(zip(F20_TEMPLATES, v)) for v in product(*F20_TEMPLATES.values())]
         for wp in word_product:
@@ -387,9 +387,9 @@ class TransformOperator:
         # Counter speech::Denouncements of hate that make direct reference to it
         results = list()
         result_ind = 0
-        new_label = Macros.hs_label_map.keys()[0]
+        new_label = list(Macros.hs_label_map.keys())[0]
         for s in sents:
-            F21_TEMPLATES['sent'].append(s['sent'])
+            F21_TEMPLATES['sent'].append(s[1])
         # end for
         word_product = [dict(zip(F21_TEMPLATES, v)) for v in product(*F21_TEMPLATES.values())]
         for wp in word_product:
