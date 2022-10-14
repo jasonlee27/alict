@@ -98,7 +98,7 @@ class Requirements:
                                 "word": None
                             },
                             "exclude": {
-                                "POS": ["negative adjs", "negative verbs", "negative nouns"],
+                                "POS": ["positive verbs", "positive nouns", "negative adjs", "negative verbs", "negative nouns"],
                                 "word": None
                             },
                             "label": "positive"
