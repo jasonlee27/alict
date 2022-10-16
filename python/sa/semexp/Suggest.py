@@ -644,7 +644,7 @@ class Suggest:
             if any(r):
                 seed, seed_label, seed_score, \
                     masked_sent, cfg_seed, cfg_from, \
-                    cfg_to, mask_pos, w_sug, input_candid = r
+                    cfg_to, mask_pos, w_sug, input_candid = r[0]
                 m_inds = list()
                 key = verified_template_results['inputs'].get(seed, None)
                 if key is None:

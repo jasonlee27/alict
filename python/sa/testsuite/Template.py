@@ -326,9 +326,6 @@ class Template:
         cfg_res_file = res_dir / f"cfg_expanded_inputs_{cksum_val}.json"
         seeds = selected['selected_inputs'][:num_seeds] if num_seeds>0 else selected['selected_inputs']
         seeds = cls.get_seed_of_interest(req, cfg_res_file, seeds)
-        if any(seeds):
-            seeds = seeds[:1]
-        # end if
         num_selected_inputs = len(selected['selected_inputs'])
         print_str = f">>>>> REQUIREMENT::{cksum_val}::"+selected['requirement']['description']
         if logger is not None:
