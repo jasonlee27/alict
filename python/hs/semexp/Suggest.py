@@ -452,14 +452,20 @@ class Suggest:
         # end if
         word_suggest = list()
         if masked_sent!=no_mask_key:
-            word_suggest = editor.suggest(masked_sent,
-                                          return_score=True,
-                                          remove_duplicates=True)[:3*num_target]
-            word_suggest = [
-                ws for ws in word_suggest
-                if cls.is_word_suggestion_avail(ws[0])
-            ]
-            word_suggest = cls.remove_duplicates(word_suggest)
+            try:
+                word_suggest = editor.suggest(masked_sent,
+                                              return_score=True,
+                                              remove_duplicates=True)[:3*num_target]
+                word_suggest = [
+                    ws for ws in word_suggest
+                    if cls.is_word_suggestion_avail(ws[0])
+                ]
+                word_suggest = cls.remove_duplicates(word_suggest)
+            except RuntimeError:
+                print(f"CUDA_OOM::{masked_sent}")
+                word_suggest = list()
+                pass
+            # end try
         # end if
         ft = time.time()
         if logger is not None:
@@ -493,7 +499,8 @@ class Suggest:
             num_sents_per_gpu = len(masked_sents.keys())
         # end if
         
-        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
+        num_pcss = cls.NUM_PROCESSES*2 if len(args)>=cls.NUM_PROCESSES*2 else 1
+        pool = multiprocessing.Pool(processes=num_pcss)
         for ms_i, masked_sent in enumerate(masked_sents.keys()):
             start = 0
             gpu_id = None
@@ -522,9 +529,11 @@ class Suggest:
 
         results = pool.starmap_async(cls.get_word_sug_parallel,
                                      args,
-                                     chunksize=len(masked_sents.keys())//cls.NUM_PROCESSES).get()
+                                     chunksize=len(args)//num_pcss).get()
         for r in results:
-            masked_sents[r['masked_sent']]['word_sug'] = r['word_sug']
+            if any(r['word_sug']):
+                masked_sents[r['masked_sent']]['word_sug'] = r['word_sug']
+            # end if
         # end for
         pool.close()
         pool.join()
@@ -536,7 +545,6 @@ class Suggest:
 
     @classmethod
     def _eval_word_suggestions_over_seeds_parallel(cls,
-                                                   nlp,
                                                    masked_sent,
                                                    word_sug,
                                                    seed_id,
@@ -548,7 +556,9 @@ class Suggest:
         st = time.time()
         results = list()
         pcs_id = multiprocessing.current_process().ident
-        for seed, seed_label, seed_score, cfg_seed, cfg_from, cfg_to, mask_pos in seed_objs:
+        nlp = spacy.load('en_core_web_md')
+        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+        for seed, seed_label, cfg_seed, cfg_from, cfg_to, mask_pos in seed_objs:
             matched_words_sug = cls.match_word_n_pos(
                 nlp,
                 word_sug,
@@ -575,11 +585,10 @@ class Suggest:
             for w_sug in word_suggest:
                 input_candid = cls.replace_mask_w_suggestion(masked_sent, w_sug)
                 # check sentence and expansion requirements
-                if cls.eval_sug_words_by_req(input_candid, req, seed_label):
+                if cls.eval_sug_words_by_req(input_candid, nlp, req, seed_label):
                     if cls.eval_sug_words_by_exp_req(nlp, w_sug, req):
                         results.append((seed,
                                         seed_label,
-                                        seed_score,
                                         masked_sent,
                                         cfg_seed,
                                         cfg_from,
@@ -592,10 +601,10 @@ class Suggest:
             # end for
         # end for
         ft = time.time()
-        if logger is not None:
-            logger.print(f"\tSuggest._eval_word_suggestions_over_seeds_parallel::SEED{seed_id}::{round(ft-st,3)}sec::pcs{pcs_id}")
-        # end if
-        return
+        # if logger is not None:
+        #     logger.print(f"\tSuggest._eval_word_suggestions_over_seeds_parallel::SEED{seed_id}::{round(ft-st,3)}sec::pcs{pcs_id}")
+        # # end if
+        return results
 
     @classmethod
     def eval_word_suggestions_over_seeds(cls,
@@ -607,9 +616,6 @@ class Suggest:
                                          no_mask_key='<no_mask>',
                                          logger=None):
         st = time.time()
-        nlp = spacy.load('en_core_web_md')
-        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES*2)
         template_results = Utils.read_json(cfg_res_file)
         args = list()
         for m_i, masked_sent in enumerate(masked_inputs_w_word_sug.keys()):
@@ -617,7 +623,6 @@ class Suggest:
             seed_objs = masked_inputs_w_word_sug[masked_sent]['inputs']
             if masked_sent!=no_mask_key:
                 args.append((
-                    nlp,
                     masked_sent,
                     word_sug,
                     m_i,
@@ -629,9 +634,11 @@ class Suggest:
                 ))
             # end if
         # end for
+        num_pcss = cls.NUM_PROCESSES*2 if len(args)>=cls.NUM_PROCESSES*2 else 1
+        pool = multiprocessing.Pool(processes=num_pcss)
         results = pool.starmap_async(cls._eval_word_suggestions_over_seeds_parallel,
                                      args,
-                                     chunksize=len(masked_inputs_w_word_sug.keys())//cls.NUM_PROCESSES).get()
+                                     chunksize=len(args)//num_pcss).get()
         verified_template_results = {
             'requirement': template_results['requirement'],
             'inputs': dict()
@@ -639,9 +646,9 @@ class Suggest:
         for r in results:
             # remove verified masked inputs
             if any(r):
-                seed, seed_label, seed_score, \
-                    masked_sent, cfg_seed, cfg_from, \
-                    cfg_to, mask_pos, w_sug, input_candid = r
+                seed, seed_label, masked_sent,\
+                    cfg_seed, cfg_from, cfg_to,\
+                    mask_pos, w_sug, input_candid = r
                 m_inds = list()
                 key = verified_template_results['inputs'].get(seed, None)
                 if key is None:

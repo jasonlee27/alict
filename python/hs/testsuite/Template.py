@@ -106,7 +106,8 @@ class Template:
         st = time.time()
         masked_input_res = dict()
         args = list()
-        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
+        num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
+        pool = multiprocessing.Pool(processes=num_pcss)
 
         template_results = {
             'requirement': req,
@@ -123,7 +124,7 @@ class Template:
         if any(args):
             results = pool.starmap_async(cls.generate_seed_cfg_parallel,
                                          args,
-                                         chunksize=len(seeds)//cls.NUM_PROCESSES).get()
+                                         chunksize=len(args)//num_pcss).get()
             for r in results:
                 template_results['inputs'][r['seed']] = {
                     'cfg_seed': r['cfg_seed'],
@@ -349,6 +350,7 @@ class Template:
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         for req in reqs:
+            print(req)
             cls.generate_inputs(nlp,
                                 nlp_task,
                                 req,

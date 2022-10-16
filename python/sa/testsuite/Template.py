@@ -130,8 +130,6 @@ class Template:
         st = time.time()
         masked_input_res = dict()
         args = list()
-        pool = multiprocessing.Pool(processes=cls.NUM_PROCESSES)
-
         template_results = {
             'requirement': req,
             'inputs': dict()
@@ -144,9 +142,11 @@ class Template:
             args.append((index, seed, seed_label, seed_score, pcfg_ref, logger))
         # end for
         if any(args):
+            num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
+            pool = multiprocessing.Pool(processes=num_pcss)
             results = pool.starmap_async(cls.generate_seed_cfg_parallel,
                                          args,
-                                         chunksize=len(seeds)//cls.NUM_PROCESSES).get()
+                                         chunksize=len(args)//num_pcss).get()
             for r in results:
                 # masked_input_res[r['seed']] = {
                 #     'cfg_seed': r['cfg_seed'],
@@ -326,6 +326,9 @@ class Template:
         cfg_res_file = res_dir / f"cfg_expanded_inputs_{cksum_val}.json"
         seeds = selected['selected_inputs'][:num_seeds] if num_seeds>0 else selected['selected_inputs']
         seeds = cls.get_seed_of_interest(req, cfg_res_file, seeds)
+        if any(seeds):
+            seeds = seeds[:1]
+        # end if
         num_selected_inputs = len(selected['selected_inputs'])
         print_str = f">>>>> REQUIREMENT::{cksum_val}::"+selected['requirement']['description']
         if logger is not None:
