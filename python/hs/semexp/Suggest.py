@@ -634,44 +634,42 @@ class Suggest:
                 ))
             # end if
         # end for
-        num_pcss = cls.NUM_PROCESSES*2 if len(args)>=cls.NUM_PROCESSES*2 else 1
-        pool = multiprocessing.Pool(processes=num_pcss)
-        results = pool.starmap_async(cls._eval_word_suggestions_over_seeds_parallel,
-                                     args,
-                                     chunksize=len(args)//num_pcss).get()
-        verified_template_results = {
-            'requirement': template_results['requirement'],
-            'inputs': dict()
-        }
-        for r in results:
-            # remove verified masked inputs
-            if any(r):
-                seed, seed_label, masked_sent,\
-                    cfg_seed, cfg_from, cfg_to,\
-                    mask_pos, w_sug, input_candid = r[0]
-                m_inds = list()
-                key = verified_template_results['inputs'].get(seed, None)
-                if key is None:
-                    verified_template_results['inputs'][seed] = {
-                        'cfg_seed': cfg_seed,
-                        'exp_inputs': list(),
-                        'label': seed_label,
-                        'label_score': seed_score
-                    }
+        if any(args):
+            verified_template_results = Utils.read_json(cfg_res_file)
+            num_pcss = cls.NUM_PROCESSES*2 if len(args)>=cls.NUM_PROCESSES*2 else 1
+            pool = multiprocessing.Pool(processes=num_pcss)
+            results = pool.starmap_async(cls._eval_word_suggestions_over_seeds_parallel,
+                                         args,
+                                         chunksize=len(args)//num_pcss).get()
+            for r in results:
+                # remove verified masked inputs
+                if any(r):
+                    seed, seed_label, masked_sent,\
+                        cfg_seed, cfg_from, cfg_to,\
+                        mask_pos, w_sug, input_candid = r[0]
+                    m_inds = list()
+                    key = verified_template_results['inputs'].get(seed, None)
+                    if key is None:
+                        verified_template_results['inputs'][seed] = {
+                            'cfg_seed': cfg_seed,
+                            'exp_inputs': list(),
+                            'label': seed_label
+                        }
+                    # end if
+                    verified_template_results['inputs'][seed]['exp_inputs'].append((
+                        masked_sent,
+                        cfg_from,
+                        cfg_to,
+                        mask_pos,
+                        w_sug,
+                        input_candid
+                    ))
                 # end if
-                verified_template_results['inputs'][seed]['exp_inputs'].append((
-                    masked_sent,
-                    cfg_from,
-                    cfg_to,
-                    mask_pos,
-                    w_sug,
-                    input_candid
-                ))
-            # end if
-        # end for
-        pool.close()
-        pool.join()
-        Utils.write_json(verified_template_results, cfg_res_file, pretty_format=True)
+            # end for
+            pool.close()
+            pool.join()
+            Utils.write_json(verified_template_results, cfg_res_file, pretty_format=True)
+        # end if
         ft = time.time()
         if logger is not None:
             logger.print(f"\tSuggest.eval_word_suggestions_over_seeds::{round(ft-st,3)}sec")

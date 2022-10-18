@@ -166,10 +166,10 @@ class Template:
             # end for
             pool.close()
             pool.join()
+
+            # write batch results into result file
+            Utils.write_json(template_results, cfg_res_file, pretty_format=True)
         # end if
-    
-        # write batch results into result file
-        Utils.write_json(template_results, cfg_res_file, pretty_format=True)
         
         ft = time.time()
         if logger is not None:

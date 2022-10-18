@@ -113,7 +113,7 @@ class Template:
             'requirement': req,
             'inputs': dict()
         }
-        if os.path.exists(cfg_res_file):
+        if os.path.exists(str(cfg_res_file)):
             template_results = Utils.read_json(cfg_res_file)
         # end if
 
@@ -137,11 +137,11 @@ class Template:
             # end for
             pool.close()
             pool.join()
+            
+            # write batch results into result file
+            Utils.write_json(template_results, cfg_res_file, pretty_format=True)
         # end if
 
-        # write batch results into result file
-        Utils.write_json(template_results, cfg_res_file, pretty_format=True)
-        
         ft = time.time()
         if logger is not None:
             logger.print(f"\tTemplate.generate_masked_inputs::{round(ft-st,3)}sec")
