@@ -487,6 +487,9 @@ class Suggest:
         st = time.time()
         results = list()
         args = list()
+        if logger is not None:
+            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::{len(masked_sents.keys())} masked sents identified")
+        # end if
         if cuda_device_inds is not None:
             assert len(cuda_device_inds)==cls.NUM_PROCESSES
             editors = {
@@ -498,8 +501,9 @@ class Suggest:
             editor = Editor()
             num_sents_per_gpu = len(masked_sents.keys())
         # end if
+        print(editors)
         
-        num_pcss = cls.NUM_PROCESSES*2 if len(args)>=cls.NUM_PROCESSES*2 else 1
+        num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
         pool = multiprocessing.Pool(processes=num_pcss)
         for ms_i, masked_sent in enumerate(masked_sents.keys()):
             start = 0
@@ -635,7 +639,8 @@ class Suggest:
             # end if
         # end for
         if any(args):
-            verified_template_results = Utils.read_json(cfg_res_file)
+            args_seed_n_masked_inputs = list()
+            verified_template_results = template_results
             num_pcss = cls.NUM_PROCESSES*2 if len(args)>=cls.NUM_PROCESSES*2 else 1
             pool = multiprocessing.Pool(processes=num_pcss)
             results = pool.starmap_async(cls._eval_word_suggestions_over_seeds_parallel,
@@ -664,10 +669,28 @@ class Suggest:
                         w_sug,
                         input_candid
                     ))
+                    if 'masked_inputs' in verified_template_results['inputs'][seed].keys():
+                        target_ind = [
+                            s_i
+                            for s_i, s in enumerate(verified_template_results['inputs'][seed]['masked_inputs'])
+                            if s['cfg_from']==cfg_from and s['cfg_to']==cfg_to and s['masked_input'][0]==masked_sent and s['masked_input'][1]==mask_pos
+                        ]
+                        del verified_template_results['inputs'][seed]['masked_inputs'][target_ind[0]]
+                        if not any(verified_template_results['inputs'][seed]['masked_inputs']):
+                            del verified_template_results['inputs'][seed]['masked_inputs']
+                        # end if
+                    # end if
                 # end if
             # end for
             pool.close()
             pool.join()
+
+            for seed in verified_template_results['inputs'].keys():
+                if 'masked_inputs' in verified_template_results['inputs'][seed].keys():
+                    del verified_template_results['inputs'][seed]['masked_inputs']
+                # end if
+            # end for
+            
             Utils.write_json(verified_template_results, cfg_res_file, pretty_format=True)
         # end if
         ft = time.time()

@@ -113,7 +113,7 @@ class Template:
             'requirement': req,
             'inputs': dict()
         }
-        if os.path.exists(str(cfg_res_file)):
+        if os.path.exists(cfg_res_file):
             template_results = Utils.read_json(cfg_res_file)
         # end if
 
@@ -209,7 +209,7 @@ class Template:
                 # end if
             # end if
         # end for
-
+        
         # get word suggestions
         if any(masked_sents):
             masked_sents = Suggest.get_word_suggestions_over_seeds(masked_sents,
@@ -292,6 +292,9 @@ class Template:
         cfg_res_file = res_dir / f"cfg_expanded_inputs_{cksum_val}.json"
         seeds = selected['selected_inputs'][:num_seeds] if num_seeds>0 else selected['selected_inputs']
         seeds = cls.get_seed_of_interest(req, cfg_res_file, seeds)
+        # if len(seeds)>10:
+        #     seeds = seeds[:5]
+        # # end if
         num_selected_inputs = len(selected['selected_inputs'])
         print_str = f">>>>> REQUIREMENT::{cksum_val}::"+selected['requirement']['description']
         if logger is not None:

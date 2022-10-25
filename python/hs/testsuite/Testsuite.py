@@ -217,6 +217,7 @@ class Testsuite:
                             "description": new_input_dicts["requirement"]["description"],
                             "templates": seed_res
                         })
+                    # end if
                     
                     # exps = Utils.read_json(res_dir / f"exps_{req_cksum}.json")
                     if exps is not None:
