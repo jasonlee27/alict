@@ -256,18 +256,19 @@ def run_analyze():
         )
     else:
         if num_seeds<0:
+            template_result_dir = Macros.result_dir / f"templates{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
             result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
-            template_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}.json"
         else:
+            template_result_dir = Macros.result_dir / f"templates{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
             result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
-            template_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
         # end if
-        result_file = result_dir / 'test_results.txt'
+        # result_file = result_dir / 'test_results.txt'
         save_to = result_dir / 'test_result_analysis.json'
         Result.analyze(
-            result_file,
+            nlp_task,
+            template_result_dir,
+            result_dir,
             Macros.sa_models_file,
-            template_file,
             save_to
         )
     # end if

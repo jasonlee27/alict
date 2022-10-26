@@ -11,6 +11,7 @@ from scipy.stats import entropy
 
 from ..requirement.Requirements import Requirements
 from ..utils.Macros import Macros
+
 from ..utils.Utils import Utils
 
 
