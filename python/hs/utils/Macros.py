@@ -16,7 +16,7 @@ class Macros:
     
     download_dir: Path = storage_dir / '_downloads' # /glusterfs/data/jxl115330/s2lct/_downloads
     log_dir: Path = storage_dir / '_logs' # /glusterfs/data/jxl115330/s2lct/_logs
-    paper_dir = root_dir / 'paper' / 'ase22'
+    paper_dir = root_dir / 'paper' / 'icse23'
     dataset_dir = download_dir / 'datasets'
 
     FMT_INT = "{:,d}"
@@ -25,7 +25,7 @@ class Macros:
     
     RAND_SEED = {1: 27, 2: 26, 3: 28} #26(trial2), 27(trial1), 28(trial3)
     MASK = "{mask}"
-
+    
     num_processes = 3
 
     ## hate speech setting

@@ -483,7 +483,7 @@ class Hatecheck:
         Macros.OUR_LC_LIST[12]: 'negate_pos_h',
         Macros.OUR_LC_LIST[13]: 'negate_neg_nh',
         Macros.OUR_LC_LIST[14]: 'phrase_question_h',
-        Macros.OUR_LC_LIST[15]: 'phrase_option_h',
+        Macros.OUR_LC_LIST[15]: 'phrase_opinion_h',
         Macros.OUR_LC_LIST[16]: 'ident_neutral_nh',
         Macros.OUR_LC_LIST[17]: 'ident_pos_nh',
         Macros.OUR_LC_LIST[18]: 'counter_quote_nh',

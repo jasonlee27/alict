@@ -92,9 +92,6 @@ class Tables:
         num_all_fail_rate = dict()
         num_pass2fail = dict()
 
-        req_dir = result_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
-
         output_file = latex.File(tables_dir / f"test-results-{task}-all-numbers.tex")
         
         lc_ids = dict()
@@ -170,20 +167,24 @@ class Tables:
 
             for lc_i in num_seeds_tot[m_name].keys():
                 if m_i==0:
-                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}", lc_descs[lc_i]))
-                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-seeds",
+                    output_file.append_macro(latex.Macro(f"test-results-hs-lc{lc_i}", lc_descs[lc_i]))
+                    output_file.append_macro(latex.Macro(f"test-results-hs-lc{lc_i}-num-seeds",
                                                          num_seeds_tot[m_name][lc_i][0]))
 
-                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps",
+                    output_file.append_macro(latex.Macro(f"test-results-hs-lc{lc_i}-num-exps",
                                                          num_exps_tot[m_name][lc_i][0]))
                 # end if
 
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-fail",
-                                                     num_all_fail[m_name][lc_i]))
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-failrate",
-                                                     num_all_fail_rate[m_name][lc_i]))
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail",
-                                                     num_pass2fail[m_name][lc_i]))
+                output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-fail",
+                                                     num_all_fail[m_name][lc_i][0]))
+                output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-seed-failrate",
+                                                     num_seed_fail_rate[m_name][lc_i][0]))
+                output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-exp-failrate",
+                                                     num_exp_fail_rate[m_name][lc_i][0]))
+                output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-failrate",
+                                                     num_all_fail_rate[m_name][lc_i][0]))
+                output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-pass-to-fail",
+                                                     num_pass2fail[m_name][lc_i][0]))
             # end for
         # end_for
         output_file.save()
@@ -198,7 +199,7 @@ class Tables:
                                 selection_method,
                                 num_seeds,
                                 num_trials):
-        output_file = latex.File(tables_dir / f"test-results-table.tex")
+        output_file = latex.File(tables_dir / f"test-results-{task}-table.tex")
         res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}"
         result_file = res_dir / 'test_result_analysis.json'
         
@@ -212,10 +213,10 @@ class Tables:
         lcs_len = len(result[model_names[0]])
         
         # Header
-        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{table*}[htbp]")
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
-        output_file.append(r"\caption{\TestResultsTableCaption}")
+        output_file.append(r"\caption{\TestResultsHsTableCaption}")
         output_file.append(r"\resizebox{0.9\textwidth}{!}{")
         # output_file.append(r"\begin{tabular}{p{4cm}||p{1cm}p{2cm}p{1cm}p{2cm}p{1cm}p{2cm}p{2cm}}")
         output_file.append(r"\begin{tabular}{p{8cm}||cclll}")
@@ -230,29 +231,29 @@ class Tables:
             lc_prefix_str = f"LC{lc_i+1}: "
             # end if
             output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8cm}{" + \
-                               lc_prefix_str + latex.Macro(f"test-results-lc{lc_i}").use() + "}}")
+                               lc_prefix_str + latex.Macro(f"test-results-hs-lc{lc_i}").use() + "}}")
             # output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
-            #                    latex.Macro(f"test-results-bl-lc{lc_i}-num-sents").use() + "}")
-            # output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
+            #                    latex.Macro(f"test-results-hs-bl-lc{lc_i}-num-sents").use() + "}")
+            # output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-bl-model0-lc{lc_i}-num-fail").use())
 
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
-                               latex.Macro(f"test-results-lc{lc_i}-num-seeds").use() + "}")            
+                               latex.Macro(f"test-results-hs-lc{lc_i}-num-seeds").use() + "}")            
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
-                               latex.Macro(f"test-results-lc{lc_i}-num-exps").use() + "}")
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-all-fail").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-all-failrate").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+                               latex.Macro(f"test-results-hs-lc{lc_i}-num-exps").use() + "}")
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-model0-lc{lc_i}-num-all-fail").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-model0-lc{lc_i}-num-all-failrate").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             
             for m_i in range(1,len(model_names)):
                 if m_i==1:
-                    m_name = 'da-ELECTRA'
+                    m_name = 'daELECTRA'
                 else:
-                    m_name = 'da-BERT'
+                    m_name = 'daBERT'
                 # end if
-                # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-fail").use())
-                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-failrate").use())
-                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+                # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-fail").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-failrate").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             # end for
             output_file.append(r"\hline")
         # end for
@@ -261,7 +262,7 @@ class Tables:
         output_file.append(r"\end{tabular}}")
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
-        output_file.append(r"\vspace{\TestResultsHsTableVSpace}")
+        output_file.append(r"\vspace{\TestResultsTableVSpace}")
         output_file.append(r"\end{table*}")
         output_file.save()
         return
@@ -286,10 +287,7 @@ class Tables:
         num_all_fail_rate = dict()
         num_pass2fail = dict()
 
-        req_dir = result_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
-
-        output_file = latex.File(tables_dir / f"test-results-bl-{task}-all-numbers.tex")
+        output_file = latex.File(tables_dir / f"test-results-{task}-bl-all-numbers.tex")
         
         lc_ids = dict()
         for l_i, l in enumerate(Macros.OUR_LC_LIST):
@@ -342,16 +340,17 @@ class Tables:
             # num_exp_fail_rate[f"model{m_i}"] = dict()
             # num_pass2fail[f"model{m_i}"] = dict()
 
+            print(lc_descs)
             for lc_i in num_seeds_tot[m_name].keys():
                 if m_i==0:
-                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}", lc_descs[lc_i]))
-                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-tcs",
+                    output_file.append_macro(latex.Macro(f"test-results-hs-bl-lc{lc_i}", lc_descs[lc_i]))
+                    output_file.append_macro(latex.Macro(f"test-results-hs-bl-lc{lc_i}-num-tcs",
                                                          num_seeds_tot[m_name][lc_i][0]))
                 # end if
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail",
-                                                     num_seed_fail[m_name][lc_i]))
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-failrate",
-                                                     num_seed_fail_rate[m_name][lc_i]))
+                output_file.append_macro(latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-fail",
+                                                     num_seed_fail[m_name][lc_i][0]))
+                output_file.append_macro(latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-failrate",
+                                                     num_seed_fail_rate[m_name][lc_i][0]))
             # end for
         # end_for
         output_file.save()
@@ -366,7 +365,7 @@ class Tables:
                                          selection_method,
                                          num_seeds,
                                          num_trials):
-        output_file = latex.File(tables_dir / f"test-results-bl-table.tex")
+        output_file = latex.File(tables_dir / f"test-results-{task}-bl-table.tex")
         res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}"
         result_file = res_dir / 'test_result_hatecheck_analysis.json'
         
@@ -380,17 +379,17 @@ class Tables:
         lcs_len = len(result[model_names[0]])
         
         # Header
-        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{table*}[htbp]")
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
-        output_file.append(r"\caption{\TestResultsTableCaption}")
+        output_file.append(r"\caption{\TestResultsHsBlTableCaption}")
         output_file.append(r"\resizebox{0.9\textwidth}{!}{")
         # output_file.append(r"\begin{tabular}{p{4cm}||p{1cm}p{2cm}p{1cm}p{2cm}p{1cm}p{2cm}p{2cm}}")
         output_file.append(r"\begin{tabular}{p{8cm}||cclll}")
         output_file.append(r"\toprule")
         
         # output_file.append(r"\tLc & \parbox{1cm}{\tNumBlSents} & \parbox{1cm}{\tNumBlFail} & \parbox{1cm}{\tNumSeeds} & \parbox{1.5cm}{\tNumSeedFail} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\tNumExpFail} & \parbox{1.5cm}{\tNumPasstoFail}\\")
-        output_file.append(r"\tLc & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\")
+        output_file.append(r"\tLc & \parbox{1cm}{\tNumSeeds} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate}\\")
         output_file.append(r"\midrule")
         
         # Content
@@ -398,20 +397,20 @@ class Tables:
             lc_prefix_str = f"LC{lc_i+1}: "
             # end if
             output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8cm}{" + \
-                               lc_prefix_str + latex.Macro(f"test-results-bl-lc{lc_i}").use() + "}}")
+                               lc_prefix_str + latex.Macro(f"test-results-hs-bl-lc{lc_i}").use() + "}}")
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
-                               latex.Macro(f"test-results-bl-lc{lc_i}-num-tcs").use() + "}")
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-failrate").use())
+                               latex.Macro(f"test-results-hs-bl-lc{lc_i}-num-tcs").use() + "}")
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-bl-model0-lc{lc_i}-num-fail").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-bl-model0-lc{lc_i}-num-failrate").use() + r"\\")
             
             for m_i in range(1,len(model_names)):
                 if m_i==1:
-                    m_name = 'da-ELECTRA'
+                    m_name = 'daELECTRA'
                 else:
-                    m_name = 'da-BERT'
+                    m_name = 'daBERT'
                 # end if
-                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-failrate").use())
+                output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-failrate").use() + r"\\")
             # end for
             output_file.append(r"\hline")
         # end for
@@ -420,7 +419,7 @@ class Tables:
         output_file.append(r"\end{tabular}}")
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
-        output_file.append(r"\vspace{\TestResultsHsBlTableVSpace}")
+        output_file.append(r"\vspace{\TestResultsTableVSpace}")
         output_file.append(r"\end{table*}")
         output_file.save()
         return
