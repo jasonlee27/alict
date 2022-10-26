@@ -340,7 +340,6 @@ class Tables:
             # num_exp_fail_rate[f"model{m_i}"] = dict()
             # num_pass2fail[f"model{m_i}"] = dict()
 
-            print(lc_descs)
             for lc_i in num_seeds_tot[m_name].keys():
                 if m_i==0:
                     output_file.append_macro(latex.Macro(f"test-results-hs-bl-lc{lc_i}", lc_descs[lc_i]))
