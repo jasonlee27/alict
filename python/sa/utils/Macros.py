@@ -10,12 +10,12 @@ class Macros:
     this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__)))
     root_dir: Path = this_dir.parent.parent.parent 
     python_dir: Path = this_dir.parent.parent
-    storage_dir: Path = Path("/glusterfs/data/jxl115330/s2lct")
+    storage_dir: Path = root_dir # Path("/glusterfs/data/jxl115330/s2lct")
     result_dir: Path = storage_dir / "_results"
     
     download_dir: Path = storage_dir / "_downloads"
     log_dir: Path = storage_dir / "_logs"
-    paper_dir = root_dir / "paper" / "ase22"
+    paper_dir = root_dir / "paper" / "icse23"
     dataset_dir = download_dir / "datasets"
 
     FMT_INT = "{:,d}"

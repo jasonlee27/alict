@@ -81,6 +81,12 @@ class Tables:
                 num_trials = options.pop('num_trials', 3)
                 cls.make_numbers_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
                 cls.make_table_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
+            elif item == "test-results-all":
+                task = options.pop('task', 'sa')
+                search_dataset = options.pop('search_dataset_name', 'sst')
+                selection_method = options.pop('selection_method', 'random')
+                cls.make_numbers_test_results_all(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+                cls.make_table_test_results_all(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
             else:
                 raise(f"Unknown table {item}")
             # end if
@@ -650,6 +656,177 @@ class Tables:
                 output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model{m_i}-lc{lc_i}-num-all-fail-med").use())
                 output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model{m_i}-lc{lc_i}-num-all-failrate-med").use())
                 output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-{num_trials}-{num_seeds}-model{m_i}-lc{lc_i}-num-pass-to-fail-med").use() + r"\\")
+            # end for
+            output_file.append(r"\hline")
+        # end for
+        # Footer
+        output_file.append(r"\bottomrule")
+        output_file.append(r"\end{tabular}}")
+        output_file.append(r"\end{center}")
+        output_file.append(r"\end{small}")
+        output_file.append(r"\vspace{\TestResultsTableVSpace}")
+        output_file.append(r"\end{table*}")
+        output_file.save()
+        return
+    
+    @classmethod
+    def make_numbers_test_results_all(cls,
+                                      result_dir,
+                                      tables_dir,
+                                      task,
+                                      search_dataset,
+                                      selection_method):
+        lc_descs = dict()
+        num_seeds_tot = dict()
+        num_exps_tot = dict()
+        num_seed_fail = dict()
+        num_exp_fail = dict()
+        num_all_fail = dict()
+        num_seed_fail_rate = dict()
+        num_exp_fail_rate = dict()
+        num_all_fail_rate = dict()
+        num_pass2fail = dict()
+
+        req_dir = result_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        output_file = latex.File(tables_dir / f"test-results-all-numbers.tex")
+        lcs = Utils.read_txt(req_file)
+        lc_ids = dict()
+        for l_i, l in enumerate(lcs):
+            desc = l.split('::')[0].strip()
+            lc_ids[desc.lower()] = (desc,l_i)
+            desc = cls.replace_latex_symbol(desc)
+            lc_descs[l_i] = desc
+        # end for
+
+        res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}"
+        result_file = res_dir / 'test_result_analysis.json'
+        result = Utils.read_json(result_file)            
+        for m_i, model_name in enumerate(result.keys()):
+            if f"model{m_i}" not in num_seeds_tot.keys():
+                num_seeds_tot[f"model{m_i}"] = dict()
+                num_exps_tot[f"model{m_i}"] = dict()
+                num_seed_fail[f"model{m_i}"] = dict()
+                num_exp_fail[f"model{m_i}"] = dict()
+                num_all_fail[f"model{m_i}"] = dict()
+                num_seed_fail_rate[f"model{m_i}"] = dict()
+                num_exp_fail_rate[f"model{m_i}"] = dict()
+                num_all_fail_rate[f"model{m_i}"] = dict()
+                num_pass2fail[f"model{m_i}"] = dict()
+            # end if
+            
+            # model_name = model_name.replace('/', '-')
+            temp_num_seeds, temp_num_exps = 0,0
+            temp_num_seed_fail, temp_num_exp_fail = 0,0
+            temp_num_pass2fail = 0
+            for res_i, res in enumerate(result[model_name]):
+                desc, _res_lc_i = lc_ids[res['req'].lower()]
+                if _res_lc_i not in num_seeds_tot[f"model{m_i}"].keys():
+                    num_seeds_tot[f"model{m_i}"][_res_lc_i] = list()
+                    num_exps_tot[f"model{m_i}"][_res_lc_i] = list()
+                    num_seed_fail[f"model{m_i}"][_res_lc_i] = list()
+                    num_exp_fail[f"model{m_i}"][_res_lc_i] = list()
+                    num_all_fail[f"model{m_i}"][_res_lc_i] = list()
+                    num_seed_fail_rate[f"model{m_i}"][_res_lc_i] = list()
+                    num_exp_fail_rate[f"model{m_i}"][_res_lc_i] = list()
+                    num_all_fail_rate[f"model{m_i}"][_res_lc_i] = list()
+                    num_pass2fail[f"model{m_i}"][_res_lc_i] = list()
+                # end if
+                num_seeds_tot[f"model{m_i}"][_res_lc_i].append(res['num_seeds'])
+                num_exps_tot[f"model{m_i}"][_res_lc_i].append(res['num_exps'] if res['is_exps_exist'] else 0)
+                num_seed_fail[f"model{m_i}"][_res_lc_i].append(res['num_seed_fail'])
+                num_exp_fail[f"model{m_i}"][_res_lc_i].append(res['num_exp_fail'] if res['is_exps_exist'] else 0.)
+                
+                num_all_fail[f"model{m_i}"][_res_lc_i].append(res['num_seed_fail']+res['num_exp_fail'] if res['is_exps_exist'] else res['num_seed_fail'])
+                    
+                num_seed_fail_rate[f"model{m_i}"][_res_lc_i].append(res['num_seed_fail']*100./res['num_seeds'])
+                num_exp_fail_rate[f"model{m_i}"][_res_lc_i].append(res['num_exp_fail']*100./res['num_exps'] if res['is_exps_exist'] else 0.)
+                num_all_fail_rate[f"model{m_i}"][_res_lc_i].append((res['num_seed_fail']+res['num_exp_fail'])*100./(res['num_seeds']+res['num_exps']) if res['is_exps_exist'] else res['num_seed_fail']*100./res['num_seeds'])
+                num_pass2fail[f"model{m_i}"][_res_lc_i].append(res['num_pass2fail'] if res['is_exps_exist'] else 0.)
+            # end for
+        # end for
+        
+        for m_i, m_name in enumerate(num_seeds_tot.keys()):
+            temp_num_seeds, temp_num_exps = 0,0
+            temp_num_seed_fail, temp_num_exp_fail = 0,0
+            temp_num_pass2fail = 0
+
+            # num_seeds_tot[f"model{m_i}"] = dict()
+            # num_exps_tot[f"model{m_i}"] = dict()
+            # num_seed_fail_rate[f"model{m_i}"] = dict()
+            # num_exp_fail_rate[f"model{m_i}"] = dict()
+            # num_pass2fail[f"model{m_i}"] = dict()
+
+            for lc_i in num_seeds_tot[m_name].keys():
+                if m_i==0:
+                    output_file.append_macro(latex.Macro(f"test-results-all-lc{lc_i}", lc_descs[lc_i]))
+                    output_file.append_macro(latex.Macro(f"test-results-all-lc{lc_i}-num-seeds",
+                                                         cls.FMT_INT.format(num_seeds_tot[m_name][lc_i][0])))
+                    output_file.append_macro(latex.Macro(f"test-results-all-lc{lc_i}-num-exps",
+                                                         cls.FMT_INT.format(num_exps_tot[m_name][lc_i][0])))
+                # end if
+                output_file.append_macro(latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-fail",
+                                                     cls.FMT_INT.format(num_all_fail[m_name][lc_i][0])))
+                output_file.append_macro(latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-failrate",
+                                                     cls.FMT_FLOAT.format(num_all_fail_rate[m_name][lc_i][0])))
+                output_file.append_macro(latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-pass-to-fail",
+                                                     cls.FMT_INT.format(num_pass2fail[m_name][lc_i][0])))
+            # end for
+        # end_for
+        output_file.save()
+        return
+    
+    @classmethod
+    def make_table_test_results_all(cls,
+                                    result_dir,
+                                    tables_dir,
+                                    task,
+                                    search_dataset,
+                                    selection_method):
+        output_file = latex.File(tables_dir / f"test-results-all-table.tex")
+        res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}"
+        result_file = res_dir / 'test_result_analysis.json'
+        result = Utils.read_json(result_file)
+        # baseline_result = Utils.read_json(baseline_result_file)
+        model_names = list(result.keys())
+        lcs_len = len(result[model_names[0]])+1
+        
+        # Header
+        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{small}")
+        output_file.append(r"\begin{center}")
+        output_file.append(r"\caption{\TestResultsAllTableCaption}")
+        output_file.append(r"\resizebox{0.9\textwidth}{!}{")
+        output_file.append(r"\begin{tabular}{p{8cm}||cclll}")
+        output_file.append(r"\toprule")
+        
+        output_file.append(r"\tLc & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\")
+        output_file.append(r"\midrule")
+        
+        # Content
+        for lc_i in range(lcs_len):
+            lc_prefix_str = f"LC{lc_i+1}: "
+            # end if
+            output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8cm}{" + \
+                               lc_prefix_str + latex.Macro(f"test-results-all-lc{lc_i}").use() + "}}")
+            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
+                               latex.Macro(f"test-results-all-lc{lc_i}-num-seeds").use() + "}")            
+            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
+                               latex.Macro(f"test-results-all-lc{lc_i}-num-exps").use() + "}")
+            
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-all-model0-lc{lc_i}-num-fail").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-all-model0-lc{lc_i}-num-failrate").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-all-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+            
+            for m_i in range(1,len(model_names)):
+                if m_i==1:
+                    m_name = 'RoBERTa'
+                else:
+                    m_name = 'dstBERT'
+                # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-failrate").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             # end for
             output_file.append(r"\hline")
         # end for

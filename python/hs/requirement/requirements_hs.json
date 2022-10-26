@@ -1,0 +1,673 @@
+[
+    {
+        "capability": "Derogation",
+        "description": "Derogation",
+        "search": [
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "i <hate_syn> <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I cannot <stand_syn> <hatecheck_ph>"
+                    ]
+                },
+                "Label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I <despise_syn> <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I <loathe_syn> <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I <abhor_syn> <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "Disgusted by all the <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I have so much <disdain_syn> for <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "so <sick_syn> of being around <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I feel nothing but <contempt_syn> for <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> <disgust_syn> me"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> are the worst"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> <make_syn> me <sick_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "there is nothing worse than <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> who think they are my equal fill me with so much rage"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "all the other <hatecheck_ph> in this country make me boil with anger"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "The <utter_syn> <scorn_syn> I feel for <hatecheck_ph> is hard to to put into words"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> <repulsive_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hurtlex_pos:n> cannot stop themselves from being <revolting_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> <repugnant_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> with any power are a threat to civilisation"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> is a danger to our country"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "It is in <hatecheck_ph> 's nature to be uncivilised"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "can be <hurtlex_pos:a>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "No one else is as <hurtlex_pos:a> as"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "Typical of a <hatecheck_ph> to be that <hurtlex_pos:a>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> without a doubt <hurtlex_pos:a> people on this planet"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "It is always the <hatecheck_ph> that is the <hurtlex_pos:a> one"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "really <isare> <hurtlex_pos:a>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> <scum_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> <worthless_syn> <dirt_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> <filth_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> refuse"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> <garbage_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> lesser beings"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> no better than <hurtlex_pos:n&cat:an_or>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "your <hatecheck_ph> lives are <worthless_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "your <hatecheck_ph> lives are absolutely nothing"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "that is fitting for <hatecheck_ph> <vermin_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> a waste space"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> a <virus_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> <cancer_syn>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> a plague to society"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<isare> subhuman creatures"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "swarms of <hatecheck_ph> <infest_syn> our government"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> belong in a zoo"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> who are sick should be taken to a vet, not a doctor"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "My dog is smarter than any <hatecheck_ph> could ever be"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "That monkey is more intelligent than all of you <hatecheck_ph> combined"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> should be dumped in a landfill"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I would never eat food that has been touched by a <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I care more about the dirt under my shoe than about <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "The life of any insect is more valuable than that of a <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "We should test new drugs on <hatecheck_ph> before testing them on animals"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I don't see any difference between a dead rat and a dead <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "It baffles me why people care even the slightest about the lives of <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "The life of any insect is more valuable than that of a <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> should all be locked up in cages"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "Putting a <hatecheck_ph> in charge is the biggest mistake anyone can make"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "Allowing any more <hatecheck_ph> into government will ruin our country"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "Never trust a single word said by a <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I would rather die than date a <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "I'd rather have cancer than be anywhere near a <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "Never trust a single word said by a <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "If I woke up as a <hatecheck_ph> , I would kill myself"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "There is nothing in the world I like less than a <hatecheck_ph>"
+                    ]
+                },
+                "label": "toxic"
+            },
+            {
+                "length": null,
+                "include": {
+                    "POS": null,
+                    "word": [
+                        "<hatecheck_ph> have no place in a civilised country like this"
+                    ]
+                },
+                "label": "toxic"
+            }
+        ],
+        "expansion": [
+            "neutral"
+        ],
+        "transform": null,
+        "transform_req": null
+    }
+]
