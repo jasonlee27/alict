@@ -14,7 +14,7 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
-                        'requirement', 'template', 'testsuite', 'testmodel', 'analyze'
+                        'requirement', 'template', 'testsuite', 'testmodel', 'analyze', 'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='hs',
                     choices=['hs'],
@@ -34,6 +34,10 @@ parser.add_argument('--model_name', type=str, default=None,
                     help='name of model to be evaluated or retrained')
 parser.add_argument('--test_baseline', action='store_true',
                     help='test models on running baseline (hatecheck) test cases')
+
+# arguments for tables and plots
+parser.add_argument('--which', type=str, default=None, nargs='+',
+                    help='tables/plots that you are interested in making')
 
 args = parser.parse_args()
 rand_seed_num = Macros.RAND_SEED[args.num_trials]
@@ -170,6 +174,22 @@ def run_analyze():
     # end if
     return
 
+# ==========
+# Tables & Plots
+
+def run_make_tables():
+    from .paper.Tables import Tables
+    options = {
+        'which': args.which,
+        'task': args.nlp_task,
+        'search_dataset_name': args.search_dataset,
+        'selection_method': args.syntax_selection,
+        'num_seeds': args.num_seeds,
+        'num_trials': args.num_trials,
+    }
+    Tables.make_tables(**options)
+    return
+
 
 func_map = {
     "hs": {
@@ -177,7 +197,8 @@ func_map = {
         'template': run_templates,
         'testsuite': run_testsuites,
         'testmodel': run_testmodel,
-        'analyze': run_analyze
+        'analyze': run_analyze,
+        'tables': run_make_tables
     }
 }
 

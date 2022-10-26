@@ -97,12 +97,11 @@ class Tables:
 
         output_file = latex.File(tables_dir / f"test-results-{task}-all-numbers.tex")
         
-        lcs = Utils.read_txt(req_file)
         lc_ids = dict()
-        for l_i, l in enumerate(lcs):
-            desc = l.split('::')[0].strip()
+        for l_i, l in enumerate(Macros.OUR_LC_LIST):
+            desc = l.split('::')[1].strip()
             lc_ids[desc.lower()] = (desc,l_i)
-            desc = cls.replace_latex_symbol(desc)
+            # desc = cls.replace_latex_symbol(desc)
             lc_descs[l_i] = desc
         # end for
 
@@ -175,35 +174,16 @@ class Tables:
                     output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-seeds",
                                                          num_seeds_tot[m_name][lc_i][0]))
 
-                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-avg",
-                                                         Utils.avg(num_exps_tot[m_name][lc_i], decimal=2)))
-                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-med",
-                                                         Utils.median(num_exps_tot[m_name][lc_i], decimal=2)))
-                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps-std",
-                                                         str(float(Utils.stdev(num_exps_tot[m_name][lc_i], decimal=2))/2)))
+                    output_file.append_macro(latex.Macro(f"test-results-lc{lc_i}-num-exps",
+                                                         num_exps_tot[m_name][lc_i][0]))
                 # end if
 
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-fail-avg",
-                                                     Utils.avg(num_all_fail[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-fail-med",
-                                                     Utils.median(num_all_fail[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-fail-std",
-                                                     str(float(Utils.stdev(num_all_fail[m_name][lc_i], decimal=2))/2)))
-
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-failrate-avg",
-                                                     Utils.avg(num_all_fail_rate[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-failrate-med",
-                                                     Utils.median(num_all_fail_rate[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-failrate-std",
-                                                     str(float(Utils.stdev(num_all_fail_rate[m_name][lc_i], decimal=2))/2)))
-
-                
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-avg",
-                                                     Utils.avg(num_pass2fail[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-med",
-                                                     Utils.median(num_pass2fail[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-std",
-                                                     str(float(Utils.stdev(num_pass2fail[m_name][lc_i], decimal=2))/2)))
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-fail",
+                                                     num_all_fail[m_name][lc_i]))
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-failrate",
+                                                     num_all_fail_rate[m_name][lc_i]))
+                output_file.append_macro(latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail",
+                                                     num_pass2fail[m_name][lc_i]))
             # end for
         # end_for
         output_file.save()
@@ -258,20 +238,21 @@ class Tables:
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
                                latex.Macro(f"test-results-lc{lc_i}-num-seeds").use() + "}")            
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
-                               latex.Macro(f"test-results-lc{lc_i}-num-exps-med").use() + "}")
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-all-fail-med").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-all-failrate-med").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail-med").use() + r"\\")
+                               latex.Macro(f"test-results-lc{lc_i}-num-exps").use() + "}")
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-all-fail").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-all-failrate").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             
             for m_i in range(1,len(model_names)):
                 if m_i==1:
-                    m_name = 'RoBERTa'
+                    m_name = 'da-ELECTRA'
                 else:
-                    m_name = 'dstBERT'
+                    m_name = 'da-BERT'
+                # end if
                 # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-fail-med").use())
-                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-failrate-med").use())
-                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail-med").use() + r"\\")
+                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-fail").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-all-failrate").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             # end for
             output_file.append(r"\hline")
         # end for
@@ -280,7 +261,7 @@ class Tables:
         output_file.append(r"\end{tabular}}")
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
-        output_file.append(r"\vspace{\TestResultsTableVSpace}")
+        output_file.append(r"\vspace{\TestResultsHsTableVSpace}")
         output_file.append(r"\end{table*}")
         output_file.save()
         return
@@ -310,12 +291,10 @@ class Tables:
 
         output_file = latex.File(tables_dir / f"test-results-bl-{task}-all-numbers.tex")
         
-        lcs = Utils.read_txt(req_file)
         lc_ids = dict()
-        for l_i, l in enumerate(lcs):
-            desc = l.split('::')[0].strip()
+        for l_i, l in enumerate(Macros.OUR_LC_LIST):
+            desc = l.strip()
             lc_ids[desc.lower()] = (desc,l_i)
-            desc = cls.replace_latex_symbol(desc)
             lc_descs[l_i] = desc
         # end for
 
@@ -330,14 +309,8 @@ class Tables:
         for m_i, model_name in enumerate(result.keys()):
             if f"model{m_i}" not in num_seeds_tot.keys():
                 num_seeds_tot[f"model{m_i}"] = dict()
-                num_exps_tot[f"model{m_i}"] = dict()
                 num_seed_fail[f"model{m_i}"] = dict()
-                num_exp_fail[f"model{m_i}"] = dict()
-                num_all_fail[f"model{m_i}"] = dict()
                 num_seed_fail_rate[f"model{m_i}"] = dict()
-                num_exp_fail_rate[f"model{m_i}"] = dict()
-                num_all_fail_rate[f"model{m_i}"] = dict()
-                num_pass2fail[f"model{m_i}"] = dict()
             # end if
                 
             # model_name = model_name.replace('/', '-')
@@ -346,28 +319,15 @@ class Tables:
             temp_num_pass2fail = 0
             for res_i, res in enumerate(result[model_name]):
                 desc, _res_lc_i = lc_ids[res['req'].lower()]
+                desc = desc.split('::')[1]
                 if _res_lc_i not in num_seeds_tot[f"model{m_i}"].keys():
                     num_seeds_tot[f"model{m_i}"][_res_lc_i] = list()
-                    num_exps_tot[f"model{m_i}"][_res_lc_i] = list()
                     num_seed_fail[f"model{m_i}"][_res_lc_i] = list()
-                    num_exp_fail[f"model{m_i}"][_res_lc_i] = list()
-                    num_all_fail[f"model{m_i}"][_res_lc_i] = list()
                     num_seed_fail_rate[f"model{m_i}"][_res_lc_i] = list()
-                    num_exp_fail_rate[f"model{m_i}"][_res_lc_i] = list()
-                    num_all_fail_rate[f"model{m_i}"][_res_lc_i] = list()
-                    num_pass2fail[f"model{m_i}"][_res_lc_i] = list()
                 # end if
-                num_seeds_tot[f"model{m_i}"][_res_lc_i].append(res['num_seeds'])
-                num_exps_tot[f"model{m_i}"][_res_lc_i].append(res['num_exps'] if res['is_exps_exist'] else 0)
-                num_seed_fail[f"model{m_i}"][_res_lc_i].append(res['num_seed_fail'])
-                num_exp_fail[f"model{m_i}"][_res_lc_i].append(res['num_exp_fail'] if res['is_exps_exist'] else 0.)
-                
-                num_all_fail[f"model{m_i}"][_res_lc_i].append(res['num_seed_fail']+res['num_exp_fail'] if res['is_exps_exist'] else res['num_seed_fail'])
-                
-                num_seed_fail_rate[f"model{m_i}"][_res_lc_i].append(res['num_seed_fail']*100./res['num_seeds'])
-                num_exp_fail_rate[f"model{m_i}"][_res_lc_i].append(res['num_exp_fail']*100./res['num_exps'] if res['is_exps_exist'] else 0.)
-                num_all_fail_rate[f"model{m_i}"][_res_lc_i].append((res['num_seed_fail']+res['num_exp_fail'])*100./(res['num_seeds']+res['num_exps']) if res['is_exps_exist'] else res['num_seed_fail']*100./res['num_seeds'])
-                num_pass2fail[f"model{m_i}"][_res_lc_i].append(res['num_pass2fail'] if res['is_exps_exist'] else 0.)
+                num_seeds_tot[f"model{m_i}"][_res_lc_i].append(res['num_tcs'])
+                num_seed_fail[f"model{m_i}"][_res_lc_i].append(res['num_tc_fail'])
+                num_seed_fail_rate[f"model{m_i}"][_res_lc_i].append(res['num_tc_fail']*100./res['num_tcs'])
             # end for
         # end for
 
@@ -385,38 +345,13 @@ class Tables:
             for lc_i in num_seeds_tot[m_name].keys():
                 if m_i==0:
                     output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}", lc_descs[lc_i]))
-                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-seeds",
+                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-tcs",
                                                          num_seeds_tot[m_name][lc_i][0]))
-
-                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-exps-avg",
-                                                         Utils.avg(num_exps_tot[m_name][lc_i], decimal=2)))
-                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-exps-med",
-                                                         Utils.median(num_exps_tot[m_name][lc_i], decimal=2)))
-                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-exps-std",
-                                                         str(float(Utils.stdev(num_exps_tot[m_name][lc_i], decimal=2))/2)))
                 # end if
-
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-all-fail-avg",
-                                                     Utils.avg(num_all_fail[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-all-fail-med",
-                                                     Utils.median(num_all_fail[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-all-fail-std",
-                                                     str(float(Utils.stdev(num_all_fail[m_name][lc_i], decimal=2))/2)))
-
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-all-failrate-avg",
-                                                     Utils.avg(num_all_fail_rate[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-all-failrate-med",
-                                                     Utils.median(num_all_fail_rate[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-all-failrate-std",
-                                                     str(float(Utils.stdev(num_all_fail_rate[m_name][lc_i], decimal=2))/2)))
-
-                
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-pass-to-fail-avg",
-                                                     Utils.avg(num_pass2fail[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-pass-to-fail-med",
-                                                     Utils.median(num_pass2fail[m_name][lc_i], decimal=2)))
-                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-pass-to-fail-std",
-                                                     str(float(Utils.stdev(num_pass2fail[m_name][lc_i], decimal=2))/2)))
+                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail",
+                                                     num_seed_fail[m_name][lc_i]))
+                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-failrate",
+                                                     num_seed_fail_rate[m_name][lc_i]))
             # end for
         # end_for
         output_file.save()
@@ -464,27 +399,19 @@ class Tables:
             # end if
             output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8cm}{" + \
                                lc_prefix_str + latex.Macro(f"test-results-bl-lc{lc_i}").use() + "}}")
-            # output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{" + \
-            #                    latex.Macro(f"test-results-bl-lc{lc_i}-num-sents").use() + "}")
-            # output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
-
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
-                               latex.Macro(f"test-results-bl-lc{lc_i}-num-seeds").use() + "}")            
-            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
-                               latex.Macro(f"test-results-bl-lc{lc_i}-num-exps-med").use() + "}")
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-all-fail-med").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-all-failrate-med").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-pass-to-fail-med").use() + r"\\")
+                               latex.Macro(f"test-results-bl-lc{lc_i}-num-tcs").use() + "}")
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-failrate").use())
             
             for m_i in range(1,len(model_names)):
                 if m_i==1:
-                    m_name = 'RoBERTa'
+                    m_name = 'da-ELECTRA'
                 else:
-                    m_name = 'dstBERT'
-                # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-all-fail-med").use())
-                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-all-failrate-med").use())
-                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-pass-to-fail-med").use() + r"\\")
+                    m_name = 'da-BERT'
+                # end if
+                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-failrate").use())
             # end for
             output_file.append(r"\hline")
         # end for
@@ -493,7 +420,7 @@ class Tables:
         output_file.append(r"\end{tabular}}")
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
-        output_file.append(r"\vspace{\TestResultsTableVSpace}")
+        output_file.append(r"\vspace{\TestResultsHsBlTableVSpace}")
         output_file.append(r"\end{table*}")
         output_file.save()
         return

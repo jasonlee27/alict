@@ -180,17 +180,24 @@ class Utils:
             copy.deepcopy(d)
             for d in data_list
         ]
-    
+  
     @classmethod
-    def avg(cls, nums: list):
-        return "{:.3f}".format(sum(nums) / len(nums))
+    def avg(cls, nums: list, decimal=3):
+        return str(round(sum(nums) / len(nums), decimal))
 
     @classmethod
-    def median(cls, nums: list):
-        return "{:.3f}".format(statistics.median(nums))
+    def median(cls, nums: list, decimal=3):
+        return str(round(statistics.median(nums), decimal))
 
     @classmethod
-    def stdev(cls, nums: list):
-        return "{:.3f}".format(statistics.stdev(nums))
+    def stdev(cls, nums: list, decimal=3):
+        return str(round(statistics.stdev(nums), decimal))
 
-    
+    @classmethod
+    def lod_to_dol(cls, list_of_dict: List[dict]) -> Dict[Any, List]:
+        """
+        Converts a list of dict to a dict of list.
+        """
+        keys = set.union(*[set(d.keys()) for d in list_of_dict])
+        return {k: [d.get(k) for d in list_of_dict] for k in keys}
+
