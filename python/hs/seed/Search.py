@@ -577,9 +577,9 @@ class Hatecheck:
             test = MFT(**t)
             func_cat, _func_desc, func_label = func_desc.split('::')
             suite.add(test,
-                      name=_func_desc,
+                      name=f"{func_cat}::{_func_desc}",
                       capability=func_cat,
-                      description=f"{_func_desc}::{func_label}")
+                      description=f"{func_desc}")
         # end for
         res_dir = Macros.hatecheck_testsuite_file.parent
         res_dir.mkdir(parents=True, exist_ok=True)

@@ -36,13 +36,11 @@ class Result:
             p = re.compile(pattern, re.DOTALL)
             req_search = p.search(m)
             lc = req_search.group(1).splitlines()[-1]
-            if lc in Macros.OUR_LC_LIST:
-                model_results.append({
-                    'lc': lc,
-                    'pass': cls.get_pass_sents_from_model_string(m),
-                    'fail': cls.get_fail_sents_from_model_string(m)
-                })
-            # end if
+            model_results.append({
+                'lc': lc,
+                'pass': cls.get_pass_sents_from_model_string(m),
+                'fail': cls.get_fail_sents_from_model_string(m)
+            })
         # end for
         return model_results
 
