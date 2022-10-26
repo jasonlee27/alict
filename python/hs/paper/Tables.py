@@ -176,15 +176,15 @@ class Tables:
                 # end if
 
                 output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-fail",
-                                                     num_all_fail[m_name][lc_i][0]))
+                                                     cls.FMT_INT.format(num_all_fail[m_name][lc_i][0])))
                 output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-seed-failrate",
-                                                     num_seed_fail_rate[m_name][lc_i][0]))
+                                                     cls.FMT_FLOAT.format(num_seed_fail_rate[m_name][lc_i][0])))
                 output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-exp-failrate",
-                                                     num_exp_fail_rate[m_name][lc_i][0]))
+                                                     cls.FMT_FLOAT.format(num_exp_fail_rate[m_name][lc_i][0])))
                 output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-failrate",
-                                                     num_all_fail_rate[m_name][lc_i][0]))
+                                                     cls.FMT_FLOAT.format(num_all_fail_rate[m_name][lc_i][0])))
                 output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-pass-to-fail",
-                                                     num_pass2fail[m_name][lc_i][0]))
+                                                     cls.FMT_INT.format(num_pass2fail[m_name][lc_i][0])))
             # end for
         # end_for
         output_file.save()
@@ -345,12 +345,12 @@ class Tables:
                 if m_i==0:
                     output_file.append_macro(latex.Macro(f"test-results-hs-bl-lc{lc_i}", lc_descs[lc_i]))
                     output_file.append_macro(latex.Macro(f"test-results-hs-bl-lc{lc_i}-num-tcs",
-                                                         num_seeds_tot[m_name][lc_i][0]))
+                                                         cls.FMT_INT.format(num_seeds_tot[m_name][lc_i][0])))
                 # end if
                 output_file.append_macro(latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-fail",
-                                                     num_seed_fail[m_name][lc_i][0]))
+                                                     cls.FMT_INT.format(num_seed_fail[m_name][lc_i][0])))
                 output_file.append_macro(latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-failrate",
-                                                     num_seed_fail_rate[m_name][lc_i][0]))
+                                                     cls.FMT_FLOAT.format(num_seed_fail_rate[m_name][lc_i][0])))
             # end for
         # end_for
         output_file.save()
