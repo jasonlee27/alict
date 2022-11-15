@@ -1,0 +1,30 @@
+Thank you for the comments.
+
+__REVIEW_1
+
+>Differences with prior grammar-based work (e.g., MT-NLP, Astraea,
+ Ogma etc)
+
+Our method is a grammar-based behavioral testing method for over
+linguistic capabilities(LCs) while the existing work (Ogma, Astraea and
+MT-NLP) focus on testing fairness and erroneous inputs.  Second, our
+method keeps label consistency while prior work doesn't garauntee the
+label consistency as they only focus on input generation. Third, ours
+generates input with new structure while others relies on the
+original structure and replaces words based on their manually
+generated grammar. Additionally, the existing work randomly selects
+words, but our work selects grammatically and contextually natural
+words suggested from CFG grammar and word suggestion model.
+
+>Introducing the linguistic capability...the loop framework.
+
+Our work uses the same linguistic capabilities introduced in
+CEHCKLIST.
+
+>Effort involved in specifying the rules?
+
+LCs in CHECKLIST are ambiguously described in a sentence. Thus, we
+manually extract elements of interests for each LCs in CHECKLIST. In
+practice, we spent less than 10 min to generate each LC.
+
+__REVIEW_2
