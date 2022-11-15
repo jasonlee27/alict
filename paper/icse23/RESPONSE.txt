@@ -6,11 +6,11 @@ __REVIEW_1
  Ogma etc)
 
 Our method is a grammar-based behavioral testing method for over
-linguistic capabilities(LCs) while the existing work (Ogma, Astraea and
-MT-NLP) focus on testing fairness and erroneous inputs.  Second, our
-method keeps label consistency while prior work doesn't garauntee the
-label consistency as they only focus on input generation. Third, ours
-generates input with new structure while others relies on the
+linguistic capabilities(LCs) while the existing work (Ogma, Astraea
+and MT-NLP) focus on testing fairness and erroneous inputs.  Second,
+our method keeps label consistency while prior work doesn't garauntee
+the label consistency as they only focus on input generation. Third,
+ours generates input with new structure while others relies on the
 original structure and replaces words based on their manually
 generated grammar. Additionally, the existing work randomly selects
 words, but our work selects grammatically and contextually natural
@@ -28,3 +28,11 @@ manually extract elements of interests for each LCs in CHECKLIST. In
 practice, we spent less than 10 min to generate each LC.
 
 __REVIEW_2
+
+>clear motivation of using linguistic capabilities.
+
+>Generalizability of the proposed method seems limited.
+
+>Comparison of S^2LCT with NLP adversarial machine learning.
+
+>No discussion or results about repair strategy.
