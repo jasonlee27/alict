@@ -18,8 +18,7 @@ words suggested from CFG grammar and word suggestion model.
 
 >Introducing the linguistic capability...the loop framework.
 
-Our work uses the same linguistic capabilities introduced in
-CEHCKLIST.
+Our work uses the same LCs provided in CEHCKLIST.
 
 >Effort involved in specifying the rules?
 
@@ -29,10 +28,26 @@ practice, we spent less than 10 min to generate each LC.
 
 __REVIEW_2
 
->clear motivation of using linguistic capabilities.
+>Do not see a clear motivation of using linguistic capabilities.
+
+Our work uses the same LCs provided in CEHCKLIST. They describes
+specific metamorphic relations between linguistic patten in input and
+output. It enables behavior testing and finding erroneous patterns of
+models.
 
 >Generalizability of the proposed method seems limited.
 
+
 >Comparison of S^2LCT with NLP adversarial machine learning.
 
+S^2LCT evaluate model behavior under task-relevant LCs. It generates
+test cases suitable to evalaute model given LC rather error-causing
+test cases.
+
 >No discussion or results about repair strategy.
+
+Section VI
+
+__REVIEW_3
+
+
