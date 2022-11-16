@@ -6,49 +6,66 @@ __REVIEW_1
  Ogma etc)
 
 Our method is a grammar-based behavioral testing method for over
-linguistic capabilities(LCs) while the existing work (Ogma, Astraea
-and MT-NLP) focus on testing fairness and erroneous inputs.  Second,
-our method keeps label consistency while prior work doesn't garauntee
-the label consistency as they only focus on input generation. Third,
-ours generates input with new structure while others relies on the
-original structure and replaces words based on their manually
-generated grammar. Additionally, the existing work randomly selects
-words, but our work selects grammatically and contextually natural
-words suggested from CFG grammar and word suggestion model.
+linguistic capabilities(LCs). On the other hand, to best of my
+knowledge, the existing work (e.g. Ogma, Astraea and MT-NLP) focus on
+testing fairness or generating adversarial inputs.  Second, our method
+secure label consistency by only allowing neutral words from the set
+of contextually suggested words while prior work does not garauntee
+the label consistency as they only focus on input generation. For
+example, Ogma and Astraea replace a word with a different word that
+has same part-of-speech. the method is limited to secure the semantic
+of input sentence, and it does not gaurantee same label as a
+result. Third, ours generates new test cases with a variety of new
+input structures while others rely on the original structure, new
+input sentences are limited to the original structure based on their
+manually generated grammar. Additionally, our work selects
+grammatically and contextually natural words suggested from CFG
+grammar and word suggestion model. In contrast, the existing work
+randomly selects words.
+
+>How much effort involved in specifying the rules?
+
+LCs in CHECKLIST are described in a sentence, thus it is not clear to
+specify linguistic characteristics of interest and how the input and
+output should be formed because of semantic and structure diversity in
+natural language. Thus, we manually specify rule for seed generation
+for each LCs in CHECKLIST to achieve the semantic and structure
+diversity. In practice, we spent less than 10 min to generate each LC.
 
 >Introducing the linguistic capability...the loop framework.
 
-Our work uses the same LCs provided in CEHCKLIST.
-
->Effort involved in specifying the rules?
-
-LCs in CHECKLIST are ambiguously described in a sentence. Thus, we
-manually extract elements of interests for each LCs in CHECKLIST. In
-practice, we spent less than 10 min to generate each LC.
+Our work uses the same LCs provided in CHECKLIST. The LCs are
+pre-defined manually for each task of interest.
 
 __REVIEW_2
 
 >Do not see a clear motivation of using linguistic capabilities.
 
-Our work uses the same LCs provided in CEHCKLIST. They describes
-specific metamorphic relations between linguistic patten in input and
-output. It enables behavior testing and finding erroneous patterns of
-models.
+Our work uses the same LCs provided in CEHCKLIST. They describe
+specific metamorphic relations between linguistic patten in input
+sentence and its output. Compared to the traditional train-valid-test
+split to test NLP models aggregately, Use of the LCs is able to assess
+NLP models over multiple linguistic characteristics in natural
+language relevant to task. Therefore, it enables model behavior
+testing finding erroneous patterns of models.
+
+>Comparison of S^2LCT with NLP adversarial machine learning [2-5].
+
+Extended from the previous response above, S^2LCT evaluates model
+behavior under task-relevant LCs. S^2LCT generates test cases suitable
+to given LC. Compared with out work, adversarial approaches focus on
+generating error-causing test cases. It is limited to assess NLP
+models over multiple linguistic characteristics.
 
 >Generalizability of the proposed method seems limited.
 
 S^2LCT is also implemented for hate speech detection task.  We will
 add results of the task in our final version [JL] or appendix?.
 
->Comparison of S^2LCT with NLP adversarial machine learning.
-
-S^2LCT evaluate model behavior under task-relevant LCs. It generates
-test cases suitable to evalaute model given LC rather error-causing
-test cases.
-
 >No discussion or results about repair strategy.
 
-Section VI
+In the section VI of our paper, we show the effectiveness of S^2LCT
+for finding root causes of bugs.
 
 __REVIEW_3
 
