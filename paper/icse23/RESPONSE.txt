@@ -78,9 +78,6 @@ See response to REVIEW_2
 [JL] do we add the numbers here or say that we will add that in the
 appendix? or final version?
 
->Production rule coverage.: We
-[JL] Do we answer the question?
-
 >label consistency results for CHECKLIST
 
 [JL] do we add the numbers here or say that we will add that in the appendix?
