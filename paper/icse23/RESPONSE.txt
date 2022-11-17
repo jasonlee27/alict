@@ -91,7 +91,17 @@ I agree that S^2LCT requires manual specification of search rules and
 transformation.
 
 >Fail Rate for CHECKLIST
-# TODO: add numbers here
+
+LC1(Short sentences with neutral adjectives and nouns): BERT:77.51%, RoBERTa:81.06%, DistilBERT:96.79%
+LC2(Short sentences with sentiment-laden adjectives): BERT:0.3%, RoBERTa:1.61%, DistilBERT:1.44%
+LC3(Sentiment change over time, present should prevail): BERT:21%, RoBERTa:10.36% DistilBERT:31.65%
+LC4(Negated negative should be positive or neutral): BERT:11.77%, RoBERTa:3.21%, DistilBERT:10.82%
+LC5(Negated neutral should still be neutral): BERT:97.24%, RoBERTa:92.31%, DistilBERT:98.16%
+LC6(Negation of negative at the end, should be positive or neutral): BERT:88.09%, RoBERTa:20.95%, DistilBERT:100%
+LC7(Negated positive with neutral content in the middle): BERT:86%, RoBERTa:41.6%, DistilBERT:86.5%
+LC8(Author sentiment is more important than of others): BERT:43.87%, RoBERTa:31.57%, DistilBERT:41.45%
+LC9(Parsing sentiment in (question, yes) form): BERT:19.48%, RoBERTa:13.71%, DistilBERT:16.92%
+LC10(Parsing sentiment in (question, no) form): BERT:53.06%, RoBERTa:59.86%, DistilBERT:84.25%
 
 >Label Consistency
 
