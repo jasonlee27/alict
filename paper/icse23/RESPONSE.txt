@@ -22,7 +22,7 @@ uniqueness of the S^2LCT stems from the following properties: First,
 S^2LCT generates new test cases with new and diverse input structures
 given the grammar obtained from commonly used large corpus.  Compared
 with the method, Astraea and Ogma generates input sentences by
-replacing words in an original sentences with other wrods with same
+replacing words in an original sentences with other words with same
 tag of part-of-speech (POS) conforming to the grammar manually
 constructed. In addition, MT-NLP both replaces words and expands input
 structure, but the expansion only relies on a addition of adjective
@@ -52,7 +52,7 @@ models over the multiple LCs. However, it requires manual effort to
 generate relevant test cases, and it results in obtaining limited
 semantic and syntactic attributes. In addition, It requires
 non-trivial manual efforts to define the metamorphic relations between
-inputs and outputs beacuse semantics of nature language can be greatly
+inputs and outputs because semantics of nature language can be greatly
 changed even by a slight perturbation to the sentences. In this work,
 we automates LC-relevant test cases generation using the same LCs
 provided in CEHCKLIST.
@@ -105,7 +105,7 @@ We will also add the results in our final version.
 
 >Label Consistency
 
-During the manual study to measure label consistency, it is observered
+During the manual study to measure label consistency, it is observed
 that the 83% of label consistency of the seed sentences comes from
 inconsistency between label and the raw sentences in the dataset, and
 it results in the 84% of label consistency of expanded
