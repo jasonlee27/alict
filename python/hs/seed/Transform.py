@@ -243,8 +243,8 @@ class TransformOperator:
 
     def perturb_template_f13(self, sents):
         # Pronoun reference::Hate expressed through reference in subsequent sentences
-        nh_sents = [s for s in sents if s['label']==list(Macros.hs_label_map.keys())[0]]
-        hs_sents = [s for s in sents if s['label']==list(Macros.hs_label_map.keys())[1]]
+        nh_sents = [s for s in sents if s[-1]==list(Macros.hs_label_map.keys())[0]]
+        hs_sents = [s for s in sents if s[-1]==list(Macros.hs_label_map.keys())[1]]
         f13_hs1_temp = F13_HS_TEMPLATES['tx-to-tx']
         f13_hs2_temp = F13_HS_TEMPLATES['nt-to-tx']
         f13_nh1_temp = F13_HS_TEMPLATES['tx-to-nt']

@@ -9,7 +9,7 @@ import copy
 import time
 # import random
 import numpy
-import spacy
+# import spacy
 import multiprocessing
 import torch.multiprocessing
 
@@ -21,7 +21,6 @@ from checklist.editor import Editor
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
-
 from ..requirement.Requirements import Requirements
 from ..seed.Search import Search
 from ..synexp.Generator import Generator
@@ -30,23 +29,28 @@ from ..semexp.Suggest import Suggest
 from ..semexp.Synonyms import Synonyms
 
 torch.multiprocessing.set_sharing_strategy('file_system')
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class Template:
 
     NUM_PROCESSES = Macros.num_processes # multiprocessing.cpu_count()
-    
     POS_MAP = {
         "NNP": "NP",
         "NNPS": "NPS",
         "PRP": "PP",
         "PRP$": "PP$"
     }
-    
+
+    # SEARCH_MAP = {
+    #     Macros.sa_task: Search.search_sentiment_analysis
+    #     Macros.mc_task:
+    #     Macros.qqp_task: 
+    # }
     SEARCH_FUNC = {
-        Macros.hs_task: Search.search_hatespeech_per_req
+        Macros.sa_task: Search.search_sentiment_analysis_per_req
     }
-    
+
     @classmethod
     def get_seed_of_interest(cls,
                              cur_req,
@@ -59,19 +63,38 @@ class Template:
         seeds = list()
         if any(template_results) and \
            template_results["requirement"]["description"]==cur_req["description"]:
-            for index, (_id, seed, seed_label) in enumerate(orig_seeds):
+            for index, (_id, seed, seed_label, seed_score) in enumerate(orig_seeds):
                 if seed not in template_results['inputs'].keys():
-                    seeds.append((_id, seed, seed_label))
+                    seeds.append((_id, seed, seed_label, seed_score))
                 # end if
             # end for
         # end if
         return seeds
-    
+
+        # if any(template_results):
+        #     template_results_saved = [
+        #         (r_i, r) for r_i, r in enumerate(template_results)
+        #         if r["requirement"]["description"]==cur_req["description"]
+        #     ]
+        #     if not any(template_results_saved):
+        #         return -1, orig_seeds
+        #     # end if
+        #     req_ind_in_result = template_results_saved[0][0]
+        #     seeds = list()
+        #     for index, (_id, seed, seed_label, seed_score) in enumerate(orig_seeds):
+        #         if seed not in template_results_saved[0][1]['inputs'].keys():
+        #             seeds.append((_id, seed, seed_label, seed_score))
+        #         # end if
+        #     # end for
+        # # end if
+        # return req_ind_in_result, seeds
+
     @classmethod
     def generate_seed_cfg_parallel(cls,
                                    index,
                                    seed,
                                    seed_label,
+                                   seed_score,
                                    pcfg_ref,
                                    logger):
         st_2 = time.time()
@@ -83,6 +106,7 @@ class Template:
             'seed': seed,
             'cfg_seed': generator.expander.cfg_seed,
             'label': seed_label,
+            'label_score': seed_score,
             'masked_inputs': list()
         }
         
@@ -106,9 +130,6 @@ class Template:
         st = time.time()
         masked_input_res = dict()
         args = list()
-        num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
-        pool = multiprocessing.Pool(processes=num_pcss)
-
         template_results = {
             'requirement': req,
             'inputs': dict()
@@ -116,20 +137,28 @@ class Template:
         if os.path.exists(cfg_res_file):
             template_results = Utils.read_json(cfg_res_file)
         # end if
-
-        for index, (_id, seed, seed_label) in enumerate(seeds):
-            args.append((index, seed, seed_label, pcfg_ref, logger))
+        
+        for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
+            args.append((index, seed, seed_label, seed_score, pcfg_ref, logger))
         # end for
-
         if any(args):
+            num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
+            pool = multiprocessing.Pool(processes=num_pcss)
             results = pool.starmap_async(cls.generate_seed_cfg_parallel,
                                          args,
                                          chunksize=len(args)//num_pcss).get()
             for r in results:
+                # masked_input_res[r['seed']] = {
+                #     'cfg_seed': r['cfg_seed'],
+                #     'label': r['label'],
+                #     'label_score': r['label_score'],
+                #     'masked_inputs': r['masked_inputs']
+                # }
                 template_results['inputs'][r['seed']] = {
                     'cfg_seed': r['cfg_seed'],
                     'exp_inputs': list(),
                     'label': r['label'],
+                    'label_score': r['label_score']
                 }
                 if any(r['masked_inputs']):
                     template_results['inputs'][r['seed']]['masked_inputs'] = r['masked_inputs']
@@ -137,16 +166,17 @@ class Template:
             # end for
             pool.close()
             pool.join()
-            
+
             # write batch results into result file
             Utils.write_json(template_results, cfg_res_file, pretty_format=True)
         # end if
-
+        
         ft = time.time()
         if logger is not None:
             logger.print(f"\tTemplate.generate_masked_inputs::{round(ft-st,3)}sec")
         # end if
-        return masked_input_res
+        # return masked_input_res
+        return
 
     @classmethod
     def get_word_suggestions(cls,
@@ -163,6 +193,7 @@ class Template:
         no_mask_key = '<no_mask>'
         for index, seed in enumerate(template_results['inputs'].keys()):
             seed_label = template_results['inputs'][seed]['label']
+            label_score = template_results['inputs'][seed]['label_score']
             cfg_seed = template_results['inputs'][seed]['cfg_seed']
             if 'masked_inputs' in template_results['inputs'][seed].keys():
                 if not any(template_results['inputs'][seed]['masked_inputs']):
@@ -175,6 +206,7 @@ class Template:
                     masked_sent_obj = (
                         seed,
                         seed_label,
+                        label_score,
                         cfg_seed,
                         None,
                         None,
@@ -197,6 +229,7 @@ class Template:
                         masked_sent_obj = (
                             seed,
                             seed_label,
+                            label_score,
                             cfg_seed,
                             cfg_from,
                             cfg_to,
@@ -234,6 +267,7 @@ class Template:
                             seed_id,
                             seed,
                             seed_label,
+                            seed_score,
                             pcfg_ref,
                             selection_method,
                             logger):
@@ -262,19 +296,20 @@ class Template:
             'cfg_seed': generator.expander.cfg_seed,
             'exp_inputs': new_input_results,
             'label': seed_label,
+            'label_score': seed_score
         }
         ft = time.time()
-        logger.print(f"\tREQUIREMENT::{cksum_val}::SELECTED_SEED_{index}::{seed_id}, {seed}, {seed_label}::{num_syntax_exps} syntax expansions::{num_words_orig_suggest} words suggestions::{len(new_input_results)} expansions generated::{round(ft-st,2)}sec::pid{os.getpid()}")
+        logger.print(f"\tREQUIREMENT::{cksum_val}::SELECTED_SEED_{index}::{seed_id}, {seed}, {seed_label}, {seed_score}::{num_syntax_exps} syntax expansions::{num_words_orig_suggest} words suggestions::{len(new_input_results)} expansions generated::{round(ft-st,2)}sec::pid{os.getpid()}")
         return {
             'seed': seed,
             'cfg_seed': generator.expander.cfg_seed,
             'exp_inputs': new_input_results,
             'label': seed_label,
+            'label_score': seed_score
         }
     
     @classmethod
     def generate_inputs(cls,
-                        nlp,
                         task,
                         req,
                         pcfg_ref,
@@ -286,15 +321,11 @@ class Template:
                         logger=None):
         st = time.time()
         # generate seeds
-        
-        selected = cls.SEARCH_FUNC[task](req, dataset, nlp)
+        selected = cls.SEARCH_FUNC[task](req, dataset)
         cksum_val = Utils.get_cksum(selected['requirement']['description'])
         cfg_res_file = res_dir / f"cfg_expanded_inputs_{cksum_val}.json"
         seeds = selected['selected_inputs'][:num_seeds] if num_seeds>0 else selected['selected_inputs']
         seeds = cls.get_seed_of_interest(req, cfg_res_file, seeds)
-        # if len(seeds)>10:
-        #     seeds = seeds[:5]
-        # # end if
         num_selected_inputs = len(selected['selected_inputs'])
         print_str = f">>>>> REQUIREMENT::{cksum_val}::"+selected['requirement']['description']
         if logger is not None:
@@ -314,13 +345,12 @@ class Template:
                                    logger=logger)
 
         # get the suggested words for the masked inputs using bert:
-        num_target=Macros.num_suggestions_on_exp_grammer_elem
+        num_target = Macros.num_suggestions_on_exp_grammer_elem
         masked_inputs_w_word_sug = cls.get_word_suggestions(cfg_res_file,
                                                             num_target=num_target,
                                                             selection_method=selection_method,
                                                             gpu_ids=gpu_ids,
                                                             logger=logger)
-        
         # validate word suggestion
         Suggest.eval_word_suggestions_over_seeds(masked_inputs_w_word_sug,
                                                  req,
@@ -329,7 +359,27 @@ class Template:
                                                  selection_method=selection_method,
                                                  logger=logger)
 
-        # template_results = Utils.read_json(cfg_res_file)
+        # template_results = Utils.read_json(cfg_res_file)            
+        # if not os.path.exists(str(cfg_res_file)):
+        #     template_results = {
+        #         'requirement': req,
+        #         'inputs': dict()
+        #     }
+        # else:
+        #     template_results = Utils.read_json(cfg_res_file)
+        # # end if
+        
+        # for seed in exp_results.keys():
+        #     template_results['inputs'][seed] = {
+        #         'cfg_seed': exp_results[seed]['cfg_seed'],
+        #         'exp_inputs': exp_results[seed]['exp_inputs'],
+        #         'label': exp_results[seed]['label'],
+        #         'label_score': exp_results[seed]['label_score']
+        #     }
+        # # end for
+        
+        # # write batch results into result file
+        # Utils.write_json(template_results, cfg_res_file, pretty_format=True)
         ft = time.time()
         logger.print(f"<<<<< REQUIREMENT::{cksum_val}::"+selected["requirement"]["description"]+f"{round(ft-st,2)}sec")
         return
@@ -348,14 +398,11 @@ class Template:
         # # end if
         logger.print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(nlp_task)
-        # editor = Editor()
+        # editor = Editor(cuda_device_ind=gpu_ids)
         pcfg_ref = RefPCFG()
-        nlp = spacy.load('en_core_web_md')
-        nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         for r_i, req in enumerate(reqs):
             print(r_i, req, len(reqs))
-            cls.generate_inputs(nlp,
-                                nlp_task,
+            cls.generate_inputs(nlp_task,
                                 req,
                                 pcfg_ref,
                                 dataset_name,
@@ -495,9 +542,9 @@ class Template:
         res_dir.mkdir(parents=True, exist_ok=True)
         logger = Logger(logger_file=log_file,
                         logger_name='template')
-        
-        logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
+
         # Search inputs from searching dataset and expand the inputs using ref_cfg
+        logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # nlp = spacy.load('en_core_web_trf')
         # nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         
@@ -517,7 +564,6 @@ class Template:
         prev_synonyms = dict()
         cksum_map_str = ""
         for t_i, req in enumerate(reqs):
-            # for each testing linguistic capabilities,
             lc_desc = req['description']
             req_cksum = Utils.get_cksum(lc_desc)
             cfg_res_file = res_dir / f"cfg_expanded_inputs_{req_cksum}.json"
@@ -528,7 +574,7 @@ class Template:
             logger.print(print_str)
             seed_inputs, exp_seed_inputs = list(), list()
             seed_templates, exp_templates = list(), list()
-            
+
             for s_i, seed_input in enumerate(inputs.keys()):
                 logger.print(f"\tSEED {s_i}: {seed_input}")
                 
@@ -600,7 +646,3 @@ class Template:
         # end for
         Utils.write_txt(cksum_map_str, res_dir / 'cksum_map.txt')
         return
-
-
-# Write templates
-# Template.get_templates(num_seeds=10)

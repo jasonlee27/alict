@@ -89,6 +89,11 @@ function analyze_eval_models() {
         )
 }
 
+
+
+# ==========
+# Tables & Plots
+
 function make_tables() {
         (cd ${_DIR}
          python -m python.hs.main \
@@ -98,6 +103,9 @@ function make_tables() {
                 --syntax_selection random \
                 --num_seeds -1 \
                 --num_trials 1
+         python -m python.hs.main \
+                --run tables \
+                --which test-results-baseline \
         )
 }
 

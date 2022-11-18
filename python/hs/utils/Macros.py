@@ -10,7 +10,7 @@ class Macros:
     this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__))) # s2lct/python/utils
     root_dir: Path = this_dir.parent.parent.parent # s2lct/
     # storage_dir: Path = Path('/glusterfs/data/jxl115330/s2lct')
-    storage_dir: Path = root_dir # Path('/nas1-nfs1/data/jxl115330/s2lct')
+    storage_dir: Path = Path('/nas1-nfs1/data/jxl115330/s2lct')
     result_dir: Path = storage_dir / '_results' # /glusterfs/data/jxl115330/s2lct/_results
     # result_dir: Path = root_dir / "_results" # s2lct/_results
     

@@ -93,19 +93,21 @@ function analyze_eval_models() {
 # ==========
 # Tables & Plots
 
-def run_make_tables():
-    from .paper.Tables import Tables
-    options = {
-        'which': args.which,
-        'task': args.nlp_task,
-        'search_dataset_name': args.search_dataset,
-        'selection_method': args.syntax_selection,
-        'num_seeds': args.num_seeds,
-        'num_trials': args.num_trials,
-    }
-    Tables.make_tables(**options)
-    return
-    
+function make_tables() {
+        (cd ${_DIR}
+         python -m python.hs.main \
+                --run tables \
+                --which test-results \
+                --search_dataset hatexplain \
+                --syntax_selection random \
+                --num_seeds -1 \
+                --num_trials 1
+         python -m python.hs.main \
+                --run tables \
+                --which test-results-baseline \
+        )
+}
+
 
 # ==========
 # Main
