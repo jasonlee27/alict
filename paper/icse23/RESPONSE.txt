@@ -1,60 +1,118 @@
+uniqueness of the test generation over lc
+difference metamorphic testing than our work
+
+ours: both label-consistency and LC-consistency
+manually discovered label consistency
+
+1. we generate new structure than other work
+
+our work more generally preserves semantic context(capability part)
+and grammatical correctness(syntactical part).
+
+==========
 Thank you for the comments.
 
-__REVIEW_1
+__REVIEW_1&2
 
->Differences with prior grammar-based work (e.g., MT-NLP, Astraea,
- Ogma etc)
+>Uniqueness of S^2LCT over prior work (MT-NLP, Astraea, Ogma and
+ adversarial methods for NLP models)
 
-Our method is a grammar-based behavioral testing method for over
-linguistic capabilities(LCs) while the existing work (Ogma, Astraea
-and MT-NLP) focus on testing fairness and erroneous inputs.  Second,
-our method keeps label consistency while prior work doesn't garauntee
-the label consistency as they only focus on input generation. Third,
-ours generates input with new structure while others relies on the
-original structure and replaces words based on their manually
-generated grammar. Additionally, the existing work randomly selects
-words, but our work selects grammatically and contextually natural
-words suggested from CFG grammar and word suggestion model.
+S^2LCT is based on a grammar based test case generation method. The
+uniqueness of the S^2LCT stems from the following properties: First,
+S^2LCT generates new test cases with new and diverse input structures
+given the grammar obtained from commonly used large corpus.  Compared
+with the method, Astraea and Ogma generates input sentences by
+replacing words in an original sentences with other wrods with same
+tag of part-of-speech (POS) conforming to the grammar manually
+constructed. In addition, MT-NLP both replaces words and expands input
+structure, but the expansion only relies on a addition of adjective
+word before noun. In our paper, the structural diversity is shown by
+production rule coverage. Second, S^2LCT addresses consistency of
+label and linguistic capability (LC). The Ogma does not aim to
+preserve the semantic similarity, and it causes label inconsistency in
+input generation. In addition, Astraea and MT-NLP manually preserves
+label consistency by only relying on limited grammar attributes
+(e.g. replacement of noun words). Compared with it, S^2LCT preserves
+label and LC consistency by analyzing syntactic and semantic
+appropriateness of expanded words in the input sentence. Besides,
+S^2LCT generates test cases suitable to the LC and assess how the
+model behaves on a specific linguistic characteristics in input
+sentences. This method is different from the adversarial methods in a
+sense that the adversarial approaches rely on generating error-causing
+test cases, and they are limited to assess NLP models on multiple
+linguistic characteristics.
 
->Introducing the linguistic capability...the loop framework.
+>Motivation of using linguistic capabilities
 
-Our work uses the same LCs provided in CEHCKLIST.
+Traditional train-valid-test split tests NLP models aggregately and
+the test set reveals biases and fail to comprehensive testing the
+models. Therefore, prior work (e.g. CHECKLIST) introduced multiple
+task relevant LCs and relevant test cases. It enables assess NLP
+models over the multiple LCs. However, it requires manual effort to
+generate relevant test cases, and it results in obtaining limited
+semantic and syntactic attributes. In addition, It requires
+non-trivial manual efforts to define the metamorphic relations between
+inputs and outputs beacuse semantics of nature language can be greatly
+changed even by a slight perturbation to the sentences. In this work,
+we automates LC-relevant test cases generation using the same LCs
+provided in CEHCKLIST.
 
->Effort involved in specifying the rules?
-
-LCs in CHECKLIST are ambiguously described in a sentence. Thus, we
-manually extract elements of interests for each LCs in CHECKLIST. In
-practice, we spent less than 10 min to generate each LC.
-
-__REVIEW_2
-
->Do not see a clear motivation of using linguistic capabilities.
-
-Our work uses the same LCs provided in CEHCKLIST. They describes
-specific metamorphic relations between linguistic patten in input and
-output. It enables behavior testing and finding erroneous patterns of
-models.
-
->Generalizability of the proposed method seems limited.
-
-
->Comparison of S^2LCT with NLP adversarial machine learning.
-
-S^2LCT evaluate model behavior under task-relevant LCs. It generates
-test cases suitable to evalaute model given LC rather error-causing
-test cases.
-
->No discussion or results about repair strategy.
-
-Section VI
-
-__REVIEW_3
+__REVIEW_2&3
 
 >Limited Applicability & Generalizability
 
+S^2LCT is also implemented for hate speech detection task.
+# TODO: add HS results
+We will also add the results of the task in our final version.
+
+__REVIEW_1
+
+>How much effort involved in specifying the rules?
+
+LCs in CHECKLIST are described in a sentence, thus it is not clear to
+specify linguistic characteristics of interest and how the input and
+output should be formed because of semantic and structure diversity in
+natural language. Thus, we manually specify rule for seed generation
+for each LCs in CHECKLIST to achieve the semantic and structure
+diversity. In practice, we spent less than 10 min to generate each LC.
+
+__REVIEW_2
+
+>No discussion or results about repair strategy.
+
+In the section VI of our paper, we show the effectiveness of S^2LCT
+for finding root causes of bugs.
+
+__REVIEW_3
+
+>Significant effort in defining search rules and transformation
+
+I agree that S^2LCT requires manual specification of search rules and
+transformation.
+
 >Fail Rate for CHECKLIST
 
->Production rule coverage.: We
+LC1(Short sentences with neutral adjectives and nouns): BERT:77.51%, RoBERTa:81.06%, DistilBERT:96.79%
+LC2(Short sentences with sentiment-laden adjectives): BERT:0.3%, RoBERTa:1.61%, DistilBERT:1.44%
+LC3(Sentiment change over time, present should prevail): BERT:21%, RoBERTa:10.36% DistilBERT:31.65%
+LC4(Negated negative should be positive or neutral): BERT:11.77%, RoBERTa:3.21%, DistilBERT:10.82%
+LC5(Negated neutral should still be neutral): BERT:97.24%, RoBERTa:92.31%, DistilBERT:98.16%
+LC6(Negation of negative at the end, should be positive or neutral): BERT:88.09%, RoBERTa:20.95%, DistilBERT:100%
+LC7(Negated positive with neutral content in the middle): BERT:86%, RoBERTa:41.6%, DistilBERT:86.5%
+LC8(Author sentiment is more important than of others): BERT:43.87%, RoBERTa:31.57%, DistilBERT:41.45%
+LC9(Parsing sentiment in (question, yes) form): BERT:19.48%, RoBERTa:13.71%, DistilBERT:16.92%
+LC10(Parsing sentiment in (question, no) form): BERT:53.06%, RoBERTa:59.86%, DistilBERT:84.25%
 
->label consistency results for CHECKLIST
+>Label Consistency
 
+During the manual study to measure label consistency, it is observered
+that the 83% of label consistency of the seed sentences comes from
+inconsistency between label and the raw sentences in the dataset, and
+it results in the 84% of label consistency of expanded
+sentences. Accordingly, we also empirically compare seed sentences and
+their expanded sentences from the pass-to-fail cases in the table II
+to check the label consistency of the expanded sentences. From the
+comparison, it is observed that no expanded words change the sentiment
+of the expanded sentences and the expanded words preserves the label
+consistency.
+# TODO: Check the label consistency on the example of pass-to-fail manually.
