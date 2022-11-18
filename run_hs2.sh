@@ -53,69 +53,65 @@ function eval_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
          # evaluating models on  our generated(hatexplain) testcases
-         # CUDA_VISIBLE_DEVICES=1 python -m python.hs.main \
-         #                     --run testmodel \
-         #                     --search_dataset hatexplain \
-         #                     --syntax_selection random \
-         #                     --num_seeds -1 \
-         #                     --num_trials 1
-         # # evaluating models on hatecheck testcases (not expanded) as baseline
-         CUDA_VISIBLE_DEVICES=1 python -m python.hs.main \
+         CUDA_VISIBLE_DEVICES=4 python -m python.hs.main \
                              --run testmodel \
                              --search_dataset hatexplain \
                              --syntax_selection random \
                              --num_seeds -1 \
-                             --num_trials 1 \
-                             --test_baseline
+                             --num_trials 1
+         # evaluating models on hatecheck testcases (not expanded) as baseline
+         # CUDA_VISIBLE_DEVICES=4 python -m python.hs.main \
+         #                     --run testmodel \
+         #                     --search_dataset hatexplain \
+         #                     --syntax_selection random \
+         #                     --num_seeds -1 \
+         #                     --num_trials 1 \
+         #                     --test_baseline
         )
 }
 
 function analyze_eval_models() {
         (cd ${_DIR}
          # evaluate NLP models with hatexplain expanded testsuites
-         # python -m python.hs.main \
-         #        --run analyze \
-         #        --search_dataset hatexplain \
-         #        --syntax_selection random \
-         #        --num_seeds -1 \
-         #        --num_trials 1
          python -m python.hs.main \
                 --run analyze \
                 --search_dataset hatexplain \
                 --syntax_selection random \
                 --num_seeds -1 \
-                --num_trials 1 \
-                --test_baseline
+                --num_trials 1
+         # python -m python.hs.main \
+         #        --run analyze \
+         #        --search_dataset hatexplain \
+         #        --syntax_selection random \
+         #        --num_seeds -1 \
+         #        --num_trials 1 \
+         #        --test_baseline
         )
 }
 
+function make_tables() {
+        (cd ${_DIR}
+         python -m python.hs.main \
+                --run tables \
+                --which test-results \
+                --search_dataset hatexplain \
+                --syntax_selection random \
+                --num_seeds -1 \
+                --num_trials 1
+        )
+}
 
-# ==========
-# Tables & Plots
-
-def run_make_tables():
-    from .paper.Tables import Tables
-    options = {
-        'which': args.which,
-        'task': args.nlp_task,
-        'search_dataset_name': args.search_dataset,
-        'selection_method': args.syntax_selection,
-        'num_seeds': args.num_seeds,
-        'num_trials': args.num_trials,
-    }
-    Tables.make_tables(**options)
-    return
-    
 
 # ==========
 # Main
 
 function main() {
         # gen_requirements # to generate test_type_hs.json and requirement_hs.json
-        gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
+        # gen_templates # to generate templates_sa/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa/templates_exp_{cksum}.json and cfg_expanded_inputs_sa.json
         # gen_testsuite
         # eval_models
         # analyze_eval_models
+        make_tables
 }
 
 # Please make sure you actiavte nlptest conda environment
