@@ -1,4 +1,5 @@
 NAME := main
+SUP := sup
 TEXS := $(wildcard *.tex)
 TABLES := $(wildcard tables/*.tex)
 FIGS := $(wildcard figs/*.tex) $(wildcard code/*)
@@ -9,6 +10,8 @@ LATEX = pdflatex
 BIBTEX = bibtex
 
 all: ${NAME}.pdf
+
+sup: ${SUP}.pdf
 
 ${NAME}.pdf: ${TEXS} ${TABLES} ${BIBS} ${FIGS} ${PLOTS} bib.bib
 	-rm -f ${NAME}.aux
@@ -21,6 +24,21 @@ ${NAME}.pdf: ${TEXS} ${TABLES} ${BIBS} ${FIGS} ${PLOTS} bib.bib
 # vvvvvv For `latex` ONLY. Comment out for `pdflatex`
 #	@dvips -j0 -t letter -o $(NAME).ps $(NAME).dvi
 #	@ps2pdf -dPDFSETTINGS=/prepress $(NAME).ps $(NAME).pdf
+# ^^^^^^^^^^^^^^^^^^^^^^^^
+	@echo '******** Did you spell-check the paper? ********'
+
+
+${SUP}.pdf: ${TEXS} ${TABLES} ${BIBS} ${FIGS} ${PLOTS} bib.bib
+	-rm -f ${SUP}.aux
+	-rm -f ${SUP}.bbl
+	-$(LATEX) $(SUP)
+	-$(BIBTEX) $(SUP)
+	-$(LATEX) $(SUP)
+	-$(LATEX) $(SUP)
+	@echo '****************************************************************'
+# vvvvvv For `latex` ONLY. Comment out for `pdflatex`
+#	@dvips -j0 -t letter -o $(SUP).ps $(SUP).dvi
+#	@ps2pdf -dPDFSETTINGS=/prepress $(SUP).ps $(SUP).pdf
 # ^^^^^^^^^^^^^^^^^^^^^^^^
 	@echo '******** Did you spell-check the paper? ********'
 
