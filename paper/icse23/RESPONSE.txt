@@ -61,9 +61,17 @@ __REVIEW_2&3
 
 >Limited Applicability & Generalizability
 
-S^2LCT is also implemented for hate speech detection task.
-# TODO: add HS results
-We will also add the results of the task in our final version.
+We show the applicability and generalizability of the S^2LCT by
+implementing it for other NLP task. In this work, we implement the
+S^2LCT for hate speech detection task. For its experiment, we use
+first 14 functionalities for the task introduced from the hatecheck
+(https://arxiv.org/abs/2012.15606), and we use all seeds for its
+expansion. Models under test for this experiment are
+Hate-speech-CNERG/bert-base-uncased-hatexplain-rationale-two,
+DaNLP/da-electra-hatespeech-detection and
+DaNLP/da-bert-hatespeech-detection. The experiment result over the
+functionalities are shown in the attachment. We will also add the
+results in our final version.
 
 __REVIEW_1
 
@@ -103,6 +111,8 @@ LC8(Author sentiment is more important than of others): BERT:43.87%, RoBERTa:31.
 LC9(Parsing sentiment in (question, yes) form): BERT:19.48%, RoBERTa:13.71%, DistilBERT:16.92%
 LC10(Parsing sentiment in (question, no) form): BERT:53.06%, RoBERTa:59.86%, DistilBERT:84.25%
 
+We will also add the results in our final version.
+
 >Label Consistency
 
 During the manual study to measure label consistency, it is observered
@@ -115,4 +125,3 @@ to check the label consistency of the expanded sentences. From the
 comparison, it is observed that no expanded words change the sentiment
 of the expanded sentences and the expanded words preserves the label
 consistency.
-# TODO: Check the label consistency on the example of pass-to-fail manually.

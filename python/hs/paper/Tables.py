@@ -109,7 +109,7 @@ class Tables:
         # end if
         res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}"
         result_file = res_dir / 'test_result_analysis.json'
-        result = Utils.read_json(result_file)            
+        result = Utils.read_json(result_file)
         for m_i, model_name in enumerate(result.keys()):
             if f"model{m_i}" not in num_seeds_tot.keys():
                 num_seeds_tot[f"model{m_i}"] = dict()
@@ -217,7 +217,7 @@ class Tables:
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
         output_file.append(r"\caption{\TestResultsHsTableCaption}")
-        output_file.append(r"\resizebox{0.9\textwidth}{!}{")
+        output_file.append(r"\resizebox{0.7\textwidth}{!}{")
         # output_file.append(r"\begin{tabular}{p{4cm}||p{1cm}p{2cm}p{1cm}p{2cm}p{1cm}p{2cm}p{2cm}}")
         output_file.append(r"\begin{tabular}{p{8cm}||cclll}")
         output_file.append(r"\toprule")
