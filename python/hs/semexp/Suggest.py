@@ -503,8 +503,6 @@ class Suggest:
         # end if
         print(editors)
         
-        num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
-        pool = multiprocessing.Pool(processes=num_pcss)
         for ms_i, masked_sent in enumerate(masked_sents.keys()):
             start = 0
             gpu_id = None
@@ -530,7 +528,10 @@ class Suggest:
                 ))
             # end if
         # end for
-
+        num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
+        print(num_pcss)
+        pool = multiprocessing.Pool(processes=num_pcss)
+        
         results = pool.starmap_async(cls.get_word_sug_parallel,
                                      args,
                                      chunksize=len(args)//num_pcss).get()

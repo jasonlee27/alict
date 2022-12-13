@@ -356,7 +356,7 @@ class SearchOperator:
         # end for
         return selected
 
-    def search_by_exclude(self, sents, search_reqs):
+    def search_by_exclude(self, sents, search_reqs, nlp):
         params = search_reqs["exclude"]
         _sents = sents.copy()
         if len(sents[0])==4:
