@@ -345,7 +345,7 @@ class SearchOperator:
         selected = list()
         for sent in sents:
             found_w = list()
-            for w in sent[1]:
+            for w in sent['tokens']:
                 if w.lower() in target_words:
                     found_w.append(w)
                 # end if
@@ -359,21 +359,21 @@ class SearchOperator:
     def search_by_exclude(self, sents, search_reqs, nlp):
         params = search_reqs["exclude"]
         _sents = sents.copy()
-        if len(sents[0])==4:
-            _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
-        else:
-            _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
-        # end if
+        # if len(sents[0])==4:
+        #     _sents = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
+        # else:
+        #     _sents = [(s_i,Utils.tokenize(s),l) for s_i, s, l in sents]
+        # # end if
         selected_indices = list()
         if type(params)==dict:
             params = [params]
         # end if
         for param in params:
-            word_exclude = param["word"]
-            tpos_exclude = param["POS"]
+            word_exclude = param.get("word", None)
+            tpos_exclude = param.get("POS", None)
             if word_exclude is not None:
                 for w in word_exclude:
-                    _sents = [sent for sent in _sents if w not in sent[1]]
+                    _sents = [sent for sent in _sents if w not in sent['tokens']]
                 # end for
             # end if
             if tpos_exclude is not None:
@@ -395,17 +395,18 @@ class SearchOperator:
             # end if
 
             for sent in _sents:
-                if sent[0] not in selected_indices:
-                    selected_indices.append(sent[0])
+                if sent['post_id'] not in selected_indices:
+                    selected_indices.append(sent['post_id'])
                 # end if
             # end for
         # end for
         result = list()
-        if len(sents[0])==4:
-            result = [(s_i,Utils.detokenize(s),l, sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
-        else:
-            result = [(s_i,Utils.detokenize(s),l) for s_i, s, l in _sents if s_i in selected_indices]
-        # end if
+        # if len(sents[0])==4:
+        #     result = [(s_i,Utils.detokenize(s),l, sc) for s_i, s, l, sc in _sents if s_i in selected_indices]
+        # else:
+        #     result = [(s_i,Utils.detokenize(s),l) for s_i, s, l in _sents if s_i in selected_indices]
+        # # end if
+        result = _sents
         return result
 
 
