@@ -36,7 +36,7 @@ SENT_DICT = {
     'neutral_noun': [w['word'] for w in SENT_WORDS.values() if w['POS']=='noun' and w['label']=='pure neutral']
 }
 
-F12_HS_TEMPLATES = {
+F12_TEMPLATES = {
     'tx-to-tx': {
         'prefix': ['people say', 'I heard that'],
         'sent': [], # toxic
@@ -63,7 +63,7 @@ F12_HS_TEMPLATES = {
     }
 }
 
-F13_HS_TEMPLATES = {
+F13_TEMPLATES = {
     'tx-to-tx': {
         'prefix': ['people say', 'i heard that'],
         'sent': [], # toxic
@@ -91,27 +91,35 @@ F13_HS_TEMPLATES = {
 }
 
 F14_TEMPLATES = {
-    'prefix': ['I do not think that', 'I do not agree with that', 'I do not believe that'],
-    'sent': [], # non-toxic
+    'temp1': {
+        'prefix': ['I do not think that', 'I do not agree with that', 'I do not believe that'],
+        'sent': [], # non-toxic
+    }
 }
 
 F15_TEMPLATES = {
-    'prefix': ['I do not think that', 'I do not agree with that', 'I do not believe that'],
-    'sent': [], # toxic
+    'temp1': {
+        'prefix': ['I do not think that', 'I do not agree with that', 'I do not believe that'],
+        'sent': [], # toxic
+    }
 }
 
 F16_TEMPLATES = {
-    'prefix': ['why do you agree with that', 'why do you like to say that'],
-    'sent': [], # toxic
-    'postfix': ['?']
+    'temp1': {
+        'prefix': ['why do you agree with that', 'why do you like to say that'],
+        'sent': [], # toxic
+        'postfix': ['?']
+    }
 }
 
 F17_TEMPLATES = {
-    'prefix': ['i think that', 'i believe that'],
-    'sent': [], # toxic
+    'temp1': {
+        'prefix': ['i think that', 'i believe that'],
+        'sent': [], # toxic
+    }
 }
 
-F20_HS_TEMPLATES = {
+F20_TEMPLATES = {
     'temp1': {
         'prefix': ['statements like "'],
         'sent': [], # toxic
@@ -124,7 +132,7 @@ F20_HS_TEMPLATES = {
     }
 }
 
-F21_HS_TEMPLATES = {
+F21_TEMPLATES = {
     'temp1': {
         'prefix': ['saying that'],
         'sent': [], # toxic
@@ -245,10 +253,10 @@ class TransformOperator:
         # Pronoun reference::Hate expressed through reference in subsequent sentences
         nh_sents = [s for s in sents if s[-1]==list(Macros.hs_label_map.keys())[0]]
         hs_sents = [s for s in sents if s[-1]==list(Macros.hs_label_map.keys())[1]]
-        f13_hs1_temp = F13_HS_TEMPLATES['tx-to-tx']
-        f13_hs2_temp = F13_HS_TEMPLATES['nt-to-tx']
-        f13_nh1_temp = F13_HS_TEMPLATES['tx-to-nt']
-        f13_nh2_temp = F13_HS_TEMPLATES['nt-to-nt']
+        f13_hs1_temp = F13_TEMPLATES['tx-to-tx']
+        f13_hs2_temp = F13_TEMPLATES['nt-to-tx']
+        f13_nh1_temp = F13_TEMPLATES['tx-to-nt']
+        f13_nh2_temp = F13_TEMPLATES['nt-to-nt']
         f13_hs1_new_label = list(Macros.hs_label_map.keys())[1]
         f13_hs2_new_label = list(Macros.hs_label_map.keys())[1]
         f13_nh1_new_label = list(Macros.hs_label_map.keys())[0]
@@ -302,15 +310,20 @@ class TransformOperator:
         results = list()
         result_ind = 0
         new_label = list(Macros.hs_label_map.keys())[1]
-        for s in sents:
-            F14_TEMPLATES['sent'].append(s[1])
-        # end for
-        word_product = [dict(zip(F14_TEMPLATES, v)) for v in product(*F14_TEMPLATES.values())]
-        for wp in word_product:
-            results.append((
-                result_ind, " ".join(list(wp.values())), new_label
-            ))
-            result_ind += 1
+        for temp_key in F14_TEMPLATES.keys():
+            for s in sents:
+                F14_TEMPLATES[temp_key]['sent'].append(s[1])
+            # end for
+            word_product = [
+                dict(zip(F14_TEMPLATES[temp_key], v))
+                for v in product(*F14_TEMPLATES[temp_key].values())
+            ]
+            for wp in word_product:
+                results.append((
+                    result_ind, " ".join(list(wp.values())), new_label
+                ))
+                result_ind += 1
+            # end for
         # end for
         return results
 
@@ -319,15 +332,20 @@ class TransformOperator:
         results = list()
         result_ind = 0
         new_label = list(Macros.hs_label_map.keys())[0]
-        for s in sents:
-            F15_TEMPLATES['sent'].append(s[1])
-        # end for
-        word_product = [dict(zip(F15_TEMPLATES, v)) for v in product(*F15_TEMPLATES.values())]
-        for wp in word_product:
-            results.append((
-                result_ind, " ".join(list(wp.values())), new_label
-            ))
-            result_ind += 1
+        for temp_key in F15_TEMPLATES.keys():
+            for s in sents:
+                F15_TEMPLATES[temp_key]['sent'].append(s[1])
+            # end for
+            word_product = [
+                dict(zip(F15_TEMPLATES[temp_key], v))
+                for v in product(*F15_TEMPLATES[temp_key].values())
+            ]
+            for wp in word_product:
+                results.append((
+                    result_ind, " ".join(list(wp.values())), new_label
+                ))
+                result_ind += 1
+            # end for
         # end for
         return results
 
@@ -336,15 +354,20 @@ class TransformOperator:
         results = list()
         result_ind = 0
         new_label = list(Macros.hs_label_map.keys())[1]
-        for s in sents:
-            F16_TEMPLATES['sent'].append(s[1])
-        # end for
-        word_product = [dict(zip(F16_TEMPLATES, v)) for v in product(*F16_TEMPLATES.values())]
-        for wp in word_product:
-            results.append((
-                result_ind, " ".join(list(wp.values())), new_label
-            ))
-            result_ind += 1
+        for temp_key in F16_TEMPLATES.keys():
+            for s in sents:
+                F16_TEMPLATES[temp_key]['sent'].append(s[1])
+            # end for
+            word_product = [
+                dict(zip(F16_TEMPLATES[temp_key], v))
+                for v in product(*F16_TEMPLATES[temp_key].values())
+            ]
+            for wp in word_product:
+                results.append((
+                    result_ind, " ".join(list(wp.values())), new_label
+                ))
+                result_ind += 1
+            # end for
         # end for
         return results
 
@@ -353,15 +376,20 @@ class TransformOperator:
         results = list()
         result_ind = 0
         new_label = list(Macros.hs_label_map.keys())[1]
-        for s in sents:
-            F17_TEMPLATES['sent'].append(s[1])
-        # end for
-        word_product = [dict(zip(F17_TEMPLATES, v)) for v in product(*F17_TEMPLATES.values())]
-        for wp in word_product:
-            results.append((
-                result_ind, " ".join(list(wp.values())), new_label
-            ))
-            result_ind += 1
+        for temp_key in F17_TEMPLATES.keys():
+            for s in sents:
+                F17_TEMPLATES[temp_key]['sent'].append(s[1])
+            # end for
+            word_product = [
+                dict(zip(F17_TEMPLATES[temp_key], v))
+                for v in product(*F17_TEMPLATES[temp_key].values())
+            ]
+            for wp in word_product:
+                results.append((
+                    result_ind, " ".join(list(wp.values())), new_label
+                ))
+                result_ind += 1
+            # end for
         # end for
         return results
 
@@ -370,15 +398,20 @@ class TransformOperator:
         results = list()
         result_ind = 0
         new_label = list(Macros.hs_label_map.keys())[0]
-        for s in sents:
-            F20_TEMPLATES['sent'].append(s[1])
-        # end for
-        word_product = [dict(zip(F20_TEMPLATES, v)) for v in product(*F20_TEMPLATES.values())]
-        for wp in word_product:
-            results.append((
-                result_ind, " ".join(list(wp.values())), new_label
-            ))
-            result_ind += 1
+        for temp_key in F20_TEMPLATES.keys():
+            for s in sents:
+                F20_TEMPLATES[temp_key]['sent'].append(s[1])
+            # end for
+            word_product = [
+                dict(zip(F20_TEMPLATES[temp_key], v))
+                for v in product(*F20_TEMPLATES[temp_key].values())
+            ]
+            for wp in word_product:
+                results.append((
+                    result_ind, " ".join(list(wp.values())), new_label
+                ))
+                result_ind += 1
+            # end for
         # end for
         return results
 
@@ -388,14 +421,19 @@ class TransformOperator:
         results = list()
         result_ind = 0
         new_label = list(Macros.hs_label_map.keys())[0]
-        for s in sents:
-            F21_TEMPLATES['sent'].append(s[1])
-        # end for
-        word_product = [dict(zip(F21_TEMPLATES, v)) for v in product(*F21_TEMPLATES.values())]
-        for wp in word_product:
-            results.append((
-                result_ind, " ".join(list(wp.values())), new_label
-            ))
-            result_ind += 1
+        for temp_key in F20_TEMPLATES.keys():
+            for s in sents:
+                F21_TEMPLATES['sent'].append(s[1])
+            # end for
+            word_product = [
+                dict(zip(F21_TEMPLATES[temp_key], v))
+                for v in product(*F21_TEMPLATES[temp_key].values())
+            ]
+            for wp in word_product:
+                results.append((
+                    result_ind, " ".join(list(wp.values())), new_label
+                ))
+                result_ind += 1
+            # end for
         # end for
         return results
