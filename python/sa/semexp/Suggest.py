@@ -483,6 +483,9 @@ class Suggest:
         results = list()
         args = list()
         editor, editors = None, None
+        if logger is not None:
+            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::{len(masked_sents.keys())} masked sents identified")
+        # end if
         if cuda_device_inds is not None:
             assert len(cuda_device_inds)==cls.NUM_PROCESSES
             editors = {
