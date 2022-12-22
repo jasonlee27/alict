@@ -121,7 +121,7 @@ class Template:
         # end if
 
         if logger is not None:
-            logger.print(f"\Template.get_word_suggestions_over_seeds::{len(masked_sents.keys())} masked sents identified")
+            logger.print(f"\tTemplate.generate_masked_inputs::{len(seeds)} seeds identified")
         # end if
         if cuda_device_inds is not None:
             assert len(cuda_device_inds)==cls.NUM_PROCESSES
@@ -129,10 +129,10 @@ class Template:
                 f"{gpu_id}": Editor(cuda_device_ind=gpu_id)
                 for gpu_id in range(len(cuda_device_inds))
             }
-            num_sents_per_gpu = len(masked_sents.keys())//cls.NUM_PROCESSES
+            num_sents_per_gpu = len(seeds)//cls.NUM_PROCESSES
         else:
             editor = Editor()
-            num_sents_per_gpu = len(masked_sents.keys())
+            num_sents_per_gpu = len(seeds)
         # end if
         
         for index, (_id, seed, seed_label) in enumerate(seeds):
@@ -208,22 +208,26 @@ class Template:
                         cfg_from = m['cfg_from']
                         cfg_to = m['cfg_to']
                         key = m['masked_input'][0] # m['masked_input'] = (_masked_input, mask_pos)
-                        if key not in masked_sents.keys():
-                            masked_sents[key] = {
-                                'inputs': list(),
-                                'word_sug': list()
-                            }
-                        # end if
-                        masked_sent_obj = (
-                            seed,
-                            seed_label,
-                            cfg_seed,
-                            cfg_from,
-                            cfg_to,
-                            m['masked_input'][1]
-                        )
-                        if masked_sent_obj not in masked_sents[key]['inputs']:
-                            masked_sents[key]['inputs'].append(masked_sent_obj)
+                        # num_mask_tokens = len([t for t in key.split() if Macros.MASK in t])
+                        num_mask_tokens = len(eval(cfg_to.split(' -> ')[-1]))-len(eval(cfg_from.split(' -> ')[-1]))
+                        if num_mask_tokens<10:
+                            if key not in masked_sents.keys():
+                                masked_sents[key] = {
+                                    'inputs': list(),
+                                    'word_sug': list()
+                                }
+                            # end if
+                            masked_sent_obj = (
+                                seed,
+                                seed_label,
+                                cfg_seed,
+                                cfg_from,
+                                cfg_to,
+                                m['masked_input'][1]
+                            )
+                            if masked_sent_obj not in masked_sents[key]['inputs']:
+                                masked_sents[key]['inputs'].append(masked_sent_obj)
+                            # end if
                         # end if
                     # end for
                 # end if
