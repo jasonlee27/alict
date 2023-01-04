@@ -220,23 +220,26 @@ class Template:
                         cfg_from = m['cfg_from']
                         cfg_to = m['cfg_to']
                         key = m['masked_input'][0] # m['masked_input'] = (_masked_input, mask_pos)
-                        if key not in masked_sents.keys():
-                            masked_sents[key] = {
-                                'inputs': list(),
-                                'word_sug': list()
-                            }
-                        # end if
-                        masked_sent_obj = (
-                            seed,
-                            seed_label,
-                            label_score,
-                            cfg_seed,
-                            cfg_from,
-                            cfg_to,
-                            m['masked_input'][1]
-                        )
-                        if masked_sent_obj not in masked_sents[key]['inputs']:
-                            masked_sents[key]['inputs'].append(masked_sent_obj)
+                        num_mask_tokens = len(eval(cfg_to.split(' -> ')[-1]))-len(eval(cfg_from.split(' -> ')[-1]))
+                        if num_mask_tokens<10:
+                            if key not in masked_sents.keys():
+                                masked_sents[key] = {
+                                    'inputs': list(),
+                                    'word_sug': list()
+                                }
+                            # end if
+                            masked_sent_obj = (
+                                seed,
+                                seed_label,
+                                label_score,
+                                cfg_seed,
+                                cfg_from,
+                                cfg_to,
+                                m['masked_input'][1]
+                            )
+                            if masked_sent_obj not in masked_sents[key]['inputs']:
+                                masked_sents[key]['inputs'].append(masked_sent_obj)
+                            # end if
                         # end if
                     # end for
                 # end if

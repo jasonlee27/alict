@@ -102,13 +102,16 @@ class Template:
         return masked_input_res
         
     @classmethod
-    def generate_masked_inputs(cls, req, seeds, pcfg_ref, cfg_res_file, logger=None):
+    def generate_masked_inputs(cls,
+                               req,
+                               seeds,
+                               pcfg_ref,
+                               cfg_res_file,
+                               cuda_device_inds=None,
+                               logger=None):
         st = time.time()
         masked_input_res = dict()
         args = list()
-        num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
-        pool = multiprocessing.Pool(processes=num_pcss)
-
         template_results = {
             'requirement': req,
             'inputs': dict()
@@ -117,11 +120,28 @@ class Template:
             template_results = Utils.read_json(cfg_res_file)
         # end if
 
+        if logger is not None:
+            logger.print(f"\tTemplate.generate_masked_inputs::{len(seeds)} seeds identified")
+        # end if
+        if cuda_device_inds is not None:
+            assert len(cuda_device_inds)==cls.NUM_PROCESSES
+            editors = {
+                f"{gpu_id}": Editor(cuda_device_ind=gpu_id)
+                for gpu_id in range(len(cuda_device_inds))
+            }
+            num_sents_per_gpu = len(seeds)//cls.NUM_PROCESSES
+        else:
+            editor = Editor()
+            num_sents_per_gpu = len(seeds)
+        # end if
+        
         for index, (_id, seed, seed_label) in enumerate(seeds):
             args.append((index, seed, seed_label, pcfg_ref, logger))
         # end for
 
         if any(args):
+            num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
+            pool = multiprocessing.Pool(processes=num_pcss)
             results = pool.starmap_async(cls.generate_seed_cfg_parallel,
                                          args,
                                          chunksize=len(args)//num_pcss).get()
@@ -188,22 +208,26 @@ class Template:
                         cfg_from = m['cfg_from']
                         cfg_to = m['cfg_to']
                         key = m['masked_input'][0] # m['masked_input'] = (_masked_input, mask_pos)
-                        if key not in masked_sents.keys():
-                            masked_sents[key] = {
-                                'inputs': list(),
-                                'word_sug': list()
-                            }
-                        # end if
-                        masked_sent_obj = (
-                            seed,
-                            seed_label,
-                            cfg_seed,
-                            cfg_from,
-                            cfg_to,
-                            m['masked_input'][1]
-                        )
-                        if masked_sent_obj not in masked_sents[key]['inputs']:
-                            masked_sents[key]['inputs'].append(masked_sent_obj)
+                        # num_mask_tokens = len([t for t in key.split() if Macros.MASK in t])
+                        num_mask_tokens = len(eval(cfg_to.split(' -> ')[-1]))-len(eval(cfg_from.split(' -> ')[-1]))
+                        if num_mask_tokens<10:
+                            if key not in masked_sents.keys():
+                                masked_sents[key] = {
+                                    'inputs': list(),
+                                    'word_sug': list()
+                                }
+                            # end if
+                            masked_sent_obj = (
+                                seed,
+                                seed_label,
+                                cfg_seed,
+                                cfg_from,
+                                cfg_to,
+                                m['masked_input'][1]
+                            )
+                            if masked_sent_obj not in masked_sents[key]['inputs']:
+                                masked_sents[key]['inputs'].append(masked_sent_obj)
+                            # end if
                         # end if
                     # end for
                 # end if
