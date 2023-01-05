@@ -423,7 +423,7 @@ class TransformOperator:
         new_label = list(Macros.hs_label_map.keys())[0]
         for temp_key in F20_TEMPLATES.keys():
             for s in sents:
-                F21_TEMPLATES['sent'].append(s[1])
+                F21_TEMPLATES[temp_key]['sent'].append(s[1])
             # end for
             word_product = [
                 dict(zip(F21_TEMPLATES[temp_key], v))

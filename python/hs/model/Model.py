@@ -3,7 +3,7 @@
 
 from typing import *
 from pathlib import Path
-from transformers import pipeline, AutoTokenizer
+from transformers import pipeline, AutoTokenizer, AutoModel
 # from nlp import load_dataset
 
 import os
@@ -27,8 +27,15 @@ class Model:
     def load_models(cls, task: str):
         _task, model_names = cls.read_model_list(task)
         for m in model_names:
+            print('@@@', m)
+            # model = AutoModel.from_pretrained(m)
+            # print(type(model))
             tokenizer = AutoTokenizer.from_pretrained(m)
-            yield m, pipeline(_task, model=m, tokenizer=tokenizer, framework="pt", device=0)
+            yield m, pipeline(task=_task,
+                              model=m,
+                              tokenizer=tokenizer,
+                              framework="pt",
+                              device=0)
         # end for
 
     @classmethod
@@ -58,12 +65,11 @@ class Model:
     
     @classmethod
     def sentiment_pred_and_conf(cls, data: List[str], batch_size=16):
-        # distilbert-base-uncased-finetuned-sst-2-english: label [NEGATIVE, POSITIVE]
-        # textattack/bert-base-uncased-SST-2: label [LABEL_0, LABEL_1]
-        # textattack/bert-base-SST-2: label [LABEL_0, LABEL_1]
+        # Hate-speech-CNERG/bert-base-uncased-hatexplain-rationale-two: {'label': 'NORMAL'/'ABUSIVE', 'score': 0.5082786083221436}
+        # alexandrainst/da-hatespeech-detection-base: {'label': 'not offensive'/'offensive', 'score': 0.5082786083221436}
         # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
         preds = cls.batch_predict(data, batch_size=batch_size)
-        pr = np.array([x['score'] if x['label']=='POSITIVE' or x['label']=='LABEL_1' else 1 - x['score'] for x in preds])
+        pr = np.array([x['score'] if x['label']=='offensive' or x['label']=='ABUSIVE' else 1 - x['score'] for x in preds])
         pp = np.zeros((pr.shape[0], 3))
         margin_neutral = 1/3.
         mn = margin_neutral / 2.
@@ -122,9 +128,8 @@ class Model:
             n=Macros.nsamples,
             logger=None):
         cls.model = model
-        testsuite.run(pred_and_conf_fn, n=n, overwrite=True, logger=logger)
-        testsuite.summary(n=n,
-                          logger=logger,
+        testsuite.run(pred_and_conf_fn, n=None, overwrite=True, logger=logger)
+        testsuite.summary(logger=logger,
                           print_fn=cls.print_result if print_fn is not None else None,
                           format_example_fn=cls.format_example if format_example_fn is not None else None)
         return
