@@ -466,10 +466,30 @@ function make_tables() {
          # Table 1
          # python -m python.sa.main --run tables --which lc-req
          # python -m python.sa.main --run tables --which manual-study
-         python -m python.sa.main --run tables --which test-results
-         
+         # python -m python.sa.main --run tables --which test-results --num_seeds 50 --num_trials 3
+         # python -m python.sa.main --run tables --which test-results --num_seeds 100 --num_trials 3
+         # python -m python.sa.main --run tables --which test-results --num_seeds 200 --num_trials 3
+         # python -m python.sa.main --run tables --which test-results-bl --num_seeds 50 --num_trials 1
+         python -m python.sa.main \
+                --run tables \
+                --which test-results-all \
+                --search_dataset sst \
+                --syntax_selection random \
+                --num_seeds -1 \
+                --num_trials -1
         )
 }
+
+function make_plots() {
+        (cd ${_DIR}
+         # Table 1
+         # python -m python.sa.main --run tables --which lc-req
+         # python -m python.sa.main --run tables --which manual-study
+         python -m python.sa.main --run plots --which selfbleu --num_seeds 100 --num_trials 3
+         python -m python.sa.main --run plots --which pdr --num_seeds 100 --num_trials 3
+        )
+}
+    
 
 # ==========
 # Main
@@ -493,6 +513,7 @@ function main_sst() {
         # gen_coverage_data # get sentences for coverage experiment
         # compute_coverage
         make_tables
+        # make_plots
         
 
         # eval_retrained_models # to ...?
