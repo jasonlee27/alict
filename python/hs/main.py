@@ -58,8 +58,8 @@ def run_templates():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     num_seeds = args.num_seeds
-    num_trials = '' if args.num_trials==1 else str(args.num_trials)
-    _num_trials = '' if num_trials==1 else str(num_trials)
+    num_trials = '' if args.num_trials<2 else str(args.num_trials)
+    _num_trials = '' if args.num_trials<2 else str(num_trials)
     gpu_ids = args.gpu_ids
     if gpu_ids is not None:
         assert len(gpu_ids)==Macros.num_processes
@@ -89,7 +89,7 @@ def run_testsuites():
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
     num_seeds = args.num_seeds
-    num_trials = '' if args.num_trials==1 else str(args.num_trials)
+    num_trials = '' if args.num_trials<2 else str(args.num_trials)
     if num_seeds<0:
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
     else:
@@ -140,7 +140,7 @@ def run_analyze():
     selection_method = args.syntax_selection
     test_baseline = args.test_baseline
     num_seeds = args.num_seeds
-    num_trials = '' if args.num_trials==1 else str(args.num_trials)
+    num_trials = '' if args.num_trials<2 else str(args.num_trials)
     if test_baseline:
         if num_seeds<0:
             result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
