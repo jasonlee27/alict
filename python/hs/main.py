@@ -114,7 +114,7 @@ def run_testmodel():
     selection_method = args.syntax_selection
     num_seeds = args.num_seeds
     test_baseline = args.test_baseline
-    num_trials = '' if args.num_trials==1 else str(args.num_trials)
+    num_trials = args.num_trials # '' if args.num_trials==1 else str(args.num_trials)
     if num_seeds<0:
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
     else:

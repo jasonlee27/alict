@@ -282,7 +282,7 @@ def main(task,
          local_model_name=None):
     logger = Logger(logger_file=log_file,
                     logger_name='testmodel')
-    _num_trials = '' if num_trials==1 else str(num_trials)
+    _num_trials = '' if num_trials<2 else str(num_trials)
     if num_seeds<0:
         test_result_dir = Macros.result_dir/ f"test_results{_num_trials}_{task}_{dataset_name}_{selection_method}"
     else:
@@ -344,7 +344,7 @@ def main_seed(task,
               local_model_name=None):
     logger = Logger(logger_file=log_file,
                     logger_name='testseed')
-    _num_trials = '' if num_trials==1 else str(num_trials)
+    _num_trials = '' if num_trials<2 else str(num_trials)
     if num_seeds<0:
         test_result_dir = Macros.result_dir/ f"seeds{_num_trials}_{task}_{dataset_name}"
     else:
