@@ -40,7 +40,7 @@ parser.add_argument('--which', type=str, default=None, nargs='+',
                     help='tables/plots that you are interested in making')
 
 args = parser.parse_args()
-rand_seed_num = Macros.RAND_SEED[args.num_trials]
+rand_seed_num = Macros.RAND_SEED[args.num_trials] if args.num_trials>0 else Macros.RAND_SEED[1]
 random.seed(rand_seed_num)
 
 def run_requirements():

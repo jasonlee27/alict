@@ -795,7 +795,7 @@ class Tables:
         result = Utils.read_json(result_file)
         # baseline_result = Utils.read_json(baseline_result_file)
         model_names = list(result.keys())
-        lcs_len = len(result[model_names[0]])+1
+        lcs_len = len(result[model_names[0]])
         
         # Header
         output_file.append(r"\begin{table*}[t]")

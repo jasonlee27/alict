@@ -169,10 +169,10 @@ class Tables:
                 if m_i==0:
                     output_file.append_macro(latex.Macro(f"test-results-hs-lc{lc_i}", lc_descs[lc_i]))
                     output_file.append_macro(latex.Macro(f"test-results-hs-lc{lc_i}-num-seeds",
-                                                         num_seeds_tot[m_name][lc_i][0]))
+                                                         cls.FMT_INT.format(num_seeds_tot[m_name][lc_i][0])))
 
                     output_file.append_macro(latex.Macro(f"test-results-hs-lc{lc_i}-num-exps",
-                                                         num_exps_tot[m_name][lc_i][0]))
+                                                         cls.FMT_INT.format(num_exps_tot[m_name][lc_i][0])))
                 # end if
 
                 output_file.append_macro(latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-fail",
