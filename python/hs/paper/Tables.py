@@ -111,7 +111,6 @@ class Tables:
         result_file = res_dir / 'test_result_analysis.json'
         result = Utils.read_json(result_file)
         for m_i, model_name in enumerate(result.keys()):
-            print(m_i, model_name)
             if f"model{m_i}" not in num_seeds_tot.keys():
                 num_seeds_tot[f"model{m_i}"] = dict()
                 num_exps_tot[f"model{m_i}"] = dict()
