@@ -111,6 +111,7 @@ class Tables:
         result_file = res_dir / 'test_result_analysis.json'
         result = Utils.read_json(result_file)
         for m_i, model_name in enumerate(result.keys()):
+            print(m_i, model_name)
             if f"model{m_i}" not in num_seeds_tot.keys():
                 num_seeds_tot[f"model{m_i}"] = dict()
                 num_exps_tot[f"model{m_i}"] = dict()
@@ -240,15 +241,15 @@ class Tables:
                                latex.Macro(f"test-results-hs-lc{lc_i}-num-seeds").use() + "}")            
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
                                latex.Macro(f"test-results-hs-lc{lc_i}-num-exps").use() + "}")
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-model0-lc{lc_i}-num-all-fail").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-model0-lc{lc_i}-num-all-failrate").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
+            output_file.append(r" & alex-BERT$\colon$" + latex.Macro(f"test-results-hs-model0-lc{lc_i}-num-all-fail").use())
+            output_file.append(r" & alex-BERT$\colon$" + latex.Macro(f"test-results-hs-model0-lc{lc_i}-num-all-failrate").use())
+            output_file.append(r" & alex-BERT$\colon$" + latex.Macro(f"test-results-hs-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             
             for m_i in range(1,len(model_names)):
                 if m_i==1:
-                    m_name = 'daELECTRA'
+                    m_name = 'CNERG-BERT'
                 else:
-                    m_name = 'daBERT'
+                    m_name = 'CNERG-BERT'
                 # end if
                 # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-fail").use())
                 output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-fail").use())
@@ -399,14 +400,14 @@ class Tables:
                                lc_prefix_str + latex.Macro(f"test-results-hs-bl-lc{lc_i}").use() + "}}")
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
                                latex.Macro(f"test-results-hs-bl-lc{lc_i}-num-tcs").use() + "}")
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-bl-model0-lc{lc_i}-num-fail").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-hs-bl-model0-lc{lc_i}-num-failrate").use() + r"\\")
+            output_file.append(r" & alex-BERT$\colon$" + latex.Macro(f"test-results-hs-bl-model0-lc{lc_i}-num-fail").use())
+            output_file.append(r" & alex-BERT$\colon$" + latex.Macro(f"test-results-hs-bl-model0-lc{lc_i}-num-failrate").use() + r"\\")
             
             for m_i in range(1,len(model_names)):
                 if m_i==1:
-                    m_name = 'daELECTRA'
+                    m_name = 'CNERG-BERT'
                 else:
-                    m_name = 'daBERT'
+                    m_name = 'CNERG-BERT'
                 # end if
                 output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-fail").use())
                 output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-failrate").use() + r"\\")
