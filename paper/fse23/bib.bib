@@ -688,3 +688,125 @@ series = {CHI '08}
   journal={SIGIR},
   year={2018}
 }
+
+@article{morris2020textattack,
+  author    = {John X. Morris and
+               Eli Lifland and
+               Jin Yong Yoo and
+               Yanjun Qi},
+  title     = {TextAttack: {A} Framework for Adversarial Attacks in Natural Language
+               Processing},
+  journal   = {CoRR},
+  volume    = {abs/2005.05909},
+  year      = {2020},
+  url       = {https://arxiv.org/abs/2005.05909},
+  eprinttype = {arXiv},
+  eprint    = {2005.05909},
+  timestamp = {Thu, 14 Oct 2021 09:15:08 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2005-05909.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{zang2020sememepso,
+    title = "Word-level Textual Adversarial Attacking as Combinatorial Optimization",
+    author = "Zang, Yuan  and
+      Qi, Fanchao  and
+      Yang, Chenghao  and
+      Liu, Zhiyuan  and
+      Zhang, Meng  and
+      Liu, Qun  and
+      Sun, Maosong",
+    booktitle = "Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics",
+    month = jul,
+    year = "2020",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2020.acl-main.540",
+    doi = "10.18653/v1/2020.acl-main.540",
+    pages = "6066--6080",
+    abstract = "Adversarial attacks are carried out to reveal the vulnerability of deep neural networks. Textual adversarial attacking is challenging because text is discrete and a small perturbation can bring significant change to the original input. Word-level attacking, which can be regarded as a combinatorial optimization problem, is a well-studied class of textual attack methods. However, existing word-level attack models are far from perfect, largely because unsuitable search space reduction methods and inefficient optimization algorithms are employed. In this paper, we propose a novel attack model, which incorporates the sememe-based word substitution method and particle swarm optimization-based search algorithm to solve the two problems separately. We conduct exhaustive experiments to evaluate our attack model by attacking BiLSTM and BERT on three benchmark datasets. Experimental results demonstrate that our model consistently achieves much higher attack success rates and crafts more high-quality adversarial examples as compared to baseline methods. Also, further experiments show our model has higher transferability and can bring more robustness enhancement to victim models by adversarial training. All the code and data of this paper can be obtained on https://github.com/thunlp/SememePSO-Attack.",
+}
+
+@inproceedings{alzantot2018genadvexp,
+    title = "Generating Natural Language Adversarial Examples",
+    author = "Alzantot, Moustafa  and
+      Sharma, Yash  and
+      Elgohary, Ahmed  and
+      Ho, Bo-Jhang  and
+      Srivastava, Mani  and
+      Chang, Kai-Wei",
+    booktitle = "Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing",
+    month = oct # "-" # nov,
+    year = "2018",
+    address = "Brussels, Belgium",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/D18-1316",
+    doi = "10.18653/v1/D18-1316",
+    pages = "2890--2896",
+    abstract = "Deep neural networks (DNNs) are vulnerable to adversarial examples, perturbations to correctly classified examples which can cause the model to misclassify. In the image domain, these perturbations can often be made virtually indistinguishable to human perception, causing humans and state-of-the-art models to disagree. However, in the natural language domain, small perturbations are clearly perceptible, and the replacement of a single word can drastically alter the semantics of the document. Given these challenges, we use a black-box population-based optimization algorithm to generate semantically and syntactically similar adversarial examples that fool well-trained sentiment analysis and textual entailment models with success rates of 97{\%} and 70{\%}, respectively. We additionally demonstrate that 92.3{\%} of the successful sentiment analysis adversarial examples are classified to their original label by 20 human annotators, and that the examples are perceptibly quite similar. Finally, we discuss an attempt to use adversarial training as a defense, but fail to yield improvement, demonstrating the strength and diversity of our adversarial examples. We hope our findings encourage researchers to pursue improving the robustness of DNNs in the natural language domain.",
+}
+
+@article{linyang2020bertattack,
+  author    = {Linyang Li and
+               Ruotian Ma and
+               Qipeng Guo and
+               Xiangyang Xue and
+               Xipeng Qiu},
+  title     = {{BERT-ATTACK:} Adversarial Attack Against {BERT} Using {BERT}},
+  journal   = {CoRR},
+  volume    = {abs/2004.09984},
+  year      = {2020},
+  url       = {https://arxiv.org/abs/2004.09984},
+  eprinttype = {arXiv},
+  eprint    = {2004.09984},
+  timestamp = {Tue, 28 Apr 2020 16:10:02 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2004-09984.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{udeshi2019ogma,
+  author    = {Sakshi Udeshi and
+               Sudipta Chattopadhyay},
+  title     = {Grammar Based Directed Testing of Machine Learning Systems},
+  journal   = {CoRR},
+  volume    = {abs/1902.10027},
+  year      = {2019},
+  url       = {http://arxiv.org/abs/1902.10027},
+  eprinttype = {arXiv},
+  eprint    = {1902.10027},
+  timestamp = {Tue, 21 May 2019 18:03:40 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-1902-10027.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{soremekun2020astraea,
+  author    = {Ezekiel O. Soremekun and
+               Sakshi Udeshi and
+               Sudipta Chattopadhyay},
+  title     = {Astraea: Grammar-based Fairness Testing},
+  journal   = {CoRR},
+  volume    = {abs/2010.02542},
+  year      = {2020},
+  url       = {https://arxiv.org/abs/2010.02542},
+  eprinttype = {arXiv},
+  eprint    = {2010.02542},
+  timestamp = {Thu, 14 Oct 2021 09:13:50 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2010-02542.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{udeshi2018fairnesstest,
+  author    = {Sakshi Udeshi and
+               Pryanshu Arora and
+               Sudipta Chattopadhyay},
+  title     = {Automated Directed Fairness Testing},
+  journal   = {CoRR},
+  volume    = {abs/1807.00468},
+  year      = {2018},
+  url       = {http://arxiv.org/abs/1807.00468},
+  eprinttype = {arXiv},
+  eprint    = {1807.00468},
+  timestamp = {Wed, 10 Oct 2018 08:05:26 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-1807-00468.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
