@@ -1,0 +1,341 @@
+ICSE 2023 Paper #1679 Reviews and Comments
+===========================================================================
+Paper #1679 S^2LCT: Specification- and Syntax-based Automated Testing
+Linguistic Capabilities of NLP Models
+
+
+Review #1679A
+===========================================================================
+
+Overall merit
+-------------
+1. Reject
+
+Paper summary
+-------------
+This paper presents an automated testing technique for NLP models. The
+main idea is to start with a set of seed inputs and then mutate these
+inputs via the learned grammar. One key aspect of the work is that it
+targets the generation of diverse test cases with different linguistic
+capabilities. The approach is implemented and evaluated to show that
+it fares better as compared to existing works such as CHECKLIST.
+
+Strengths
+---------
++ Important and timely problem
++ The presentation is relatively easy to follow
+
+Weaknesses
+----------
+- The novelty of the technical approach is unclear
+- Closely related works are neither discussed nor compared 
+- Rules may involve non-trivial manual effort
+
+Comments for authors
+--------------------
+This paper presents an approach for a timely and very important
+problem. Overall, the approach is presented in a simple
+manner. However, on the downside, the technical approach is very
+similar to grammar based testing of NLP models, this has already been
+explored. Additionally, the work does not seem to be aware of the
+recent effort in NLP testing. In the following, I will elaborate on
+these points.
+
+#Soundness: 
+
+The proposed approach is reasonable. Nonetheless, it involves a
+non-trivial human involvement for integrating specification and
+rules. While the approach targets to automate oracle generation and
+transformation, it shifts the burden to rule specification for
+diversifying the test cases.
+
+#Significance: 
+
+The proposed approach is a technique for automated testing of NLP
+models. The targeted problem is certainly important and
+timely. However, the proposed approach is very similar to some of the
+grammar based testing approaches proposed for NLP models. As a
+consequence, it does not appear to be a technological advancement as
+per as the contribution to the field of software engineering is
+concerned.
+
+#Novelty: 
+
+- The proposed approach is not novel. A large part of the technical
+  approach is based on grammar based mutation. Grammar based mutation
+  for testing NLP models is not new (see Ogma: Grammar Based Directed
+  Testing of ML systems). The proposed approach fails to distinguish
+  the key differences with such prior approaches.
+
+- As per as I am concerned, introducing the linguistic capability for
+  automated test generation is something new. However, this part is
+  manual and it is not clear how easy/difficult to have such human in
+  the loop framework.
+
+- The presented results only compare with CHECKLIST. There are more
+  automated approaches (see Astraea: Grammar Based Fairness Testing)
+  that can perform a comprehensive automated testing of NLP
+  models. Such works should be included in the baseline.
+
+- The claim in the abstract that "state-of-the-art methods rely on
+  manually created test cases" is incorrect. There are several
+  approaches for NLP testing that are automated or semi automated
+  e.g., Ogma, MT-NLP, Astraea etc. Such incorrect claims should be
+  revised.
+
+
+#Verifiability and Transparency:
+
+- The evaluation is not sufficient. The subjects only include BERT or
+  some of its variants. The proposed approach should target a variety
+  of technologies for NLP models, as targeted in prior works.
+
+- The user study is very preliminary. As a result, it is unclear
+  whether the generated test sentences are indeed "sensible". For
+  example, it is possible to generate syntactically correct sentences
+  which might be completely meaningless. Such evaluation is missing.
+
+Question for authors
+--------------------
+
+1. How does the approach differ with recent approaches such as MT-NLP,
+   Astraea, Ogma etc?
+2. How "sensible" are the generated sentences by the approach? 
+3. How much effort is involved in specifying the rules?
+
+
+
+Review #1679B
+===========================================================================
+
+Overall merit
+-------------
+2. Weak reject
+
+Paper summary
+-------------
+This paper proposes S^2LCT, an automated linguistic capability based
+testing technique for debugging modern NLP sentiment classification
+models. S^2LCT includes two components: seed input generation and
+expansion.  It first defines a set of linguistic capabilities
+(descriptions of a set of sentences) that assess the subject model,
+and automatically search for testing seed inputs that match the
+linguistic capabilities. Then, it mutates seed inputs based on their
+context-free grammar and a pre-trained mask language model.
+Evaluation results on 3 transformer-based sentiment analysis NLP
+models (BERT, RoBERTa, DistilBERT) show that the proposed S^2LCT is
+able to generate high quality test samples with correct labels and
+higher diversity than the baseline methods.
+
+Strengths
+---------
++ Important topic 
++ Easy to follow in most places
++ Outperform the baseline methods under the chosen metrics
+
+Weaknesses
+----------
+- The motivation and formal definition of linguistic capabilities are missing
+- Generalizability of the proposed method seems limited 
+- Some baselines are missing 
+- Critical experiments are missing
+
+Comments for authors
+--------------------
+This paper proposes S^2LCT, an automated testing tool for NLP
+transformer models. It aims to find misclassified input samples
+through a set of pre-defined linguistic capabilities and mask language
+model driven mutation. Although the evaluation shows some promising
+results, the paper falls short in a few places.
+
+First of all, linguistic capability is not precisely defined although
+it is a critical concept in the paper. From Table I, I assume
+linguistic capabilities are some descriptions for certain sets of
+sentences.  It would be helpful if the authors provide the formal
+definition of linguistic capabilities.
+
+I do not see a clear motivation of using linguistic capabilities to
+generate test inputs. In Table I, the authors define 10 linguistic
+capabilities. Are they correlated?  It is unclear to me why the
+authors chose to define these 10 rules.  To my understanding, the
+ultimate goal of the proposed technique is to find misclassified
+samples. Why does defining linguistic capabilities help to achieve
+this goal?  For instance, LC1 denotes that ‘Short sentences with
+neutral adjectives and nouns’, does it mean sentences that match this
+capability are easier to trigger misclassification?
+
+The generalizability of the proposed method might be limited. Although
+the authors claim that the baseline method [1] relies on manually
+created test cases that may not be scalable, I notice that the
+proposed method also requires substantial human efforts, e.g., the
+definitions of linguistic capabilities. Besides, the authors only
+evaluate their method on the sentiment classification task. It is
+unknown if S^2LCT is able to outperform the baseline method on other
+prevailing NLP tasks, such as question-answering [1] and name entity
+recognition.
+
+CHECKLIST [1] is the only baseline technique considered in this
+paper. However, a large body of work in NLP adversarial machine
+learning is suitable for generating problematic testing samples
+[2-5]. I expect to see more discussion and comparison between the
+proposed S^2LCT and such methods.
+
+In Table II, the authors report the failure cases and the failure rate
+of S^2LCT generated samples on subject models. However, there is no
+discussion or results about repair strategy. After identifying these
+bugs, it is unclear how to further improve the model's
+performance. Should the developers retrain the model by augmenting the
+dataset with these samples?  Can S^2LCT still generate buggy samples
+after model retraining?
+
+[1] Ribeiro, M. T., Wu, T., Guestrin, C., & Singh, S. (2020). Beyond accuracy: Behavioral testing of NLP models with CheckList. arXiv preprint arXiv:2005.04118.
+
+[2] Morris, J. X., Lifland, E., Yoo, J. Y., Grigsby, J., Jin, D., & Qi, Y. (2020). Textattack: A framework for adversarial attacks, data augmentation, and adversarial training in nlp. arXiv preprint arXiv:2005.05909.
+
+[3] Zang, Y., Qi, F., Yang, C., Liu, Z., Zhang, M., Liu, Q., & Sun, M. (2019). Word-level textual adversarial attacking as combinatorial optimization. arXiv preprint arXiv:1910.12196.
+
+[4] Alzantot, M., Sharma, Y., Elgohary, A., Ho, B. J., Srivastava, M., & Chang, K. W. (2018). Generating natural language adversarial examples. arXiv preprint arXiv:1804.07998.
+
+[5] Li, L., Ma, R., Guo, Q., Xue, X., & Qiu, X. (2020). Bert-attack: Adversarial attack against bert using bert. arXiv preprint arXiv:2004.09984.
+
+Question for authors
+--------------------
+1. What is the formal definition of linguistic capability?
+
+2. What is the motivation for using linguistic capabilities to
+generate testing samples?
+
+3. Can the proposed method generalize well on other NLP tasks such QA
+and NER?
+
+4. How does the proposed method compare to existing NLP adversarial
+sample generation techniques, such as textattck [2]?
+
+5. How does the proposed method help improve the model's performance
+after finding bugs?
+
+
+
+Review #1679C
+===========================================================================
+
+Overall merit
+-------------
+3. Weak accept
+
+Paper summary
+-------------
+The paper presents S2LCT, a novel approach to automate the testing of
+NLP models in terms of linguistic capabilities. S2LCT searches for
+suitable seed sentences from an existing dataset, then it generates
+new test inputs by expanding these seed sentences based on a
+context-free grammar. Specifically, the authors first manually design
+search rules and transformation templates for each linguistic
+capability to be tested (10 LCs) in the context of sentiment
+analysis. These search rules are used to identify seed sentences from
+a NL dataset, then the transformation templates based on the
+sentences’ parse trees are used to expand the seed and create masked
+expanded sentences. These masks are filled-in by a BERT model that
+will recommend word tokens to be inserted in place of the mask. The
+words are then validated using specific rules (sentiment and adherence
+to parse tree). The authors evaluate their approach against the
+state-of-the-art approach CHECKLIST in the context of sentiment
+analysis. The results show that S2LCT produces more diverse tests than
+CHECKLIST, which cover more production rules. When applying these
+tests to three different models, the authors find that S2LCT induces
+more failures and higher coverage on the models.
+
+Strengths
+---------
+- The idea of retrieving seed sentences, transforming them, and using
+  BERT for expansion is very interesting
+- Well curated evaluation comparing against CHECKLIST in several
+  aspects and using three different models
+
+Weaknesses
+----------
+- Limited Applicability & Generalizability
+- Limited Automation & Handcrafted Rules
+- Label Consistency not discussed for CHECKLIST
+
+Artifacts assessment
+--------------------
+4. The artifacts are in line with what is declared in the submission
+   form and in the paper
+
+Comments for authors
+--------------------
+## Soundness
+The design of the proposed approach is sound, the problem and solution
+are well motivated and described in detail. The idea of retrieving
+seed sentences from a large dataset of NL corpus makes sense and the
+transformation rules used to expand these seeds into many more
+sentences is a very interesting contribution. I also appreciate the
+use of a BERT model to replace the masks introduced by the
+transformations. Overall, the proposed approach is intuitive, well
+described, and with good potential. The empirical study is well
+designed, covering three well-known models, and comparing the
+state-of-the-art approach CHECKLIST on a variety of factors, including
+diversity, coverage, and model failures.
+
+## Novelty
+While individually the ideas described in the paper have been used in
+other approaches, I believe that the combination of these is
+novel. Overall, I think the paper provides a good contribution to the
+field and a solid evaluation.
+
+## Verifiability and Transparency
+The approach is described in detail and can be easily replicated using
+the information available in the paper. The experiments are clear and
+well designed, and the replication package is available on GitHub.
+
+## Presentation
+The paper is very well written, organized and easy to read. The
+running examples used in the paper allow the reader to understand each
+step of the process.
+
+Typo:
+Page 6: “Production rule coverage.: We” -> you may want to remove the
+dot before the colon.
+
+## Detailed Comments
+
+### Limited Applicability & Generalizability
+This approach is limited in its applicability to sentiment analysis
+tasks. The abstract and the first part of the introduction appear to
+have larger claims on test input generation, but it is not clear how
+this approach can be easily extended and generalized to other tasks or
+fields.
+
+### Limited Automation & Handcrafted Rules
+The authors discuss the limitations of CHECKLIST, highlighting the
+manual effort involved in defining template structure and its
+placeholder values for test generation. However, S2LCT also involves a
+significant effort in defining search rules and transformation, which
+have been handcrafted by human experts. I understand that this is a
+price that can be paid once and then amortized on many retrieved seeds
+and expansions, but this is a limitation in terms of automation that
+should be mentioned in the paper. Similarly, adapting this approach
+for a different NLP task would require significant manual effort to
+define new search rules and transformations that are general enough
+yet precise.
+
+### Fail Rate for CHECKLIST
+I’m not sure why the authors do not provide the information about
+Failure rate of the three models on the CHECKLIST data. Can you add
+this in Table 2? Or provide data in the online appendix?
+
+### Label Consistency
+The label consistency of both seeds and expanded sentences is only
+84%, which is not an impressive result. I believe this is still
+respectful for this novel approach, but should be taken into
+consideration when evaluating the performances of the models on the
+generated data. Additionally, the authors do not discuss the label
+consistency results for CHECKLIST.
+
+### Replication Package
+The replication package is publicly available and anonymized on
+GitHub. The README provides clear and detailed steps about
+installation and usage. I would recommend the authors to organize the
+data and code in a better way, instead of simply uploading a zipped
+file.

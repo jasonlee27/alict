@@ -17,7 +17,7 @@ class Macros:
     
     download_dir: Path = storage_dir / "_downloads"
     log_dir: Path = storage_dir / "_logs"
-    paper_dir = root_dir / "paper" / "icse23"
+    paper_dir = root_dir / "paper" / "fse23"
     dataset_dir = download_dir / "datasets"
 
     FMT_INT = "{:,d}"

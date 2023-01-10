@@ -1,0 +1,50 @@
+\section{Background}
+\label{sec:background}
+
+In this section, we provide a brief background of \Cklst's \cite{marcoACL2020checklist} approach of test case generation
+ via an example.
+%  Quality of software is verified by ensuring
+% the proper working of all functionalities without knowing the internal
+% workings of the software. Knowing performances of model on the
+% multiple functionalities provides users with better understanding and
+% debugging the software. The same principle applies to the NLP model.
+% Traditional NLP model evaluation relying on a test set lacks the
+% specification of model functionality. However, in NLP domain, there
+% are many phenomena on linguistic input such as negation, and
+% questionization. Given a NLP task, the phenomena determine
+% task-relevant output. Traditional evaluation method neglects them;
+% thus, it becomes less efficient to detect and analyze which aspect the
+% model yields unexpected outcome.
+\Cklst
+introduces task-dependent \lcs for monitoring model performance on
+each \lc. It assumes that the linguistic phenomena can be represented
+in the behavior of the model under test, because each linguistic capability specifies the desired behavior between model inputs and outputs. For each \lc, \Cklst manually creates
+test case templates and generates sentences by filling in the values of
+each placeholder.
+
+\begin{figure}[t]
+ \centering
+ \lstinputlisting[language=python-pretty]{code/checklist_template2.py}
+ \vspace{-10pt}
+ \caption{\CklstTemplateFigCaption}
+ \vspace{-10pt}
+\end{figure}
+
+We show an example of \Cklst templates in
+Figure~\ref{code:TempEx}. These templates are used for
+evaluating the \sa model on the linguistic capability of \SareqExThree.
+For the templates defined
+at lines~\ref{code:tempex:template:1} to \ref{code:tempex:template:2}, they
+have placeholders such as ${it}$, ${air\_noun}$, ${pos\_adj}$. Values
+for the placeholders are defined at
+lines~\ref{code:tempex:airnoun:1} to~\ref{code:tempex:negadj:2}.
+For each template, \Cklst fills in all the combinations of the
+values of placeholders to generate sentences under this \lc.
+For example, sentences such as ``The flight is good'' and ``That
+airline was happy'' are generated using the template at line 10.
+
+Despite the simple approach used for test case generation, \Cklst has
+limitations. First, it relies on manual work for defining template
+structure and its placeholder values, making the test case
+generation a costly process. Moreover, such
+manual work generates a limited number of templates, produces similar test cases, and induces bias in the test cases. These limitations motivated the design of our approach.

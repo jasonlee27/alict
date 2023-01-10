@@ -1,0 +1,23 @@
+\begin{algorithm}
+
+
+
+\caption{Syntax expansion identification algorithm.}
+\label{alg:diff}
+\begin{algorithmic}[1]
+\STATE \textbf{Input:} Parse trees of seed sentences $S$, reference context-free grammar $R$
+\STATE \textbf{Output:} Set of masked sentences $M$
+\FOR {each part tree $s$ from $S$}
+    \FOR {each production $s\_prod$ from $s$}
+        \STATE $s\_lhs = s\_prod.lhs$
+        \STATE $s\_rhs = s\_prod.rhs$
+        \FOR {each $r\_rhs$ from $R[s\_lhs]$}
+            \IF {$s\_rhs \subset r\_rhs$}
+                \STATE $M = M \cup insertMask($r\_rhs-s\_rhs$, s)$
+            \ENDIF
+        \ENDFOR
+    \ENDFOR
+\ENDFOR
+\STATE \RETURN $random(M, k)$
+\end{algorithmic}
+\end{algorithm}

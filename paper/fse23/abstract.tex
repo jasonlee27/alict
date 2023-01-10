@@ -1,0 +1,38 @@
+\begin{abstract}
+  \Nlp has been widely used for developing a variety of text analytic applications with high reliability. For any NLP-based applications to be trustworthy, assessment through measuring the accuracy of the holdout datasets is needed. Recent research introduced methods that assess an NLP model on a set of linguistic capabilities.
+  However, we observe that state-of-the-art methods rely on manually created test cases, which may be limited in terms of scalability and diversity.
+%\Nlp (NLP) technique has become one of the core techniques fordeveloping text  analytic applications.  These applications need to achieve high reliability to be useful in practice.  
+%The trustworthiness of the NLP applications is often obtained by measuring the accuracy ofthe applications on holdout datasets. However, assessing an NLP application on the accuracy of the holdout datasets is limited in validating its overallquality because these datasets are often notcomprehensive. 
+  %To address this limitation, methodologies to assess an NLP model on a set oflinguistic capabilities has recently been introduced. However, current state-of-the-art methodologies rely on manuallycreated test cases which limits the scale of the testing dataset. 
+  In this work, we introduce \tool,
+  an automated linguistic capability-based testing technique.  Given a set of linguistic capabilities that assess an NLP model, \tool first searches for suitable seed inputs from existing datasets, and then generates a sufficient number
+  of new test inputs by expanding the seed inputs based on their \cfg (CFG). 
+  \tool guarantees the correctness of the generated test input labels and that these test inputs belong to the correct linguistic capabilities. 
+  Evaluation results show that \tool can generate test cases that are 100\%  more diverse than state-of-the-art 
+   while ensuring the correctness of labels and linguistic capabilities of the test inputs. 
+%   \Cong{You mention comprehensive and scalability before, so better give improvement numbers in terms of these metrics.}
+  We also show that \tool facilitates the identification of critical failures and its origins in the NLP models.
+\end{abstract}
+
+% \begin{abstract}
+%   \Nlp (NLP) technique\jl{technique, model, application?} becomes one of the core techniques for developing
+%   text analytics applications.  For developing the NLP applications,
+%   the applications are required to achieve high reliability before they
+%   go to market\jl{<-simplify the sentence}.  The trustworthiness of the prevalent NLP
+%   applications is obtained by measuring the accuracy of the
+%   applications on test dataset.  However, evaluating NLP on
+%   testset \jl{does with held-out accuracy??} is limited to show its quality
+%   because the test datasets are often not comprehensive \jl{what does it mean?}. While the behavioral testing over multiple general linguistic capabilities are
+%   employed, it relies on manually created test cases, and is still
+%   limited to measure its comprehensive performance for each linguistic
+%   capability \jl{does not make sense in terms of story telling}. In this work, we introduce \tool, an NLP model
+%   testing methodology. Given a linguistic capability, The
+%   \tool finds relevant testcases to test the linguistic
+%   capability from existing datasets as seed inputs, generates
+%   sufficient number of new test cases by fuzzing the seed inputs based
+%   on their \cfg (CFG) \jl{<-long sentence}. We illustrate the usefulness of the \tool by showing input diversity and identifying
+%   critical failures in \sota models for NLP task. In our experiment,
+%   we show that the \tool generates {} more test cases with {}
+%   higher diversity, and finds {} more bugs. \jl{describe what lc is about in a sentence} \jl{need to mention the result with numeric values}
+  
+% \end{abstract}
