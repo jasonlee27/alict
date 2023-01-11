@@ -1,3 +1,39 @@
+1. MT-NLP
+Link: https://dl.acm.org/doi/abs/10.5555/3491440.3491504
+MT-NLP applies a simple expansion that only adds an adjective word
+before noun. Many adversarial generation techniques also rely on word
+substitution, but some of them insert a word.
+
+2. Astraea
+Link: https://arxiv.org/abs/2010.02542
+Astraea replaces words in an original sentence with other substitution
+based on their pre-defined input grammar until it finds fairness
+violation. It is limted to only rely on replacing noun words to test
+the model fairness without changing the sentence structure.
+
+3. Ogma
+Link: https://arxiv.org/abs/1902.10027
+Ogma replace words in an original sentence with other words with the
+same tag of part-of-speech (POS), without changing the sentence
+structure.
+
+4. Textattack
+Link: https://arxiv.org/abs/2005.05909
+5. SememePSO (Word-level Textual Adversarial Attacking as Combinatorial
+Optimization)
+Link: https://arxiv.org/abs/1910.12196
+6. Generating Natural Language Adversarial Examples
+Link: https://arxiv.org/abs/1804.07998
+7. BERT-ATTACK: Adversarial Attack Against BERT Using BERT
+Link: https://arxiv.org/abs/2004.09984
+This approach relies on substituting random words in an input sentence
+with different words without changing the sentence structure. It focus
+on attacking the model under test, but not differentiating if the
+perturbed sentence attack the model by its adversarial properties or
+by its context change from the input sentence.
+
+
+==========
 1. Checklist (Marco Tulio Ribeiro et al)
 Link: https://arxiv.org/pdf/2005.04118.pdf
 TASK: Sentiment analysis, duplicate question detection and machine
