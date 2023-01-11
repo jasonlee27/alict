@@ -32,9 +32,46 @@ consistency of NLP model. However, in this work, we focused on the model evaluat
 
 \MyPara{Text Generation}
 %
-Different data augmentation approaches have been proposed for text generation. One of methods in this category is easy data augmentation (EDA)~\cite{weizou2019eda}. It uses simple operations such as synonym replacement and random swap. Coulombe~\cite{coulombe2018textaugapi} implements rule-based transformations using regular expressions for text transformations such as insertion of spelling mistakes, data alterations, entity names, and abbreviations. Mixup interpolation, which was introduced in computer vision category, was implemented in text domain~\cite{hongyu2019dataaugmixup}. Learning-based language models has been used to generate text data for multiple tasks~\cite{qizhe2019unsupdataaug, ateret2019lambda}. While these approaches focus on obtaining synthetic training data, not testing NLP model over \lcs,
+Different data augmentation approaches have been proposed for text
+generation. One of methods in this category is easy data augmentation
+(EDA)~\cite{weizou2019eda}. It uses simple operations such as synonym
+replacement and random swap. Coulombe~\cite{coulombe2018textaugapi}
+implements rule-based transformations using regular expressions for
+text transformations such as insertion of spelling mistakes, data
+alterations, entity names, and abbreviations. Mixup interpolation,
+which was introduced in computer vision category, was implemented in
+text domain~\cite{hongyu2019dataaugmixup}. Learning-based language
+models has been used to generate text data for multiple
+tasks~\cite{qizhe2019unsupdataaug, ateret2019lambda}. While these
+approaches focus on obtaining synthetic training data, not testing NLP
+model over \lcs,
 % they are not able to be used for the capability testing of the NLP model, 
-our work generates text data for testing NLP model over \lcs.
+our work generates text data for testing NLP model over \lcs.  In
+addition, adversarial text generation methods has been used for
+attacking NLP
+model~\cite{morris2020textattack,zang2020sememepso,alzantot2018genadvexp,linyang2020bertattack}. Morris \textit{\etal}~\cite{morris2020textattack}
+transform input text by leveraging existing methods such as insertion,
+deletion and swap of word/character within the similarity-based
+constraints. Zang \textit{\etal}~\cite{zang2020sememepso} finds
+sememe-based synonyms and generates adversarial examples by the word
+substitution. Alzantot \textit{\etal}~\cite{alzantot2018genadvexp}
+substitutes word in an input text with its neighboring words in
+embedding space that fools an NLP
+model. Linyang \textit{\etal}~\cite{linyang2020bertattack} generates
+word substitutes with BERT predicted words for attacking an NLP
+model. Also, Grammar-based text generation has been also
+introduced~\cite{udeshi2019ogma,soremekun2020astraea,maIJCAI2020mtnlp}.
+Ogma~\cite{udeshi2019ogma} and Astraea~\cite{soremekun2020astraea}
+leverages predefined grammar, and search adversarial examples by
+replacing word in an input text with another one that conforms to same
+production rule in the grammar until the replacement leads to error in
+the model. Ma \textit{\etal}~\cite{maIJCAI2020mtnlp} applies a simple
+expansion that inserts an adjective word before noun besides to
+replacement of analogy word found in embedding space. Our work
+generates text data does not only rely on the word substitution, but
+also changes diverse structures from the input text. In addition, we
+generates text conforming to same context of input text and its
+corresponding \lc by investigating its semantic and syntax.
 
 \MyPara{Linguistic Capability Evaluation}
 %
