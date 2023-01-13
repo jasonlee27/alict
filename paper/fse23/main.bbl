@@ -31,6 +31,62 @@ S.~Gururangan, S.~Swayamdipta, O.~Levy, R.~Schwartz, S.~R. Bowman, and N.~A.
   Smith, ``Annotation artifacts in natural language inference data,''
   \emph{arXiv preprint arXiv:1803.02324}, 2018.
 
+\bibitem{morris2020textattack}
+\BIBentryALTinterwordspacing
+J.~X. Morris, E.~Lifland, J.~Y. Yoo, and Y.~Qi, ``Textattack: {A} framework for
+  adversarial attacks in natural language processing,'' \emph{CoRR}, vol.
+  abs/2005.05909, 2020. [Online]. Available:
+  \url{https://arxiv.org/abs/2005.05909}
+\BIBentrySTDinterwordspacing
+
+\bibitem{zang2020sememepso}
+\BIBentryALTinterwordspacing
+Y.~Zang, F.~Qi, C.~Yang, Z.~Liu, M.~Zhang, Q.~Liu, and M.~Sun, ``Word-level
+  textual adversarial attacking as combinatorial optimization,'' in
+  \emph{Proceedings of the 58th Annual Meeting of the Association for
+  Computational Linguistics}.\hskip 1em plus 0.5em minus 0.4em\relax Online:
+  Association for Computational Linguistics, Jul. 2020, pp. 6066--6080.
+  [Online]. Available: \url{https://aclanthology.org/2020.acl-main.540}
+\BIBentrySTDinterwordspacing
+
+\bibitem{alzantot2018genadvexp}
+\BIBentryALTinterwordspacing
+M.~Alzantot, Y.~Sharma, A.~Elgohary, B.-J. Ho, M.~Srivastava, and K.-W. Chang,
+  ``Generating natural language adversarial examples,'' in \emph{Proceedings of
+  the 2018 Conference on Empirical Methods in Natural Language
+  Processing}.\hskip 1em plus 0.5em minus 0.4em\relax Brussels, Belgium:
+  Association for Computational Linguistics, Oct.-Nov. 2018, pp. 2890--2896.
+  [Online]. Available: \url{https://aclanthology.org/D18-1316}
+\BIBentrySTDinterwordspacing
+
+\bibitem{linyang2020bertattack}
+\BIBentryALTinterwordspacing
+L.~Li, R.~Ma, Q.~Guo, X.~Xue, and X.~Qiu, ``{BERT-ATTACK:} adversarial attack
+  against {BERT} using {BERT},'' \emph{CoRR}, vol. abs/2004.09984, 2020.
+  [Online]. Available: \url{https://arxiv.org/abs/2004.09984}
+\BIBentrySTDinterwordspacing
+
+\bibitem{udeshi2019ogma}
+\BIBentryALTinterwordspacing
+S.~Udeshi and S.~Chattopadhyay, ``Grammar based directed testing of machine
+  learning systems,'' \emph{CoRR}, vol. abs/1902.10027, 2019. [Online].
+  Available: \url{http://arxiv.org/abs/1902.10027}
+\BIBentrySTDinterwordspacing
+
+\bibitem{soremekun2020astraea}
+\BIBentryALTinterwordspacing
+E.~O. Soremekun, S.~Udeshi, and S.~Chattopadhyay, ``Astraea: Grammar-based
+  fairness testing,'' \emph{CoRR}, vol. abs/2010.02542, 2020. [Online].
+  Available: \url{https://arxiv.org/abs/2010.02542}
+\BIBentrySTDinterwordspacing
+
+\bibitem{udeshi2018fairnesstest}
+\BIBentryALTinterwordspacing
+S.~Udeshi, P.~Arora, and S.~Chattopadhyay, ``Automated directed fairness
+  testing,'' \emph{CoRR}, vol. abs/1807.00468, 2018. [Online]. Available:
+  \url{http://arxiv.org/abs/1807.00468}
+\BIBentrySTDinterwordspacing
+
 \bibitem{marcoACL2020checklist}
 M.~T. Ribeiro, T.~Wu, C.~Guestrin, and S.~Singh, ``Beyond accuracy: Behavioral
   testing of nlp models with checklist,'' in \emph{Association for
@@ -269,6 +325,16 @@ A.~Anaby{-}Tavor, B.~Carmeli, E.~Goldbraich, A.~Kantor, G.~Kour, S.~Shlomov,
   N.~Tepper, and N.~Zwerdling, ``Not enough data? deep learning to the
   rescue!'' \emph{CoRR}, vol. abs/1911.03118, 2019. [Online]. Available:
   \url{http://arxiv.org/abs/1911.03118}
+\BIBentrySTDinterwordspacing
+
+\bibitem{maIJCAI2020mtnlp}
+\BIBentryALTinterwordspacing
+P.~Ma, S.~Wang, and J.~Liu, ``Metamorphic testing and certified mitigation of
+  fairness violations in nlp models,'' in \emph{Proceedings of the Twenty-Ninth
+  International Joint Conference on Artificial Intelligence, {IJCAI-20}},
+  C.~Bessiere, Ed.\hskip 1em plus 0.5em minus 0.4em\relax International Joint
+  Conferences on Artificial Intelligence Organization, 7 2020, pp. 458--465,
+  main track. [Online]. Available: \url{https://doi.org/10.24963/ijcai.2020/64}
 \BIBentrySTDinterwordspacing
 
 \bibitem{wang2018glue}
