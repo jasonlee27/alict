@@ -77,6 +77,7 @@
 \newcommand{\CfgStmtTableCaptionVSpace}{-5pt}
 \newcommand{\ResultTableCaptionVSpace}{-5pt}
 \newcommand{\ReqTableVSpace}{-5pt}
+\newcommand{\HsdReqTableVSpace}{-5pt}
 \newcommand{\SelfBleuTableVSpace}{-5pt}
 \newcommand{\RetrainDebugTableVSpace}{-5pt}
 \newcommand{\TestResultsTableVSpace}{-5pt}
@@ -264,7 +265,12 @@ requirement (\ref{fig:TransformReqSubEx}) and its template
 \newcommand{\SareqExThree}{``Sentiment change over time, present should prevail"}
 
 %% Table Caption
-\newcommand{\ReqTableCaption}{Search rules and transformation templates for linguistic capabilities.\label{tab:specification}\vspace{\ReqTableVSpace}}
+\newcommand{\ReqTableCaption}{Search rules and transformation
+templates for linguistic
+capabilities of \sa task.\label{tab:specification}\vspace{\ReqTableVSpace}}
+\newcommand{\HsdReqTableCaption}{Search rules and transformation
+templates for linguistic
+capabilities of \hsd task.\label{tab:hsd-specification}\vspace{\HsdReqTableVSpace}}
 \newcommand{\ResultTableCaption}{Results on \Nlp tasks
 of \Ccd, \Ctr, \Cref respectively.\label{table:Result}\vspace{-5pt}}
 \newcommand{\SelfBleuTableCaption}{\selfbleu scores over testcases
@@ -297,6 +303,7 @@ cases.\label{table:TestResultHsBl}}
 
 %%% NUMBRERS
 \input{tables/lc-requirement-numbers}
+\input{tables/lc-hsd-requirement-numbers}
 %% \input{tables/selfbleu-numbers}
 %% \input{tables/retrain-debug-numbers}
 \input{tables/manual-study-numbers}

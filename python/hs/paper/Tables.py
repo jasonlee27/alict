@@ -101,9 +101,9 @@ class Tables:
                 search = r"\textbf{Search}~"+cls.replace_latex_symbol(search.split('<SEARCH>')[-1])
                 transform = r"\textbf{Transform}~"+cls.replace_latex_symbol(transform.split('<TRANSFORM>')[-1])
             # end if
-            output_file.append_macro(latex.Macro(f"lc_{l_i+1}_desc", desc))
-            output_file.append_macro(latex.Macro(f"lc_{l_i+1}_search", search))
-            output_file.append_macro(latex.Macro(f"lc_{l_i+1}_transform", transform))
+            output_file.append_macro(latex.Macro(f"hsd_lc_{l_i+1}_desc", desc))
+            output_file.append_macro(latex.Macro(f"hsd_lc_{l_i+1}_search", search))
+            output_file.append_macro(latex.Macro(f"hsd_lc_{l_i+1}_transform", transform))
         # end for
         output_file.save()
         return
@@ -117,7 +117,8 @@ class Tables:
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
         output_file.append(r"\caption{\HsdReqTableCaption}")
-        output_file.append(r"\begin{tabular}{p{5cm}||p{9cm}}")
+        output_file.append(r"\resizebox{0.8\textwidth}{!}{")
+        output_file.append(r"\begin{tabular}{p{5cm}||p{12.5cm}}")
         output_file.append(r"\toprule")
         
         # Content
@@ -130,16 +131,16 @@ class Tables:
             l_split = l.split('::')
             len_l = len(l_split) # 3 or 4
             output_file.append("\multirow{3}{*}{\parbox{5cm}{" + \
-                               f"LC{l_i+1}: " + latex.Macro(f"lc_{l_i+1}_desc").use() + "}}")
-            output_file.append(" & " + latex.Macro(f"lc_{l_i+1}_search").use() + r"\\")
-            output_file.append(" & " + latex.Macro(f"lc_{l_i+1}_transform").use() + r"\\")
+                               f"LC{l_i+1}: " + latex.Macro(f"hsd_lc_{l_i+1}_desc").use() + "}}")
+            output_file.append(" & " + latex.Macro(f"hsd_lc_{l_i+1}_search").use() + r"\\")
+            output_file.append(" & " + latex.Macro(f"hsd_lc_{l_i+1}_transform").use() + r"\\")
             output_file.append(r"\\")
             output_file.append(r"\hline")
         # end for
 
         # Footer
         output_file.append(r"\bottomrule")
-        output_file.append(r"\end{tabular}")
+        output_file.append(r"\end{tabular}}")
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
         output_file.append(r"\vspace{\HsdReqTableVSpace}")
