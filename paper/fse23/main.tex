@@ -1,5 +1,6 @@
-\documentclass[10pt,conference]{IEEEtran}
-\IEEEoverridecommandlockouts
+\documentclass[sigconf,review,anonymous]{acmart}
+\let\Bbbk\relax
+\acmConference[ESEC/FSE 2023]{The 31st ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering}{11 - 17 November, 2023}{San Francisco, USA}
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 %% Use macros
 \input{macros}
@@ -12,12 +13,11 @@
 
 \title{\tool{}: Specification- and Syntax-based Automated Testing Linguistic Capabilities of NLP Models}
 
+%% Abstract
+\input{abstract}
 
 %% \title{\tool{}: Specification- and Syntax-based Automated Testing Linguistic Capabilities of NLP Models}
 \maketitle
-
-%% Abstract
-\input{abstract}
 
 %% Contents
 \input{intro}
@@ -31,7 +31,7 @@
 \input{concl}
 \clearpage
 
-\bibliographystyle{IEEEtran}
+\bibliographystyle{ACM-Reference-Format}
 \bibliography{bib}
 
 %% Appendix
