@@ -801,9 +801,9 @@ class Tables:
                 output_file.append_macro(latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-pass-to-fail",
                                                      cls.FMT_INT.format(num_pass2fail[m_name][lc_i][0])))
                 
-                output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-fail",
+                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail",
                                                      cls.FMT_INT.format(bl_num_tc_fail[m_name][lc_i][0])))
-                output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-failrate",
+                output_file.append_macro(latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-failrate",
                                                      cls.FMT_FLOAT.format(bl_num_tc_fail_rate[m_name][lc_i][0])))
             # end for
         # end_for
