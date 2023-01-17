@@ -6,199 +6,191 @@
 \begin{center}
 \caption{\TestResultsHsTableCaption}
 \resizebox{0.7\textwidth}{!}{
-\begin{tabular}{p{8cm}||cclll}
+\begin{tabular}{p{8cm}||ccclll}
 \toprule
-\tLc & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\
+\tLc & \parbox{1cm}{\tNumBlTcs} & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\
 \midrule
-\multirow{2}{*}{\parbox{8cm}{LC1: \UseMacro{test-results-hs-lc0}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc0-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc0-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc0-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc0-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC1: \UseMacro{test-results-hs-lc0}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc0-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc0-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc0-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc0-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc0-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc0-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc0-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc0-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc0-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc0-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc0-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc0-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc0-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc0-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc0-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc0-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc0-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc0-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc0-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc0-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC2: \UseMacro{test-results-hs-lc1}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc1-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc1-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc1-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc1-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC2: \UseMacro{test-results-hs-lc1}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc1-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc1-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc1-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc1-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc1-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc1-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc1-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc1-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc1-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc1-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc1-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc1-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc1-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc1-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc1-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc1-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc1-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc1-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc1-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc1-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC3: \UseMacro{test-results-hs-lc2}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc2-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc2-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc2-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc2-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC3: \UseMacro{test-results-hs-lc2}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc2-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc2-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc2-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc2-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc2-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc2-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc2-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc2-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc2-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc2-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc2-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc2-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc2-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc2-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc2-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc2-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc2-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc2-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc2-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc2-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC4: \UseMacro{test-results-hs-lc3}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc3-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc3-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc3-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc3-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC4: \UseMacro{test-results-hs-lc3}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc3-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc3-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc3-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc3-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc3-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc3-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc3-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc3-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc3-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc3-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc3-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc3-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc3-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc3-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc3-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc3-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc3-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc3-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc3-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc3-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC5: \UseMacro{test-results-hs-lc4}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc4-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc4-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc4-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc4-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC5: \UseMacro{test-results-hs-lc4}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc4-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc4-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc4-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc4-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc4-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc4-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc4-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc4-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc4-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc4-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc4-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc4-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc4-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc4-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc4-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc4-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc4-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc4-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc4-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc4-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC6: \UseMacro{test-results-hs-lc5}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc5-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc5-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc5-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc5-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC6: \UseMacro{test-results-hs-lc5}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc5-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc5-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc5-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc5-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc5-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc5-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc5-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc5-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc5-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc5-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc5-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc5-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc5-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc5-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc5-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc5-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc5-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc5-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc5-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc5-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC7: \UseMacro{test-results-hs-lc6}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc6-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc6-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc6-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc6-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC7: \UseMacro{test-results-hs-lc6}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc6-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc6-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc6-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc6-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc6-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc6-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc6-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc6-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc6-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc6-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc6-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc6-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc6-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc6-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc6-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc6-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc6-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc6-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc6-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc6-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC8: \UseMacro{test-results-hs-lc7}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc7-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc7-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc7-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc7-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC8: \UseMacro{test-results-hs-lc7}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc7-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc7-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc7-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc7-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc7-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc7-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc7-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc7-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc7-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc7-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc7-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc7-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc7-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc7-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc7-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc7-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc7-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc7-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc7-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc7-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC9: \UseMacro{test-results-hs-lc8}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc8-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc8-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc8-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc8-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC9: \UseMacro{test-results-hs-lc8}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc8-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc8-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc8-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc8-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc8-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc8-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc8-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc8-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc8-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc8-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc8-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc8-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc8-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc8-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc8-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc8-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc8-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc8-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc8-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc8-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC10: \UseMacro{test-results-hs-lc9}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc9-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc9-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc9-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc9-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC10: \UseMacro{test-results-hs-lc9}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc9-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc9-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc9-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc9-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc9-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc9-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc9-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc9-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc9-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc9-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc9-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc9-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc9-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc9-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc9-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc9-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc9-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc9-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc9-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc9-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC11: \UseMacro{test-results-hs-lc10}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc10-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc10-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc10-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc10-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC11: \UseMacro{test-results-hs-lc10}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc10-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc10-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc10-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc10-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc10-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc10-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc10-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc10-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc10-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc10-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc10-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc10-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc10-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc10-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc10-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc10-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc10-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc10-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc10-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc10-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC12: \UseMacro{test-results-hs-lc11}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc11-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc11-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc11-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc11-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC12: \UseMacro{test-results-hs-lc11}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc11-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc11-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc11-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc11-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc11-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc11-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc11-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc11-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc11-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc11-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc11-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc11-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc11-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc11-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc11-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc11-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc11-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc11-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc11-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc11-num-pass-to-fail}\\
 \hline
-\multirow{2}{*}{\parbox{8cm}{LC13: \UseMacro{test-results-hs-lc12}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc12-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc12-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc12-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc12-num-all-failrate}
+\multirow{3}{*}{\parbox{8cm}{LC13: \UseMacro{test-results-hs-lc12}}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-bl-lc12-num-tcs}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc12-num-seeds}}
+ & \multirow{3}{*}{\centering\UseMacro{test-results-hs-lc12-num-exps}}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc12-num-all-fail}/\UseMacro{test-results-hs-bl-model0-lc12-num-fail}
+ & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc12-num-all-failrate}/\UseMacro{test-results-hs-bl-model0-lc12-num-failrate}
  & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc12-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc12-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc12-num-all-failrate}
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc12-num-all-fail}/\UseMacro{test-results-hs-bl-model1-lc12-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc12-num-all-failrate}/\UseMacro{test-results-hs-bl-model1-lc12-num-failrate}
  & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc12-num-pass-to-fail}\\
-\hline
-\multirow{2}{*}{\parbox{8cm}{LC14: \UseMacro{test-results-hs-lc13}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc13-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc13-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc13-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc13-num-all-failrate}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc13-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc13-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc13-num-all-failrate}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc13-num-pass-to-fail}\\
-\hline
-\multirow{2}{*}{\parbox{8cm}{LC15: \UseMacro{test-results-hs-lc14}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc14-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc14-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc14-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc14-num-all-failrate}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc14-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc14-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc14-num-all-failrate}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc14-num-pass-to-fail}\\
-\hline
-\multirow{2}{*}{\parbox{8cm}{LC16: \UseMacro{test-results-hs-lc15}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc15-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc15-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc15-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc15-num-all-failrate}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc15-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc15-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc15-num-all-failrate}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc15-num-pass-to-fail}\\
-\hline
-\multirow{2}{*}{\parbox{8cm}{LC17: \UseMacro{test-results-hs-lc16}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc16-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc16-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc16-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc16-num-all-failrate}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc16-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc16-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc16-num-all-failrate}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc16-num-pass-to-fail}\\
-\hline
-\multirow{2}{*}{\parbox{8cm}{LC18: \UseMacro{test-results-hs-lc17}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc17-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc17-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc17-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc17-num-all-failrate}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc17-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc17-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc17-num-all-failrate}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc17-num-pass-to-fail}\\
-\hline
-\multirow{2}{*}{\parbox{8cm}{LC19: \UseMacro{test-results-hs-lc18}}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc18-num-seeds}}
- & \multirow{2}{*}{\centering\UseMacro{test-results-hs-lc18-num-exps}}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc18-num-all-fail}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc18-num-all-failrate}
- & alex-BERT$\colon$\UseMacro{test-results-hs-model0-lc18-num-pass-to-fail}\\
- & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc18-num-all-fail}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc18-num-all-failrate}
- & CNERG-BERT$\colon$\UseMacro{test-results-hs-model1-lc18-num-pass-to-fail}\\
+ & & & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc12-num-all-fail}/\UseMacro{test-results-hs-bl-model2-lc12-num-fail}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc12-num-all-failrate}/\UseMacro{test-results-hs-bl-model2-lc12-num-failrate}
+ & CNERG-BERT$\colon$\UseMacro{test-results-hs-model2-lc12-num-pass-to-fail}\\
 \hline
 \bottomrule
 \end{tabular}}
