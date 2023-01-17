@@ -693,6 +693,10 @@ class Tables:
         num_all_fail_rate = dict()
         num_pass2fail = dict()
 
+        bl_num_tc_tot = dict()
+        bl_num_tc_fail = dict()
+        bl_num_tc_fail_rate = dict()
+
         req_dir = result_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
         output_file = latex.File(tables_dir / f"test-results-all-numbers.tex")
@@ -707,7 +711,9 @@ class Tables:
 
         res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}"
         result_file = res_dir / 'test_result_analysis.json'
-        result = Utils.read_json(result_file)            
+        bl_result_file = res_dir / 'test_result_checklist_analysis.json'
+        result = Utils.read_json(result_file)
+        bl_result = Utils.read_json(bl_result_file)
         for m_i, model_name in enumerate(result.keys()):
             if f"model{m_i}" not in num_seeds_tot.keys():
                 num_seeds_tot[f"model{m_i}"] = dict()
@@ -719,6 +725,10 @@ class Tables:
                 num_exp_fail_rate[f"model{m_i}"] = dict()
                 num_all_fail_rate[f"model{m_i}"] = dict()
                 num_pass2fail[f"model{m_i}"] = dict()
+
+                bl_num_tc_tot[f"model{m_i}"] = dict()
+                bl_num_tc_fail[f"model{m_i}"] = dict()
+                bl_num_tc_fail_rate[f"model{m_i}"] = dict()
             # end if
             
             # model_name = model_name.replace('/', '-')
@@ -727,6 +737,8 @@ class Tables:
             temp_num_pass2fail = 0
             for res_i, res in enumerate(result[model_name]):
                 desc, _res_lc_i = lc_ids[res['req'].lower()]
+                bl_res = [bl_r for bl_r in bl_result[model_name] if bl_r['req'].lower()==desc.lower()]
+                bl_res = bl_res[0]
                 if _res_lc_i not in num_seeds_tot[f"model{m_i}"].keys():
                     num_seeds_tot[f"model{m_i}"][_res_lc_i] = list()
                     num_exps_tot[f"model{m_i}"][_res_lc_i] = list()
@@ -737,6 +749,10 @@ class Tables:
                     num_exp_fail_rate[f"model{m_i}"][_res_lc_i] = list()
                     num_all_fail_rate[f"model{m_i}"][_res_lc_i] = list()
                     num_pass2fail[f"model{m_i}"][_res_lc_i] = list()
+                    
+                    bl_num_tc_tot[f"model{m_i}"][_res_lc_i] = list()
+                    bl_num_tc_fail[f"model{m_i}"][_res_lc_i] = list()
+                    bl_num_tc_fail_rate[f"model{m_i}"][_res_lc_i] = list()
                 # end if
                 num_seeds_tot[f"model{m_i}"][_res_lc_i].append(res['num_seeds'])
                 num_exps_tot[f"model{m_i}"][_res_lc_i].append(res['num_exps'] if res['is_exps_exist'] else 0)
@@ -749,6 +765,10 @@ class Tables:
                 num_exp_fail_rate[f"model{m_i}"][_res_lc_i].append(res['num_exp_fail']*100./res['num_exps'] if res['is_exps_exist'] else 0.)
                 num_all_fail_rate[f"model{m_i}"][_res_lc_i].append((res['num_seed_fail']+res['num_exp_fail'])*100./(res['num_seeds']+res['num_exps']) if res['is_exps_exist'] else res['num_seed_fail']*100./res['num_seeds'])
                 num_pass2fail[f"model{m_i}"][_res_lc_i].append(res['num_pass2fail'] if res['is_exps_exist'] else 0.)
+
+                bl_num_tc_tot[f"model{m_i}"][_res_lc_i].append(bl_res['num_tcs'])
+                bl_num_tc_fail[f"model{m_i}"][_res_lc_i].append(bl_res['num_tc_fail'])
+                bl_num_tc_fail_rate[f"model{m_i}"][_res_lc_i].append(bl_res['num_tc_fail']*100./bl_res['num_tcs'])
             # end for
         # end for
         
@@ -770,6 +790,9 @@ class Tables:
                                                          cls.FMT_INT.format(num_seeds_tot[m_name][lc_i][0])))
                     output_file.append_macro(latex.Macro(f"test-results-all-lc{lc_i}-num-exps",
                                                          cls.FMT_INT.format(num_exps_tot[m_name][lc_i][0])))
+                    
+                    output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-tcs",
+                                                         cls.FMT_INT.format(bl_num_tc_tot[m_name][lc_i][0])))
                 # end if
                 output_file.append_macro(latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-fail",
                                                      cls.FMT_INT.format(num_all_fail[m_name][lc_i][0])))
@@ -777,6 +800,11 @@ class Tables:
                                                      cls.FMT_FLOAT.format(num_all_fail_rate[m_name][lc_i][0])))
                 output_file.append_macro(latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-pass-to-fail",
                                                      cls.FMT_INT.format(num_pass2fail[m_name][lc_i][0])))
+                
+                output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-fail",
+                                                     cls.FMT_INT.format(bl_num_tc_fail[m_name][lc_i][0])))
+                output_file.append_macro(latex.Macro(f"test-results-bl-lc{lc_i}-num-failrate",
+                                                     cls.FMT_FLOAT.format(bl_num_tc_fail_rate[m_name][lc_i][0])))
             # end for
         # end_for
         output_file.save()
@@ -792,7 +820,9 @@ class Tables:
         output_file = latex.File(tables_dir / f"test-results-all-table.tex")
         res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}"
         result_file = res_dir / 'test_result_analysis.json'
+        bl_result_file = res_dir / 'test_result_checklist_analysis.json'
         result = Utils.read_json(result_file)
+        bl_result = Utils.read_json(bl_result_file)
         # baseline_result = Utils.read_json(baseline_result_file)
         model_names = list(result.keys())
         lcs_len = len(result[model_names[0]])
@@ -803,10 +833,10 @@ class Tables:
         output_file.append(r"\begin{center}")
         output_file.append(r"\caption{\TestResultsAllTableCaption}")
         output_file.append(r"\resizebox{0.9\textwidth}{!}{")
-        output_file.append(r"\begin{tabular}{p{8cm}||cclll}")
+        output_file.append(r"\begin{tabular}{p{8cm}||ccclll}")
         output_file.append(r"\toprule")
         
-        output_file.append(r"\tLc & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\")
+        output_file.append(r"\tLc & \parbox{1cm}{\tNumBlTcs} & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\")
         output_file.append(r"\midrule")
         
         # Content
@@ -816,12 +846,16 @@ class Tables:
             output_file.append("\multirow{"+str(len(model_names))+"}{*}{\parbox{8cm}{" + \
                                lc_prefix_str + latex.Macro(f"test-results-all-lc{lc_i}").use() + "}}")
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
-                               latex.Macro(f"test-results-all-lc{lc_i}-num-seeds").use() + "}")            
+                               latex.Macro(f"test-results-bl-lc{lc_i}-num-tcs").use() + "}")       
+            output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
+                               latex.Macro(f"test-results-all-lc{lc_i}-num-seeds").use() + "}")
             output_file.append(" & \multirow{"+str(len(model_names))+"}{*}{\centering" + \
                                latex.Macro(f"test-results-all-lc{lc_i}-num-exps").use() + "}")
             
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-all-model0-lc{lc_i}-num-fail").use())
-            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-all-model0-lc{lc_i}-num-failrate").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-all-model0-lc{lc_i}-num-fail").use() + '/' + \
+                               latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-fail").use())
+            output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-all-model0-lc{lc_i}-num-failrate").use() + '/' + \
+                               latex.Macro(f"test-results-bl-model0-lc{lc_i}-num-failrate").use())
             output_file.append(r" & BERT$\colon$" + latex.Macro(f"test-results-all-model0-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             
             for m_i in range(1,len(model_names)):
@@ -830,8 +864,10 @@ class Tables:
                 else:
                     m_name = 'dstBERT'
                 # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-failrate").use())
+                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-fail").use() + '/' + \
+                                   latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
+                output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-failrate").use() + '/' + \
+                                   latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-failrate").use())
                 output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-pass-to-fail").use() + r"\\")
             # end for
             output_file.append(r"\hline")
