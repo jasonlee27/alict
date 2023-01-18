@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.5.11)  17 JAN 2023 23:52
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.5.11)  17 JAN 2023 23:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1877,19 +1877,42 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 (./experiment.tex
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/it' will be
 (Font)              scaled to size 9.0pt on input line 28.
-LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 29
+LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 30
 .
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/inconsolata/t1zi4.fd
 File: t1zi4.fd 2018/01/14 T1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 9.0pt on input line 29.
+(Font)              scaled to size 9.0pt on input line 30.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zi4' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
- [5.5 <./figs/running_example.pdf>]) (./result.tex
+
+
+Package natbib Warning: Citation `sanh2019distilbertad' on page 5 undefined on 
+input line 32.
+
+
+Package natbib Warning: Citation `aluru2020deep' on page 5 undefined on input l
+ine 33.
+
+
+Overfull \hbox (2.8384pt too wide) in paragraph at lines 28--35
+\T1/LinuxLibertineT-TLF/m/n/9 (-20) y-sis task, and \T1/zi4/m/n/9 dehate-BERT \
+T1/LinuxLibertineT-TLF/m/n/9 (-20) (Hate-speech-CNERG/dehatebert-mono-
+ []
+
+
+Package natbib Warning: Citation `mathew2021hatexplain' on page 5 undefined on 
+input line 39.
+
+[5.5 <./figs/running_example.pdf>]
+Underfull \vbox (badness 5316) has occurred while \output is active []
+
+ [6.6])
+(./result.tex
 Overfull \hbox (61.84332pt too wide) in paragraph at lines 4--5
 \T1/LinuxLibertineT-TLF/m/n/9 (-20) the RQs. More re-sults are avail-able at ht
 tps://github.com/csresearcher27/s2lct$[]$project. 
@@ -1915,11 +1938,7 @@ Overfull \hbox (1.3464pt too wide) in paragraph at lines 154--154
  []\T1/LinuxLibertineT-TLF/b/n/8 (-20) S$[]$LCT/Cklst 
  []
 
-
-Underfull \vbox (badness 1158) has occurred while \output is active []
-
- [6.6])
-(./tables/test-results-hs-table.tex
+) (./tables/test-results-hs-table.tex
 Underfull \hbox (badness 10000) in paragraph at lines 223--223
 []\T1/LinuxLibertineT-TLF/b/n/8 (+20) Htck
  []
@@ -2053,17 +2072,17 @@ Class acmart Warning: \vspace should only be used to provide space above/below
 surrounding objects on input line 134.
 
 
+Underfull \vbox (badness 6758) has occurred while \output is active []
+
+ [8.8 <./figs/nlp_coverage.pdf>]
+
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 150.
 
-[8.8 <./figs/nlp_coverage.pdf>]) (./threats.tex) (./related.tex
+) (./threats.tex) (./related.tex
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 1.
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
@@ -2073,7 +2092,10 @@ surrounding objects on input line 4.
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 33.
 
-[9.9 <./figs/explain.pdf>]
+
+Underfull \vbox (badness 1622) has occurred while \output is active []
+
+ [9.9 <./figs/explain.pdf>]
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 76.
@@ -2087,9 +2109,7 @@ surrounding objects on input line 89.
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 1.
 
-) [10.10
-
-] [11.11] [12.12] [13.13] [14.14
+) [10.10] [11.11] [12.12] [13.13] [14.14
 
 
 ] (./main.bbl
@@ -2131,7 +2151,6 @@ LaTeX Info: Redefining \tempurl on input line 661.
 LaTeX Info: Redefining \tempurl on input line 680.
  [15.15
 
-
 ]
 LaTeX Info: Redefining \tempurl on input line 698.
 LaTeX Info: Redefining \tempurl on input line 716.
@@ -2139,6 +2158,9 @@ LaTeX Info: Redefining \tempurl on input line 732.
 LaTeX Info: Redefining \tempurl on input line 747.
 LaTeX Info: Redefining \tempurl on input line 765.
 )
+
+Package natbib Warning: There were undefined citations.
+
 (/usr/local/texlive/2021/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
 File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
 )
@@ -2162,11 +2184,11 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 42B980A5093EA15919EDBE1C4CB27CE1;3372.
  ) 
 Here is how much of TeX's memory you used:
- 37902 strings out of 478994
- 717242 string characters out of 5858184
+ 37893 strings out of 478994
+ 717008 string characters out of 5858184
  1313658 words of memory out of 5000000
  53525 multiletter control sequences out of 15000+600000
- 635667 words of font info for 589 fonts, out of 8000000 for 9000
+ 634641 words of font info for 583 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  96i,17n,131p,1345b,1902s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc}{
@@ -2193,7 +2215,7 @@ ype1/public/newtx/NewTXMI7.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/
 public/newtx/txexs.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/n
 ewtx/txmiaX.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/newtx/tx
 sys.pfb>
-Output written on main.pdf (16 pages, 865884 bytes).
+Output written on main.pdf (16 pages, 870834 bytes).
 PDF statistics:
  779 PDF objects out of 1000 (max. 8388607)
  671 compressed objects within 7 object streams

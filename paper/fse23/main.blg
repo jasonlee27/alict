@@ -6,6 +6,9 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Database file #1: bib.bib
+Warning--I didn't find a database entry for "sanh2019distilbertad"
+Warning--I didn't find a database entry for "aluru2020deep"
+Warning--I didn't find a database entry for "mathew2021hatexplain"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=200001) to 20 items from 10.
@@ -56,7 +59,7 @@ Warning--no number and no volume in zylberajch2021hildif
 Warning--page numbers missing in both pages and numpages fields in zylberajch2021hildif
 You've used 49 entries,
             5981 wiz_defined-function locations,
-            1883 strings with 32946 characters,
+            1886 strings with 32999 characters,
 and the built_in function-call counts, 57695 in all, are:
 = -- 7630
 > -- 2103
@@ -95,4 +98,4 @@ warning$ -- 43
 while$ -- 229
 width$ -- 0
 write$ -- 1096
-(There were 43 warnings)
+(There were 46 warnings)

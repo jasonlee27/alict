@@ -6,8 +6,9 @@ the effectiveness of \tool. We answer the following research
 questions (RQs):
 
 \begin{enumerate}[label=\textbf{RQ\arabic*}]
-\item \label{rq:three}: \textbf{Test Case Diversity.} Can \tool generate more diverse test cases
-  than \Cklst?
+% \item \label{rq:three}: \textbf{Test Case Diversity.} Can \tool generate more diverse test cases
+%   than \Cklst?
+\item \label{rq:three}: \textbf{Test Efficiency.} Can \tool generated test cases evaluate an NLP model more efficiently?
 \item \label{rq:one}: \textbf{Test Oracle.}  Can \tool generate test sentences with correct sentiment labels?
 \item \label{rq:two}: \textbf{Capability Testing.} Are \tool generated test sentences correctly categorized into a \lc?
 % \item \label{rq:four}: \textbf{Usefulness of Test Inputs.} Can \tool be useful to find root causes of bugs
@@ -23,62 +24,115 @@ questions (RQs):
 %model.
 
 \subsection{Experimental Subjects}
-
 \paragraph*{\textbf{NLP Models \& Dataset}}
-We evaluate our approach on three learning-based \sa models released from the Hugging Face centralized
+We evaluate our approach on three \sa models and two \hsd models. All
+are learning-based models released from the Hugging Face centralized
 model hub:\footnote{https://huggingface.co/models} \texttt{\Bert}
-(\bertsamodel), \texttt{\Roberta} (\robertasamodel), and \texttt{\Dbert} (\disbertsamodel). These models were pre-trained on English
-language using a masked language modeling (MLM) objective, and
-were fine-tuned on the \sa task. In this experiment, we used the \Sst \cite{socher2013sst} dataset for
-searching the seeds in \tool. \Sst is a
-corpus of movie review, consisting of 11,855 sentences
-with sentiment scores. We split the
-scores into ranges [0, 0.4], (0.4, 0.6] and (0.6, 1.0] to assign them
-negative, neutral and positive labels, respectively. In addition,
-\Swn~\cite{baccianella2010sentiwordnet} is a publicly available dataset for English sentiment lexicons.  
-It provides lexical sentiment scores and the sentiment word labels 
-are categorized by implementing the rules.
-We used \Swn as both the generation and the expansion domain knowledge as shown in Figure \ref{fig:overview}.
+(\bertsamodel), \texttt{\Roberta} (\robertasamodel), and
+\texttt{\Dbert} (\disbertsamodel~\cite{sanh2019distilbertad}) for \sa
+task, and \texttt{\hsdBert} (\berthsdmodel~\cite{aluru2020deep}) and
+\texttt{\hsdRoBerta} (\robertahsdmodel) for \hsd.
+
+These models were pre-trained on English language using a masked
+language modeling (MLM) objective, and were fine-tuned on the \sa and
+\hsd task. In this experiment, we used the \Sst~\cite{socher2013sst}
+and \Hatexp~\cite{mathew2021hatexplain} datasets, for \sa and \hsd
+respectively, for searching the seeds in \tool. \Sst is a corpus of
+movie review, consisting of 11,855 sentences with sentiment scores. We
+split the scores into ranges [0, 0.4], (0.4, 0.6] and (0.6, 1.0] to
+    assign them negative, neutral and positive labels,
+    respectively. \Hatexp is a hate speech dataset collected from
+    Twitter and Gab. It consists of 20,148 sentences (9,055 from
+    Twitter and 11,093 from Gab). Each data has sentence, class of
+    hate speech, target community, and rationale for the labelling
+    decision.  In addition, \Swn~\cite{baccianella2010sentiwordnet} is
+    a publicly available dataset for English sentiment lexicons.  We
+    used \Swn as both the generation and the expansion domain
+    knowledge as shown in Figure \ref{fig:overview}.
 
 \paragraph*{\textbf{Comparison Baseline}}
 We compared \tool with
-\Cklst,\footnote{https://github.com/marcotcr/checklist} a
-manual template and \lc based approach to generate test cases. In this evalaution, we used \Cklst's \sa test cases that are
-generated from its publicly available Jupyter Notebook implementation.
+\Cklst,\footnote{https://github.com/marcotcr/checklist} a manual
+template and \lc based approach to generate test cases. In this
+evalaution, we used \Cklst's \sa test cases that are generated from
+its publicly available Jupyter Notebook implementation. \jl{Do we need
+  to explain why we used checklist only as a baseline?}
 
 \subsection{Experimental Process}
 
 \paragraph*{\textbf{RQ1}}
-Recall that \Cklst relies on significant manual efforts and may not generate comprehensive test cases in a linguistic capability. \tool, instead, automatically generates test cases based on a search
-dataset and the syntax in a large reference corpus. 
-We expect \tool can generate a more diverse test suite than \Cklst.
+Recall that \Cklst relies on significant manual efforts and may not
+generate comprehensive test cases in a linguistic capability. \tool,
+instead, automatically generates test cases based on a search dataset
+and the syntax in a large reference corpus.  We expect \tool can
+generate more efficient test suite than \Cklst for finding errors with
+regards to quantity and diversity of test suite.
 
-We first evaluate the three \sa models by testing them on the \tool  test cases, reporting number of test cases and each model's failure rate in each linguistic capability. Specifically, for each \lc, we randomly choose 50, 100 and 200 seeds , and expand test cases from these seeds. We selected subsets of seeds to be used for expansion because the syntax-based expansion phase may be expensive to run all the generated seeds. We tested the three models using both seed and expanded test cases. To account for the randomness in random seed selection, we repeated these experiments 3 times and report median number of test cases and each model's failure rate.
+We first evaluate the three \sa models and two \hsd models by testing
+them on the \tool test cases, reporting number of test cases and each
+model's failure rate in each linguistic capability. Specifically, for
+each \lc, we expand test cases from all generated seeds.
+% We selected subsets of seeds to be used for expansion because the
+% syntax-based expansion phase may be expensive to run all the
+% generated seeds.
+We test the five models using both seed and expanded test cases. 
+% To account for the randomness in random seed selection, we repeated
+% these experiments 3 times and report median number of test cases and
+% each model's failure rate.
 
-We use two metrics to compare the diversity between the \tool generated seeds and the \Cklst test cases.
+We use two metrics to compare the diversity between the \tool
+generated seeds and the \Cklst test cases.
 
 \paragraph*{\selfbleu} We reuse the input diversity metric, 
-called \selfbleu, that Zhu \etal introduced~\cite{zhu2018texygen}. \bleu evaluates the token-level similarity.
-% Regarding that \selfbleu takes each sentence as hypothesis and rest in a collection of textual data as reference, we calculate \bleu scores for every pairs of hypothesis and each reference sentence.
-The \selfbleu is defined as the average \bleu scores over all reference sentences.
-% Since the \bleu score ranges from 0 as the least similar inputs to 1 as the most similar inputs,
-A higher \selfbleu score indicates less diversity in the test suite. In the experiment, we collected 50, 100 and 200 randomly selected \tool seeds and reported the median \selfbleu score over three trials for each group of seeds.
-% The median \selfbleu over 3 trials of the random collection of the 50, 100 and 200 seeds is defined as the final \selfbleu scores. For the comparison, \selfbleu scores of \Cklst test cases are calculated in the same manner.
+called \selfbleu, that Zhu \etal
+introduced~\cite{zhu2018texygen}. \bleu evaluates the token-level
+similarity.
+% Regarding that \selfbleu takes each sentence as hypothesis and rest
+% in a collection of textual data as reference, we calculate \bleu
+% scores for every pairs of hypothesis and each reference sentence.
+The \selfbleu is defined as the average \bleu scores over all
+reference sentences.
+% Since the \bleu score ranges from 0 as the least similar inputs to 1
+% as the most similar inputs,
+A higher \selfbleu score indicates less diversity in the test
+suite. In the experiment, we collected 50, 100 and 200 randomly
+selected \tool seeds and reported the median \selfbleu score over
+three trials for each group of seeds.
+% The median \selfbleu over 3 trials of the random collection of the
+% 50, 100 and 200 seeds is defined as the final \selfbleu scores. For
+% the comparison, \selfbleu scores of \Cklst test cases are calculated
+% in the same manner.
 
 \paragraph*{Production rule coverage.} We propose a new metric to evaluate the syntactic diversity of the generated test suite.
-It is defined as the number of production rules used in a set of test sentences. In our experiments, we used the Berkeley Neural Parser~\cite{kitaev2018seedparser,kitaev2019seedparser} to parse and collect all the production covered in a set of test sentences.
-We compared the \pdr between 50, 100 and 200 randomly selected \tool seeds and the \Cklst test cases.
-% collect the  of 50, 100 and 200 randomly selected \tool seeds and \Cklst test cases by the Berkeley Neural Parse~\cite{kitaev2018seedparser,kitaev2019seedparser}. Next, we traverse the parse trees and the \pdr score is calculated as the number of the production rules for the 50, 100 and 200 selected \tool seeds and \Cklst test cases.
+It is defined as the number of production rules used in a set of test
+sentences. In our experiments, we used the Berkeley Neural
+Parser~\cite{kitaev2018seedparser,kitaev2019seedparser} to parse and
+collect all the production covered in a set of test sentences.  We
+compared the \pdr between 50, 100 and 200 randomly selected \tool
+seeds and the \Cklst test cases.
+% collect the of 50, 100 and 200 randomly selected \tool seeds and
+% \Cklst test cases by the Berkeley Neural
+% Parse~\cite{kitaev2018seedparser,kitaev2019seedparser}. Next, we
+% traverse the parse trees and the \pdr score is calculated as the
+% number of the production rules for the 50, 100 and 200 selected
+% \tool seeds and \Cklst test cases.
 
 % ---
 
-In addition,
-we follow the approach presented by Ma et al. \cite{ma2018deepgauge},
-where the authors measure the coverage of NLP model intermediate states as corner-case neurons.
-Because the matrix computation of intermediate states impacts NLP model decision-making, a test suite that covers a greater number of intermediate states can represent more NLP model decision-making, making it more diverse.
-Specifically, we used two coverage metrics by Ma et al. \cite{ma2018deepgauge}, \textit{boundary coverage} (BoundCov) and \textit{strong activation coverage} (SActCov), to evaluate the test suite diversity.
-It is worth noting that a test sample with a statistical distribution similar to the training data is rarely found in the corner case region.
-Thus, covering a larger corner case region indicates that the test suite is more likely to be buggy.
+In addition, we follow the approach presented by Ma et
+al. \cite{ma2018deepgauge}, where the authors measure the coverage of
+NLP model intermediate states as corner-case neurons.  Because the
+matrix computation of intermediate states impacts NLP model
+decision-making, a test suite that covers a greater number of
+intermediate states can represent more NLP model decision-making,
+making it more diverse.  Specifically, we used two coverage metrics by
+Ma et al. \cite{ma2018deepgauge}, \textit{boundary coverage}
+(BoundCov) and \textit{strong activation coverage} (SActCov), to
+evaluate the test suite diversity.  It is worth noting that a test
+sample with a statistical distribution similar to the training data is
+rarely found in the corner case region.  Thus, covering a larger
+corner case region indicates that the test suite is more likely to be
+buggy.
 
 
 \begin{equation}
@@ -89,8 +143,13 @@ Thus, covering a larger corner case region indicates that the test suite is more
     \label{eq:corner}
 \end{equation}
 
-\noindent Equation \ref{eq:corner} defines the corner-case neuron of the NLP model $f(\cdot)$, where $\mathcal{X}$ is the given test suite, $N$ is the number of neurons in model $f(\cdot)$, $f_n(\cdot)$ is the $n^{th}$ neuron's output, and $high_n$ and $low_n$ are the $n^{th}$ neurons' output bounds on the model training dataset.
-Equation \ref{eq:corner} can be interpreted as the collection of neurons that emit outputs beyond the model's numerical boundary.
+\noindent Equation \ref{eq:corner} defines the corner-case neuron of
+the NLP model $f(\cdot)$, where $\mathcal{X}$ is the given test suite,
+$N$ is the number of neurons in model $f(\cdot)$, $f_n(\cdot)$ is the
+$n^{th}$ neuron's output, and $high_n$ and $low_n$ are the $n^{th}$
+neurons' output bounds on the model training dataset.  Equation
+\ref{eq:corner} can be interpreted as the collection of neurons that
+emit outputs beyond the model's numerical boundary.
 
 \begin{equation}
 \begin{split}
@@ -100,21 +159,35 @@ Equation \ref{eq:corner} can be interpreted as the collection of neurons that em
     \label{eq:coverage}
 \end{equation}
 
-\noindent The definition of our coverage metrics is shown in Equation \ref{eq:coverage}, where BoundCov measures the coverage of neurons that produces outputs exceeding the upper or lower bounds, and SActCov measures the coverage of neurons that creates outputs exceeding the lower bound.
-Higher coverage indicates the test suite is better for triggering the corner-case neurons, thus better test suite diversity.
+\noindent The definition of our coverage metrics is shown in Equation
+\ref{eq:coverage}, where BoundCov measures the coverage of neurons
+that produces outputs exceeding the upper or lower bounds, and SActCov
+measures the coverage of neurons that creates outputs exceeding the
+lower bound.  Higher coverage indicates the test suite is better for
+triggering the corner-case neurons, thus better test suite diversity.
 
-% ($Cov(\mathcal{X})$ in \equref{eq:coverage}),
-% where $N$ is the total number blocks, $\mathbb I(\cdot)$ is the indicator function, and
-% $(B_i(x) > \tau_i))$ represents whether $i^{th}$ block is activated by input $x$~(the definition of $B_i$ and $\tau_i$ are the same with \equref{eq:new2} and \equref{eq:new3}).
-% Because AdNNs activate different blocks for decision making, then a higher block coverage indicates the test samples cover more decision behaviors. 
+% ($Cov(\mathcal{X})$ in \equref{eq:coverage}), where $N$ is the total
+% number blocks, $\mathbb I(\cdot)$ is the indicator function, and
+% $(B_i(x) > \tau_i))$ represents whether $i^{th}$ block is activated
+% by input $x$~(the definition of $B_i$ and $\tau_i$ are the same with
+% \equref{eq:new2} and \equref{eq:new3}).  Because AdNNs activate
+% different blocks for decision making, then a higher block coverage
+% indicates the test samples cover more decision behaviors.
 
 
-To answer RQ1, for each NLP model under test, we first feed its training dataset to compute each neuron's lower and upper bounds. After that, we select the same number of test cases from \tool and \Cklst as the test suite and compute the corresponding coverage metrics.
+To answer RQ1, for each NLP model under test, we first feed its
+training dataset to compute each neuron's lower and upper
+bounds. After that, we select the same number of test cases from \tool
+and \Cklst as the test suite and compute the corresponding coverage
+metrics.
 
-% For each subject, we randomly select 100 seed samples from the test dataset as seed inputs. We then feed the same seed inputs into \tool and \texttt{ILFO} to generate test samples. 
-% Finally, we feed the generated test samples to AdNNs and measure block coverage.
-% We repeat this process 10 times and record the average coverage and the variance.
-% The results are shown in \tabref{tab:coverage} last two columns. 
+% For each subject, we randomly select 100 seed samples from the test
+% dataset as seed inputs. We then feed the same seed inputs into \tool
+% and \texttt{ILFO} to generate test samples.  Finally, we feed the
+% generated test samples to AdNNs and measure block coverage.  We
+% repeat this process 10 times and record the average coverage and the
+% variance.  The results are shown in \tabref{tab:coverage} last two
+% columns.
 
 %
 %The amount of \sa model
@@ -138,7 +211,7 @@ To answer RQ1, for each NLP model under test, we first feed its training dataset
 %cases from \tool and \Cklst on the fine-tuned \sw{first time mention fine-tuning: reader does not know how we fine-tune} \sa model of
 %\bertsamodel and compare the coverage between \tool and \Cklst.
 
-\paragraph*{\textbf{RQ2 and RQ3}} As described in Section \ref{sec:approach},
+\paragraph*{\textbf{RQ2 and RQ3}} \jl{need to do the manual study for the \hsd task also?} As described in Section \ref{sec:approach},
 \tool generates test cases in two steps: specification-based seed
 generation and syntax-based sentence expansion. These automated steps
 may generate seed/expanded sentences marked with incorrect sentiment
@@ -147,22 +220,27 @@ labels or categorized into wrong linguistic capabilities.
 % the search rule and template defined in a linguistic capability may
 % not always generate seed sentences in that capability or with the
 % correct label. 
-To answer RQ2 and RQ3, we performed a manual study to
-measure the correctness of the sentiment labels and linguistic
-capabilities associated with the seed/expanded sentences, produced by
-\tool.
+To answer RQ2 and RQ3, we performed a manual study to measure the
+correctness of the sentiment labels and linguistic capabilities
+associated with the seed/expanded sentences, produced by \tool.
 
-In the manual study, we randomly sample 100 \tool seed sentences, each of which has at least one expanded sentence, and divide these seeds to two sets (i.e., 50 in each set). For each sampled seed sentence, we randomly obtain one of its expanded sentences.
-This forms the two sets of sentences (200 sentences in total) we use for this study, each with 50 seeds and 50 corresponding expanded sentences.
-We recruited three participants for this study; all of them are graduate students with no knowledge about this work. 
-2 of them were assigned one set of sentences and the third was assigned the other set.
-Each participant was asked to provide two scores for each sentence.
-\emph{(1) Relevancy score between sentence and its associated \lc}:
-this score measures the correctness of \tool linguistic capability categorization.  The scores are discrete,
-ranging from 1 (``strongly not relevant'') to 5 (``strongly relevant''). \emph{(2) sentiment score of the sentence}: this score measures the sentiment level of the sentence . It
-is also discrete, ranging from 1 (``strongly
-negative'') to 5 (``strongly positive''). 
-We measure the following:
+In the manual study, we randomly sample 100 \tool seed sentences, each
+of which has at least one expanded sentence, and divide these seeds to
+two sets (i.e., 50 in each set). For each sampled seed sentence, we
+randomly obtain one of its expanded sentences.  This forms the two
+sets of sentences (200 sentences in total) we use for this study, each
+with 50 seeds and 50 corresponding expanded sentences.  We recruited
+three participants for this study; all of them are graduate students
+with no knowledge about this work.  2 of them were assigned one set of
+sentences and the third was assigned the other set.  Each participant
+was asked to provide two scores for each sentence.  \emph{(1)
+Relevancy score between sentence and its associated \lc}: this score
+measures the correctness of \tool linguistic capability
+categorization.  The scores are discrete, ranging from 1 (``strongly
+not relevant'') to 5 (``strongly relevant''). \emph{(2) sentiment
+score of the sentence}: this score measures the sentiment level of the
+sentence . It is also discrete, ranging from 1 (``strongly negative'')
+to 5 (``strongly positive'').  We measure the following:
 
 \begin{equation}
 \begin{aligned}
@@ -177,11 +255,17 @@ We measure the following:
 \end{aligned}
 \end{equation}
 
-Equation~\ref{metric:srel} represents the percentage of the test cases that \tool and the participants produce the same sentiment labels. High value of this metric indicates \tool generates test cases with correct labels. Equation~\ref{metric:lcrel} represents the average of the
-normalized relevancy score between a sentence and its associated
-\lc. The relevancy score is to evaluate the relevancy of the sentence to be used for testing model under test on the corresponding \lc. Higher average score means indicate the linguistic capability categorization by \tool is correct. We answer RQ2 and RQ3 using the metrics defined by
-Equation~\ref{metric:srel} and Equation~\ref{metric:lcrel},
-respectively.
+Equation~\ref{metric:srel} represents the percentage of the test cases
+that \tool and the participants produce the same sentiment
+labels. High value of this metric indicates \tool generates test cases
+with correct labels. Equation~\ref{metric:lcrel} represents the
+average of the normalized relevancy score between a sentence and its
+associated \lc. The relevancy score is to evaluate the relevancy of
+the sentence to be used for testing model under test on the
+corresponding \lc. Higher average score means indicate the linguistic
+capability categorization by \tool is correct. We answer RQ2 and RQ3
+using the metrics defined by Equation~\ref{metric:srel} and
+Equation~\ref{metric:lcrel}, respectively.
 
 
 
