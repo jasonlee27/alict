@@ -1,0 +1,794 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{49}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{#1}\fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[Alzantot et~al\mbox{.}(2018)]%
+        {alzantot2018genadvexp}
+\bibfield{author}{\bibinfo{person}{Moustafa Alzantot}, \bibinfo{person}{Yash
+  Sharma}, \bibinfo{person}{Ahmed Elgohary}, \bibinfo{person}{Bo-Jhang Ho},
+  \bibinfo{person}{Mani Srivastava}, {and} \bibinfo{person}{Kai-Wei Chang}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Generating Natural Language Adversarial Examples}.
+  In \bibinfo{booktitle}{\emph{Proceedings of the 2018 Conference on Empirical
+  Methods in Natural Language Processing}}. \bibinfo{publisher}{Association for
+  Computational Linguistics}, \bibinfo{address}{Brussels, Belgium},
+  \bibinfo{pages}{2890--2896}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/D18-1316}
+\showDOI{\tempurl}
+
+
+\bibitem[Anaby{-}Tavor et~al\mbox{.}(2019)]%
+        {ateret2019lambda}
+\bibfield{author}{\bibinfo{person}{Ateret Anaby{-}Tavor}, \bibinfo{person}{Boaz
+  Carmeli}, \bibinfo{person}{Esther Goldbraich}, \bibinfo{person}{Amir Kantor},
+  \bibinfo{person}{George Kour}, \bibinfo{person}{Segev Shlomov},
+  \bibinfo{person}{Naama Tepper}, {and} \bibinfo{person}{Naama Zwerdling}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Not Enough Data? Deep Learning to the Rescue!}
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1911.03118}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1911.03118}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1911.03118}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Baccianella et~al\mbox{.}(2010)]%
+        {baccianella2010sentiwordnet}
+\bibfield{author}{\bibinfo{person}{Stefano Baccianella},
+  \bibinfo{person}{Andrea Esuli}, {and} \bibinfo{person}{Fabrizio Sebastiani}.}
+  \bibinfo{year}{2010}\natexlab{}.
+\newblock \showarticletitle{{S}enti{W}ord{N}et 3.0: An Enhanced Lexical
+  Resource for Sentiment Analysis and Opinion Mining}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the Seventh International Conference
+  on Language Resources and Evaluation ({LREC}'10)}}.
+  \bibinfo{publisher}{European Language Resources Association (ELRA)},
+  \bibinfo{address}{Valletta, Malta}.
+\newblock
+\urldef\tempurl%
+\url{http://www.lrec-conf.org/proceedings/lrec2010/pdf/769_Paper.pdf}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Belinkov and Bisk(2017)]%
+        {belinkov2018breaknmt}
+\bibfield{author}{\bibinfo{person}{Yonatan Belinkov} {and}
+  \bibinfo{person}{Yonatan Bisk}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Synthetic and Natural Noise Both Break Neural
+  Machine Translation}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1711.02173}
+  (\bibinfo{year}{2017}).
+\newblock
+\showeprint[arXiv]{1711.02173}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1711.02173}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Chen et~al\mbox{.}(2020)]%
+        {simin2020denas}
+\bibfield{author}{\bibinfo{person}{Simin Chen}, \bibinfo{person}{Soroush
+  Bateni}, \bibinfo{person}{Sampath Grandhi}, \bibinfo{person}{Xiaodi Li},
+  \bibinfo{person}{Cong Liu}, {and} \bibinfo{person}{Wei Yang}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{DENAS: Automated Rule Generation by
+  Knowledge Extraction from Neural Networks}}.
+\newblock \bibinfo{publisher}{Association for Computing Machinery},
+  \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{813–825}.
+\newblock
+\showISBNx{9781450370431}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3368089.3409733}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Coulombe(2018)]%
+        {coulombe2018textaugapi}
+\bibfield{author}{\bibinfo{person}{Claude Coulombe}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Text Data Augmentation Made Simple By Leveraging
+  {NLP} Cloud APIs}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1812.04718}
+  (\bibinfo{year}{2018}).
+\newblock
+\showeprint[arXiv]{1812.04718}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1812.04718}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Devlin et~al\mbox{.}(2018)]%
+        {devlin2019bert}
+\bibfield{author}{\bibinfo{person}{Jacob Devlin}, \bibinfo{person}{Ming{-}Wei
+  Chang}, \bibinfo{person}{Kenton Lee}, {and} \bibinfo{person}{Kristina
+  Toutanova}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{{BERT:} Pre-training of Deep Bidirectional
+  Transformers for Language Understanding}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1810.04805}
+  (\bibinfo{year}{2018}).
+\newblock
+\showeprint[arXiv]{1810.04805}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1810.04805}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Geva et~al\mbox{.}(2019)]%
+        {geva2019we}
+\bibfield{author}{\bibinfo{person}{Mor Geva}, \bibinfo{person}{Yoav Goldberg},
+  {and} \bibinfo{person}{Jonathan Berant}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Are we modeling the task or the annotator? an
+  investigation of annotator bias in natural language understanding datasets}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:1908.07898}}
+  (\bibinfo{year}{2019}).
+\newblock
+
+
+\bibitem[Guo et~al\mbox{.}(2019)]%
+        {hongyu2019dataaugmixup}
+\bibfield{author}{\bibinfo{person}{Hongyu Guo}, \bibinfo{person}{Yongyi Mao},
+  {and} \bibinfo{person}{Richong Zhang}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Augmenting Data with Mixup for Sentence
+  Classification: An Empirical Study}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1905.08941}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1905.08941}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1905.08941}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Guo et~al\mbox{.}(2018)]%
+        {lemna}
+\bibfield{author}{\bibinfo{person}{Wenbo Guo}, \bibinfo{person}{Dongliang Mu},
+  \bibinfo{person}{Jun Xu}, \bibinfo{person}{Purui Su}, \bibinfo{person}{Gang
+  Wang}, {and} \bibinfo{person}{Xinyu Xing}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Lemna: Explaining deep learning based security
+  applications}. In \bibinfo{booktitle}{\emph{proceedings of the 2018 ACM
+  SIGSAC conference on computer and communications security}}.
+  \bibinfo{pages}{364--379}.
+\newblock
+
+
+\bibitem[Gururangan et~al\mbox{.}(2018)]%
+        {gururangan2018annotation}
+\bibfield{author}{\bibinfo{person}{Suchin Gururangan}, \bibinfo{person}{Swabha
+  Swayamdipta}, \bibinfo{person}{Omer Levy}, \bibinfo{person}{Roy Schwartz},
+  \bibinfo{person}{Samuel~R Bowman}, {and} \bibinfo{person}{Noah~A Smith}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Annotation artifacts in natural language inference
+  data}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:1803.02324}}
+  (\bibinfo{year}{2018}).
+\newblock
+
+
+\bibitem[He et~al\mbox{.}(2019)]%
+        {pinjia2020structinvtestingnmt}
+\bibfield{author}{\bibinfo{person}{Pinjia He}, \bibinfo{person}{Clara Meister},
+  {and} \bibinfo{person}{Zhendong Su}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Structure-Invariant Testing for Machine
+  Translation}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1907.08710}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1907.08710}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1907.08710}
+\showURL{%
+\tempurl}
+
+
+\bibitem[He et~al\mbox{.}(2020)]%
+        {pinjia2020testnmtrt}
+\bibfield{author}{\bibinfo{person}{Pinjia He}, \bibinfo{person}{Clara Meister},
+  {and} \bibinfo{person}{Zhendong Su}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Testing Machine Translation via Referential
+  Transparency}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/2004.10361}
+  (\bibinfo{year}{2020}).
+\newblock
+\showeprint[arXiv]{2004.10361}
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2004.10361}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Honnibal and Montani(2017)]%
+        {spacy}
+\bibfield{author}{\bibinfo{person}{Matthew Honnibal} {and}
+  \bibinfo{person}{Ines Montani}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{{spaCy 2}: Natural language understanding with
+  {B}loom embeddings, convolutional neural networks and incremental parsing}.
+  (\bibinfo{year}{2017}).
+\newblock
+\newblock
+\shownote{To appear}.
+
+
+\bibitem[Huang et~al\mbox{.}(2022)]%
+        {huang2022aeon}
+\bibfield{author}{\bibinfo{person}{Jen-tse Huang}, \bibinfo{person}{Jianping
+  Zhang}, \bibinfo{person}{Wenxuan Wang}, \bibinfo{person}{Pinjia He},
+  \bibinfo{person}{Yuxin Su}, {and} \bibinfo{person}{Michael~R Lyu}.}
+  \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{AEON: A Method for Automatic Evaluation of NLP Test
+  Cases}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2205.06439}}
+  (\bibinfo{year}{2022}).
+\newblock
+
+
+\bibitem[Husnain et~al\mbox{.}(2021)]%
+        {husnain2021swnvalidity}
+\bibfield{author}{\bibinfo{person}{Mujtaba Husnain}, \bibinfo{person}{Malik
+  Muhammad~Saad Missen}, \bibinfo{person}{Nadeem Akhtar},
+  \bibinfo{person}{Micka{\"e}l Coustaty}, \bibinfo{person}{Shahzad Mumtaz},
+  {and} \bibinfo{person}{VB Prasath}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{A systematic study on the role of SentiWordNet in
+  opinion mining}.
+\newblock \bibinfo{journal}{\emph{Frontiers of Computer Science}}
+  \bibinfo{volume}{15}, \bibinfo{number}{4} (\bibinfo{year}{2021}),
+  \bibinfo{pages}{1--19}.
+\newblock
+
+
+\bibitem[Iyyer et~al\mbox{.}(2018)]%
+        {iyyer2018adversarial}
+\bibfield{author}{\bibinfo{person}{Mohit Iyyer}, \bibinfo{person}{John
+  Wieting}, \bibinfo{person}{Kevin Gimpel}, {and} \bibinfo{person}{Luke
+  Zettlemoyer}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Adversarial Example Generation with Syntactically
+  Controlled Paraphrase Networks}. In \bibinfo{booktitle}{\emph{Proceedings of
+  the 2018 Conference of the North {A}merican Chapter of the Association for
+  Computational Linguistics: Human Language Technologies, Volume 1 (Long
+  Papers)}}. \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{New Orleans, Louisiana}, \bibinfo{pages}{1875--1885}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/N18-1170}
+\showDOI{\tempurl}
+
+
+\bibitem[Kitaev et~al\mbox{.}(2019)]%
+        {kitaev2019seedparser}
+\bibfield{author}{\bibinfo{person}{Nikita Kitaev}, \bibinfo{person}{Steven
+  Cao}, {and} \bibinfo{person}{Dan Klein}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Multilingual Constituency Parsing with
+  Self-Attention and Pre-Training}. In \bibinfo{booktitle}{\emph{Proceedings of
+  the 57th Annual Meeting of the Association for Computational Linguistics}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Florence, Italy}, \bibinfo{pages}{3499--3505}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/P19-1340}
+\showDOI{\tempurl}
+
+
+\bibitem[Kitaev and Klein(2018)]%
+        {kitaev2018seedparser}
+\bibfield{author}{\bibinfo{person}{Nikita Kitaev} {and} \bibinfo{person}{Dan
+  Klein}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Constituency Parsing with a Self-Attentive
+  Encoder}. In \bibinfo{booktitle}{\emph{Proceedings of the 56th Annual Meeting
+  of the Association for Computational Linguistics (Volume 1: Long Papers)}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Melbourne, Australia}, \bibinfo{pages}{2676--2686}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/P18-1249}
+\showDOI{\tempurl}
+
+
+\bibitem[Lertvittayakumjorn et~al\mbox{.}(2020)]%
+        {lertvittayakumjorn2020find}
+\bibfield{author}{\bibinfo{person}{Piyawat Lertvittayakumjorn},
+  \bibinfo{person}{Lucia Specia}, {and} \bibinfo{person}{Francesca Toni}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \bibinfo{title}{FIND: Human-in-the-Loop Debugging Deep Text
+  Classifiers}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.48550/ARXIV.2010.04987}
+\showDOI{\tempurl}
+
+
+\bibitem[Li et~al\mbox{.}(2020)]%
+        {linyang2020bertattack}
+\bibfield{author}{\bibinfo{person}{Linyang Li}, \bibinfo{person}{Ruotian Ma},
+  \bibinfo{person}{Qipeng Guo}, \bibinfo{person}{Xiangyang Xue}, {and}
+  \bibinfo{person}{Xipeng Qiu}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{{BERT-ATTACK:} Adversarial Attack Against {BERT}
+  Using {BERT}}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/2004.09984}
+  (\bibinfo{year}{2020}).
+\newblock
+\showeprint[arXiv]{2004.09984}
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2004.09984}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Liu et~al\mbox{.}(2019)]%
+        {liu2019roberta}
+\bibfield{author}{\bibinfo{person}{Yinhan Liu}, \bibinfo{person}{Myle Ott},
+  \bibinfo{person}{Naman Goyal}, \bibinfo{person}{Jingfei Du},
+  \bibinfo{person}{Mandar Joshi}, \bibinfo{person}{Danqi Chen},
+  \bibinfo{person}{Omer Levy}, \bibinfo{person}{Mike Lewis},
+  \bibinfo{person}{Luke Zettlemoyer}, {and} \bibinfo{person}{Veselin
+  Stoyanov}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{RoBERTa: {A} Robustly Optimized {BERT} Pretraining
+  Approach}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1907.11692}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1907.11692}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1907.11692}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Ma et~al\mbox{.}(2018)]%
+        {ma2018deepgauge}
+\bibfield{author}{\bibinfo{person}{Lei Ma}, \bibinfo{person}{Felix Juefei-Xu},
+  \bibinfo{person}{Fuyuan Zhang}, \bibinfo{person}{Jiyuan Sun},
+  \bibinfo{person}{Minhui Xue}, \bibinfo{person}{Bo Li},
+  \bibinfo{person}{Chunyang Chen}, \bibinfo{person}{Ting Su},
+  \bibinfo{person}{Li Li}, \bibinfo{person}{Yang Liu}, {et~al\mbox{.}}}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Deepgauge: Multi-granularity testing criteria for
+  deep learning systems}. In \bibinfo{booktitle}{\emph{Proceedings of the 33rd
+  ACM/IEEE International Conference on Automated Software Engineering}}.
+  \bibinfo{pages}{120--131}.
+\newblock
+
+
+\bibitem[Ma et~al\mbox{.}(2020)]%
+        {maIJCAI2020mtnlp}
+\bibfield{author}{\bibinfo{person}{Pingchuan Ma}, \bibinfo{person}{Shuai Wang},
+  {and} \bibinfo{person}{Jin Liu}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Metamorphic Testing and Certified Mitigation of
+  Fairness Violations in NLP Models}. In \bibinfo{booktitle}{\emph{Proceedings
+  of the Twenty-Ninth International Joint Conference on Artificial
+  Intelligence, {IJCAI-20}}}, \bibfield{editor}{\bibinfo{person}{Christian
+  Bessiere}} (Ed.). \bibinfo{publisher}{International Joint Conferences on
+  Artificial Intelligence Organization}, \bibinfo{pages}{458--465}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.24963/ijcai.2020/64}
+\showDOI{\tempurl}
+\newblock
+\shownote{Main track}.
+
+
+\bibitem[Marcus et~al\mbox{.}(1993)]%
+        {mitchell1993treebank}
+\bibfield{author}{\bibinfo{person}{Mitchell~P. Marcus},
+  \bibinfo{person}{Mary~Ann Marcinkiewicz}, {and} \bibinfo{person}{Beatrice
+  Santorini}.} \bibinfo{year}{1993}\natexlab{}.
+\newblock \showarticletitle{Building a Large Annotated Corpus of English: The
+  Penn Treebank}.
+\newblock \bibinfo{journal}{\emph{Comput. Linguist.}} \bibinfo{volume}{19},
+  \bibinfo{number}{2} (\bibinfo{date}{jun} \bibinfo{year}{1993}),
+  \bibinfo{pages}{313–330}.
+\newblock
+\showISSN{0891-2017}
+
+
+\bibitem[Morris et~al\mbox{.}(2020)]%
+        {morris2020textattack}
+\bibfield{author}{\bibinfo{person}{John~X. Morris}, \bibinfo{person}{Eli
+  Lifland}, \bibinfo{person}{Jin~Yong Yoo}, {and} \bibinfo{person}{Yanjun Qi}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{TextAttack: {A} Framework for Adversarial Attacks
+  in Natural Language Processing}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/2005.05909}
+  (\bibinfo{year}{2020}).
+\newblock
+\showeprint[arXiv]{2005.05909}
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2005.05909}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Prabhakaran et~al\mbox{.}(2019)]%
+        {prabhakaran2019fairness}
+\bibfield{author}{\bibinfo{person}{Vinodkumar Prabhakaran},
+  \bibinfo{person}{Ben Hutchinson}, {and} \bibinfo{person}{Margaret Mitchell}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Perturbation Sensitivity Analysis to Detect
+  Unintended Model Biases}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1910.04210}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1910.04210}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1910.04210}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Ribeiro et~al\mbox{.}(2019)]%
+        {ribeiro2019consistencyeval}
+\bibfield{author}{\bibinfo{person}{Marco~Tulio Ribeiro},
+  \bibinfo{person}{Carlos Guestrin}, {and} \bibinfo{person}{Sameer Singh}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Are Red Roses Red? Evaluating Consistency of
+  Question-Answering Models}. In \bibinfo{booktitle}{\emph{Proceedings of the
+  57th Annual Meeting of the Association for Computational Linguistics}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Florence, Italy}, \bibinfo{pages}{6174--6184}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/P19-1621}
+\showDOI{\tempurl}
+
+
+\bibitem[Ribeiro et~al\mbox{.}(2016a)]%
+        {lime}
+\bibfield{author}{\bibinfo{person}{Marco~Tulio Ribeiro},
+  \bibinfo{person}{Sameer Singh}, {and} \bibinfo{person}{Carlos Guestrin}.}
+  \bibinfo{year}{2016}\natexlab{a}.
+\newblock \showarticletitle{" Why should i trust you?" Explaining the
+  predictions of any classifier}. In \bibinfo{booktitle}{\emph{Proceedings of
+  the 22nd ACM SIGKDD international conference on knowledge discovery and data
+  mining}}. \bibinfo{pages}{1135--1144}.
+\newblock
+
+
+\bibitem[Ribeiro et~al\mbox{.}(2016b)]%
+        {ribeiroSG16lime}
+\bibfield{author}{\bibinfo{person}{Marco~T{\'{u}}lio Ribeiro},
+  \bibinfo{person}{Sameer Singh}, {and} \bibinfo{person}{Carlos Guestrin}.}
+  \bibinfo{year}{2016}\natexlab{b}.
+\newblock \showarticletitle{"Why Should {I} Trust You?": Explaining the
+  Predictions of Any Classifier}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1602.04938}
+  (\bibinfo{year}{2016}).
+\newblock
+\showeprint[arXiv]{1602.04938}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1602.04938}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Ribeiro et~al\mbox{.}(2018)]%
+        {ribeiro2018sear}
+\bibfield{author}{\bibinfo{person}{Marco~Tulio Ribeiro},
+  \bibinfo{person}{Sameer Singh}, {and} \bibinfo{person}{Carlos Guestrin}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Semantically Equivalent Adversarial Rules for
+  Debugging {NLP} models}. In \bibinfo{booktitle}{\emph{Proceedings of the 56th
+  Annual Meeting of the Association for Computational Linguistics (Volume 1:
+  Long Papers)}}. \bibinfo{publisher}{Association for Computational
+  Linguistics}, \bibinfo{address}{Melbourne, Australia},
+  \bibinfo{pages}{856--865}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/P18-1079}
+\showDOI{\tempurl}
+
+
+\bibitem[Ribeiro et~al\mbox{.}(2020)]%
+        {marcoACL2020checklist}
+\bibfield{author}{\bibinfo{person}{Marco~Tulio Ribeiro},
+  \bibinfo{person}{Tongshuang Wu}, \bibinfo{person}{Carlos Guestrin}, {and}
+  \bibinfo{person}{Sameer Singh}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Beyond Accuracy: Behavioral Testing of NLP models
+  with CheckList}. In \bibinfo{booktitle}{\emph{Association for Computational
+  Linguistics (ACL)}}.
+\newblock
+
+
+\bibitem[R{\"o}ttger et~al\mbox{.}(2020)]%
+        {rottger2020hatecheck}
+\bibfield{author}{\bibinfo{person}{Paul R{\"o}ttger}, \bibinfo{person}{Bertram
+  Vidgen}, \bibinfo{person}{Dong Nguyen}, \bibinfo{person}{Zeerak Waseem},
+  \bibinfo{person}{Helen Margetts}, {and} \bibinfo{person}{Janet~B
+  Pierrehumbert}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Hatecheck: Functional tests for hate speech
+  detection models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2012.15606}}
+  (\bibinfo{year}{2020}).
+\newblock
+
+
+\bibitem[Rychalska et~al\mbox{.}(2019)]%
+        {rychalska2019wildnlp}
+\bibfield{author}{\bibinfo{person}{Barbara Rychalska},
+  \bibinfo{person}{Dominika Basaj}, \bibinfo{person}{Alicja Gosiewska}, {and}
+  \bibinfo{person}{Przemys{\l}aw Biecek}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Models in the Wild: On Corruption Robustness of
+  Neural NLP Systems}. In \bibinfo{booktitle}{\emph{Neural Information
+  Processing}}, \bibfield{editor}{\bibinfo{person}{Tom Gedeon},
+  \bibinfo{person}{Kok~Wai Wong}, {and} \bibinfo{person}{Minho Lee}} (Eds.).
+  \bibinfo{publisher}{Springer International Publishing},
+  \bibinfo{address}{Cham}, \bibinfo{pages}{235--247}.
+\newblock
+\showISBNx{978-3-030-36718-3}
+
+
+\bibitem[Sanh et~al\mbox{.}(2019)]%
+        {sanh2019distilbert}
+\bibfield{author}{\bibinfo{person}{Victor Sanh}, \bibinfo{person}{Lysandre
+  Debut}, \bibinfo{person}{Julien Chaumond}, {and} \bibinfo{person}{Thomas
+  Wolf}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{DistilBERT, a distilled version of BERT: smaller,
+  faster, cheaper and lighter}.
+\newblock \bibinfo{journal}{\emph{ArXiv}}  \bibinfo{volume}{abs/1910.01108}
+  (\bibinfo{year}{2019}).
+\newblock
+
+
+\bibitem[Segura et~al\mbox{.}(2016)]%
+        {segura2016metamorphictest}
+\bibfield{author}{\bibinfo{person}{Sergio Segura}, \bibinfo{person}{Gordon
+  Fraser}, \bibinfo{person}{Ana~B. Sanchez}, {and} \bibinfo{person}{Antonio
+  Ruiz-Cortés}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{A Survey on Metamorphic Testing}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Software Engineering}}
+  \bibinfo{volume}{42}, \bibinfo{number}{9} (\bibinfo{year}{2016}),
+  \bibinfo{pages}{805--824}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1109/TSE.2016.2532875}
+\showDOI{\tempurl}
+
+
+\bibitem[Socher et~al\mbox{.}(2013)]%
+        {socher2013sst}
+\bibfield{author}{\bibinfo{person}{Richard Socher}, \bibinfo{person}{Alex
+  Perelygin}, \bibinfo{person}{Jean Wu}, \bibinfo{person}{Jason Chuang},
+  \bibinfo{person}{Christopher~D. Manning}, \bibinfo{person}{Andrew Ng}, {and}
+  \bibinfo{person}{Christopher Potts}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{Recursive Deep Models for Semantic Compositionality
+  Over a Sentiment Treebank}. In \bibinfo{booktitle}{\emph{Proceedings of the
+  2013 Conference on Empirical Methods in Natural Language Processing}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Seattle, Washington, USA}, \bibinfo{pages}{1631--1642}.
+\newblock
+\urldef\tempurl%
+\url{https://aclanthology.org/D13-1170}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Soremekun et~al\mbox{.}(2020)]%
+        {soremekun2020astraea}
+\bibfield{author}{\bibinfo{person}{Ezekiel~O. Soremekun},
+  \bibinfo{person}{Sakshi Udeshi}, {and} \bibinfo{person}{Sudipta
+  Chattopadhyay}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Astraea: Grammar-based Fairness Testing}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/2010.02542}
+  (\bibinfo{year}{2020}).
+\newblock
+\showeprint[arXiv]{2010.02542}
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2010.02542}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Sphinx and Theme(2021)]%
+        {nltkTreebankCorporaWebPage}
+\bibfield{author}{\bibinfo{person}{Sphinx} {and} \bibinfo{person}{NLTK Theme}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{NLTK Documentation}}.
+\newblock
+\newblock
+\shownote{\url{https://www.nltk.org/howto/corpus.html}}.
+
+
+\bibitem[Udeshi et~al\mbox{.}(2018)]%
+        {udeshi2018fairnesstest}
+\bibfield{author}{\bibinfo{person}{Sakshi Udeshi}, \bibinfo{person}{Pryanshu
+  Arora}, {and} \bibinfo{person}{Sudipta Chattopadhyay}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Automated Directed Fairness Testing}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1807.00468}
+  (\bibinfo{year}{2018}).
+\newblock
+\showeprint[arXiv]{1807.00468}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1807.00468}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Udeshi and Chattopadhyay(2019)]%
+        {udeshi2019ogma}
+\bibfield{author}{\bibinfo{person}{Sakshi Udeshi} {and}
+  \bibinfo{person}{Sudipta Chattopadhyay}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Grammar Based Directed Testing of Machine Learning
+  Systems}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1902.10027}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1902.10027}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1902.10027}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Wang et~al\mbox{.}(2019)]%
+        {wang2019superglue}
+\bibfield{author}{\bibinfo{person}{Alex Wang}, \bibinfo{person}{Yada
+  Pruksachatkun}, \bibinfo{person}{Nikita Nangia}, \bibinfo{person}{Amanpreet
+  Singh}, \bibinfo{person}{Julian Michael}, \bibinfo{person}{Felix Hill},
+  \bibinfo{person}{Omer Levy}, {and} \bibinfo{person}{Samuel~R. Bowman}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{SuperGLUE: {A} Stickier Benchmark for
+  General-Purpose Language Understanding Systems}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1905.00537}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1905.00537}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1905.00537}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Wang et~al\mbox{.}(2018)]%
+        {wang2018glue}
+\bibfield{author}{\bibinfo{person}{Alex Wang}, \bibinfo{person}{Amanpreet
+  Singh}, \bibinfo{person}{Julian Michael}, \bibinfo{person}{Felix Hill},
+  \bibinfo{person}{Omer Levy}, {and} \bibinfo{person}{Samuel~R. Bowman}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{{GLUE:} {A} Multi-Task Benchmark and Analysis
+  Platform for Natural Language Understanding}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1804.07461}
+  (\bibinfo{year}{2018}).
+\newblock
+\showeprint[arXiv]{1804.07461}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1804.07461}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Wei and Zou(2019)]%
+        {weizou2019eda}
+\bibfield{author}{\bibinfo{person}{Jason Wei} {and} \bibinfo{person}{Kai Zou}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{{EDA}: Easy Data Augmentation Techniques for
+  Boosting Performance on Text Classification Tasks}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 2019 Conference on Empirical
+  Methods in Natural Language Processing and the 9th International Joint
+  Conference on Natural Language Processing (EMNLP-IJCNLP)}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Hong Kong, China}, \bibinfo{pages}{6382--6388}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/D19-1670}
+\showDOI{\tempurl}
+
+
+\bibitem[Wu et~al\mbox{.}(2019)]%
+        {wu2019errudite}
+\bibfield{author}{\bibinfo{person}{Tongshuang Wu}, \bibinfo{person}{Marco~Tulio
+  Ribeiro}, \bibinfo{person}{Jeffrey Heer}, {and} \bibinfo{person}{Daniel
+  Weld}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{{E}rrudite: Scalable, Reproducible, and Testable
+  Error Analysis}. In \bibinfo{booktitle}{\emph{Proceedings of the 57th Annual
+  Meeting of the Association for Computational Linguistics}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Florence, Italy}, \bibinfo{pages}{747--763}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/P19-1073}
+\showDOI{\tempurl}
+
+
+\bibitem[Xie et~al\mbox{.}(2019)]%
+        {qizhe2019unsupdataaug}
+\bibfield{author}{\bibinfo{person}{Qizhe Xie}, \bibinfo{person}{Zihang Dai},
+  \bibinfo{person}{Eduard~H. Hovy}, \bibinfo{person}{Minh{-}Thang Luong}, {and}
+  \bibinfo{person}{Quoc~V. Le}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Unsupervised Data Augmentation}.
+\newblock \bibinfo{journal}{\emph{CoRR}}  \bibinfo{volume}{abs/1904.12848}
+  (\bibinfo{year}{2019}).
+\newblock
+\showeprint[arXiv]{1904.12848}
+\urldef\tempurl%
+\url{http://arxiv.org/abs/1904.12848}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Zang et~al\mbox{.}(2020)]%
+        {zang2020sememepso}
+\bibfield{author}{\bibinfo{person}{Yuan Zang}, \bibinfo{person}{Fanchao Qi},
+  \bibinfo{person}{Chenghao Yang}, \bibinfo{person}{Zhiyuan Liu},
+  \bibinfo{person}{Meng Zhang}, \bibinfo{person}{Qun Liu}, {and}
+  \bibinfo{person}{Maosong Sun}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Word-level Textual Adversarial Attacking as
+  Combinatorial Optimization}. In \bibinfo{booktitle}{\emph{Proceedings of the
+  58th Annual Meeting of the Association for Computational Linguistics}}.
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Online}, \bibinfo{pages}{6066--6080}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/2020.acl-main.540}
+\showDOI{\tempurl}
+
+
+\bibitem[Zhu et~al\mbox{.}(2018)]%
+        {zhu2018texygen}
+\bibfield{author}{\bibinfo{person}{Yaoming Zhu}, \bibinfo{person}{Sidi Lu},
+  \bibinfo{person}{Lei Zheng}, \bibinfo{person}{Jiaxian Guo},
+  \bibinfo{person}{Weinan Zhang}, \bibinfo{person}{Jun Wang}, {and}
+  \bibinfo{person}{Yong Yu}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Texygen: A Benchmarking Platform for Text
+  Generation Models}.
+\newblock \bibinfo{journal}{\emph{SIGIR}} (\bibinfo{year}{2018}).
+\newblock
+
+
+\bibitem[Zylberajch et~al\mbox{.}(2021)]%
+        {zylberajch2021hildif}
+\bibfield{author}{\bibinfo{person}{Hugo Zylberajch}, \bibinfo{person}{Piyawat
+  Lertvittayakumjorn}, {and} \bibinfo{person}{Francesca Toni}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{HILDIF: Interactive Debugging of NLI Models Using
+  Influence Functions}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the First Workshop on
+  Interactive Learning for Natural Language Processing}}
+  (\bibinfo{year}{2021}).
+\newblock
+
+
+\end{thebibliography}

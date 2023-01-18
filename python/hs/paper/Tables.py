@@ -328,7 +328,7 @@ class Tables:
         output_file.append(r"\toprule")
         
         # output_file.append(r"\tLc & \parbox{1cm}{\tNumBlSents} & \parbox{1cm}{\tNumBlFail} & \parbox{1cm}{\tNumSeeds} & \parbox{1.5cm}{\tNumSeedFail} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\tNumExpFail} & \parbox{1.5cm}{\tNumPasstoFail}\\")
-        output_file.append(r"\tLc & \parbox{1cm}{\tNumBlTcs} & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\")
+        output_file.append(r"\tLc & \parbox{1cm}{\tNumHsBlTcs} & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.7cm}{\centering\tNumHsFail} & \parbox{1.7cm}{\centering\tHsFailRate} & \parbox{1.7cm}{\centering\tNumPasstoFail}\\")
         output_file.append(r"\midrule")
         
         # Content
@@ -357,7 +357,7 @@ class Tables:
                 # # end if
                 m_name = 'CNERG-BERT'
                 # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-fail").use() + '/' + \
+                output_file.append(f" & & & & {m_name}$\colon$" + latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-fail").use() + '/' + \
                                    latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-fail").use())
                 output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-hs-model{m_i}-lc{lc_i}-num-all-failrate").use() + '/' + \
                                    latex.Macro(f"test-results-hs-bl-model{m_i}-lc{lc_i}-num-failrate").use())

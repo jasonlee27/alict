@@ -836,7 +836,7 @@ class Tables:
         output_file.append(r"\begin{tabular}{p{8cm}||ccclll}")
         output_file.append(r"\toprule")
         
-        output_file.append(r"\tLc & \parbox{1cm}{\tNumBlTcs} & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\")
+        output_file.append(r"\tLc & \parbox{1.5cm}{\tNumBlTcs} & \parbox{1cm}{\tNumSeeds} & \parbox{1cm}{\tNumExps} & \parbox{1.5cm}{\centering\tNumFail} & \parbox{1.5cm}{\centering\tFailRate} & \parbox{1.5cm}{\centering\tNumPasstoFail}\\")
         output_file.append(r"\midrule")
         
         # Content
@@ -864,7 +864,7 @@ class Tables:
                 else:
                     m_name = 'dstBERT'
                 # output_file.append(f" & & {m_name}$\colon$" + latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
-                output_file.append(f" & & & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-fail").use() + '/' + \
+                output_file.append(f" & & & & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-fail").use() + '/' + \
                                    latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-fail").use())
                 output_file.append(f" & {m_name}$\colon$" + latex.Macro(f"test-results-all-model{m_i}-lc{lc_i}-num-failrate").use() + '/' + \
                                    latex.Macro(f"test-results-bl-model{m_i}-lc{lc_i}-num-failrate").use())
