@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.5.11)  17 JAN 2023 23:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.5.11)  17 JAN 2023 23:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1895,23 +1895,23 @@ Overfull \hbox (61.84332pt too wide) in paragraph at lines 4--5
 tps://github.com/csresearcher27/s2lct$[]$project. 
  []
 
-(./tables/test-results-3-50-table.tex
-Underfull \hbox (badness 10000) in paragraph at lines 144--144
+(./tables/test-results-all-table.tex
+Underfull \hbox (badness 10000) in paragraph at lines 154--154
 []\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 144--144
+Underfull \hbox (badness 10000) in paragraph at lines 154--154
 []\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
  []
 
 
-Overfull \hbox (1.3464pt too wide) in paragraph at lines 144--144
+Overfull \hbox (1.3464pt too wide) in paragraph at lines 154--154
  []\T1/LinuxLibertineT-TLF/b/n/8 (-20) S$[]$LCT/Cklst 
  []
 
 
-Overfull \hbox (1.3464pt too wide) in paragraph at lines 144--144
+Overfull \hbox (1.3464pt too wide) in paragraph at lines 154--154
  []\T1/LinuxLibertineT-TLF/b/n/8 (-20) S$[]$LCT/Cklst 
  []
 
@@ -1919,6 +1919,22 @@ Overfull \hbox (1.3464pt too wide) in paragraph at lines 144--144
 Underfull \vbox (badness 1158) has occurred while \output is active []
 
  [6.6])
+(./tables/test-results-hs-table.tex
+Underfull \hbox (badness 10000) in paragraph at lines 223--223
+[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) Htck
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 223--223
+[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 223--223
+[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
+ []
+
+)
 Package epstopdf Info: Source file: <figs/pdr-selfbleu-agg-lineplot.eps>
 (epstopdf)                    date: 2023-01-10 20:50:18
 (epstopdf)                    size: 45371 bytes
@@ -1928,7 +1944,7 @@ ed-to.pdf>
 (epstopdf)                    size: 14869 bytes
 (epstopdf)             Command: <repstopdf --outfile=figs/pdr-selfbleu-agg-line
 plot-eps-converted-to.pdf figs/pdr-selfbleu-agg-lineplot.eps>
-(epstopdf)             \includegraphics on input line 13.
+(epstopdf)             \includegraphics on input line 16.
 Package epstopdf Info: Output file is already uptodate.
 <figs/pdr-selfbleu-agg-lineplot-eps-converted-to.pdf, id=384, 463.7325pt x 347.
 2975pt>
@@ -1936,11 +1952,11 @@ File: figs/pdr-selfbleu-agg-lineplot-eps-converted-to.pdf Graphic file (type pd
 f)
 <use figs/pdr-selfbleu-agg-lineplot-eps-converted-to.pdf>
 Package pdftex.def Info: figs/pdr-selfbleu-agg-lineplot-eps-converted-to.pdf  u
-sed on input line 13.
+sed on input line 16.
 (pdftex.def)             Requested size: 177.20633pt x 132.71632pt.
 
 
-Class acmart Warning: A possible image without description on input line 15.
+Class acmart Warning: A possible image without description on input line 18.
 
 Package epstopdf Info: Source file: <figs/pdr-ours-50seeds-barplot.eps>
 (epstopdf)                    date: 2023-01-10 20:50:18
@@ -1951,7 +1967,7 @@ d-to.pdf>
 (epstopdf)                    size: 12634 bytes
 (epstopdf)             Command: <repstopdf --outfile=figs/pdr-ours-50seeds-barp
 lot-eps-converted-to.pdf figs/pdr-ours-50seeds-barplot.eps>
-(epstopdf)             \includegraphics on input line 34.
+(epstopdf)             \includegraphics on input line 37.
 Package epstopdf Info: Output file is already uptodate.
 <figs/pdr-ours-50seeds-barplot-eps-converted-to.pdf, id=385, 463.7325pt x 347.2
 975pt>
@@ -1959,10 +1975,10 @@ File: figs/pdr-ours-50seeds-barplot-eps-converted-to.pdf Graphic file (type pdf
 )
 <use figs/pdr-ours-50seeds-barplot-eps-converted-to.pdf>
 Package pdftex.def Info: figs/pdr-ours-50seeds-barplot-eps-converted-to.pdf  us
-ed on input line 34.
+ed on input line 37.
 (pdftex.def)             Requested size: 177.20633pt x 132.71632pt.
 
-Class acmart Warning: A possible image without description on input line 36.
+Class acmart Warning: A possible image without description on input line 39.
 
 Package epstopdf Info: Source file: <figs/numfail-pass2fail-agg-lineplot.eps>
 (epstopdf)                    date: 2023-01-10 20:50:18
@@ -1973,7 +1989,7 @@ nverted-to.pdf>
 (epstopdf)                    size: 13162 bytes
 (epstopdf)             Command: <repstopdf --outfile=figs/numfail-pass2fail-agg
 -lineplot-eps-converted-to.pdf figs/numfail-pass2fail-agg-lineplot.eps>
-(epstopdf)             \includegraphics on input line 40.
+(epstopdf)             \includegraphics on input line 43.
 Package epstopdf Info: Output file is already uptodate.
 <figs/numfail-pass2fail-agg-lineplot-eps-converted-to.pdf, id=386, 463.7325pt x
  347.2975pt>
@@ -1981,15 +1997,19 @@ File: figs/numfail-pass2fail-agg-lineplot-eps-converted-to.pdf Graphic file (ty
 pe pdf)
 <use figs/numfail-pass2fail-agg-lineplot-eps-converted-to.pdf>
 Package pdftex.def Info: figs/numfail-pass2fail-agg-lineplot-eps-converted-to.p
-df  used on input line 40.
+df  used on input line 43.
 (pdftex.def)             Requested size: 177.20633pt x 132.71632pt.
 
-Class acmart Warning: A possible image without description on input line 42.
+Class acmart Warning: A possible image without description on input line 45.
+
+
+LaTeX Warning: Reference `table:TestResult' on page 7 undefined on input line 7
+4.
 
 [7.7 <./figs/pdr-selfbleu-agg-lineplot-eps-converted-to.pdf> <./figs/pdr-ours-5
 0seeds-barplot-eps-converted-to.pdf> <./figs/numfail-pass2fail-agg-lineplot-eps
 -converted-to.pdf>] (./CM/coverage.tex
-<figs/nlp_coverage.pdf, id=423, 629.15619pt x 336.12337pt>
+<figs/nlp_coverage.pdf, id=421, 629.15619pt x 336.12337pt>
 File: figs/nlp_coverage.pdf Graphic file (type pdf)
 <use figs/nlp_coverage.pdf>
 Package pdftex.def Info: figs/nlp_coverage.pdf  used on input line 4.
@@ -2004,37 +2024,37 @@ Class acmart Warning: A possible image without description on input line 8.
 
 ) (./tables/manual-study-table.tex)
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.95pt on input line 117.
+(Font)              scaled to size 10.95pt on input line 120.
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 6.1pt on input line 117.
+(Font)              scaled to size 6.1pt on input line 120.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 117.
+(hyperref)                removing `math shift' on input line 120.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 117.
+(hyperref)                removing `superscript' on input line 120.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 117.
+(hyperref)                removing `math shift' on input line 120.
 
-<figs/explain.pdf, id=430, 1385.1685pt x 558.0646pt>
+<figs/explain.pdf, id=428, 1385.1685pt x 558.0646pt>
 File: figs/explain.pdf Graphic file (type pdf)
 <use figs/explain.pdf>
-Package pdftex.def Info: figs/explain.pdf  used on input line 124.
+Package pdftex.def Info: figs/explain.pdf  used on input line 127.
 (pdftex.def)             Requested size: 405.03754pt x 163.18002pt.
 
-Class acmart Warning: A possible image without description on input line 128.
+Class acmart Warning: A possible image without description on input line 131.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 131.
+surrounding objects on input line 134.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 147.
+surrounding objects on input line 150.
 
 [8.8 <./figs/nlp_coverage.pdf>]) (./threats.tex) (./related.tex
 
@@ -2067,62 +2087,12 @@ surrounding objects on input line 89.
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 1.
 
-(./tables/test-results-all-table.tex
-Underfull \hbox (badness 10000) in paragraph at lines 154--154
-[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
- []
+) [10.10
+
+] [11.11] [12.12] [13.13] [14.14
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 154--154
-[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
- []
-
-
-Overfull \hbox (1.3464pt too wide) in paragraph at lines 154--154
- []\T1/LinuxLibertineT-TLF/b/n/8 (-20) S$[]$LCT/Cklst 
- []
-
-
-Overfull \hbox (1.3464pt too wide) in paragraph at lines 154--154
- []\T1/LinuxLibertineT-TLF/b/n/8 (-20) S$[]$LCT/Cklst 
- []
-
-) (./tables/test-results-hs-table.tex
-Underfull \hbox (badness 10000) in paragraph at lines 223--223
-[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) Htck
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 223--223
-[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 223--223
-[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
- []
-
-) (./tables/test-results-hs-bl-table.tex
-Underfull \hbox (badness 10000) in paragraph at lines 154--154
-[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
- []
-
-
-Overfull \hbox (1.3464pt too wide) in paragraph at lines 154--154
- []\T1/LinuxLibertineT-TLF/b/n/8 (-20) S$[]$LCT/Cklst 
- []
-
-
-Overfull \hbox (1.3464pt too wide) in paragraph at lines 154--154
- []\T1/LinuxLibertineT-TLF/b/n/8 (-20) S$[]$LCT/Cklst 
- []
-
-)) [10.10
-
-] [11.11] [12.12] [13.13
-
-
-] [14.14] [15.15] [16.16] (./main.bbl
+] (./main.bbl
 LaTeX Info: Redefining \tempurl on input line 70.
 LaTeX Info: Redefining \tempurl on input line 88.
 LaTeX Info: Redefining \tempurl on input line 104.
@@ -2159,8 +2129,7 @@ LaTeX Info: Redefining \tempurl on input line 619.
 LaTeX Info: Redefining \tempurl on input line 645.
 LaTeX Info: Redefining \tempurl on input line 661.
 LaTeX Info: Redefining \tempurl on input line 680.
- [17.17
-
+ [15.15
 
 
 ]
@@ -2185,16 +2154,19 @@ Class acmart Warning: ACM keywords are mandatory for papers over two pages.
 
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
-[18.18] (./main.aux)
+[16.16] (./main.aux)
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: DC51E3CEB6C8CF4ECB25E7FEE9CA00BD;3372.
+(rerunfilecheck)             Checksum: 42B980A5093EA15919EDBE1C4CB27CE1;3372.
  ) 
 Here is how much of TeX's memory you used:
- 37939 strings out of 478994
- 718390 string characters out of 5858184
- 1313822 words of memory out of 5000000
- 53549 multiletter control sequences out of 15000+600000
- 635932 words of font info for 591 fonts, out of 8000000 for 9000
+ 37902 strings out of 478994
+ 717242 string characters out of 5858184
+ 1313658 words of memory out of 5000000
+ 53525 multiletter control sequences out of 15000+600000
+ 635667 words of font info for 589 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  96i,17n,131p,1345b,1902s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc}{
@@ -2221,10 +2193,10 @@ ype1/public/newtx/NewTXMI7.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/
 public/newtx/txexs.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/n
 ewtx/txmiaX.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/newtx/tx
 sys.pfb>
-Output written on main.pdf (18 pages, 872069 bytes).
+Output written on main.pdf (16 pages, 865884 bytes).
 PDF statistics:
- 791 PDF objects out of 1000 (max. 8388607)
- 681 compressed objects within 7 object streams
- 160 named destinations out of 1000 (max. 500000)
+ 779 PDF objects out of 1000 (max. 8388607)
+ 671 compressed objects within 7 object streams
+ 156 named destinations out of 1000 (max. 500000)
  123600 words of extra memory for PDF output out of 128383 (max. 10000000)
 
