@@ -1,0 +1,25 @@
+Result:
+
+Test-result-all-table:
+1. 6 out of 10 lcs of sa task obtain significantly more number of test
+cases generated and fail cases.
+for lc1 and 2, we search test cases with its length less than 10
+words. In addition, lc4 and 5 finds test cases starting with
+demonstratives words. Therefore, sst dataset contains relatively small
+number of test cases that meets such constraints.
+
+3. In addition, using syntax expansion process introduces many pass to
+fail cases. It finds what input features fool the model and useful to
+analyze model with those test cases.
+
+Test-hs-result-table:
+1. 18 out of 19 lcs of hs task obtain significantly more number of
+test cases generated. 1 lc in the hs task requires sentences without
+any positive and negative words with group identifiers. hatexplain
+dataset contains relatively small number of test cases that meets such
+constraints
+2. all lcs of hs task obtain significantly more number of failed test
+cases generated.
+3. In addition, using syntax expansion process introduces many pass to
+fail cases. It finds what input features fool the model and useful to
+analyze model with those test cases.
