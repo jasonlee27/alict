@@ -53,7 +53,7 @@ F12_TEMPLATES = {
         'prefix': ['people say', 'i heard that'],
         'sent': [], # toxic
         'conj': ['but'],
-        'postfix': ['[i do not hate them', 'i like them']
+        'postfix': ['i do not hate them', 'i like them']
     },
     'nt-to-nt': {
         'prefix': ['people say', 'i heard that'],

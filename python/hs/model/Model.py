@@ -69,7 +69,7 @@ class Model:
         # alexandrainst/da-hatespeech-detection-base: {'label': 'not offensive'/'offensive', 'score': 0.5082786083221436}
         # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
         preds = cls.batch_predict(data, batch_size=batch_size)
-        pr = np.array([x['score'] if x['label']=='offensive' or x['label']=='ABUSIVE' else 1 - x['score'] for x in preds])
+        pr = np.array([x['score'] if x['label'].lower()=='hate' else 1 - x['score'] for x in preds])
         pp = np.zeros((pr.shape[0], 3))
         margin_neutral = 1/3.
         mn = margin_neutral / 2.

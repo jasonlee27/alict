@@ -415,12 +415,14 @@ class Result:
             template_file = template_result_dir / f"cfg_expanded_inputs_{cksum_val}.json"
             if os.path.exists(result_dir / f"{nlp_task}_testsuite_seeds_{cksum_val}.pkl") or \
                os.path.exists(result_dir / f"{nlp_task}_testsuite_exps_{cksum_val}.pkl"):
+                print(f"@@ {lc_desc}")
                 seed_exp_map[lc_desc] = cls.get_seed_to_exp_map(template_file)
             # end if
         # end for
                 
         results = dict()
         for model in result_dict.keys():
+            print(f"@@ {model}")
             model_result = result_dict[model]
             results[model] = cls.analyze_model(model_result, seed_exp_map)
         # end for

@@ -53,17 +53,13 @@ class Plots:
 
         for item in which:
             if item == 'pdr-selfbleu-agg':
-                cls.pdr_selfbleu_agg_plot(Macros.result_dir, figs_dir)
+                # Results of Self-BLEU (left) and Production Rule Coverage (right) of S2LCT and CHECKLIST test cases.
+                cls.pdr_selfbleu_agg_plot(Macros.result_dir, figs_dir) 
             elif item == 'selfbleu':
-                cls.selfbleu_ours_sample_plot(Macros.result_dir, figs_dir)
-                cls.selfbleu_bl_sample_plot(Macros.result_dir, figs_dir)
-                cls.selfbleu_agg_sample_plot(Macros.result_dir, figs_dir)
+                cls.selfbleu_sample_plot(Macros.result_dir, figs_dir)
             elif item == 'pdr':
-                cls.pdr_ours_plot(Macros.result_dir, figs_dir)
-                cls.pdr_ours_sample_plot(Macros.result_dir, figs_dir)
-                cls.pdr_bl_sample_plot(Macros.result_dir, figs_dir)
-                cls.pdr_seed_exp_plot(Macros.result_dir, figs_dir)
-                cls.pdr_agg_plot(Macros.result_dir, figs_dir)
+                # Results of production rule coverage between S2LCT with 50 seeds and CHECKLIST test cases
+                cls.pdr_bar_plot(Macros.result_dir, figs_dir)
             elif item == 'test-results':
                 # cls.failrate_combined_over_seeds_plot(Macros.result_dir, figs_dir)
                 # cls.failrate_seed_over_seeds_plot(Macros.result_dir, figs_dir)
@@ -88,194 +84,56 @@ class Plots:
         return string
 
     @classmethod
-    def selfbleu_ours_sample_plot(cls,
-                                  results_dir: Path,
-                                  figs_dir: Path,
-                                  task=Macros.sa_task,
-                                  search_dataset_name=Macros.datasets[Macros.sa_task][0],
-                                  selection_method='random'):
+    def selfbleu_sample_plot(cls,
+                             results_dir: Path,
+                             figs_dir: Path,
+                             task=Macros.sa_task,
+                             search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                             selection_method='random'):
         data_lod: List[dict] = list()
-        x_ticks = {0:50, 1:100, 2:200}
+        x_ticks = {0:50, 1:100, 2:150, 3:200}
         num_seeds = list(x_ticks.keys())
-
-        req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
-        for l_i, l in enumerate(Utils.read_txt(req_file)):
-            lc_desc = l.strip().split('::')[0].lower()
-            for ns in x_ticks.values():
-                result_file = results_dir / 'selfbleu' / f"seeds_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_selfbleu.json"
-                result = Utils.read_json(result_file)
-                for s_i, score in enumerate(result[lc_desc]['ours']['selfbleu_scores']):
-                    result_lc_ours = {
-                        'sample': s_i,
-                        'lc': f"LC{l_i+1}",
-                        'num_seed': ns,
-                        'scores': score
-                        # 'avg': result[lc_desc]['ours']['avg_score'],
-                        # 'med': result[lc_desc]['ours']['med_score'],
-                        # 'std': result[lc_desc]['ours']['std_score']
-                    }
-                    data_lod.append(result_lc_ours)
-                # end for
-            # end for
-        # end for
-
-        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
-
-        # Plotting part
-        fig: plt.Figure = plt.figure()
-        ax: plt.Axes = fig.subplots()
-
-        hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-        markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-
-        ax = sns.lineplot(data=df, x='num_seed', y='scores',
-                          hue='lc',
-                          hue_order=hue_order,
-                          style='lc',
-                          estimator='median',
-                          err_style=None, # or "band"
-                          markers=markers,
-                          markersize=9,
-                          markeredgewidth=0,
-                          dashes=True,
-                          ci='sd',
-                          ax=ax)
-        plt.xticks(list(x_ticks.values()))
-        ax.set_ylim(0.0, 1.2)
-        ax.set_xlabel("Number of seeds")
-        ax.set_ylabel("Self-BLEU")
-        
-        # Shrink current axis by 20%
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
-
-        # Put a legend to the right of the current axis
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-        # fig.tight_layout()
-        fig.savefig(figs_dir / "selfbleu-ours-sample-lineplot.eps")
-        return
-
-    @classmethod
-    def selfbleu_bl_sample_plot(cls,
-                                results_dir: Path,
-                                figs_dir: Path,
-                                task=Macros.sa_task,
-                                search_dataset_name=Macros.datasets[Macros.sa_task][0],
-                                selection_method='random'):
-        data_lod: List[dict] = list()
-        # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
-
-        req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
-        for l_i, l in enumerate(Utils.read_txt(req_file)):
-            lc_desc = l.strip().split('::')[0].lower()
-            for ns in x_ticks.values():
-                result_file = results_dir / 'selfbleu' / f"seeds_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_selfbleu.json"
-                result = Utils.read_json(result_file)
-                for score in result[lc_desc]['bl']['selfbleu_scores']:
-                    result_lc_bl = {
-                        'lc': f"LC{l_i+1}",
-                        'num_seed': ns,
-                        'scores': score
-                        # 'avg': result[lc_desc]['ours']['avg_score'],
-                        # 'med': result[lc_desc]['ours']['med_score'],
-                        # 'std': result[lc_desc]['ours']['std_score']
-                    }
-                    data_lod.append(result_lc_bl)
-                # end for
-            # end for
-        # end for
-
-        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
-
-        # Plotting part
-        fig: plt.Figure = plt.figure()
-        ax: plt.Axes = fig.subplots()
-
-        hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-        markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-
-        ax = sns.lineplot(data=df, x='num_seed', y='scores',
-                          hue='lc',
-                          hue_order=hue_order,
-                          style='lc',
-                          estimator='median',
-                          err_style=None, # or "bars"
-                          markers=markers,
-                          markersize=9,
-                          markeredgewidth=0,
-                          dashes=True,
-                          ci='sd',
-                          ax=ax)
-        plt.xticks(list(x_ticks.values()))
-        ax.set_ylim(0.0, 1.2)
-        ax.set_xlabel("Number of seeds")
-        ax.set_ylabel("Self-BLEU")
-
-        # Shrink current axis by 20%
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
-
-        # Put a legend to the right of the current axis
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-        fig.savefig(figs_dir / "selfbleu-bl-sample-lineplot.eps")
-        return
-
-    @classmethod
-    def selfbleu_agg_sample_plot(cls,
-                                 results_dir: Path,
-                                 figs_dir: Path,
-                                 task=Macros.sa_task,
-                                 search_dataset_name=Macros.datasets[Macros.sa_task][0],
-                                 selection_method='random'):
-        data_lod: List[dict] = list()
-        # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
-    
-        req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
-        for ns in x_ticks.values():
-            for l_i, l in enumerate(Utils.read_txt(req_file)):
-                lc_desc = l.strip().split('::')[0].lower()
-                result_file = results_dir / 'selfbleu' / f"seeds_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_selfbleu.json"
-                result = Utils.read_json(result_file)
-                data_lod.append({
+        result_file = results_dir / 'selfbleu' / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+        result = Utils.read_json(result_file)
+        for l_i, lc in enumerate(result.keys()):
+            for s_i, num_sample in enumerate(result[lc]['ours'].keys()):
+                _num_sample = int(num_sample.split('sample')[0])
+                result_lc_ours = {
+                    'sample': s_i,
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT',
-                    'num_seed': ns,
-                    'scores': float(result[lc_desc]['ours']['avg_score'])
-                })
-                data_lod.append({
+                    'num_seed': _num_sample,
+                    'scores': float(result[lc]['ours'][num_sample]['avg_score'])
+                }
+
+                result_lc_bls = {
+                    'sample': s_i,
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
-                    'num_seed': ns,
-                    'scores': float(result[lc_desc]['bl']['avg_score'])
-                })
+                    'num_seed': _num_sample,
+                    'scores': float(result[lc]['bl'][num_sample]['avg_score'])
+                }
+
+                data_lod.append(result_lc_ours)
+                data_lod.append(result_lc_bls)
             # end for
         # end for
-    
-
-        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
         
+        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+
         # Plotting part
         fig: plt.Figure = plt.figure()
         ax: plt.Axes = fig.subplots()
 
-        # hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-        # markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-        hue_order = ['S$^2$LCT', 'CHECKLIST']
+        hue_order = ['CHECKLIST', 'S$^2$LCT']
         markers = ['$1$', '$2$']
 
         ax = sns.lineplot(data=df, x='num_seed', y='scores',
                           hue='type',
                           hue_order=hue_order,
                           style='type',
-                          err_style=None, # or "bars"
                           estimator='median',
+                          err_style=None, # or "band"
                           markers=True,
                           markersize=9,
                           markeredgewidth=0,
@@ -284,79 +142,8 @@ class Plots:
                           ax=ax)
         plt.xticks(list(x_ticks.values()))
         ax.set_ylim(0.0, 1.2)
-        ax.set_xlabel("Number of seeds")
+        ax.set_xlabel("Number of seed samples")
         ax.set_ylabel("Self-BLEU")
-
-        # Shrink current axis by 20%
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
-        # Put a legend to the right of the current axis
-        # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-
-        fig.tight_layout()
-        fig.savefig(figs_dir / "selfbleu-agg-sample-lineplot.eps")
-        return
-
-    
-    
-    @classmethod
-    def pdr_ours_sample_plot(cls,
-                             results_dir: Path,
-                             figs_dir: Path,
-                             task=Macros.sa_task,
-                             search_dataset_name=Macros.datasets[Macros.sa_task][0],
-                             selection_method='random'):
-        data_lod: List[dict] = list()
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
-
-        req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
-        for l_i, l in enumerate(Utils.read_txt(req_file)):
-            lc_desc = l.strip().split('::')[0].lower()
-            for ns in x_ticks.values():
-                result_file = results_dir / 'pdr_cov' / f"seeds_sample_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
-                result = Utils.read_json(result_file)
-                for s_i, score in enumerate(result[lc_desc]['ours']['coverage_scores']):
-                    result_lc_ours = {
-                        'sample': s_i,
-                        'lc': f"LC{l_i+1}",
-                        'num_seed': ns,
-                        'scores': score
-                        # 'avg': result[lc_desc]['ours']['avg_score'],
-                        # 'med': result[lc_desc]['ours']['med_score'],
-                        # 'std': result[lc_desc]['ours']['std_score']
-                    }
-                    data_lod.append(result_lc_ours)
-                # end for
-            # end for
-        # end for
-
-        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
-
-        # Plotting part
-        fig: plt.Figure = plt.figure()
-        ax: plt.Axes = fig.subplots()
-
-        hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-        markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-
-        ax = sns.lineplot(data=df, x='num_seed', y='scores',
-                          hue='lc',
-                          hue_order=hue_order,
-                          style='lc',
-                          estimator='median',
-                          err_style=None, # or "band"
-                          markers=markers,
-                          markersize=9,
-                          markeredgewidth=0,
-                          dashes=True,
-                          ci='sd',
-                          ax=ax)
-        plt.xticks(list(x_ticks.values()))
-        ax.set_ylim(-50, 700)
-        ax.set_xlabel("Number of seeds")
-        ax.set_ylabel("Number of Production Rules Covered")
         
         # Shrink current axis by 20%
         box = ax.get_position()
@@ -365,19 +152,18 @@ class Plots:
         # Put a legend to the right of the current axis
         ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         # fig.tight_layout()
-        fig.savefig(figs_dir / "pdr-ours-sample-lineplot.eps")
+        fig.savefig(figs_dir / "selfbleu-agg-sample-lineplot.eps")
         return
 
     @classmethod
-    def pdr_bl_sample_plot(cls,
-                           results_dir: Path,
-                           figs_dir: Path,
-                           task=Macros.sa_task,
-                           search_dataset_name=Macros.datasets[Macros.sa_task][0],
-                           selection_method='random'):
+    def pdr_bar_plot(cls,
+                     results_dir: Path,
+                     figs_dir: Path,
+                     task=Macros.sa_task,
+                     search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                     selection_method='random'):
         data_lod: List[dict] = list()
-        # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = {0:50, 1:100, 2:200}
+        x_ticks = {0:0} # , 1:100, 2:200}
         num_seeds = list(x_ticks.keys())
 
         req_dir = results_dir / 'reqs'
@@ -385,181 +171,28 @@ class Plots:
         for l_i, l in enumerate(Utils.read_txt(req_file)):
             lc_desc = l.strip().split('::')[0].lower()
             for ns in x_ticks.values():
-                result_file = results_dir / 'pdr_cov' / f"seeds_sample_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
+                result_file = results_dir / 'pdr_cov' / f"seeds_exps_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
                 result = Utils.read_json(result_file)
-                for score in result[lc_desc]['bl']['coverage_scores']:
-                    result_lc_bl = {
-                        'lc': f"LC{l_i+1}",
-                        'num_seed': ns,
-                        'scores': score
-                        # 'avg': result[lc_desc]['ours']['avg_score'],
-                        # 'med': result[lc_desc]['ours']['med_score'],
-                        # 'std': result[lc_desc]['ours']['std_score']
-                    }
-                    data_lod.append(result_lc_bl)
-                # end for
-            # end for
-        # end for
-
-        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
-
-        # Plotting part
-        fig: plt.Figure = plt.figure()
-        ax: plt.Axes = fig.subplots()
-
-        hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-        markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-
-        ax = sns.lineplot(data=df, x='num_seed', y='scores',
-                          hue='lc',
-                          hue_order=hue_order,
-                          style='lc',
-                          estimator='median',
-                          err_style=None, # or "bars"
-                          markers=markers,
-                          markersize=9,
-                          markeredgewidth=0,
-                          dashes=True,
-                          ci='sd',
-                          ax=ax)
-        plt.xticks(list(x_ticks.values()))
-        ax.set_ylim(-50, 700)
-        ax.set_xlabel("Number of seeds")
-        ax.set_ylabel("Number of Production Rules Covered")
-
-        # Shrink current axis by 20%
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
-
-        # Put a legend to the right of the current axis
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-        fig.savefig(figs_dir / "pdr-bl-sample-lineplot.eps")
-        return
-
-    @classmethod
-    def pdr_seed_exp_plot(cls,
-                          results_dir: Path,
-                          figs_dir: Path,
-                          task=Macros.sa_task,
-                          search_dataset_name=Macros.datasets[Macros.sa_task][0],
-                          selection_method='random'):
-        # data_lod: List[dict] = list()
-        data_lod = {
-            'ours-seed': list(),
-            'ours-seed-exp': list(),
-        }
-        # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
-        req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
-        for l_i, l in enumerate(Utils.read_txt(req_file)):
-            lc_desc = l.strip().split('::')[0].lower()
-            for ns in x_ticks.values():
-                result_file = results_dir / 'pdr_cov' / f"seeds_exps_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
-                result = Utils.read_json(result_file)
-                for score in result[lc_desc]['ours_seed']['coverage_scores']:
-                    data_lod['ours-seed'].append({
-                        'lc': f"LC{l_i+1}",
-                        'num_seed': ns,
-                        'scores': score
-                        # 'avg': result[lc_desc]['ours']['avg_score'],
-                        # 'med': result[lc_desc]['ours']['med_score'],
-                        # 'std': result[lc_desc]['ours']['std_score']
-                    })
-                # end for
-                for score in result[lc_desc]['ours_seed_exp']['coverage_scores']:
-                    data_lod['ours-seed-exp'].append({
-                        'lc': f"LC{l_i+1}",
-                        'num_seed': ns,
-                        'scores': score
-                        # 'avg': result[lc_desc]['ours']['avg_score'],
-                        # 'med': result[lc_desc]['ours']['med_score'],
-                        # 'std': result[lc_desc]['ours']['std_score']
-                    })
-                # end for
-            # end for
-        # end for
-
-        for data_type, _data_lod in data_lod.items():
-
-            df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(_data_lod))
-
-            # Plotting part
-            fig: plt.Figure = plt.figure()
-            ax: plt.Axes = fig.subplots()
-            
-            hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-            markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-            
-            ax = sns.lineplot(data=df, x='num_seed', y='scores',
-                              hue='lc',
-                              hue_order=hue_order,
-                              style='lc',
-                              estimator='median',
-                              err_style=None, # or "bars"
-                              markers=markers,
-                              markersize=9,
-                              markeredgewidth=0,
-                              dashes=True,
-                              ci='sd',
-                              ax=ax)
-            plt.xticks(list(x_ticks.values()))
-            ax.set_ylim(0, 850)
-            ax.set_xlabel("Number of seeds")
-            ax.set_ylabel("Number of Production Rules Covered")
-            
-            # Shrink current axis by 20%
-            box = ax.get_position()
-            ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
-            
-            # Put a legend to the right of the current axis
-            ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-            fig.savefig(figs_dir / f"pdr-{data_type}-lineplot.eps")
-        # end if
-        return
-
-    @classmethod
-    def pdr_ours_plot(cls,
-                      results_dir: Path,
-                      figs_dir: Path,
-                      task=Macros.sa_task,
-                      search_dataset_name=Macros.datasets[Macros.sa_task][0],
-                      selection_method='random'):
-        data_lod: List[dict] = list()
-        x_ticks = {0:50} # , 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
-
-        req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
-        for l_i, l in enumerate(Utils.read_txt(req_file)):
-            lc_desc = l.strip().split('::')[0].lower()
-            for ns in x_ticks.values():
-                result_file = results_dir / 'pdr_cov' / f"seeds_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
-                result = Utils.read_json(result_file)
-                bl_score = result[lc_desc]['bl']['coverage_scores'][0]
+                bl_score = result[lc_desc]['bl']['coverage_scores']
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'num_seed': ns,
-                    'scores': bl_score
-                    # 'avg': result[lc_desc]['ours']['avg_score'],
-                    # 'med': result[lc_desc]['ours']['med_score'],
-                    # 'std': result[lc_desc]['ours']['std_score']
+                    'scores': result[lc_desc]['bl']['coverage_scores']
                 })
-                print(l_i+1, bl_score, result[lc_desc]['ours']['med_score'], float(result[lc_desc]['ours']['med_score'])/bl_score)
-                for score in result[lc_desc]['ours']['coverage_scores']:
-                    result_lc_ours = {
-                        'lc': f"LC{l_i+1}",
-                        'type': 'S$^2$LCT',
-                        'num_seed': ns,
-                        'scores': score
-                        # 'avg': result[lc_desc]['ours']['avg_score'],
-                        # 'med': result[lc_desc]['ours']['med_score'],
-                        # 'std': result[lc_desc]['ours']['std_score']
-                    }
-                    data_lod.append(result_lc_ours)
-                # end for
+                # print(l_i+1, bl_score, result[lc_desc]['ours_seed_exp']['med_score'], float(result[lc_desc]['ours']['med_score'])/bl_score)
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'S$^2$LCT (SEED)',
+                    'num_seed': ns,
+                    'scores': result[lc_desc]['ours_seed']['coverage_scores']
+                })
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'S$^2$LCT (SEED+EXP)',
+                    'num_seed': ns,
+                    'scores': result[lc_desc]['ours_seed_exp']['coverage_scores']
+                }
             # end for
         # end for
 
@@ -569,12 +202,12 @@ class Plots:
         fig: plt.Figure = plt.figure()
         ax: plt.Axes = fig.subplots()
 
-        hue_order = ['CHECKLIST', 'S$^2$LCT']
-        
+        hue_order = ['CHECKLIST', 'S$^2$LCT']        
         from numpy import median
         ax = sns.barplot(data=df, x='lc', y='scores',
                          hue='type',
                          hue_order=hue_order,
+                         error
                          estimator=median)
         # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
         ax.set_ylim(bottom=0, top=600)
@@ -588,7 +221,7 @@ class Plots:
         # Put a legend to the right of the current axis
         # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         fig.tight_layout()
-        fig.savefig(figs_dir / "pdr-ours-50seeds-barplot.eps")
+        fig.savefig(figs_dir / "pdr-ours-barplot.eps")
         return
     
     # @classmethod

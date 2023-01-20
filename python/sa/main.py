@@ -338,37 +338,25 @@ def run_selfbleu():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    num_seeds = args.num_seeds
-    num_trials = args.num_trials
     main_seed(nlp_task,
               search_dataset_name,
-              selection_method,
-              num_seeds,
-              num_trials)
+              selection_method)
     return
 
 def run_pdrule_cov():
-    from .exp.ProductionruleCoverage import main_seed, main_seed_sample, main_seed_exp
+    from .exp.ProductionruleCoverage import main_seed, main_seed_exp, main_seed_exp_all
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    num_seeds = args.num_seeds
-    num_trials = args.num_trials
-    main_seed(nlp_task,
-              search_dataset_name,
-              selection_method,
-              num_seeds,
-              num_trials)
     main_seed_sample(nlp_task,
                      search_dataset_name,
-                     selection_method,
-                     num_seeds,
-                     num_trials)
-    main_seed_exp(nlp_task,
-                  search_dataset_name,
-                  selection_method,
-                  num_seeds,
-                  num_trials)
+                     selection_method)
+    main_seed_exp_sample(nlp_task,
+                         search_dataset_name,
+                         selection_method)
+    main_seed_exp_all(nlp_task,
+                      search_dataset_name,
+                      selection_method)
     return
 
 # ==========

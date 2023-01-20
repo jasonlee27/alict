@@ -14,7 +14,9 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
-                        'requirement', 'template', 'testsuite', 'testmodel', 'analyze', 'tables'
+                        'requirement', 'template', 'testsuite', 'testmodel', 'analyze',
+                        'humanstudy', 'humanstudy_results',
+                        'tables'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='hs',
                     choices=['hs'],
@@ -174,6 +176,35 @@ def run_analyze():
     # end if
     return
 
+
+# ==========
+# Human study
+
+def run_humanstudy():
+    from .exp.Humanstudy import Humanstudy
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    Humanstudy.main_sample(nlp_task,
+                           search_dataset_name,
+                           selection_method)
+    return
+
+def run_humanstudy_result():
+    from .exp.Humanstudy import Humanstudy
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    model_name = args.model_name
+    num_samples = 20
+    Humanstudy.main_result(nlp_task,
+                           search_dataset_name,
+                           selection_method,
+                           model_name,
+                           num_samples)
+    return
+
+
 # ==========
 # Tables & Plots
 
@@ -198,6 +229,8 @@ func_map = {
         'testsuite': run_testsuites,
         'testmodel': run_testmodel,
         'analyze': run_analyze,
+        'humanstudy': run_humanstudy,
+        'humanstudy_results': run_humanstudy_result,
         'tables': run_make_tables
     }
 }
