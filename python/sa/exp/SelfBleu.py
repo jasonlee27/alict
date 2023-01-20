@@ -14,7 +14,7 @@ from multiprocessing import Pool
 # from functools import partial
 from nltk.translate.bleu_score import SmoothingFunction
 
-from ..testsuite.Search import ChecklistTestsuite
+from ..seed.Search import ChecklistTestsuite
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
@@ -150,72 +150,47 @@ class SelfBleu:
 
 def read_our_seeds(task,
                    search_dataset_name,
-                   selection_method='',
-                   num_seeds=-1,
-                   num_trials=-1):
-    if num_trials>0:
-        texts_lcs_over_trials = list()
-        texts_all_over_trials = list()
-        for num_trial in range(num_trials):
-            _num_trial = '' if num_trial==0 else str(num_trial+1)
-            seed_file = Macros.result_dir / f"cfg_expanded_inputs{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds.json"
-            seed_dict = Utils.read_json(seed_file)
-            texts_lcs = dict()
-            texts_all = list()
-            for seeds in seed_dict:
-                lc = seeds['requirement']['description']
-                seed_sents = [s for s in seeds['inputs'].keys()]
-                texts_lcs[lc] = seed_sents
-                texts_all.extend(seed_sents)
-            # end for
-            texts_lcs_over_trials.append(texts_lcs)
-            texts_all_over_trials.append(texts_all)
-        # end for
-        return texts_all_over_trials, texts_lcs_over_trials
-    else:
-        seed_res_dir_name = f"seeds_{task}_{search_dataset_name}"
-        seed_dir = Macros.result_dir / seed_res_dir_name
-        cksums = Utils.read_txt(seed_dir / 'cksum_map.txt')
-        texts_lcs = dict()
-        texts_all = list()
-        for l in cksums:
-            lc, cksum_val = l.split('\t')[0].strip(), l.split('\t')[1].strip()
-            seed_file = seed_dir / f"seed_{cksum_val}.json"
-            seed_dict = Utils.read_json(seed_file)
-            seed_sents = [s[1] for s in seed_dict['seeds']]
-            texts_lcs[lc] = seed_sents
-            texts_all.extend(seed_sents)
-        # end for
-        return texts_all, texts_lcs
-    # end if
-        
-
-def read_our_exps(task,
-                  search_dataset_name,
-                  selection_method,
-                  num_seeds,
-                  num_trials):
-    if num_seeds<0:
-        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}.json"
-    else:
-        seed_file = Macros.result_dir / f"cfg_expanded_inputs{num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds.json"
-    # end if
-    seed_dict = Utils.read_json(seed_file)
+                   selection_method):
     texts_lcs = dict()
     texts_all = list()
-    for seeds in seed_dict:
-        lc = seeds['requirement']['description']
+    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
+    seed_files = [
+        f for f in os.listdir(str(seed_dir))
+        if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
+    ]
+    for seed_file in seed_files:
+        seed_dict = Utils.read_json(seed_dir / seed_file)
+        lc = seed_dict['requirement']['description']
+        seed_sents = [s for s in seed_dict['inputs'].keys()]
+        texts_lcs[lc] = seed_sents
+        texts_all.extend(seed_sents)
+    # end for
+    return texts_all, texts_lcs
+        
+def read_our_exps(task,
+                  search_dataset_name,
+                  selection_method):
+    texts_lcs = dict()
+    texts_all = list()
+    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
+    seed_files = [
+        f for f in os.listdir(str(seed_dir))
+        if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
+    ]
+    for seed_file in seed_files:
+        seed_dict = Utils.read_json(seed_dir / seed_file)
+        lc = seed_dict['requirement']['description']
         exp_sents = list()
-        for s in seeds['inputs'].keys():
-            exp_sents.extend([e[5] for e in seeds['inputs'][s]['exp_inputs']])
+        for s in seed_dict['inputs'].keys():
+            exp_sents.extend([e[5] for e in seed_dict['inputs'][s]['exp_inputs']])
         # end for
         texts_lcs[lc] = exp_sents
         texts_all.extend(exp_sents)
     # end for
     return texts_all, texts_lcs
 
-def read_checklist_testcases(task, search_dataset_name):
-    seed_res_dir_name = f"seeds_{task}_{search_dataset_name}"
+def read_checklist_testcases(task, search_dataset_name, selection_method):
+    seed_res_dir_name = f"templates_{task}_{search_dataset_name}_{selection_method}"
     seed_dir = Macros.result_dir / seed_res_dir_name
     cksums = Utils.read_txt(seed_dir / 'cksum_map.txt')
     texts_lcs = dict()
@@ -235,155 +210,82 @@ def read_checklist_testcases(task, search_dataset_name):
 
 def main_seed(task,
               search_dataset_name,
-              selection_method,
-              num_seeds,
-              num_trials):
-    if num_seeds>0:
-        logger_file = Macros.log_dir / f"seeds_over{num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_selfbleu.log"
-        result_file = Macros.selfbleu_result_dir / f"seeds_over{num_trials}_{task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_selfbleu.json"
-        logger = Logger(logger_file=logger_file,
-                        logger_name='seed_selfbleu_log')
-        Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
-        _, texts_checklist = read_checklist_testcases(task,
-                                                      search_dataset_name)
-        _, texts_ours = read_our_seeds(task,
-                                       search_dataset_name,
-                                       selection_method=selection_method,
-                                       num_seeds=num_seeds,
-                                       num_trials=num_trials)
-        if os.path.exists(str(result_file)):
-            scores = Utils.read_json(result_file)
-        else:
-            scores = dict()
-        # end if
-        for lc in texts_checklist.keys():
-            if lc not in scores.keys():
-                logger.print(f"OURS::{lc}")
-                our_sents, bl_sents = list(), list()
-                scores[lc] = {
-                    'ours': {
-                        'selfbleu_scores': list()
-                    },
-                    'bl': {
+              selection_method):
+    num_trials = 10
+    num_samples = [50, 100, 150, 200]
+    logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
+    result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+    logger = Logger(logger_file=logger_file,
+                    logger_name='seed_selfbleu_log')
+    Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
+    _, texts_checklist = read_checklist_testcases(task,
+                                                  search_dataset_name,
+                                                  selection_method)
+    _, texts_seed_ours = read_our_seeds(task,
+                                        search_dataset_name,
+                                        selection_method)
+    # _, texts_exp_ours = read_our_exps(task,
+    #                                   search_dataset_name,
+    #                                   selection_method)
+    # if os.path.exists(str(result_file)):
+    #     scores = Utils.read_json(result_file)
+    # else:
+    #     scores = dict()
+    # # end if
+    scores = dict()
+    for lc in texts_checklist.keys():
+        if lc not in scores.keys():
+            logger.print(f"OURS::{lc}")
+            our_sents, bl_sents = list(), list()
+            scores[lc] = {
+                'ours': {
+                    f"{num_sample}sample": {
                         'selfbleu_scores': list()
                     }
+                    for num_sample in num_samples
+                },
+                'bl': {
+                    f"{num_sample}sample": {
+                        'selfbleu_scores': list()
+                    }
+                    for num_sample in num_samples
                 }
+            }
+            for num_sample in num_samples:
+                scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'] = list()
                 for num_trial in range(num_trials):
                     random.seed(num_trial)
-                    _texts_ours = texts_ours[num_trial]
-                    _texts_ours_lc = _texts_ours[lc]
-                    texts_checklist_lc = texts_checklist[lc]
-                    if len(_texts_ours_lc)<len(texts_checklist_lc):
-                        num_samples = len(_texts_ours_lc)
-                        r_idxs = list(range(len(texts_checklist_lc)))
-                        random.shuffle(r_idxs)
-                        our_sents = _texts_ours_lc
-                        bl_sents = [texts_checklist_lc[r_i] for r_i in r_idxs[:num_samples]]
-                    else:
-                        num_samples = len(texts_checklist_lc)
-                        r_idxs = list(range(len(_texts_ours_lc)))
-                        random.shuffle(r_idxs)
-                        our_sents = [_texts_ours_lc[r_i] for r_i in r_idxs[:num_samples]]
-                        bl_sents = texts_checklist_lc
-                    # end if
-                    scores[lc]['num_data'] = len(our_sents)
+                    # _num_sample = min([
+                    #     num_sample,
+                    #     len(texts_seed_ours[lc]),
+                    #     len(texts_checklist[lc])
+                    # ])
+                    scores[lc]['num_data'] = num_sample
+                    # sample_exps = random.sample(texts_exp_ours[lc], _num_sample)
+                    our_sents = random.sample(texts_seed_ours[lc], num_sample)
+                    bl_sents = random.sample(texts_checklist[lc], num_sample)
+                    print(len(our_sents), len(bl_sents))
                     sbleu = SelfBleu(texts=our_sents,
                                      num_data=len(our_sents),
                                      logger=logger)
                     score = sbleu.get_score_wo_sample()
-                    scores[lc]['ours']['selfbleu_scores'].append(score)
+                    scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'].append(score)
                     sbleu_bl = SelfBleu(texts=bl_sents,
                                         num_data=len(bl_sents),
                                         logger=logger)
                     score_bl = sbleu_bl.get_score_wo_sample()
-                    scores[lc]['bl']['selfbleu_scores'].append(score_bl)
+                    scores[lc]['bl']['selfbleu_scores'][f"{num_sample}sample"].append(score_bl)
                 # end for
                 logger.print(f"{scores[lc]}")
-                scores[lc]['ours']['avg_score'] = Utils.avg(scores[lc]['ours']['selfbleu_scores'])
-                scores[lc]['ours']['med_score'] = Utils.median(scores[lc]['ours']['selfbleu_scores'])
-                scores[lc]['ours']['std_score'] = Utils.stdev(scores[lc]['ours']['selfbleu_scores'])
-                scores[lc]['bl']['avg_score'] = Utils.avg(scores[lc]['bl']['selfbleu_scores'])
-                scores[lc]['bl']['med_score'] = Utils.median(scores[lc]['bl']['selfbleu_scores'])
-                scores[lc]['bl']['std_score'] = Utils.stdev(scores[lc]['bl']['selfbleu_scores'])
+                scores[lc]['ours'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['bl'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['bl'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['bl'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'])
                 Utils.write_json(scores, result_file, pretty_format=True)
-            # end if
-        # end for
-    else:
-        logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.log"
-        result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_selfbleu.json"
-        logger = Logger(logger_file=logger_file,
-                        logger_name='seed_selfbleu_log')
-        Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
-        
-        _, texts_checklist = read_checklist_testcases(task,
-                                                      search_dataset_name)
-        _, texts_ours = read_our_seeds(task,
-                                       search_dataset_name)
-        # _, texts_ours = read_our_exps(task,
-        #                               search_dataset_name,
-        #                               selection_method,
-        #                               num_seeds,
-        #                               num_trials)
-
-        if os.path.exists(str(result_file)):
-            result = Utils.read_json(result_file)
-        else:
-            result = {
-                'ours': dict(),
-                'checklist': dict()
-            }
-            # end if
-            scores = dict()
-            scores_baseline = dict()
-            for lc in texts_ours.keys():
-                if lc not in result['ours'].keys():
-                    st = time.time()
-                    logger.print(f"OURS::{lc}")
-                    sbleu = SelfBleu(texts=texts_ours[lc],
-                                     num_data=len(texts_checklist[lc]),
-                                     logger=logger)
-                    scores[lc] = {
-                        'num_data': sbleu.num_data,
-                        'score': sbleu.get_score()
-                    }
-                    result = {
-                        'ours': scores,
-                        'checklist': scores_baseline
-                    }
-                    Utils.write_json(result, result_file, pretty_format=True)
-                    ft = time.time()
-                    logger.print(f"{round(ft-st,2)}secs", end='::')
-                    logger.print(f"num_data:{scores[lc]['num_data']}::score:{scores[lc]['score']}")
-                # end if
             # end for
-    
-        for lc in texts_checklist.keys():
-            if lc not in result['checklist'].keys():
-                st = time.time()
-                logger.print(f"BL::{lc}", end='::')
-                sbleu = SelfBleu(texts=texts_checklist[lc],
-                                 num_data=len(texts_checklist[lc]),
-                                 logger=logger)
-                scores_baseline[lc] = {
-                    'num_data': sbleu.num_data,
-                    'score': sbleu.get_score()
-                }
-                result = {
-                    'ours': scores,
-                    'checklist': scores_baseline
-                }
-                Utils.write_json(result, result_file, pretty_format=True)
-                ft = time.time()
-                logger.print(f"{round(ft-st,2)}secs", end='::')
-                logger.print(f"num_data:{scores_baseline[lc]['num_data']}::score:{scores_baseline[lc]['score']}")
-            # end if
-        # end for
-
-        result = {
-            'ours': scores,
-            'checklist': scores_baseline
-        }
-        Utils.write_json(result, result_file, pretty_format=True)
-    # end if
+        # end if
+    # end for
     return
 
