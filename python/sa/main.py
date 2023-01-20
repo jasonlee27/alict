@@ -344,7 +344,7 @@ def run_selfbleu():
     return
 
 def run_pdrule_cov():
-    from .exp.ProductionruleCoverage import main_seed, main_seed_exp, main_seed_exp_all
+    from .exp.ProductionruleCoverage import main_seed_sample, main_seed_exp_sample, main_seed_exp_all
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
