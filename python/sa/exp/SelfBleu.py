@@ -154,7 +154,7 @@ def read_our_seeds(task,
     texts_lcs = dict()
     texts_all = list()
     seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
-    seed_files = [
+    seed_fles = [
         f for f in os.listdir(str(seed_dir))
         if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
     ]
@@ -252,7 +252,7 @@ def main_seed(task,
                 }
             }
             for num_sample in num_samples:
-                scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'] = list()
+                # scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'] = list()
                 for num_trial in range(num_trials):
                     random.seed(num_trial)
                     # _num_sample = min([
@@ -262,9 +262,8 @@ def main_seed(task,
                     # ])
                     scores[lc]['num_data'] = num_sample
                     # sample_exps = random.sample(texts_exp_ours[lc], _num_sample)
-                    our_sents = random.sample(texts_seed_ours[lc], num_sample)
-                    bl_sents = random.sample(texts_checklist[lc], num_sample)
-                    print(len(our_sents), len(bl_sents))
+                    our_sents = random.sample(texts_seed_ours[lc], min(len(texts_seed_ours[lc]), num_sample))
+                    bl_sents = random.sample(texts_checklist[lc], min(len(texts_checklist[lc]), num_sample))
                     sbleu = SelfBleu(texts=our_sents,
                                      num_data=len(our_sents),
                                      logger=logger)
@@ -274,7 +273,7 @@ def main_seed(task,
                                         num_data=len(bl_sents),
                                         logger=logger)
                     score_bl = sbleu_bl.get_score_wo_sample()
-                    scores[lc]['bl']['selfbleu_scores'][f"{num_sample}sample"].append(score_bl)
+                    scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'].append(score_bl)
                 # end for
                 logger.print(f"{scores[lc]}")
                 scores[lc]['ours'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'])
