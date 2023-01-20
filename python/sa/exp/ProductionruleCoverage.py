@@ -13,8 +13,8 @@ from sklearn.preprocessing import normalize
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
-from ..testsuite.cfg.CFG import BeneparCFG
-from ..testsuite.Search import ChecklistTestsuite
+from ..synexp.cfg.CFG import BeneparCFG
+from ..seed.Search import ChecklistTestsuite
 
 import torch.multiprocessing
 try:
@@ -94,7 +94,7 @@ class ProductionruleCoverage:
     @classmethod
     def get_our_seed_cfg_rules(cls,
                                task,
-                               dataset_name,
+                               search_dataset_name,
                                selection_method,
                                parse_all_sents=False,
                                logger=None):
@@ -108,7 +108,7 @@ class ProductionruleCoverage:
             cfg_res = Utils.read_json(seed_dir / seed_file)
             lc_desc = cfg_res['requirement']['description']
             lc_cksum = Utils.get_cksum(lc_desc)
-            res_file = Macros.pdr_cov_result_dir / f"seed_{task}_{dataset_name}_{selection_method}_pdr_{lc_cksum}.json"
+            res_file = Macros.pdr_cov_result_dir / f"seed_{task}_{search_dataset_name}_{selection_method}_pdr_{lc_cksum}.json"
             if os.path.exists(res_file):
                 seed_rules = Utils.read_json(res_file)
             else:
@@ -149,7 +149,7 @@ class ProductionruleCoverage:
     @classmethod
     def get_our_exp_cfg_rules(cls,
                               task,
-                              dataset_name,
+                              search_dataset_name,
                               selection_method,
                               logger=None):
         exp_rules_over_lcs = dict()
@@ -162,7 +162,7 @@ class ProductionruleCoverage:
             cfg_res = Utils.read_json(seed_dir / seed_file)
             lc_desc = cfg_res['requirement']['description']
             lc_cksum = Utils.get_cksum(lc_desc)
-            res_file = Macros.pdr_cov_result_dir / f"exp_{task}_{dataset_name}_{selection_method}_pdr_{lc_cksum}.json"
+            res_file = Macros.pdr_cov_result_dir / f"exp_{task}_{search_dataset_name}_{selection_method}_pdr_{lc_cksum}.json"
             if os.path.exists(res_file):
                 exp_rules = Utils.read_json(res_file)
             else:
@@ -199,7 +199,7 @@ class ProductionruleCoverage:
     @classmethod
     def get_bl_cfg_rules(cls,
                          task,
-                         dataset_name,
+                         search_dataset_name,
                          selection_method,
                          logger=None):
         bl_rules_over_lcs = dict()
@@ -329,12 +329,12 @@ def main_seed(task,
                     scores[lc]['ours'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_ours)
                     scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_bl)
                 # end for
-                scores[lc]['ours'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc_key]['ours'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc_key]['ours'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc_key]['ours'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['bl'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc_key]['bl'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['bl'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc_key]['bl'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['bl'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc_key]['bl'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['bl'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['bl'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['bl'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
             # end for
         # end if
         Utils.write_json(scores, result_file, pretty_format=True)
