@@ -54,7 +54,7 @@ class Plots:
         for item in which:
             if item == 'pdr-selfbleu-agg':
                 # Results of Self-BLEU (left) and Production Rule Coverage (right) of S2LCT and CHECKLIST test cases.
-                cls.pdr_selfbleu_agg_plot(Macros.result_dir, figs_dir) 
+                cls.pdr_selfbleu_agg_plot(Macros.result_dir, figs_dir)
             elif item == 'selfbleu':
                 cls.selfbleu_sample_plot(Macros.result_dir, figs_dir)
             elif item == 'pdr':
@@ -94,28 +94,25 @@ class Plots:
         x_ticks = {0:50, 1:100, 2:150, 3:200}
         num_seeds = list(x_ticks.keys())
         result_file = results_dir / 'selfbleu' / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+        print(result_file)
         result = Utils.read_json(result_file)
         for l_i, lc in enumerate(result.keys()):
             for s_i, num_sample in enumerate(result[lc]['ours'].keys()):
                 _num_sample = int(num_sample.split('sample')[0])
-                result_lc_ours = {
+                data_lod.append({
                     'sample': s_i,
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT',
                     'num_seed': _num_sample,
                     'scores': float(result[lc]['ours'][num_sample]['avg_score'])
-                }
-
-                result_lc_bls = {
+                })
+                data_lod.append({
                     'sample': s_i,
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'num_seed': _num_sample,
                     'scores': float(result[lc]['bl'][num_sample]['avg_score'])
-                }
-
-                data_lod.append(result_lc_ours)
-                data_lod.append(result_lc_bls)
+                })
             # end for
         # end for
         
@@ -138,7 +135,7 @@ class Plots:
                           markersize=9,
                           markeredgewidth=0,
                           dashes=True,
-                          ci='sd',
+                          errorbar='sd',
                           ax=ax)
         plt.xticks(list(x_ticks.values()))
         ax.set_ylim(0.0, 1.2)
@@ -152,7 +149,7 @@ class Plots:
         # Put a legend to the right of the current axis
         ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         # fig.tight_layout()
-        fig.savefig(figs_dir / "selfbleu-agg-sample-lineplot.eps")
+        fig.savefig(figs_dir / "selfbleu-sample-lineplot.eps")
         return
 
     @classmethod
@@ -192,10 +189,9 @@ class Plots:
                     'type': 'S$^2$LCT (SEED+EXP)',
                     'num_seed': ns,
                     'scores': result[lc_desc]['ours_seed_exp']['coverage_scores']
-                }
+                })
             # end for
         # end for
-
         df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
 
         # Plotting part
@@ -207,7 +203,6 @@ class Plots:
         ax = sns.barplot(data=df, x='lc', y='scores',
                          hue='type',
                          hue_order=hue_order,
-                         error
                          estimator=median)
         # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
         ax.set_ylim(bottom=0, top=600)
@@ -285,7 +280,7 @@ class Plots:
     #                       markersize=9,
     #                       markeredgewidth=0,
     #                       dashes=True,
-    #                       ci='sd',
+    #                       errorbar='sd',
     #                       ax=ax)
     #     plt.xticks(list(x_ticks.values()))
     #     ax.set_ylim(0, 850)
@@ -388,7 +383,7 @@ class Plots:
                              markersize=9,
                              markeredgewidth=0,
                              dashes=True,
-                             ci='sd',
+                             errorbar='sd',
                              ax=ax1)
         ax_pdr = sns.lineplot(data=df_pdr, x='num_seed', y='scores',
                               hue='type',
@@ -400,7 +395,7 @@ class Plots:
                               markersize=9,
                               markeredgewidth=0,
                               dashes=True,
-                              ci='sd',
+                              errorbar='sd',
                               ax=ax2)
         plt.xticks(list(x_ticks.values()))
         ax_sb.set_ylim(0.0, 1.2)
@@ -498,7 +493,7 @@ class Plots:
                               markersize=9,
                               markeredgewidth=0,
                               dashes=True,
-                              ci='sd',
+                              errorbar='sd',
                               ax=ax)
             plt.xticks(list(x_ticks.values()))
             ax.set_ylim(-0.1, 1.2)
@@ -586,7 +581,7 @@ class Plots:
                               markersize=9,
                               markeredgewidth=0,
                               dashes=True,
-                              ci='sd',
+                              errorbar='sd',
                               ax=ax)
             plt.xticks(list(x_ticks.values()))
             ax.set_ylim(-0.1, 1.2)
@@ -674,7 +669,7 @@ class Plots:
                               markersize=9,
                               markeredgewidth=0,
                               dashes=True,
-                              ci='sd',
+                              errorbar='sd',
                               ax=ax)
             plt.xticks(list(x_ticks.values()))
             ax.set_ylim(-0.1, 1.2)
@@ -762,7 +757,7 @@ class Plots:
                               markersize=9,
                               markeredgewidth=0,
                               dashes=True,
-                              ci='sd',
+                              errorbar='sd',
                               ax=ax)
             plt.xticks(list(x_ticks.values()))
             ax.set_ylim(-20, 350)
@@ -850,7 +845,7 @@ class Plots:
                               markersize=9,
                               markeredgewidth=0,
                               dashes=True,
-                              ci='sd',
+                              errorbar='sd',
                               ax=ax)
             plt.xticks(list(x_ticks.values()))
             ax.set_ylim(-500, 6000)
@@ -948,7 +943,7 @@ class Plots:
                           markeredgewidth=0,
                           dashes=True,
                           palette='Set1',
-                          ci='sd',
+                          errorbar='sd',
                           ax=ax)
         plt.xticks(list(x_ticks.values()))
         ax.set_ylim(-500, 4000)
@@ -1046,7 +1041,7 @@ class Plots:
                           markeredgewidth=0,
                           palette="Set1",
                           dashes=True,
-                          ci='sd',
+                          errorbar='sd',
                           ax=ax)
         plt.xticks(list(x_ticks.values()))
         ax.set_ylim(0, 120)
@@ -1151,7 +1146,7 @@ class Plots:
                                   markeredgewidth=0,
                                   palette="Set1",
                                   dashes=True,
-                                  ci='sd',
+                                  errorbar='sd',
                                   ax=ax1)
         ax_pass2fail = sns.lineplot(data=df_pass2fail, x='num_seed', y='num_pass2fail',
                                     hue='model',
@@ -1164,7 +1159,7 @@ class Plots:
                                     markeredgewidth=0,
                                     palette="Set1",
                                     dashes=True,
-                                    ci='sd',
+                                    errorbar='sd',
                                     ax=ax2)
         plt.xticks(list(x_ticks.values()))
         ax_numfail.set_ylim(0, 3500)
