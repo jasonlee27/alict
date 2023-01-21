@@ -95,22 +95,27 @@ class Plots:
         num_seeds = list(x_ticks.keys())
         result_file = results_dir / 'selfbleu' / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
         result = Utils.read_json(result_file)
-        for l_i, lc in enumerate(result.keys()):
-            for s_i, num_sample in enumerate(result[lc]['ours'].keys()):
+        print(result.keys())
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        for l_i, lc in enumerate(Utils.read_txt(req_file)):
+            lc_desc = lc.strip().split('::')[0]
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+            for s_i, num_sample in enumerate(result[lc_desc]['ours'].keys()):
                 _num_sample = int(num_sample.split('sample')[0])
                 data_lod.append({
                     'sample': s_i,
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT',
                     'num_seed': _num_sample,
-                    'scores': float(result[lc]['ours'][num_sample]['avg_score'])
+                    'scores': float(result[lc_desc]['ours'][num_sample]['avg_score'])
                 })
                 data_lod.append({
                     'sample': s_i,
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'num_seed': _num_sample,
-                    'scores': float(result[lc]['bl'][num_sample]['avg_score'])
+                    'scores': float(result[lc_desc]['bl'][num_sample]['avg_score'])
                 })
             # end for
         # end for
@@ -163,9 +168,12 @@ class Plots:
         num_seeds = list(x_ticks.keys())
         result_file = results_dir / 'pdr_cov' / f"seeds_exps_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
         result = Utils.read_json(result_file)
-        for l_i, lc_desc in enumerate(result.keys()):
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        for l_i, lc in enumerate(Utils.read_txt(req_file)):
+            lc_desc = lc.strip().split('::')[0]
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
             for ns in x_ticks.values():
-                print(result[lc_desc])
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
@@ -300,59 +308,59 @@ class Plots:
                               task=Macros.sa_task,
                               search_dataset_name=Macros.datasets[Macros.sa_task][0],
                               selection_method='random'):
-        data_pdr_lod: List[dict] = list()
         # num_seeds = [0,50,100,200] # x-axis
         x_ticks = {0:50, 1:100, 2:150, 3:200}
+        num_trials = 10
         num_seeds = list(x_ticks.keys())
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
         selfbleu_result_file = results_dir / 'selfbleu' / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
-        selfbleu_result = Utils.read_json(result_file)
-        pdr_cov_result_file = results_dir / 'pdr_cov' / f"seeds_exps_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
-        pdr_cov_result = Utils.read_json(result_file)
-        for ns in x_ticks.values():
-            for l_i, lc_desc in enumerate(result.keys()):
-                result_file = results_dir / 'pdr_cov' / f"seeds_exps_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
-                result = Utils.read_json(result_file)
+        pdr_cov_result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+        
+        pdr_cov_result = Utils.read_json(pdr_cov_result_file)
+        data_pdr_lod: List[dict] = list()
+        for l_i, lc in enumerate(Utils.read_txt(req_file)):
+            lc_desc = lc.strip().split('::')[0]
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower():
+            for ns in x_ticks.values():
                 data_pdr_lod.append({
                     'lc': f"LC{l_i+1}",
-                    'type': 'S$^2$LCT(seed)',
+                    'type': 'S$^2$LCT (SEED)',
                     'num_seed': ns,
-                    'scores': float(result[lc_desc]['ours_seed']['med_score'])
+                    'scores': float(pdr_cov_result[lc_desc]['ours_seed']['med_score'])
                 })
                 data_pdr_lod.append({
                     'lc': f"LC{l_i+1}",
-                    'type': 'S$^2$LCT(seed+exp)',
+                    'type': 'S$^2$LCT (SEED+EXP)',
                     'num_seed': ns,
-                    'scores': float(result[lc_desc]['ours_seed_exp']['med_score'])
+                    'scores': float(pdr_cov_result[lc_desc]['ours_seed_exp']['med_score'])
                 })
-
-                result_bl_file = results_dir / 'pdr_cov' / f"seeds_sample_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
-                result_bl = Utils.read_json(result_bl_file)
                 data_pdr_lod.append({
                     'lc': f"LC{l_i+1}",
-                    'type': 'CHECKLIST', 
+                    'type': 'CHECKLIST',
                     'num_seed': ns,
-                    'scores': float(result_bl[lc_desc]['bl']['med_score'])
+                    'scores': float(pdr_cov_result[lc_desc]['bl']['med_score'])
                 })
             # end for
         # end for
-
+        
+        selfbleu_result = Utils.read_json(selfbleu_result_file)
         data_sb_lod: List[dict] = list()
-        for ns in x_ticks.values():
-            for l_i, l in enumerate(Utils.read_txt(req_file)):
-                lc_desc = l.strip().split('::')[0].lower()
-                result_file = results_dir / 'selfbleu' / f"seeds_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_selfbleu.json"
-                result = Utils.read_json(result_file)
+        for l_i, lc in enumerate(Utils.read_txt(req_file)):
+            lc_desc = lc.strip().split('::')[0]
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower():
+            for ns in x_ticks.values():
                 data_sb_lod.append({
                     'lc': f"LC{l_i+1}",
-                    'type': 'S$^2$LCT',
+                    'type': 'S$^2$LCT (SEED)',
                     'num_seed': ns,
-                    'scores': float(result[lc_desc]['ours']['avg_score'])
+                    'scores': float(selfbleu_result[lc_desc]['ours']['med_score'])
                 })
                 data_sb_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'num_seed': ns,
-                    'scores': float(result[lc_desc]['bl']['avg_score'])
+                    'scores': float(selfbleu_result[lc_desc]['bl']['med_score'])
                 })
             # end for
         # end for
@@ -365,8 +373,8 @@ class Plots:
         # fig: plt.Figure = plt.figure()
         # ax: plt.Axes = fig.subplots()
 
-        hue_order_sb = ['S$^2$LCT', 'CHECKLIST']
-        hue_order_pdr = ['S$^2$LCT(seed)', 'S$^2$LCT(seed+exp)', 'CHECKLIST']
+        hue_order_sb = ['S$^2$LCT(SEED)', 'CHECKLIST']
+        hue_order_pdr = ['S$^2$LCT(SEED)', 'S$^2$LCT(SEED+EXP)', 'CHECKLIST']
         
         ax_sb = sns.lineplot(data=df_sb, x='num_seed', y='scores',
                              hue='type',
@@ -1061,8 +1069,8 @@ class Plots:
                                               search_dataset_name=Macros.datasets[Macros.sa_task][0],
                                               selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
-        num_trials = 3
-        x_ticks = {0:50, 1:100, 2:200}
+        num_trials = 10
+        x_ticks = {0:50, 1:100, 2:150, 3:200}
         num_seeds = list(x_ticks.keys())
         data_lod_numfail = list()
         data_lod_pass2fail = list()
