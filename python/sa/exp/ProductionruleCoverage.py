@@ -222,25 +222,26 @@ class ProductionruleCoverage:
             lc_cksum = Utils.get_cksum(lc_desc)
             if lc_desc not in bl_rules.keys():
                 bl_rules[lc_desc] = dict()
-                if logger is not None:
-                    logger.print(f"BL_FOR_PDR::{lc_desc}")
-                # end if
-                sents = ChecklistTestsuite.get_sents(
-                    Macros.checklist_sa_dataset_file,
-                    lc_desc
-                )
-                args = [s[1] for s in sents if s[1] not in bl_rules[lc_desc].keys()]
-                if any(args):
-                    pool = Pool(processes=NUM_PROCESSES)
-                    results = pool.map_async(get_cfg_rules_per_sent,
-                                             args,
-                                             chunksize=len(args) // NUM_PROCESSES).get()
-                    for r in results:
-                        bl_rules[lc_desc][r['sent']] = r['cfg_rules']
-                    # end for
-                # end if
-                Utils.write_json(bl_rules, res_file, pretty_format=True)
             # end if
+                
+            if logger is not None:
+                logger.print(f"BL_FOR_PDR::{lc_desc}")
+            # end if
+            sents = ChecklistTestsuite.get_sents(
+                Macros.checklist_sa_dataset_file,
+                lc_desc
+            )
+            args = [s[1] for s in sents if s[1] not in bl_rules[lc_desc].keys()]
+            if any(args):
+                pool = Pool(processes=NUM_PROCESSES)
+                results = pool.map_async(get_cfg_rules_per_sent,
+                                         args,
+                                         chunksize=len(args) // NUM_PROCESSES).get()
+                for r in results:
+                    bl_rules[lc_desc][r['sent']] = r['cfg_rules']
+                # end for
+            # end if
+            Utils.write_json(bl_rules, res_file, pretty_format=True)
         # end for
         return bl_rules
     
@@ -494,7 +495,7 @@ def main_seed_exp_all(task,
             cov_score_bl, _ = pdr3_obj.get_score()
             scores[lc]['ours_seed']['coverage_scores'] = cov_score_ours_seed
             scores[lc]['ours_seed_exp']['coverage_scores'] = cov_score_ours_seed_exp
-            scores[lc]['coverage_scores'] = cov_score_bl
+            scores[lc]['bl']['coverage_scores'] = cov_score_bl
         # end if
         Utils.write_json(scores, result_file, pretty_format=True)
     # end for
