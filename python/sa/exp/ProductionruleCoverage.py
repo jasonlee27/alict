@@ -494,7 +494,7 @@ def main_seed_exp_all(task,
             cov_score_bl, _ = pdr3_obj.get_score()
             scores[lc]['ours_seed']['coverage_scores'] = cov_score_ours_seed
             scores[lc]['ours_seed_exp']['coverage_scores'] = cov_score_ours_seed_exp
-            scores[lc]['']['coverage_scores'] = cov_score_bl
+            scores[lc]['coverage_scores'] = cov_score_bl
         # end if
         Utils.write_json(scores, result_file, pretty_format=True)
     # end for
