@@ -1,15 +1,15 @@
 
 # This script is for generating all plots used in paper
 
-from typing import *
-
-import matplotlib as mpl
-from matplotlib import pyplot as plt
+import math
 import pandas as pd
-from pathlib import Path
 import seaborn as sns
+import matplotlib as mpl
 
+from typing import *
+from pathlib import Path
 from seutil import IOUtils
+from matplotlib import pyplot as plt
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -94,7 +94,6 @@ class Plots:
         x_ticks = {0:50, 1:100, 2:150, 3:200}
         num_seeds = list(x_ticks.keys())
         result_file = results_dir / 'selfbleu' / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
-        print(result_file)
         result = Utils.read_json(result_file)
         for l_i, lc in enumerate(result.keys()):
             for s_i, num_sample in enumerate(result[lc]['ours'].keys()):
@@ -138,7 +137,7 @@ class Plots:
                           errorbar='sd',
                           ax=ax)
         plt.xticks(list(x_ticks.values()))
-        ax.set_ylim(0.0, 1.2)
+        ax.set_ylim(0.0, 1.1)
         ax.set_xlabel("Number of seed samples")
         ax.set_ylabel("Self-BLEU")
         
@@ -162,33 +161,29 @@ class Plots:
         data_lod: List[dict] = list()
         x_ticks = {0:0} # , 1:100, 2:200}
         num_seeds = list(x_ticks.keys())
-
-        req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
-        for l_i, l in enumerate(Utils.read_txt(req_file)):
-            lc_desc = l.strip().split('::')[0].lower()
+        result_file = results_dir / 'pdr_cov' / f"seeds_exps_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+        result = Utils.read_json(result_file)
+        for l_i, lc_desc in enumerate(result.keys()):
             for ns in x_ticks.values():
-                result_file = results_dir / 'pdr_cov' / f"seeds_exps_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
-                result = Utils.read_json(result_file)
-                bl_score = result[lc_desc]['bl']['coverage_scores']
+                print(result[lc_desc])
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'num_seed': ns,
-                    'scores': result[lc_desc]['bl']['coverage_scores']
+                    'scores': math.log(result[lc_desc]['bl']['coverage_scores'])
                 })
                 # print(l_i+1, bl_score, result[lc_desc]['ours_seed_exp']['med_score'], float(result[lc_desc]['ours']['med_score'])/bl_score)
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT (SEED)',
                     'num_seed': ns,
-                    'scores': result[lc_desc]['ours_seed']['coverage_scores']
+                    'scores': math.log(result[lc_desc]['ours_seed']['coverage_scores'])
                 })
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT (SEED+EXP)',
                     'num_seed': ns,
-                    'scores': result[lc_desc]['ours_seed_exp']['coverage_scores']
+                    'scores': math.log(result[lc_desc]['ours_seed_exp']['coverage_scores'])
                 })
             # end for
         # end for
@@ -198,16 +193,17 @@ class Plots:
         fig: plt.Figure = plt.figure()
         ax: plt.Axes = fig.subplots()
 
-        hue_order = ['CHECKLIST', 'S$^2$LCT']        
+        hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
         from numpy import median
         ax = sns.barplot(data=df, x='lc', y='scores',
                          hue='type',
                          hue_order=hue_order,
                          estimator=median)
         # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
-        ax.set_ylim(bottom=0, top=600)
+        # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
+        ax.set_ylim(bottom=0, top=14)
         ax.set_xlabel("Linguistic Capabilities")
-        ax.set_ylabel("Number of Production Rules Covered")
+        ax.set_ylabel("Log of Number of Production Rules Covered")
         
         # Shrink current axis by 20%
         box = ax.get_position()
@@ -216,7 +212,7 @@ class Plots:
         # Put a legend to the right of the current axis
         # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         fig.tight_layout()
-        fig.savefig(figs_dir / "pdr-ours-barplot.eps")
+        fig.savefig(figs_dir / "pdr-barplot.eps")
         return
     
     # @classmethod
@@ -297,7 +293,6 @@ class Plots:
     #     fig.savefig(figs_dir / "pdr-agg-lineplot.eps")
     #     return
 
-
     @classmethod
     def pdr_selfbleu_agg_plot(cls,
                               results_dir: Path,
@@ -307,14 +302,14 @@ class Plots:
                               selection_method='random'):
         data_pdr_lod: List[dict] = list()
         # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = {0:50, 1:100, 2:200}
+        x_ticks = {0:50, 1:100, 2:150, 3:200}
         num_seeds = list(x_ticks.keys())
-        req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
-        
+        selfbleu_result_file = results_dir / 'selfbleu' / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+        selfbleu_result = Utils.read_json(result_file)
+        pdr_cov_result_file = results_dir / 'pdr_cov' / f"seeds_exps_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+        pdr_cov_result = Utils.read_json(result_file)
         for ns in x_ticks.values():
-            for l_i, l in enumerate(Utils.read_txt(req_file)):
-                lc_desc = l.strip().split('::')[0].lower()
+            for l_i, lc_desc in enumerate(result.keys()):
                 result_file = results_dir / 'pdr_cov' / f"seeds_exps_over3_{task}_{search_dataset_name}_{selection_method}_{ns}seeds_pdrcov.json"
                 result = Utils.read_json(result_file)
                 data_pdr_lod.append({

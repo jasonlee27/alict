@@ -470,16 +470,21 @@ def main_seed_exp_all(task,
                 }
             }
             seed_sents = list(seed_rules[lc].keys())
-            seed_exp_sents = seed_sents+list(exp_rules[lc].keys())
+            exp_sents = list(exp_rules[lc].keys())
             bl_sents = list(checklist_rules[lc].keys())
             pdr1 = {
                 s: seed_rules[lc][s]
                 for s in seed_sents
             }
             pdr2 = {
-                e: exp_rules[lc][e]
-                for e in seed_exp_sents
+                s: seed_rules[lc][s]
+                for s in seed_sents
             }
+            for e in exp_sents:
+                if e not in pdr2.keys():
+                    pdr2[e] = exp_rules[lc][e]
+                # end if
+            # end for
             pdr3 = {
                 e: checklist_rules[lc][e]
                 for e in bl_sents
