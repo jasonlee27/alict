@@ -155,7 +155,7 @@ def read_our_seeds(task,
     texts_lcs = dict()
     texts_all = list()
     seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
-    seed_fles = [
+    seed_files = [
         f for f in os.listdir(str(seed_dir))
         if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
     ]

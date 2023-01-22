@@ -246,17 +246,17 @@ class ProductionruleCoverage:
         return bl_rules
     
 
-def main_seed_sample(task,
-                     search_dataset_name,
-                     selection_method):
+def main_sample(task,
+                search_dataset_name,
+                selection_method):
     st = time.time()
     num_trials = 10
     num_samples = [50, 100, 150, 200]
-    logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_{selection_method}_pdrcov.log"
-    result_file = Macros.pdr_cov_result_dir / f"seeds_bls_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+    logger_file = Macros.log_dir / f"seed_{task}_{search_dataset_name}_{selection_method}_pdrcov.log"
+    result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
     Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
     logger = Logger(logger_file=logger_file,
-                    logger_name='seed_pdrcov_log')
+                    logger_name='seed_exp_bl_sample_pdrcov_log')
     seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
         task,
         search_dataset_name,
@@ -264,12 +264,12 @@ def main_seed_sample(task,
         parse_all_sents=False,
         logger=logger
     )
-    # exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
-    #     task,
-    #     search_dataset_name,
-    #     selection_method,
-    #     logger=logger
-    # )
+    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+        task,
+        search_dataset_name,
+        selection_method,
+        logger=logger
+    )
     checklist_rules = ProductionruleCoverage.get_bl_cfg_rules(
         task,
         search_dataset_name,
@@ -280,10 +280,16 @@ def main_seed_sample(task,
     scores = dict()
     for lc in tqdm(seed_rules.keys()):
         if lc not in scores.keys():
-            logger.print(f"OURS_PDR_SEED_BL::{lc}")
+            logger.print(f"OURS_PDR_SAMPLE::{lc}")
             our_sents, bl_sents = list(), list()
             scores[lc] = {
-                'ours': {
+                'ours_seed': {
+                    f"{num_sample}sample": {
+                        'coverage_scores': list()
+                    }
+                    for num_sample in num_samples
+                },
+                'ours_seed_exp': {
                     f"{num_sample}sample": {
                         'coverage_scores': list()
                     }
@@ -301,40 +307,46 @@ def main_seed_sample(task,
                     random.seed(num_trial)
                     seed_sents = random.sample(list(seed_rules[lc].keys()),
                                                min(len(seed_rules[lc]), num_sample))
+                    exp_sents = random.sample(list(exp_rules[lc].keys()),
+                                              min(len(exp_rules[lc]), num_sample))
                     bl_sents = random.sample(list(checklist_rules[lc].keys()),
                                              min(len(checklist_rules[lc]), num_sample))
-                   # _exp_rules, exp_sents = None, None
-                    # if exp_rules is not None:
-                    #     exp_rules_per_trial = exp_rules[num_trial]
-                    #     _exp_rules = exp_rules_per_trial[lc]
-                    #     exp_sents = list(_exp_rules.keys())
-                    # # end if
-                    # sample bl pdrs to make same number of pdrs with ours
                     pdr1 = {
                         s: seed_rules[lc][s]
                         for s in seed_sents
                     }
-                    # if exp_sents is not None:
-                    #     for e in exp_sents:
-                    #         if e not in pdr1.keys():
-                    #             pdr1[e] = _exp_rules[e]
-                    #         # end if
-                    #     # end for
-                    # # end if
                     pdr2 = {
+                        s: seed_rules[lc][s]
+                        for s in seed_sents
+                    }
+                    for e in exp_sents:
+                        if e not in pdr2.keys():
+                            pdr2[e] = exp_rules[lc][e]
+                        # end if
+                    # end for
+                    pdr3 = {
                         s: checklist_rules[lc][s]
                         for s in bl_sents
                     }
-                    pdr_obj = ProductionruleCoverage(lc=lc,
-                                                     our_cfg_rules=pdr1,
-                                                     bl_cfg_rules=pdr2)
-                    cov_score_ours, cov_score_bl = pdr_obj.get_score()
-                    scores[lc]['ours'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_ours)
+                    pdr_obj1 = ProductionruleCoverage(lc=lc,
+                                                      our_cfg_rules=pdr1)
+                    pdr_obj2 = ProductionruleCoverage(lc=lc,
+                                                      our_cfg_rules=pdr2)
+                    pdr_obj3 = ProductionruleCoverage(lc=lc,
+                                                      our_cfg_rules=pdr3)
+                    cov_score_seed, _ = pdr_obj1.get_score()
+                    cov_score_seed_exp, _ = pdr_obj2.get_score()
+                    cov_score_bl, _ = pdr_obj3.get_score()
+                    scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_seed)
+                    scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_seed_exp)
                     scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_bl)
                 # end for
-                scores[lc]['ours'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
@@ -344,91 +356,12 @@ def main_seed_sample(task,
     # end for
     return
 
-def main_seed_exp_sample(task,
-                         search_dataset_name,
-                         selection_method):
-    st = time.time()
-    num_trials = 10
-    num_samples = [50, 100, 150, 200]
-    logger_file = Macros.log_dir / f"seeds_exps_{task}_{search_dataset_name}_{selection_method}_pdrcov.log"
-    result_file = Macros.pdr_cov_result_dir / f"seeds_exps_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
-    # end if
-    Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
-    logger = Logger(logger_file=logger_file,
-                    logger_name='seed_exp_pdrcov_log')
-    seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
-        task,
-        search_dataset_name,
-        selection_method,
-        parse_all_sents=False,
-        logger=logger
-    )
-    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
-        task,
-        search_dataset_name,
-        selection_method,
-        logger=logger
-    )
-    
-    scores = dict()
-    for lc in tqdm(seed_rules.keys()):
-        if lc not in scores.keys():
-            logger.print(f"OURS_PDR_SEED_EXP::{lc}", end='::')
-            our_sents, bl_sents = list(), list()
-            scores[lc] = {
-                'ours_seed': {
-                    f"{num_sample}sample": {
-                        'coverage_scores': list()
-                    }
-                    for num_sample in num_samples
-                },
-                'ours_seed_exp': {
-                    f"{num_sample}sample": {
-                        'coverage_scores': list()
-                    }
-                    for num_sample in num_samples
-                }
-            }
-            for num_sample in num_samples:
-                for num_trial in range(num_trials):
-                    random.seed(num_trial)
-                    seed_sents = random.sample(list(seed_rules[lc].keys()),
-                                               min(len(seed_rules[lc]), num_sample))
-                    exp_sents = random.sample(list(exp_rules[lc].keys()),
-                                               min(len(exp_rules[lc]), num_sample))
-                    pdr1 = {
-                        s: seed_rules[lc][s]
-                        for s in seed_sents
-                    }
-                    pdr2 = {
-                        e: exp_rules[lc][e]
-                        for e in exp_sents
-                    }
-                    pdr_obj = ProductionruleCoverage(lc=lc,
-                                                     our_cfg_rules=pdr1,
-                                                     bl_cfg_rules=pdr2)
-                    cov_score_ours, cov_score_bl = pdr_obj.get_score()
-                    scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_ours)
-                    scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_bl)
-                # end for
-                scores[lc]['ours_seed'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours_seed'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours_seed'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
-            # end for
-        # end if
-        Utils.write_json(scores, result_file, pretty_format=True)
-    # end for
-    return
-
-def main_seed_exp_all(task,
-                      search_dataset_name,
-                      selection_method):
+def main_all(task,
+             search_dataset_name,
+             selection_method):
     st = time.time()
     logger_file = Macros.log_dir / f"seeds_exps_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.log"
-    result_file = Macros.pdr_cov_result_dir / f"seeds_exps_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+    result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
     # end if
     Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
     logger = Logger(logger_file=logger_file,

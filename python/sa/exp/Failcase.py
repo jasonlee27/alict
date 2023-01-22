@@ -92,7 +92,7 @@ def main_fail(task,
     
     # reqs = Requirements.get_requirements(nlp_task)
     scores = dict()
-    for model in Utils.read_txt(model_name_file):
+    for model in Utils.read_txt(Macros.sa_models_file):
         model = model.strip()
         scores[model] = dict()
         model_results = result_dict[model]
@@ -100,7 +100,7 @@ def main_fail(task,
         for r in reqs:
             lc = r['description']
             scores[m][lc] = {
-                f"{num_sample}sample": 0                    
+                f"{num_sample}sample": 0
                 for num_sample in num_samples
             }
             seeds_fail = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='SEED'][0]['fail']
@@ -109,6 +109,10 @@ def main_fail(task,
                 for num_trial in range(num_trials):
                     random.seed(num_trial)
                     our_sents = random.sample(texts_seed_ours[lc]+texts_exp_ours[lc], min(len(texts_seed_ours[lc]), num_sample))
+                    our_sents = [
+                        Utils.detokenize(Utils.tokenize(s))
+                        for s in our_sents
+                    ]
                     num_fails = len([s for s in ours_sents if s in seeds_fail or s in exps_fail])
                     scores[m][lc][f"{num_sample}sample"] = num_fails
                 # end for
