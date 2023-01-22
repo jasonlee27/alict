@@ -6,6 +6,7 @@ import multiprocessing
 
 from tqdm import tqdm
 from .SelfBleu import read_our_seeds, read_our_exps
+from ..model.Result import Result
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -71,9 +72,43 @@ def main_fail(task,
               selection_method):
     num_trials = 10
     num_samples = [50, 100, 150, 200]
-    logger_file = Macros.log_dir / f"p2f_f2p_{task}_{search_dataset_name}_{selection_method}.log"
-    result_file = Macros.result_dir / f"p2f_f2p_{task}_{search_dataset_name}_{selection_method}.json"
-    test_result_file = Macros.result_dir / f"test_results_{task}_{search_dataset_name}_{selection_method}" / "test_result_analysis.json"
+    logger_file = Macros.log_dir / f"failcases_{task}_{search_dataset_name}_{selection_method}.log"
+    result_file = Macros.result_dir / f"failcases_{task}_{search_dataset_name}_{selection_method}.json"
+    result_dir = Macros.result_dir / f"test_results_{task}_{search_dataset_name}_{selection_method}" 
+    test_result_file = result_dir / 'test_result_analysis.json'
+    raw_result_file = result_dir / 'test_results.txt'
     test_result = Utils.read_json(test_results_file)
-    model_names = list(test_result.keys())
+    raw_test_result = Result.parse_results(result_file, model_name_file)
+    _, texts_seed_ours = read_our_seeds(task,
+                                        search_dataset_name,
+                                        selection_method)
+    _, texts_exp_ours = read_our_exps(task,
+                                      search_dataset_name,
+                                      selection_method)
+    
+    # reqs = Requirements.get_requirements(nlp_task)
+    scores = dict()
+    for model in test_result.keys():
+        scores[model] = dict()
+        model_results = result_dict[model]
+        reqs = sorted(set([r['req'] for r in model_results]))
+        for r in reqs:
+            lc = r['description']
+            scores[m][lc] = {
+                f"{num_sample}sample": 0                    
+                for num_sample in num_samples
+            }
+            seeds_fail = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='SEED'][0]['fail']
+            exps_fail = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='EXP'][0]['fail']
+            for num_sample in num_samples:
+                for num_trial in range(num_trials):
+                    random.seed(num_trial)
+                    our_sents = random.sample(texts_seed_ours[lc]+texts_exp_ours[lc], min(len(texts_seed_ours[lc]), num_sample))
+                    num_fails = len([s for s in ours_sents if s in seeds_fail or s in exps_fail])
+                    scores[m][lc][f"{num_sample}sample"] = num_fails
+                # end for
+            # end for
+        # end for
+        Utils.write_json(scores, result_file, pretty_format=True)
+    # end for
     return
