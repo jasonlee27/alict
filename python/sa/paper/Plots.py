@@ -321,7 +321,7 @@ class Plots:
         data_pdr_lod: List[dict] = list()
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
             lc_desc = lc.strip().split('::')[0]
-            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower():
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
             for ns in x_ticks.values():
                 data_pdr_lod.append({
                     'lc': f"LC{l_i+1}",
@@ -348,7 +348,7 @@ class Plots:
         data_sb_lod: List[dict] = list()
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
             lc_desc = lc.strip().split('::')[0]
-            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower():
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
             for ns in x_ticks.values():
                 data_sb_lod.append({
                     'lc': f"LC{l_i+1}",
@@ -1076,17 +1076,19 @@ class Plots:
         data_lod_pass2fail = list()
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
-        lc_index_dict = {
-            l.strip().split('::')[0].lower(): f"LC{l_i+1}"
-            for l_i, l in enumerate(Utils.read_txt(req_file))
-        }
+        seed_file = Macros.result_dir / f"test_results_{task}_{search_dataset_name}_{selection_method}" / "test_result_analysis.json"
+        seed_dict = Utils.read_json(seed_file)
+        # lc_index_dict = {
+        #     l.strip().split('::')[0].lower(): f"LC{l_i+1}"
+        #     for l_i, l in enumerate(Utils.read_txt(req_file))
+        # }
         model_names = list()
-
+        lc_desc = lc.strip().split('::')[0]
+        lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+        
         for ns_i, ns in x_ticks.items():
+            lcs = Utils.read_txt(req_file)
             for num_trial in range(num_trials):
-                _num_trial = '' if num_trial==0 else str(num_trial+1)
-                seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
-                seed_dict = Utils.read_json(seed_file)
                 for model_name, results_per_model in seed_dict.items():
                     _model_name = model_name.split('/')[-1]
                     if _model_name.startswith('bert-base'):
@@ -1099,10 +1101,12 @@ class Plots:
                         model_names.append('DistilBERT')
                         _model_name = 'DistilBERT'
                     # end if
-                    for lc_i, lc_result in enumerate(results_per_model):
-                        lc = lc_result['req']
-                        lc_key = lc.lower()
-                        lc_index = lc_index_dict[lc_key]
+                    
+                    for lc_i, lc in enumerate(lcs):
+                        lc_desc = lc.strip().split('::')[0]
+                        lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+                        lc_index = f"LC{l_i+1}"
+                        
                         num_seeds = lc_result['num_seeds']
                         num_seed_fail = lc_result['num_seed_fail']
                         seed_fr = num_seed_fail*1./num_seeds

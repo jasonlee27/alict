@@ -23,6 +23,7 @@ NUM_PROCESSES_IN_USE = 40 # os.cpu_count()
 NUM_TRIALS = 3
 
 class SelfBleu:
+    
     def __init__(self,
                  text_file=None,
                  texts=None,
@@ -260,7 +261,6 @@ def main_seed(task,
                     #     len(texts_seed_ours[lc]),
                     #     len(texts_checklist[lc])
                     # ])
-                    scores[lc]['num_data'] = num_sample
                     # sample_exps = random.sample(texts_exp_ours[lc], _num_sample)
                     our_sents = random.sample(texts_seed_ours[lc], min(len(texts_seed_ours[lc]), num_sample))
                     bl_sents = random.sample(texts_checklist[lc], min(len(texts_checklist[lc]), num_sample))
