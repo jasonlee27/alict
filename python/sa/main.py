@@ -16,9 +16,9 @@ parser.add_argument('--run', type=str, required=True,
                     choices=[
                         'requirement', 'template', 'testsuite', 'seedgen',
                         'testmodel', 'testmodel_seed', 'retrain', 'analyze',
-                        'analyze_seed', 'retrain_analyze', 'explain_nlp', 'selfbleu',
-                        'pdrule_cov', 'humanstudy', 'humanstudy_results', 'coverage_data',
-                        'tables', 'plots'
+                        'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
+                        'selfbleu', 'pdrule_cov', 'humanstudy', 'humanstudy_results',
+                        'coverage_data', 'tables', 'plots'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
@@ -333,6 +333,19 @@ def run_explainNLP():
     )
     return
 
+def run_failcase():
+    from .exp.Failcase import main_fail, main_p2f_f2p
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    main_fail(nlp_task,
+              search_dataset_name,
+              selection_method)
+    main_p2f_f2p(nlp_task,
+                 search_dataset_name,
+                 selection_method)
+    return
+
 def run_selfbleu():
     from .exp.SelfBleu import main_seed
     nlp_task = args.nlp_task
@@ -344,19 +357,16 @@ def run_selfbleu():
     return
 
 def run_pdrule_cov():
-    from .exp.ProductionruleCoverage import main_seed_sample, main_seed_exp_sample, main_seed_exp_all
+    from .exp.ProductionruleCoverage import main_sample, main_all
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    main_seed_sample(nlp_task,
-                     search_dataset_name,
-                     selection_method)
-    main_seed_exp_sample(nlp_task,
-                         search_dataset_name,
-                         selection_method)
-    main_seed_exp_all(nlp_task,
-                      search_dataset_name,
-                      selection_method)
+    main_sample(nlp_task,
+                search_dataset_name,
+                selection_method)
+    main_all(nlp_task,
+             search_dataset_name,
+             selection_method)
     return
 
 # ==========
@@ -456,6 +466,7 @@ func_map = {
         'analyze_seed': run_analyze_seed,
         'retrain_analyze': run_retrain_analyze,
         'explain_nlp': run_explainNLP,
+        'failcase': run_failcase,
         'selfbleu': run_selfbleu,
         'pdrule_cov': run_pdrule_cov,
         'humanstudy': run_humanstudy,
