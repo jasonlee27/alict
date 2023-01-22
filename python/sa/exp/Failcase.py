@@ -95,10 +95,9 @@ def main_fail(task,
     for model in Utils.read_txt(Macros.sa_models_file):
         model = model.strip()
         scores[model] = dict()
-        model_results = result_dict[model]
-        reqs = sorted(set([r['req'] for r in model_results]))
-        for r in reqs:
-            lc = r['description']
+        model_results = raw_test_result[model]
+        lcs = sorted(set([r['req'] for r in model_results]))
+        for lc in lcs:
             scores[m][lc] = {
                 f"{num_sample}sample": 0
                 for num_sample in num_samples
@@ -108,7 +107,10 @@ def main_fail(task,
             for num_sample in num_samples:
                 for num_trial in range(num_trials):
                     random.seed(num_trial)
-                    our_sents = random.sample(texts_seed_ours[lc]+texts_exp_ours[lc], min(len(texts_seed_ours[lc]), num_sample))
+                    our_sents = random.sample(
+                        texts_seed_ours[lc]+texts_exp_ours[lc],
+                        min(len(texts_seed_ours[lc]), num_sample)
+                    )
                     our_sents = [
                         Utils.detokenize(Utils.tokenize(s))
                         for s in our_sents
