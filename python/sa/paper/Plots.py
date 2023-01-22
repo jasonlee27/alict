@@ -1076,61 +1076,55 @@ class Plots:
         data_lod_pass2fail = list()
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
-        seed_file = Macros.result_dir / f"test_results_{task}_{search_dataset_name}_{selection_method}" / "test_result_analysis.json"
-        seed_dict = Utils.read_json(seed_file)
-        # lc_index_dict = {
-        #     l.strip().split('::')[0].lower(): f"LC{l_i+1}"
-        #     for l_i, l in enumerate(Utils.read_txt(req_file))
-        # }
+        p2f_result_file = Macros.result_dir / 'p2f_f2p_sa_sst_random.json'
+        fail_result_file = Macros.result_dir / 'p2f_f2p_sa_sst_random.json' # TODO: change file name
+        p2f_result = Utils.read_json(p2f_result_file)
+        fail_result = Utils.read_json(fail_result_file)
         model_names = list()
-        lc_desc = lc.strip().split('::')[0]
-        lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
-        
-        for ns_i, ns in x_ticks.items():
-            lcs = Utils.read_txt(req_file)
-            for num_trial in range(num_trials):
-                for model_name, results_per_model in seed_dict.items():
-                    _model_name = model_name.split('/')[-1]
-                    if _model_name.startswith('bert-base'):
-                        model_names.append('BERT')
-                        _model_name = 'BERT'
-                    elif _model_name.startswith('roberta-base'):
-                        model_names.append('RoBERTa')
-                        _model_name = 'RoBERTa'
-                    else:
-                        model_names.append('DistilBERT')
-                        _model_name = 'DistilBERT'
-                    # end if
-                    
-                    for lc_i, lc in enumerate(lcs):
+        data_lod_pass2fail = list()
+        data_lod_numfail = list()
+        for model_name in p2f_result.keys():
+            p2f_result_model = p2f_result[model_name]
+            fail_result_model = fail_result[model_name]
+            _model_name = model_name.split('/')[-1]
+            if _model_name.startswith('bert-base'):
+                model_names.append('BERT')
+                _model_name = 'BERT'
+            elif _model_name.startswith('roberta-base'):
+                model_names.append('RoBERTa')
+                _model_name = 'RoBERTa'
+            else:
+                model_names.append('DistilBERT')
+                _model_name = 'DistilBERT'
+            # end if
+
+            for ns in x_ticks.values():
+                sample_key = f"{ns}sample"
+                for t in range(num_trials):
+                    num_p2fs = list()
+                    num_fails = list()
+                    for l_i, lc in enumerate(Utils.read_txt(req_file)):
                         lc_desc = lc.strip().split('::')[0]
-                        lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
-                        lc_index = f"LC{l_i+1}"
-                        
-                        num_seeds = lc_result['num_seeds']
-                        num_seed_fail = lc_result['num_seed_fail']
-                        seed_fr = num_seed_fail*1./num_seeds
-                        num_exps = lc_result['num_exps']
-                        num_exp_fail = lc_result['num_exp_fail']
-                        exp_fr = num_exp_fail*1./num_exps
-                        num_pass2fail = lc_result['num_pass2fail']
-                        data_lod_numfail.append({
-                            'lc': lc_index,
-                            'model': _model_name,
-                            'num_seed': ns,
-                            'num_fail': num_seed_fail+num_exp_fail
-                        })
-                        data_lod_pass2fail.append({
-                            'lc': lc_index,
-                            'model': _model_name,
-                            'num_seed': ns,
-                            'num_pass2fail': num_pass2fail
-                        })
+                        lc_desc = lc_desc if lc_desc in p2f_result_model.keys() else lc_desc.lower()
+                        num_p2fs.append(p2f_result_model[lc_desc][sample_key][t])
+                        num_fails.append(fail_result_model[lc_desc][sample_key][t])
                     # end for
+                    data_lod_pass2fail.append({
+                        'model': _model_name,
+                        'num_seed': ns,
+                        'num_trial': t,
+                        'num_pass2fail': sum(num_p2fs)
+                    })
+                    data_lod_numfail.append({
+                        'model': _model_name,
+                        'num_seed': ns,
+                        'num_trial': t,
+                        'num_fail': sum(num_fails)
+                    })
                 # end for
             # end for
         # end for
-
+        
         df_numfail: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod_numfail))
         df_pass2fail: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod_pass2fail))
         
