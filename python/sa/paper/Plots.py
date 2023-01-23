@@ -409,7 +409,7 @@ class Plots:
         # box = ax_sb.get_position()
         # ax_sb.set_position([box.x0, box.y0, box.width * 0.9, box.height])
                 
-        ax_pdr.set_ylim(0, 850)
+        ax_pdr.set_ylim(0, 750)
         ax_pdr.set_xlabel("Number of seeds")
         ax_pdr.set_ylabel("Number of Production Rules Covered")
 
