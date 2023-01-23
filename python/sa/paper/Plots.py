@@ -166,7 +166,7 @@ class Plots:
         data_lod: List[dict] = list()
         x_ticks = {0:0} # , 1:100, 2:200}
         num_seeds = list(x_ticks.keys())
-        result_file = results_dir / 'pdr_cov' / f"seeds_exps_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+        result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
         result = Utils.read_json(result_file)
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -181,12 +181,12 @@ class Plots:
                     'scores': math.log(result[lc_desc]['bl']['coverage_scores'])
                 })
                 # print(l_i+1, bl_score, result[lc_desc]['ours_seed_exp']['med_score'], float(result[lc_desc]['ours']['med_score'])/bl_score)
-                data_lod.append({
-                    'lc': f"LC{l_i+1}",
-                    'type': 'S$^2$LCT (SEED)',
-                    'num_seed': ns,
-                    'scores': math.log(result[lc_desc]['ours_seed']['coverage_scores'])
-                })
+                # data_lod.append({
+                #     'lc': f"LC{l_i+1}",
+                #     'type': 'S$^2$LCT (SEED)',
+                #     'num_seed': ns,
+                #     'scores': math.log(result[lc_desc]['ours_seed']['coverage_scores'])
+                # })
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT (SEED+EXP)',
@@ -201,7 +201,7 @@ class Plots:
         fig: plt.Figure = plt.figure()
         ax: plt.Axes = fig.subplots()
 
-        hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+        hue_order = ['CHECKLIST', 'S$^2$LCT (SEED+EXP)']
         from numpy import median
         ax = sns.barplot(data=df, x='lc', y='scores',
                          hue='type',
@@ -321,25 +321,25 @@ class Plots:
         data_pdr_lod: List[dict] = list()
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
             lc_desc = lc.strip().split('::')[0]
-            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+            lc_desc = lc_desc if lc_desc in pdr_cov_result.keys() else lc_desc.lower()
             for ns in x_ticks.values():
                 data_pdr_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT (SEED)',
                     'num_seed': ns,
-                    'scores': float(pdr_cov_result[lc_desc]['ours_seed']['med_score'])
+                    'scores': float(pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['med_score'])
                 })
                 data_pdr_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT (SEED+EXP)',
                     'num_seed': ns,
-                    'scores': float(pdr_cov_result[lc_desc]['ours_seed_exp']['med_score'])
+                    'scores': float(pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['med_score'])
                 })
                 data_pdr_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'num_seed': ns,
-                    'scores': float(pdr_cov_result[lc_desc]['bl']['med_score'])
+                    'scores': float(pdr_cov_result[lc_desc]['bl'][f"{ns}sample"]['med_score'])
                 })
             # end for
         # end for
@@ -348,19 +348,19 @@ class Plots:
         data_sb_lod: List[dict] = list()
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
             lc_desc = lc.strip().split('::')[0]
-            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+            lc_desc = lc_desc if lc_desc in selfbleu_result.keys() else lc_desc.lower()
             for ns in x_ticks.values():
                 data_sb_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT (SEED)',
                     'num_seed': ns,
-                    'scores': float(selfbleu_result[lc_desc]['ours']['med_score'])
+                    'scores': float(selfbleu_result[lc_desc]['ours'][f"{ns}sample"]['med_score'])
                 })
                 data_sb_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'num_seed': ns,
-                    'scores': float(selfbleu_result[lc_desc]['bl']['med_score'])
+                    'scores': float(selfbleu_result[lc_desc]['bl'][f"{ns}sample"]['med_score'])
                 })
             # end for
         # end for
@@ -373,8 +373,8 @@ class Plots:
         # fig: plt.Figure = plt.figure()
         # ax: plt.Axes = fig.subplots()
 
-        hue_order_sb = ['S$^2$LCT(SEED)', 'CHECKLIST']
-        hue_order_pdr = ['S$^2$LCT(SEED)', 'S$^2$LCT(SEED+EXP)', 'CHECKLIST']
+        hue_order_sb = ['CHECKLIST', 'S$^2$LCT (SEED)', ]
+        hue_order_pdr = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
         
         ax_sb = sns.lineplot(data=df_sb, x='num_seed', y='scores',
                              hue='type',
@@ -382,7 +382,7 @@ class Plots:
                              estimator='median',
                              style='type',
                              err_style=None, # or "bars"
-                             markers=True,
+                             markers=['X', 'o'],
                              markersize=9,
                              markeredgewidth=0,
                              dashes=True,
@@ -394,7 +394,7 @@ class Plots:
                               estimator='median',
                               style='type',
                               err_style=None, # or "bars"
-                              markers=True,
+                              markers=['X', 's', 'o'],
                               markersize=9,
                               markeredgewidth=0,
                               dashes=True,
