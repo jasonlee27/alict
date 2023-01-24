@@ -215,9 +215,9 @@ def read_checklist_testcases(task, search_dataset_name, selection_method):
     return texts_all, texts_lcs
 
 
-def main_seed(task,
-              search_dataset_name,
-              selection_method):
+def main_sample(task,
+                search_dataset_name,
+                selection_method):
     num_trials = 10
     num_samples = [50, 100, 150, 200]
     logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
@@ -283,12 +283,12 @@ def main_seed(task,
                     sbleu_seed = SelfBleu(texts=seed_sents,
                                           num_data=len(seed_sents),
                                           logger=logger)
-                    score_seed = sbleu.get_score_wo_sample()
+                    score_seed = sbleu_seed.get_score_wo_sample()
                     scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed)
                     sbleu_seed_exp = SelfBleu(texts=seed_sents+exp_sents,
                                          num_data=len(seed_sents+exp_sents),
                                          logger=logger)
-                    score_seed_exp = sbleu_exp.get_score_wo_sample()
+                    score_seed_exp = sbleu_seed_exp.get_score_wo_sample()
                     scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed_exp)
                     sbleu_bl = SelfBleu(texts=bl_sents,
                                         num_data=len(bl_sents),
