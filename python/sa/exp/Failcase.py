@@ -5,7 +5,6 @@ import random
 import multiprocessing
 
 from tqdm import tqdm
-from .SelfBleu import read_our_seeds, read_our_exps
 from ..model.Result import Result
 
 from ..utils.Macros import Macros
@@ -83,12 +82,6 @@ def main_fail(task,
     # test_result = Utils.read_json(test_result_file)
     raw_test_result_file = result_dir / 'test_results.txt'
     raw_test_result = Result.parse_results(raw_test_result_file, Macros.sa_models_file)
-    # _, texts_seed_ours = read_our_seeds(task,
-    #                                     search_dataset_name,
-    #                                     selection_method)
-    # _, texts_exp_ours = read_our_exps(task,
-    #                                   search_dataset_name,
-    #                                   selection_method)
     
     # reqs = Requirements.get_requirements(nlp_task)
     scores = dict()

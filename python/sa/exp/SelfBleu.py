@@ -172,7 +172,7 @@ def read_our_exps(task,
                   search_dataset_name,
                   selection_method):
     texts_lcs = dict()
-    texts_all = list()
+    seed_exp_map = dict()
     seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
     seed_files = [
         f for f in os.listdir(str(seed_dir))
@@ -181,14 +181,20 @@ def read_our_exps(task,
     for seed_file in seed_files:
         seed_dict = Utils.read_json(seed_dir / seed_file)
         lc = seed_dict['requirement']['description']
+        if lc not in seed_exp_map.keys():
+            seed_exp_map[lc] = dict()
+        # end if
         exp_sents = list()
         for s in seed_dict['inputs'].keys():
-            exp_sents.extend([e[5] for e in seed_dict['inputs'][s]['exp_inputs']])
+            exp_sents_per_seed = [e[5] for e in seed_dict['inputs'][s]['exp_inputs']]
+            if s not in seed_exp_map[lc].keys():
+                seed_exp_map[lc][s] = exp_sents_per_seed
+            # end if
+            exp_sents.extend(exp_sents_per_seed)
         # end for
         texts_lcs[lc] = exp_sents
-        texts_all.extend(exp_sents)
     # end for
-    return texts_all, texts_lcs
+    return seed_exp_map, texts_lcs
 
 def read_checklist_testcases(task, search_dataset_name, selection_method):
     seed_res_dir_name = f"templates_{task}_{search_dataset_name}_{selection_method}"
@@ -222,12 +228,12 @@ def main_seed(task,
     _, texts_checklist = read_checklist_testcases(task,
                                                   search_dataset_name,
                                                   selection_method)
-    _, texts_seed_ours = read_our_seeds(task,
-                                        search_dataset_name,
-                                        selection_method)
-    # _, texts_exp_ours = read_our_exps(task,
-    #                                   search_dataset_name,
-    #                                   selection_method)
+    _, texts_seed = read_our_seeds(task,
+                                   search_dataset_name,
+                                   selection_method)
+    seed_exp_map, _ = read_our_exps(task,
+                                    search_dataset_name,
+                                    selection_method)
     # if os.path.exists(str(result_file)):
     #     scores = Utils.read_json(result_file)
     # else:
@@ -239,7 +245,13 @@ def main_seed(task,
             logger.print(f"OURS::{lc}")
             our_sents, bl_sents = list(), list()
             scores[lc] = {
-                'ours': {
+                'ours_seed': {
+                    f"{num_sample}sample": {
+                        'selfbleu_scores': list()
+                    }
+                    for num_sample in num_samples
+                },
+                'ours_seed_exp': {
                     f"{num_sample}sample": {
                         'selfbleu_scores': list()
                     }
@@ -261,14 +273,23 @@ def main_seed(task,
                     #     len(texts_seed_ours[lc]),
                     #     len(texts_checklist[lc])
                     # ])
-                    # sample_exps = random.sample(texts_exp_ours[lc], _num_sample)
-                    our_sents = random.sample(texts_seed_ours[lc], min(len(texts_seed_ours[lc]), num_sample))
+                    seed_sents = random.sample(texts_seed[lc], min(len(texts_seed[lc]), num_sample))
+                    texts_exp = list()
+                    for s in seed_sents:
+                        texts_exp.extend(seed_exp_map[lc][s])
+                    # end for
                     bl_sents = random.sample(texts_checklist[lc], min(len(texts_checklist[lc]), num_sample))
-                    sbleu = SelfBleu(texts=our_sents,
-                                     num_data=len(our_sents),
-                                     logger=logger)
-                    score = sbleu.get_score_wo_sample()
-                    scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'].append(score)
+                    exp_sents = random.sample(texts_exp, min(len(texts_exp), num_sample))
+                    sbleu_seed = SelfBleu(texts=seed_sents,
+                                          num_data=len(seed_sents),
+                                          logger=logger)
+                    score_seed = sbleu.get_score_wo_sample()
+                    scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed)
+                    sbleu_seed_exp = SelfBleu(texts=seed_sents+exp_sents,
+                                         num_data=len(seed_sents+exp_sents),
+                                         logger=logger)
+                    score_seed_exp = sbleu_exp.get_score_wo_sample()
+                    scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed_exp)
                     sbleu_bl = SelfBleu(texts=bl_sents,
                                         num_data=len(bl_sents),
                                         logger=logger)
@@ -276,9 +297,12 @@ def main_seed(task,
                     scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'].append(score_bl)
                 # end for
                 logger.print(f"{scores[lc]}")
-                scores[lc]['ours'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'])
-                scores[lc]['ours'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'])
-                scores[lc]['ours'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours_seed'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours_seed'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours_seed'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'])
