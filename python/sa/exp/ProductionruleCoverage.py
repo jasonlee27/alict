@@ -362,7 +362,6 @@ def main_all(task,
     st = time.time()
     logger_file = Macros.log_dir / f"seeds_exps_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.log"
     result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
-    # end if
     Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_exp_all_pdrcov_log')

@@ -30,13 +30,12 @@ class Humanstudy:
     #     4: 'weak_neg',
     #     5: 'strong_pos'
     # }
-
-    SENTIMENT_MAP_FROM_STR = {
-        'negative': [1,2],
-        'neutral': [3],
-        'positive': [4,5],
-        "['positive', 'neutral']": [3,4,5]
-    }
+    
+    # SENTIMENT_MAP_FROM_STR = {
+    #     'normal': 1,
+    #     'hatespeech': 5,
+    #     'offensive': 5
+    # }
     SENTIMENT_MAP_FROM_SCORE = {
         '0': [1,2],
         '1': [3],
@@ -48,6 +47,14 @@ class Humanstudy:
     def read_sentences(cls, json_dir: Path, include_label=False):
         cksum_map = random.sample(Utils.read_txt(json_dir / 'cksum_map.txt')[:-1], 10)
         results = dict()
+        # _raw_data_dict = Utils.read_json(Macros.hatexplain_data_file)
+        # raw_data_dict = dict()
+        # for key, vals in _raw_data_dict.items():
+        #     sent = Utils.detokenize([t.lower() for t in vals['post_tokens']])
+        #     label_scores = [cls.SENTIMENT_MAP_FROM_STR[v['label']] for v in vals['annotators']]
+        #     raw_data_dict[sent] = sum(label_scores)*1./len(label_scores)
+        # # end for
+        
         for l in cksum_map:
             lc_desc, cksum = l.split('\t')
             print(lc_desc)
@@ -63,7 +70,7 @@ class Humanstudy:
                         seed_dict[seed] = {
                             'label': label,
                             'exp': [
-                                (e[5], cls.SENTIMENT_MAP_FROM_STR[str(label)])
+                                (e[5], label)
                                 for e in inp['inputs'][seed]['exp_inputs'] if e[5] is not None
                             ]
                         }
@@ -207,7 +214,8 @@ class Humanstudy:
                     tokens = Utils.tokenize(sent)
                     _sent = Utils.detokenize(tokens)
                     if sent in seed_sents or _sent in seed_sents:
-                        res[_sent] = cls.SENTIMENT_MAP_FROM_STR[str(sent_dict[r][s]['label'])]
+                        # res[_sent] = cls.SENTIMENT_MAP_FROM_STR[str(sent_dict[r][s]['label'])]
+                        res[_sent] = sent_dict[r][s]['label']
                         res_lc[_sent] = r
                     # end if
                     for e in sent_dict[r][s]['exp']:
@@ -339,12 +347,18 @@ class Humanstudy:
         for s_i, sent in enumerate(tgt_results.keys()):
             label = tgt_results[sent]
             if sent in seed_sents:
-                labels_h = seed_human_results[sent]['sent_score']
-                label_consistency = [1 if l in label else 0 for l in labels_h]
+                labels_h = [
+                    'non-toxic' if score in ['1', '2', '3'] else 'toxic'
+                    for score in seed_human_results[sent]['sent_score']
+                ]
+                label_consistency = [1 if l==label else 0 for l in labels_h]
                 res['seed'][sent] = sum(label_consistency)/len(label_consistency)
             elif sent in exp_sents:
-                labels_h = exp_human_results[sent]['sent_score']
-                label_consistency = [1 if l in label else 0 for l in labels_h]
+                labels_h = [
+                    'non-toxic' if score in ['1', '2', '3'] else 'toxic'
+                    for score in exp_human_results[sent]['sent_score']
+                ]
+                label_consistency = [1 if l==label else 0 for l in labels_h]
                 res['exp'][sent] = sum(label_consistency)/len(label_consistency)
             # end if
         # end for
