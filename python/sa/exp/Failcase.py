@@ -6,6 +6,7 @@ import multiprocessing
 
 from tqdm import tqdm
 from ..model.Result import Result
+from .SelfBleu import read_our_seeds
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -77,13 +78,13 @@ def main_fail(task,
     num_samples = [50, 100, 150, 200]
     logger_file = Macros.log_dir / f"failcases_{task}_{search_dataset_name}_{selection_method}.log"
     result_file = Macros.result_dir / f"failcases_{task}_{search_dataset_name}_{selection_method}.json"
+    bl_result_file = Macros.result_dir / f"failcases_bl_{task}_{search_dataset_name}_{selection_method}.json"
     result_dir = Macros.result_dir / f"test_results_{task}_{search_dataset_name}_{selection_method}" 
     # test_result_file = result_dir / 'test_result_analysis.json'
     # test_result = Utils.read_json(test_result_file)
     raw_test_result_file = result_dir / 'test_results.txt'
     raw_test_result = Result.parse_results(raw_test_result_file, Macros.sa_models_file)
     
-    # reqs = Requirements.get_requirements(nlp_task)
     scores = dict()
     for model in Utils.read_txt(Macros.sa_models_file):
         model = model.strip()
@@ -116,5 +117,40 @@ def main_fail(task,
             # end for
         # end for
         Utils.write_json(scores, result_file, pretty_format=True)
+    # end for
+
+    # for BL failcases
+    raw_bl_test_result_file = result_dir / 'test_results_checklist.txt'
+    raw_bl_test_result = Result.parse_checklist_results(raw_bl_test_result_file, Macros.sa_models_file)
+    scores = dict()
+    for model in Utils.read_txt(Macros.sa_models_file):
+        model = model.strip()
+        scores[model] = dict()
+        bl_model_results = raw_bl_test_result[model]
+        lcs = sorted(set([r['req'] for r in bl_model_results]))
+        for lc in lcs:
+            scores[model][lc] = {
+                f"{num_sample}sample": list()
+                for num_sample in num_samples
+            }
+            sent_pass = [s for s in bl_model_results[0]['pass']]
+            sent_fail = [s for s in bl_model_results[0]['fail']]
+            for num_sample in num_samples:
+                for num_trial in range(num_trials):
+                    random.seed(num_trial)
+                    our_sents = random.sample(
+                        sent_pass+sent_fail,
+                        min(len(sent_pass+sent_fail), num_sample)
+                    )
+                    # our_sents = [
+                    #     Utils.detokenize(Utils.tokenize(s))
+                    #     for s in our_sents
+                    # ]
+                    num_fails = len([s for s in our_sents if s in sent_fail])
+                    scores[model][lc][f"{num_sample}sample"].append(num_fails)
+                # end for
+            # end for
+        # end for
+        Utils.write_json(scores, bl_result_file, pretty_format=True)
     # end for
     return
