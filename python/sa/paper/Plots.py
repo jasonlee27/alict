@@ -139,6 +139,7 @@ class Plots:
                           markersize=9,
                           markeredgewidth=0,
                           dashes=True,
+                          palette="Set1",
                           errorbar='sd',
                           ax=ax)
         plt.xticks(list(x_ticks.values()))
@@ -206,6 +207,7 @@ class Plots:
         ax = sns.barplot(data=df, x='lc', y='scores',
                          hue='type',
                          hue_order=hue_order,
+                         palette="Set1",
                          estimator=median)
         # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
         # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
@@ -386,6 +388,7 @@ class Plots:
                              markersize=9,
                              markeredgewidth=0,
                              dashes=True,
+                             palette="Set1",
                              errorbar='sd',
                              ax=ax1)
         ax_pdr = sns.lineplot(data=df_pdr, x='num_seed', y='scores',
@@ -398,6 +401,7 @@ class Plots:
                               markersize=9,
                               markeredgewidth=0,
                               dashes=True,
+                              palette="Set1",
                               errorbar='sd',
                               ax=ax2)
         plt.xticks(list(x_ticks.values()))
@@ -1077,7 +1081,7 @@ class Plots:
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
         p2f_result_file = Macros.result_dir / 'p2f_f2p_sa_sst_random.json'
-        fail_result_file = Macros.result_dir / 'p2f_f2p_sa_sst_random.json' # TODO: change file name
+        fail_result_file = Macros.result_dir / 'failcases_sa_sst_random.json'
         p2f_result = Utils.read_json(p2f_result_file)
         fail_result = Utils.read_json(fail_result_file)
         model_names = list()
