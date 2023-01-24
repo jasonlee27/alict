@@ -83,12 +83,12 @@ def main_fail(task,
     # test_result = Utils.read_json(test_result_file)
     raw_test_result_file = result_dir / 'test_results.txt'
     raw_test_result = Result.parse_results(raw_test_result_file, Macros.sa_models_file)
-    _, texts_seed_ours = read_our_seeds(task,
-                                        search_dataset_name,
-                                        selection_method)
-    _, texts_exp_ours = read_our_exps(task,
-                                      search_dataset_name,
-                                      selection_method)
+    # _, texts_seed_ours = read_our_seeds(task,
+    #                                     search_dataset_name,
+    #                                     selection_method)
+    # _, texts_exp_ours = read_our_exps(task,
+    #                                   search_dataset_name,
+    #                                   selection_method)
     
     # reqs = Requirements.get_requirements(nlp_task)
     scores = dict()
@@ -98,25 +98,27 @@ def main_fail(task,
         model_results = raw_test_result[model]
         lcs = sorted(set([r['req'] for r in model_results]))
         for lc in lcs:
-            scores[m][lc] = {
-                f"{num_sample}sample": 0
+            scores[model][lc] = {
+                f"{num_sample}sample": list()
                 for num_sample in num_samples
             }
-            seeds_fail = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='SEED'][0]['fail']
-            exps_fail = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='EXP'][0]['fail']
+            seeds_pass = [mr for mr in model_results if mr['req']==lc and mr['sent_type']=='SEED'][0]['pass']
+            seeds_fail = [mr for mr in model_results if mr['req']==lc and mr['sent_type']=='SEED'][0]['fail']
+            exps_pass = [mr for mr in model_results if mr['req']==lc and mr['sent_type']=='EXP'][0]['pass']
+            exps_fail = [mr for mr in model_results if mr['req']==lc and mr['sent_type']=='EXP'][0]['fail']
             for num_sample in num_samples:
                 for num_trial in range(num_trials):
                     random.seed(num_trial)
                     our_sents = random.sample(
-                        texts_seed_ours[lc]+texts_exp_ours[lc],
-                        min(len(texts_seed_ours[lc]), num_sample)
+                        seeds_pass+seeds_fail+exps_pass+exps_fail,
+                        min(len(seeds_pass+seeds_fail+exps_pass+exps_fail), num_sample)
                     )
-                    our_sents = [
-                        Utils.detokenize(Utils.tokenize(s))
-                        for s in our_sents
-                    ]
-                    num_fails = len([s for s in ours_sents if s in seeds_fail or s in exps_fail])
-                    scores[m][lc][f"{num_sample}sample"] = num_fails
+                    # our_sents = [
+                    #     Utils.detokenize(Utils.tokenize(s))
+                    #     for s in our_sents
+                    # ]
+                    num_fails = len([s for s in our_sents if s in seeds_fail or s in exps_fail])
+                    scores[model][lc][f"{num_sample}sample"].append(num_fails)
                 # end for
             # end for
         # end for
