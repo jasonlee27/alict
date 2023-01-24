@@ -23,3 +23,22 @@ cases generated.
 3. In addition, using syntax expansion process introduces many pass to
 fail cases. It finds what input features fool the model and useful to
 analyze model with those test cases.
+
+
+=========
+
+1. explain clearly how the search/transform rules are generated in
+what heuristic rules in sec 3.1
+
+2. sa task, rename LC4 and LC6 to make it independent
+
+3. figure 2, explain each component explicitly. (e.g. 3.1)
+
+4. split rq1 into effectiveness and diversity.
+
+5. figure 4: color consistency, redo the figure with multiple sampling
+
+6. background section
+
+
+

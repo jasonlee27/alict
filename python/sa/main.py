@@ -347,11 +347,11 @@ def run_failcase():
     return
 
 def run_selfbleu():
-    from .exp.SelfBleu import main_seed
+    from .exp.SelfBleu import main_sample
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    main_seed(nlp_task,
+    main_sample(nlp_task,
               search_dataset_name,
               selection_method)
     return

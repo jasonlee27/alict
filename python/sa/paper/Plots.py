@@ -139,6 +139,7 @@ class Plots:
                           markersize=9,
                           markeredgewidth=0,
                           dashes=True,
+                          palette="Set1",
                           errorbar='sd',
                           ax=ax)
         plt.xticks(list(x_ticks.values()))
@@ -206,6 +207,7 @@ class Plots:
         ax = sns.barplot(data=df, x='lc', y='scores',
                          hue='type',
                          hue_order=hue_order,
+                         palette="Set1",
                          estimator=median)
         # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
         # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
@@ -386,6 +388,7 @@ class Plots:
                              markersize=9,
                              markeredgewidth=0,
                              dashes=True,
+                             palette="Set1",
                              errorbar='sd',
                              ax=ax1)
         ax_pdr = sns.lineplot(data=df_pdr, x='num_seed', y='scores',
@@ -398,6 +401,7 @@ class Plots:
                               markersize=9,
                               markeredgewidth=0,
                               dashes=True,
+                              palette="Set1",
                               errorbar='sd',
                               ax=ax2)
         plt.xticks(list(x_ticks.values()))
@@ -1077,15 +1081,18 @@ class Plots:
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
         p2f_result_file = Macros.result_dir / 'p2f_f2p_sa_sst_random.json'
-        fail_result_file = Macros.result_dir / 'p2f_f2p_sa_sst_random.json' # TODO: change file name
+        fail_result_file = Macros.result_dir / 'failcases_sa_sst_random.json'
+        fail_bl_result_file = Macros.result_dir / 'failcases_bl_sa_sst_random.json'
         p2f_result = Utils.read_json(p2f_result_file)
         fail_result = Utils.read_json(fail_result_file)
+        fail_bl_result = Utils.read_json(fail_bl_result_file)
         model_names = list()
         data_lod_pass2fail = list()
         data_lod_numfail = list()
         for model_name in p2f_result.keys():
             p2f_result_model = p2f_result[model_name]
             fail_result_model = fail_result[model_name]
+            fail_bl_result_model = fail_bl_result[model_name]
             _model_name = model_name.split('/')[-1]
             if _model_name.startswith('bert-base'):
                 model_names.append('BERT')
@@ -1103,28 +1110,35 @@ class Plots:
                 for t in range(num_trials):
                     num_p2fs = list()
                     num_fails = list()
+                    num_bl_fails = list()
                     for l_i, lc in enumerate(Utils.read_txt(req_file)):
                         lc_desc = lc.strip().split('::')[0]
                         lc_desc = lc_desc if lc_desc in p2f_result_model.keys() else lc_desc.lower()
-                        num_p2fs.append(p2f_result_model[lc_desc][sample_key][t])
+                        num_p2fs.append(p2f_result_model[lc_desc][sample_key]['p2f'][t])
                         num_fails.append(fail_result_model[lc_desc][sample_key][t])
+                        num_bl_fails.append(fail_bl_result_model[lc_desc][sample_key][t])
                     # end for
                     data_lod_pass2fail.append({
                         'model': _model_name,
                         'num_seed': ns,
                         'num_trial': t,
-                        'num_pass2fail': sum(num_p2fs)
+                        'num_pass2fail': float(Utils.median(num_p2fs))
                     })
                     data_lod_numfail.append({
-                        'model': _model_name,
+                        'model': f"{_model_name} (S^2LCT)",
                         'num_seed': ns,
                         'num_trial': t,
-                        'num_fail': sum(num_fails)
+                        'num_fail': float(Utils.median(num_fails))
+                    })
+                    data_lod_numfail.append({
+                        'model': f"{_model_name} (CHECKLIST)",
+                        'num_seed': ns,
+                        'num_trial': t,
+                        'num_fail': float(Utils.median(num_bl_fails))
                     })
                 # end for
             # end for
         # end for
-        
         df_numfail: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod_numfail))
         df_pass2fail: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod_pass2fail))
         
@@ -1133,41 +1147,38 @@ class Plots:
         # fig: plt.Figure = plt.figure()
         # ax: plt.Axes = fig.subplots()
 
-        hue_order = model_names
+        from numpy import median
+        hue_order = [f"{m} (S^2LCT)" for m in model_names]+[f"{m} (CHECKLIST)" for m in model_names]
         # markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-        
         ax_numfail = sns.lineplot(data=df_numfail, x='num_seed', y='num_fail',
                                   hue='model',
                                   hue_order=hue_order,
+                                  estimator=median,
                                   style='model',
-                                  estimator='median',
                                   err_style=None, # or "bars"
                                   markers=True,
                                   markersize=9,
                                   markeredgewidth=0,
-                                  palette="Set1",
                                   dashes=True,
-                                  errorbar='sd',
                                   ax=ax1)
+        hue_order = model_names
         ax_pass2fail = sns.lineplot(data=df_pass2fail, x='num_seed', y='num_pass2fail',
                                     hue='model',
                                     hue_order=hue_order,
+                                    estimator=median,
                                     style='model',
-                                    estimator='median',
                                     err_style=None, # or "bars"
                                     markers=True,
                                     markersize=9,
                                     markeredgewidth=0,
-                                    palette="Set1",
                                     dashes=True,
-                                    errorbar='sd',
                                     ax=ax2)
         plt.xticks(list(x_ticks.values()))
-        ax_numfail.set_ylim(0, 3500)
+        ax_numfail.set_ylim(-10, 270)
         ax_numfail.set_xlabel("Number of seeds")
         ax_numfail.set_ylabel("Number of fail cases")
 
-        ax_pass2fail.set_ylim(0, 100)
+        ax_pass2fail.set_ylim(0, 15)
         ax_pass2fail.set_xlabel("Number of seeds")
         ax_pass2fail.set_ylabel("Number of pass-to-fail cases")
             
