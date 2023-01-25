@@ -17,6 +17,8 @@ from ..utils.Logger import Logger
 
 
 class NeuralCoverageData:
+
+    RES_DIR = Macros.result_dir / 'coverage'
     
     @classmethod
     def read_sst_testcase(cls,
@@ -64,7 +66,7 @@ class NeuralCoverageData:
         
     @classmethod
     def write_sst_testcase(cls, sst_testcases):
-        res_dir = Macros.result_dir / 'coverage' / 'ours'
+        res_dir = cls.RES_DIR / 'ours'
         res_dir.mkdir(parents=True, exist_ok=True)
         
         cksum_map_text = ''
@@ -86,7 +88,7 @@ class NeuralCoverageData:
 
     @classmethod
     def write_checklist_testcase(cls, checklist_testcases):
-        res_dir = Macros.result_dir / 'coverage' / 'checklist'
+        res_dir = cls.RES_DIR / 'checklist'
         res_dir.mkdir(parents=True, exist_ok=True)
         cksum_map_text = ''
         for lc_desc in checklist_testcases.keys():
@@ -122,6 +124,7 @@ class NeuralCoverageData:
 def main_write(task,
                search_dataset_name,
                selection_method):
+    NeuralCoverageData.RES_DIR = Macros.result_dir / 'coverage' / f"{task}_{search_dataset_name}_{selection_method}"
     checklist_testcases = NeuralCoverageData.read_checklist_testcase(Macros.checklist_sa_dataset_file)
     NeuralCoverageData.write_checklist_testcase(checklist_testcases)
     sst_testcases = NeuralCoverageData.read_sst_testcase(task,
