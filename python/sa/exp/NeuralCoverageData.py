@@ -68,8 +68,8 @@ class NeuralCoverageData:
         res_dir.mkdir(parents=True, exist_ok=True)
         
         cksum_map_text = ''
-        test_cases = list()
         for lc_desc in sst_testcases.keys():
+            test_cases = list()
             sst_sents = sst_testcases[lc_desc]['sents']
             sst_cksum = sst_testcases[lc_desc]['cksum']
             # res_sst_text = ''
@@ -79,7 +79,7 @@ class NeuralCoverageData:
                 test_cases.append(sst_sents[d_i])
             # end for
             sst_save_file = res_dir / f"our_sents_{sst_cksum}.json"
-            Utils.write_json(res_sst_text, sst_save_file, pretty_format=False)
+            Utils.write_json(test_cases, sst_save_file, pretty_format=False)
         # end for
         Utils.write_txt(cksum_map_text, res_dir / 'cksum_map.txt')
         return
@@ -89,8 +89,8 @@ class NeuralCoverageData:
         res_dir = Macros.result_dir / 'coverage' / 'checklist'
         res_dir.mkdir(parents=True, exist_ok=True)
         cksum_map_text = ''
-        test_cases = list()
         for lc_desc in checklist_testcases.keys():
+            test_cases = list()
             checklist_sents = checklist_testcases[lc_desc]['sents']
             checklist_cksum = checklist_testcases[lc_desc]['cksum']
             res_checklist_text = ''
@@ -113,7 +113,7 @@ class NeuralCoverageData:
                 test_cases.append(checklist_sents[d_i])
             # end for
             checklist_save_file = res_dir / f"checklist_sents_{checklist_cksum}.json"
-            Utils.write_json(res_checklist_text, checklist_save_file, pretty_format=False)
+            Utils.write_json(test_cases, checklist_save_file, pretty_format=False)
         # end for
         Utils.write_txt(cksum_map_text, res_dir / 'cksum_map.txt')
         return
@@ -127,8 +127,6 @@ def main_write(task,
     sst_testcases = NeuralCoverageData.read_sst_testcase(task,
                                                          search_dataset_name,
                                                          selection_method)
-    for lc in sst_testcases.keys():
-        NeuralCoverageData.write_sst_testcase(sst_testcases[lc])
-    # end for
+    NeuralCoverageData.write_sst_testcase(sst_testcases)
     return
     
