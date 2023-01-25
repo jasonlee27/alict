@@ -18,7 +18,7 @@ parser.add_argument('--run', type=str, required=True,
                         'testmodel', 'testmodel_seed', 'retrain', 'analyze',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
                         'selfbleu', 'pdrule_cov', 'humanstudy', 'humanstudy_results',
-                        'coverage_data', 'tables', 'plots'
+                        'neural_coverage_data', 'tables', 'plots'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
@@ -374,12 +374,16 @@ def run_pdrule_cov():
 
 def run_humanstudy():
     from .exp.Humanstudy import Humanstudy
+    from .exp.Humanstudy import Mtnlp
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    Humanstudy.main_sample(nlp_task,
-                           search_dataset_name,
-                           selection_method)
+    # Humanstudy.main_sample(nlp_task,
+    #                        search_dataset_name,
+    #                        selection_method)
+    Mtnlp.main_mutation(nlp_task,
+                        search_dataset_name,
+                        selection_method)
     return
 
 def run_humanstudy_result():
@@ -399,9 +403,9 @@ def run_humanstudy_result():
 # ==========
 # Coverage Exp
 
-def run_coverage_data():
+def run_neural_coverage_data():
     # from .coverage.extract_data import Coveragedata
-    from .exp.Coveragedata import main_write
+    from .exp.NeuralCoverageData import main_write
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
@@ -414,9 +418,7 @@ def run_coverage_data():
     # #                                     selection_method)
     main_write(nlp_task,
                search_dataset_name,
-               selection_method,
-               num_seeds,
-               num_trials)
+               selection_method)
     return
 
 # ==========
@@ -471,7 +473,7 @@ func_map = {
         'pdrule_cov': run_pdrule_cov,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
-        'coverage_data': run_coverage_data,
+        'neural_coverage_data': run_neural_coverage_data,
         'tables': run_make_tables,
         'plots': run_make_plots
     }

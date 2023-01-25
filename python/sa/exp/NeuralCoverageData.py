@@ -16,17 +16,14 @@ from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 
 
-class Coveragedata:
-
+class NeuralCoverageData:
+    
     @classmethod
     def read_sst_testcase(cls,
                           task,
                           dataset_name,
-                          selection_method,
-                          num_seeds,
-                          num_trial):
-        _num_trial = '' if num_trial==1 else str(num_trial)
-        test_results_dir = Macros.result_dir / f"templates{_num_trial}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
+                          selection_method):
+        test_results_dir = Macros.result_dir / f"templates_{task}_{dataset_name}_{selection_method}"
         cksum_vals = [
             (l.strip().split('\t')[0], l.strip().split('\t')[1])
             for l in Utils.read_txt(test_results_dir / 'cksum_map.txt')
@@ -66,51 +63,33 @@ class Coveragedata:
         return test_data
         
     @classmethod
-    def write_sst_testcase(cls, num_seeds, num_trial, sst_testcases):
-        _num_trial = '' if num_trial==1 else str(num_trial)
-        cov_dir = Macros.result_dir / 'coverage' / 'txt_files'
-        res_dir = cov_dir / f"ours_trial{_num_trial}_{num_seeds}seeds"
+    def write_sst_testcase(cls, sst_testcases):
+        res_dir = Macros.result_dir / 'coverage' / 'ours'
         res_dir.mkdir(parents=True, exist_ok=True)
-        # sst_testcases = cls.read_sst_testcase(task,
-        #                                       dataset_name,
-        #                                       selection_method,
-        #                                       num_seeds,
-        #                                       num_trial)
-        # checklist_testcases = cls.read_checklist_testcase(Macros.checklist_sa_dataset_file)
         
         cksum_map_text = ''
+        test_cases = list()
         for lc_desc in sst_testcases.keys():
             sst_sents = sst_testcases[lc_desc]['sents']
             sst_cksum = sst_testcases[lc_desc]['cksum']
-            res_sst_text = ''
-            # num_sents = 0
-            # if len(sst_sents)>len(checklist_sents):
-            #     num_sents = len(checklist_sents)
-            #     sent_ids = list(range(num_sents))
-            #     random.shuffle(sent_ids)
-            #     sst_sents = [sst_sents[s_i] for s_i in sent_ids]
-            # elif len(sst_sents)<len(checklist_sents):
-            #     num_sents = len(sst_sents)
-            #     sent_ids = list(range(num_sents))
-            #     random.shuffle(sent_ids)
-            #     checklist_sents = [checklist_sents[s_i] for s_i in sent_ids]
-            # # end if
+            # res_sst_text = ''
             cksum_map_text += f"{lc_desc}\t{sst_cksum}\n"
             for d_i in range(len(sst_sents)):
-                res_sst_text += f"{sst_sents[d_i]}\n"
+                # res_sst_text += f"{sst_sents[d_i]}\n"
+                test_cases.append(sst_sents[d_i])
             # end for
-            sst_save_file = res_dir / f"our_sents_{sst_cksum}.txt"
-            Utils.write_txt(res_sst_text, sst_save_file)
+            sst_save_file = res_dir / f"our_sents_{sst_cksum}.json"
+            Utils.write_json(res_sst_text, sst_save_file, pretty_format=False)
         # end for
         Utils.write_txt(cksum_map_text, res_dir / 'cksum_map.txt')
         return
 
     @classmethod
     def write_checklist_testcase(cls, checklist_testcases):
-        cov_dir = Macros.result_dir / 'coverage' / 'txt_files'
-        res_dir = cov_dir / "checklist"
+        res_dir = Macros.result_dir / 'coverage' / 'checklist'
         res_dir.mkdir(parents=True, exist_ok=True)
         cksum_map_text = ''
+        test_cases = list()
         for lc_desc in checklist_testcases.keys():
             checklist_sents = checklist_testcases[lc_desc]['sents']
             checklist_cksum = checklist_testcases[lc_desc]['cksum']
@@ -130,10 +109,11 @@ class Coveragedata:
             # # end if
             cksum_map_text += f"{lc_desc}\t{checklist_cksum}\n"
             for d_i in range(len(checklist_sents)):
-                res_checklist_text += f"{checklist_sents[d_i]}\n"
+                # res_checklist_text += f"{checklist_sents[d_i]}\n"
+                test_cases.append(checklist_sents[d_i])
             # end for
-            checklist_save_file = res_dir / f"checklist_sents_{checklist_cksum}.txt"
-            Utils.write_txt(res_checklist_text, checklist_save_file)
+            checklist_save_file = res_dir / f"checklist_sents_{checklist_cksum}.json"
+            Utils.write_json(res_checklist_text, checklist_save_file, pretty_format=False)
         # end for
         Utils.write_txt(cksum_map_text, res_dir / 'cksum_map.txt')
         return
@@ -141,18 +121,14 @@ class Coveragedata:
     
 def main_write(task,
                search_dataset_name,
-               selection_method,
-               num_seeds,
-               all_num_trials):
-    checklist_testcases = Coveragedata.read_checklist_testcase(Macros.checklist_sa_dataset_file)
-    Coveragedata.write_checklist_testcase(checklist_testcases)
-    for num_trial in range(1, all_num_trials+1):
-        sst_testcases = Coveragedata.read_sst_testcase(task,
-                                                       search_dataset_name,
-                                                       selection_method,
-                                                       num_seeds,
-                                                       num_trial)
-        Coveragedata.write_sst_testcase(num_seeds, num_trial, sst_testcases)
+               selection_method):
+    checklist_testcases = NeuralCoverageData.read_checklist_testcase(Macros.checklist_sa_dataset_file)
+    NeuralCoverageData.write_checklist_testcase(checklist_testcases)
+    sst_testcases = NeuralCoverageData.read_sst_testcase(task,
+                                                         search_dataset_name,
+                                                         selection_method)
+    for lc in sst_testcases.keys():
+        NeuralCoverageData.write_sst_testcase(sst_testcases[lc])
     # end for
     return
     

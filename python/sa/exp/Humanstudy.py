@@ -45,33 +45,37 @@ class Humanstudy:
     }
     
     @classmethod
-    def read_sentences(cls, json_file: Path, include_label=False):
-        inputs = Utils.read_json(json_file)
+    def read_sentences(cls, json_dir: Path, include_label=False):
+        template_files = [
+            f for f in os.listdir(str(json_dir))
+            if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
+        ]
         results = dict()
-        for inp in inputs:
-            req = inp['requirement']['description']
+        for template_file in template_files:
+            inputs = Utils.read_json(json_dir / template_file)
+            lc = inputs['requirement']['description']
             # seeds, exps = list(), list()
             seed_dict = dict()
-            for seed in inp['inputs'].keys():
+            for seed in inputs['inputs'].keys():
                 if include_label:
-                    label = inp['inputs'][seed]['label']
+                    label = inputs['inputs'][seed]['label']
                     seed_dict[seed] = {
                         'label': label,
                         'exp': [
                             (e[5], cls.SENTIMENT_MAP_FROM_STR[str(label)])
-                            for e in inp['inputs'][seed]['exp_inputs'] if e[5] is not None
+                            for e in inputs['inputs'][seed]['exp_inputs'] if e[5] is not None
                         ]
                     }
                 else:
                     seed_dict[seed] = {
                         'exp': [
                             e[5]
-                            for e in inp['inputs'][seed]['exp_inputs'] if e[5] is not None
+                            for e in inputs['inputs'][seed]['exp_inputs'] if e[5] is not None
                         ]
                     }
                 # end if
             # end for
-            results[req] = seed_dict
+            results[lc] = seed_dict
         # end for
         return results
         
@@ -544,10 +548,10 @@ class Humanstudy:
                     nlp_task,
                     search_dataset_name,
                     selection_method):
-        target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
+        seed_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
         res_dir = Macros.result_dir / 'human_study' / f"{nlp_task}_{search_dataset_name}_{selection_method}"
         res_dir.mkdir(parents=True, exist_ok=True)
-        sent_dict = cls.read_sentences(target_file)
+        sent_dict = cls.read_sentences(seed_dir)
         sample_dict = cls.sample_sents(sent_dict, num_files=3, num_samples=5)
         cls.write_samples(sample_dict, res_dir)
         return
@@ -573,4 +577,103 @@ class Humanstudy:
             num_samples=num_samples
         )
         Utils.write_json(result, res_dir / f"human_study_results.json", pretty_format=True)
+        return
+
+
+class Mtnlp:
+
+    MTNLP_MUTATION_RES_DIR = Macros.result_dir / 'mt_nlp_mutation_results'
+
+    @classmethod
+    def get_sample_label_per_sent(cls, seed_sent, template_dict):
+        for lc in template_dict.keys():
+            for seed in template_dict[lc].keys():
+                if seed==seed_sent:
+                    return template_dict[lc][seed]['label']
+                # end if
+            # end for
+        # end for
+        return
+
+    @classmethod
+    def get_mutated_sents(sent_index, seed_txt_filename):
+        mutated_sent_txt_file = cls.MTNLP_MUTATION_RES_DIR / f"{seed_txt_filename}_seed{sent_index}.txt"
+        return [l for l in Utils.read_txt(mutated_sent_txt_file) if l!='\n']
+
+    @classmethod
+    def get_sample_labels(cls,
+                          nlp_task,
+                          search_dataset_name,
+                          selection_method,
+                          sample_sent_txt_file):
+        template_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
+        template_dict = Humanstudy.read_sentences(template_dir)
+        # sample_sent_txt_filename = os.path.splittxt(os.path.basename(sample_sent_txt_file))
+        sample_sents = [l for l in Utils.read_txt(sample_sent_txt_file) if l!='\n']
+        # mutation_res = list()
+        res = dict()
+        for s_i, s in enumerate(sample_sents):
+            label = cls.get_sample_label_per_sent(s, template_dict)
+            res[s] = label
+            # mutated_sents = cls.get_mutated_sents(s_i, sample_sent_txt_filename)
+            # if any(mutated_sents):
+            #     mutation_res.append(mutated_sents)
+            # # end if
+        # end for
+        return res
+
+    @classmethod
+    def get_mutations_from_samples(cls, sample_sent_txt_file):
+        sample_sent_txt_filename = os.path.split(os.path.basename(str(sample_sent_txt_file)))
+        sample_sents = [l for l in Utils.read_txt(str(sample_sent_txt_file)) if l!='\n']
+        mutation_res = dict()
+        for s_i, s in enumerate(sample_sents):
+            # label = cls.get_sample_label_per_sent(s, template_dict)
+            # res[s] = label
+            mutated_sents = cls.get_mutated_sents(s_i, sample_sent_txt_filename)
+            if any(mutated_sents):
+                mutation_resp[s] = mutated_sents
+            else:
+                mutation_resp[s] = None
+            # end if
+        # end for
+        return mutation_res
+
+    # @classmethod
+    # def sample_mutations(cls, mutation_res, num_sample):
+    #     mutations_flatten = list()
+    #     for s in mutation_res.keys():
+    #         mutations = mutation_res[s]
+    #         if mutations is not None:
+    #             mutations_flatten.extend(mutations)
+    #         # end if
+    #     # end for
+    #     samples = random.sample(mutations_flatten, min(len(mutations_flatten), num_sample))
+    #     return samples
+
+    @classmethod
+    def main_mutation(cls, 
+                      nlp_task,
+                      search_dataset_name,
+                      selection_method):
+        sample_sent_txt_file = Macros.result_dir / 'human_study' / f"{nlp_task}_{search_dataset_name}_{selection_method}" / 'seed_samples_raw_file2.txt'
+        sample_labels = cls.get_sample_labels(nlp_task,
+                                              search_dataset_name,
+                                              selection_method,
+                                              sample_sent_txt_file)
+        num_sample = len(sample_labels.keys())
+        mutations = cls.get_mutations_from_samples(sample_sent_txt_file)
+        res = list()
+        for s in mutations.keys():
+            ms = mutations[s]
+            if ms is not None:
+                ms_label = sample_labels[s]
+                for _ms in ms:
+                    res.append(f"{_ms} :: {ms_label}\n")
+                # end for
+            # end if
+        # end for
+        samples = random.sample(res, min(len(res), num_sample))
+        sample_sent_txt_filename = os.path.split(os.path.basename(sample_sent_txt_file))
+        Utils.write_txt('\n'.join(samples), cls.MTNLP_MUTATION_RES_DIR / f"mtnlp_mutation_samples_{sample_sent_txt_filename}.txt")
         return
