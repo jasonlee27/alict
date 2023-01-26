@@ -91,13 +91,13 @@ class Plots:
                              search_dataset_name=Macros.datasets[Macros.sa_task][0],
                              selection_method='random'):
         num_trials = 10
-        data_lod: List[dict] = list()
         x_ticks = [50, 100, 150, 200]
         result_file = results_dir / 'selfbleu' / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
         result = Utils.read_json(result_file)
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
+            data_lod: List[dict] = list()
             lc_desc = lc.strip().split('::')[0]
             lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
             for s_i, num_sample in enumerate(result[lc_desc]['ours_seed'].keys()):
@@ -324,37 +324,46 @@ class Plots:
         num_trials = 10
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
-        selfbleu_result_file = results_dir / 'selfbleu' / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+        selfbleu_result_file = results_dir / 'selfbleu' / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
         pdr_cov_result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
         
         pdr_cov_result = Utils.read_json(pdr_cov_result_file)
         selfbleu_result = Utils.read_json(selfbleu_result_file)
-        data_pdr_lod: List[dict] = list()
-        data_sb_lod: List[dict] = list()
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
+            data_pdr_lod: List[dict] = list()
+            data_sb_lod: List[dict] = list()
             lc_desc = lc.strip().split('::')[0]
             lc_desc = lc_desc if lc_desc in pdr_cov_result.keys() else lc_desc.lower()
-            for ns in x_ticks:
-                for t in range(num_trials):
+            _pdr_x_ticks = [int(s.split('sample')[0]) for s in pdr_cov_result[lc_desc]['ours_seed'].keys()]
+            temp = len(_pdr_x_ticks)//4
+            pdr_x_ticks = [x for x_i, x in enumerate(_pdr_x_ticks) if x_i%temp==0][:-1] +[_pdr_x_ticks[-1]]
+            pdr_y_limit = -1
+            for t in range(num_trials):
+                for ns in pdr_x_ticks:
                     data_pdr_lod.append({
                         'lc': f"LC{l_i+1}",
                         'type': 'S$^2$LCT (SEED)',
                         'num_seed': ns,
-                        'scores': float(pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t])
+                        'scores': pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t]
                     })
                     data_pdr_lod.append({
                         'lc': f"LC{l_i+1}",
                         'type': 'S$^2$LCT (SEED+EXP)',
                         'num_seed': ns,
-                        'scores': float(pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t])
+                        'scores': pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]
                     })
                     data_pdr_lod.append({
                         'lc': f"LC{l_i+1}",
                         'type': 'CHECKLIST',
                         'num_seed': ns,
-                        'scores': float(pdr_cov_result[lc_desc]['bl'][f"{ns}sample"]['coverage_scores'][t])
+                        'scores': pdr_cov_result[lc_desc]['bl'][f"{ns}sample"]['coverage_scores'][t]
                     })
-
+                    if pdr_y_limit<pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]:
+                        pdr_y_limit=pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]
+                    # end if
+                # end for
+                
+                for ns in x_ticks:
                     data_sb_lod.append({
                         'lc': f"LC{l_i+1}",
                         'type': 'S$^2$LCT (SEED)',
@@ -363,7 +372,7 @@ class Plots:
                     })
                     data_sb_lod.append({
                         'lc': f"LC{l_i+1}",
-                        'type': 'S$^2$LCT (SEED)',
+                        'type': 'S$^2$LCT (SEED+EXP)',
                         'num_seed': ns,
                         'scores': float(selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t])
                     })
@@ -384,13 +393,12 @@ class Plots:
             # fig: plt.Figure = plt.figure()
             # ax: plt.Axes = fig.subplots()
             
-            hue_order_sb = ['CHECKLIST', 'S$^2$LCT (SEED)', ]
-            hue_order_pdr = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+            hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
             
             from numpy import median
             ax_sb = sns.lineplot(data=df_sb, x='num_seed', y='scores',
                                  hue='type',
-                                 hue_order=hue_order_sb,
+                                 hue_order=hue_order,
                                  estimator=median,
                                  style='type',
                                  err_style='bars',
@@ -404,18 +412,19 @@ class Plots:
             
             ax_pdr = sns.lineplot(data=df_pdr, x='num_seed', y='scores',
                                   hue='type',
-                                  hue_order=hue_order_pdr,
+                                  hue_order=hue_order,
                                   estimator=median,
                                   style='type',
                                   err_style='bars',
                                   markers=['X', 's', 'o'],
-                                  markersize=9,
+                                  markersize=7,
                                   markeredgewidth=0,
                                   dashes=True,
                                   palette="Set1",
                                   err_kws={'capsize': 3},
                                   ax=ax2)
-            plt.xticks(x_ticks)
+            # plt.xticks(x_ticks)
+            ax_sb.set_xticks(x_ticks)
             ax_sb.set_ylim(0.0, 1.2)
             ax_sb.set_xlabel("Number of seeds")
             ax_sb.set_ylabel("Self-BLEU score")
@@ -423,8 +432,8 @@ class Plots:
             # Shrink current axis by 20%
             # box = ax_sb.get_position()
             # ax_sb.set_position([box.x0, box.y0, box.width * 0.9, box.height])
-            
-            ax_pdr.set_ylim(0, 750)
+            ax_pdr.set_xticks(pdr_x_ticks)
+            ax_pdr.set_ylim(-100, pdr_y_limit+500)
             ax_pdr.set_xlabel("Number of seeds")
             ax_pdr.set_ylabel("Number of Production Rules Covered")
             
@@ -435,7 +444,7 @@ class Plots:
             # Put a legend to the right of the current axis
             # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
             fig.tight_layout()
-            fig.savefig(figs_dir / "pdr-selfbleu-agg-lc{l_i}-lineplot.eps")
+            fig.savefig(figs_dir / f"pdr-selfbleu-agg-lc{l_i+1}-lineplot.eps")
         # end for
         return
         
@@ -1109,7 +1118,7 @@ class Plots:
                 _model_name = 'DistilBERT'
             # end if
 
-            for ns in enumerate(x_ticks):
+            for ns in x_ticks:
                 sample_key = f"{ns}sample"
                 for t in range(num_trials):
                     num_p2fs = list()
