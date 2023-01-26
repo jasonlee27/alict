@@ -207,7 +207,12 @@ def read_hatecheck_testcases(task, search_dataset_name, selection_method):
         sents = Hatecheck.get_sents(
             Macros.hatecheck_data_file,
         )
-        _sents = [s['sent'] for s in sents if s['func']==Hatecheck.FUNCTIONALITY_MAP[lc]]
+        func_name = [
+            Hatecheck.FUNCTIONALITY_MAP[key]
+            for key in Hatecheck.FUNCTIONALITY_MAP.keys()
+            if key.split('::')[-1]==lc
+        ][0]
+        _sents = [s['sent'] for s in sents if s['func']==func_name]
         texts_lcs[lc] = _sents
         texts_all.extend(_sents)
     # end for
@@ -218,7 +223,7 @@ def main_sample(task,
                 search_dataset_name,
                 selection_method):
     num_trials = 10
-    num_samples = [100, 200, 300, 400, 500]
+    num_samples = [50, 100, 150, 200]
     logger_file = Macros.log_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
     result_file = Macros.selfbleu_result_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
     logger = Logger(logger_file=logger_file,

@@ -15,6 +15,7 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
                         'requirement', 'template', 'testsuite', 'testmodel', 'analyze',
+                        'failcase', 'selfbleu', 'pdrule_cov',
                         'humanstudy', 'humanstudy_results',
                         'tables'
                     ], help='task to be run')
@@ -176,6 +177,45 @@ def run_analyze():
     # end if
     return
 
+# ==========
+# Exp
+
+def run_failcase():
+    from .exp.Failcase import main_fail, main_p2f_f2p
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    main_fail(nlp_task,
+              search_dataset_name,
+              selection_method)
+    main_p2f_f2p(nlp_task,
+                 search_dataset_name,
+                 selection_method)
+    return
+
+def run_selfbleu():
+    from .exp.SelfBleu import main_sample
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    main_sample(nlp_task,
+                search_dataset_name,
+                selection_method)
+    return
+
+def run_pdrule_cov():
+    from .exp.ProductionruleCoverage import main_sample, main_all
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    main_sample(nlp_task,
+                search_dataset_name,
+                selection_method)
+    main_all(nlp_task,
+             search_dataset_name,
+             selection_method)
+    return
+
 
 # ==========
 # Human study
@@ -229,6 +269,9 @@ func_map = {
         'testsuite': run_testsuites,
         'testmodel': run_testmodel,
         'analyze': run_analyze,
+        'failcase': run_failcase,
+        'selfbleu': run_selfbleu,
+        'pdrule_cov': run_pdrule_cov,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
         'tables': run_make_tables

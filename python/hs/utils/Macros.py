@@ -70,6 +70,12 @@ class Macros:
 
     hs_models_file = download_dir / "models" / "hs_models.txt"
 
+    # Self-Bleu
+    selfbleu_result_dir: Path = result_dir / 'selfbleu'
+    
+    # Production Rule Coverage
+    pdr_cov_result_dir: Path = result_dir / 'pdr_cov'
+    
     OUR_LC_LIST = [
         'Derogation::Expression of strong negative emotions (explicit)',
         'Derogation::Description using very negative attributes (explicit)',

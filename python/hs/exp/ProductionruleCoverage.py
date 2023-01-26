@@ -230,7 +230,16 @@ class ProductionruleCoverage:
             sents = Hatecheck.get_sents(
                 Macros.hatecheck_sa_dataset_file,
             )
-            args = [s['sent'] for s in sents if s['sent'] not in bl_rules[lc_desc].keys() and if s['func']==Hatecheck.FUNCTIONALITY_MAP[lc]]
+            func_name = [
+                Hatecheck.FUNCTIONALITY_MAP[key]
+                for key in Hatecheck.FUNCTIONALITY_MAP.keys()
+                if key.split('::')[-1]==lc_desc
+            ][0]
+            args = [
+                s['sent']
+                for s in sents
+                if s['sent'] not in bl_rules[lc_desc].keys() and if s['func']==func_name
+            ]
             if any(args):
                 pool = Pool(processes=NUM_PROCESSES)
                 results = pool.map_async(get_cfg_rules_per_sent,
