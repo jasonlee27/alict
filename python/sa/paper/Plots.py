@@ -188,7 +188,7 @@ class Plots:
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'num_seed': ns,
-                    'scores': math.log(result[lc_desc]['bl']['coverage_scores'])
+                    'scores': math.log10(result[lc_desc]['bl']['coverage_scores'])
                 })
                 # print(l_i+1, bl_score, result[lc_desc]['ours_seed_exp']['med_score'], float(result[lc_desc]['ours']['med_score'])/bl_score)
                 # data_lod.append({
