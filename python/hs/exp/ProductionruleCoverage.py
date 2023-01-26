@@ -22,7 +22,7 @@ try:
 except RuntimeError:
     pass
 
-NUM_PROCESSES = 2 # Macros.num_processes
+NUM_PROCESSES = 1 # Macros.num_processes
 
 def get_cfg_rules_per_sent(sent):
     st = time.time()
@@ -228,7 +228,7 @@ class ProductionruleCoverage:
                 logger.print(f"BL_FOR_PDR::{lc_desc}")
             # end if
             sents = Hatecheck.get_sents(
-                Macros.hatecheck_sa_dataset_file,
+                Macros.hatecheck_data_file,
             )
             func_name = [
                 Hatecheck.FUNCTIONALITY_MAP[key]
@@ -238,7 +238,7 @@ class ProductionruleCoverage:
             args = [
                 s['sent']
                 for s in sents
-                if s['sent'] not in bl_rules[lc_desc].keys() and if s['func']==func_name
+                if s['sent'] not in bl_rules[lc_desc].keys() and s['func']==func_name
             ]
             if any(args):
                 pool = Pool(processes=NUM_PROCESSES)
