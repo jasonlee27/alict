@@ -219,7 +219,7 @@ def main_sample(task,
                 search_dataset_name,
                 selection_method):
     num_trials = 10
-    num_samples = [100, 200, 300, 400, 500]
+    num_samples = [200, 400, 600, 800, 1000]
     logger_file = Macros.log_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
     result_file = Macros.selfbleu_result_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
     logger = Logger(logger_file=logger_file,

@@ -4,6 +4,7 @@
 # OURS::Sentiment change over time, present should prevail::75294sents::around6secperonesent::125.49hourstocomplete(sequentially)
 
 import os
+import math
 import nltk
 import time
 import random
@@ -212,7 +213,7 @@ def read_hatecheck_testcases(task, search_dataset_name, selection_method):
             for key in Hatecheck.FUNCTIONALITY_MAP.keys()
             if key.split('::')[-1]==lc
         ][0]
-        _sents = [s['sent'] for s in sents if s['func']==func_name]
+        _sents = [s['sent'] for s in sents if s['func']==func_name or s['func'] in func_name]
         texts_lcs[lc] = _sents
         texts_all.extend(_sents)
     # end for
@@ -223,7 +224,6 @@ def main_sample(task,
                 search_dataset_name,
                 selection_method):
     num_trials = 10
-    num_samples = [50, 100, 150, 200]
     logger_file = Macros.log_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
     result_file = Macros.selfbleu_result_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
     logger = Logger(logger_file=logger_file,
@@ -248,6 +248,8 @@ def main_sample(task,
         if lc not in scores.keys():
             logger.print(lc)
             our_sents, bl_sents = list(), list()
+            max_num_samples = int(10*math.ceil(len(texts_hatecheck[lc])/10.))
+            num_samples = list(range(10, max_num_samples, 10))
             scores[lc] = {
                 'ours_seed': {
                     f"{num_sample}sample": {

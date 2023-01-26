@@ -26,6 +26,7 @@ NUM_PROCESSES = 1 # Macros.num_processes
 
 def get_cfg_rules_per_sent(sent):
     st = time.time()
+    print(sent)
     tree_dict = BeneparCFG.get_seed_cfg(sent)
     cfg_rules = tree_dict['rule']
     rules = list()
@@ -120,7 +121,6 @@ class ProductionruleCoverage:
                 if logger is not None:
                     logger.print(f"OUR_SEED::{lc_desc}")
                 # end if
-                        
                 for seed in cfg_res['inputs'].keys():
                     if seed not in seed_rules.keys():
                         cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
@@ -287,7 +287,8 @@ def main_sample(task,
     scores = dict()
     for lc in tqdm(seed_rules.keys()):
         if lc not in scores.keys():
-            num_samples = list(range(100, len(list(hatecheck_rules[lc].keys()))+100, 100))
+            max_num_samples = int(10*math.ceil(len(hatecheck_rules[lc].keys())/10.))
+            num_samples = list(range(10, max_num_samples, 10))
             logger.print(f"OURS_PDR_SAMPLE::{lc}")
             our_sents, bl_sents = list(), list()
             scores[lc] = {
