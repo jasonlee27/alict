@@ -95,7 +95,6 @@ class Plots:
         num_seeds = list(x_ticks.keys())
         result_file = results_dir / 'selfbleu' / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
         result = Utils.read_json(result_file)
-        print(result.keys())
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
@@ -118,43 +117,42 @@ class Plots:
                     'scores': float(result[lc_desc]['bl'][num_sample]['avg_score'])
                 })
             # end for
+
+            df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+            
+            # Plotting part
+            fig: plt.Figure = plt.figure()
+            ax: plt.Axes = fig.subplots()
+            
+            hue_order = ['CHECKLIST', 'S$^2$LCT']
+            markers = ['$1$', '$2$']
+            
+            ax = sns.lineplot(data=df, x='num_seed', y='scores',
+                              hue='type',
+                              hue_order=hue_order,
+                              style='type',
+                              estimator='median',
+                              markers=True,
+                              markersize=9,
+                              markeredgewidth=0,
+                              dashes=True,
+                              palette="Set1",
+                              errorbar=('ci', 95),
+                              ax=ax)
+            plt.xticks(list(x_ticks.values()))
+            ax.set_ylim(0.0, 1.1)
+            ax.set_xlabel("Number of seed samples")
+            ax.set_ylabel("Self-BLEU")
+            
+            # Shrink current axis by 20%
+            box = ax.get_position()
+            ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+            
+            # Put a legend to the right of the current axis
+            ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+            # fig.tight_layout()
+            fig.savefig(figs_dir / f"selfbleu-sample-lc{l_i+1}-lineplot.eps")
         # end for
-        
-        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
-
-        # Plotting part
-        fig: plt.Figure = plt.figure()
-        ax: plt.Axes = fig.subplots()
-
-        hue_order = ['CHECKLIST', 'S$^2$LCT']
-        markers = ['$1$', '$2$']
-
-        ax = sns.lineplot(data=df, x='num_seed', y='scores',
-                          hue='type',
-                          hue_order=hue_order,
-                          style='type',
-                          estimator='median',
-                          err_style=None, # or "band"
-                          markers=True,
-                          markersize=9,
-                          markeredgewidth=0,
-                          dashes=True,
-                          palette="Set1",
-                          errorbar='sd',
-                          ax=ax)
-        plt.xticks(list(x_ticks.values()))
-        ax.set_ylim(0.0, 1.1)
-        ax.set_xlabel("Number of seed samples")
-        ax.set_ylabel("Self-BLEU")
-        
-        # Shrink current axis by 20%
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
-
-        # Put a legend to the right of the current axis
-        ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-        # fig.tight_layout()
-        fig.savefig(figs_dir / "selfbleu-sample-lineplot.eps")
         return
 
     @classmethod
