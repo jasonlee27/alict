@@ -220,8 +220,8 @@ def main_sample(task,
                 selection_method):
     num_trials = 10
     num_samples = [50, 100, 150, 200]
-    logger_file = Macros.log_dir / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
-    result_file = Macros.selfbleu_result_dir / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+    logger_file = Macros.log_dir / f"{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
+    result_file = Macros.selfbleu_result_dir / f"{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_selfbleu_log')
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)

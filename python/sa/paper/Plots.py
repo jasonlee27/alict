@@ -93,12 +93,13 @@ class Plots:
         data_lod: List[dict] = list()
         x_ticks = {0:50, 1:100, 2:150, 3:200}
         num_seeds = list(x_ticks.keys())
-        result_file = results_dir / 'selfbleu' / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+        result_file = results_dir / 'selfbleu' / f"{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
         result = Utils.read_json(result_file)
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
             lc_desc = lc.strip().split('::')[0]
+            print(l_i, lc_desc)
             lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
             for s_i, num_sample in enumerate(result[lc_desc]['ours'].keys()):
                 _num_sample = int(num_sample.split('sample')[0])
