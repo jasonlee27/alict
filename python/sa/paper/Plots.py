@@ -90,6 +90,7 @@ class Plots:
                              task=Macros.sa_task,
                              search_dataset_name=Macros.datasets[Macros.sa_task][0],
                              selection_method='random'):
+        num_trials = 10
         data_lod: List[dict] = list()
         x_ticks = {0:50, 1:100, 2:150, 3:200}
         num_seeds = list(x_ticks.keys())
@@ -99,46 +100,57 @@ class Plots:
         req_file = req_dir / 'requirements_desc.txt'
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
             lc_desc = lc.strip().split('::')[0]
-            print(l_i, lc_desc)
             lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
-            for s_i, num_sample in enumerate(result[lc_desc]['ours'].keys()):
+            for s_i, num_sample in enumerate(result[lc_desc]['ours_seed'].keys()):
                 _num_sample = int(num_sample.split('sample')[0])
-                data_lod.append({
-                    'sample': s_i,
-                    'lc': f"LC{l_i+1}",
-                    'type': 'S$^2$LCT',
-                    'num_seed': _num_sample,
-                    'scores': float(result[lc_desc]['ours'][num_sample]['avg_score'])
-                })
-                data_lod.append({
-                    'sample': s_i,
-                    'lc': f"LC{l_i+1}",
-                    'type': 'CHECKLIST',
-                    'num_seed': _num_sample,
-                    'scores': float(result[lc_desc]['bl'][num_sample]['avg_score'])
-                })
+                for t in range(num_trials):
+                    data_lod.append({
+                        'sample': s_i,
+                        'lc': f"LC{l_i+1}",
+                        'type': 'S$^2$LCT (SEED)',
+                        'trial': t,
+                        'num_seed': _num_sample,
+                        'scores': result[lc_desc]['ours_seed'][num_sample]['selfbleu_scores'][t]
+                    })
+                    data_lod.append({
+                        'sample': s_i,
+                        'lc': f"LC{l_i+1}",
+                        'type': 'S$^2$LCT (SEED+EXP)',
+                        'trial': t,
+                        'num_seed': _num_sample,
+                        'scores': result[lc_desc]['ours_seed_exp'][num_sample]['selfbleu_scores'][t]
+                    })
+                    data_lod.append({
+                        'sample': s_i,
+                        'lc': f"LC{l_i+1}",
+                        'type': 'CHECKLIST',
+                        'trial': t,
+                        'num_seed': _num_sample,
+                        'scores': result[lc_desc]['bl'][num_sample]['selfbleu_scores'][t]
+                    })
+                # end for
             # end for
-
             df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
             
             # Plotting part
             fig: plt.Figure = plt.figure()
             ax: plt.Axes = fig.subplots()
             
-            hue_order = ['CHECKLIST', 'S$^2$LCT']
-            markers = ['$1$', '$2$']
-            
+            hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+            markers = ['$1$', '$2$', '$3$']
+            from numpy import median
             ax = sns.lineplot(data=df, x='num_seed', y='scores',
                               hue='type',
                               hue_order=hue_order,
                               style='type',
-                              estimator='median',
+                              estimator=median,
+                              err_style="bars",
                               markers=True,
                               markersize=9,
                               markeredgewidth=0,
                               dashes=True,
                               palette="Set1",
-                              errorbar=('ci', 95),
+                              err_kws={'capsize': 3},
                               ax=ax)
             plt.xticks(list(x_ticks.values()))
             ax.set_ylim(0.0, 1.1)
