@@ -1093,114 +1093,115 @@ class Plots:
         data_lod_pass2fail = list()
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
-        p2f_result_file = Macros.result_dir / 'p2f_f2p_sa_sst_random.json'
-        fail_result_file = Macros.result_dir / 'failcases_sa_sst_random.json'
-        fail_bl_result_file = Macros.result_dir / 'failcases_bl_sa_sst_random.json'
+        p2f_result_file = Macros.result_dir / f"p2f_f2p_{task}_{search_dataset_name}_{selection_method}.json"
+        fail_result_file = Macros.result_dir / f"failcases_{task}_{search_dataset_name}_{selection_method}.json"
+        fail_bl_result_file = Macros.result_dir / f"failcases_bl_{task}_{search_dataset_name}_{selection_method}.json"
         p2f_result = Utils.read_json(p2f_result_file)
         fail_result = Utils.read_json(fail_result_file)
         fail_bl_result = Utils.read_json(fail_bl_result_file)
         model_names = list()
         data_lod_pass2fail = list()
         data_lod_numfail = list()
-        for model_name in p2f_result.keys():
-            p2f_result_model = p2f_result[model_name]
-            fail_result_model = fail_result[model_name]
-            fail_bl_result_model = fail_bl_result[model_name]
-            _model_name = model_name.split('/')[-1]
-            if _model_name.startswith('bert-base'):
-                model_names.append('BERT')
-                _model_name = 'BERT'
-            elif _model_name.startswith('roberta-base'):
-                model_names.append('RoBERTa')
-                _model_name = 'RoBERTa'
-            else:
-                model_names.append('DistilBERT')
-                _model_name = 'DistilBERT'
-            # end if
-
-            for ns in x_ticks:
-                sample_key = f"{ns}sample"
-                for t in range(num_trials):
+        for l_i, lc in enumerate(Utils.read_txt(req_file)):
+            lc_desc = lc.strip().split('::')[0]
+            lc_desc = lc_desc if lc_desc in p2f_result_model.keys() else lc_desc.lower()
+            
+            for model_name in p2f_result.keys():
+                p2f_result_model = p2f_result[model_name]
+                fail_result_model = fail_result[model_name]
+                fail_bl_result_model = fail_bl_result[model_name]
+                _model_name = model_name.split('/')[-1]
+                if _model_name.startswith('bert-base'):
+                    model_names.append('BERT')
+                    _model_name = 'BERT'
+                elif _model_name.startswith('roberta-base'):
+                    model_names.append('RoBERTa')
+                    _model_name = 'RoBERTa'
+                else:
+                    model_names.append('DistilBERT')
+                    _model_name = 'DistilBERT'
+                # end if
+                for ns in x_ticks:
+                    sample_key = f"{ns}sample"
                     num_p2fs = list()
                     num_fails = list()
                     num_bl_fails = list()
-                    for l_i, lc in enumerate(Utils.read_txt(req_file)):
-                        lc_desc = lc.strip().split('::')[0]
-                        lc_desc = lc_desc if lc_desc in p2f_result_model.keys() else lc_desc.lower()
-                        num_p2fs.append(p2f_result_model[lc_desc][sample_key]['p2f'][t])
-                        num_fails.append(fail_result_model[lc_desc][sample_key][t])
-                        num_bl_fails.append(fail_bl_result_model[lc_desc][sample_key][t])
+                    for t in range(num_trials):
+                        data_lod_pass2fail.append({
+                            'model': _model_name,
+                            'num_seed': ns,
+                            'num_trial': t,
+                            'num_pass2fail': p2f_result_model[lc_desc][sample_key]['p2f'][t]
+                        })
+                        data_lod_numfail.append({
+                            'model': f"{_model_name} (S^2LCT)",
+                            'num_seed': ns,
+                            'num_trial': t,
+                            'num_fail': fail_result_model[lc_desc][sample_key][t]
+                        })
+                        data_lod_numfail.append({
+                            'model': f"{_model_name} (CHECKLIST)",
+                            'num_seed': ns,
+                            'num_trial': t,
+                            'num_fail': fail_bl_result_model[lc_desc][sample_key][t]
+                        })
                     # end for
-                    data_lod_pass2fail.append({
-                        'model': _model_name,
-                        'num_seed': ns,
-                        'num_trial': t,
-                        'num_pass2fail': float(Utils.median(num_p2fs))
-                    })
-                    data_lod_numfail.append({
-                        'model': f"{_model_name} (S^2LCT)",
-                        'num_seed': ns,
-                        'num_trial': t,
-                        'num_fail': float(Utils.median(num_fails))
-                    })
-                    data_lod_numfail.append({
-                        'model': f"{_model_name} (CHECKLIST)",
-                        'num_seed': ns,
-                        'num_trial': t,
-                        'num_fail': float(Utils.median(num_bl_fails))
-                    })
                 # end for
             # end for
-        # end for
-        df_numfail: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod_numfail))
-        df_pass2fail: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod_pass2fail))
+            df_numfail: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod_numfail))
+            df_pass2fail: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod_pass2fail))
         
-        # Plotting part
-        fig, (ax1, ax2) = plt.subplots(ncols=2, sharey=False)
-        # fig: plt.Figure = plt.figure()
-        # ax: plt.Axes = fig.subplots()
-
-        from numpy import median
-        hue_order = [f"{m} (S^2LCT)" for m in model_names]+[f"{m} (CHECKLIST)" for m in model_names]
-        # markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
-        ax_numfail = sns.lineplot(data=df_numfail, x='num_seed', y='num_fail',
-                                  hue='model',
-                                  hue_order=hue_order,
-                                  estimator=median,
-                                  style='model',
-                                  err_style=None, # or "bars"
-                                  markers=True,
-                                  markersize=9,
-                                  markeredgewidth=0,
-                                  dashes=True,
-                                  ax=ax1)
-        hue_order = model_names
-        ax_pass2fail = sns.lineplot(data=df_pass2fail, x='num_seed', y='num_pass2fail',
-                                    hue='model',
-                                    hue_order=hue_order,
-                                    estimator=median,
-                                    style='model',
-                                    err_style=None, # or "bars"
-                                    markers=True,
-                                    markersize=9,
-                                    markeredgewidth=0,
-                                    dashes=True,
-                                    ax=ax2)
-        plt.xticks(x_ticks)
-        ax_numfail.set_ylim(-10, 270)
-        ax_numfail.set_xlabel("Number of seeds")
-        ax_numfail.set_ylabel("Number of fail cases")
-
-        ax_pass2fail.set_ylim(0, 15)
-        ax_pass2fail.set_xlabel("Number of seeds")
-        ax_pass2fail.set_ylabel("Number of pass-to-fail cases")
+            # Plotting part
+            fig, (ax1, ax2) = plt.subplots(ncols=2, sharey=False)
+            # fig: plt.Figure = plt.figure()
+            # ax: plt.Axes = fig.subplots()
             
-        # Shrink current axis by 20%
-        # box = ax.get_position()
-        # ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+            from numpy import median
+            hue_order = [f"{m} (S^2LCT)" for m in model_names]+[f"{m} (CHECKLIST)" for m in model_names]
+            # markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
+            ax_numfail = sns.lineplot(data=df_numfail, x='num_seed', y='num_fail',
+                                      hue='model',
+                                      hue_order=hue_order,
+                                      estimator=median,
+                                      style='model',
+                                      err_style="bars",
+                                      markers=True,
+                                      markersize=9,
+                                      markeredgewidth=0,
+                                      dashes=True,
+                                      palette="Set1",
+                                      err_kws={'capsize': 3},
+                                      ax=ax1)
+            hue_order = model_names
+            ax_pass2fail = sns.lineplot(data=df_pass2fail, x='num_seed', y='num_pass2fail',
+                                        hue='model',
+                                        hue_order=hue_order,
+                                        estimator=median,
+                                        style='model',
+                                        err_style="bars",
+                                        markers=True,
+                                        markersize=9,
+                                        markeredgewidth=0,
+                                        dashes=True,
+                                        palette="Set1",
+                                        err_kws={'capsize': 3},
+                                        ax=ax2)
+            plt.xticks(x_ticks)
+            ax_numfail.set_ylim(-10, 270)
+            ax_numfail.set_xlabel("Number of seeds")
+            ax_numfail.set_ylabel("Number of fail cases")
             
-        # Put a legend to the right of the current axis
-        # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
-        fig.tight_layout()
-        fig.savefig(figs_dir / f"numfail-pass2fail-agg-lineplot.eps")
+            ax_pass2fail.set_ylim(0, 15)
+            ax_pass2fail.set_xlabel("Number of seeds")
+            ax_pass2fail.set_ylabel("Number of pass-to-fail cases")
+            
+            # Shrink current axis by 20%
+            # box = ax.get_position()
+            # ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+            
+            # Put a legend to the right of the current axis
+            # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+            fig.tight_layout()
+            fig.savefig(figs_dir / f"numfail-pass2fail-agg-lc{l_i+1}-lineplot.eps")
+        # end for
         return
