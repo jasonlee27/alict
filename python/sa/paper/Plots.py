@@ -92,8 +92,7 @@ class Plots:
                              selection_method='random'):
         num_trials = 10
         data_lod: List[dict] = list()
-        x_ticks = {0:50, 1:100, 2:150, 3:200}
-        num_seeds = list(x_ticks.keys())
+        x_ticks = [50, 100, 150, 200]
         result_file = results_dir / 'selfbleu' / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
         result = Utils.read_json(result_file)
         req_dir = results_dir / 'reqs'
@@ -152,7 +151,7 @@ class Plots:
                               palette="Set1",
                               err_kws={'capsize': 3},
                               ax=ax)
-            plt.xticks(list(x_ticks.values()))
+            plt.xticks(x_ticks)
             ax.set_ylim(0.0, 1.2)
             ax.set_xlabel("Number of seed samples")
             ax.set_ylabel("Self-BLEU")
@@ -176,8 +175,7 @@ class Plots:
                      search_dataset_name=Macros.datasets[Macros.sa_task][0],
                      selection_method='random'):
         data_lod: List[dict] = list()
-        x_ticks = {0:0} # , 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
+        x_ticks = [0] # , 1:100, 2:200}
         result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
         result = Utils.read_json(result_file)
         req_dir = results_dir / 'reqs'
@@ -185,7 +183,7 @@ class Plots:
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
             lc_desc = lc.strip().split('::')[0]
             lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
-            for ns in x_ticks.values():
+            for ns in x_ticks:
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
@@ -322,9 +320,8 @@ class Plots:
                               search_dataset_name=Macros.datasets[Macros.sa_task][0],
                               selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = {0:50, 1:100, 2:150, 3:200}
+        x_ticks = [50, 100, 150, 200]
         num_trials = 10
-        num_seeds = list(x_ticks.keys())
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
         selfbleu_result_file = results_dir / 'selfbleu' / f"seeds_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
@@ -337,7 +334,7 @@ class Plots:
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
             lc_desc = lc.strip().split('::')[0]
             lc_desc = lc_desc if lc_desc in pdr_cov_result.keys() else lc_desc.lower()
-            for ns in x_ticks.values():
+            for ns in x_ticks:
                 for t in range(num_trials):
                     data_pdr_lod.append({
                         'lc': f"LC{l_i+1}",
@@ -418,7 +415,7 @@ class Plots:
                                   palette="Set1",
                                   err_kws={'capsize': 3},
                                   ax=ax2)
-            plt.xticks(list(x_ticks.values()))
+            plt.xticks(x_ticks)
             ax_sb.set_ylim(0.0, 1.2)
             ax_sb.set_xlabel("Number of seeds")
             ax_sb.set_ylabel("Self-BLEU score")
@@ -452,8 +449,7 @@ class Plots:
                                           selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
+        x_ticks = [50, 100, 150, 200]
         data_lod = dict()
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -467,7 +463,7 @@ class Plots:
             markers.append(marker)
         # end for
 
-        for ns_i, ns in x_ticks.items():
+        for ns_i, ns in enumerate(x_ticks):
             for num_trial in range(num_trials):
                 _num_trial = '' if num_trial==0 else str(num_trial+1)
                 seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
@@ -517,7 +513,7 @@ class Plots:
                               dashes=True,
                               errorbar='sd',
                               ax=ax)
-            plt.xticks(list(x_ticks.values()))
+            plt.xticks(x_ticks)
             ax.set_ylim(-0.1, 1.2)
             ax.set_xlabel("Number of seeds")
             ax.set_ylabel("Failure rate on S$^2$LCT test cases")
@@ -541,8 +537,7 @@ class Plots:
                                       selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
+        x_ticks = [50, 100, 150, 200]
         data_lod = dict()
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -553,7 +548,7 @@ class Plots:
         hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
         markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
 
-        for ns_i, ns in x_ticks.items():
+        for ns_i, ns in enumerate(x_ticks):
             for num_trial in range(num_trials):
                 _num_trial = '' if num_trial==0 else str(num_trial+1)
                 seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
@@ -605,7 +600,7 @@ class Plots:
                               dashes=True,
                               errorbar='sd',
                               ax=ax)
-            plt.xticks(list(x_ticks.values()))
+            plt.xticks(x_ticks)
             ax.set_ylim(-0.1, 1.2)
             ax.set_xlabel("Number of seeds")
             ax.set_ylabel("Failure rate on S$^2$LCT seed test cases")
@@ -629,8 +624,7 @@ class Plots:
                                      selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
+        x_ticks = [50, 100, 150, 200]
         data_lod = dict()
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -641,7 +635,7 @@ class Plots:
         hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
         markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
         
-        for ns_i, ns in x_ticks.items():
+        for ns_i, ns in enumerate(x_ticks):
             for num_trial in range(num_trials):
                 _num_trial = '' if num_trial==0 else str(num_trial+1)
                 seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
@@ -693,7 +687,7 @@ class Plots:
                               dashes=True,
                               errorbar='sd',
                               ax=ax)
-            plt.xticks(list(x_ticks.values()))
+            plt.xticks(x_ticks)
             ax.set_ylim(-0.1, 1.2)
             ax.set_xlabel("Number of seeds")
             ax.set_ylabel("Failure rate on S$^2$LCT expanded test cases")
@@ -717,8 +711,7 @@ class Plots:
                                   selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
+        x_ticks = [50, 100, 150, 200]
         data_lod = dict()
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -729,7 +722,7 @@ class Plots:
         hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
         markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
 
-        for ns_i, ns in x_ticks.items():
+        for ns_i, ns in enumerate(x_ticks):
             for num_trial in range(num_trials):
                 _num_trial = '' if num_trial==0 else str(num_trial+1)
                 seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
@@ -781,7 +774,7 @@ class Plots:
                               dashes=True,
                               errorbar='sd',
                               ax=ax)
-            plt.xticks(list(x_ticks.values()))
+            plt.xticks(x_ticks)
             ax.set_ylim(-20, 350)
             ax.set_xlabel("Number of seeds")
             ax.set_ylabel("Number of Pass2fail")
@@ -805,8 +798,7 @@ class Plots:
                                 selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
+        x_ticks = [50, 100, 150, 200]
         data_lod = dict()
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -817,7 +809,7 @@ class Plots:
         hue_order = [f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))]
         markers = [f"${l_i+1}$" for l_i, _ in enumerate(Utils.read_txt(req_file))]
 
-        for ns_i, ns in x_ticks.items():
+        for ns_i, ns in enumerate(x_ticks):
             for num_trial in range(num_trials):
                 _num_trial = '' if num_trial==0 else str(num_trial+1)
                 seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
@@ -869,7 +861,7 @@ class Plots:
                               dashes=True,
                               errorbar='sd',
                               ax=ax)
-            plt.xticks(list(x_ticks.values()))
+            plt.xticks(x_ticks)
             ax.set_ylim(-500, 6000)
             ax.set_xlabel("Number of seeds")
             ax.set_ylabel("Number of fail cases")
@@ -893,8 +885,7 @@ class Plots:
                                     selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
+        x_ticks = [50, 100, 150, 200]
         data_lod = list()
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -904,7 +895,7 @@ class Plots:
         }
         model_names = list()
 
-        for ns_i, ns in x_ticks.items():
+        for ns_i, ns in enumerate(x_ticks):
             for num_trial in range(num_trials):
                 _num_trial = '' if num_trial==0 else str(num_trial+1)
                 seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
@@ -967,7 +958,7 @@ class Plots:
                           palette='Set1',
                           errorbar='sd',
                           ax=ax)
-        plt.xticks(list(x_ticks.values()))
+        plt.xticks(x_ticks)
         ax.set_ylim(-500, 4000)
         ax.set_xlabel("Number of seeds")
         ax.set_ylabel("Number of fail cases")
@@ -991,8 +982,7 @@ class Plots:
                                       selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
-        x_ticks = {0:50, 1:100, 2:200}
-        num_seeds = list(x_ticks.keys())
+        x_ticks = [50, 100, 150, 200]
         data_lod = list()
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -1002,7 +992,7 @@ class Plots:
         }
         model_names = list()
 
-        for ns_i, ns in x_ticks.items():
+        for ns_i, ns in enumerate(x_ticks):
             for num_trial in range(num_trials):
                 _num_trial = '' if num_trial==0 else str(num_trial+1)
                 seed_file = Macros.result_dir / f"test_results{_num_trial}_{task}_{search_dataset_name}_{selection_method}_{ns}seeds" / "test_result_analysis.json"
@@ -1065,7 +1055,7 @@ class Plots:
                           dashes=True,
                           errorbar='sd',
                           ax=ax)
-        plt.xticks(list(x_ticks.values()))
+        plt.xticks(x_ticks)
         ax.set_ylim(0, 120)
         ax.set_xlabel("Number of seeds")
         ax.set_ylabel("Number of pass-to-fail cases")
@@ -1087,10 +1077,9 @@ class Plots:
                                               task=Macros.sa_task,
                                               search_dataset_name=Macros.datasets[Macros.sa_task][0],
                                               selection_method='random'):
-        # num_seeds = [0,50,100,200] # x-axis
+        # num_seeds = [0,50,100,150,200] # x-axis
         num_trials = 10
-        x_ticks = {0:50, 1:100, 2:150, 3:200}
-        num_seeds = list(x_ticks.keys())
+        x_ticks = [50, 100, 150, 200]
         data_lod_numfail = list()
         data_lod_pass2fail = list()
         req_dir = results_dir / 'reqs'
@@ -1120,7 +1109,7 @@ class Plots:
                 _model_name = 'DistilBERT'
             # end if
 
-            for ns in x_ticks.values():
+            for ns in enumerate(x_ticks):
                 sample_key = f"{ns}sample"
                 for t in range(num_trials):
                     num_p2fs = list()
@@ -1188,7 +1177,7 @@ class Plots:
                                     markeredgewidth=0,
                                     dashes=True,
                                     ax=ax2)
-        plt.xticks(list(x_ticks.values()))
+        plt.xticks(x_ticks)
         ax_numfail.set_ylim(-10, 270)
         ax_numfail.set_xlabel("Number of seeds")
         ax_numfail.set_ylabel("Number of fail cases")
