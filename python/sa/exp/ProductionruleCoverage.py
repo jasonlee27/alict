@@ -307,9 +307,9 @@ def main_sample(task,
                     random.seed(num_trial)
                     seed_sents = random.sample(list(seed_rules[lc].keys()),
                                                min(len(seed_rules[lc]), num_sample))
-                    seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
-                    exp_sents = random.sample(seed_exp_sents,
-                                              min(len(seed_exp_sents), num_sample))
+                    all_seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
+                    seed_exp_sents = random.sample(seed_exp_sents,
+                                                   min(len(all_seed_exp_sents), num_sample))
                     bl_sents = random.sample(list(checklist_rules[lc].keys()),
                                              min(len(checklist_rules[lc]), num_sample))
                     pdr1 = {
