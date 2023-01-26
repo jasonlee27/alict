@@ -94,7 +94,7 @@ class Plots:
         data_lod: List[dict] = list()
         x_ticks = {0:50, 1:100, 2:150, 3:200}
         num_seeds = list(x_ticks.keys())
-        result_file = results_dir / 'selfbleu' / f"{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+        result_file = results_dir / 'selfbleu' / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
         result = Utils.read_json(result_file)
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'

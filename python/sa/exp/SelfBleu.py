@@ -219,9 +219,9 @@ def main_sample(task,
                 search_dataset_name,
                 selection_method):
     num_trials = 10
-    num_samples = [50, 100, 150, 200]
-    logger_file = Macros.log_dir / f"{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
-    result_file = Macros.selfbleu_result_dir / f"{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+    num_samples = [100, 200, 300, 400, 500]
+    logger_file = Macros.log_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
+    result_file = Macros.selfbleu_result_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_selfbleu_log')
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
@@ -242,7 +242,7 @@ def main_sample(task,
     scores = dict()
     for lc in texts_checklist.keys():
         if lc not in scores.keys():
-            logger.print(f"OURS::{lc}")
+            logger.print(lc)
             our_sents, bl_sents = list(), list()
             scores[lc] = {
                 'ours_seed': {

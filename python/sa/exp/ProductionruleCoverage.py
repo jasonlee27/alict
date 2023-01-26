@@ -251,7 +251,6 @@ def main_sample(task,
                 selection_method):
     st = time.time()
     num_trials = 10
-    num_samples = [50, 100, 150, 200]
     logger_file = Macros.log_dir / f"seed_{task}_{search_dataset_name}_{selection_method}_pdrcov.log"
     result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
     Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
@@ -280,6 +279,7 @@ def main_sample(task,
     scores = dict()
     for lc in tqdm(seed_rules.keys()):
         if lc not in scores.keys():
+            num_samples = list(range(100, len(list(checklist_rules[lc].keys()))+100, 100))
             logger.print(f"OURS_PDR_SAMPLE::{lc}")
             our_sents, bl_sents = list(), list()
             scores[lc] = {
