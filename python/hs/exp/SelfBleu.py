@@ -14,7 +14,7 @@ from multiprocessing import Pool
 # from functools import partial
 from nltk.translate.bleu_score import SmoothingFunction
 
-from ..seed.Search import ChecklistTestsuite
+from ..seed.Search import Hatecheck
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
@@ -196,7 +196,7 @@ def read_our_exps(task,
     # end for
     return seed_exp_map, texts_lcs
 
-def read_checklist_testcases(task, search_dataset_name, selection_method):
+def read_hatecheck_testcases(task, search_dataset_name, selection_method):
     seed_res_dir_name = f"templates_{task}_{search_dataset_name}_{selection_method}"
     seed_dir = Macros.result_dir / seed_res_dir_name
     cksums = Utils.read_txt(seed_dir / 'cksum_map.txt')
@@ -204,11 +204,10 @@ def read_checklist_testcases(task, search_dataset_name, selection_method):
     texts_all = list()
     for l in cksums:
         lc, cksum_val = l.split('\t')[0].strip(), l.split('\t')[1].strip()
-        sents = ChecklistTestsuite.get_sents(
-            Macros.checklist_sa_dataset_file,
-            lc
+        sents = Hatecheck.get_sents(
+            Macros.hatecheck_data_file,
         )
-        _sents = [s[1] for s in sents]
+        _sents = [s['sent'] for s in sents if s['func']==Hatecheck.FUNCTIONALITY_MAP[lc]]
         texts_lcs[lc] = _sents
         texts_all.extend(_sents)
     # end for
@@ -225,7 +224,7 @@ def main_sample(task,
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_selfbleu_log')
     Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
-    _, texts_checklist = read_checklist_testcases(task,
+    _, texts_hatecheck = read_hatecheck_testcases(task,
                                                   search_dataset_name,
                                                   selection_method)
     _, texts_seed = read_our_seeds(task,
@@ -240,7 +239,7 @@ def main_sample(task,
     #     scores = dict()
     # # end if
     scores = dict()
-    for lc in texts_checklist.keys():
+    for lc in texts_hatecheck.keys():
         if lc not in scores.keys():
             logger.print(lc)
             our_sents, bl_sents = list(), list()
@@ -271,15 +270,15 @@ def main_sample(task,
                     # _num_sample = min([
                     #     num_sample,
                     #     len(texts_seed_ours[lc]),
-                    #     len(texts_checklist[lc])
+                    #     len(texts_hatecheck[lc])
                     # ])
                     seed_sents = random.sample(texts_seed[lc], min(len(texts_seed[lc]), num_sample))
                     texts_exp = list()
                     for s in texts_seed[lc]:
                         texts_exp.extend(seed_exp_map[lc][s])
                     # end for
-                    bl_sents = random.sample(texts_checklist[lc],
-                                             min(len(texts_checklist[lc]), num_sample))
+                    bl_sents = random.sample(texts_hatecheck[lc],
+                                             min(len(texts_hatecheck[lc]), num_sample))
                     seed_exp_sents = random.sample(texts_seed[lc]+texts_exp,
                                                    min(len(texts_seed[lc]+texts_exp), num_sample))
                     sbleu_seed = SelfBleu(texts=seed_sents,

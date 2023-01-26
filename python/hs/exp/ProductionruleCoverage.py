@@ -14,7 +14,7 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 from ..synexp.cfg.CFG import BeneparCFG
-from ..seed.Search import ChecklistTestsuite
+from ..seed.Search import Hatecheck
 
 import torch.multiprocessing
 try:
@@ -205,7 +205,7 @@ class ProductionruleCoverage:
                          selection_method,
                          logger=None):
         bl_rules_over_lcs = dict()
-        res_file = Macros.pdr_cov_result_dir / f"bl_cfg_rules_{task}_checklist.json"
+        res_file = Macros.pdr_cov_result_dir / f"bl_cfg_rules_{task}_hatecheck.json"
         seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
         seed_files = [
             f for f in os.listdir(str(seed_dir))
@@ -227,11 +227,10 @@ class ProductionruleCoverage:
             if logger is not None:
                 logger.print(f"BL_FOR_PDR::{lc_desc}")
             # end if
-            sents = ChecklistTestsuite.get_sents(
-                Macros.checklist_sa_dataset_file,
-                lc_desc
+            sents = Hatecheck.get_sents(
+                Macros.hatecheck_sa_dataset_file,
             )
-            args = [s[1] for s in sents if s[1] not in bl_rules[lc_desc].keys()]
+            args = [s['sent'] for s in sents if s['sent'] not in bl_rules[lc_desc].keys() and if s['func']==Hatecheck.FUNCTIONALITY_MAP[lc]]
             if any(args):
                 pool = Pool(processes=NUM_PROCESSES)
                 results = pool.map_async(get_cfg_rules_per_sent,
@@ -269,7 +268,7 @@ def main_sample(task,
         selection_method,
         logger=logger
     )
-    checklist_rules = ProductionruleCoverage.get_bl_cfg_rules(
+    hatecheck_rules = ProductionruleCoverage.get_bl_cfg_rules(
         task,
         search_dataset_name,
         selection_method,
@@ -279,7 +278,7 @@ def main_sample(task,
     scores = dict()
     for lc in tqdm(seed_rules.keys()):
         if lc not in scores.keys():
-            num_samples = list(range(100, len(list(checklist_rules[lc].keys()))+100, 100))
+            num_samples = list(range(100, len(list(hatecheck_rules[lc].keys()))+100, 100))
             logger.print(f"OURS_PDR_SAMPLE::{lc}")
             our_sents, bl_sents = list(), list()
             scores[lc] = {
@@ -310,8 +309,8 @@ def main_sample(task,
                     seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
                     exp_sents = random.sample(seed_exp_sents,
                                               min(len(seed_exp_sents), num_sample))
-                    bl_sents = random.sample(list(checklist_rules[lc].keys()),
-                                             min(len(checklist_rules[lc]), num_sample))
+                    bl_sents = random.sample(list(hatecheck_rules[lc].keys()),
+                                             min(len(hatecheck_rules[lc]), num_sample))
                     pdr1 = {
                         s: seed_rules[lc][s]
                         for s in seed_sents
@@ -327,7 +326,7 @@ def main_sample(task,
                         # end if
                     # end for
                     pdr3 = {
-                        s: checklist_rules[lc][s]
+                        s: hatecheck_rules[lc][s]
                         for s in bl_sents
                     }
                     pdr_obj1 = ProductionruleCoverage(lc=lc,
@@ -380,7 +379,7 @@ def main_all(task,
         selection_method,
         logger=logger
     )
-    checklist_rules = ProductionruleCoverage.get_bl_cfg_rules(
+    hatecheck_rules = ProductionruleCoverage.get_bl_cfg_rules(
         task,
         search_dataset_name,
         selection_method,
@@ -405,7 +404,7 @@ def main_all(task,
             }
             seed_sents = list(seed_rules[lc].keys())
             exp_sents = list(exp_rules[lc].keys())
-            bl_sents = list(checklist_rules[lc].keys())
+            bl_sents = list(hatecheck_rules[lc].keys())
             pdr1 = {
                 s: seed_rules[lc][s]
                 for s in seed_sents
@@ -420,7 +419,7 @@ def main_all(task,
                 # end if
             # end for
             pdr3 = {
-                e: checklist_rules[lc][e]
+                e: hatecheck_rules[lc][e]
                 for e in bl_sents
             }
             pdr1_obj = ProductionruleCoverage(lc=lc,
