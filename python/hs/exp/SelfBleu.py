@@ -248,8 +248,12 @@ def main_sample(task,
         if lc not in scores.keys():
             logger.print(lc)
             our_sents, bl_sents = list(), list()
-            max_num_samples = int(10*math.ceil(len(texts_hatecheck[lc])/10.))
-            num_samples = list(range(10, max_num_samples, 10))
+            texts_exp = list()
+            for s in texts_seed[lc]:
+                texts_exp.extend(seed_exp_map[lc][s])
+            # end for
+            max_num_samples = 1000
+            num_samples = list(range(100, max_num_samples, 100))
             scores[lc] = {
                 'ours_seed': {
                     f"{num_sample}sample": {
@@ -280,10 +284,8 @@ def main_sample(task,
                     #     len(texts_hatecheck[lc])
                     # ])
                     seed_sents = random.sample(texts_seed[lc], min(len(texts_seed[lc]), num_sample))
-                    texts_exp = list()
-                    for s in texts_seed[lc]:
-                        texts_exp.extend(seed_exp_map[lc][s])
-                    # end for
+                    
+                    
                     bl_sents = random.sample(texts_hatecheck[lc],
                                              min(len(texts_hatecheck[lc]), num_sample))
                     seed_exp_sents = random.sample(texts_seed[lc]+texts_exp,

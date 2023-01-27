@@ -1,4 +1,5 @@
 import os
+import math
 import nltk
 import time
 import random
@@ -26,7 +27,6 @@ NUM_PROCESSES = 1 # Macros.num_processes
 
 def get_cfg_rules_per_sent(sent):
     st = time.time()
-    print(sent)
     tree_dict = BeneparCFG.get_seed_cfg(sent)
     cfg_rules = tree_dict['rule']
     rules = list()
@@ -211,6 +211,9 @@ class ProductionruleCoverage:
             f for f in os.listdir(str(seed_dir))
             if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
         ]
+        sents = Hatecheck.get_sents(
+            Macros.hatecheck_data_file,
+        )
         if os.path.exists(res_file):
             bl_rules = Utils.read_json(res_file)
         else:
@@ -220,16 +223,14 @@ class ProductionruleCoverage:
             cfg_res = Utils.read_json(seed_dir / seed_file)
             lc_desc = cfg_res['requirement']['description']
             lc_cksum = Utils.get_cksum(lc_desc)
-            if lc_desc not in bl_rules.keys():
+            if lc_desc not in bl_rules.keys() or \
+               not any(bl_rules[lc_desc]):
                 bl_rules[lc_desc] = dict()
             # end if
-                
             if logger is not None:
                 logger.print(f"BL_FOR_PDR::{lc_desc}")
             # end if
-            sents = Hatecheck.get_sents(
-                Macros.hatecheck_data_file,
-            )
+            
             func_name = [
                 Hatecheck.FUNCTIONALITY_MAP[key]
                 for key in Hatecheck.FUNCTIONALITY_MAP.keys()
@@ -238,7 +239,8 @@ class ProductionruleCoverage:
             args = [
                 s['sent']
                 for s in sents
-                if s['sent'] not in bl_rules[lc_desc].keys() and s['func']==func_name
+                if s['sent'] not in bl_rules[lc_desc].keys() and \
+                (s['func']==func_name or s['func'] in func_name)
             ]
             if any(args):
                 pool = Pool(processes=NUM_PROCESSES)
@@ -287,8 +289,8 @@ def main_sample(task,
     scores = dict()
     for lc in tqdm(seed_rules.keys()):
         if lc not in scores.keys():
-            max_num_samples = int(10*math.ceil(len(hatecheck_rules[lc].keys())/10.))
-            num_samples = list(range(10, max_num_samples, 10))
+            max_num_samples = 8000 # int(100*math.ceil(len(seed_rules[lc].keys())/100.))
+            num_samples = list(range(100, max_num_samples, 100))
             logger.print(f"OURS_PDR_SAMPLE::{lc}")
             our_sents, bl_sents = list(), list()
             scores[lc] = {

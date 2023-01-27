@@ -82,7 +82,8 @@ class SearchOperator:
                     if lc==f"{self.capability}::{self.description}"
                 ][0]
                 for s_i, s in enumerate(_sents):
-                    if s['func']==Hatecheck.FUNCTIONALITY_MAP[func]:
+                    if s['func']==Hatecheck.FUNCTIONALITY_MAP[func] or \
+                       s['func'] in Hatecheck.FUNCTIONALITY_MAP[func]:
                         sents.append((
                             s_i, s['sent'], s['label']
                         ))
@@ -594,7 +595,8 @@ class Hatecheck:
         sh_req_descs = cls.FUNCTIONALITY_MAP[req_desc]
         selected = list()
         for s_i, s in enumerate(sents):
-            if s['func'] in sh_req_descs:
+            if s['func'] in sh_req_descs or \
+               s['func']==sh_req_descs:
                 selected.append((s_i, s['sent'], s['label']))
         # end if
         random.shuffle(selected)
