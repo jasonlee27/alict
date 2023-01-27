@@ -195,13 +195,13 @@ class Plots:
                 #     'lc': f"LC{l_i+1}",
                 #     'type': 'S$^2$LCT (SEED)',
                 #     'num_seed': ns,
-                #     'scores': math.log(result[lc_desc]['ours_seed']['coverage_scores'])
+                #     'scores': math.log10(result[lc_desc]['ours_seed']['coverage_scores'])
                 # })
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT (SEED+EXP)',
                     'num_seed': ns,
-                    'scores': math.log(result[lc_desc]['ours_seed_exp']['coverage_scores'])
+                    'scores': math.log10(result[lc_desc]['ours_seed_exp']['coverage_scores'])
                 })
             # end for
         # end for
@@ -211,6 +211,7 @@ class Plots:
         fig: plt.Figure = plt.figure()
         ax: plt.Axes = fig.subplots()
 
+        # hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
         hue_order = ['CHECKLIST', 'S$^2$LCT (SEED+EXP)']
         from numpy import median
         ax = sns.barplot(data=df, x='lc', y='scores',
@@ -220,7 +221,7 @@ class Plots:
                          estimator=median)
         # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
         # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
-        ax.set_ylim(bottom=0, top=14)
+        ax.set_ylim(bottom=0, top=6)
         ax.set_xlabel("Linguistic Capabilities")
         ax.set_ylabel("Log of Number of Production Rules Covered")
         
@@ -320,7 +321,7 @@ class Plots:
                               search_dataset_name=Macros.datasets[Macros.sa_task][0],
                               selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = [100, 200, 300, 400, 500]
+        x_ticks = [200, 400, 600, 800, 1000]
         num_trials = 10
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -334,7 +335,6 @@ class Plots:
             data_sb_lod: List[dict] = list()
             lc_desc = lc.strip().split('::')[0]
             lc_desc = lc_desc if lc_desc in pdr_cov_result.keys() else lc_desc.lower()
-            print(l_i, lc_desc)
             _pdr_x_ticks = [int(s.split('sample')[0]) for s in pdr_cov_result[lc_desc]['ours_seed'].keys()]
             temp = len(_pdr_x_ticks)//4
             pdr_x_ticks = [x for x_i, x in enumerate(_pdr_x_ticks) if x_i%temp==0][:-1] +[_pdr_x_ticks[-1]]
