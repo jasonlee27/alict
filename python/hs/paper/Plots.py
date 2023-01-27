@@ -181,7 +181,7 @@ class Plots:
                               search_dataset_name=Macros.datasets[Macros.hs_task][0],
                               selection_method='random'):
                 # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = [40, 70, 100, 130]
+        x_ticks = [200, 400, 600, 800]
         num_trials = 10
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc_hs.txt'
@@ -199,6 +199,7 @@ class Plots:
             temp = len(_pdr_x_ticks)//4
             pdr_x_ticks = [x for x_i, x in enumerate(_pdr_x_ticks) if x_i%temp==0][:-1] +[_pdr_x_ticks[-1]]
             pdr_y_limit = -1
+            sb_y_limit = -1
             for t in range(num_trials):
                 for ns in pdr_x_ticks:
                     data_pdr_lod.append({
@@ -219,9 +220,11 @@ class Plots:
                         'num_seed': ns,
                         'scores': pdr_cov_result[lc_desc]['bl'][f"{ns}sample"]['coverage_scores'][t]
                     })
-                    if pdr_y_limit<pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]:
-                        pdr_y_limit=pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]
-                    # end if
+                    pdr_y_limit = max(
+                        pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t],
+                        pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t],
+                        pdr_cov_result[lc_desc]['bl'][f"{ns}sample"]['coverage_scores'][t]
+                    )
                 # end for
                 for ns in x_ticks:
                     data_sb_lod.append({
@@ -242,6 +245,11 @@ class Plots:
                         'num_seed': ns,
                         'scores': float(selfbleu_result[lc_desc]['bl'][f"{ns}sample"]['selfbleu_scores'][t])
                     })
+                    sb_y_limit=max(
+                        float(selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t]),
+                        float(selfbleu_result[lc_desc]['ours_seed'][f"{ns}sample"]['selfbleu_scores'][t]),
+                        float(selfbleu_result[lc_desc]['bl'][f"{ns}sample"]['selfbleu_scores'][t])
+                    )
                 # end for
             # end for
 
@@ -283,9 +291,10 @@ class Plots:
                                   palette="Set1",
                                   err_kws={'capsize': 3},
                                   ax=ax2)
-            # plt.xticks(x_ticks)
+            # plt.xticks(x_tcks)
             ax_sb.set_xticks(x_ticks)
-            ax_sb.set_ylim(0.0, 1.2)
+            sb_y_limit = sb_y_limit+0.5
+            ax_sb.set_ylim(0.0, sb_y_limit)
             ax_sb.set_xlabel("Number of seeds")
             ax_sb.set_ylabel("Self-BLEU score")
             
@@ -293,7 +302,8 @@ class Plots:
             # box = ax_sb.get_position()
             # ax_sb.set_position([box.x0, box.y0, box.width * 0.9, box.height])
             ax_pdr.set_xticks(pdr_x_ticks)
-            ax_pdr.set_ylim(-100, pdr_y_limit+500)
+            pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+1000
+            ax_pdr.set_ylim(-100, pdr_y_limit)
             ax_pdr.set_xlabel("Number of seeds")
             ax_pdr.set_ylabel("Number of Production Rules Covered")
             

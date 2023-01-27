@@ -339,6 +339,7 @@ class Plots:
             temp = len(_pdr_x_ticks)//4
             pdr_x_ticks = [x for x_i, x in enumerate(_pdr_x_ticks) if x_i%temp==0][:-1] +[_pdr_x_ticks[-1]]
             pdr_y_limit = -1
+            sb_y_limit = -1
             for t in range(num_trials):
                 for ns in pdr_x_ticks:
                     data_pdr_lod.append({
@@ -359,12 +360,11 @@ class Plots:
                         'num_seed': ns,
                         'scores': pdr_cov_result[lc_desc]['bl'][f"{ns}sample"]['coverage_scores'][t]
                     })
-                    if pdr_y_limit<pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]:
-                        pdr_y_limit=pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]
-                    # end if
-                    if pdr_y_limit<pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t]:
-                        pdr_y_limit=pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t]
-                    # end if
+                    pdr_y_limit = max(
+                        pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t],
+                        pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t],
+                        pdr_cov_result[lc_desc]['bl'][f"{ns}sample"]['coverage_scores'][t]
+                    )
                 # end for
                 
                 for ns in x_ticks:
@@ -386,6 +386,11 @@ class Plots:
                         'num_seed': ns,
                         'scores': float(selfbleu_result[lc_desc]['bl'][f"{ns}sample"]['selfbleu_scores'][t])
                     })
+                    sb_y_limit=max(
+                        selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t],
+                        selfbleu_result[lc_desc]['ours_seed'][f"{ns}sample"]['selfbleu_scores'][t],
+                        selfbleu_result[lc_desc]['bl'][f"{ns}sample"]['selfbleu_scores'][t]
+                    )
                 # end for
             # end for
 
@@ -429,7 +434,8 @@ class Plots:
                                   ax=ax2)
             # plt.xticks(x_ticks)
             ax_sb.set_xticks(x_ticks)
-            ax_sb.set_ylim(0.0, 1.5)
+            sb_y_limit = sb_y_limit+0.5
+            ax_sb.set_ylim(0.0, sb_y_limit)
             ax_sb.set_xlabel("Number of seeds")
             ax_sb.set_ylabel("Self-BLEU score")
             

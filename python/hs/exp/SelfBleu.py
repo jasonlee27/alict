@@ -253,7 +253,7 @@ def main_sample(task,
                 texts_exp.extend(seed_exp_map[lc][s])
             # end for
             max_num_samples = 1000
-            num_samples = list(range(100, max_num_samples, 100))
+            num_samples = list(range(100, max_num_samples+100, 100))
             scores[lc] = {
                 'ours_seed': {
                     f"{num_sample}sample": {
