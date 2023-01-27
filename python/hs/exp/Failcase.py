@@ -30,6 +30,7 @@ def main_p2f_f2p(task,
         scores[m] = dict()
         test_result_model = test_result[m]
         for lc in texts_seed_ours.keys():
+            print(lc, [l['req'] for l in test_result_model])
             test_result_model_lc = [l for l in test_result_model if l['req']==lc or l['req']==lc.lower()][0]
             p2f_cases = dict()
             f2p_cases = dict()
