@@ -17,7 +17,7 @@ parser.add_argument('--run', type=str, required=True,
                         'requirement', 'template', 'testsuite', 'testmodel', 'analyze',
                         'failcase', 'selfbleu', 'pdrule_cov',
                         'humanstudy', 'humanstudy_results',
-                        'tables'
+                        'tables', 'plots'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='hs',
                     choices=['hs'],
@@ -261,6 +261,18 @@ def run_make_tables():
     Tables.make_tables(**options)
     return
 
+def run_make_plots():
+    from .paper.Plots import Plots
+    options = {
+        'which': args.which,
+        'task': args.nlp_task,
+        'search_dataset_name': args.search_dataset,
+        'selection_method': args.syntax_selection,
+        'model_name': args.model_name,
+    }
+    Plots.make_plots(**options)
+    return
+
 
 func_map = {
     "hs": {
@@ -274,7 +286,8 @@ func_map = {
         'pdrule_cov': run_pdrule_cov,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
-        'tables': run_make_tables
+        'tables': run_make_tables,
+        'plots': run_make_plots
     }
 }
 

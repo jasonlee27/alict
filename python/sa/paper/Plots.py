@@ -39,8 +39,8 @@ class Plots:
         task = options.pop('task', 'sa')
         search_dataset = options.pop('search_dataset_name', 'sst')
         selection_method = options.pop('selection_method', 'random')
-        num_seeds = options.pop('num_seeds', 50)
-        num_trials = options.pop('num_trials', 3)
+        # num_seeds = options.pop('num_seeds', 50)
+        # num_trials = options.pop('num_trials', 3)
         
         which: Union[str, List[str]] = options.pop("which", [])
         paper_dir: Path = Path(options.pop("paper_dir", Macros.paper_dir))
@@ -91,7 +91,7 @@ class Plots:
                              search_dataset_name=Macros.datasets[Macros.sa_task][0],
                              selection_method='random'):
         num_trials = 10
-        x_ticks = [50, 100, 150, 200]
+        x_ticks = [100, 200, 300, 400, 500]
         result_file = results_dir / 'selfbleu' / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
         result = Utils.read_json(result_file)
         req_dir = results_dir / 'reqs'
@@ -320,7 +320,7 @@ class Plots:
                               search_dataset_name=Macros.datasets[Macros.sa_task][0],
                               selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = [50, 100, 150, 200]
+        x_ticks = [100, 200, 300, 400, 500]
         num_trials = 10
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -334,6 +334,7 @@ class Plots:
             data_sb_lod: List[dict] = list()
             lc_desc = lc.strip().split('::')[0]
             lc_desc = lc_desc if lc_desc in pdr_cov_result.keys() else lc_desc.lower()
+            print(l_i, lc_desc)
             _pdr_x_ticks = [int(s.split('sample')[0]) for s in pdr_cov_result[lc_desc]['ours_seed'].keys()]
             temp = len(_pdr_x_ticks)//4
             pdr_x_ticks = [x for x_i, x in enumerate(_pdr_x_ticks) if x_i%temp==0][:-1] +[_pdr_x_ticks[-1]]
@@ -360,6 +361,9 @@ class Plots:
                     })
                     if pdr_y_limit<pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]:
                         pdr_y_limit=pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]
+                    # end if
+                    if pdr_y_limit<pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t]:
+                        pdr_y_limit=pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t]
                     # end if
                 # end for
                 
@@ -425,7 +429,7 @@ class Plots:
                                   ax=ax2)
             # plt.xticks(x_ticks)
             ax_sb.set_xticks(x_ticks)
-            ax_sb.set_ylim(0.0, 1.2)
+            ax_sb.set_ylim(0.0, 1.5)
             ax_sb.set_xlabel("Number of seeds")
             ax_sb.set_ylabel("Self-BLEU score")
             
@@ -433,7 +437,8 @@ class Plots:
             # box = ax_sb.get_position()
             # ax_sb.set_position([box.x0, box.y0, box.width * 0.9, box.height])
             ax_pdr.set_xticks(pdr_x_ticks)
-            ax_pdr.set_ylim(-100, pdr_y_limit+500)
+            pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+1000
+            ax_pdr.set_ylim(-100, pdr_y_limit)
             ax_pdr.set_xlabel("Number of seeds")
             ax_pdr.set_ylabel("Number of Production Rules Covered")
             

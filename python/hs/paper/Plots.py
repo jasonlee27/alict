@@ -36,11 +36,11 @@ class Plots:
         mpl.rcParams['xtick.labelsize'] = 'large'
         mpl.rcParams['ytick.labelsize'] = 'large'
 
-        task = options.pop('task', 'sa')
-        search_dataset = options.pop('search_dataset_name', 'sst')
+        task = options.pop('task', 'hs')
+        search_dataset = options.pop('search_dataset_name', 'hatexplain')
         selection_method = options.pop('selection_method', 'random')
-        num_seeds = options.pop('num_seeds', 50)
-        num_trials = options.pop('num_trials', 3)
+        # num_seeds = options.pop('num_seeds', 50)
+        # num_trials = options.pop('num_trials', 3)
         
         which: Union[str, List[str]] = options.pop("which", [])
         paper_dir: Path = Path(options.pop("paper_dir", Macros.paper_dir))
@@ -128,7 +128,7 @@ class Plots:
                     data_lod.append({
                         'sample': s_i,
                         'lc': f"LC{l_i+1}",
-                        'type': 'CHECKLIST',
+                        'type': 'HATECHECK',
                         'trial': t,
                         'num_seed': _num_sample,
                         'scores': result[lc_desc]['bl'][num_sample]['selfbleu_scores'][t]
@@ -141,7 +141,7 @@ class Plots:
             fig: plt.Figure = plt.figure()
             ax: plt.Axes = fig.subplots()
             
-            hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+            hue_order = ['HATECHECK', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
             markers = ['$1$', '$2$', '$3$']
             from numpy import median
             ax = sns.lineplot(data=df, x='num_seed', y='scores',
@@ -181,10 +181,10 @@ class Plots:
                               search_dataset_name=Macros.datasets[Macros.hs_task][0],
                               selection_method='random'):
                 # num_seeds = [0,50,100,200] # x-axis
-        x_ticks = [50, 100, 150, 200]
+        x_ticks = [40, 70, 100, 130]
         num_trials = 10
         req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
+        req_file = req_dir / 'requirements_desc_hs.txt'
         selfbleu_result_file = results_dir / 'selfbleu' / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
         pdr_cov_result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
         
@@ -215,7 +215,7 @@ class Plots:
                     })
                     data_pdr_lod.append({
                         'lc': f"LC{l_i+1}",
-                        'type': 'CHECKLIST',
+                        'type': 'HATECHECK',
                         'num_seed': ns,
                         'scores': pdr_cov_result[lc_desc]['bl'][f"{ns}sample"]['coverage_scores'][t]
                     })
@@ -223,7 +223,6 @@ class Plots:
                         pdr_y_limit=pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]
                     # end if
                 # end for
-                
                 for ns in x_ticks:
                     data_sb_lod.append({
                         'lc': f"LC{l_i+1}",
@@ -239,7 +238,7 @@ class Plots:
                     })
                     data_sb_lod.append({
                         'lc': f"LC{l_i+1}",
-                        'type': 'CHECKLIST',
+                        'type': 'HATECHECK',
                         'num_seed': ns,
                         'scores': float(selfbleu_result[lc_desc]['bl'][f"{ns}sample"]['selfbleu_scores'][t])
                     })
@@ -254,7 +253,7 @@ class Plots:
             # fig: plt.Figure = plt.figure()
             # ax: plt.Axes = fig.subplots()
             
-            hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+            hue_order = ['HATECHECK', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
             
             from numpy import median
             ax_sb = sns.lineplot(data=df_sb, x='num_seed', y='scores',
@@ -313,8 +312,8 @@ class Plots:
     def failrate_combined_over_seeds_plot(cls,
                                           results_dir: Path,
                                           figs_dir: Path,
-                                          task=Macros.sa_task,
-                                          search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                                          task=Macros.hs_task,
+                                          search_dataset_name=Macros.datasets[Macros.hs_task][0],
                                           selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
@@ -322,7 +321,7 @@ class Plots:
         num_seeds = list(x_ticks.keys())
         data_lod = dict()
         req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
+        req_file = req_dir / 'requirements_desc_hs.txt'
         lc_index_dict = dict()
         hue_order, markers = list(), list()
         for l_i, l in enumerate(Utils.read_txt(req_file)):
@@ -402,8 +401,8 @@ class Plots:
     def failrate_seed_over_seeds_plot(cls,
                                       results_dir: Path,
                                       figs_dir: Path,
-                                      task=Macros.sa_task,
-                                      search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                                      task=Macros.hs_task,
+                                      search_dataset_name=Macros.datasets[Macros.hs_task][0],
                                       selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
@@ -411,7 +410,7 @@ class Plots:
         num_seeds = list(x_ticks.keys())
         data_lod = dict()
         req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
+        req_file = req_dir / 'requirements_desc_hs.txt'
         lc_index_dict = {
             l.strip().split('::')[0].lower(): f"LC{l_i+1}"
             for l_i, l in enumerate(Utils.read_txt(req_file))
@@ -490,8 +489,8 @@ class Plots:
     def failrate_exp_over_seeds_plot(cls,
                                      results_dir: Path,
                                      figs_dir: Path,
-                                     task=Macros.sa_task,
-                                     search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                                     task=Macros.hs_task,
+                                     search_dataset_name=Macros.datasets[Macros.hs_task][0],
                                      selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
@@ -499,7 +498,7 @@ class Plots:
         num_seeds = list(x_ticks.keys())
         data_lod = dict()
         req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
+        req_file = req_dir / 'requirements_desc_hs.txt'
         lc_index_dict = {
             l.strip().split('::')[0].lower(): f"LC{l_i+1}"
             for l_i, l in enumerate(Utils.read_txt(req_file))
@@ -578,8 +577,8 @@ class Plots:
     def pass2fail_over_seeds_plot(cls,
                                   results_dir: Path,
                                   figs_dir: Path,
-                                  task=Macros.sa_task,
-                                  search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                                  task=Macros.hs_task,
+                                  search_dataset_name=Macros.datasets[Macros.hs_task][0],
                                   selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
@@ -587,7 +586,7 @@ class Plots:
         num_seeds = list(x_ticks.keys())
         data_lod = dict()
         req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
+        req_file = req_dir / 'requirements_desc_hs.txt'
         lc_index_dict = {
             l.strip().split('::')[0].lower(): f"LC{l_i+1}"
             for l_i, l in enumerate(Utils.read_txt(req_file))
@@ -666,8 +665,8 @@ class Plots:
     def numfail_over_seeds_plot(cls,
                                 results_dir: Path,
                                 figs_dir: Path,
-                                task=Macros.sa_task,
-                                search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                                task=Macros.hs_task,
+                                search_dataset_name=Macros.datasets[Macros.hs_task][0],
                                 selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
@@ -675,7 +674,7 @@ class Plots:
         num_seeds = list(x_ticks.keys())
         data_lod = dict()
         req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
+        req_file = req_dir / 'requirements_desc_hs.txt'
         lc_index_dict = {
             l.strip().split('::')[0].lower(): f"LC{l_i+1}"
             for l_i, l in enumerate(Utils.read_txt(req_file))
@@ -754,8 +753,8 @@ class Plots:
     def numfail_agg_over_seeds_plot(cls,
                                     results_dir: Path,
                                     figs_dir: Path,
-                                    task=Macros.sa_task,
-                                    search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                                    task=Macros.hs_task,
+                                    search_dataset_name=Macros.datasets[Macros.hs_task][0],
                                     selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         num_trials = 3
@@ -763,7 +762,7 @@ class Plots:
         num_seeds = list(x_ticks.keys())
         data_lod = list()
         req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
+        req_file = req_dir / 'requirements_desc_hs.txt'
         lc_index_dict = {
             l.strip().split('::')[0].lower(): f"LC{l_i+1}"
             for l_i, l in enumerate(Utils.read_txt(req_file))
@@ -860,7 +859,7 @@ class Plots:
         x_ticks = [50, 100, 150, 200]
         data_lod = list()
         req_dir = results_dir / 'reqs'
-        req_file = req_dir / 'requirements_desc.txt'
+        req_file = req_dir / 'requirements_desc_hs.txt'
         lc_index_dict = {
             l.strip().split('::')[0].lower(): f"LC{l_i+1}"
             for l_i, l in enumerate(Utils.read_txt(req_file))
