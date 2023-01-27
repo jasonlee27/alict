@@ -16,7 +16,7 @@ def main_p2f_f2p(task,
                  search_dataset_name,
                  selection_method):
     num_trials = 10
-    num_samples = [50, 100, 150, 200]
+    num_samples = [200, 400, 600, 800]
     logger_file = Macros.log_dir / f"p2f_f2p_{task}_{search_dataset_name}_{selection_method}.log"
     result_file = Macros.result_dir / f"p2f_f2p_{task}_{search_dataset_name}_{selection_method}.json"
     test_result_file = Macros.result_dir / f"test_results_{task}_{search_dataset_name}_{selection_method}" / "test_result_analysis.json"
@@ -75,7 +75,7 @@ def main_fail(task,
               search_dataset_name,
               selection_method):
     num_trials = 10
-    num_samples = [50, 100, 150, 200]
+    num_samples = [200, 400, 600, 800]
     logger_file = Macros.log_dir / f"failcases_{task}_{search_dataset_name}_{selection_method}.log"
     result_file = Macros.result_dir / f"failcases_{task}_{search_dataset_name}_{selection_method}.json"
     bl_result_file = Macros.result_dir / f"failcases_bl_{task}_{search_dataset_name}_{selection_method}.json"
@@ -83,10 +83,10 @@ def main_fail(task,
     # test_result_file = result_dir / 'test_result_analysis.json'
     # test_result = Utils.read_json(test_result_file)
     raw_test_result_file = result_dir / 'test_results.txt'
-    raw_test_result = Result.parse_results(raw_test_result_file, Macros.sa_models_file)
+    raw_test_result = Result.parse_results(raw_test_result_file, Macros.hs_models_file)
     
     scores = dict()
-    for model in Utils.read_txt(Macros.sa_models_file):
+    for model in Utils.read_txt(Macros.hs_models_file):
         model = model.strip()
         scores[model] = dict()
         model_results = raw_test_result[model]
@@ -121,9 +121,9 @@ def main_fail(task,
 
     # for BL failcases
     raw_bl_test_result_file = result_dir / 'test_results_hatecheck.txt'
-    raw_bl_test_result = Result.parse_hatecheck_results(raw_bl_test_result_file, Macros.sa_models_file)
+    raw_bl_test_result = Result.parse_hatecheck_results(raw_bl_test_result_file, Macros.hs_models_file)
     scores = dict()
-    for model in Utils.read_txt(Macros.sa_models_file):
+    for model in Utils.read_txt(Macros.hs_models_file):
         model = model.strip()
         scores[model] = dict()
         bl_model_results = raw_bl_test_result[model]
