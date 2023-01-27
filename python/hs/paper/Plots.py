@@ -1025,7 +1025,7 @@ class Plots:
                                               selection_method='random'):
         # num_seeds = [0,50,100,150,200] # x-axis
         num_trials = 10
-        x_ticks = [50, 100, 150, 200]
+        x_ticks = [200, 400, 600, 800]
         data_lod_numfail = list()
         data_lod_pass2fail = list()
         req_dir = results_dir / 'reqs'
@@ -1037,13 +1037,14 @@ class Plots:
         fail_result = Utils.read_json(fail_result_file)
         fail_bl_result = Utils.read_json(fail_bl_result_file)
         model_names = list()
-        data_lod_pass2fail = list()
-        data_lod_numfail = list()
         for l_i, lc in enumerate(Utils.read_txt(req_file)):
             lc_desc = lc.strip().split('::')[0]
-            lc_desc = lc_desc if lc_desc in p2f_result_model.keys() else lc_desc.lower()
-            
+            data_lod_pass2fail: List[dict] = list()
+            data_lod_numfail: List[dict] = list()
+            p2f_y_limit = -1
+            fail_y_limit = -1
             for model_name in p2f_result.keys():
+                lc_desc = lc_desc if lc_desc in p2f_result_model.keys() else lc_desc.lower()
                 p2f_result_model = p2f_result[model_name]
                 fail_result_model = fail_result[model_name]
                 fail_bl_result_model = fail_bl_result[model_name]
@@ -1079,6 +1080,17 @@ class Plots:
                             'num_trial': t,
                             'num_fail': fail_bl_result_model[lc_desc][sample_key][t]
                         })
+                        p2f_y_limit = max(
+                            p2f_y_limit,
+                            p2f_result_model[lc_desc][sample_key]['p2f'][t]
+                        )
+                        fail_y_limit = max(
+                            fail_y_limit,
+                            max(
+                                fail_result_model[lc_desc][sample_key][t],
+                                fail_bl_result_model[lc_desc][sample_key][t]
+                            )
+                        )
                     # end for
                 # end for
             # end for
@@ -1121,11 +1133,13 @@ class Plots:
                                         err_kws={'capsize': 3},
                                         ax=ax2)
             plt.xticks(x_ticks)
-            ax_numfail.set_ylim(-10, 270)
+            fail_y_limit = fail_y_limit+200 if fail_y_limit<1000 else fail_y_limit+1000
+            ax_numfail.set_ylim(-10, fail_y_limit)
             ax_numfail.set_xlabel("Number of seeds")
             ax_numfail.set_ylabel("Number of fail cases")
             
-            ax_pass2fail.set_ylim(0, 15)
+            p2f_y_limit = p2f_y_limit+10 if p2f_y_limit<1000 else p2f_y_limit+1000
+            ax_pass2fail.set_ylim(-1, p2f_y_limit)
             ax_pass2fail.set_xlabel("Number of seeds")
             ax_pass2fail.set_ylabel("Number of pass-to-fail cases")
             

@@ -1174,15 +1174,11 @@ class Plots:
                                 fail_bl_result_model[lc_desc][sample_key][t]
                             )
                         )
-
                     # end for
                 # end for
             # end for
             df_numfail: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod_numfail))
             df_pass2fail: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod_pass2fail))
-
-            if l_i==6:
-                print(data_lod_pass2fail[-1])
         
             # Plotting part
             fig, (ax1, ax2) = plt.subplots(ncols=2, sharey=False)
