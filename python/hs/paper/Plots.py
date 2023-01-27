@@ -1,22 +1,18 @@
 
 # This script is for generating all plots used in paper
-
-from typing import *
-
-import matplotlib as mpl
-from matplotlib import pyplot as plt
+import math
 import pandas as pd
-from pathlib import Path
+import matplotlib as mpl
 import seaborn as sns
 
+from typing import *
+from matplotlib import pyplot as plt
+from pathlib import Path
 from seutil import IOUtils
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
-
-# from hdlp.Macros import Macros
-# from hdlp.Utils import Utils
 
 
 class Plots:
@@ -316,7 +312,76 @@ class Plots:
             fig.tight_layout()
             fig.savefig(figs_dir / f"pdr-selfbleu-agg-hs-lc{l_i+1}-lineplot.eps")
         # end for
-        return        
+        return
+
+    @classmethod
+    def pdr_bar_plot(cls,
+                     results_dir: Path,
+                     figs_dir: Path,
+                     task=Macros.hs_task,
+                     search_dataset_name=Macros.datasets[Macros.hs_task][0],
+                     selection_method='random'):
+        data_lod: List[dict] = list()
+        x_ticks = [0] # , 1:100, 2:200}
+        result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_all_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+        result = Utils.read_json(result_file)
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc_hs.txt'
+        for l_i, lc in enumerate(Utils.read_txt(req_file)):
+            lc_desc = lc.strip().split('::')[0]
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+            for ns in x_ticks:
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'HATECHECK',
+                    'num_seed': ns,
+                    'scores': math.log10(result[lc_desc]['bl']['coverage_scores'])
+                })
+                # print(l_i+1, bl_score, result[lc_desc]['ours_seed_exp']['med_score'], float(result[lc_desc]['ours']['med_score'])/bl_score)
+                # data_lod.append({
+                #     'lc': f"LC{l_i+1}",
+                #     'type': 'S$^2$LCT (SEED)',
+                #     'num_seed': ns,
+                #     'scores': math.log10(result[lc_desc]['ours_seed']['coverage_scores'])
+                # })
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'S$^2$LCT (SEED+EXP)',
+                    'num_seed': ns,
+                    'scores': math.log10(result[lc_desc]['ours_seed_exp']['coverage_scores'])
+                })
+            # end for
+        # end for
+        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+
+        # Plotting part
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+
+        # hue_order = ['HATECHECK', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+        hue_order = ['HATECHECK', 'S$^2$LCT (SEED+EXP)']
+        from numpy import median
+        ax = sns.barplot(data=df, x='lc', y='scores',
+                         hue='type',
+                         hue_order=hue_order,
+                         palette="Set1",
+                         estimator=median)
+        # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
+        # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
+        ax.set_ylim(bottom=0, top=6)
+        ax.tick_params(axis='x', rotation=45)
+        ax.set_xlabel("Linguistic Capabilities")
+        ax.set_ylabel("Log of Number of Production Rules Covered")
+        
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+
+        # Put a legend to the right of the current axis
+        # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        fig.tight_layout()
+        fig.savefig(figs_dir / "pdr-hs-barplot.eps")
+        return
 
     @classmethod
     def failrate_combined_over_seeds_plot(cls,
