@@ -162,6 +162,19 @@ function make_tables() {
         )
 }
 
+function make_plots() {
+        (cd ${_DIR}
+         # Table 1
+         # python -m python.hs.main --run tables --which lc-req
+         # python -m python.hs.main --run tables --which manual-study
+         python -m python.hs.main --run plots --which pdr-selfbleu-agg
+         # python -m python.hs.main --run plots --which pdr
+         # python -m python.hs.main --run plots --which numfail-pass2fail-agg
+
+         # python -m python.hs.main --run plots --which selfbleu
+        )
+}
+
 
 # ==========
 # Main
@@ -172,10 +185,11 @@ function main() {
         # gen_testsuite
         # eval_models
         # analyze_eval_models
-        selfbleu
+        # selfbleu
         # pdrulecoverage
         # failcase
         # humanstudy
+        make_plots
 }
 
 # Please make sure you actiavte nlptest conda environment
