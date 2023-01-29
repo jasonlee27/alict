@@ -468,6 +468,7 @@ class Plots:
         # box = ax_sb.get_position()
         # ax_sb.set_position([box.x0, box.y0, box.width * 0.9, box.height])
         ax_pdr.set_xticks(pdr_x_ticks)
+        ax_pdr.set_yscale('log')
         pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+1000
         ax_pdr.set_ylim(-100, pdr_y_limit)
         ax_pdr.tick_params(axis='x', rotation=45)

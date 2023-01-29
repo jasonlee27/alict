@@ -496,6 +496,7 @@ class Plots:
             ax_sb.set_ylim(0.0, sb_y_limit)
             ax_sb.set_xlabel("Number of seeds")
             ax_sb.set_ylabel("Self-BLEU score")
+            plt.grid(True, which='both', ls='--')
             
             # Shrink current axis by 20%
             # box = ax_sb.get_position()
@@ -618,6 +619,7 @@ class Plots:
         ax_sb.set_ylim(0.0, sb_y_limit)
         ax_sb.set_xlabel("Number of seeds")
         ax_sb.set_ylabel("Self-BLEU score")
+        plt.grid(True, which='both', ls='--')
         
         # Shrink current axis by 20%
         # box = ax_sb.get_position()

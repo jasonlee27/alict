@@ -383,23 +383,33 @@ class Tables:
                                   task,
                                   search_dataset,
                                   selection_method):
-        result_file = result_dir / 'human_study' / f"{task}_{search_dataset}_{selection_method}" / "human_study_results.json"
         output_file = latex.File(tables_dir / 'manual-study-numbers.tex')
-        result = Utils.read_json(result_file)
-        seed_agg_result = result['agg']['seed']
-        exp_agg_result = result['agg']['exp']
-        output_file.append_macro(latex.Macro(f"manual-study-seed-num-sents",
-                                             seed_agg_result['num_sents']))
-        output_file.append_macro(latex.Macro(f"manual-study-seed-label-consistency",
-                                             cls.FMT_FLOAT.format(round(seed_agg_result['avg_label_score'],2))))
-        output_file.append_macro(latex.Macro(f"manual-study-seed-lc-relevancy",
-                                             cls.FMT_FLOAT.format(round(seed_agg_result['avg_lc_score'],2))))
-        output_file.append_macro(latex.Macro(f"manual-study-exp-num-sents",
-                                             exp_agg_result['num_sents']))
-        output_file.append_macro(latex.Macro(f"manual-study-exp-label-consistency",
-                                             cls.FMT_FLOAT.format(round(exp_agg_result['avg_label_score'],2))))
-        output_file.append_macro(latex.Macro(f"manual-study-exp-lc-relevancy",
-                                             cls.FMT_FLOAT.format(round(exp_agg_result['avg_lc_score'],2))))
+        tasks = ['sa', 'hs']
+        for task in tasks:
+            if task=='sa':
+                search_dataset = 'sst'
+                selection_method = 'random'
+            elif task=='hsd':
+                search_dataset = 'hatexplain'
+                selection_method = 'random'
+            # end if
+            result_file = result_dir / 'human_study' / f"{task}_{search_dataset}_{selection_method}" / "human_study_results.json"
+            result = Utils.read_json(result_file)
+            seed_res = result['agg']['seed']
+            exp_res = result['agg']['exp']
+            output_file.append_macro(latex.Macro(f"manual-study-{task}-seed-num-sents",
+                                                 seed_res['num_sents']))
+            output_file.append_macro(latex.Macro(f"manual-study-{task}-seed-label-consistency",
+                                                 cls.FMT_FLOAT.format(round(seed_res['avg_label_score'],2))))
+            output_file.append_macro(latex.Macro(f"manual-study-{task}-seed-lc-relevancy",
+                                                 cls.FMT_FLOAT.format(round(seed_res['avg_lc_score'],2))))
+            output_file.append_macro(latex.Macro(f"manual-study-{task}-exp-num-sents",
+                                                 exp_res['num_sents']))
+            output_file.append_macro(latex.Macro(f"manual-study-{task}-exp-label-consistency",
+                                                 cls.FMT_FLOAT.format(round(exp_res['avg_label_score'],2))))
+            output_file.append_macro(latex.Macro(f"manual-study-{task}-exp-lc-relevancy",
+                                                 cls.FMT_FLOAT.format(round(exp_res['avg_lc_score'],2))))
+        # end for
         output_file.save()
         return
 
@@ -409,34 +419,34 @@ class Tables:
                                 tables_dir,
                                 task,
                                 search_dataset,
-                                selection_method):        
-        result_file = result_dir / 'human_study' / f"{task}_{search_dataset}_{selection_method}" / "human_study_results.json"
+                                selection_method):
+        tasks = ['sa', 'hs']
         output_file = latex.File(tables_dir / 'manual-study-table.tex')
-        result = Utils.read_json(result_file)
-        seed_agg_result = result['agg']['seed']
-        exp_agg_result = result['agg']['exp']
-        
-        # Header
-        output_file.append(r"\begin{table}[htbp]")
-        output_file.append(r"\begin{small}")
-        output_file.append(r"\begin{center}")
-        output_file.append(r"\caption{\ManualStudyTableCaption}")
-        output_file.append(r"\resizebox{0.47\textwidth}{!}{")
-        output_file.append(r"\begin{tabular}{l c c c}")
-        output_file.append(r"\toprule")
+        for task in tasks:
+            task_latex = 'SA' if task=='sa' else 'HSD'
+            # Header
+            output_file.append(r"\begin{table}[htbp]")
+            output_file.append(r"\begin{small}")
+            output_file.append(r"\begin{center}")
+            output_file.append(r"\caption{\ManualStudyTableCaption}")
+            output_file.append(r"\resizebox{0.47\textwidth}{!}{")
+            output_file.append(r"\begin{tabular}{l c c c c}")
+            output_file.append(r"\toprule")
 
-        # Content
-        output_file.append(r"\tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel \\")
-        output_file.append(r"\midrule")
-
-        output_file.append("Seed & " + latex.Macro("manual-study-seed-num-sents").use())
-        output_file.append(" & " + latex.Macro("manual-study-seed-label-consistency").use())
-        output_file.append(" & " + latex.Macro("manual-study-seed-lc-relevancy").use())
-        output_file.append(r"\\")
-        output_file.append("Expanded & " + latex.Macro("manual-study-exp-num-sents").use())
-        output_file.append(" & " + latex.Macro("manual-study-exp-label-consistency").use())
-        output_file.append(" & " + latex.Macro("manual-study-exp-lc-relevancy").use())
-        output_file.append(r"\\")
+            # Content
+            output_file.append(r"\tTask \tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel \\")
+            output_file.append(r"\midrule")
+            
+            output_file.append("\multirow{2}{*}{1} & " + task_latex)
+            output_file.append("Seed & " + latex.Macro(f"manual-study-{task}-seed-num-sents").use())
+            output_file.append(" & " + latex.Macro(f"manual-study-{task}-seed-label-consistency").use())
+            output_file.append(" & " + latex.Macro(f"manual-study-{task}-seed-lc-relevancy").use())
+            output_file.append(r"\\")
+            output_file.append("& Expanded & " + latex.Macro(f"manual-study-{task}-exp-num-sents").use())
+            output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-label-consistency").use())
+            output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-lc-relevancy").use())
+            output_file.append(r"\\")
+        # end for
 
         # Footer
         output_file.append(r"\bottomrule")
