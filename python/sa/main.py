@@ -17,7 +17,8 @@ parser.add_argument('--run', type=str, required=True,
                         'requirement', 'template', 'testsuite', 'seedgen',
                         'testmodel', 'testmodel_seed', 'retrain', 'analyze',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
-                        'selfbleu', 'pdrule_cov', 'humanstudy', 'humanstudy_results',
+                        'selfbleu', 'selfbleu_mtnlp', 'pdrule_cov', 'pdrule_cov_mtnlp',
+                        'humanstudy', 'humanstudy_results',
                         'neural_coverage_data', 'tables', 'plots'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
@@ -359,6 +360,16 @@ def run_selfbleu():
                 selection_method)
     return
 
+def run_selfbleu_mtnlp():
+    from .exp.SelfBleu import main_mtnlp
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    main_mtnlp(nlp_task,
+               search_dataset_name,
+               selection_method)
+    return
+
 def run_pdrule_cov():
     from .exp.ProductionruleCoverage import main_sample, main_all
     nlp_task = args.nlp_task
@@ -370,6 +381,17 @@ def run_pdrule_cov():
     main_all(nlp_task,
              search_dataset_name,
              selection_method)
+    return
+
+
+def run_pdrule_cov_mtnlp():
+    from .exp.ProductionruleCoverage import main_mtnlp
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    main_mtnlp(nlp_task,
+               search_dataset_name,
+               selection_method)
     return
 
 # ==========
@@ -396,11 +418,12 @@ def run_humanstudy_result():
     selection_method = args.syntax_selection
     model_name = args.model_name
     num_samples = 20
+    print("Run run_humanstudy_result..")
     Humanstudy.main_result(nlp_task,
                            search_dataset_name,
                            selection_method,
-                           model_name,
-                           num_samples)
+                           model_name)
+    print("@@@@@@@")
     return
 
 # ==========
@@ -473,7 +496,9 @@ func_map = {
         'explain_nlp': run_explainNLP,
         'failcase': run_failcase,
         'selfbleu': run_selfbleu,
+        'selfbleu_mtnlp': run_selfbleu_mtnlp,
         'pdrule_cov': run_pdrule_cov,
+        'pdrule_cov_mtnlp': run_pdrule_cov_mtnlp,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
         'neural_coverage_data': run_neural_coverage_data,
