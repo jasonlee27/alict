@@ -319,8 +319,8 @@ def main_sample(task,
     for lc in tqdm(seed_rules.keys()):
         if lc not in scores.keys():
             len_seed_exp = len(list(seed_rules[lc].keys())+list(exp_rules[lc].keys()))
-            max_num_samples = int(2e4) # min(int(100*math.ceil(len_seed_exp/100.)), int(2e4))
-            num_samples = list(range(100, max_num_samples+100, 100))
+            max_num_samples = int(1e5) # min(int(100*math.ceil(len_seed_exp/100.)), int(2e4))
+            num_samples = list(range(500, max_num_samples+500, 500))
             logger.print(f"OURS_PDR_SAMPLE::{lc}")
             our_sents, bl_sents = list(), list()
             scores[lc] = {

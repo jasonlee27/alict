@@ -341,15 +341,11 @@ class Humanstudy:
             label = tgt_results[sent]
             if sent in seed_sents:
                 labels_h = seed_human_results[sent]['sent_score']
-                print('SEED: ', labels_h, label)
                 label_consistency = [1 if l in label else 0 for l in labels_h]
-                print('SEED: ', labels_h, label, label_consistency)
                 res['seed'][sent] = sum(label_consistency)/len(label_consistency)
             elif sent in exp_sents:
                 labels_h = exp_human_results[sent]['sent_score']
-                print('EXP: ', labels_h, label)
                 label_consistency = [1 if l in label else 0 for l in labels_h]
-                print('EXP: ', labels_h, label, label_consistency)
                 res['exp'][sent] = sum(label_consistency)/len(label_consistency)
             # end if
         # end for

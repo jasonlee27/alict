@@ -314,3 +314,57 @@ def main_sample(task,
     # end for
     return
 
+
+def main_mtnlp(task,
+               search_dataset_name,
+               selection_method):
+    st = time.time()
+    logger_file = Macros.log_dir / f"mtnlp_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
+    mlnlp_dir = Macros.download_dir / 'MT-NLP'
+    mtnlp_res_dir =  Macros.result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
+    mtnlp_file = mtnlp_res_dir / 'mutations_s2lct_seed_samples.json'
+    result_file = Macros.selfbleu_result_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+    logger = Logger(logger_file=logger_file,
+                    logger_name='mtnlt_mutation_log')
+    
+    # seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
+    #     task,
+    #     search_dataset_name,
+    #     selection_method,
+    #     parse_all_sents=False,
+    #     logger=logger
+    # )
+    mt_res = Utils.read_json(mtnlp_file)
+    sample_file = mt_res['sample_file']
+    file_ind = re.search('raw_file(\d)\.txt').group(1)
+    seed_sents = list(mt_res['mutations'].keys())
+
+    exp_sents = [
+        l.split('::')[0]
+        for l in Utils.read_txt(mtnlp_dir / f"{task}_exp_samples_raw_file{file_ind}.txt")
+        if l.strip()!=''
+    ]
+
+    mt_sents = list()
+    for seed in seed_sents:
+        mt_sents.extend(mt_res['mutations'][seed]['ana'])
+        mt_sents.extend(mt_res['mutations'][seed]['act'])
+    # end for
+
+    logger.print(f"OURS_SELFBLEU_SAMPLE::mtnlp::")
+    our_sents, bl_sents = list(), list()
+    
+    sbleu_seed = SelfBleu(texts=exp_sents,
+                          num_data=len(exp_sents),
+                          logger=logger)
+    score_seed = sbleu_seed.get_score_wo_sample()
+    sbleu_bl = SelfBleu(texts=mt_sents,
+                        num_data=len(mt_sents),
+                        logger=logger)
+    score_bl = sbleu_bl.get_score_wo_sample()
+    scores = {
+        'ours_exp': cov_score_exp
+        'mtnlp': cov_score_mt
+    }
+    Utils.write_json(scores, result_file, pretty_format=True)
+    return
