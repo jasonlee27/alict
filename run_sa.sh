@@ -21,12 +21,18 @@ function gen_templates() {
         (cd ${_DIR}
          # generate templates from sst dataset
          echo "running..."
-         CUDA_VISIBLE_DEVICES=4,7 python -m python.sa.main \
+         CUDA_VISIBLE_DEVICES=4,5,6 python -m python.sa.main \
                              --run template \
                              --search_dataset sst \
                              --syntax_selection random \
-                             --num_seeds 50 \
+                             --gpu_ids 4 5 6 \
                              --num_trials 1 # > /dev/null 2>&1
+         # CUDA_VISIBLE_DEVICES=4,7 python -m python.sa.main \
+         #                     --run template \
+         #                     --search_dataset sst \
+         #                     --syntax_selection random \
+         #                     --num_seeds 50 \
+         #                     --num_trials 1 # > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=4,7 python -m python.sa.main \
          #                     --run template \
          #                     --search_dataset sst \
@@ -39,6 +45,49 @@ function gen_templates() {
          #                     --syntax_selection random \
          #                     --num_seeds 200 \
          #                     --num_trials 3 # > /dev/null 2>&1
+         # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
+         #                     --run template \
+         #                     --search_dataset sst \
+         #                     --syntax_selection random \
+         #                     --num_seeds 100 \
+         #                     --num_trials 1 # > /dev/null 2>&1
+         # CUDA_VISIBLE_DEVICES=4,7 python -m python.sa.main \
+         #                     --run template \
+         #                     --search_dataset sst \
+         #                     --syntax_selection random \
+         #                     --num_seeds 200 \
+         #                     --num_trials 1 # > /dev/null 2>&1
+         # CUDA_VISIBLE_DEVICES=4,7 python -m python.sa.main \
+         #                     --run template \
+         #                     --search_dataset sst \
+         #                     --syntax_selection random \
+         #                     --num_seeds 200 \
+         #                     --num_trials 3 # > /dev/null 2>&1
+
+         # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
+         #                     --run template \
+         #                     --search_dataset checklist \
+         #                     --syntax_selection random \
+         #                     --num_seeds 100 \
+         #                     --num_trials 1 # > /dev/null 2>&1
+         # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
+         #                     --run template \
+         #                     --search_dataset checklist \
+         #                     --syntax_selection random \
+         #                     --num_seeds 50 \
+         #                     --num_trials 1 # > /dev/null 2>&1
+         # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
+         #                     --run template \
+         #                     --search_dataset checklist \
+         #                     --syntax_selection random \
+         #                     --num_seeds 100 \
+         #                     --num_trials 3 # > /dev/null 2>&1
+         # CUDA_VISIBLE_DEVICES=2,7 python -m python.sa.main \
+         #                     --run template \
+         #                     --search_dataset checklist \
+         #                     --syntax_selection random \
+         #                     --num_seeds 200 \
+         #                     --num_trials 1 # > /dev/null 2>&1
         )
 }
 
@@ -49,13 +98,19 @@ function gen_testsuite() {
                 --run testsuite \
                 --search_dataset sst \
                 --syntax_selection random \
-                --num_seeds 50 \
+                --num_seeds -1 \
                 --num_trials 1
          # python -m python.sa.main \
          #        --run testsuite \
          #        --search_dataset sst \
          #        --syntax_selection random \
          #        --num_seeds 50 \
+         #        --num_trials 1
+         # python -m python.sa.main \
+         #        --run testsuite \
+         #        --search_dataset sst \
+         #        --syntax_selection random \
+         #        --num_seeds 50 \
          #        --num_trials 2
          # python -m python.sa.main \
          #        --run testsuite \
@@ -99,14 +154,26 @@ function gen_testsuite() {
          #        --syntax_selection random \
          #        --num_seeds 200 \
          #        --num_trials 3
-         # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection bertscore
-         # python -m python.sa.main --run testsuite --search_dataset sst --syntax_selection noselect
 
          # write test cases into Checklist Testsuite format from checklist testcases
          # python -m python.sa.main \
          #        --run testsuite \
          #        --search_dataset checklist \
-         #        --syntax_selection random
+         #        --syntax_selection random \
+         #        --num_seeds 50 \
+         #        --num_trials 1
+         # python -m python.sa.main \
+         #        --run testsuite \
+         #        --search_dataset checklist \
+         #        --syntax_selection random \
+         #        --num_seeds 100 \
+         #        --num_trials 3
+         # python -m python.sa.main \
+         #        --run testsuite \
+         #        --search_dataset checklist \
+         #        --syntax_selection random \
+         #        --num_seeds 200 \
+         #        --num_trials 3
         )
 }
 
@@ -125,9 +192,15 @@ function eval_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
          # evaluating models on checklist testcases
-         # CUDA_VISIBLE_DEVICES=1,3,5 python -m python.sa.main --run testmodel --test_baseline
+         CUDA_VISIBLE_DEVICES=1 python -m python.sa.main --run testmodel --test_baseline
 
          # evaluating models on our generated testcases
+         # CUDA_VISIBLE_DEVICES=5 python -m python.sa.main \
+         #                     --run testmodel \
+         #                     --search_dataset sst \
+         #                     --syntax_selection random \
+         #                     --num_seeds -1 \
+         #                     --num_trials 1 # > /dev/null 2>&1
          # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
          #                     --run testmodel \
          #                     --search_dataset sst \
@@ -164,38 +237,53 @@ function eval_models() {
          #                     --syntax_selection random \
          #                     --num_seeds 100 \
          #                     --num_trials 3
-         CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
-                             --run testmodel \
-                             --search_dataset sst \
-                             --syntax_selection random \
-                             --num_seeds 200 \
-                             --num_trials 1
+         # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
+         #                     --run testmodel \
+         #                     --search_dataset sst \
+         #                     --syntax_selection random \
+         #                     --num_seeds 200 \
+         #                     --num_trials 1
          # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
          #                     --run testmodel \
          #                     --search_dataset sst \
          #                     --syntax_selection random \
          #                     --num_seeds 200 \
          #                     --num_trials 2
-         CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
-                             --run testmodel \
-                             --search_dataset sst \
-                             --syntax_selection random \
-                             --num_seeds 200 \
-                             --num_trials 3
+         # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
+         #                     --run testmodel \
+         #                     --search_dataset sst \
+         #                     --syntax_selection random \
+         #                     --num_seeds 200 \
+         #                     --num_trials 3
          
          # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main --run testmodel --syntax_selection bertscore
          # CUDA_VISIBLE_DEVICES=6,7 time python -m python.sa.main --run testmodel --syntax_selection noselect
 
          # evaluating models on checklist expanded testcases
-         # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
-         #                     --run testmodel \
-         #                     --search_dataset checklist \
-         #                     --syntax_selection random
-         # CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
+         # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
          #                     --run testmodel \
          #                     --search_dataset checklist \
          #                     --syntax_selection random \
-         #                     --test_baseline
+         #                     --num_seeds -1 \
+         #                     --num_trials 1
+         # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
+         #                     --run testmodel \
+         #                     --search_dataset checklist \
+         #                     --syntax_selection random \
+         #                     --num_seeds 50 \
+         #                     --num_trials 1
+         # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
+         #                     --run testmodel \
+         #                     --search_dataset checklist \
+         #                     --syntax_selection random \
+         #                     --num_seeds 100 \
+         #                     --num_trials 3
+         # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
+         #                     --run testmodel \
+         #                     --search_dataset checklist \
+         #                     --syntax_selection random \
+         #                     --num_seeds 200 \
+         #                     --num_trials 3
         )
 }
 
@@ -256,6 +344,12 @@ function analyze_eval_models() {
          #        --run analyze \
          #        --search_dataset sst \
          #        --syntax_selection random \
+         #        --num_seeds -1 \
+         #        --num_trials 1 # > /dev/null 2>&1
+         # python -m python.sa.main \
+         #        --run analyze \
+         #        --search_dataset sst \
+         #        --syntax_selection random \
          #        --num_seeds 50 \
          #        --num_trials 1
          # python -m python.sa.main \
@@ -307,11 +401,11 @@ function analyze_eval_models() {
          #        --num_seeds 200 \
          #        --num_trials 3
          
-         # python -m python.sa.main \
-         #        --run analyze \
-         #        --search_dataset sst \
-         #        --syntax_selection random \
-         #        --test_baseline
+         python -m python.sa.main \
+                --run analyze \
+                --search_dataset sst \
+                --syntax_selection random \
+                --test_baseline
          # python -m python.sa.main --run analyze --search_dataset sst --syntax_selection bertscore
          # python -m python.sa.main --run analyze --search_dataset sst --syntax_selection noselect
 
@@ -319,12 +413,31 @@ function analyze_eval_models() {
          # python -m python.sa.main \
          #        --run analyze \
          #        --search_dataset checklist \
-         #        --syntax_selection random
+         #        --syntax_selection random \
+         #        --num_seeds 50 \
+         #        --num_trials 1
          # python -m python.sa.main \
          #        --run analyze \
          #        --search_dataset checklist \
          #        --syntax_selection random \
-         #        --test_baseline
+         #        --num_seeds 100 \
+         #        --num_trials 3
+         # python -m python.sa.main \
+         #        --run analyze \
+         #        --search_dataset checklist \
+         #        --syntax_selection random \
+         #        --num_seeds 200 \
+         #        --num_trials 3
+         
+         # # python -m python.sa.main \
+         # #        --run analyze \
+         # #        --search_dataset checklist \
+         # #        --syntax_selection random
+         # # python -m python.sa.main \
+         # #        --run analyze \
+         # #        --search_dataset checklist \
+         # #        --syntax_selection random \
+         # #        --test_baseline
         )
 }
 
@@ -359,14 +472,33 @@ function explain_nlp() {
                             --model_name textattack/bert-base-uncased-SST-2
 }
 
+# ==========
+# Exp
+
+function failcase() {
+        (cd ${_DIR}
+         python -m python.sa.main \
+                --run failcase \
+                --search_dataset sst \
+                --syntax_selection random
+        )
+}
+
 function selfbleu() {
         (cd ${_DIR}
          python -m python.sa.main \
                 --run selfbleu \
                 --search_dataset sst \
-                --syntax_selection random \
-                --num_seeds 100 \
-                --num_trials 3
+                --syntax_selection random
+        )
+}
+
+function mtnlp_selfbleu() {
+        (cd ${_DIR}
+         python -m python.sa.main \
+                --run selfbleu_mtnlp \
+                --search_dataset sst \
+                --syntax_selection random
         )
 }
 
@@ -375,9 +507,16 @@ function pdrulecoverage() {
          CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
                              --run pdrule_cov \
                              --search_dataset sst \
-                             --syntax_selection random \
-                             --num_seeds 100 \
-                             --num_trials 3
+                             --syntax_selection random
+        )
+}
+
+function mtnlp_pdrulecoverage() {
+        (cd ${_DIR}
+         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
+                             --run pdrule_cov_mtnlp \
+                             --search_dataset sst \
+                             --syntax_selection random
         )
 }
 
@@ -406,26 +545,12 @@ function humanstudy_results() {
 # ==========
 # Coverage Exp
 
-function gen_coverage_data() {
+function get_neuralcoverage_data() {
         (cd ${_DIR}
          python -m python.sa.main \
-                --run coverage_data \
+                --run neural_coverage_data \
                 --search_dataset sst \
-                --syntax_selection random \
-                --num_seeds 50 \
-                --num_trials 3
-         python -m python.sa.main \
-                --run coverage_data \
-                --search_dataset sst \
-                --syntax_selection random \
-                --num_seeds 100 \
-                --num_trials 3
-         python -m python.sa.main \
-                --run coverage_data \
-                --search_dataset sst \
-                --syntax_selection random \
-                --num_seeds 200 \
-                --num_trials 3
+                --syntax_selection random
         )
 }
 
@@ -466,30 +591,9 @@ function make_tables() {
          # Table 1
          # python -m python.sa.main --run tables --which lc-req
          # python -m python.sa.main --run tables --which manual-study
-         # python -m python.sa.main --run tables --which test-results --num_seeds 50 --num_trials 3
-         # python -m python.sa.main --run tables --which test-results --num_seeds 100 --num_trials 3
-         # python -m python.sa.main --run tables --which test-results --num_seeds 200 --num_trials 3
-         # python -m python.sa.main --run tables --which test-results-bl --num_seeds 50 --num_trials 1
-         python -m python.sa.main \
-                --run tables \
-                --which test-results-all \
-                --search_dataset sst \
-                --syntax_selection random \
-                --num_seeds -1 \
-                --num_trials -1
+         python -m python.sa.main --run tables --which test-results
         )
 }
-
-function make_plots() {
-        (cd ${_DIR}
-         # Table 1
-         # python -m python.sa.main --run tables --which lc-req
-         # python -m python.sa.main --run tables --which manual-study
-         python -m python.sa.main --run plots --which selfbleu --num_seeds 100 --num_trials 3
-         python -m python.sa.main --run plots --which pdr --num_seeds 100 --num_trials 3
-        )
-}
-    
 
 # ==========
 # Main
@@ -505,23 +609,23 @@ function main_sst() {
         # analyze_eval_models_seed
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # analyze_retrained_models # to generate debug_results file
+        # failcase
         # selfbleu # to compute the selfbleu
         # pdrulecoverage # to compute the diversity of grammatic structure of sentence
         # explain_nlp # to run the explainNLP
         # humanstudy # sample sentences for manual study
         # humanstudy_results # get results of manual study into human_study.json
-        # gen_coverage_data # get sentences for coverage experiment
+        # get_neuralcoverage_data # get sentences for coverage experiment
         # compute_coverage
-        make_tables
-        # make_plots
+        # make_tables
+        mtnlp_selfbleu
+        # mtnlp_pdrulecoverage
         
 
         # eval_retrained_models # to ...?
 }
 
 
-# please make sure you actiavte nlptest conda environment
-# main_sst
 
 
 function main_checklist() {
@@ -530,9 +634,10 @@ function main_checklist() {
         # gen_requirements # to generate test_type_sa.json and requirement_sa.json
         # gen_templates # to generate templates_sa_{dataset_name}/seeds_{cksum}.json, templates_sa/templates_seed_{cksum}.json and templates_sa_{dataset_name}/templates_exp_{cksum}.json and cfg_expanded_inputs_sa_{dataset_name}.json
         # gen_testsuite # to generate pkl checklist testsuite files in test_results directory
-        # eval_models # run testsuite.run on checklist expanded testsets
-        analyze_eval_models # to generate test_results_analysis.json and test_results_checklist_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json 
+        eval_models # run testsuite.run on checklist expanded testsets
+        # analyze_eval_models # to generate test_results_analysis.json and test_results_checklist_analysis.json by reading test_results.txt and cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json 
 }
 
+# please make sure you actiavte nlptest conda environment
 main_sst
 # main_checklist

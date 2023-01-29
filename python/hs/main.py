@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
                         'requirement', 'template', 'testsuite', 'testmodel', 'analyze',
-                        'failcase', 'selfbleu', 'pdrule_cov',
+                        'failcase', 'selfbleu', 'selfbleu_mtnlp', 'pdrule_cov', 'pdrule_cov_mtnlp',
                         'humanstudy', 'humanstudy_results',
                         'tables', 'plots'
                     ], help='task to be run')
@@ -203,6 +203,16 @@ def run_selfbleu():
                 selection_method)
     return
 
+def run_selfbleu_mtnlp():
+    from .exp.SelfBleu import main_mtnlp
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    main_mtnlp(nlp_task,
+               search_dataset_name,
+               selection_method)
+    return
+
 def run_pdrule_cov():
     from .exp.ProductionruleCoverage import main_sample, main_all
     nlp_task = args.nlp_task
@@ -216,6 +226,15 @@ def run_pdrule_cov():
              selection_method)
     return
 
+def run_pdrule_cov_mtnlp():
+    from .exp.ProductionruleCoverage import main_mtnlp
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    main_mtnlp(nlp_task,
+               search_dataset_name,
+               selection_method)
+    return
 
 # ==========
 # Human study
@@ -237,6 +256,7 @@ def run_humanstudy_result():
     selection_method = args.syntax_selection
     model_name = args.model_name
     num_samples = 20
+    print('Run run_humanstudy_result..')
     Humanstudy.main_result(nlp_task,
                            search_dataset_name,
                            selection_method,
@@ -283,7 +303,9 @@ func_map = {
         'analyze': run_analyze,
         'failcase': run_failcase,
         'selfbleu': run_selfbleu,
+        'selfbleu_mtnlp': run_selfbleu_mtnlp,
         'pdrule_cov': run_pdrule_cov,
+        'pdrule_cov_mtnlp': run_pdrule_cov_mtnlp,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
         'tables': run_make_tables,

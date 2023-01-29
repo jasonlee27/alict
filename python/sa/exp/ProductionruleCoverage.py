@@ -519,6 +519,7 @@ def main_mtnlp(task,
     result_file = Macros.pdr_cov_result_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
     logger = Logger(logger_file=logger_file,
                     logger_name='mtnlt_mutation_log')
+    logger.print(f"OURS_PDR_SAMPLE::mtnlp::")
     
     # _seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
     #     task,
@@ -570,41 +571,39 @@ def main_mtnlp(task,
         lc_cksum = Utils.get_cksum(lc_desc)
         # _lc_cksum = Utils.get_cksum(lc_desc.lower())
         seed_file = seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"
-        exp_sents[s] = list()
+        # exp_sents[s] = list()
         # if os.path.exists(seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json") and \
         #    not os.path.exists(seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"):
         #     seed_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"    
         # # end if
         cfg_res = Utils.read_json(seed_file)
-        print(seed_file)
         tokens = Utils.tokenize(s)
         _s = Utils.detokenize(tokens)
         for exp in cfg_res['inputs'][_s]['exp_inputs']:
             exp_sent = exp[5]
-            exp_sents[s].append(exp_sent)
+            # exp_sents[s].append(exp_sent)
+            exp_sents[s].extend(exp_sent)
         # end for
     # end for
-    logger.print(f"OURS_PDR_SAMPLE::mtnlp::")
+
+    mt_sents = list()
+    for s in seed_sents:
+        ana_mt_sents = mt_res['mutations'][s]['ana']
+        act_mt_sents = mt_res['mutations'][s]['act']
+        if any(ana_mt_sents+act_mt_sents):
+            mt_sents.extend(ana_mt_sents+act_mt_sents)
+        # end if
+    # end for
+
     scores = {
         'ours_exp': list(),
         'mtnlp': list()
     }
     for t in tqdm(range(num_trials)):
-        sample_exp_sents = list()
-        for s in exp_sents.keys():
-            exp_sent = random.sample(exp_sents[s], 1)
-            sample_exp_sents.append(exp_sent)
-        # end for
-
-        sample_mt_sents = list()
-        for s in seed_sents:
-            ana_mt_sents = mt_res['mutations'][s]['ana']
-            act_mt_sents = mt_res['mutations'][s]['act']
-            if any(ana_mt_sents+act_mt_sents):
-                mt_sent = random.sample(ana_mt_sents+act_mt_sents, 1)
-                sample_mt_sents.append(mt_sent)
-            # end if
-        # end for
+        sample_exp_sents = random.sample(exp_sents,
+                                         min(len(seed_sents), len(exp_sents)))
+        sample_mt_sents = random.sample(mt_sents,
+                                        min(len(seed_sents), len(mt_sents)))
 
         sample_exp_rules = dict()
         for e in sample_exp_sents:

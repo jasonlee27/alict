@@ -322,3 +322,115 @@ def main_sample(task,
     # end for
     return
 
+
+def main_mtnlp(task,
+               search_dataset_name,
+               selection_method):
+    st = time.time()
+    num_trials = 10
+    logger_file = Macros.log_dir / f"mtnlp_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
+    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
+    mtnlp_dir = Macros.download_dir / 'MT-NLP'
+    mtnlp_res_dir =  Macros.result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
+    mtnlp_file = mtnlp_res_dir / 'mutations_s2lct_seed_samples.json'
+    result_file = Macros.pdr_cov_result_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+    logger = Logger(logger_file=logger_file,
+                    logger_name='mtnlt_mutation_log')
+    
+    # _seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
+    #     task,
+    #     search_dataset_name,
+    #     selection_method,
+    #     parse_all_sents=False,
+    #     logger=logger
+    # )
+    
+    mt_res = Utils.read_json(mtnlp_file)
+    sample_file = mtnlp_dir / mt_res['sample_file']
+    file_ind = re.search('raw_file(\d)\.txt', mt_res['sample_file']).group(1)
+    seed_sents = list(mt_res['mutations'].keys())
+    # seed_rules = dict()
+    seed_lcs = dict()
+    search_lns = [
+        l.strip()
+        for l in Utils.read_txt(mtnlp_dir / f"{task}_seed_samples_raw_file{file_ind}.txt")
+        if l.strip()!=''
+    ]
+    for s in seed_sents:
+        for l in search_lns:
+            if l.split('::')[0].strip()==s:
+                seed_lcs[s] = l.split('::')[-1].strip()
+            # end if
+        # end for
+    # end for
+        
+    # end for
+    
+    # get exp_sents and their rules
+    # exp_sents = [
+    #     l.split('::')[0]
+    #     for l in Utils.read_txt(mtnlp_dir / f"{task}_exp_samples_raw_file{file_ind}.txt")
+    #     if l.strip()!=''
+    # ]
+    exp_sents = list()
+    req_dir = Macros.result_dir / 'reqs'
+    req_file = req_dir / 'requirements_desc.txt'
+    for s in seed_lcs.keys():
+        lc_desc = seed_lcs[s].strip()
+        lc_cksum = Utils.get_cksum(lc_desc)
+        # _lc_cksum = Utils.get_cksum(lc_desc.lower())
+        seed_file = seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"
+        # if os.path.exists(seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json") and \
+        #    not os.path.exists(seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"):
+        #     seed_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"    
+        # # end if
+        cfg_res = Utils.read_json(seed_file)
+        # tokens = Utils.tokenize(s)
+        # s = Utils.detokenize(tokens)
+        for exp in cfg_res['inputs'][s]['exp_inputs']:
+            exp_sent = exp[5]
+            exp_sents.extend(exp_sent)
+        # end for
+    # end for
+
+    mt_sents = list()
+    for s in seed_sents:
+        ana_mt_sents = mt_res['mutations'][s]['ana']
+        act_mt_sents = mt_res['mutations'][s]['act']
+        if any(ana_mt_sents+act_mt_sents):
+            mt_sents.extend(ana_mt_sents+act_mt_sents)
+        # end if
+    # end for
+    logger.print(f"OURS_SELFBLEU_SAMPLE::mtnlp::")
+    scores = {
+        'sample_file': mt_res['sample_file'],
+        'ours_exp': {
+            'num_data': list(),
+            'scores': list()
+        },
+        'mtnlp': {
+            'num_data': list(),
+            'scores': list()
+        }
+    }
+    for t in tqdm(range(num_trials)):
+        random.seed(num_trial)
+        sample_exp_sents = random.sample(exp_sents,
+                                         min(len(seed_sents), len(exp_sents)))
+        sample_mt_sents = random.sample(exp_sents,
+                                        min(len(seed_sents), len(mt_sents)))
+        sbleu_exp = SelfBleu(texts=seed_sents,
+                             num_data=len(sample_exp_sents),
+                             logger=logger)
+        score_exp = sbleu_exp.get_score_wo_sample()
+        sbleu_mt = SelfBleu(texts=sample_mt_sents,
+                            num_data=len(sample_mt_sents),
+                            logger=logger)
+        score_mt = sbleu_mt.get_score_wo_sample()
+        scores['ours_exp']['num_data'].append(len(sample_exp_sents))
+        scores['ours_exp']['scores'].append(score_exp)
+        scores['mtnlp']['num_data'].append(len(sample_mt_sents))
+        scores['mtnlp']['scores'].append(score_mt)
+    # end for
+    Utils.write_json(scores, result_file, pretty_format=True)
+    return

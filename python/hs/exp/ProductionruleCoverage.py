@@ -480,5 +480,139 @@ def main_all(task,
         Utils.write_json(scores, result_file, pretty_format=True)
     # end for
     return
-                    
 
+
+def main_mtnlp(task,
+               search_dataset_name,
+               selection_method):
+    st = time.time()
+    num_trials = 10
+    logger_file = Macros.log_dir / f"mtnlp_{task}_{search_dataset_name}_{selection_method}_pdrcov.log"
+    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
+    mtnlp_dir = Macros.download_dir / 'MT-NLP'
+    mtnlp_res_dir =  Macros.result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
+    mtnlp_file = mtnlp_res_dir / 'mutations_s2lct_seed_samples.json'
+    result_file = Macros.pdr_cov_result_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+    logger = Logger(logger_file=logger_file,
+                    logger_name='mtnlt_mutation_log')
+    logger.print(f"OURS_PDR_SAMPLE::mtnlp::")
+    
+    # _seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
+    #     task,
+    #     search_dataset_name,
+    #     selection_method,
+    #     parse_all_sents=False,
+    #     logger=logger
+    # )
+
+    _exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+        task,
+        search_dataset_name,
+        selection_method,
+        logger=logger
+    )
+    
+    mt_res = Utils.read_json(mtnlp_file)
+    sample_file = mtnlp_dir / mt_res['sample_file']
+    file_ind = re.search('raw_file(\d)\.txt', mt_res['sample_file']).group(1)
+    seed_sents = list(mt_res['mutations'].keys())
+    # seed_rules = dict()
+    seed_lcs = dict()
+    search_lns = [
+        l.strip()
+        for l in Utils.read_txt(mtnlp_dir / f"{task}_seed_samples_raw_file{file_ind}.txt")
+        if l.strip()!=''
+    ]
+    for s in seed_sents:
+        for l in search_lns:
+            if l.split('::')[0].strip()==s:
+                seed_lcs[s] = l.split('::')[-1].strip()
+            # end if
+        # end for
+    # end for
+        
+    # end for
+    
+    # get exp_sents and their rules
+    # exp_sents = [
+    #     l.split('::')[0]
+    #     for l in Utils.read_txt(mtnlp_dir / f"{task}_exp_samples_raw_file{file_ind}.txt")
+    #     if l.strip()!=''
+    # ]
+    exp_sents = dict()
+    req_dir = Macros.result_dir / 'reqs'
+    req_file = req_dir / 'requirements_desc.txt'
+    for s in seed_lcs.keys():
+        lc_desc = seed_lcs[s].strip()
+        lc_cksum = Utils.get_cksum(lc_desc)
+        # _lc_cksum = Utils.get_cksum(lc_desc.lower())
+        seed_file = seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"
+        # exp_sents[s] = list()
+        # if os.path.exists(seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json") and \
+        #    not os.path.exists(seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"):
+        #     seed_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"    
+        # # end if
+        cfg_res = Utils.read_json(seed_file)
+        tokens = Utils.tokenize(s)
+        _s = Utils.detokenize(tokens)
+        for exp in cfg_res['inputs'][_s]['exp_inputs']:
+            exp_sent = exp[5]
+            # exp_sents[s].append(exp_sent)
+            exp_sents[s].extend(exp_sent)
+        # end for
+    # end for
+
+    mt_sents = list()
+    for s in seed_sents:
+        ana_mt_sents = mt_res['mutations'][s]['ana']
+        act_mt_sents = mt_res['mutations'][s]['act']
+        if any(ana_mt_sents+act_mt_sents):
+            mt_sents.extend(ana_mt_sents+act_mt_sents)
+        # end if
+    # end for
+
+    scores = {
+        'ours_exp': list(),
+        'mtnlp': list()
+    }
+    for t in tqdm(range(num_trials)):
+        sample_exp_sents = random.sample(exp_sents,
+                                         min(len(seed_sents), len(exp_sents)))
+        sample_mt_sents = random.sample(mt_sents,
+                                        min(len(seed_sents), len(mt_sents)))
+
+        sample_exp_rules = dict()
+        for e in sample_exp_sents:
+            seed_sent = [s for s in exp_sents.keys() if e in exp_sents[s]][0]
+            lc = seed_lcs[seed_sent]
+            sample_exp_rules[e] = _exp_rules[lc][e]
+        # end for
+    
+        mt_rules = ProductionruleCoverage.get_mt_cfg_rules(
+            task,
+            search_dataset_name,
+            selection_method,
+            'mtnlp',
+            sample_mt_sents,
+            logger=logger
+        )
+        pdr1 = {
+            s: sample_exp_rules[s]
+            for s in sample_exp_sents
+        }
+        pdr2 = {
+            s: mt_rules[s] 
+            for s in sample_mt_sents
+        }
+        
+        pdr_obj1 = ProductionruleCoverage(lc=None,
+                                          our_cfg_rules=pdr1)
+        pdr_obj2 = ProductionruleCoverage(lc=None,
+                                          our_cfg_rules=pdr2)
+        cov_score_exp, _ = pdr_obj1.get_score()
+        cov_score_mt, _ = pdr_obj2.get_score()
+        scores['ours_exp'].append(cov_score_exp)
+        scores['mtnlp'].append(cov_score_mt)
+    # end for
+    Utils.write_json(scores, result_file, pretty_format=True)
+    return
