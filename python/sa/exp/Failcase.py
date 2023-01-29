@@ -80,8 +80,8 @@ def main_fail(task,
     result_file = Macros.result_dir / f"failcases_{task}_{search_dataset_name}_{selection_method}.json"
     bl_result_file = Macros.result_dir / f"failcases_bl_{task}_{search_dataset_name}_{selection_method}.json"
     result_dir = Macros.result_dir / f"test_results_{task}_{search_dataset_name}_{selection_method}" 
-    # test_result_file = result_dir / 'test_result_analysis.json'
-    # test_result = Utils.read_json(test_result_file)
+    test_result_file = result_dir / 'test_result_analysis.json'
+    test_result = Utils.read_json(test_result_file)
     raw_test_result_file = result_dir / 'test_results.txt'
     raw_test_result = Result.parse_results(raw_test_result_file, Macros.sa_models_file)
     
@@ -128,13 +128,13 @@ def main_fail(task,
         scores[model] = dict()
         bl_model_results = raw_bl_test_result[model]
         lcs = sorted(set([r['req'] for r in bl_model_results]))
-        for lc in lcs:
+        for l_i, lc in enumerate(lcs):
             scores[model][lc] = {
                 f"{num_sample}sample": list()
                 for num_sample in num_samples
             }
-            sent_pass = [s for s in bl_model_results[0]['pass']]
-            sent_fail = [s for s in bl_model_results[0]['fail']]
+            sent_pass = [s for s in bl_model_results if s['req']==lc][0]['pass']
+            sent_fail = [s for s in bl_model_results if s['req']==lc][0]['fail']
             for num_sample in num_samples:
                 for num_trial in range(num_trials):
                     random.seed(num_trial)

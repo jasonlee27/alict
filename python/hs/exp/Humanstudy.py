@@ -4,17 +4,14 @@
 # Reported bugs (Approach): # of l{i}_ours != l{i}_model
 
 
-from typing import *
-
 import re, os
-import nltk
-import copy
+# import nltk
+# import copy
 import random
 import numpy
-import spacy
 
+from typing import *
 from pathlib import Path
-from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -31,11 +28,10 @@ class Humanstudy:
     #     5: 'strong_pos'
     # }
     
-    # SENTIMENT_MAP_FROM_STR = {
-    #     'normal': 1,
-    #     'hatespeech': 5,
-    #     'offensive': 5
-    # }
+    SENTIMENT_MAP_FROM_STR = {
+        'non-toxic': [1,2,3],
+        'toxic': [4,5]
+    }
     SENTIMENT_MAP_FROM_SCORE = {
         '0': [1,2],
         '1': [3],
@@ -57,7 +53,6 @@ class Humanstudy:
         
         for l in cksum_map:
             lc_desc, cksum = l.split('\t')
-            print(lc_desc)
             json_file = json_dir / f"cfg_expanded_inputs_{cksum.strip()}.json"
             if os.path.exists(str(json_file)):
                 inp = Utils.read_json(json_file)
@@ -154,7 +149,7 @@ class Humanstudy:
             # end for
             Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
             Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
-            print(f"{f_i}:{res_dir} / seed_samples_raw_{f_i}.txt\nnum_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
+            # print(f"{f_i}:{res_dir} / seed_samples_raw_{f_i}.txt\nnum_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
         # end for
         return
     
@@ -202,8 +197,8 @@ class Humanstudy:
         return res
 
     @classmethod
-    def get_target_results(cls, target_file, seed_human_results, exp_human_results):
-        sent_dict = cls.read_sentences(target_file, include_label=True)
+    def get_target_results(cls, seed_cfg_dir, seed_human_results, exp_human_results):
+        sent_dict = cls.read_sentences(seed_cfg_dir, include_label=True)
         res, res_lc = dict(), dict()
         seed_sents = list(seed_human_results.keys())
         exp_sents = list(exp_human_results.keys())
@@ -263,6 +258,10 @@ class Humanstudy:
                    _sent in seed_sents or \
                    sent in exp_sents or \
                    _sent in exp_sents:
+                    print('get_pass_sents_from_model_string')
+                    print(str(sent_search.group(2)))
+                    print(str(sent_search.group(3)))
+                    print('---')
                     result.append({
                         'pred': cls.SENTIMENT_MAP_FROM_SCORE[str(sent_search.group(2))],
                         'label': cls.SENTIMENT_MAP_FROM_SCORE[str(sent_search.group(3))],
@@ -347,18 +346,14 @@ class Humanstudy:
         for s_i, sent in enumerate(tgt_results.keys()):
             label = tgt_results[sent]
             if sent in seed_sents:
-                labels_h = [
-                    'non-toxic' if score in ['1', '2', '3'] else 'toxic'
-                    for score in seed_human_results[sent]['sent_score']
-                ]
+                labels_h = cls.seed_human_results[sent]['sent_score']
                 label_consistency = [1 if l==label else 0 for l in labels_h]
+                print('SEED: ', labels_h, label, label_consistency)
                 res['seed'][sent] = sum(label_consistency)/len(label_consistency)
             elif sent in exp_sents:
-                labels_h = [
-                    'non-toxic' if score in ['1', '2', '3'] else 'toxic'
-                    for score in exp_human_results[sent]['sent_score']
-                ]
+                labels_h = exp_human_results[sent]['sent_score']
                 label_consistency = [1 if l==label else 0 for l in labels_h]
+                print('EXP: ', labels_h, label, label_consistency)
                 res['exp'][sent] = sum(label_consistency)/len(label_consistency)
             # end if
         # end for
@@ -469,13 +464,13 @@ class Humanstudy:
                     selection_method: str,
                     model_name: str,
                     res_dir: Path,
-                    target_file: Path,
+                    seed_cfg_dir: Path,
                     num_samples:int=100):
         # model_name="textattack/bert-base-uncased-SST-2"
         seed_sent_files = sorted([
             f for f in os.listdir(str(res_dir))
             if os.path.isfile(os.path.join(str(res_dir), f)) and \
-            re.search(r"seed_samples_raw_file(\d+)\.txt", f)
+            re.search(r"^seed_samples_raw_file(\d+)\.txt", f)
         ])
         res = dict()
         seed_rep_bugs_subjs = list()
@@ -486,26 +481,25 @@ class Humanstudy:
         exp_label_incons_subjs = list()
         labels = dict()
         for seed_f_i, seed_sent_file in enumerate(seed_sent_files):
-            subject_i = int(re.search(r"seed_samples_raw_file(\d+)\.txt", seed_sent_file).group(1))
-            exp_sent_file = res_dir / f"exp_samples_raw_file{subject_i}.txt"
+            file_i = int(re.search(r"^seed_samples_raw_file(\d+)\.txt", seed_sent_file).group(1))
+            exp_sent_file = res_dir / f"exp_samples_raw_file{file_i}.txt"
             seed_resp_files = sorted([
                 res_dir / resp_f for resp_f in os.listdir(str(res_dir))
                 if os.path.isfile(os.path.join(str(res_dir), resp_f)) and \
-                re.search(f"seed_samples_raw_file{subject_i}_resp(\d+)\.txt", resp_f)
+                re.search(f"^seed_samples_raw_file{file_i}_resp(\d+)\.txt", resp_f)
             ])
             exp_resp_files = sorted([
                 res_dir / resp_f for resp_f in os.listdir(str(res_dir))
                 if os.path.isfile(os.path.join(str(res_dir), resp_f)) and \
-                re.search(f"exp_samples_raw_file{subject_i}_resp(\d+)\.txt", resp_f)
+                re.search(f"^exp_samples_raw_file{file_i}_resp(\d+)\.txt", resp_f)
             ])
-            
             seed_sents = cls.read_sample_sentences(res_dir / seed_sent_file)
             seed_human_res = cls.read_sample_scores(seed_resp_files, seed_sents)
             
             exp_sents = cls.read_sample_sentences(exp_sent_file)
             exp_human_res = cls.read_sample_scores(exp_resp_files, exp_sents)
             
-            tgt_res, tgt_res_lc = cls.get_target_results(target_file,
+            tgt_res, tgt_res_lc = cls.get_target_results(seed_cfg_dir,
                                                          seed_human_res,
                                                          exp_human_res)
             # pred_res = cls.get_predict_results(nlp_task,
@@ -520,7 +514,7 @@ class Humanstudy:
             # seed_incorr_inps, exp_incorr_inps = cls.get_incorrect_inputs(
             #     pred_res, seed_res, exp_res
             # )
-            res[f"file{subject_i}"] = {
+            res[f"file{file_i}"] = {
                 'label_scores': cls.get_label_consistency(tgt_res, seed_human_res, exp_human_res),
                 'lc_scores': cls.get_lc_relevancy(tgt_res_lc, seed_human_res, exp_human_res)
             }
@@ -556,7 +550,6 @@ class Humanstudy:
                 'avg_lc_score': sum(agg_exp_lc_scores)/len(agg_exp_lc_scores),
             }
         }
-        print(res['agg'])
         return res
     
     @classmethod
@@ -580,7 +573,8 @@ class Humanstudy:
                     selection_method,
                     model_name,
                     num_samples):
-        target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
+        seed_cfg_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
+        # target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
         res_dir = Macros.result_dir / 'human_study' / f"{nlp_task}_{search_dataset_name}_{selection_method}"
         res_dir.mkdir(parents=True, exist_ok=True)
         # model_name = "textattack/bert-base-uncased-SST-2"
@@ -590,7 +584,7 @@ class Humanstudy:
             selection_method,
             model_name,
             res_dir,
-            target_file,
+            seed_cfg_dir,
             num_samples=num_samples
         )
         Utils.write_json(result, res_dir / f"human_study_results.json", pretty_format=True)

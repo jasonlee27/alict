@@ -30,43 +30,45 @@ def main_p2f_f2p(task,
         scores[m] = dict()
         test_result_model = test_result[m]
         for lc in texts_seed_ours.keys():
-            print(lc, [l['req'] for l in test_result_model])
-            test_result_model_lc = [l for l in test_result_model if l['req']==lc or l['req']==lc.lower()][0]
+            test_result_model_lc = [l for l in test_result_model if l['req']==lc or l['req']==lc.lower()]
             p2f_cases = dict()
             f2p_cases = dict()
-            for pf in test_result_model_lc['pass->fail']:
-                if pf['from']['sent'] not in p2f_cases.keys():
-                    p2f_cases[pf['from']['sent']] = len(pf['to'])
-                else:
-                    p2f_cases[pf['from']['sent']] += len(pf['to'])
-                # end if
-            # end for
-            for pf in test_result_model_lc['fail->pass']:
-                if pf['from']['sent'] not in p2f_cases.keys():
-                    f2p_cases[pf['from']['sent']] = len(pf['to'])
-                else:
-                    f2p_cases[pf['from']['sent']] += len(pf['to'])
-                # end if
-            # end for
-            scores[m][lc] = {
-                f"{num_sample}sample": {
-                    'p2f': list(),
-                    'f2p': list()
-                }
-                for num_sample in num_samples
-            }
-            for num_sample in num_samples:
-                for num_trial in range(num_trials):
-                    random.seed(num_trial)
-                    our_sents = random.sample(texts_seed_ours[lc], min(len(texts_seed_ours[lc]), num_sample))
-                    our_sents = [
-                        Utils.detokenize(Utils.tokenize(s))
-                        for s in our_sents
-                    ]
-                    scores[m][lc][f"{num_sample}sample"]['p2f'].append(sum([p2f_cases[s] if s in p2f_cases.keys() else 0 for s in our_sents]))
-                    scores[m][lc][f"{num_sample}sample"]['f2p'].append(sum([f2p_cases[s] if s in f2p_cases.keys() else 0 for s in our_sents]))
+            if any(test_result_model_lc):
+                test_result_model_lc = test_result_model_lc[0]
+                for pf in test_result_model_lc['pass->fail']:
+                    if pf['from']['sent'] not in p2f_cases.keys():
+                        p2f_cases[pf['from']['sent']] = len(pf['to'])
+                    else:
+                        p2f_cases[pf['from']['sent']] += len(pf['to'])
+                    # end if
                 # end for
-            # end for
+                for pf in test_result_model_lc['fail->pass']:
+                    if pf['from']['sent'] not in p2f_cases.keys():
+                        f2p_cases[pf['from']['sent']] = len(pf['to'])
+                    else:
+                        f2p_cases[pf['from']['sent']] += len(pf['to'])
+                    # end if
+                # end for
+                scores[m][lc] = {
+                    f"{num_sample}sample": {
+                        'p2f': list(),
+                        'f2p': list()
+                    }
+                    for num_sample in num_samples
+                }
+                for num_sample in num_samples:
+                    for num_trial in range(num_trials):
+                        random.seed(num_trial)
+                        our_sents = random.sample(texts_seed_ours[lc], min(len(texts_seed_ours[lc]), num_sample))
+                        our_sents = [
+                            Utils.detokenize(Utils.tokenize(s))
+                            for s in our_sents
+                        ]
+                        scores[m][lc][f"{num_sample}sample"]['p2f'].append(sum([p2f_cases[s] if s in p2f_cases.keys() else 0 for s in our_sents]))
+                        scores[m][lc][f"{num_sample}sample"]['f2p'].append(sum([f2p_cases[s] if s in f2p_cases.keys() else 0 for s in our_sents]))
+                    # end for
+                # end for
+            # end if
         # end for
         Utils.write_json(scores, result_file, pretty_format=True)
     # end for
@@ -134,8 +136,8 @@ def main_fail(task,
                 f"{num_sample}sample": list()
                 for num_sample in num_samples
             }
-            sent_pass = [s for s in bl_model_results[0]['pass']]
-            sent_fail = [s for s in bl_model_results[0]['fail']]
+            sent_pass = [s for s in bl_model_results if s['req']==lc][0]['pass']
+            sent_fail = [s for s in bl_model_results if s['req']==lc][0]['fail']
             for num_sample in num_samples:
                 for num_trial in range(num_trials):
                     random.seed(num_trial)

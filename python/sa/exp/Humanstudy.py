@@ -4,17 +4,14 @@
 # Reported bugs (Approach): # of l{i}_ours != l{i}_model
 
 
-from typing import *
-
 import re, os
-import nltk
-import copy
+# import nltk
+# import copy
 import random
 import numpy
-import spacy
 
+from typing import *
 from pathlib import Path
-from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
@@ -193,8 +190,8 @@ class Humanstudy:
         return res
 
     @classmethod
-    def get_target_results(cls, target_file, seed_human_results, exp_human_results):
-        sent_dict = cls.read_sentences(target_file, include_label=True)
+    def get_target_results(cls, seed_cfg_dir, seed_human_results, exp_human_results):
+        sent_dict = cls.read_sentences(seed_cfg_dir, include_label=True)
         res, res_lc = dict(), dict()
         seed_sents = list(seed_human_results.keys())
         exp_sents = list(exp_human_results.keys())
@@ -453,8 +450,7 @@ class Humanstudy:
                     selection_method: str,
                     model_name: str,
                     res_dir: Path,
-                    target_file: Path,
-                    num_samples:int=100):
+                    seed_cfg_dir: Path):
         # model_name="textattack/bert-base-uncased-SST-2"
         seed_sent_files = sorted([
             f for f in os.listdir(str(res_dir))
@@ -470,17 +466,17 @@ class Humanstudy:
         exp_label_incons_subjs = list()
         labels = dict()
         for seed_f_i, seed_sent_file in enumerate(seed_sent_files):
-            subject_i = int(re.search(r"seed_samples_raw_file(\d+)\.txt", seed_sent_file).group(1))
-            exp_sent_file = res_dir / f"exp_samples_raw_file{subject_i}.txt"
+            file_i = int(re.search(r"seed_samples_raw_file(\d+)\.txt", seed_sent_file).group(1))
+            exp_sent_file = res_dir / f"exp_samples_raw_file{file_i}.txt"
             seed_resp_files = sorted([
                 res_dir / resp_f for resp_f in os.listdir(str(res_dir))
                 if os.path.isfile(os.path.join(str(res_dir), resp_f)) and \
-                re.search(f"seed_samples_raw_file{subject_i}_resp(\d+)\.txt", resp_f)
+                re.search(f"seed_samples_raw_file{file_i}_resp(\d+)\.txt", resp_f)
             ])
             exp_resp_files = sorted([
                 res_dir / resp_f for resp_f in os.listdir(str(res_dir))
                 if os.path.isfile(os.path.join(str(res_dir), resp_f)) and \
-                re.search(f"exp_samples_raw_file{subject_i}_resp(\d+)\.txt", resp_f)
+                re.search(f"exp_samples_raw_file{file_i}_resp(\d+)\.txt", resp_f)
             ])
             
             seed_sents = cls.read_sample_sentences(res_dir / seed_sent_file)
@@ -489,7 +485,7 @@ class Humanstudy:
             exp_sents = cls.read_sample_sentences(exp_sent_file)
             exp_human_res = cls.read_sample_scores(exp_resp_files, exp_sents)
             
-            tgt_res, tgt_res_lc = cls.get_target_results(target_file,
+            tgt_res, tgt_res_lc = cls.get_target_results(seed_cfg_dir,
                                                          seed_human_res,
                                                          exp_human_res)
             # pred_res = cls.get_predict_results(nlp_task,
@@ -504,7 +500,7 @@ class Humanstudy:
             # seed_incorr_inps, exp_incorr_inps = cls.get_incorrect_inputs(
             #     pred_res, seed_res, exp_res
             # )
-            res[f"file{subject_i}"] = {
+            res[f"file{file_i}"] = {
                 'label_scores': cls.get_label_consistency(tgt_res, seed_human_res, exp_human_res),
                 'lc_scores': cls.get_lc_relevancy(tgt_res_lc, seed_human_res, exp_human_res)
             }
@@ -540,7 +536,6 @@ class Humanstudy:
                 'avg_lc_score': sum(agg_exp_lc_scores)/len(agg_exp_lc_scores),
             }
         }
-        print(res['agg'])
         return res
     
     @classmethod
@@ -561,11 +556,11 @@ class Humanstudy:
                     nlp_task,
                     search_dataset_name,
                     selection_method,
-                    model_name,
-                    num_samples):
-        target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
+                    model_name):
+        seed_cfg_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
         res_dir = Macros.result_dir / 'human_study' / f"{nlp_task}_{search_dataset_name}_{selection_method}"
         res_dir.mkdir(parents=True, exist_ok=True)
+        # target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
         # model_name = "textattack/bert-base-uncased-SST-2"
         result = cls.get_results(
             nlp_task,
@@ -573,107 +568,106 @@ class Humanstudy:
             selection_method,
             model_name,
             res_dir,
-            target_file,
-            num_samples=num_samples
+            seed_cfg_dir,
         )
         Utils.write_json(result, res_dir / f"human_study_results.json", pretty_format=True)
         return
 
 
-class Mtnlp:
+# class Mtnlp:
 
-    MTNLP_MUTATION_RES_DIR = Macros.result_dir / 'mt_nlp_mutation_results'
+#     MTNLP_MUTATION_RES_DIR = Macros.result_dir / 'mt_nlp_mutation_results'
 
-    @classmethod
-    def get_sample_label_per_sent(cls, seed_sent, template_dict):
-        for lc in template_dict.keys():
-            for seed in template_dict[lc].keys():
-                if seed==seed_sent:
-                    return template_dict[lc][seed]['label']
-                # end if
-            # end for
-        # end for
-        return
+#     @classmethod
+#     def get_sample_label_per_sent(cls, seed_sent, template_dict):
+#         for lc in template_dict.keys():
+#             for seed in template_dict[lc].keys():
+#                 if seed==seed_sent:
+#                     return template_dict[lc][seed]['label']
+#                 # end if
+#             # end for
+#         # end for
+#         return
 
-    @classmethod
-    def get_mutated_sents(sent_index, seed_txt_filename):
-        mutated_sent_txt_file = cls.MTNLP_MUTATION_RES_DIR / f"{seed_txt_filename}_seed{sent_index}.txt"
-        return [l for l in Utils.read_txt(mutated_sent_txt_file) if l!='\n']
+#     @classmethod
+#     def get_mutated_sents(sent_index, seed_txt_filename):
+#         mutated_sent_txt_file = cls.MTNLP_MUTATION_RES_DIR / f"{seed_txt_filename}_seed{sent_index}.txt"
+#         return [l for l in Utils.read_txt(mutated_sent_txt_file) if l!='\n']
 
-    @classmethod
-    def get_sample_labels(cls,
-                          nlp_task,
-                          search_dataset_name,
-                          selection_method,
-                          sample_sent_txt_file):
-        template_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
-        template_dict = Humanstudy.read_sentences(template_dir)
-        # sample_sent_txt_filename = os.path.splittxt(os.path.basename(sample_sent_txt_file))
-        sample_sents = [l for l in Utils.read_txt(sample_sent_txt_file) if l!='\n']
-        # mutation_res = list()
-        res = dict()
-        for s_i, s in enumerate(sample_sents):
-            label = cls.get_sample_label_per_sent(s, template_dict)
-            res[s] = label
-            # mutated_sents = cls.get_mutated_sents(s_i, sample_sent_txt_filename)
-            # if any(mutated_sents):
-            #     mutation_res.append(mutated_sents)
-            # # end if
-        # end for
-        return res
+#     @classmethod
+#     def get_sample_labels(cls,
+#                           nlp_task,
+#                           search_dataset_name,
+#                           selection_method,
+#                           sample_sent_txt_file):
+#         template_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
+#         template_dict = Humanstudy.read_sentences(template_dir)
+#         # sample_sent_txt_filename = os.path.splittxt(os.path.basename(sample_sent_txt_file))
+#         sample_sents = [l for l in Utils.read_txt(sample_sent_txt_file) if l!='\n']
+#         # mutation_res = list()
+#         res = dict()
+#         for s_i, s in enumerate(sample_sents):
+#             label = cls.get_sample_label_per_sent(s, template_dict)
+#             res[s] = label
+#             # mutated_sents = cls.get_mutated_sents(s_i, sample_sent_txt_filename)
+#             # if any(mutated_sents):
+#             #     mutation_res.append(mutated_sents)
+#             # # end if
+#         # end for
+#         return res
 
-    @classmethod
-    def get_mutations_from_samples(cls, sample_sent_txt_file):
-        sample_sent_txt_filename = os.path.split(os.path.basename(str(sample_sent_txt_file)))
-        sample_sents = [l for l in Utils.read_txt(str(sample_sent_txt_file)) if l!='\n']
-        mutation_res = dict()
-        for s_i, s in enumerate(sample_sents):
-            # label = cls.get_sample_label_per_sent(s, template_dict)
-            # res[s] = label
-            mutated_sents = cls.get_mutated_sents(s_i, sample_sent_txt_filename)
-            if any(mutated_sents):
-                mutation_resp[s] = mutated_sents
-            else:
-                mutation_resp[s] = None
-            # end if
-        # end for
-        return mutation_res
+#     @classmethod
+#     def get_mutations_from_samples(cls, sample_sent_txt_file):
+#         sample_sent_txt_filename = os.path.split(os.path.basename(str(sample_sent_txt_file)))
+#         sample_sents = [l for l in Utils.read_txt(str(sample_sent_txt_file)) if l!='\n']
+#         mutation_res = dict()
+#         for s_i, s in enumerate(sample_sents):
+#             # label = cls.get_sample_label_per_sent(s, template_dict)
+#             # res[s] = label
+#             mutated_sents = cls.get_mutated_sents(s_i, sample_sent_txt_filename)
+#             if any(mutated_sents):
+#                 mutation_resp[s] = mutated_sents
+#             else:
+#                 mutation_resp[s] = None
+#             # end if
+#         # end for
+#         return mutation_res
 
-    # @classmethod
-    # def sample_mutations(cls, mutation_res, num_sample):
-    #     mutations_flatten = list()
-    #     for s in mutation_res.keys():
-    #         mutations = mutation_res[s]
-    #         if mutations is not None:
-    #             mutations_flatten.extend(mutations)
-    #         # end if
-    #     # end for
-    #     samples = random.sample(mutations_flatten, min(len(mutations_flatten), num_sample))
-    #     return samples
+#     # @classmethod
+#     # def sample_mutations(cls, mutation_res, num_sample):
+#     #     mutations_flatten = list()
+#     #     for s in mutation_res.keys():
+#     #         mutations = mutation_res[s]
+#     #         if mutations is not None:
+#     #             mutations_flatten.extend(mutations)
+#     #         # end if
+#     #     # end for
+#     #     samples = random.sample(mutations_flatten, min(len(mutations_flatten), num_sample))
+#     #     return samples
 
-    @classmethod
-    def main_mutation(cls, 
-                      nlp_task,
-                      search_dataset_name,
-                      selection_method):
-        sample_sent_txt_file = Macros.result_dir / 'human_study' / f"{nlp_task}_{search_dataset_name}_{selection_method}" / 'seed_samples_raw_file2.txt'
-        sample_labels = cls.get_sample_labels(nlp_task,
-                                              search_dataset_name,
-                                              selection_method,
-                                              sample_sent_txt_file)
-        num_sample = len(sample_labels.keys())
-        mutations = cls.get_mutations_from_samples(sample_sent_txt_file)
-        res = list()
-        for s in mutations.keys():
-            ms = mutations[s]
-            if ms is not None:
-                ms_label = sample_labels[s]
-                for _ms in ms:
-                    res.append(f"{_ms} :: {ms_label}\n")
-                # end for
-            # end if
-        # end for
-        samples = random.sample(res, min(len(res), num_sample))
-        sample_sent_txt_filename = os.path.split(os.path.basename(sample_sent_txt_file))
-        Utils.write_txt('\n'.join(samples), cls.MTNLP_MUTATION_RES_DIR / f"mtnlp_mutation_samples_{sample_sent_txt_filename}.txt")
-        return
+#     @classmethod
+#     def main_mutation(cls, 
+#                       nlp_task,
+#                       search_dataset_name,
+#                       selection_method):
+#         sample_sent_txt_file = Macros.result_dir / 'human_study' / f"{nlp_task}_{search_dataset_name}_{selection_method}" / 'seed_samples_raw_file2.txt'
+#         sample_labels = cls.get_sample_labels(nlp_task,
+#                                               search_dataset_name,
+#                                               selection_method,
+#                                               sample_sent_txt_file)
+#         num_sample = len(sample_labels.keys())
+#         mutations = cls.get_mutations_from_samples(sample_sent_txt_file)
+#         res = list()
+#         for s in mutations.keys():
+#             ms = mutations[s]
+#             if ms is not None:
+#                 ms_label = sample_labels[s]
+#                 for _ms in ms:
+#                     res.append(f"{_ms} :: {ms_label}\n")
+#                 # end for
+#             # end if
+#         # end for
+#         samples = random.sample(res, min(len(res), num_sample))
+#         sample_sent_txt_filename = os.path.split(os.path.basename(sample_sent_txt_file))
+#         Utils.write_txt('\n'.join(samples), cls.MTNLP_MUTATION_RES_DIR / f"mtnlp_mutation_samples_{sample_sent_txt_filename}.txt")
+#         return
