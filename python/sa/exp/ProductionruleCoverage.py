@@ -283,7 +283,6 @@ def main_sample(task,
             len_seed_exp = len(list(seed_rules[lc].keys())+list(exp_rules[lc].keys()))
             max_num_samples = min(int(100*math.ceil(len_seed_exp/100.)), int(5e4))
             num_samples = list(range(100, max_num_samples, 100))
-            print(lc, max_num_samples)
             logger.print(f"OURS_PDR_SAMPLE::{lc}")
             our_sents, bl_sents = list(), list()
             scores[lc] = {

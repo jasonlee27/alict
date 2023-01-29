@@ -82,21 +82,23 @@ class Model:
     @classmethod
     def format_example(cls, x, pred, conf, *args, **kwargs):
         softmax = type(conf) in [np.array, np.ndarray]
-        pred_res = "FAIL" if kwargs["isfailed"] else "PASS"
-        expect_result, label = args[0], args[1]
+        expect_result = args[0]
+        label = expect_result
+        pred_res = "FAIL" if pred!=label else "PASS"
         binary = False
         if softmax:
             if conf.shape[0] == 2:
-                conf = conf[1]
-                return f"DATA::{pred_res}::{conf:%.1f}::{str(pred)}::{str(label)}::{str(x)}"
+                confs = ' '.join(['%.1f' % c for c in conf])
+                # conf = conf[1]
+                return f"DATA::{pred_res}::{str(confs)}::{str(pred)}::{str(label)}::{str(x)}"
             elif conf.shape[0] <= 4:
                 confs = ' '.join(['%.1f' % c for c in conf])
                 # return f"{pred_res}::{conf}::{str(x)}"
                 return f"DATA::{pred_res}::{str(confs)}::{str(pred)}::{str(label)}::{str(x)}"
             else:
-                conf = conf[pred]
+                confs = ' '.join(['%.1f' % c for c in conf])
                 # return f"{pred_res}::{pred}:({conf:%.1f})::{str(x)}"
-                return f"DATA::{pred_res}::{conf:%.1f}::{str(pred)}::{str(label)}::{str(x)}"
+                return f"DATA::{pred_res}::{str(confs)}::{str(pred)}::{str(label)}::{str(x)}"
         else:
             return f"DATA::{pred_res}::[]::{str(pred)}::{str(label)}::{str(x)}"
         
@@ -122,5 +124,5 @@ class Model:
         testsuite.run(pred_and_conf_fn, n=None, overwrite=True, logger=logger)
         testsuite.summary(logger=logger,
                           print_fn=cls.print_result if print_fn is not None else None,
-                          format_example_fn=cls.format_example if format_example_fn is not None else None)
+                          format_example_fn=cls.format_example if format_example_fn is None else None)
         return
