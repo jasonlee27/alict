@@ -103,48 +103,63 @@ class ProductionruleCoverage:
                                logger=None):
         seed_rules_over_lcs = dict()
         seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
-        seed_files = [
-            f for f in os.listdir(str(seed_dir))
-            if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
-        ]
-        for seed_file in seed_files:
-            cfg_res = Utils.read_json(seed_dir / seed_file)
-            lc_desc = cfg_res['requirement']['description']
+        req_dir = Macros.result_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc_hs.txt'
+        for l_i, l in enumerate(Utils.read_txt(req_file)):
+            lc_desc = l.strip().split('::')[0]
             lc_cksum = Utils.get_cksum(lc_desc)
+            _lc_cksum = Utils.get_cksum(lc_desc.lower())
+            seed_file = seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"
             res_file = Macros.pdr_cov_result_dir / f"seed_{task}_{search_dataset_name}_{selection_method}_pdr_{lc_cksum}.json"
+            if os.path.exists(seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json") and \
+               not os.path.exists(seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"):
+                seed_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"
+                res_file = Macros.pdr_cov_result_dir / f"seed_{task}_{search_dataset_name}_{selection_method}_pdr_{_lc_cksum}.json"
+            # end if
+
+            seed_rules = dict()
             if os.path.exists(res_file):
-                seed_rules = Utils.read_json(res_file)
-            else:
-                seed_rules = dict()
+                try:
+                    seed_rules = Utils.read_json(res_file)
+                    seed_rules_over_lcs[lc_desc] = seed_rules
+                except:
+                    seed_rules = dict()
+                # end try
             # end if
-            if not parse_all_sents:
-                if logger is not None:
-                    logger.print(f"OUR_SEED::{lc_desc}")
-                # end if
-                for seed in cfg_res['inputs'].keys():
-                    if seed not in seed_rules.keys():
-                        cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
-                        seed_rules[seed] = get_pdr_per_sent(cfg_seed)
+            if not any(seed_rules):
+                print(f"OUR_SEED::{lc_desc}")
+                cfg_res = Utils.read_json(seed_dir / seed_file)
+            
+            
+                if not parse_all_sents:
+                    if logger is not None:
+                        logger.print(f"OUR_SEED::{lc_desc}")
                     # end if
-                # end for
-            else:
-                if logger is not None:
-                    logger.print(f"OUR_SEED_FOR_PDR::{lc_desc}::")
-                # end if
-                args = [(s[1],) for s in seed['seeds'] if s[1] not in seed_rules.keys()]
-                if any(args):
-                    pool = Pool(processes=NUM_PROCESSES)
-                    results = pool.starmap_async(get_cfg_rules_per_sent,
-                                                 args,
-                                                 chunksize=len(args) // NUM_PROCESSES).get()
-                    for r in results:
-                        seed_rules[r['sent']] = r['cfg_rules']
+                    for seed in cfg_res['inputs'].keys():
+                        if seed not in seed_rules.keys():
+                            cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
+                            seed_rules[seed] = get_pdr_per_sent(cfg_seed)
+                        # end if
                     # end for
+                else:
+                    if logger is not None:
+                        logger.print(f"OUR_SEED_FOR_PDR::{lc_desc}::")
+                    # end if
+                    args = [(s[1],) for s in seed['seeds'] if s[1] not in seed_rules.keys()]
+                    if any(args):
+                        pool = Pool(processes=NUM_PROCESSES)
+                        results = pool.starmap_async(get_cfg_rules_per_sent,
+                                                     args,
+                                                     chunksize=len(args) // NUM_PROCESSES).get()
+                        for r in results:
+                            seed_rules[r['sent']] = r['cfg_rules']
+                        # end for
                     
+                    # end if
                 # end if
+                Utils.write_json(seed_rules, res_file, pretty_format=True)
+                seed_rules_over_lcs[lc_desc] = seed_rules
             # end if
-            Utils.write_json(seed_rules, res_file, pretty_format=True)
-            seed_rules_over_lcs[lc_desc] = seed_rules
         # end for
         return seed_rules_over_lcs
 
@@ -156,45 +171,59 @@ class ProductionruleCoverage:
                               logger=None):
         exp_rules_over_lcs = dict()
         seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
-        seed_files = [
-            f for f in os.listdir(str(seed_dir))
-            if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
-        ]
-        for seed_file in seed_files:
-            cfg_res = Utils.read_json(seed_dir / seed_file)
-            lc_desc = cfg_res['requirement']['description']
+        req_dir = Macros.result_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc_hs.txt'
+        for l_i, l in enumerate(Utils.read_txt(req_file)):
+            lc_desc = l.strip().split('::')[0]
             lc_cksum = Utils.get_cksum(lc_desc)
+            _lc_cksum = Utils.get_cksum(lc_desc.lower())
+            seed_file = seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"
             res_file = Macros.pdr_cov_result_dir / f"exp_{task}_{search_dataset_name}_{selection_method}_pdr_{lc_cksum}.json"
+            if os.path.exists(seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json") and \
+               not os.path.exists(seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"):
+                seed_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"
+                res_file = Macros.pdr_cov_result_dir / f"exp_{task}_{search_dataset_name}_{selection_method}_pdr_{_lc_cksum}.json"
+            # end if
+            
+            exp_rules = dict()
             if os.path.exists(res_file):
-                exp_rules = Utils.read_json(res_file)
-            else:
-                exp_rules = dict()
+                try:
+                    exp_rules = Utils.read_json(res_file)
+                    exp_rules_over_lcs[lc_desc] = exp_rules
+                except:
+                    exp_rules = dict()
+                # end try
             # end if
-            if logger is not None:
-                logger.print(f"OUR_EXP_FOR_PDR::{lc_desc}")
-            # end if
-            for seed in cfg_res['inputs'].keys():
-                exp_rules[seed] = list()
-                cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
-                pdr_seed = get_pdr_per_sent(cfg_seed)
-                for exp in cfg_res['inputs'][seed]['exp_inputs']:
-                    pdr_exp = pdr_seed.copy()
-                    cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
-                    if exp_sent not in exp_rules.keys():
-                        cfg_from = cfg_from.replace(f" -> ", '->')
-                        lhs, rhs = cfg_from.split('->')
-                        if len(eval(rhs))==1:
-                            cfg_from = f"{lhs}->{eval(rhs)[0]}"
+            if not any(exp_rules):
+                cfg_res = Utils.read_json(seed_dir / seed_file)
+                print(f"OUR_EXP_FOR_PDR::{lc_desc}")
+
+                if logger is not None:
+                    logger.print(f"OUR_EXP_FOR_PDR::{lc_desc}")
+                # end if
+                for seed in cfg_res['inputs'].keys():
+                    exp_rules[seed] = list()
+                    cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
+                    pdr_seed = get_pdr_per_sent(cfg_seed)
+                    for exp in cfg_res['inputs'][seed]['exp_inputs']:
+                        pdr_exp = pdr_seed.copy()
+                        cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
+                        if exp_sent not in exp_rules.keys():
+                            cfg_from = cfg_from.replace(f" -> ", '->')
+                            lhs, rhs = cfg_from.split('->')
+                            if len(eval(rhs))==1:
+                                cfg_from = f"{lhs}->{eval(rhs)[0]}"
+                            # end if
+                            cfg_to = cfg_to.replace(f" -> ", '->')
+                            pdr_exp.remove(cfg_from)
+                            pdr_exp.append(cfg_to)
+                            exp_rules[exp_sent] = pdr_exp
                         # end if
-                        cfg_to = cfg_to.replace(f" -> ", '->')
-                        pdr_exp.remove(cfg_from)
-                        pdr_exp.append(cfg_to)
-                        exp_rules[exp_sent] = pdr_exp
-                    # end if
+                    # end for
                 # end for
-            # end for
-            Utils.write_json(exp_rules, res_file, pretty_format=True)
-            exp_rules_over_lcs[lc_desc] = exp_rules
+                Utils.write_json(exp_rules, res_file, pretty_format=True)
+                exp_rules_over_lcs[lc_desc] = exp_rules
+            # end if
         # end for
         return exp_rules_over_lcs
     
@@ -290,7 +319,7 @@ def main_sample(task,
     for lc in tqdm(seed_rules.keys()):
         if lc not in scores.keys():
             len_seed_exp = len(list(seed_rules[lc].keys())+list(exp_rules[lc].keys()))
-            max_num_samples = min(int(100*math.ceil(len_seed_exp/100.)), int(5e4))
+            max_num_samples = int(2e4) # min(int(100*math.ceil(len_seed_exp/100.)), int(2e4))
             num_samples = list(range(100, max_num_samples, 100))
             print(lc, max_num_samples)
             logger.print(f"OURS_PDR_SAMPLE::{lc}")
