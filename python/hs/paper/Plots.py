@@ -179,7 +179,7 @@ class Plots:
                               selection_method='random'):
                 # num_seeds = [0,50,100,200] # x-axis
         x_ticks = [200, 400, 600, 800]
-        pdr_x_ticks = [10000, 30000, 50000, 70000, 100000]
+        pdr_x_ticks = [10000, 90000, 160000, 230000, 300000]
         num_trials = 10
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc_hs.txt'
