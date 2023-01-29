@@ -28,15 +28,13 @@ class Humanstudy:
     #     5: 'strong_pos'
     # }
     
-    SENTIMENT_MAP_FROM_STR = {
-        'non-toxic': [1,2,3],
-        'toxic': [4,5]
-    }
+    # SENTIMENT_MAP_FROM_STR = {
+    #     'non-toxic': [1,2,3],
+    #     'toxic': [4,5]
+    # }
     SENTIMENT_MAP_FROM_SCORE = {
-        '0': [1,2],
-        '1': [3],
-        '2': [4,5],
-        "None": [3,4,5]
+        '0': [1,2,3],
+        '1': [4,5],
     }
     
     @classmethod
@@ -249,7 +247,7 @@ class Humanstudy:
     def get_pass_sents_from_model_string(cls, model_result_str, seed_sents, exp_sents):
         result = list()
         for l in model_result_str.splitlines():
-            sent_search = re.search(r"DATA::PASS::(\d*\.?\d* \d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
+            sent_search = re.search(r"DATA::PASS::(\d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
             if sent_search:
                 sent = sent_search.group(4)
                 tokens = Utils.tokenize(sent)
@@ -276,7 +274,7 @@ class Humanstudy:
     def get_fail_sents_from_model_string(cls, model_result_str, seed_sents, exp_sents):
         result = list()
         for l in model_result_str.splitlines():
-            sent_search = re.search(r"DATA::FAIL::(\d*\.?\d* \d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
+            sent_search = re.search(r"DATA::FAIL::(\d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
             if sent_search:
                 sent = sent_search.group(4)
                 tokens = Utils.tokenize(sent)
@@ -347,12 +345,12 @@ class Humanstudy:
             label = tgt_results[sent]
             if sent in seed_sents:
                 labels_h = cls.seed_human_results[sent]['sent_score']
-                label_consistency = [1 if l==label else 0 for l in labels_h]
+                label_consistency = [1 if l in label else 0 for l in labels_h]
                 print('SEED: ', labels_h, label, label_consistency)
                 res['seed'][sent] = sum(label_consistency)/len(label_consistency)
             elif sent in exp_sents:
                 labels_h = exp_human_results[sent]['sent_score']
-                label_consistency = [1 if l==label else 0 for l in labels_h]
+                label_consistency = [1 if l in label else 0 for l in labels_h]
                 print('EXP: ', labels_h, label, label_consistency)
                 res['exp'][sent] = sum(label_consistency)/len(label_consistency)
             # end if

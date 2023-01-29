@@ -58,7 +58,7 @@ class Result:
     def get_pass_sents_from_model_string(cls, model_result_str):
         result = list()
         for l in model_result_str.splitlines():
-            sent_search = re.search(r"DATA::PASS::(\d*\.?\d* \d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
+            sent_search = re.search(r"DATA::PASS::(\d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
             if sent_search:
                 sent = sent_search.group(4)
                 tokens = Utils.tokenize(sent)
@@ -79,7 +79,7 @@ class Result:
     def get_fail_sents_from_model_string(cls, model_result_str):
         result = list()
         for l in model_result_str.splitlines():
-            sent_search = re.search(r"DATA::FAIL::(\d*\.?\d* \d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
+            sent_search = re.search(r"DATA::FAIL::(\d*\.?\d* \d*\.?\d*)::(\d)::(\d?|None?)::(.*)", l)
             if sent_search:
                 sent = sent_search.group(4)
                 tokens = Utils.tokenize(sent)
