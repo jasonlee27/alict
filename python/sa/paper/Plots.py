@@ -223,7 +223,7 @@ class Plots:
         # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
         # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
         ax.set_yscale('log')
-        ax.set_ylim(bottom=0, top=6)
+        ax.set_ylim(bottom=0, top=1e5)
         ax.set_xlabel("Linguistic Capabilities")
         ax.set_ylabel("Log of Number of Production Rules Covered")
         plt.grid(True, which='both', ls='--')
