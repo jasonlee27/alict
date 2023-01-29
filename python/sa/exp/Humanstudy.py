@@ -167,7 +167,7 @@ class Humanstudy:
     @classmethod
     def read_sample_scores(cls, resp_files: List[Path], sents: List[str], num_samples: int=100):
         res = dict()
-        for resp_i, resp_f in enumerate(resp_files):                
+        for resp_i, resp_f in enumerate(resp_files):
             res_lines = Utils.read_txt(resp_f)
             num_sents = 0
             for l_i, l in enumerate(res_lines):
@@ -478,32 +478,32 @@ class Humanstudy:
                 if os.path.isfile(os.path.join(str(res_dir), resp_f)) and \
                 re.search(f"exp_samples_raw_file{file_i}_resp(\d+)\.txt", resp_f)
             ])
+            if any(seed_resp_files) and any(exp_resp_files):
             
-            seed_sents = cls.read_sample_sentences(res_dir / seed_sent_file)
-            seed_human_res = cls.read_sample_scores(seed_resp_files, seed_sents)
-            
-            exp_sents = cls.read_sample_sentences(exp_sent_file)
-            exp_human_res = cls.read_sample_scores(exp_resp_files, exp_sents)
-            
-            tgt_res, tgt_res_lc = cls.get_target_results(seed_cfg_dir,
-                                                         seed_human_res,
-                                                         exp_human_res)
-            # pred_res = cls.get_predict_results(nlp_task,
-            #                                    search_dataset_name,
-            #                                    selection_method,
-            #                                    model_name,
-            #                                    seed_res,
-            #                                    exp_res)            
-            # seed_rep_bugs, exp_rep_bugs = cls.get_reported_bugs(
-            #     pred_res, tgt_res, seed_res, exp_res
-            # )
-            # seed_incorr_inps, exp_incorr_inps = cls.get_incorrect_inputs(
-            #     pred_res, seed_res, exp_res
-            # )
-            res[f"file{file_i}"] = {
-                'label_scores': cls.get_label_consistency(tgt_res, seed_human_res, exp_human_res),
-                'lc_scores': cls.get_lc_relevancy(tgt_res_lc, seed_human_res, exp_human_res)
-            }
+                seed_sents = cls.read_sample_sentences(res_dir / seed_sent_file)
+                seed_human_res = cls.read_sample_scores(seed_resp_files, seed_sents)
+                exp_sents = cls.read_sample_sentences(exp_sent_file)
+                exp_human_res = cls.read_sample_scores(exp_resp_files, exp_sents)
+                tgt_res, tgt_res_lc = cls.get_target_results(seed_cfg_dir,
+                                                             seed_human_res,
+                                                             exp_human_res)
+                # pred_res = cls.get_predict_results(nlp_task,
+                #                                    search_dataset_name,
+                #                                    selection_method,
+                #                                    model_name,
+                #                                    seed_res,
+                #                                    exp_res)            
+                # seed_rep_bugs, exp_rep_bugs = cls.get_reported_bugs(
+                #     pred_res, tgt_res, seed_res, exp_res
+                # )
+                # seed_incorr_inps, exp_incorr_inps = cls.get_incorrect_inputs(
+                #     pred_res, seed_res, exp_res
+                # )
+                res[f"file{file_i}"] = {
+                    'label_scores': cls.get_label_consistency(tgt_res, seed_human_res, exp_human_res),
+                    'lc_scores': cls.get_lc_relevancy(tgt_res_lc, seed_human_res, exp_human_res)
+                }
+            # end if
         # end for
 
         agg_seed_label_scores = list()
