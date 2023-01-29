@@ -337,6 +337,7 @@ class Plots:
                                   err_kws={'capsize': 3},
                                   ax=ax2)
             # plt.xticks(x_tcks)
+            plt.legend(loc='upper right')
             ax_sb.set_xticks(x_ticks)
             ax_sb.tick_params(axis='x', rotation=45)
             sb_y_limit = sb_y_limit+0.5
@@ -349,7 +350,7 @@ class Plots:
             # ax_sb.set_position([box.x0, box.y0, box.width * 0.9, box.height])
             ax_pdr.set_xticks(pdr_x_ticks)
             ax_pdr.tick_params(axis='x', rotation=45)
-            pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+1000
+            pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+int(pdr_y_limit*.5)
             ax_pdr.set_ylim(-100, pdr_y_limit)
             ax_pdr.set_xlabel("Number of seeds")
             ax_pdr.set_ylabel("Number of Production Rules Covered")
@@ -457,6 +458,7 @@ class Plots:
                               err_kws={'capsize': 3},
                               ax=ax2)
         # plt.xticks(x_ticks)
+        plt.legend(loc='upper right')
         ax_sb.set_xticks(x_ticks)
         ax_sb.tick_params(axis='x', rotation=45)
         sb_y_limit = sb_y_limit+0.5
@@ -468,8 +470,7 @@ class Plots:
         # box = ax_sb.get_position()
         # ax_sb.set_position([box.x0, box.y0, box.width * 0.9, box.height])
         ax_pdr.set_xticks(pdr_x_ticks)
-        ax_pdr.set_yscale('log')
-        pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+1000
+        pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+int(pdr_y_limit*.5)
         ax_pdr.set_ylim(-100, pdr_y_limit)
         ax_pdr.tick_params(axis='x', rotation=45)
         ax_pdr.set_xlabel("Number of seeds")
