@@ -309,7 +309,7 @@ def main_sample(task,
     for lc in tqdm(seed_rules.keys()):
         if lc not in scores.keys():
             len_seed_exp = len(list(seed_rules[lc].keys())+list(exp_rules[lc].keys()))
-            max_num_samples = int(2e4) # min(int(100*math.ceil(len_seed_exp/100.)), int(2e4))
+            max_num_samples = int(5e4) # min(int(100*math.ceil(len_seed_exp/100.)), int(2e4))
             num_samples = list(range(100, max_num_samples+100, 100))
             logger.print(f"OURS_PDR_SAMPLE::{lc}")
             our_sents, bl_sents = list(), list()
@@ -470,5 +470,129 @@ def main_all(task,
         Utils.write_json(scores, result_file, pretty_format=True)
     # end for
     return
-                    
 
+
+def main_mtnlp(task,
+               search_dataset_name,
+               selection_method):
+    st = time.time()
+    logger_file = Macros.log_dir / f"mtnlp_{task}_{search_dataset_name}_{selection_method}_mutation.log"
+    mlnlp_dir = Macros.download_dir / 'MT-NLP'
+    mtnlp_res_dir =  Macros.result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
+    mtnlp_file = mtnlp_res_dir / 'mutations_s2lct_seed_samples.json'
+    result_file = Macros.pdr_cov_result_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_mutation.json"
+    mt_res = Utils.read_json(mtnlp_file)
+    
+
+
+
+
+
+    
+    Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
+    logger = Logger(logger_file=logger_file,
+                    logger_name='seed_exp_bl_sample_pdrcov_log')
+    
+    seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
+        task,
+        search_dataset_name,
+        selection_method,
+        parse_all_sents=False,
+        logger=logger
+    )
+    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+        task,
+        search_dataset_name,
+        selection_method,
+        logger=logger
+    )
+    checklist_rules = ProductionruleCoverage.get_bl_cfg_rules(
+        task,
+        search_dataset_name,
+        selection_method,
+        logger=logger
+    )
+    
+    scores = dict()
+    for lc in tqdm(seed_rules.keys()):
+        if lc not in scores.keys():
+            len_seed_exp = len(list(seed_rules[lc].keys())+list(exp_rules[lc].keys()))
+            max_num_samples = int(5e4) # min(int(100*math.ceil(len_seed_exp/100.)), int(2e4))
+            num_samples = list(range(100, max_num_samples+100, 100))
+            logger.print(f"OURS_PDR_SAMPLE::{lc}")
+            our_sents, bl_sents = list(), list()
+            scores[lc] = {
+                'ours_seed': {
+                    f"{num_sample}sample": {
+                        'coverage_scores': list()
+                    }
+                    for num_sample in num_samples
+                },
+                'ours_seed_exp': {
+                    f"{num_sample}sample": {
+                        'coverage_scores': list()
+                    }
+                    for num_sample in num_samples 
+                },
+                'bl': {
+                    f"{num_sample}sample": {
+                        'coverage_scores': list()
+                    }
+                    for num_sample in num_samples
+                }
+            }
+            all_seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
+            for num_sample in num_samples:
+                for num_trial in range(num_trials):
+                    random.seed(num_trial)
+                    seed_sents = random.sample(list(seed_rules[lc].keys()),
+                                               min(len(seed_rules[lc]), num_sample))
+                    seed_exp_sents = random.sample(all_seed_exp_sents,
+                                                   min(len(all_seed_exp_sents), num_sample))
+                    bl_sents = random.sample(list(checklist_rules[lc].keys()),
+                                             min(len(checklist_rules[lc]), num_sample))
+                    pdr1 = {
+                        s: seed_rules[lc][s]
+                        for s in seed_sents
+                    }
+                    pdr2 = {
+                        s: seed_rules[lc][s] 
+                        for s in seed_exp_sents
+                        if s in seed_rules[lc].keys()
+                    }
+                    for e in seed_exp_sents:
+                        if e not in pdr2.keys():
+                            pdr2[e] = exp_rules[lc][e]
+                        # end if
+                    # end for
+                    pdr3 = {
+                        s: checklist_rules[lc][s]
+                        for s in bl_sents
+                    }
+                    pdr_obj1 = ProductionruleCoverage(lc=lc,
+                                                      our_cfg_rules=pdr1)
+                    pdr_obj2 = ProductionruleCoverage(lc=lc,
+                                                      our_cfg_rules=pdr2)
+                    pdr_obj3 = ProductionruleCoverage(lc=lc,
+                                                      our_cfg_rules=pdr3)
+                    cov_score_seed, _ = pdr_obj1.get_score()
+                    cov_score_seed_exp, _ = pdr_obj2.get_score()
+                    cov_score_bl, _ = pdr_obj3.get_score()
+                    scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_seed)
+                    scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_seed_exp)
+                    scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_bl)
+                # end for
+                scores[lc]['ours_seed'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['bl'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['bl'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['bl'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
+            # end for
+            Utils.write_json(scores, result_file, pretty_format=True)
+        # end if
+    # end for
+    return

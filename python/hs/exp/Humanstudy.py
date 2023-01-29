@@ -28,10 +28,10 @@ class Humanstudy:
     #     5: 'strong_pos'
     # }
     
-    # SENTIMENT_MAP_FROM_STR = {
-    #     'non-toxic': [1,2,3],
-    #     'toxic': [4,5]
-    # }
+    SENTIMENT_MAP_FROM_STR = {
+        'non-toxic': [1,2,3],
+        'toxic': [4,5]
+    }
     SENTIMENT_MAP_FROM_SCORE = {
         '0': [1,2,3],
         '1': [4,5],
@@ -207,8 +207,8 @@ class Humanstudy:
                     tokens = Utils.tokenize(sent)
                     _sent = Utils.detokenize(tokens)
                     if sent in seed_sents or _sent in seed_sents:
-                        # res[_sent] = cls.SENTIMENT_MAP_FROM_STR[str(sent_dict[r][s]['label'])]
-                        res[_sent] = sent_dict[r][s]['label']
+                        res[_sent] = cls.SENTIMENT_MAP_FROM_STR[str(sent_dict[r][s]['label'])]
+                        # res[_sent] = sent_dict[r][s]['label']
                         res_lc[_sent] = r
                     # end if
                     for e in sent_dict[r][s]['exp']:
@@ -216,7 +216,7 @@ class Humanstudy:
                         tokens = Utils.tokenize(sent)
                         _sent = Utils.detokenize(tokens)
                         if sent in exp_sents or _sent in exp_sents:
-                            res[_sent] = e[1]
+                            res[_sent] = cls.SENTIMENT_MAP_FROM_STR[str(e[1])]
                             res_lc[_sent] = r
                         # end if
                     # end for
@@ -256,10 +256,6 @@ class Humanstudy:
                    _sent in seed_sents or \
                    sent in exp_sents or \
                    _sent in exp_sents:
-                    print('get_pass_sents_from_model_string')
-                    print(str(sent_search.group(2)))
-                    print(str(sent_search.group(3)))
-                    print('---')
                     result.append({
                         'pred': cls.SENTIMENT_MAP_FROM_SCORE[str(sent_search.group(2))],
                         'label': cls.SENTIMENT_MAP_FROM_SCORE[str(sent_search.group(3))],
