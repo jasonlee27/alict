@@ -189,7 +189,7 @@ class Plots:
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'num_seed': ns,
-                    'scores': math.log10(result[lc_desc]['bl']['coverage_scores'])
+                    'scores': result[lc_desc]['bl']['coverage_scores']
                 })
                 # print(l_i+1, bl_score, result[lc_desc]['ours_seed_exp']['med_score'], float(result[lc_desc]['ours']['med_score'])/bl_score)
                 # data_lod.append({
@@ -202,7 +202,7 @@ class Plots:
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT (SEED+EXP)',
                     'num_seed': ns,
-                    'scores': math.log10(result[lc_desc]['ours_seed_exp']['coverage_scores'])
+                    'scores': result[lc_desc]['ours_seed_exp']['coverage_scores']
                 })
             # end for
         # end for
@@ -222,9 +222,11 @@ class Plots:
                          estimator=median)
         # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
         # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
+        ax.set_yscale('log')
         ax.set_ylim(bottom=0, top=6)
         ax.set_xlabel("Linguistic Capabilities")
         ax.set_ylabel("Log of Number of Production Rules Covered")
+        plt.grid(True, which='both', ls='--')
         
         # Shrink current axis by 20%
         box = ax.get_position()
@@ -323,7 +325,7 @@ class Plots:
                               selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         x_ticks = [200, 400, 600, 800, 1000]
-        pdr_x_ticks = [1000, 6000, 11000, 16000, 20000]
+        pdr_x_ticks = [10000, 30000, 50000, 70000, 100000]
         num_trials = 10
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -487,8 +489,9 @@ class Plots:
                                   err_kws={'capsize': 3},
                                   ax=ax2)
             # plt.xticks(x_ticks)
+            plt.legend(loc='upper right')
             ax_sb.set_xticks(x_ticks)
-            ax_sb.set_xticklabels(['2e2','4e2','6e2','8e2','1e3'])
+            ax_sb.tick_params(axis='x', rotation=45)
             sb_y_limit = sb_y_limit+0.5
             ax_sb.set_ylim(0.0, sb_y_limit)
             ax_sb.set_xlabel("Number of seeds")
@@ -498,8 +501,8 @@ class Plots:
             # box = ax_sb.get_position()
             # ax_sb.set_position([box.x0, box.y0, box.width * 0.9, box.height])
             ax_pdr.set_xticks(pdr_x_ticks)
-            ax_pdr.set_xticklabels(['1e3','6e3','11e3','16e3','2e4'])
-            pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+1000
+            ax_pdr.tick_params(axis='x', rotation=45)
+            pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+3000
             ax_pdr.set_ylim(-100, pdr_y_limit)
             ax_pdr.set_xlabel("Number of seeds")
             ax_pdr.set_ylabel("Number of Production Rules Covered")
@@ -608,7 +611,9 @@ class Plots:
                               err_kws={'capsize': 3},
                               ax=ax2)
         # plt.xticks(x_ticks)
+        plt.legend(loc='upper right')
         ax_sb.set_xticks(x_ticks)
+        ax_sb.tick_params(axis='x', rotation=45)
         sb_y_limit = sb_y_limit+0.5
         ax_sb.set_ylim(0.0, sb_y_limit)
         ax_sb.set_xlabel("Number of seeds")
@@ -618,7 +623,8 @@ class Plots:
         # box = ax_sb.get_position()
         # ax_sb.set_position([box.x0, box.y0, box.width * 0.9, box.height])
         ax_pdr.set_xticks(pdr_x_ticks)
-        pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+1000
+        ax_pdr.tick_params(axis='x', rotation=45)
+        pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+2000
         ax_pdr.set_ylim(-100, pdr_y_limit)
         ax_pdr.set_xlabel("Number of seeds")
         ax_pdr.set_ylabel("Number of Production Rules Covered")
