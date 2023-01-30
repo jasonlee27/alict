@@ -195,23 +195,30 @@ class Humanstudy:
         res, res_lc = dict(), dict()
         seed_sents = list(seed_human_results.keys())
         exp_sents = list(exp_human_results.keys())
-        for r in sent_dict.keys():
-            for s in sent_dict[r].keys(): # seed sents
-                if any(sent_dict[r][s]['exp']):
+        for lc in sent_dict.keys():
+            for s in sent_dict[lc].keys(): # seed sents
+                if any(sent_dict[lc][s]['exp']):
                     sent = s
                     tokens = Utils.tokenize(sent)
                     _sent = Utils.detokenize(tokens)
-                    if sent in seed_sents or _sent in seed_sents:
-                        res[_sent] = cls.SENTIMENT_MAP_FROM_STR[str(sent_dict[r][s]['label'])]
-                        res_lc[_sent] = r
+                    if sent in seed_sents:
+                        res[sent] = cls.SENTIMENT_MAP_FROM_STR[str(sent_dict[lc][s]['label'])]
+                        res_lc[sent] = lc
+                    elif _sent in seed_sents:
+                        res[_sent] = cls.SENTIMENT_MAP_FROM_STR[str(sent_dict[lc][s]['label'])]
+                        res_lc[_sent] = lc
                     # end if
-                    for e in sent_dict[r][s]['exp']:
-                        sent = e[0]
+                    for e in sent_dict[lc][s]['exp']:
+                        e_sent = e[0]
                         tokens = Utils.tokenize(sent)
-                        _sent = Utils.detokenize(tokens)
-                        if sent in exp_sents or _sent in exp_sents:
-                            res[_sent] = e[1]
-                            res_lc[_sent] = r
+                        _e_sent = Utils.detokenize(tokens)
+                        if e_sent in exp_sents:
+                            res[e_sent] = e[1]
+                            res_lc[e_sent] = lc
+                        elif _e_sent in exp_sents:
+                            print(e_sent, _e_sent)
+                            res[_e_sent] = e[1]
+                            res_lc[_e_sent] = lc
                         # end if
                     # end for
                 # end if
@@ -331,18 +338,37 @@ class Humanstudy:
             'seed': dict(),
             'exp': dict()
         }
+        num_seed_data = 0
+        num_exp_data = 0
         for s_i, sent in enumerate(tgt_results.keys()):
+            tokens = Utils.tokenize(sent)
+            _sent = Utils.detokenize(tokens)
             label = tgt_results[sent]
             if sent in seed_sents:
+                num_seed_data += 1
                 labels_h = seed_human_results[sent]['sent_score']
+                print(num_exp_data, label, labels_h)
                 label_consistency = [1 if l in label else 0 for l in labels_h]
                 res['seed'][sent] = sum(label_consistency)/len(label_consistency)
+            elif _sent in seed_sents:
+                num_seed_data += 1
+                labels_h = seed_human_results[_sent]['sent_score']
+                label_consistency = [1 if l in label else 0 for l in labels_h]
+                res['seed'][_sent] = sum(label_consistency)/len(label_consistency)
             elif sent in exp_sents:
+                num_exp_data += 1
                 labels_h = exp_human_results[sent]['sent_score']
+                print(num_exp_data, label, labels_h)
                 label_consistency = [1 if l in label else 0 for l in labels_h]
                 res['exp'][sent] = sum(label_consistency)/len(label_consistency)
+            elif _sent in exp_sents:
+                num_exp_data += 1
+                labels_h = exp_human_results[_sent]['sent_score']
+                label_consistency = [1 if l in label else 0 for l in labels_h]
+                res['exp'][_sent] = sum(label_consistency)/len(label_consistency)
             # end if
         # end for
+        print(num_seed_data, num_exp_data)
         return res
 
     @classmethod

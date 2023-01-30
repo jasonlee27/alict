@@ -325,7 +325,7 @@ def main_mtnlp(task,
     mtnlp_dir = Macros.download_dir / 'MT-NLP'
     mtnlp_res_dir =  Macros.result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
     mtnlp_file = mtnlp_res_dir / 'mutations_s2lct_seed_samples.json'
-    result_file = Macros.pdr_cov_result_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+    result_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
     logger = Logger(logger_file=logger_file,
                     logger_name='mtnlt_mutation_log')
     
@@ -370,19 +370,23 @@ def main_mtnlp(task,
     for s in seed_lcs.keys():
         lc_desc = seed_lcs[s].strip()
         lc_cksum = Utils.get_cksum(lc_desc)
-        # _lc_cksum = Utils.get_cksum(lc_desc.lower())
+        _lc_cksum = Utils.get_cksum(lc_desc.lower())
         seed_file = seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"
-        # if os.path.exists(seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json") and \
-        #    not os.path.exists(seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"):
-        #     seed_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"    
-        # # end if
+        if os.path.exists(seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json") and \
+           not os.path.exists(seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"):
+            seed_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"    
+        # end if
         cfg_res = Utils.read_json(seed_file)
-        # tokens = Utils.tokenize(s)
-        # s = Utils.detokenize(tokens)
-        for exp in cfg_res['inputs'][s]['exp_inputs']:
-            exp_sent = exp[5]
-            exp_sents.extend(exp_sent)
-        # end for
+        if cfg_res is not None:
+            # tokens = Utils.tokenize(s)
+            # s = Utils.detokenize(tokens)
+            if s in cfg_res['inputs'].keys():
+                for exp in cfg_res['inputs'][s]['exp_inputs']:
+                    exp_sent = exp[5]
+                    exp_sents.extend(exp_sent)
+                # end for
+            # end if
+        # end if
     # end for
 
     mt_sents = list()
@@ -406,10 +410,10 @@ def main_mtnlp(task,
         }
     }
     for t in tqdm(range(num_trials)):
-        random.seed(num_trial)
+        random.seed(t)
         sample_exp_sents = random.sample(exp_sents,
                                          min(len(seed_sents), len(exp_sents)))
-        sample_mt_sents = random.sample(exp_sents,
+        sample_mt_sents = random.sample(mt_sents,
                                         min(len(seed_sents), len(mt_sents)))
         sbleu_exp = SelfBleu(texts=seed_sents,
                              num_data=len(sample_exp_sents),
