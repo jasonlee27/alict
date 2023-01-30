@@ -49,6 +49,11 @@ class Tables:
             which = [which]
         # end if
 
+        task = options.pop('task', 'sa')
+        search_dataset = options.pop('search_dataset_name', 'sst')
+        selection_method = options.pop('selection_method', 'random')
+        num_seeds = options.pop('num_seeds', 50)
+        num_trials = options.pop('num_trials', 3)
         for item in which: 
             if item == "lc-req":
                 cls.make_numbers_lc_requirement(Macros.result_dir, tables_dir)
@@ -68,31 +73,21 @@ class Tables:
             #     cls.make_numbers_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method, epochs, model_name)
             #     cls.make_table_retrain(Macros.result_dir, tables_dir, task, search_dataset, selection_method, epochs, model_name)
             elif item == "manual-study":
-                task = options.pop('task', 'sa')
-                search_dataset = options.pop('search_dataset_name', 'sst')
-                selection_method = options.pop('selection_method', 'random')
                 cls.make_numbers_manual_study(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
                 cls.make_table_manual_study(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
             elif item == "test-results":
-                task = options.pop('task', 'sa')
-                search_dataset = options.pop('search_dataset_name', 'sst')
-                selection_method = options.pop('selection_method', 'random')
-                num_seeds = options.pop('num_seeds', 50)
-                num_trials = options.pop('num_trials', 3)
+                
                 cls.make_numbers_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
                 cls.make_table_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
             elif item == "test-results-all":
-                task = options.pop('task', 'sa')
-                search_dataset = options.pop('search_dataset_name', 'sst')
-                selection_method = options.pop('selection_method', 'random')
                 cls.make_numbers_test_results_all(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
                 cls.make_table_test_results_all(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
             elif item == "test-results-bl":
-                task = options.pop('task', 'sa')
-                search_dataset = options.pop('search_dataset_name', 'sst')
-                selection_method = options.pop('selection_method', 'random')
                 cls.make_numbers_test_results_baseline(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
                 cls.make_table_test_results_baseline(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+            elif item == 'mtnlp-comparison':
+                cls.make_numbers_mtnlp_comparison(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+                cls.make_table_mtnlp_comparison(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
             else:
                 raise(f"Unknown table {item}")
             # end if
@@ -1034,6 +1029,115 @@ class Tables:
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
         output_file.append(r"\vspace{\TestResultsTableVSpace}")
+        output_file.append(r"\end{table*}")
+        output_file.save()
+        return
+
+    @classmethod
+    def make_numbers_mtnlp_comparison(cls,
+                                      result_dir,
+                                      tables_dir):
+        tasks = ['sa', 'hs']
+        for task in tasks:
+            if task == 'sa':
+                search_dataset_name = 'sst'
+                selection_method = 'random'
+            else:
+                search_dataset_name = 'hatexplain'
+                selection_method = 'random'
+            # end if
+            mtnlp_res_dir = result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
+            prd_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+            sb_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+            output_file = latex.File(tables_dir / f"mtnlp-comp-numbers.tex")
+        
+            # Self-Bleu scores
+            sb_res = Utils.read_json(sb_res_file)
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-num-mutate",
+                                                 cls.FMT_INT.format(sb_res['ours_exp']['num_data'][0])))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-avg",
+                                                 Utils.avg(sb_res['ours_exp']['scores'], decimal=2)))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-med",
+                                                 Utils.median(sb_res['ours_exp']['scores'], decimal=2)))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-std",
+                                                 Utils.stdev(sb_res['ours_exp']['scores'], decimal=2)))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-selfbleu-num-mutate",
+                                                 cls.FMT_INT.format(sb_res['mtnlp']['num_data'][0])))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-selfbleu-avg",
+                                                 Utils.avg(sb_res['mtnlp']['scores'], decimal=2)))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-selfbleu-med",
+                                                 Utils.median(sb_res['mtnlp']['scores'], decimal=2)))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-selfbleu-std",
+                                                 Utils.stdev(sb_res['mtnlp']['scores'], decimal=2)))
+
+            # PDR cov scores
+            pdr_res = Utils.read_json(pdr_res_file)
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-pdr-num-mutate",
+                                                 cls.FMT_INT.format(pdr_res['ours_exp']['num_data'][0])))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-pdr-avg",
+                                                 Utils.avg(pdr_res['ours_exp']['scores'], decimal=2)))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-pdr-med",
+                                                 Utils.median(pdr_res['ours_exp']['scores'], decimal=2)))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-pdr-std",
+                                                 Utils.stdev(pdr_res['ours_exp']['scores'], decimal=2)))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-pdr-num-mutate",
+                                                 cls.FMT_INT.format(pdr_res['mtnlp']['num_data'][0])))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-pdr-avg",
+                                                 Utils.avg(pdr_res['mtnlp']['scores'], decimal=2)))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-pdr-med",
+                                                 Utils.median(pdr_res['mtnlp']['scores'], decimal=2)))
+            output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-pdr-std",
+                                                 Utils.stdev(pdr_res['mtnlp']['scores'], decimal=2)))
+        # end for
+        output_file.save()
+        return
+
+    @classmethod
+    def make_table_mtnlp_comparison(cls,
+                                    result_dir,
+                                    tables_dir,
+                                    task,
+                                    search_dataset,
+                                    selection_method):
+        mtnlp_res_dir = result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
+        prd_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+        sb_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+        output_file = latex.File(tables_dir / f"mtnlp-comp-table.tex")
+        
+        # Header
+        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{small}")
+        output_file.append(r"\begin{center}")
+        output_file.append(r"\caption{\MtnlpCompTableCaption}")
+        output_file.append(r"\resizebox{0.9\textwidth}{!}{")
+        output_file.append(r"\begin{tabular}{l|ccc}")
+        output_file.append(r"\toprule")
+        
+        output_file.append(r"\tApproach & \tNummut & \tSelfbleu & \tPdrcov \\")
+        output_file.append(r"\midrule")
+
+        # tasks = ['sa', 'hs']
+        # for task in tasks:
+        output_file.append(r"S^{2}LCT & " + latex.Macro(f"mtnlp-comp-ours-pdr-num-mutate").use())
+        output_file.append(r" & " + latex.Macro(f"mtnlp-comp-ours-selfbleu-avg").use() + '\pm'+
+                           latex.Macro(f"mtnlp-comp-ours-selfbleu-std").use())
+        output_file.append(r" & " + latex.Macro(f"mtnlp-comp-ours-pdr-avg").use() + '\pm'+
+                           latex.Macro(f"mtnlp-comp-ours-pdr-std").use() + r"\\")
+        output_file.append(r"\hline")
+        
+        output_file.append(r"MT-NLP & " + latex.Macro(f"mtnlp-comp-mtnlp-pdr-num-mutate").use())
+        output_file.append(r" & " + latex.Macro(f"mtnlp-comp-mtnlp-selfbleu-avg").use() + '\pm'+
+                           latex.Macro(f"mtnlp-comp-mtnlp-selfbleu-std").use())
+        output_file.append(r" & " + latex.Macro(f"mtnlp-comp-mtnlp-pdr-avg").use() + '\pm'+
+                           latex.Macro(f"mtnlp-comp-mtnlp-pdr-std").use() + r"\\")
+        output_file.append(r"\hline")
+        # end for
+        # Footer
+        output_file.append(r"\bottomrule")
+        output_file.append(r"\end{tabular}}")
+        output_file.append(r"\end{center}")
+        output_file.append(r"\end{small}")
+        output_file.append(r"\vspace{\MtnlpCompTableVSpace}")
         output_file.append(r"\end{table*}")
         output_file.save()
         return
