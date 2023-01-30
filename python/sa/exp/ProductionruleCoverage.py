@@ -281,30 +281,32 @@ class ProductionruleCoverage:
                          search_dataset_name,
                          selection_method,
                          baseline_name,
+                         mt_dir,
                          mt_sents,
                          logger=None):
-        mt_rules = dict()
-        res_file = Macros.pdr_cov_result_dir / f"mt_cfg_rules_{task}_{baseline_name}.json"
-        mt_rules_prev = dict()
-        if os.path.exists(str(res_file)):
-            mt_rules_prev = Utils.read_json(res_file)
-        # end if
+        res_file = mt_dir / f"mt_cfg_rules_{task}_{baseline_name}.json"
         args = list()
+        mt_rules = dict()
+        if os.path.exists(str(res_file)):
+            mt_rules = Utils.read_json(res_file)
+        # end if
         for s in mt_sents:
-            if s in mt_rules_prev.keys():
-                mt_rules[s] = mt_rules_prev[s]
+            if s in mt_rules.keys():
+                mt_rules[s] = mt_rules[s]
             else:
                 args.append(s)
             # end if
         # end for
-        pool = Pool(processes=NUM_PROCESSES)
-        results = pool.map_async(get_cfg_rules_per_sent,
-                                 args,
-                                 chunksize=len(args) // NUM_PROCESSES).get()
-        for r in results:
-            mt_rules[r['sent']] = r['cfg_rules']
-        # end for
-        Utils.write_json(mt_rules, res_file, pretty_format=True)
+        if any(args):
+            pool = Pool(processes=NUM_PROCESSES)
+            results = pool.map_async(get_cfg_rules_per_sent,
+                                     args,
+                                     chunksize=len(args) // NUM_PROCESSES).get()
+            for r in results:
+                mt_rules[r['sent']] = r['cfg_rules']
+            # end for
+            Utils.write_json(mt_rules, res_file, pretty_format=True)
+        # end if
         return mt_rules
     
 
@@ -515,7 +517,7 @@ def main_mtnlp(task,
     mtnlp_dir = Macros.download_dir / 'MT-NLP'
     mtnlp_res_dir =  Macros.result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
     mtnlp_file = mtnlp_res_dir / 'mutations_s2lct_seed_samples.json'
-    result_file = Macros.pdr_cov_result_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+    result_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
     logger = Logger(logger_file=logger_file,
                     logger_name='mtnlt_mutation_log')
     logger.print(f"OURS_PDR_SAMPLE::mtnlp::")
@@ -598,8 +600,15 @@ def main_mtnlp(task,
     # end for
 
     scores = {
-        'ours_exp': list(),
-        'mtnlp': list()
+        'sample_file': mt_res['sample_file'],
+        'ours_exp': {
+            'num_data': list(),
+            'scores': list()
+        },
+        'mtnlp': {
+            'num_data': list(),
+            'scores': list()
+        }
     }
     for t in tqdm(range(num_trials)):
         sample_exp_sents = random.sample(exp_sents,
@@ -612,6 +621,7 @@ def main_mtnlp(task,
             search_dataset_name,
             selection_method,
             's2lct',
+            mtnlp_res_dir,
             sample_exp_sents,
             logger=logger
         )
@@ -621,6 +631,7 @@ def main_mtnlp(task,
             search_dataset_name,
             selection_method,
             'mtnlp',
+            mtnlp_res_dir,
             sample_mt_sents,
             logger=logger
         )
@@ -638,8 +649,10 @@ def main_mtnlp(task,
                                           our_cfg_rules=pdr2)
         cov_score_exp, _ = pdr_obj1.get_score()
         cov_score_mt, _ = pdr_obj2.get_score()
-        scores['ours_exp'].append(cov_score_exp)
-        scores['mtnlp'].append(cov_score_mt)
+        scores['ours_exp']['num_data'].append(len(sample_exp_sents))
+        scores['ours_exp']['scores'].append(cov_score_exp)
+        scores['mtnlp']['num_data'].append(len(sample_mt_sents))
+        scores['mtnlp']['scores'].append(cov_score_mt)
     # end for
     Utils.write_json(scores, result_file, pretty_format=True)
     return
