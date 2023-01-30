@@ -86,8 +86,8 @@ class Tables:
                 cls.make_numbers_test_results_baseline(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
                 cls.make_table_test_results_baseline(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
             elif item == 'mtnlp-comparison':
-                cls.make_numbers_mtnlp_comparison(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
-                cls.make_table_mtnlp_comparison(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+                cls.make_numbers_mtnlp_comparison(Macros.result_dir, tables_dir)
+                cls.make_table_mtnlp_comparison(Macros.result_dir, tables_dir)
             else:
                 raise(f"Unknown table {item}")
             # end if
@@ -384,7 +384,7 @@ class Tables:
             if task=='sa':
                 search_dataset = 'sst'
                 selection_method = 'random'
-            elif task=='hsd':
+            elif task=='hs':
                 search_dataset = 'hatexplain'
                 selection_method = 'random'
             # end if
@@ -428,10 +428,10 @@ class Tables:
         output_file.append(r"\toprule")
         
         # Content
-        output_file.append(r"\tTask \tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel \\")
+        output_file.append(r"\tTask & \tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel \\")
         output_file.append(r"\midrule")
         
-        for task in tasks:
+        for t_i, task in enumerate(tasks):
             task_latex = 'SA' if task=='sa' else 'HSD'
             output_file.append("\multirow{2}{*}{" + task_latex + "} ")
             output_file.append(" & SEED & " + latex.Macro(f"manual-study-{task}-seed-num-sents").use())
@@ -440,7 +440,9 @@ class Tables:
             output_file.append(" & EXP & " + latex.Macro(f"manual-study-{task}-exp-num-sents").use())
             output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-label-consistency").use())
             output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-lc-relevancy").use() + r"\\")
-            output_file.append(r"\hline")
+            if t_i+1<len(tasks):
+                output_file.append(r"\hline")
+            # end if
         # end for
 
         # Footer
@@ -1047,11 +1049,13 @@ class Tables:
                 selection_method = 'random'
             # end if
             mtnlp_res_dir = result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
-            prd_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+            pdr_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
             sb_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
             output_file = latex.File(tables_dir / f"mtnlp-comp-numbers.tex")
         
             # Self-Bleu scores
+            print(sb_res_file)
+            print(pdr_res_file)
             sb_res = Utils.read_json(sb_res_file)
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-num-mutate",
                                                  cls.FMT_INT.format(sb_res['ours_exp']['num_data'][0])))
@@ -1095,13 +1099,10 @@ class Tables:
     @classmethod
     def make_table_mtnlp_comparison(cls,
                                     result_dir,
-                                    tables_dir,
-                                    task,
-                                    search_dataset,
-                                    selection_method):
-        mtnlp_res_dir = result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
-        prd_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
-        sb_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+                                    tables_dir):
+        # mtnlp_res_dir = result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
+        # prd_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+        # sb_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
         output_file = latex.File(tables_dir / f"mtnlp-comp-table.tex")
         
         # Header
