@@ -394,7 +394,6 @@ class Humanstudy:
                 print('get_label_consistency: exp: ', s)
             # end if
         # end for
-        print(num_seed_data, num_exp_data, num_tgt_data)
         return res
 
     @classmethod
@@ -411,22 +410,42 @@ class Humanstudy:
             'seed': dict(),
             'exp': dict()
         }
-        for s_i, sent in enumerate(tgt_lc_results.keys()):
-            lc = tgt_lc_results[sent]
-            tokens = Utils.tokenize(sent)
-            _sent = Utils.detokenize(tokens)
-            if sent in seed_sents:
-                lc_scores_h = seed_human_results[sent]['lc_score']
-                res['seed'][sent] = sum(lc_scores_h)/len(lc_scores_h)
-            elif _sent in seed_sents:
-                lc_scores_h = exp_human_results[_sent]['lc_score']
-                res['seed'][_sent] = sum(lc_scores_h)/len(lc_scores_h)
-            elif sent in exp_sents:
-                lc_scores_h = exp_human_results[sent]['lc_score']
-                res['exp'][sent] = sum(lc_scores_h)/len(lc_scores_h)
-            elif _sent in exp_sents:
-                lc_scores_h = exp_human_results[_sent]['lc_score']
-                res['exp'][_sent] = sum(lc_scores_h)/len(lc_scores_h)
+
+        num_tgt_data = 0
+        num_seed_data = 0
+        num_exp_data = 0
+
+        for s in seed_sents:
+            tokens = Utils.tokenize(s)
+            _s = Utils.detokenize(tokens)
+            num_tgt_data += 1
+            if s in tgt_lc_results.keys():
+                num_seed_data += 1
+                lc_scores_h = seed_human_results[s]['lc_score']
+                res['seed'][s] = sum(lc_scores_h)/len(lc_scores_h)
+            elif _s in tgt_lc_results.keys():
+                num_seed_data += 1
+                lc_scores_h = seed_human_results[s]['lc_score']
+                res['seed'][s] = sum(lc_scores_h)/len(lc_scores_h)
+            else:
+                print('get_lc_consistency: seed: ', s)
+            # end if
+        # end for
+
+        for s in exp_sents:
+            tokens = Utils.tokenize(s)
+            _s = Utils.detokenize(tokens)
+            num_tgt_data += 1
+            if s in tgt_lc_results.keys():
+                num_seed_data += 1
+                lc_scores_h = seed_human_results[s]['lc_score']
+                res['exp'][s] = sum(lc_scores_h)/len(lc_scores_h)
+            elif _s in tgt_lc_results.keys():
+                num_seed_data += 1
+                lc_scores_h = seed_human_results[s]['lc_score']
+                res['exp'][s] = sum(lc_scores_h)/len(lc_scores_h)
+            else:
+                print('get_lc_consistency: exp: ', s)
             # end if
         # end for
         return res
@@ -554,10 +573,10 @@ class Humanstudy:
         
         tgt_res, tgt_res_lc = cls.get_target_results(seed_cfg_dir,
                                                      resps)
-        for file_i in resps.keys():
-            seed_human_res = resps[file_i]['seed']
-            exp_human_res = resps[file_i]['exp']
-            res[f"file{file_i}"] = {
+        for f_i in resps.keys():
+            seed_human_res = resps[f_i]['seed']
+            exp_human_res = resps[f_i]['exp']
+            res[f_i] = {
                 'label_scores': cls.get_label_consistency(tgt_res, seed_human_res, exp_human_res),
                 'lc_scores': cls.get_lc_relevancy(tgt_res_lc, seed_human_res, exp_human_res)
             }
