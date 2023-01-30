@@ -5,23 +5,29 @@
 \begin{small}
 \begin{center}
 \caption{\ManualStudyTableCaption}
-% \vspace{-3mm}
 \resizebox{0.47\textwidth}{!}{
-\begin{tabular}{l r r r}
+\begin{tabular}{l|l|ccc}
 \toprule
-\tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel \\
+\tTask & \tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel \\
 \midrule
-Seed & \UseMacro{manual-study-seed-num-sents}
- & \UseMacro{manual-study-seed-label-consistency}
- & \UseMacro{manual-study-seed-lc-relevancy}
-\\
-Expanded & \UseMacro{manual-study-exp-num-sents}
- & \UseMacro{manual-study-exp-label-consistency}
- & \UseMacro{manual-study-exp-lc-relevancy}
-\\
+\multirow{2}{*}{SA} 
+ & SEED & \UseMacro{manual-study-sa-seed-num-sents}
+ & \UseMacro{manual-study-sa-seed-label-consistency}
+ & \UseMacro{manual-study-sa-seed-lc-relevancy}\\
+ & EXP & \UseMacro{manual-study-sa-exp-num-sents}
+ & \UseMacro{manual-study-sa-exp-label-consistency}
+ & \UseMacro{manual-study-sa-exp-lc-relevancy}\\
+\hline
+\multirow{2}{*}{HSD} 
+ & SEED & \UseMacro{manual-study-hs-seed-num-sents}
+ & \UseMacro{manual-study-hs-seed-label-consistency}
+ & \UseMacro{manual-study-hs-seed-lc-relevancy}\\
+ & EXP & \UseMacro{manual-study-hs-exp-num-sents}
+ & \UseMacro{manual-study-hs-exp-label-consistency}
+ & \UseMacro{manual-study-hs-exp-lc-relevancy}\\
 \bottomrule
 \end{tabular}}
 \end{center}
 \end{small}
-% \vspace{\ManualStudyTableVSpace}
+\vspace{\ManualStudyTableVSpace}
 \end{table}
