@@ -417,30 +417,30 @@ class Tables:
                                 selection_method):
         tasks = ['sa', 'hs']
         output_file = latex.File(tables_dir / 'manual-study-table.tex')
+
+        # Header
+        output_file.append(r"\begin{table}[htbp]")
+        output_file.append(r"\begin{small}")
+        output_file.append(r"\begin{center}")
+        output_file.append(r"\caption{\ManualStudyTableCaption}")
+        output_file.append(r"\resizebox{0.47\textwidth}{!}{")
+        output_file.append(r"\begin{tabular}{l|l|ccc}")
+        output_file.append(r"\toprule")
+        
+        # Content
+        output_file.append(r"\tTask \tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel \\")
+        output_file.append(r"\midrule")
+        
         for task in tasks:
             task_latex = 'SA' if task=='sa' else 'HSD'
-            # Header
-            output_file.append(r"\begin{table}[htbp]")
-            output_file.append(r"\begin{small}")
-            output_file.append(r"\begin{center}")
-            output_file.append(r"\caption{\ManualStudyTableCaption}")
-            output_file.append(r"\resizebox{0.47\textwidth}{!}{")
-            output_file.append(r"\begin{tabular}{l c c c c}")
-            output_file.append(r"\toprule")
-
-            # Content
-            output_file.append(r"\tTask \tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel \\")
-            output_file.append(r"\midrule")
-            
-            output_file.append("\multirow{2}{*}{1} & " + task_latex)
-            output_file.append("Seed & " + latex.Macro(f"manual-study-{task}-seed-num-sents").use())
+            output_file.append("\multirow{2}{*}{" + task_latex + "} ")
+            output_file.append(" & SEED & " + latex.Macro(f"manual-study-{task}-seed-num-sents").use())
             output_file.append(" & " + latex.Macro(f"manual-study-{task}-seed-label-consistency").use())
-            output_file.append(" & " + latex.Macro(f"manual-study-{task}-seed-lc-relevancy").use())
-            output_file.append(r"\\")
-            output_file.append("& Expanded & " + latex.Macro(f"manual-study-{task}-exp-num-sents").use())
+            output_file.append(" & " + latex.Macro(f"manual-study-{task}-seed-lc-relevancy").use() + r"\\")
+            output_file.append(" & EXP & " + latex.Macro(f"manual-study-{task}-exp-num-sents").use())
             output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-label-consistency").use())
-            output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-lc-relevancy").use())
-            output_file.append(r"\\")
+            output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-lc-relevancy").use() + r"\\")
+            output_file.append(r"\hline")
         # end for
 
         # Footer
