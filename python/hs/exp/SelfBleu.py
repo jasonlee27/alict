@@ -422,9 +422,9 @@ def main_mtnlp(task,
         random.seed(t)
         sample_exp_sents = random.sample(exp_sents,
                                          min(len(seed_sents), len(exp_sents)))
-        sample_mt_sents = random.sample(exp_sents,
+        sample_mt_sents = random.sample(mt_sents,
                                         min(len(seed_sents), len(mt_sents)))
-        sbleu_exp = SelfBleu(texts=seed_sents,
+        sbleu_exp = SelfBleu(texts=sample_exp_sents,
                              num_data=len(sample_exp_sents),
                              logger=logger)
         score_exp = sbleu_exp.get_score_wo_sample()
