@@ -1040,6 +1040,7 @@ class Tables:
                                       result_dir,
                                       tables_dir):
         tasks = ['sa', 'hs']
+        output_file = latex.File(tables_dir / f"mtnlp-comp-numbers.tex")
         for task in tasks:
             if task == 'sa':
                 search_dataset_name = 'sst'
@@ -1051,11 +1052,8 @@ class Tables:
             mtnlp_res_dir = result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
             pdr_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
             sb_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
-            output_file = latex.File(tables_dir / f"mtnlp-comp-numbers.tex")
         
             # Self-Bleu scores
-            print(sb_res_file)
-            print(pdr_res_file)
             sb_res = Utils.read_json(sb_res_file)
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-num-mutate",
                                                  cls.FMT_INT.format(sb_res['ours_exp']['num_data'][0])))
@@ -1103,36 +1101,40 @@ class Tables:
         # mtnlp_res_dir = result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
         # prd_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
         # sb_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+        tasks = ['sa', 'hs']
         output_file = latex.File(tables_dir / f"mtnlp-comp-table.tex")
         
         # Header
-        output_file.append(r"\begin{table*}[t]")
+        output_file.append(r"\begin{table}[htbp]")
         output_file.append(r"\begin{small}")
         output_file.append(r"\begin{center}")
         output_file.append(r"\caption{\MtnlpCompTableCaption}")
-        output_file.append(r"\resizebox{0.9\textwidth}{!}{")
-        output_file.append(r"\begin{tabular}{l|ccc}")
+        output_file.append(r"\resizebox{0.47\textwidth}{!}{")
+        output_file.append(r"\begin{tabular}{l|l|ccc}")
         output_file.append(r"\toprule")
-        
-        output_file.append(r"\tApproach & \tNummut & \tSelfbleu & \tPdrcov \\")
-        output_file.append(r"\midrule")
 
-        # tasks = ['sa', 'hs']
-        # for task in tasks:
-        output_file.append(r"S^{2}LCT & " + latex.Macro(f"mtnlp-comp-ours-pdr-num-mutate").use())
-        output_file.append(r" & " + latex.Macro(f"mtnlp-comp-ours-selfbleu-avg").use() + '\pm'+
-                           latex.Macro(f"mtnlp-comp-ours-selfbleu-std").use())
-        output_file.append(r" & " + latex.Macro(f"mtnlp-comp-ours-pdr-avg").use() + '\pm'+
-                           latex.Macro(f"mtnlp-comp-ours-pdr-std").use() + r"\\")
-        output_file.append(r"\hline")
+        # Content
+        output_file.append(r"\tTask & \tApproach & \tNummut & \tSelfbleu & \tPdrcov \\")
+        output_file.append(r"\midrule")
         
-        output_file.append(r"MT-NLP & " + latex.Macro(f"mtnlp-comp-mtnlp-pdr-num-mutate").use())
-        output_file.append(r" & " + latex.Macro(f"mtnlp-comp-mtnlp-selfbleu-avg").use() + '\pm'+
-                           latex.Macro(f"mtnlp-comp-mtnlp-selfbleu-std").use())
-        output_file.append(r" & " + latex.Macro(f"mtnlp-comp-mtnlp-pdr-avg").use() + '\pm'+
-                           latex.Macro(f"mtnlp-comp-mtnlp-pdr-std").use() + r"\\")
-        output_file.append(r"\hline")
+        for t_i, task in enumerate(tasks):
+            task_latex = 'SA' if task=='sa' else 'HSD'
+            output_file.append("\multirow{2}{*}{" + task_latex + "} ")
+            output_file.append(r" & S^{2}LCT & " + latex.Macro(f"mtnlp-comp-{task}-ours-pdr-num-mutate").use())
+            output_file.append(r" & " + latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-avg").use() + '\pm')
+            output_file.append(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-std").use())
+            output_file.append(r" & " + latex.Macro(f"mtnlp-comp-{task}-ours-pdr-avg").use() + '\pm'+
+                               latex.Macro(f"mtnlp-comp-{task}-ours-pdr-std").use() + r"\\")
+            output_file.append(r" & MT-NLP & " + latex.Macro(f"mtnlp-comp-{task}-mtnlp-pdr-num-mutate").use())
+            output_file.append(r" & " + latex.Macro(f"mtnlp-comp-{task}-mtnlp-selfbleu-avg").use() + '\pm')
+            output_file.append(latex.Macro(f"mtnlp-comp-{task}-mtnlp-selfbleu-std").use())
+            output_file.append(r" & " + latex.Macro(f"mtnlp-comp-{task}-mtnlp-pdr-avg").use() + '\pm'+
+                               latex.Macro(f"mtnlp-comp-{task}-mtnlp-pdr-std").use() + r"\\")
+            if t_i+1<len(tasks):
+                output_file.append(r"\hline")
+            # end if
         # end for
+
         # Footer
         output_file.append(r"\bottomrule")
         output_file.append(r"\end{tabular}}")

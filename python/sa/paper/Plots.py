@@ -192,12 +192,12 @@ class Plots:
                     'scores': result[lc_desc]['bl']['coverage_scores']
                 })
                 # print(l_i+1, bl_score, result[lc_desc]['ours_seed_exp']['med_score'], float(result[lc_desc]['ours']['med_score'])/bl_score)
-                # data_lod.append({
-                #     'lc': f"LC{l_i+1}",
-                #     'type': 'S$^2$LCT (SEED)',
-                #     'num_seed': ns,
-                #     'scores': math.log10(result[lc_desc]['ours_seed']['coverage_scores'])
-                # })
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'S$^2$LCT (SEED)',
+                    'num_seed': ns,
+                    'scores': result[lc_desc]['ours_seed']['coverage_scores']
+                })
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'S$^2$LCT (SEED+EXP)',
@@ -213,7 +213,7 @@ class Plots:
         ax: plt.Axes = fig.subplots()
 
         # hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
-        hue_order = ['CHECKLIST', 'S$^2$LCT (SEED+EXP)']
+        hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
         from numpy import median
         ax = sns.barplot(data=df, x='lc', y='scores',
                          hue='type',
@@ -225,7 +225,8 @@ class Plots:
         ax.set_yscale('log')
         ax.set_ylim(bottom=0, top=1e5)
         ax.set_xlabel("Linguistic Capabilities")
-        ax.set_ylabel("Log of Number of Production Rules Covered")
+        ax.set_ylabel("Number of Production Rules Covered")
+        ax.legend(loc='upper right')
         plt.grid(True, which='both', ls='--')
         
         # Shrink current axis by 20%
