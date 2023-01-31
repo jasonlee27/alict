@@ -23,9 +23,9 @@ import checklist
 from checklist.editor import Editor
 from checklist.perturb import Perturb
 
+from Validate import Validate
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
-# from .cfg.CFG import BeneparCFG
 from ..seed.Search import SearchOperator, SENT_DICT
 
 NUM_TOPK = 5
@@ -210,6 +210,8 @@ class Suggest:
 
     @classmethod
     def eval_sug_words_by_exp_req(cls, nlp, word_suggest, requirement):
+        # find relevant expanded words.
+        # in this work, we accept neutral words
         word_suggest = [word_suggest] if type(word_suggest)==str else list(word_suggest)
         if requirement['expansion'] is None:
             return True
@@ -348,13 +350,18 @@ class Suggest:
                 # check sentence and expansion requirements
                 if cls.eval_sug_words_by_req(input_candid, requirement, label):
                     if cls.eval_sug_words_by_exp_req(nlp, w_sug, requirement):
-                        results.append((masked_input,
-                                        gen_input['cfg_from'],
-                                        gen_input['cfg_to'],
-                                        mask_pos,
-                                        w_sug,
-                                        input_candid,
-                                        label))
+                        if requirement['transform'] is not None and \
+                           Validate.is_conform_to_template(
+                               sent=masked_input,
+                               transform_spec=requirement['transform']):
+                            results.append((masked_input,
+                                            gen_input['cfg_from'],
+                                            gen_input['cfg_to'],
+                                            mask_pos,
+                                            w_sug,
+                                            input_candid,
+                                            label))
+                        # end if
                     # end if
                 # end if
             # end for

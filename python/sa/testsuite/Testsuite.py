@@ -454,7 +454,13 @@ class Testsuite:
         return
 
     @classmethod
-    def write_testsuites(cls, nlp_task, dataset, selection_method, num_seeds, num_trials, log_file):
+    def write_testsuites(cls,
+                         nlp_task,
+                         dataset,
+                         selection_method,
+                         num_seeds,
+                         num_trials,
+                         log_file):
         logger = Logger(logger_file=log_file,
                         logger_name='testsuite')
         logger.print('Generate Testsuites from Templates ...')

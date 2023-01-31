@@ -25,7 +25,7 @@ from ..requirement.Requirements import Requirements
 from ..seed.Search import Search
 from ..synexp.Generator import Generator
 from ..synexp.cfg.RefPCFG import RefPCFG
-from ..semexp.Suggest import Suggest
+from ..semexp.Suggest import Suggest, Validate
 from ..semexp.Synonyms import Synonyms
 
 torch.multiprocessing.set_sharing_strategy('file_system')
@@ -91,6 +91,7 @@ class Template:
 
     @classmethod
     def generate_seed_cfg_parallel(cls,
+                                   req,
                                    index,
                                    seed,
                                    seed_label,
@@ -100,7 +101,7 @@ class Template:
         st_2 = time.time()
         pcs_id = multiprocessing.current_process().ident
         gpu_id = multiprocessing.current_process().name.split('-')[-1]
-        generator = Generator(seed, pcfg_ref)
+        generator = Generator(seed, pcfg_ref, req)
         gen_inputs = generator.masked_input_generator()
         masked_input_res = {
             'seed': seed,
@@ -126,7 +127,12 @@ class Template:
         return masked_input_res
         
     @classmethod
-    def generate_masked_inputs(cls, req, seeds, pcfg_ref, cfg_res_file, logger=None):
+    def generate_masked_inputs(cls,
+                               req,
+                               seeds,
+                               pcfg_ref,
+                               cfg_res_file,
+                               logger=None):
         st = time.time()
         masked_input_res = dict()
         args = list()
@@ -139,7 +145,15 @@ class Template:
         # end if
         
         for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-            args.append((index, seed, seed_label, seed_score, pcfg_ref, logger))
+            args.append((
+                req,
+                index,
+                seed,
+                seed_label,
+                seed_score,
+                pcfg_ref,
+                logger
+            ))
         # end for
         if any(args):
             num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
@@ -362,25 +376,6 @@ class Template:
                                                  selection_method=selection_method,
                                                  logger=logger)
 
-        # template_results = Utils.read_json(cfg_res_file)            
-        # if not os.path.exists(str(cfg_res_file)):
-        #     template_results = {
-        #         'requirement': req,
-        #         'inputs': dict()
-        #     }
-        # else:
-        #     template_results = Utils.read_json(cfg_res_file)
-        # # end if
-        
-        # for seed in exp_results.keys():
-        #     template_results['inputs'][seed] = {
-        #         'cfg_seed': exp_results[seed]['cfg_seed'],
-        #         'exp_inputs': exp_results[seed]['exp_inputs'],
-        #         'label': exp_results[seed]['label'],
-        #         'label_score': exp_results[seed]['label_score']
-        #     }
-        # # end for
-        
         # # write batch results into result file
         # Utils.write_json(template_results, cfg_res_file, pretty_format=True)
         ft = time.time()
@@ -404,7 +399,6 @@ class Template:
         # editor = Editor(cuda_device_ind=gpu_ids)
         pcfg_ref = RefPCFG()
         for r_i, req in enumerate(reqs):
-            print(r_i, req, len(reqs))            
             cls.generate_inputs(nlp_task,
                                 req,
                                 pcfg_ref,
@@ -593,13 +587,22 @@ class Template:
                 if any(exp_inputs):
                     # expanded inputs
                     for inp_i, inp in enumerate(exp_inputs):
-                        exp_sent = inp[5]
+                        is_valid = True
                         if exp_sent is not None:
-                            exp_seed_inputs.append({
-                                "input": inp[5],
-                                "place_holder": Utils.tokenize(inp[5]),
-                                "label": label_seed
-                            })
+                            if req['transform'] and \
+                               not Validate.is_conform_to_template(
+                                   sent=inp[0],
+                                   transform_spec=self.requirement['transform']):
+                                # masked_input = inp[0]
+                                is_valid = False
+                            # end if
+                            if is_valid:
+                                exp_seed_inputs.append({
+                                    "input": inp[5],
+                                    "place_holder": Utils.tokenize(inp[5]),
+                                    "label": label_seed
+                                })
+                            # end if
                         # end if
                     # end for
                 # end if

@@ -26,12 +26,16 @@ from .cfg.CFGConverter import CFGConverter
 
 class Generator:
 
-    def __init__(self, seed: str, pcfg_ref: str):
+    def __init__(self,
+                 seed: str,
+                 pcfg_ref: str,
+                 requirement: dict):
         self.seed = seed
         self.expander = CFGConverter(
             seed_input=seed,
             pcfg_ref=pcfg_ref,
         )
+        self.requirement = requirement
         # self.editor = editor
         
     def masked_input_generator(self):
@@ -87,28 +91,37 @@ class Generator:
                     new_input = seed_input.replace(old_phrase, new_phrase)
                     if new_input not in masked_inputs:
                         _masked_input, mask_pos = self.get_pos_from_mask(new_input)
-                        if rhs_to_prob is None and sent_prob_wo_target is None:
-                            result.append({
-                                "input": seed_input,
-                                "lhs": lhs,
-                                "cfg_from": f"{lhs} -> {rhs_from}",
-                                "cfg_to": f"{lhs} -> {rhs_to}",
-                                "target_phrase": old_phrase,
-                                "masked_phrase": new_phrase,
-                                "masked_input": (_masked_input, mask_pos),
-                            })
-                        else:    
-                            result.append({
-                                "input": seed_input,
-                                "lhs": lhs,
-                                "cfg_from": f"{lhs} -> {rhs_from}",
-                                "cfg_to": f"{lhs} -> {rhs_to}",
-                                "target_phrase": old_phrase,
-                                "masked_phrase": new_phrase,
-                                "masked_input": (_masked_input, mask_pos),
-                                "prob": rhs_to_prob,
-                                "sent_prob_wo_target": sent_prob_wo_target
-                            })
+                        is_valid = True
+                        if self.requirement['transform'] and \
+                           not Validate.is_conform_to_template(
+                               sent=_masked_input,
+                               transform_spec=self.requirement['transform']):
+                            is_valid = False:
+                        # end if
+                        if is_valid:
+                            if rhs_to_prob is None and sent_prob_wo_target is None:
+                                result.append({
+                                    "input": seed_input,
+                                    "lhs": lhs,
+                                    "cfg_from": f"{lhs} -> {rhs_from}",
+                                    "cfg_to": f"{lhs} -> {rhs_to}",
+                                    "target_phrase": old_phrase,
+                                    "masked_phrase": new_phrase,
+                                    "masked_input": (_masked_input, mask_pos),
+                                })
+                            else:    
+                                result.append({
+                                    "input": seed_input,
+                                    "lhs": lhs,
+                                    "cfg_from": f"{lhs} -> {rhs_from}",
+                                    "cfg_to": f"{lhs} -> {rhs_to}",
+                                    "target_phrase": old_phrase,
+                                    "masked_phrase": new_phrase,
+                                    "masked_input": (_masked_input, mask_pos),
+                                    "prob": rhs_to_prob,
+                                    "sent_prob_wo_target": sent_prob_wo_target
+                                })
+                            # end if
                         # end if
                     # end if
                 # end for
