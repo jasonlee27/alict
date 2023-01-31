@@ -513,9 +513,18 @@ function pdrulecoverage() {
 
 function mtnlp_pdrulecoverage() {
         (cd ${_DIR}
-         CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
+         CUDA_VISIBLE_DEVICES=3 python -m python.sa.main \
                              --run pdrule_cov_mtnlp \
                              --search_dataset sst \
+                             --syntax_selection random
+        )
+}
+
+function checklist_pdrulecoverage() {
+        (cd ${_DIR}
+         CUDA_VISIBLE_DEVICES=3 python -m python.sa.main \
+                             --run pdrule_cov_checklist \
+                             --search_dataset checklist \
                              --syntax_selection random
         )
 }
@@ -534,11 +543,11 @@ function humanstudy() {
 
 function humanstudy_results() {
         (cd ${_DIR}
-         python -m python.sa.main \
-                --run humanstudy_results \
-                --search_dataset sst \
-                --syntax_selection random \
-                --model_name textattack/bert-base-uncased-SST-2
+         CUDA_VISIBLE_DEVICES=3 python -m python.sa.main \
+                             --run humanstudy_results \
+                             --search_dataset sst \
+                             --syntax_selection random \
+                             --model_name textattack/bert-base-uncased-SST-2
         )
 }
 
@@ -595,6 +604,20 @@ function make_tables() {
         )
 }
 
+function make_plots() {
+        (cd ${_DIR}
+         # Table 1
+         # python -m python.sa.main --run tables --which lc-req
+         # python -m python.sa.main --run tables --which manual-study
+         # python -m python.sa.main --run plots --which pdr-selfbleu-agg
+         python -m python.sa.main --run plots --which pdr
+         # python -m python.sa.main --run plots --which numfail-pass2fail-agg
+
+         # python -m python.sa.main --run plots --which selfbleu
+        )
+}
+
+
 # ==========
 # Main
 
@@ -618,8 +641,9 @@ function main_sst() {
         # get_neuralcoverage_data # get sentences for coverage experiment
         # compute_coverage
         # make_tables
-        mtnlp_selfbleu
+        # mtnlp_selfbleu
         # mtnlp_pdrulecoverage
+        checklist_pdrulecoverage
         
 
         # eval_retrained_models # to ...?
