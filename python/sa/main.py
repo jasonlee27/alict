@@ -17,7 +17,8 @@ parser.add_argument('--run', type=str, required=True,
                         'requirement', 'template', 'testsuite', 'seedgen',
                         'testmodel', 'testmodel_seed', 'retrain', 'analyze',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
-                        'selfbleu', 'selfbleu_mtnlp', 'pdrule_cov', 'pdrule_cov_mtnlp',
+                        'selfbleu', 'selfbleu_mtnlp',
+                        'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_checklist',
                         'humanstudy', 'humanstudy_results',
                         'neural_coverage_data', 'tables', 'plots'
                     ], help='task to be run')
@@ -509,6 +510,7 @@ func_map = {
         'selfbleu_mtnlp': run_selfbleu_mtnlp,
         'pdrule_cov': run_pdrule_cov,
         'pdrule_cov_mtnlp': run_pdrule_cov_mtnlp,
+        'pdrule_cov_checklist': run_pdrule_cov_checklist,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
         'neural_coverage_data': run_neural_coverage_data,

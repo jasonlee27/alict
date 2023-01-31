@@ -666,26 +666,30 @@ def main_checklist(task,
     logger_file = Macros.log_dir / f"checklist_{task}_checklist_{selection_method}_pdrcov.log"
     result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_all_{task}_checklist_{selection_method}_pdrcov.json"
 
-    seed_rules = dict()
-    exp_rules = dict()
+    
     scores_list = list()
     for t in range(num_test_results):
-        _t = '' if t==0 else str(t)
+        _t = '' if t==0 else str(t+1)
+        seed_rules = dict()
+        exp_rules = dict()
         seed_file = Macros.result_dir / f"cfg_expanded_inputs{_t}_{task}_checklist_{selection_method}_{num_seeds}seeds.json"
         cfg_results_over_lcs = Utils.read_json(seed_file)
         
         for cfg_res in cfg_results_over_lcs:
+            lc = cfg_res['requirement']['description']
+            seed_rules[lc] = dict()
+            exp_rules[lc] = dict()
             for seed in cfg_res['inputs'].keys():
 
-                if seed not in seed_rules.keys():
+                if seed not in seed_rules[lc].keys():
                     cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
                     pdr_seed = get_pdr_per_sent(cfg_seed)
-                    seed_rules[seed] = pdr_seed
+                    seed_rules[lc][seed] = pdr_seed
 
                     for exp in cfg_res['inputs'][seed]['exp_inputs']:
                         pdr_exp = pdr_seed.copy()
                         cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
-                        if exp_sent not in exp_rules.keys():
+                        if exp_sent not in exp_rules[lc].keys():
                             cfg_from = cfg_from.replace(f" -> ", '->')
                             lhs, rhs = cfg_from.split('->')
                             if len(eval(rhs))==1:
@@ -694,7 +698,7 @@ def main_checklist(task,
                             cfg_to = cfg_to.replace(f" -> ", '->')
                             pdr_exp.remove(cfg_from)
                             pdr_exp.append(cfg_to)
-                            exp_rules[exp_sent] = pdr_exp
+                            exp_rules[lc][exp_sent] = pdr_exp
                         # end if
                     # end for
                 # end if
@@ -704,16 +708,12 @@ def main_checklist(task,
         scores = dict()
         for lc in tqdm(seed_rules.keys()):
             if lc not in scores.keys():
-                logger.print(f"OURS_PDR_SEED_EXP_ALL::{lc}", end='::')
                 our_sents, bl_sents = list(), list()
                 scores[lc] = {
                     'ours_seed': {
                         'coverage_scores': None
                     },
                     'ours_seed_exp': {
-                        'coverage_scores': None
-                    },
-                    'bl': {
                         'coverage_scores': None
                     }
                 }
