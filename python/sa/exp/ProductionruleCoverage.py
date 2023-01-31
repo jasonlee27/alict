@@ -743,6 +743,6 @@ def main_checklist(task,
             # end if
         # end for
         scores_list.append(scores)
-        Utils.write_json(scores, result_file, pretty_format=True)
     # end for
+    Utils.write_json(scores_list, result_file, pretty_format=True)
     return
