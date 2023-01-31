@@ -26,7 +26,7 @@ from ..requirement.Requirements import Requirements
 from ..seed.Search import Search
 from ..synexp.Generator import Generator
 from ..synexp.cfg.RefPCFG import RefPCFG
-from ..semexp.Suggest import Suggest
+from ..semexp.Suggest import Suggest, Validate
 from ..semexp.Synonyms import Synonyms
 
 torch.multiprocessing.set_sharing_strategy('file_system')
@@ -540,6 +540,10 @@ class Template:
         reqs = Requirements.get_requirements(nlp_task)
         prev_synonyms = dict()
         cksum_map_str = ""
+        reqs = [
+            r for r in reqs
+            if r.get('use_testcase', None)!='hatecheck'
+        ]
         for t_i, req in enumerate(reqs):
             # for each testing linguistic capabilities,
             lc_desc = req['description']
@@ -568,13 +572,24 @@ class Template:
                 if any(exp_inputs):
                     # expanded inputs
                     for inp_i, inp in enumerate(exp_inputs):
+                        is_valid = True
                         exp_sent = inp[5]
+                        mask_exp_sent = inp[0]
                         if exp_sent is not None:
-                            exp_seed_inputs.append({
-                                "input": inp[5],
-                                "place_holder": Utils.tokenize(inp[5]),
-                                "label": label_seed
-                            })
+                            if req.get('transform', None) and \
+                               not Validate.is_conform_to_template(
+                                   sent=mask_exp_sent,
+                                   label=label_seed,
+                                   transform_spec=req['transform']):
+                                is_valid = False
+                            # end if
+                            if is_valid:
+                                exp_seed_inputs.append({
+                                    "input": inp[5],
+                                    "place_holder": Utils.tokenize(inp[5]),
+                                    "label": label_seed
+                                })
+                            # end if
                         # end if
                     # end for
                 # end if

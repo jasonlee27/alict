@@ -19,7 +19,7 @@ from checklist.editor import Editor
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..requirement.Requirements import Requirements
-from ..semexp.Suggest import Suggest
+from ..semexp.Suggest import Suggest, Validate
 from .cfg.CFGConverter import CFGConverter
 
 
@@ -86,28 +86,37 @@ class Generator:
                     new_input = seed_input.replace(old_phrase, new_phrase)
                     if new_input not in masked_inputs:
                         _masked_input, mask_pos = self.get_pos_from_mask(new_input)
-                        if rhs_to_prob is None and sent_prob_wo_target is None:
-                            result.append({
-                                "input": seed_input,
-                                "lhs": lhs,
-                                "cfg_from": f"{lhs} -> {rhs_from}",
-                                "cfg_to": f"{lhs} -> {rhs_to}",
-                                "target_phrase": old_phrase,
-                                "masked_phrase": new_phrase,
-                                "masked_input": (_masked_input, mask_pos),
-                            })
-                        else:    
-                            result.append({
-                                "input": seed_input,
-                                "lhs": lhs,
-                                "cfg_from": f"{lhs} -> {rhs_from}",
-                                "cfg_to": f"{lhs} -> {rhs_to}",
-                                "target_phrase": old_phrase,
-                                "masked_phrase": new_phrase,
-                                "masked_input": (_masked_input, mask_pos),
-                                "prob": rhs_to_prob,
-                                "sent_prob_wo_target": sent_prob_wo_target
-                            })
+                        is_valid = True
+                        if self.requirement.get('transform', None) and \
+                           not Validate.is_conform_to_template(
+                               sent=_masked_input,
+                               transform_spec=self.requirement['transform']):
+                            is_valid = False
+                        # end if
+                        if is_valid:
+                            if rhs_to_prob is None and sent_prob_wo_target is None:
+                                result.append({
+                                    "input": seed_input,
+                                    "lhs": lhs,
+                                    "cfg_from": f"{lhs} -> {rhs_from}",
+                                    "cfg_to": f"{lhs} -> {rhs_to}",
+                                    "target_phrase": old_phrase,
+                                    "masked_phrase": new_phrase,
+                                    "masked_input": (_masked_input, mask_pos),
+                                })
+                            else:    
+                                result.append({
+                                    "input": seed_input,
+                                    "lhs": lhs,
+                                    "cfg_from": f"{lhs} -> {rhs_from}",
+                                    "cfg_to": f"{lhs} -> {rhs_to}",
+                                    "target_phrase": old_phrase,
+                                    "masked_phrase": new_phrase,
+                                    "masked_input": (_masked_input, mask_pos),
+                                    "prob": rhs_to_prob,
+                                    "sent_prob_wo_target": sent_prob_wo_target
+                                })
+                            # end if
                         # end if
                     # end if
                 # end for

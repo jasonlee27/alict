@@ -350,7 +350,7 @@ class Suggest:
                 # check sentence and expansion requirements
                 if cls.eval_sug_words_by_req(input_candid, requirement, label):
                     if cls.eval_sug_words_by_exp_req(nlp, w_sug, requirement):
-                        if requirement['transform'] is not None and \
+                        if requirement.get('transform', None) is not None and \
                            Validate.is_conform_to_template(
                                sent=masked_input,
                                transform_spec=requirement['transform']):

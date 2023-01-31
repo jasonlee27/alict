@@ -92,7 +92,7 @@ class Generator:
                     if new_input not in masked_inputs:
                         _masked_input, mask_pos = self.get_pos_from_mask(new_input)
                         is_valid = True
-                        if self.requirement['transform'] and \
+                        if self.requirement.get('transform', None) and \
                            not Validate.is_conform_to_template(
                                sent=_masked_input,
                                transform_spec=self.requirement['transform']):

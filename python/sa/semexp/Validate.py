@@ -46,7 +46,7 @@ class Validate:
         'negate ^demonstratives_AUXBE': [
             WORD2POS_MAP
         ],
-        'negate ^AUXBE': [
+        'negate AUXBE$': [
             NEG_OF_NEG_AT_THE_END_PHRASE_TEMPLATE
         ],
         'negate positive': [
