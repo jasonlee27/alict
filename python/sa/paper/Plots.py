@@ -59,8 +59,7 @@ class Plots:
             elif item == 'selfbleu':
                 cls.selfbleu_sample_plot(Macros.result_dir, figs_dir)
             elif item == 'pdr':
-                # Results of production rule coverage between S2LCT with 50 seeds and CHECKLIST test cases
-                cls.pdr_bar_plot(Macros.result_dir, figs_dir)
+                # cls.pdr_bar_plot(Macros.result_dir, figs_dir)
                 cls.pdr_checklist_bar_plot(Macros.result_dir, figs_dir)
             elif item == 'test-results':
                 # cls.failrate_combined_over_seeds_plot(Macros.result_dir, figs_dir)
@@ -239,8 +238,8 @@ class Plots:
         fig.tight_layout()
         fig.savefig(figs_dir / "pdr-barplot.eps")
         return
-
-        @classmethod
+    
+    @classmethod
     def pdr_checklist_bar_plot(cls,
                                results_dir: Path,
                                figs_dir: Path,
@@ -285,13 +284,11 @@ class Plots:
                          hue='type',
                          hue_order=hue_order,
                          palette="Set1",
-                         estimator=median,
-                         errorbar=('ci', 95),
-                         err_kws={'capsize': 3})
+                         estimator=median)
         # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
         # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
         # ax.set_yscale('log')
-        ax.set_ylim(bottom=0, top=1e3)
+        ax.set_ylim(bottom=0, top=100)
         ax.set_xlabel("Linguistic Capabilities")
         ax.set_ylabel("Number of Production Rules Covered")
         ax.legend(loc='upper right')
