@@ -27,7 +27,8 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 
 from ..seed.Search import SearchOperator, SENT_DICT
-from ..seed.Transform import NEG_OF_NEG_AT_THE_END_PHRASE_TEMPLATE, \
+from ..seed.Transform import WORD2POS_MAP, \
+    NEG_OF_NEG_AT_THE_END_PHRASE_TEMPLATE, \
     DISAGREEMENT_PHRASE, \
     CUR_NEG_TEMPORAL_PHRASE_TEMPLATE, \
     CUR_POS_TEMPORAL_PHRASE_TEMPLATE, \
@@ -37,19 +38,34 @@ from ..seed.Transform import NEG_OF_NEG_AT_THE_END_PHRASE_TEMPLATE, \
 
 class Validate:
 
+    TRANFORM_TEMPLATE_MAP = {
+        'add temporal_awareness': {
+            'negative': CUR_NEG_TEMPORAL_PHRASE_TEMPLATE,
+            'positive': CUR_POS_TEMPORAL_PHRASE_TEMPLATE
+        },
+        'negate ^demonstratives_AUXBE': [
+            WORD2POS_MAP
+        ],
+        'negate ^AUXBE': [
+            NEG_OF_NEG_AT_THE_END_PHRASE_TEMPLATE
+        ],
+        'negate positive': [
+            DISAGREEMENT_PHRASE
+        ],
+        'srl': [
+            SRL_PHASE_TEMPLATE
+        ],
+        'questionize yes': [
+            QUESTIONIZE_PHRASE_TEMPLATE
+        ],
+        'questionize no': [
+            QUESTIONIZE_PHRASE_TEMPLATE
+        ],
+    }
+
     @classmethod
     def get_templates(cls, transform_spec):
-        templates = None
-        if transform_spec.split()[-1]=='temporal_awareness':
-            templates = {
-                'negative': CUR_NEG_TEMPORAL_PHRASE_TEMPLATE,
-                'positive': CUR_POS_TEMPORAL_PHRASE_TEMPLATE
-            }
-        elif transform_spec.split()[-1]=='QUESTIONIZE_PHRASE_TEMPLATE':
-            templates = [
-                QUESTIONIZE_PHRASE_TEMPLATE
-            ]
-        # end if
+        templates = cls.TRANFORM_TEMPLATE_MAP[transform_spec]
         return templates
     
     @classmethod
