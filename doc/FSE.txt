@@ -1,3 +1,18 @@
+
+We decided to submit to ISSTA 2023
+
+1. Remove LC1-6 in hatecheck 
+
+2. Predicates for LCs for seeds (things need to talk to Dr's)
+
+3. Validation of LC after expansion
+
+4. Only the free form can be expanded (e.g. LC3: static form used for
+transform template cannot be expanded)
+
+
+=====
+
 Result:
 
 Test-result-all-table:
