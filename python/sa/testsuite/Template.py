@@ -527,6 +527,7 @@ class Template:
                       num_seeds,
                       num_trials,
                       gpu_ids,
+                      no_cfg_gen,
                       log_file):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
@@ -542,18 +543,18 @@ class Template:
 
         # Search inputs from searching dataset and expand the inputs using ref_cfg
         logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
-        # nlp = spacy.load('en_core_web_trf')
-        # nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         
-        cls.get_new_inputs(
-            res_dir, # cfg_res_file,
-            nlp_task,
-            dataset_name,
-            num_seeds=num_seeds,
-            selection_method=selection_method,
-            gpu_ids=gpu_ids,
-            logger=logger
-        )
+        if not no_cfg_gen:
+            cls.get_new_inputs(
+                res_dir, # cfg_res_file,
+                nlp_task,
+                dataset_name,
+                num_seeds=num_seeds,
+                selection_method=selection_method,
+                gpu_ids=gpu_ids,
+                logger=logger
+            )
+        # end if
 
         # Make templates by synonyms
         logger.print("Generate Templates ...")
@@ -588,12 +589,14 @@ class Template:
                     # expanded inputs
                     for inp_i, inp in enumerate(exp_inputs):
                         is_valid = True
+                        exp_sent = inp[5]
+                        mask_exp_sent = inp[0]
                         if exp_sent is not None:
                             if req['transform'] and \
                                not Validate.is_conform_to_template(
-                                   sent=inp[0],
-                                   transform_spec=self.requirement['transform']):
-                                # masked_input = inp[0]
+                                   sent=mask_exp_sent,
+                                   label=label_seed,
+                                   transform_spec=req['transform']):
                                 is_valid = False
                             # end if
                             if is_valid:
@@ -606,7 +609,6 @@ class Template:
                         # end if
                     # end for
                 # end if
-                
                 # # make template for seed input
                 # tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
                 # _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
@@ -636,6 +638,7 @@ class Template:
                 Utils.write_json(exp_seed_inputs,
                                  res_dir / f"exps_{req_cksum}.json",
                                  pretty_format=True)
+                
             # end if
             # if any(seed_templates):
             #     Utils.write_json(seed_templates,

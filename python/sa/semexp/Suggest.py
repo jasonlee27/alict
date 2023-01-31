@@ -23,7 +23,7 @@ import checklist
 from checklist.editor import Editor
 from checklist.perturb import Perturb
 
-from Validate import Validate
+from .Validate import Validate
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..seed.Search import SearchOperator, SENT_DICT

@@ -39,22 +39,33 @@ class Validate:
 
     @classmethod
     def get_templates(cls, transform_spec):
-        pass
+        templates = None
+        if transform_spec.split()[-1]=='temporal_awareness':
+            templates = {
+                'negative': CUR_NEG_TEMPORAL_PHRASE_TEMPLATE,
+                'positive': CUR_POS_TEMPORAL_PHRASE_TEMPLATE
+            }
+        elif transform_spec.split()[-1]=='QUESTIONIZE_PHRASE_TEMPLATE':
+            templates = [
+                QUESTIONIZE_PHRASE_TEMPLATE
+            ]
+        # end if
+        return templates
     
     @classmethod
-    def is_new_token_in_template(cls, sent, transform_spec):
-        template = cls.get_templates(transform_spec)
+    def is_new_token_in_template(cls, sent, label, transform_spec):
+        templates = cls.get_templates(transform_spec)
         conformance_list = list()
+        template = templates[label] if type(templates)==dict else templates[0]
         for tp_key in template.keys():
-            if any(template[tp_key]) and not conformance_list:
+            if any(template[tp_key]):
                 tp_vals = template[tp_key]
                 conformance = [
                     True if re.search(tp_val, sent) else False
                     for tp_val in tp_vals
                 ]
-                if any(conformance):
-                    conformance_list.append(True)
-                # end if
+                conformance_val = True if any(conformance) else False
+                conformance_list.append(conformance_val)
             # end if
         # end for
         return all(conformance_list)
@@ -63,12 +74,18 @@ class Validate:
     def is_conform_to_template(cls, **kwargs):
         transform_spec = kwargs['transform_spec']
         sent = kwargs['sent']
-        return cls.is_new_token_in_template(sent, transform_spec)
+        label = kwargs['label']
+        return cls.is_new_token_in_template(
+            sent,
+            label,
+            transform_spec
+        )
 
     @classmethod
     def validate_lc_template(cls, **kwargs):
         transform_spec = kwargs['transform_spec']
         sents = kwargs['sents']
+        labels = kwargs['labels']
         valid_sents = [
             s for s in sents
             if cls.is_conform_to_template(

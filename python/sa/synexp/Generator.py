@@ -19,7 +19,7 @@ from checklist.editor import Editor
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..requirement.Requirements import Requirements
-from ..semexp.Suggest import Suggest
+from ..semexp.Suggest import Suggest, Validate
 from .cfg.CFGConverter import CFGConverter
 
 
@@ -96,7 +96,7 @@ class Generator:
                            not Validate.is_conform_to_template(
                                sent=_masked_input,
                                transform_spec=self.requirement['transform']):
-                            is_valid = False:
+                            is_valid = False
                         # end if
                         if is_valid:
                             if rhs_to_prob is None and sent_prob_wo_target is None:

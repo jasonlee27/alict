@@ -101,6 +101,7 @@ def run_templates():
         num_seeds=num_seeds,
         num_trials=num_trials,
         gpu_ids=gpu_ids,
+        no_cfg_gen=True,
         log_file=log_file
     )
     return
