@@ -656,3 +656,93 @@ def main_mtnlp(task,
     # end for
     Utils.write_json(scores, result_file, pretty_format=True)
     return
+
+def main_checklist(task,
+                   search_dataset_name,
+                   selection_method):
+    num_trials = 10
+    num_seeds = 200
+    num_test_results = 3
+    logger_file = Macros.log_dir / f"checklist_{task}_checklist_{selection_method}_pdrcov.log"
+    result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_all_{task}_checklist_{selection_method}_pdrcov.json"
+
+    seed_rules = dict()
+    exp_rules = dict()
+    scores_list = list()
+    for t in range(num_test_results):
+        _t = '' if t==0 else str(t)
+        seed_file = Macros.result_dir / f"cfg_expanded_inputs{_t}_{task}_checklist_{selection_method}_{num_seeds}seeds.json"
+        cfg_results_over_lcs = Utils.read_json(seed_file)
+        
+        for cfg_res in cfg_results_over_lcs:
+            for seed in cfg_res['inputs'].keys():
+
+                if seed not in seed_rules.keys():
+                    cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
+                    pdr_seed = get_pdr_per_sent(cfg_seed)
+                    seed_rules[seed] = pdr_seed
+
+                    for exp in cfg_res['inputs'][seed]['exp_inputs']:
+                        pdr_exp = pdr_seed.copy()
+                        cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
+                        if exp_sent not in exp_rules.keys():
+                            cfg_from = cfg_from.replace(f" -> ", '->')
+                            lhs, rhs = cfg_from.split('->')
+                            if len(eval(rhs))==1:
+                                cfg_from = f"{lhs}->{eval(rhs)[0]}"
+                            # end if
+                            cfg_to = cfg_to.replace(f" -> ", '->')
+                            pdr_exp.remove(cfg_from)
+                            pdr_exp.append(cfg_to)
+                            exp_rules[exp_sent] = pdr_exp
+                        # end if
+                    # end for
+                # end if
+            # end for
+        # end for
+
+        scores = dict()
+        for lc in tqdm(seed_rules.keys()):
+            if lc not in scores.keys():
+                logger.print(f"OURS_PDR_SEED_EXP_ALL::{lc}", end='::')
+                our_sents, bl_sents = list(), list()
+                scores[lc] = {
+                    'ours_seed': {
+                        'coverage_scores': None
+                    },
+                    'ours_seed_exp': {
+                        'coverage_scores': None
+                    },
+                    'bl': {
+                        'coverage_scores': None
+                    }
+                }
+                seed_sents = list(seed_rules[lc].keys())
+                exp_sents = list(exp_rules[lc].keys())
+                pdr1 = {
+                    s: seed_rules[lc][s]
+                    for s in seed_sents
+                }
+                pdr2 = {
+                    s: seed_rules[lc][s]
+                    for s in seed_sents
+                }
+                for e in exp_sents:
+                    if e not in pdr2.keys():
+                        pdr2[e] = exp_rules[lc][e]
+                    # end if
+                # end for
+                pdr1_obj = ProductionruleCoverage(lc=lc,
+                                                  our_cfg_rules=pdr1)
+                cov_score_ours_seed, _ = pdr1_obj.get_score()
+                pdr2_obj = ProductionruleCoverage(lc=lc,
+                                                  our_cfg_rules=pdr2)
+                cov_score_ours_seed_exp, _ = pdr2_obj.get_score()
+                scores[lc]['ours_seed']['coverage_scores'] = cov_score_ours_seed
+                scores[lc]['ours_seed_exp']['coverage_scores'] = cov_score_ours_seed_exp
+            # end if
+        # end for
+        scores_list.append(scores)
+        Utils.write_json(scores, result_file, pretty_format=True)
+    # end for
+    return

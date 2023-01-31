@@ -394,6 +394,16 @@ def run_pdrule_cov_mtnlp():
                selection_method)
     return
 
+def run_pdrule_cov_checklist():
+    from .exp.ProductionruleCoverage import main_checklist
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    main_checklist(nlp_task,
+                   search_dataset_name,
+                   selection_method)
+    return
+
 # ==========
 # Human study
 

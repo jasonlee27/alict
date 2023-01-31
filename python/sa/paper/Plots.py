@@ -61,6 +61,7 @@ class Plots:
             elif item == 'pdr':
                 # Results of production rule coverage between S2LCT with 50 seeds and CHECKLIST test cases
                 cls.pdr_bar_plot(Macros.result_dir, figs_dir)
+                cls.pdr_checklist_bar_plot(Macros.result_dir, figs_dir)
             elif item == 'test-results':
                 # cls.failrate_combined_over_seeds_plot(Macros.result_dir, figs_dir)
                 # cls.failrate_seed_over_seeds_plot(Macros.result_dir, figs_dir)
@@ -238,6 +239,74 @@ class Plots:
         fig.tight_layout()
         fig.savefig(figs_dir / "pdr-barplot.eps")
         return
+
+        @classmethod
+    def pdr_checklist_bar_plot(cls,
+                               results_dir: Path,
+                               figs_dir: Path,
+                               task=Macros.sa_task,
+                               search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                               selection_method='random'):
+        data_lod: List[dict] = list()
+        result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_all_{task}_checklist_{selection_method}_pdrcov.json"
+        results = Utils.read_json(result_file)
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        num_test_results = 3
+        for t in range(num_test_results):
+            result = results[t]
+            for l_i, lc in enumerate(Utils.read_txt(req_file)):
+                lc_desc = lc.strip().split('::')[0]
+                lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'CHECKLIST',
+                    'result_ind': t+1,
+                    'scores': result[lc_desc]['ours_seed']['coverage_scores']
+                })
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'CHECKLIST+EXP',
+                    'result_ind': t+1,
+                    'scores': result[lc_desc]['ours_seed_exp']['coverage_scores']
+                })
+            # end for
+        # end for
+        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+
+        # Plotting part
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+
+        # hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+        hue_order = ['CHECKLIST', 'CHECKLIST+EXP']
+        from numpy import median
+        ax = sns.barplot(data=df, x='lc', y='scores',
+                         hue='type',
+                         hue_order=hue_order,
+                         palette="Set1",
+                         estimator=median,
+                         errorbar=('ci', 95),
+                         err_kws={'capsize': 3})
+        # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
+        # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
+        # ax.set_yscale('log')
+        ax.set_ylim(bottom=0, top=1e3)
+        ax.set_xlabel("Linguistic Capabilities")
+        ax.set_ylabel("Number of Production Rules Covered")
+        ax.legend(loc='upper right')
+        # plt.grid(True, which='both', ls='--')
+        
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+
+        # Put a legend to the right of the current axis
+        # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        fig.tight_layout()
+        fig.savefig(figs_dir / "pdr-checklist-barplot.eps")
+        return
+    
     
     # @classmethod
     # def pdr_agg_plot(cls,
