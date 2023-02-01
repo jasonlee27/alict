@@ -522,18 +522,15 @@ class Template:
         
         logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg
-        # nlp = spacy.load('en_core_web_trf')
-        # nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
-        
-        cls.get_new_inputs(
-            res_dir, # cfg_res_file,
-            nlp_task,
-            dataset_name,
-            num_seeds=num_seeds,
-            selection_method=selection_method,
-            gpu_ids=gpu_ids,
-            logger=logger
-        )
+        # cls.get_new_inputs(
+        #     res_dir, # cfg_res_file,
+        #     nlp_task,
+        #     dataset_name,
+        #     num_seeds=num_seeds,
+        #     selection_method=selection_method,
+        #     gpu_ids=gpu_ids,
+        #     logger=logger
+        # )
 
         # Make templates by synonyms
         logger.print("Generate Templates ...")

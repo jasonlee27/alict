@@ -43,12 +43,12 @@ class Validate:
 
     TRANFORM_TEMPLATE_MAP = {
         'template f12': {
-            cls.LABELS[0]: [v for k, v in F12_TEMPLATES.items() if k.endswith('tx')],
-            cls.LABELS[1]: [v for k, v in F12_TEMPLATES.items() if k.endswith('nt')]
+            LABELS[0]: [v for k, v in F12_TEMPLATES.items() if k.endswith('nt')],
+            LABELS[1]: [v for k, v in F12_TEMPLATES.items() if k.endswith('tx')]
         },
         'template f13': {
-            cls.LABELS[0]: [v for k, v in F13_TEMPLATES.items() if k.endswith('tx')],
-            cls.LABELS[1]: [v for k, v in F13_TEMPLATES.items() if k.endswith('nt')]
+            LABELS[0]: [v for k, v in F13_TEMPLATES.items() if k.endswith('nt')],
+            LABELS[1]: [v for k, v in F13_TEMPLATES.items() if k.endswith('tx')]
         },
         'template f14': list(F14_TEMPLATES.values()),
         'template f15': list(F15_TEMPLATES.values()),
@@ -70,7 +70,7 @@ class Validate:
         if type(templates)==dict:
             templates = templates[label]
         # end if
-        for template templates:
+        for template in templates:
             conformance_list = list()
             for tp_key in template.keys():
                 if any(template[tp_key]):
