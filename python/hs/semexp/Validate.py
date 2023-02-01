@@ -76,7 +76,7 @@ class Validate:
                 if any(template[tp_key]):
                     tp_vals = template[tp_key]
                     conformance = [
-                        True if re.search(tp_val, sent) else False
+                        True if re.search(re.escape(tp_val), sent) else False
                         for tp_val in tp_vals
                     ]
                     conformance_val = True if any(conformance) else False
