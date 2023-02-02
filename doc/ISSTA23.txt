@@ -9,6 +9,9 @@ TODO:
 
 - rewrite results after having all results
 
+- make a table of pdr coverage comparing hatecheck and hatecheck+its
+  expansion: it is running for the expansion
+
 - ask simin for neral coverage for new validated test cases:
   decide to meet after his FSE submission
 
@@ -24,6 +27,9 @@ TODO:
 + rewrite the intro section based on comments
 
 + Remove LC1-6 in hatecheck
+
++ make a table of pdr coverage comparing checklist and checklist+its
+  expansion 
 
 + Figure out how to characterize LC specs using predicates for LCs
 for seeds: did for searching and keep the transformation templates in
