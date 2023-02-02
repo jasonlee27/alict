@@ -28,9 +28,11 @@ class Generator:
 
     def __init__(self,
                  seed: str,
+                 label: str,
                  pcfg_ref: str,
                  requirement: dict):
         self.seed = seed
+        self.label = label
         self.expander = CFGConverter(
             seed_input=seed,
             pcfg_ref=pcfg_ref,
@@ -95,6 +97,7 @@ class Generator:
                         if self.requirement.get('transform', None) and \
                            not Validate.is_conform_to_template(
                                sent=_masked_input,
+                               label=self.label,
                                transform_spec=self.requirement['transform']):
                             is_valid = False
                         # end if
