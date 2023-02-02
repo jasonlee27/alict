@@ -591,8 +591,9 @@ class Hatecheck:
     @classmethod
     def search(cls, req, nlp):
         sents = cls.get_sents(Macros.hatecheck_data_file)
+        cap = req['capability']
         req_desc = req['description']
-        sh_req_descs = cls.FUNCTIONALITY_MAP[req_desc]
+        sh_req_descs = cls.FUNCTIONALITY_MAP[f"{cap}::{req_desc}"]
         selected = list()
         for s_i, s in enumerate(sents):
             if s['func'] in sh_req_descs or \

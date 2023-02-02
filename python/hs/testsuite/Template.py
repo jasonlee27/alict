@@ -33,7 +33,7 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 
 
 class Template:
-
+    
     NUM_PROCESSES = Macros.num_processes # multiprocessing.cpu_count()
     
     POS_MAP = {
@@ -73,11 +73,12 @@ class Template:
                                    seed,
                                    seed_label,
                                    pcfg_ref,
+                                   req,
                                    logger):
         st_2 = time.time()
         pcs_id = multiprocessing.current_process().ident
         gpu_id = multiprocessing.current_process().name.split('-')[-1]
-        generator = Generator(seed, pcfg_ref)
+        generator = Generator(seed, pcfg_ref, req)
         gen_inputs = generator.masked_input_generator()
         masked_input_res = {
             'seed': seed,
@@ -136,7 +137,7 @@ class Template:
         # end if
         
         for index, (_id, seed, seed_label) in enumerate(seeds):
-            args.append((index, seed, seed_label, pcfg_ref, logger))
+            args.append((index, seed, seed_label, pcfg_ref, req, logger))
         # end for
 
         if any(args):
@@ -372,12 +373,16 @@ class Template:
         # # end if
         logger.print("Analyzing CFG ...")
         reqs = Requirements.get_requirements(nlp_task)
+        reqs = [
+            r for r in reqs
+            if r.get('use_testcase', None)!='hatecheck'
+        ]
         # editor = Editor()
         pcfg_ref = RefPCFG()
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
         for r_i, req in enumerate(reqs):
-            print(r_i, req, len(reqs))
+            print(req)
             cls.generate_inputs(nlp,
                                 nlp_task,
                                 req,
@@ -522,15 +527,15 @@ class Template:
         
         logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
         # Search inputs from searching dataset and expand the inputs using ref_cfg
-        # cls.get_new_inputs(
-        #     res_dir, # cfg_res_file,
-        #     nlp_task,
-        #     dataset_name,
-        #     num_seeds=num_seeds,
-        #     selection_method=selection_method,
-        #     gpu_ids=gpu_ids,
-        #     logger=logger
-        # )
+        cls.get_new_inputs(
+            res_dir, # cfg_res_file,
+            nlp_task,
+            dataset_name,
+            num_seeds=num_seeds,
+            selection_method=selection_method,
+            gpu_ids=gpu_ids,
+            logger=logger
+        )
 
         # Make templates by synonyms
         logger.print("Generate Templates ...")

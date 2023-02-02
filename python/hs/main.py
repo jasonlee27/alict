@@ -24,7 +24,7 @@ parser.add_argument('--nlp_task', type=str, default='hs',
                     help='nlp task of focus')
 parser.add_argument('--search_dataset', type=str, default='hatexplain',
                     help='name of dataset for searching testcases that meets the requirement')
-parser.add_argument('--num_seeds', type=int, default=Macros.max_num_seeds,
+parser.add_argument('--num_seeds', type=int, default=-1,
                     help='number of seed inputs found in search dataset')
 parser.add_argument('--num_trials', type=int, default=1,
                     help='number of trials for the experiment')

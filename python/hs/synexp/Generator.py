@@ -25,12 +25,13 @@ from .cfg.CFGConverter import CFGConverter
 
 class Generator:
 
-    def __init__(self, seed: str, pcfg_ref: str):
+    def __init__(self, seed: str, pcfg_ref: str, requirement):
         self.seed = seed
         self.expander = CFGConverter(
             seed_input=seed,
             pcfg_ref=pcfg_ref,
         )
+        self.requirement = requirement
         # self.editor = editor
         
     def masked_input_generator(self):
