@@ -125,8 +125,9 @@ class Humanstudy:
         return sample_results
     
     @classmethod
-    def write_samples(cls, sample_dict: Dict, res_dir: Path):
+    def write_samples(cls, sample_dict: Dict, res_dir: Path, num_samples_per_file=50):
         for f_i in sample_dict.keys():
+            random.seed(f_i)
             seeds, exps = list(), list()
             seed_res = ""
             exp_res = ""
@@ -134,11 +135,21 @@ class Humanstudy:
                 seeds.extend(sample_dict[f_i][req]['seed'])
                 exps.extend(sample_dict[f_i][req]['exp'])
             # end for
-            for s, r in seeds:
-                seed_res += f"{s} :: {r}\n\n\n"
-            # end for
-            for e, r in exps:
-                exp_res += f"{e} :: {r}\n\n\n"
+
+            seed_inds = list(range(len(seeds)))
+            ids_out = list()
+            if len(seeds)>num_samples_per_file:
+                num_samples_out = len(seeds) - num_samples_per_file
+                random.shuffle(seed_inds)
+                ids_out = seed_inds[:num_samples_out]
+            # end if
+            for s_i in seed_inds:
+                if s_i not in ids_out:
+                    s, r = seeds[s_i]
+                    e, _r = exps[s_i]
+                    seed_res += f"{s} :: {r}\n\n\n"
+                    exp_res += f"{e} :: {_r}\n\n\n"
+                # end if
             # end for
             Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
             Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
