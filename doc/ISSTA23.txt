@@ -1,14 +1,37 @@
 
 We decided to submit to ISSTA 2023
 
-1. Remove LC1-6 in hatecheck 
+TODO:
 
-2. figure out how to characterize LC specs using predicates for LCs
-for seeds
+- rewrite the approach section
 
-3. Validation of LC after expansion
+- rewrite experiment
 
-4. Only the free form can be expanded (e.g. LC3: static form used for
-transform template cannot be expanded)
+- rewrite results after having all results
+
+- ask simin for neral coverage for new validated test cases:
+  decide to meet after his FSE submission
+
+- generate new sample test cases for human study
+
+- make table for test results: done for hs, but not done for sa
+
+- run the selfbleu and pdr coverage for the new validated test cases:
+  running for hs, not done for sa
 
 =====
+
++ rewrite the intro section based on comments
+
++ Remove LC1-6 in hatecheck
+
++ Figure out how to characterize LC specs using predicates for LCs
+for seeds: did for searching and keep the transformation templates in
+the table.
+
++ Validation of LC after expansion: done and experiments for obtaining
+test results for sa is running. Test results for hs is done and in the
+table 3 in overleaf.
+
++ Only the free form can be expanded (e.g. LC3: static form used for
+transform template cannot be expanded)
