@@ -136,7 +136,7 @@ F21_TEMPLATES = {
     'temp1': {
         'prefix': ['saying that'],
         'sent': [], # toxic
-        'postfix': ['shows how misguided you are', '']
+        'postfix': ['shows how misguided you are']
     },
     'temp2': {
         'prefix': ['i cannot believe that'],

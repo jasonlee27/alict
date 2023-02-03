@@ -156,7 +156,7 @@ def read_our_seeds(task,
                    selection_method):
     texts_lcs = dict()
     texts_all = list()
-    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
+    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}_prev"
     seed_files = [
         f for f in os.listdir(str(seed_dir))
         if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
@@ -175,7 +175,7 @@ def read_our_exps(task,
                   selection_method):
     texts_lcs = dict()
     seed_exp_map = dict()
-    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
+    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}_prev"
     seed_files = [
         f for f in os.listdir(str(seed_dir))
         if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')

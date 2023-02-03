@@ -421,7 +421,7 @@ class Hatexplain:
             if(final_label.count(final_label_id)==1):
                 final_label_id = 'undecided'
             else:
-                if(final_label_id in ['hatespeech','offensive']):
+                if(final_label_id in ['hatespeech']):
                     final_label_id='toxic'
                 else:
                     final_label_id='non-toxic'

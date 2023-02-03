@@ -118,21 +118,19 @@ class ProductionruleCoverage:
                 seed_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"
                 res_file = Macros.pdr_cov_result_dir / f"seed_{task}_{search_dataset_name}_{selection_method}_pdr_{_lc_cksum}.json"
             # end if
-
+            
             seed_rules = dict()
-            if os.path.exists(res_file):
-                try:
-                    seed_rules = Utils.read_json(res_file)
-                    seed_rules_over_lcs[lc_desc] = seed_rules
-                except:
-                    seed_rules = dict()
-                # end try
-            # end if
-            if not any(seed_rules):
+            # if os.path.exists(res_file):
+            #     try:
+            #         seed_rules = Utils.read_json(res_file)
+            #         seed_rules_over_lcs[lc_desc] = seed_rules
+            #     except:
+            #         seed_rules = dict()
+            #     # end try
+            # # end if
+            if not any(seed_rules) and os.path.exists(seed_file):
+                cfg_res = Utils.read_json(seed_file)
                 print(f"OUR_SEED::{lc_desc}")
-                cfg_res = Utils.read_json(seed_dir / seed_file)
-            
-            
                 if not parse_all_sents:
                     if logger is not None:
                         logger.print(f"OUR_SEED::{lc_desc}")
@@ -189,15 +187,15 @@ class ProductionruleCoverage:
             # end if
             
             exp_rules = dict()
-            if os.path.exists(res_file):
-                try:
-                    exp_rules = Utils.read_json(res_file)
-                    exp_rules_over_lcs[lc_desc] = exp_rules
-                except:
-                    exp_rules = dict()
-                # end try
-            # end if
-            if not any(exp_rules):
+            # if os.path.exists(res_file):
+            #     try:
+            #         exp_rules = Utils.read_json(res_file)
+            #         exp_rules_over_lcs[lc_desc] = exp_rules
+            #     except:
+            #         exp_rules = dict()
+            #     # end try
+            # # end if
+            if not any(exp_rules) and os.path.exists(seed_file):
                 cfg_res = Utils.read_json(seed_file)
                 print(f"OUR_EXP_FOR_PDR::{lc_desc}")
 
@@ -516,6 +514,74 @@ def main_all(task,
         # end if
         Utils.write_json(scores, result_file, pretty_format=True)
     # end for
+    return
+
+def main_hatecheck(task,
+                   selection_method):
+    # measure and compare pdr coverage between hatecheck and its expansions
+    st = time.time()
+    logger_file = Macros.log_dir / f"seeds_exps_all_{task}_hatecheck_{selection_method}_pdrcov.log"
+    result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_all_{task}_hatecheck_{selection_method}_pdrcov.json"
+    Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
+    logger = Logger(logger_file=logger_file,
+                    logger_name='seed_exp_all_pdrcov_log')    
+    seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
+        task,
+        'hatecheck',
+        selection_method,
+        parse_all_sents=False,
+        logger=logger
+    )
+    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+        task,
+        'hatecheck',
+        selection_method,
+        logger=logger
+    )
+    
+    scores = dict()
+    for lc in tqdm(seed_rules.keys()):
+        if lc not in scores.keys():
+            logger.print(f"OURS_PDR_SEED_EXP_ALL::{lc}", end='::')
+            our_sents, bl_sents = list(), list()
+            scores[lc] = {
+                'ours_seed': {
+                    'coverage_scores': None
+                },
+                'ours_seed_exp': {
+                    'coverage_scores': None
+                }
+            }
+            seed_sents = list(seed_rules[lc].keys())
+            exp_sents = list(exp_rules[lc].keys())
+            pdr1 = {
+                s: seed_rules[lc][s]
+                for s in seed_sents
+            }
+            pdr2 = {
+                s: seed_rules[lc][s]
+                for s in seed_sents
+            }
+            for e in exp_sents:
+                if e not in pdr2.keys():
+                    pdr2[e] = exp_rules[lc][e]
+                # end if
+            # end for
+            pdr3 = {
+                e: hatecheck_rules[lc][e]
+                for e in bl_sents
+            }
+            pdr1_obj = ProductionruleCoverage(lc=lc,
+                                              our_cfg_rules=pdr1)
+            cov_score_ours_seed, _ = pdr1_obj.get_score()
+            pdr2_obj = ProductionruleCoverage(lc=lc,
+                                              our_cfg_rules=pdr2)
+            cov_score_ours_seed_exp, _ = pdr2_obj.get_score()
+            scores[lc]['ours_seed']['coverage_scores'] = cov_score_ours_seed
+            scores[lc]['ours_seed_exp']['coverage_scores'] = cov_score_ours_seed_exp
+        # end if
+    # end for
+    Utils.write_json(scores, result_file, pretty_format=True)
     return
 
 
