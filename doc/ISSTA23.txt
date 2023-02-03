@@ -3,26 +3,26 @@ We decided to submit to ISSTA 2023
 
 TODO:
 
-- rewrite the approach section
-
-- rewrite experiment
-
-- rewrite results after having all results
-
 - make a table of pdr coverage comparing hatecheck and hatecheck+its
   expansion: it is running for the expansion
+  
+- rewrite experiment
 
 - ask simin for neral coverage for new validated test cases:
   decide to meet after his FSE submission
 
 - generate new sample test cases for human study
 
-- make table for test results: done for hs, but not done for sa
+- make table for test results: but not done for sa
 
 - run the selfbleu and pdr coverage for the new validated test cases:
-  running for hs, not done for sa
+  not done for sa
+
+- rewrite results after having all results
 
 =====
+
++ rewrite the approach section
 
 + rewrite the intro section based on comments
 
