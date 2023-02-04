@@ -495,7 +495,7 @@ class Tables:
             _num_trial = '' if num_trial==0 else str(num_trial+1)
             res_dir = result_dir / f"test_results{_num_trial}_{task}_{search_dataset}_{selection_method}_{num_seeds}seeds"
             result_file = res_dir / 'test_result_analysis.json'
-            result = Utils.read_json(result_file)            
+            result = Utils.read_json(result_file)
             for m_i, model_name in enumerate(result.keys()):
                 if f"model{m_i}" not in num_seeds_tot.keys():
                     num_seeds_tot[f"model{m_i}"] = dict()
