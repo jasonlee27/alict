@@ -411,16 +411,16 @@ def run_pdrule_cov_checklist():
 
 def run_humanstudy():
     from .exp.Humanstudy import Humanstudy
-    from .exp.Humanstudy import Mtnlp
+    # from .exp.Humanstudy import Mtnlp
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
-    # Humanstudy.main_sample(nlp_task,
-    #                        search_dataset_name,
-    #                        selection_method)
-    Mtnlp.main_mutation(nlp_task,
-                        search_dataset_name,
-                        selection_method)
+    Humanstudy.main_sample(nlp_task,
+                           search_dataset_name,
+                           selection_method)
+    # Mtnlp.main_mutation(nlp_task,
+    #                     search_dataset_name,
+    #                     selection_method)
     return
 
 def run_humanstudy_result():

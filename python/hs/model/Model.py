@@ -66,7 +66,6 @@ class Model:
     @classmethod
     def sentiment_pred_and_conf(cls, data: List[str], batch_size=16):
         # cardiffnlp/twitter-roberta-base-hate: {'label': 'hate/non-hate', 'score': 0.5082786083221436}
-        # change format to softmax, make everything in [0.33, 0.66] range be predicted as neutral
         preds = cls.batch_predict(data, batch_size=batch_size)
         pr = np.array([x['score'] if x['label'].lower()=='hate' else 1 - x['score'] for x in preds])
         pp = np.zeros((pr.shape[0], 2))

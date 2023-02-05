@@ -192,15 +192,15 @@ function eval_models() {
         # evaluate NLP models with generated testsuites
         (cd ${_DIR}
          # evaluating models on checklist testcases
-         CUDA_VISIBLE_DEVICES=1 python -m python.sa.main --run testmodel --test_baseline
+         CUDA_VISIBLE_DEVICES=5 python -m python.sa.main --run testmodel --test_baseline
 
          # evaluating models on our generated testcases
-         # CUDA_VISIBLE_DEVICES=5 python -m python.sa.main \
-         #                     --run testmodel \
-         #                     --search_dataset sst \
-         #                     --syntax_selection random \
-         #                     --num_seeds -1 \
-         #                     --num_trials 1 # > /dev/null 2>&1
+         CUDA_VISIBLE_DEVICES=5 python -m python.sa.main \
+                             --run testmodel \
+                             --search_dataset sst \
+                             --syntax_selection random \
+                             --num_seeds -1 \
+                             --num_trials 1
          # CUDA_VISIBLE_DEVICES=5,7 python -m python.sa.main \
          #                     --run testmodel \
          #                     --search_dataset sst \
@@ -340,12 +340,12 @@ function eval_retrained_models() {
 function analyze_eval_models() {
         (cd ${_DIR}
          # evaluate NLP models with generated testsuites
-         # python -m python.sa.main \
-         #        --run analyze \
-         #        --search_dataset sst \
-         #        --syntax_selection random \
-         #        --num_seeds -1 \
-         #        --num_trials 1 # > /dev/null 2>&1
+         python -m python.sa.main \
+                --run analyze \
+                --search_dataset sst \
+                --syntax_selection random \
+                --num_seeds -1 \
+                --num_trials 1
          # python -m python.sa.main \
          #        --run analyze \
          #        --search_dataset sst \
@@ -633,8 +633,8 @@ function main_sst() {
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # analyze_retrained_models # to generate debug_results file
         # failcase
-        # selfbleu # to compute the selfbleu
-        # pdrulecoverage # to compute the diversity of grammatic structure of sentence
+        selfbleu # to compute the selfbleu
+        pdrulecoverage # to compute the diversity of grammatic structure of sentence
         # explain_nlp # to run the explainNLP
         # humanstudy # sample sentences for manual study
         # humanstudy_results # get results of manual study into human_study.json
@@ -643,7 +643,7 @@ function main_sst() {
         # make_tables
         # mtnlp_selfbleu
         # mtnlp_pdrulecoverage
-        checklist_pdrulecoverage
+        # checklist_pdrulecoverage
         
 
         # eval_retrained_models # to ...?

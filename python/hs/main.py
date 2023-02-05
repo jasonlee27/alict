@@ -14,8 +14,10 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
-                        'requirement', 'template', 'testsuite', 'testmodel', 'analyze',
-                        'failcase', 'selfbleu', 'selfbleu_mtnlp', 'pdrule_cov', 'pdrule_cov_mtnlp',
+                        'requirement', 'template', 'testsuite',
+                        'testmodel', 'analyze', 'failcase',
+                        'selfbleu', 'selfbleu_mtnlp',
+                        'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_hatecheck',
                         'humanstudy', 'humanstudy_results',
                         'tables', 'plots'
                     ], help='task to be run')
@@ -226,6 +228,15 @@ def run_pdrule_cov():
              selection_method)
     return
 
+
+def run_pdrule_cov_hatecheck():
+    from .exp.ProductionruleCoverage import main_hatecheck
+    nlp_task = args.nlp_task
+    selection_method = args.syntax_selection
+    main_hatecheck(nlp_task,
+                   selection_method)
+    return
+
 def run_pdrule_cov_mtnlp():
     from .exp.ProductionruleCoverage import main_mtnlp
     nlp_task = args.nlp_task
@@ -306,6 +317,7 @@ func_map = {
         'selfbleu_mtnlp': run_selfbleu_mtnlp,
         'pdrule_cov': run_pdrule_cov,
         'pdrule_cov_mtnlp': run_pdrule_cov_mtnlp,
+        'pdrule_cov_hatecheck': run_pdrule_cov_hatecheck,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
         'tables': run_make_tables,

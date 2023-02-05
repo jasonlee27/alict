@@ -65,6 +65,7 @@ class Template:
                 # end if
             # end for
         # end if
+        # print('=====', len(orig_seeds), len(seeds), len(template_results['inputs'].keys()))
         return seeds
     
     @classmethod
@@ -296,6 +297,65 @@ class Template:
             'exp_inputs': new_input_results,
             'label': seed_label,
         }
+
+    @classmethod
+    def temp_generate_inputs(cls,
+                             nlp,
+                             task,
+                             req,
+                             pcfg_ref,
+                             dataset,
+                             res_dir,
+                             num_seeds=None,
+                             selection_method=None,
+                             gpu_ids=None,
+                             logger=None):
+        st = time.time()
+        # generate seeds
+        
+        selected = cls.SEARCH_FUNC[task](req, dataset, nlp)
+        seeds = selected['selected_inputs']
+        cksum_val = Utils.get_cksum(selected['requirement']['description'])
+        cfg_res_file = res_dir / f"cfg_expanded_inputs_{cksum_val}.json"
+        cfg_res = Utils.read_json(cfg_res_file)
+        print(req)
+        seed_sents = dict()
+        for seed in seeds:
+            (_id, seed_sent, seed_label) = seed
+            seed_sents[seed_sent] = seed_label
+        # end for
+        
+        if len(seed_sents)<len(cfg_res['inputs'].keys()):
+            sents = list()
+            keys = list(cfg_res['inputs'].keys())
+            for s in keys:
+                if s not in seed_sents.keys():
+                    sents.append(s)
+                    removed_value = cfg_res['inputs'].pop(s, 'No Key found')
+                    # del cfg_res['inputs'][s]
+                else:
+                     if seed_sents[s]!=cfg_res['inputs'][s]['label']:
+                         cfg_res['inputs'][s]['label'] = seed_sents[s]
+                    # end if
+                # end if
+            # end for    
+        else:
+            keys = list(cfg_res['inputs'].keys())
+            for s in keys:
+                if s not in seed_sents.keys():
+                    removed_value = cfg_res['inputs'].pop(s, 'No Key found')
+                else:
+                    if seed_sents[s]!=cfg_res['inputs'][s]['label']:
+                        cfg_res['inputs'][s]['label'] = seed_sents[s]
+                    # end if
+
+                # end if
+            # end for            
+        # end if
+        Utils.write_json(cfg_res, cfg_res_file, pretty_format=True)
+        print('==========')
+        return
+        
     
     @classmethod
     def generate_inputs(cls,
@@ -317,9 +377,6 @@ class Template:
         cfg_res_file = res_dir / f"cfg_expanded_inputs_{cksum_val}.json"
         seeds = selected['selected_inputs'][:num_seeds] if num_seeds>0 else selected['selected_inputs']
         seeds = cls.get_seed_of_interest(req, cfg_res_file, seeds)
-        # if len(seeds)>10:
-        #     seeds = seeds[:5]
-        # # end if
         num_selected_inputs = len(selected['selected_inputs'])
         print_str = f">>>>> REQUIREMENT::{cksum_val}::"+selected['requirement']['description']
         if logger is not None:
@@ -381,6 +438,19 @@ class Template:
         pcfg_ref = RefPCFG()
         nlp = spacy.load('en_core_web_md')
         nlp.add_pipe("spacy_wordnet", after='tagger', config={'lang': nlp.lang})
+        # for r_i, req in enumerate(reqs):
+        #     cls.temp_generate_inputs(nlp,
+        #                         nlp_task,
+        #                         req,
+        #                         pcfg_ref,
+        #                         dataset_name,
+        #                         res_dir, # cfg_res_file,
+        #                         num_seeds=num_seeds,
+        #                         selection_method=selection_method,
+        #                         gpu_ids=gpu_ids,
+        #                         logger=logger)
+        # # end for
+        # raise()
         for r_i, req in enumerate(reqs):
             print(req)
             cls.generate_inputs(nlp,

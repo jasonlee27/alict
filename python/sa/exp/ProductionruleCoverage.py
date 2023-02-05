@@ -660,28 +660,27 @@ def main_mtnlp(task,
 def main_checklist(task,
                    search_dataset_name,
                    selection_method):
+    # measure and compare pdr coverage between checklist and its expansions
     num_trials = 10
     num_seeds = 200
     num_test_results = 3
-    logger_file = Macros.log_dir / f"checklist_{task}_checklist_{selection_method}_pdrcov.log"
+    logger_file = Macros.log_dir / f"seed_exp_bl_all_{task}_checklist_{selection_method}_pdrcov.log"
     result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_all_{task}_checklist_{selection_method}_pdrcov.json"
 
     
     scores_list = list()
     for t in range(num_test_results):
-        _t = '' if t==0 else str(t+1)
+        _t = '' if t==0 else str(t)
         seed_rules = dict()
         exp_rules = dict()
         seed_file = Macros.result_dir / f"cfg_expanded_inputs{_t}_{task}_checklist_{selection_method}_{num_seeds}seeds.json"
         cfg_results_over_lcs = Utils.read_json(seed_file)
-        
         for cfg_res in cfg_results_over_lcs:
-            lc = cfg_res['requirement']['description']
-            seed_rules[lc] = dict()
-            exp_rules[lc] = dict()
+
+            lc_desc = cfg_res['requirement']['description']
             for seed in cfg_res['inputs'].keys():
 
-                if seed not in seed_rules[lc].keys():
+                if seed not in seed_rules.keys():
                     cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
                     pdr_seed = get_pdr_per_sent(cfg_seed)
                     seed_rules[lc][seed] = pdr_seed
@@ -689,7 +688,7 @@ def main_checklist(task,
                     for exp in cfg_res['inputs'][seed]['exp_inputs']:
                         pdr_exp = pdr_seed.copy()
                         cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
-                        if exp_sent not in exp_rules[lc].keys():
+                        if exp_sent not in exp_rules.keys():
                             cfg_from = cfg_from.replace(f" -> ", '->')
                             lhs, rhs = cfg_from.split('->')
                             if len(eval(rhs))==1:
@@ -698,7 +697,7 @@ def main_checklist(task,
                             cfg_to = cfg_to.replace(f" -> ", '->')
                             pdr_exp.remove(cfg_from)
                             pdr_exp.append(cfg_to)
-                            exp_rules[lc][exp_sent] = pdr_exp
+                            exp_rules[exp_sent] = pdr_exp
                         # end if
                     # end for
                 # end if
@@ -714,6 +713,9 @@ def main_checklist(task,
                         'coverage_scores': None
                     },
                     'ours_seed_exp': {
+                        'coverage_scores': None
+                    },
+                    'bl': {
                         'coverage_scores': None
                     }
                 }
@@ -743,6 +745,6 @@ def main_checklist(task,
             # end if
         # end for
         scores_list.append(scores)
+        Utils.write_json(scores, result_file, pretty_format=True)
     # end for
-    Utils.write_json(scores_list, result_file, pretty_format=True)
     return

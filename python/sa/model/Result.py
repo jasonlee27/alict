@@ -427,6 +427,7 @@ class Result:
         for model in result_dict.keys():
             model_result = result_dict[model]
             results[model] = cls.analyze_model(model_result, seed_exp_map)
+            print(model)
         # end for
         Utils.write_json(results, saveto, pretty_format=True)
         return results
