@@ -244,7 +244,7 @@ class Plots:
                                results_dir: Path,
                                figs_dir: Path,
                                task=Macros.sa_task,
-                               search_dataset_name=Macros.datasets[Macros.sa_task][0],
+                               search_dataset_name=Macros.datasets[Macros.sa_task][1],
                                selection_method='random'):
         data_lod: List[dict] = list()
         result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_all_{task}_checklist_{selection_method}_pdrcov.json"

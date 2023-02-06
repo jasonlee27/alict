@@ -57,12 +57,8 @@ class Plots:
                 # cls.selfbleu_bl_sample_plot(Macros.result_dir, figs_dir)
                 # cls.selfbleu_agg_sample_plot(Macros.result_dir, figs_dir)
             elif item == 'pdr':
-                cls.pdr_bar_plot(Macros.result_dir, figs_dir)
-                # cls.pdr_ours_plot(Macros.result_dir, figs_dir)
-                # cls.pdr_ours_sample_plot(Macros.result_dir, figs_dir)
-                # cls.pdr_bl_sample_plot(Macros.result_dir, figs_dir)
-                # cls.pdr_seed_exp_plot(Macros.result_dir, figs_dir)
-                # cls.pdr_agg_plot(Macros.result_dir, figs_dir)
+                # cls.pdr_bar_plot(Macros.result_dir, figs_dir)
+                cls.pdr_hatecheck_bar_plot(Macros.result_dir, figs_dir)
             elif item == 'test-results':
                 # cls.failrate_combined_over_seeds_plot(Macros.result_dir, figs_dir)
                 # cls.failrate_seed_over_seeds_plot(Macros.result_dir, figs_dir)
@@ -555,6 +551,76 @@ class Plots:
         # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         fig.tight_layout()
         fig.savefig(figs_dir / "pdr-hs-barplot.eps")
+        return
+
+    @classmethod
+    def pdr_hatecheck_bar_plot(cls,
+                               results_dir: Path,
+                               figs_dir: Path,
+                               task=Macros.hs_task,
+                               search_dataset_name=Macros.datasets[Macros.hs_task][1],
+                               selection_method='random'):
+        data_lod: List[dict] = list()
+        result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_all_{task}_hatecheck_{selection_method}_pdrcov.json"
+        result = Utils.read_json(result_file)
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc_hs.txt'
+        print(result.keys())
+        max_cov_val = -1
+        l_i = 0
+        for lc in Utils.read_txt(req_file):
+            lc_desc = lc.strip().split('::')[0]
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+            if lc_desc in result.keys():
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'HATECHECK',
+                    'scores': result[lc_desc]['ours_seed']['coverage_scores']
+                })
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'HATECHECK+EXP',
+                    'scores': result[lc_desc]['ours_seed_exp']['coverage_scores']
+                })
+                max_cov_val = max(
+                    max_cov_val,
+                    result[lc_desc]['ours_seed']['coverage_scores'],
+                    result[lc_desc]['ours_seed_exp']['coverage_scores']
+                )
+                l_i += 1
+            # end if
+        # end for
+        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+
+        # Plotting part
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+
+        # hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+        hue_order = ['HATECHECK', 'HATECHECK+EXP']
+        from numpy import median
+        ax = sns.barplot(data=df, x='lc', y='scores',
+                         hue='type',
+                         hue_order=hue_order,
+                         palette="Set1",
+                         estimator=median)
+        # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
+        # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
+        # ax.set_yscale('log')
+        ax.set_ylim(bottom=0, top=max_cov_val+100)
+        ax.set_xlabel("Linguistic Capabilities")
+        ax.set_ylabel("Number of Production Rules Covered")
+        ax.legend(loc='upper right')
+        # plt.grid(True, which='both', ls='--')
+        
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+
+        # Put a legend to the right of the current axis
+        # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        fig.tight_layout()
+        fig.savefig(figs_dir / "pdr-hatecheck-barplot.eps")
         return
 
     @classmethod
