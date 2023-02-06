@@ -6,7 +6,12 @@ TODO:
 - ask simin for neral coverage for new validated test cases:
   decide to meet after his FSE submission
 
-- generate new sample test cases for human study
+- generate new sample test cases for human study:
+  approved by rav, troung and rutvij
+  Manual test
+
+  2 is fine but with more test cases    
+  Ask measure time for spending
 
 - make table for test results: but not done for hs
 
