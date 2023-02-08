@@ -7,13 +7,11 @@ TODO:
   decide to meet after his FSE submission
 
 - generate new sample test cases for human study:
-  approved by rav, troung and rutvij
+  approved by rav(sa), zihe(sa), miao(hs)
   Manual test
 
   2 is fine but with more test cases    
   Ask measure time for spending
-
-- make table for test results: but not done for hs
 
 - run the selfbleu and pdr coverage for the new validated test cases:
   not done for hs
@@ -21,6 +19,8 @@ TODO:
 - rewrite results after having all results
 
 =====
+
++ make table for test results
 
 + rewrite experiment
 
