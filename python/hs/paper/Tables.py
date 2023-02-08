@@ -57,10 +57,8 @@ class Tables:
                 task = options.pop('task', 'hs')
                 search_dataset = options.pop('search_dataset_name', 'hatexplain')
                 selection_method = options.pop('selection_method', 'random')
-                num_seeds = options.pop('num_seeds', -1)
-                num_trials = options.pop('num_trials', -1)
-                cls.make_numbers_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
-                cls.make_table_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method, num_seeds, num_trials)
+                cls.make_numbers_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
+                cls.make_table_test_results(Macros.result_dir, tables_dir, task, search_dataset, selection_method)
             elif item == 'test-results-baseline':
                 task = options.pop('task', 'hs')
                 search_dataset = options.pop('search_dataset_name', 'hatexplain')
@@ -154,9 +152,7 @@ class Tables:
                                   tables_dir,
                                   task,
                                   search_dataset,
-                                  selection_method,
-                                  num_seeds,
-                                  num_trials):
+                                  selection_method):
         lc_descs = dict()
         num_seeds_tot = dict()
         num_exps_tot = dict()
@@ -175,18 +171,13 @@ class Tables:
         output_file = latex.File(tables_dir / f"test-results-{task}-all-numbers.tex")
         
         lc_ids = dict()
-        for l_i, l in enumerate(Macros.OUR_LC_LIST):
+        for l_i, l in enumerate(Macros.OUR_LC_LIST[6:]):
             desc = l.split('::')[1].strip()
             lc_ids[desc.lower()] = (desc,l_i)
             # desc = cls.replace_latex_symbol(desc)
             lc_descs[l_i] = desc
         # end for
 
-        if num_trials<=0:
-            _num_trials = [-1]
-        else:
-            _num_trials = list(range(num_trials))
-        # end if
         res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}"
         result_file = res_dir / 'test_result_analysis.json'
         bl_result_file = res_dir / 'test_result_hatecheck_analysis.json'
@@ -223,6 +214,7 @@ class Tables:
                         break
                     # endfif
                 # end for
+                print(desc, _res_lc_i)
                 if _res_lc_i not in num_seeds_tot[f"model{m_i}"].keys():
                     num_seeds_tot[f"model{m_i}"][_res_lc_i] = list()
                     num_exps_tot[f"model{m_i}"][_res_lc_i] = list()
@@ -304,9 +296,7 @@ class Tables:
                                 tables_dir,
                                 task,
                                 search_dataset,
-                                selection_method,
-                                num_seeds,
-                                num_trials):
+                                selection_method):
         output_file = latex.File(tables_dir / f"test-results-{task}-table.tex")
         res_dir = result_dir / f"test_results_{task}_{search_dataset}_{selection_method}"
         result_file = res_dir / 'test_result_analysis.json'
