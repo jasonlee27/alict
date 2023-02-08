@@ -592,13 +592,13 @@ class Template:
                         exp_sent = inp[5]
                         mask_exp_sent = inp[0]
                         if exp_sent is not None:
-                            if req.get('transform', None) and \
-                               not Validate.is_conform_to_template(
-                                   sent=mask_exp_sent,
-                                   label=label_seed,
-                                   transform_spec=req['transform']):
-                                is_valid = False
-                            # end if
+                            # if req.get('transform', None) and \
+                            #    not Validate.is_conform_to_template(
+                            #        sent=mask_exp_sent,
+                            #        label=label_seed,
+                            #        transform_spec=req['transform']):
+                            #     is_valid = False
+                            # # end if
                             if is_valid:
                                 exp_seed_inputs.append({
                                     "input": inp[5],

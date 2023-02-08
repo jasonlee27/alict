@@ -60,7 +60,8 @@ class Template:
         if any(template_results) and \
            template_results["requirement"]["description"]==cur_req["description"]:
             for index, (_id, seed, seed_label) in enumerate(orig_seeds):
-                if seed not in template_results['inputs'].keys():
+                if seed not in template_results['inputs'].keys() or \
+                   not any(template_results['inputs'][seed]['exp_inputs']):
                     seeds.append((_id, seed, seed_label))
                 # end if
             # end for
@@ -595,17 +596,17 @@ class Template:
         logger = Logger(logger_file=log_file,
                         logger_name='template')
         
-        logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
-        # Search inputs from searching dataset and expand the inputs using ref_cfg
-        cls.get_new_inputs(
-            res_dir, # cfg_res_file,
-            nlp_task,
-            dataset_name,
-            num_seeds=num_seeds,
-            selection_method=selection_method,
-            gpu_ids=gpu_ids,
-            logger=logger
-        )
+        # logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
+        # # Search inputs from searching dataset and expand the inputs using ref_cfg
+        # cls.get_new_inputs(
+        #     res_dir, # cfg_res_file,
+        #     nlp_task,
+        #     dataset_name,
+        #     num_seeds=num_seeds,
+        #     selection_method=selection_method,
+        #     gpu_ids=gpu_ids,
+        #     logger=logger
+        # )
 
         # Make templates by synonyms
         logger.print("Generate Templates ...")
@@ -624,90 +625,92 @@ class Template:
             inputs_per_req = Utils.read_json(cfg_res_file)
             cksum_map_str += f"{lc_desc}\t{req_cksum}\n"
             inputs = inputs_per_req["inputs"]
-            print_str = '>>>>> REQUIREMENT:'+inputs_per_req["requirement"]["description"]
-            logger.print(print_str)
-            seed_inputs, exp_seed_inputs = list(), list()
-            seed_templates, exp_templates = list(), list()
-            
-            for s_i, seed_input in enumerate(inputs.keys()):
-                logger.print(f"\tSEED {s_i}: {seed_input}")
+            if inputs_per_req["requirement"].get('use_testcase', None)!='hatecheck':
+                print_str = '>>>>> REQUIREMENT:'+inputs_per_req["requirement"]["description"]
+                logger.print(print_str)
+                seed_inputs, exp_seed_inputs = list(), list()
+                seed_templates, exp_templates = list(), list()
                 
-                cfg_seed = inputs[seed_input]["cfg_seed"]
-                label_seed = inputs[seed_input]["label"]
-                exp_inputs = inputs[seed_input]["exp_inputs"]
-                seed_inputs.append({
-                    "input": seed_input,
-                    "place_holder": Utils.tokenize(seed_input),
-                    "label": label_seed
-                })
+                for s_i, seed_input in enumerate(inputs.keys()):
+                    logger.print(f"\tSEED {s_i}: {seed_input}")
+                
+                    cfg_seed = inputs[seed_input]["cfg_seed"]
+                    label_seed = inputs[seed_input]["label"]
+                    exp_inputs = inputs[seed_input]["exp_inputs"]
+                    seed_inputs.append({
+                        "input": seed_input,
+                        "place_holder": Utils.tokenize(seed_input),
+                        "label": label_seed
+                    })
 
-                if any(exp_inputs):
-                    # expanded inputs
-                    for inp_i, inp in enumerate(exp_inputs):
-                        is_valid = True
-                        exp_sent = inp[5]
-                        mask_exp_sent = inp[0]
-                        if exp_sent is not None:
-                            if req.get('transform', None) and \
-                               not Validate.is_conform_to_template(
-                                   sent=mask_exp_sent,
-                                   label=label_seed,
-                                   transform_spec=req['transform']):
-                                is_valid = False
+                    if any(exp_inputs):
+                        # expanded inputs
+                        for inp_i, inp in enumerate(exp_inputs):
+                            is_valid = True
+                            exp_sent = inp[5]
+                            mask_exp_sent = inp[0]
+                            if exp_sent is not None:
+                                # if req.get('transform', None) and \
+                                #    not Validate.is_conform_to_template(
+                                #        sent=mask_exp_sent,
+                                #        label=label_seed,
+                                #        transform_spec=req['transform']):
+                                #     is_valid = False
+                                # # end if
+                                if is_valid:
+                                    exp_seed_inputs.append({
+                                        "input": inp[5],
+                                        "place_holder": Utils.tokenize(inp[5]),
+                                        "label": label_seed
+                                    })
+                                # end if
                             # end if
-                            if is_valid:
-                                exp_seed_inputs.append({
-                                    "input": inp[5],
-                                    "place_holder": Utils.tokenize(inp[5]),
-                                    "label": label_seed
-                                })
-                            # end if
-                        # end if
-                    # end for
+                        # end for
+                    # end if
+                
+                    # # make template for seed input
+                    # tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
+                    # _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
+                    # _templates["label"] = label_seed
+                    # seed_templates.append(_templates)
+                    
+                    # if any(exp_inputs):
+                    #     # Make template for expanded inputs
+                    #     for inp_i, inp in enumerate(exp_inputs):
+                    #         (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
+                    #         tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
+                    #         _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
+                    #         _templates["label"] = exp_input_label
+                    #         exp_templates.append(_templates)
+                    #         print(".", end="")
+                    #     # end for
+                    #     print()
+                    # # end if
+                # end for
+
+                if any(seed_inputs):
+                    Utils.write_json(seed_inputs,
+                                     res_dir / f"seeds_{req_cksum}.json",
+                                     pretty_format=True)
                 # end if
-                
-                # # make template for seed input
-                # tokens, tokens_pos = cls.get_pos(seed_input, [], cfg_seed, [], seed_input)
-                # _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
-                # _templates["label"] = label_seed
-                # seed_templates.append(_templates)
-
-                # if any(exp_inputs):
-                #     # Make template for expanded inputs
-                #     for inp_i, inp in enumerate(exp_inputs):
-                #         (mask_input,cfg_from,cfg_to,mask_pos,word_sug,exp_input,exp_input_label) = inp
-                #         tokens, tokens_pos = cls.get_pos(mask_input, mask_pos, cfg_seed, word_sug, exp_input)
-                #         _templates, prev_synonyms = cls.get_templates_by_synonyms(nlp, tokens, tokens_pos, prev_synonyms)
-                #         _templates["label"] = exp_input_label
-                #         exp_templates.append(_templates)
-                #         print(".", end="")
-                #     # end for
-                #     print()
+                if any(exp_seed_inputs):
+                    Utils.write_json(exp_seed_inputs,
+                                     res_dir / f"exps_{req_cksum}.json",
+                                     pretty_format=True)
+                # end if
+                # if any(seed_templates):
+                #     Utils.write_json(seed_templates,
+                #                      res_dir / f"templates_seed_{req_cksum}.json",
+                #                      pretty_format=True)
                 # # end if
-            # end for
-
-            if any(seed_inputs):
-                Utils.write_json(seed_inputs,
-                                 res_dir / f"seeds_{req_cksum}.json",
-                                 pretty_format=True)
+                # if any(exp_templates):
+                #     Utils.write_json(exp_templates,
+                #                      res_dir / f"templates_exp_{req_cksum}.json",
+                #                      pretty_format=True)
+                # # end if
+                print_str = '<<<<< REQUIREMENT:'+inputs_per_req["requirement"]["description"]
+                logger.print(print_str)
             # end if
-            if any(exp_seed_inputs):
-                Utils.write_json(exp_seed_inputs,
-                                 res_dir / f"exps_{req_cksum}.json",
-                                 pretty_format=True)
-            # end if
-            # if any(seed_templates):
-            #     Utils.write_json(seed_templates,
-            #                      res_dir / f"templates_seed_{req_cksum}.json",
-            #                      pretty_format=True)
-            # # end if
-            # if any(exp_templates):
-            #     Utils.write_json(exp_templates,
-            #                      res_dir / f"templates_exp_{req_cksum}.json",
-            #                      pretty_format=True)
-            # # end if
-            print_str = '<<<<< REQUIREMENT:'+inputs_per_req["requirement"]["description"]
-            logger.print(print_str)
         # end for
         Utils.write_txt(cksum_map_str, res_dir / 'cksum_map.txt')
         return
