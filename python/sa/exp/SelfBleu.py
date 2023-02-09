@@ -324,46 +324,40 @@ def main_mtnlp(task,
     seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
     mtnlp_dir = Macros.download_dir / 'MT-NLP'
     mtnlp_res_dir =  Macros.result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
-    mtnlp_file = mtnlp_res_dir / 'mutations_s2lct_seed_samples.json'
     result_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
     logger = Logger(logger_file=logger_file,
                     logger_name='mtnlt_mutation_log')
-    
-    # _seed_rules = ProductionruleCoverage.get_our_seed_cfg_rules(
-    #     task,
-    #     search_dataset_name,
-    #     selection_method,
-    #     parse_all_sents=False,
-    #     logger=logger
-    # )
-    
-    mt_res = Utils.read_json(mtnlp_file)
-    sample_file = mtnlp_dir / mt_res['sample_file']
-    file_ind = re.search('raw_file(\d)\.txt', mt_res['sample_file']).group(1)
-    seed_sents = list(mt_res['mutations'].keys())
-    # seed_rules = dict()
+    mtnlp_files = sorted([
+        f for f in os.listdir(mtnlp_res_dir)
+        if f.startswith('mutations_s2lct_seed_samples') and f.endswith('.json')
+    ])
     seed_lcs = dict()
-    search_lns = [
-        l.strip()
-        for l in Utils.read_txt(mtnlp_dir / f"{task}_seed_samples_raw_file{file_ind}.txt")
-        if l.strip()!=''
-    ]
-    for s in seed_sents:
-        for l in search_lns:
-            if l.split('::')[0].strip()==s:
-                seed_lcs[s] = l.split('::')[-1].strip()
+    mt_sents = list()
+    sample_files = list()
+    for mtnlp_file in mtnlp_files:
+        mt_res = Utils.read_json(mtnlp_res_dir / mtnlp_file)
+        sample_file = mtnlp_dir / mt_res['sample_file']
+        sample_files.append(sample_file)
+        file_ind = re.search('raw_file(\d)\.txt', mt_res['sample_file']).group(1)
+        seed_sents = list(mt_res['mutations'].keys())
+        search_lns = [
+            l.strip()
+            for l in Utils.read_txt(mtnlp_dir / f"{task}_seed_samples_raw_file{file_ind}.txt")
+            if l.strip()!=''
+        ]
+        for s in seed_sents:
+            for l in search_lns:
+                if l.split('::')[0].strip()==s:
+                    seed_lcs[s] = l.split('::')[-1].strip()
+                # end if
+            # end for
+            ana_mt_sents = mt_res['mutations'][s]['ana']
+            act_mt_sents = mt_res['mutations'][s]['act']
+            if any(ana_mt_sents+act_mt_sents):
+                mt_sents.extend(ana_mt_sents+act_mt_sents)
             # end if
         # end for
     # end for
-        
-    # end for
-    
-    # get exp_sents and their rules
-    # exp_sents = [
-    #     l.split('::')[0]
-    #     for l in Utils.read_txt(mtnlp_dir / f"{task}_exp_samples_raw_file{file_ind}.txt")
-    #     if l.strip()!=''
-    # ]
     exp_sents = list()
     req_dir = Macros.result_dir / 'reqs'
     req_file = req_dir / 'requirements_desc.txt'
@@ -386,15 +380,6 @@ def main_mtnlp(task,
                     exp_sents.extend(exp_sent)
                 # end for
             # end if
-        # end if
-    # end for
-
-    mt_sents = list()
-    for s in seed_sents:
-        ana_mt_sents = mt_res['mutations'][s]['ana']
-        act_mt_sents = mt_res['mutations'][s]['act']
-        if any(ana_mt_sents+act_mt_sents):
-            mt_sents.extend(ana_mt_sents+act_mt_sents)
         # end if
     # end for
     logger.print(f"OURS_SELFBLEU_SAMPLE::mtnlp::")
