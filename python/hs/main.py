@@ -19,6 +19,7 @@ parser.add_argument('--run', type=str, required=True,
                         'selfbleu', 'selfbleu_mtnlp',
                         'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_hatecheck',
                         'humanstudy', 'humanstudy_results',
+                        'neural_coverage_data',
                         'tables', 'plots'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='hs',
@@ -276,6 +277,27 @@ def run_humanstudy_result():
     return
 
 
+def run_neural_coverage_data():
+    # from .coverage.extract_data import Coveragedata
+    from .exp.NeuralCoverage import main
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    num_seeds = args.num_seeds
+    num_trials = args.num_trials
+    # Coveragedata.write_target_seed_sents(nlp_task,
+    #                                      search_dataset_name)
+    # # Coveragedata.write_target_exp_sents(nlp_task,
+    # #                                     search_dataest_name,
+    # #                                     selection_method)
+    print("Run run_neural_coverage_data..")
+    main(nlp_task,
+         search_dataset_name,
+         selection_method)
+    return
+
+
+
 # ==========
 # Tables & Plots
 
@@ -320,6 +342,7 @@ func_map = {
         'pdrule_cov_hatecheck': run_pdrule_cov_hatecheck,
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
+        'neural_coverage_data': run_neural_coverage_data,
         'tables': run_make_tables,
         'plots': run_make_plots
     }

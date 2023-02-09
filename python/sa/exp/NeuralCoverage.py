@@ -16,9 +16,9 @@ from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 
 
-class NeuralCoverageData:
+class NeuralCoverage:
 
-    RES_DIR = Macros.result_dir / 'coverage'
+    RES_DIR = Macros.result_dir / 'neural_coverage'
     
     @classmethod
     def read_sst_testcase(cls,
@@ -65,7 +65,7 @@ class NeuralCoverageData:
         return test_data
         
     @classmethod
-    def write_sst_testcase(cls, sst_testcases):
+    def write_our_testcase(cls, sst_testcases):
         res_dir = cls.RES_DIR / 'ours'
         res_dir.mkdir(parents=True, exist_ok=True)
         
@@ -80,7 +80,7 @@ class NeuralCoverageData:
                 # res_sst_text += f"{sst_sents[d_i]}\n"
                 test_cases.append(sst_sents[d_i])
             # end for
-            sst_save_file = res_dir / f"our_sents_{sst_cksum}.json"
+            sst_save_file = res_dir / f"sents_{sst_cksum}.json"
             Utils.write_json(test_cases, sst_save_file, pretty_format=False)
         # end for
         Utils.write_txt(cksum_map_text, res_dir / 'cksum_map.txt')
@@ -114,22 +114,22 @@ class NeuralCoverageData:
                 # res_checklist_text += f"{checklist_sents[d_i]}\n"
                 test_cases.append(checklist_sents[d_i])
             # end for
-            checklist_save_file = res_dir / f"checklist_sents_{checklist_cksum}.json"
+            checklist_save_file = res_dir / f"sents_{checklist_cksum}.json"
             Utils.write_json(test_cases, checklist_save_file, pretty_format=False)
         # end for
         Utils.write_txt(cksum_map_text, res_dir / 'cksum_map.txt')
         return
 
     
-def main_write(task,
-               search_dataset_name,
-               selection_method):
-    NeuralCoverageData.RES_DIR = Macros.result_dir / 'coverage' / f"{task}_{search_dataset_name}_{selection_method}"
-    checklist_testcases = NeuralCoverageData.read_checklist_testcase(Macros.checklist_sa_dataset_file)
-    NeuralCoverageData.write_checklist_testcase(checklist_testcases)
-    sst_testcases = NeuralCoverageData.read_sst_testcase(task,
-                                                         search_dataset_name,
-                                                         selection_method)
-    NeuralCoverageData.write_sst_testcase(sst_testcases)
+def main(task,
+         search_dataset_name,
+         selection_method):
+    NeuralCoverage.RES_DIR = Macros.result_dir / 'neural_coverage' / f"{task}_{search_dataset_name}_{selection_method}"
+    checklist_testcases = NeuralCoverage.read_checklist_testcase(Macros.checklist_sa_dataset_file)
+    NeuralCoverage.write_checklist_testcase(checklist_testcases)
+    sst_testcases = NeuralCoverage.read_sst_testcase(task,
+                                                     search_dataset_name,
+                                                     selection_method)
+    NeuralCoverage.write_our_testcase(sst_testcases)
     return
     

@@ -513,7 +513,7 @@ function pdrulecoverage() {
 
 function mtnlp_pdrulecoverage() {
         (cd ${_DIR}
-         CUDA_VISIBLE_DEVICES=3 python -m python.sa.main \
+         CUDA_VISIBLE_DEVICES=1 python -m python.sa.main \
                              --run pdrule_cov_mtnlp \
                              --search_dataset sst \
                              --syntax_selection random
@@ -633,19 +633,17 @@ function main_sst() {
         # retrain_models # to retrain models and test the retrained models on testsuite.run on our and checklist generated testsets
         # analyze_retrained_models # to generate debug_results file
         # failcase
-        selfbleu # to compute the selfbleu
-        pdrulecoverage # to compute the diversity of grammatic structure of sentence
+        # selfbleu # to compute the selfbleu
+        # pdrulecoverage # to compute the diversity of grammatic structure of sentence
+        # checklist_pdrulecoverage
         # explain_nlp # to run the explainNLP
         # humanstudy # sample sentences for manual study
         # humanstudy_results # get results of manual study into human_study.json
-        # get_neuralcoverage_data # get sentences for coverage experiment
+        get_neuralcoverage_data # get sentences for coverage experiment
         # compute_coverage
         # make_tables
         # mtnlp_selfbleu
         # mtnlp_pdrulecoverage
-        # checklist_pdrulecoverage
-        
-
         # eval_retrained_models # to ...?
 }
 

@@ -26,7 +26,7 @@ function gen_templates() {
                              --gpu_ids 1 2 3 \
                              --num_seeds -1 \
                              --num_trials 1 # > /dev/null 2>&1
-         # CUDA_VISIBLE_DEVICES=1,2 python -m python.hs.main \
+         # CUDA_VISIBLE_DEVICES=3,4,5 python -m python.hs.main \
          #                     --run template \
          #                     --search_dataset hatecheck \
          #                     --syntax_selection random # > /dev/null 2>&1
@@ -36,16 +36,16 @@ function gen_templates() {
 function gen_testsuite() {
         # write test cases into hatexplain Testsuite format
         (cd ${_DIR}
-         # python -m python.hs.main \
-         #        --run testsuite \
-         #        --search_dataset hatexplain \
-         #        --syntax_selection random \
-         #        --num_seeds -1 \
-         #        --num_trials 1
          python -m python.hs.main \
                 --run testsuite \
-                --search_dataset hatecheck \
-                --syntax_selection random
+                --search_dataset hatexplain \
+                --syntax_selection random \
+                --num_seeds -1 \
+                --num_trials 1
+         # python -m python.hs.main \
+         #        --run testsuite \
+         #        --search_dataset hatecheck \
+         #        --syntax_selection random
         )
 }
 
@@ -58,34 +58,34 @@ function eval_models() {
          #                     --search_dataset hatexplain \
          #                     --syntax_selection random \
          #                     --num_seeds -1 \
-         #                     --num_trials -1
+         #                     --num_trials 1
          # evaluating models on our generated(hatecheck) testcases
-         CUDA_VISIBLE_DEVICES=6 python -m python.hs.main \
-                             --run testmodel \
-                             --search_dataset hatecheck \
-                             --syntax_selection random \
-                             --num_seeds -1 \
-                             --num_trials -1
-         # # evaluating models on hatecheck testcases (not expanded) as baseline
-         # CUDA_VISIBLE_DEVICES=7 python -m python.hs.main \
+         # CUDA_VISIBLE_DEVICES=6 python -m python.hs.main \
          #                     --run testmodel \
-         #                     --search_dataset hatexplain \
+         #                     --search_dataset hatecheck \
          #                     --syntax_selection random \
          #                     --num_seeds -1 \
-         #                     --num_trials -1 \
-         #                     --test_baseline
+         #                     --num_trials -1
+         # evaluating models on hatecheck testcases (not expanded) as baseline
+         CUDA_VISIBLE_DEVICES=7 python -m python.hs.main \
+                             --run testmodel \
+                             --search_dataset hatexplain \
+                             --syntax_selection random \
+                             --num_seeds -1 \
+                             --num_trials -1 \
+                             --test_baseline
         )
 }
 
 function analyze_eval_models() {
         (cd ${_DIR}
          # evaluate NLP models with hatexplain expanded testsuites
-         python -m python.hs.main \
-                --run analyze \
-                --search_dataset hatexplain \
-                --syntax_selection random \
-                --num_seeds -1 \
-                --num_trials -1
+         # python -m python.hs.main \
+         #        --run analyze \
+         #        --search_dataset hatexplain \
+         #        --syntax_selection random \
+         #        --num_seeds -1 \
+         #        --num_trials -1
          python -m python.hs.main \
                 --run analyze \
                 --search_dataset hatexplain \
@@ -147,7 +147,7 @@ function hatecheck_pdrulecoverage() {
 
 function mtnlp_pdrulecoverage() {
         (cd ${_DIR}
-         CUDA_VISIBLE_DEVICES=3 python -m python.hs.main \
+         CUDA_VISIBLE_DEVICES=2 python -m python.hs.main \
                              --run pdrule_cov_mtnlp \
                              --search_dataset hatexplain \
                              --syntax_selection random
@@ -175,6 +175,17 @@ function humanstudy_results() {
         )
 }
 
+# ==========
+# Neural Coverage Exp
+
+function get_neuralcoverage_data() {
+        (cd ${_DIR}
+         python -m python.hs.main \
+                --run neural_coverage_data \
+                --search_dataset hatexplain \
+                --syntax_selection random
+        )
+}
 
 # ==========
 # Tables & Plots
@@ -219,6 +230,7 @@ function main() {
         # analyze_eval_models
         # failcase
         # pdrulecoverage
+        # hatecheck_pdrulecoverage
         # selfbleu
         # failcase
         # humanstudy_sample
@@ -226,7 +238,7 @@ function main() {
         # make_plots
         # mtnlp_selfbleu
         # mtnlp_pdrulecoverage
-        hatecheck_pdrulecoverage
+        get_neuralcoverage_data
 }
 
 # Please make sure you actiavte nlptest conda environment

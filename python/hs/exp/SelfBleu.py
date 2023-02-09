@@ -156,7 +156,7 @@ def read_our_seeds(task,
                    selection_method):
     texts_lcs = dict()
     texts_all = list()
-    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}_prev"
+    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
     seed_files = [
         f for f in os.listdir(str(seed_dir))
         if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
@@ -175,7 +175,7 @@ def read_our_exps(task,
                   selection_method):
     texts_lcs = dict()
     seed_exp_map = dict()
-    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}_prev"
+    seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
     seed_files = [
         f for f in os.listdir(str(seed_dir))
         if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
@@ -341,6 +341,7 @@ def main_mtnlp(task,
         if f.startswith('mutations_s2lct_seed_samples') and f.endswith('.json')
     ])
     seed_lcs = dict()
+    seed_sents = list()
     mt_sents = list()
     sample_files = list()
     for mtnlp_file in mtnlp_files:
@@ -348,14 +349,14 @@ def main_mtnlp(task,
         sample_file = mtnlp_dir / mt_res['sample_file']
         sample_files.append(mt_res['sample_file'])
         file_ind = re.search('raw_file(\d)\.txt', mt_res['sample_file']).group(1)
-        seed_sents = list(mt_res['mutations'].keys())
-        
+        _seed_sents = list(mt_res['mutations'].keys())
+        seed_sents.extend(_seed_sents)
         search_lns = [
             l.strip()
             for l in Utils.read_txt(mtnlp_dir / f"{task}_seed_samples_raw_file{file_ind}.txt")
             if l.strip()!=''
         ]
-        for s in seed_sents:
+        for s in _seed_sents:
             for l in search_lns:
                 if l.split('::')[0].strip()==s:
                     seed_lcs[s] = l.split('::')[-1].strip()

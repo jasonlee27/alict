@@ -435,7 +435,6 @@ def run_humanstudy_result():
                            search_dataset_name,
                            selection_method,
                            model_name)
-    print("@@@@@@@")
     return
 
 # ==========
@@ -443,7 +442,7 @@ def run_humanstudy_result():
 
 def run_neural_coverage_data():
     # from .coverage.extract_data import Coveragedata
-    from .exp.NeuralCoverageData import main_write
+    from .exp.NeuralCoverage import main
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
@@ -454,9 +453,10 @@ def run_neural_coverage_data():
     # # Coveragedata.write_target_exp_sents(nlp_task,
     # #                                     search_dataest_name,
     # #                                     selection_method)
-    main_write(nlp_task,
-               search_dataset_name,
-               selection_method)
+    print("Run run_neural_coverage_data..")
+    main(nlp_task,
+         search_dataset_name,
+         selection_method)
     return
 
 # ==========
