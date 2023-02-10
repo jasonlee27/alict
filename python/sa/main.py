@@ -20,7 +20,8 @@ parser.add_argument('--run', type=str, required=True,
                         'selfbleu', 'selfbleu_mtnlp',
                         'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_checklist',
                         'humanstudy', 'humanstudy_results',
-                        'neural_coverage_data', 'tables', 'plots'
+                        'neural_coverage_data', 'textattack',
+                        'tables', 'plots'
                     ], help='task to be run')
 parser.add_argument('--nlp_task', type=str, default='sa',
                     choices=['sa'],
@@ -431,10 +432,13 @@ def run_humanstudy_result():
     model_name = args.model_name
     num_samples = 20
     print("Run run_humanstudy_result..")
-    Humanstudy.main_result(nlp_task,
-                           search_dataset_name,
-                           selection_method,
-                           model_name)
+    # Humanstudy.main_result(nlp_task,
+    #                        search_dataset_name,
+    #                        selection_method,
+    #                        model_name)
+    Humanstudy.main_label(nlp_task,
+                          search_dataset_name,
+                          selection_method)
     return
 
 # ==========
@@ -459,6 +463,21 @@ def run_neural_coverage_data():
          selection_method)
     return
 
+# ==========
+# Textattack
+def run_textattack():
+    from .exp.Textattack import main
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    num_seeds = args.num_seeds
+    num_trials = args.num_trials
+    print("Run run_textattack..")
+    main(nlp_task,
+         search_dataset_name,
+         selection_method)
+    return
+    
 # ==========
 # Tables & Plots
 
@@ -515,6 +534,7 @@ func_map = {
         'humanstudy': run_humanstudy,
         'humanstudy_results': run_humanstudy_result,
         'neural_coverage_data': run_neural_coverage_data,
+        'textattack': run_textattack,
         'tables': run_make_tables,
         'plots': run_make_plots
     }
