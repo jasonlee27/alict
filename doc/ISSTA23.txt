@@ -3,22 +3,23 @@ We decided to submit to ISSTA 2023
 
 TODO:
 
-- ask simin for neral coverage for new validated test cases:
-  decide to meet after his FSE submission
+- rewrite results after having all results.
 
-- generate new sample test cases for human study:
-  approved by rav(sa), zihe(sa), miao(hs)
-  Manual test
+- rewrite approach based on feedback
 
+=====
+
++ generate new sample test cases for human study:
+  approved by rav(sa), zihe(sa), miao(hs), saif(hs) and need to wait
+  for their results
   2 is fine but with more test cases    
   Ask measure time for spending
 
-- run the selfbleu and pdr coverage for the new validated test cases:
++ ask simin for neral coverage for new validated test cases: need to
+  wait for his results
+
++ run the selfbleu and pdr coverage for the new validated test cases:
   not done for hs
-
-- rewrite results after having all results
-
-=====
 
 + make table for test results
 
