@@ -653,6 +653,58 @@ class Humanstudy:
         Utils.write_json(result, res_dir / f"human_study_results.json", pretty_format=True)
         return
 
+    @classmethod
+    def main_label(cls,
+                   nlp_task,
+                   search_dataset_name,
+                   selection_method):
+        seed_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
+        res_dir = Macros.result_dir / 'human_study' / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+        sent_dict = cls.read_sentences(seed_dir, include_label=True)
+        seed_sent_files = sorted([
+            f for f in os.listdir(str(res_dir))
+            if os.path.isfile(os.path.join(str(res_dir), f)) and \
+            re.search(r"seed_samples_raw_file(\d+)\.txt", f)
+        ])
+        for seed_f_i, seed_sent_file in enumerate(seed_sent_files):
+            print(seed_sent_file)
+            res_str = ''
+
+            inp_sents = [
+                l.split('::')[0].strip()
+                for l in Utils.read_txt(res_dir / seed_sent_file)
+                if l.strip()!=''
+            ]
+            for lc in sent_dict.keys():
+                for s in sent_dict[lc].keys(): # seed sents
+                    tokens = Utils.tokenize(s)
+                    _s = Utils.detokenize(tokens)
+                    label = None
+                    if s in inp_sents:
+                        label = sent_dict[lc][s]['label']
+                        print('=== ', s, label)
+                    elif _s in inp_sents:
+                        label = sent_dict[lc][s]['label']
+                        print('--- ', s, label)
+                    # end if
+                    if label is not None:
+                        res_str += f"{s} :: {label}\n"
+                        label = None
+                    # end if
+                # end for
+            # end for
+            Utils.write_txt(res_str, res_dir / f"{seed_sent_file.split('.txt')[0]}_labels.txt")
+        # end for
+
+
+
+
+
+                
+
+
+                
+
 
 # class Mtnlp:
 
