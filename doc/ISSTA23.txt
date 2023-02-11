@@ -7,6 +7,31 @@ TODO:
 
 - rewrite approach based on feedback
 
+Hasattr(feature, value)
+Hasattr vd contain(tag_of_pos)
+
+sec3.1 
+Type of predicates 
+hasattr checks attributes
+contain – need external domain knowledge based.
+
+Template – explain prefix, suffix so on.
+Token clause
+
+
+Placeholder- 1. Enumerative, 2. Search based
+2. by defining functions (hasattr, contain)
+1. (template)
+
+
+Test results:
+-	Figure 4 & 5 get values using just expansion sentences.
+-	Selfbleu score on checklist+exp and hatecheck+exp
+-	Manual test: measure how much expanded sentences are meaningless from seed sentence
+
+Check the availability in review (adv approaches)
+
+
 =====
 
 + generate new sample test cases for human study:
