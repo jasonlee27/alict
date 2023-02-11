@@ -3,6 +3,49 @@ We decided to submit to ISSTA 2023
 
 TODO:
 
+- Comparison of ours with existing adv attacks:
+  MODEL_UNDER_TEST: textattack/bert-base-uncased-SST-2
+  #pass2fail ours: 4 out of 50
+  #pass2fail alzantot: 20 out of 50
+  #pass2fail bert-attack: 25 out of 50
+  #pass2fail pso: 25 out of 50
+
+  INTERESTING EXAMPLES:
+  1. seed: Exhilarating but blatantly biased.
+  - our_exp_adv: Exhilarating but [[most]] blatantly biased.
+  - alzantot_adv: [[Excite]] but blatantly biased.
+  - bert-attack_adv: [[hilagreat]] but blatantly biased.
+  - pso_adv: [[Pathetic]] but blatantly biased.
+
+  2. seed: Last time, I agreed with saying that "A compelling film.", although now I don't like it.
+  - our_exp_adv: Last time, I agreed with saying that " A compelling [[documentary]] film . ", although now I do not like it.
+  - alzantot_adv: [[Latest]] time, I agreed with saying that "A compelling film.", although now I don't like it.
+  - bert-attack_adv: Last time, I agreed with saying that "A compelling film.", although now I don't [[mind]] it.
+  - pso_adv: Last time, I agreed with saying that "A compelling film.", although now I don't [[suppose]] it.
+
+  3. seed: Do I think that "Huston nails both the glad-handing and the choking sense of hollow despair."? yes
+  - our_exp_adv: None
+  (Expansions: 
+   1. Do I think that \" Huston [[finally]] nails both the glad-handing and the choking sense of hollow despair . \"? yes,
+   2. Do I think that \" Huston nails [[deeply]] both the glad-handing and the choking sense of hollow despair . \"? yes)
+  - alzantot_adv: Do I think that "Huston [[toenails]] both the glad-handing and the choking sense of hollow despair."? yes
+  - bert-attack_adv: Do I think that "Huston nails both the [[glad-der]] and the choking sense of hollow despair."? [[no]]
+  - pso_adv: Do I think that "Huston [[skewers]] both the glad-handing and the choking sense of hollow despair."? yes
+
+  4. seed: Do I think that "The sort of movie that gives tastelessness a bad rap."? yes
+  - our_exp_adv: None
+  (Expansions:
+    1.Do I think that "The sort of movie that gives tastelessness [[usually]] a bad rap."? yes
+    2.Do I think that "The sort of movie that gives tastelessness a bad [[political]] rap."? yes
+    3.Do I think that "The sort of movie that gives tastelessness a bad rap [[tonight]]."? yes
+    4.Do I think that "The sort of movie [[reviewer]] that gives tastelessness a bad rap."? yes
+    5.Do I think that "The sort of [[new]] movie that gives tastelessness a bad rap."? yes
+    6.Do I think that "The sort [[kinda]] of movie that gives tastelessness a bad rap."? yes
+    7.Do I think that "The [[traditional]] sort of movie that gives tastelessness a bad rap."? yes)
+  - alzantot_adv: Do I [[reckon]] that "The sort of [[cinematic]] that gives tastelessness a [[naughty]] rap."? yes
+  - bert-attack_adv: Do I think that "The sort of movie that gives tastelessness a [[decent]] rap."? yes
+  - pso_adv: [[Cast]] I [[reckon]] that "The [[kind]] of [[magic]] that [[playes]] tastelessness a [[mischievous]] [[punch]]."? yes
+
 - rewrite results after having all results.
 
 - rewrite approach based on feedback
