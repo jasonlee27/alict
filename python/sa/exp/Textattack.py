@@ -16,14 +16,22 @@ from ..utils.Logger import Logger
 
 
 class Textattack:
-
-    TEXTATTACK_DIR = Macros.download_dir / 'textattack'
+    # textattack/bert-base-uncased-SST-2
+    # textattack/roberta-base-SST-2
+    # distilbert-base-uncased-finetuned-sst-2-english
     MODEL_UNDER_TEST = 'textattack/bert-base-uncased-SST-2'
+    TEXTATTACK_DIR = Macros.download_dir / 'textattack'
+    MODEL_LOG_MAP = {
+        'textattack/bert-base-uncased-SST-2': 'log.txt',
+        'textattack/roberta-base-SST-2': '2-log.txt',
+        'distilbert-base-uncased-finetuned-sst-2-english': '3-log.txt'
+    }
     
     @classmethod
     def parse_results(cls, recipe_name):
         # recipe_name: [alzantot, bert-attack, pso]
-        log_file = cls.TEXTATTACK_DIR / f"{recipe_name}-log.txt"
+        log_ext = cls.MODEL_LOG_MAP[cls.MODEL_UNDER_TEST]
+        log_file = cls.TEXTATTACK_DIR / f"{recipe_name}-{log_ext}"
         lines = Utils.read_txt(log_file)
         l_i = 0
         result = dict()
@@ -72,7 +80,7 @@ class Textattack:
                 r['from']['sent']
                 for r in res['pass->fail']
             ]
-            print(len(res['pass->fail']), sum([len(d['to']) for d in res['pass->fail']]))
+            # print(len(res['pass->fail']), sum([len(d['to']) for d in res['pass->fail']]))
         # end for
         
         seeds_used_for_adv = list(adv_example_dict.keys())
@@ -103,11 +111,17 @@ class Textattack:
 def main(task: str,
          search_dataset_name: str,
          selection_method: str):
+    print(f"MODEL_UNDER_TEST: {Textattack.MODEL_UNDER_TEST}")
     # recipe_name: [alzantot, bert-attack, pso]
     recipe_name = ['alzantot', 'bert-attack', 'pso']
     for r in recipe_name:
+        
         adv_example_dict = Textattack.parse_results(r)
-        num_adv_ta = sum([len(adv_example_dict[s]) for s in adv_example_dict.keys() if adv_example_dict[s] is not None])
+        num_adv_ta = sum([
+            len(adv_example_dict[s])
+            for s in adv_example_dict.keys()
+            if adv_example_dict[s] is not None
+        ])
         s2lct_result = Textattack.get_s2lct_exp_fails(
             adv_example_dict,
             task,
@@ -115,6 +129,15 @@ def main(task: str,
             selection_method
         )
         num_adv_s2lct = sum([len(s2lct_result[s]) for s in s2lct_result.keys() if s2lct_result[s] is not None])
-        print(num_adv_ta, num_adv_s2lct)
-    # end 
+        print(f"RECIPE {r}: {num_adv_ta}, {num_adv_s2lct}")
+    # end
+    for s in s2lct_result.keys():
+        if s2lct_result[s] is not None:
+            print(s)
+            for e in s2lct_result[s]:
+                print('===== ', e)
+                print()
+            # end for
+        # end if
+    # end for
     return

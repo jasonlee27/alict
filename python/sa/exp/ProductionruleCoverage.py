@@ -171,6 +171,7 @@ class ProductionruleCoverage:
                               selection_method,
                               logger=None):
         exp_rules_over_lcs = dict()
+        seed_exp_map = dict()
         seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
         req_dir = Macros.result_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -206,9 +207,11 @@ class ProductionruleCoverage:
                     exp_rules[seed] = list()
                     cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
                     pdr_seed = get_pdr_per_sent(cfg_seed)
+                    seed_exp_map[seed] = list()
                     for exp in cfg_res['inputs'][seed]['exp_inputs']:
                         pdr_exp = pdr_seed.copy()
                         cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
+                        seed_exp_map[seed].append(exp_sent)
                         if exp_sent not in exp_rules.keys():
                             cfg_from = cfg_from.replace(f" -> ", '->')
                             lhs, rhs = cfg_from.split('->')
@@ -226,7 +229,7 @@ class ProductionruleCoverage:
                 exp_rules_over_lcs[lc_desc] = exp_rules
             # end if
         # end for
-        return exp_rules_over_lcs
+        return exp_rules_over_lcs, seed_exp_map
     
     @classmethod
     def get_bl_cfg_rules(cls,
@@ -327,7 +330,7 @@ def main_sample(task,
         parse_all_sents=False,
         logger=logger
     )
-    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+    exp_rules, seed_exp_map = ProductionruleCoverage.get_our_exp_cfg_rules(
         task,
         search_dataset_name,
         selection_method,
@@ -368,14 +371,21 @@ def main_sample(task,
                     for num_sample in num_samples
                 }
             }
-            all_seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
+            # all_seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
             for num_sample in num_samples:
                 for num_trial in range(num_trials):
                     random.seed(num_trial)
                     seed_sents = random.sample(list(seed_rules[lc].keys()),
                                                min(len(seed_rules[lc]), num_sample))
-                    seed_exp_sents = random.sample(all_seed_exp_sents,
-                                                   min(len(all_seed_exp_sents), num_sample))
+                    seed_exp_sents = seed_sents.copy()
+                    for s in seed_sents:
+                        if s in seed_exp_map.keys():
+                            exp_sent = random.sample(seed_exp_map[s], 1)
+                            seed_exp_sents.append(exp_sent)
+                        # end if
+                    # end for
+                    # seed_exp_sents = random.sample(all_seed_exp_sents,
+                    #                                min(len(all_seed_exp_sents), num_sample))
                     bl_sents = random.sample(list(checklist_rules[lc].keys()),
                                              min(len(checklist_rules[lc]), num_sample))
                     pdr1 = {
@@ -383,7 +393,7 @@ def main_sample(task,
                         for s in seed_sents
                     }
                     pdr2 = {
-                        s: seed_rules[lc][s] 
+                        s: seed_rules[lc][s]
                         for s in seed_exp_sents
                         if s in seed_rules[lc].keys()
                     }
@@ -440,7 +450,7 @@ def main_all(task,
         parse_all_sents=False,
         logger=logger
     )
-    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+    exp_rules, _ = ProductionruleCoverage.get_our_exp_cfg_rules(
         task,
         search_dataset_name,
         selection_method,
@@ -522,7 +532,7 @@ def main_mtnlp(task,
                     logger_name='mtnlt_mutation_log')
     logger.print(f"OURS_PDR_SAMPLE::mtnlp::")
 
-    _exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+    _exp_rules, _ = ProductionruleCoverage.get_our_exp_cfg_rules(
         task,
         search_dataset_name,
         selection_method,
@@ -655,29 +665,26 @@ def main_checklist(task,
     num_test_results = 3
     logger_file = Macros.log_dir / f"seed_exp_bl_all_{task}_checklist_{selection_method}_pdrcov.log"
     result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_all_{task}_checklist_{selection_method}_pdrcov.json"
-
-    
-    scores_list = list()
+    scores = dict()
     for t in range(num_test_results):
-        _t = '' if t==0 else str(t)
+        _t = '' if t==0 else str(t+1)
         seed_rules = dict()
         exp_rules = dict()
         seed_file = Macros.result_dir / f"cfg_expanded_inputs{_t}_{task}_checklist_{selection_method}_{num_seeds}seeds.json"
         cfg_results_over_lcs = Utils.read_json(seed_file)
         for cfg_res in cfg_results_over_lcs:
-
-            lc_desc = cfg_res['requirement']['description']
+            lc = cfg_res['requirement']['description']
+            seed_rules[lc] = dict()
+            exp_rules[lc] = dict()
             for seed in cfg_res['inputs'].keys():
-
                 if seed not in seed_rules.keys():
                     cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
                     pdr_seed = get_pdr_per_sent(cfg_seed)
                     seed_rules[lc][seed] = pdr_seed
-
                     for exp in cfg_res['inputs'][seed]['exp_inputs']:
                         pdr_exp = pdr_seed.copy()
                         cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
-                        if exp_sent not in exp_rules.keys():
+                        if exp_sent not in exp_rules[lc].keys():
                             cfg_from = cfg_from.replace(f" -> ", '->')
                             lhs, rhs = cfg_from.split('->')
                             if len(eval(rhs))==1:
@@ -686,54 +693,48 @@ def main_checklist(task,
                             cfg_to = cfg_to.replace(f" -> ", '->')
                             pdr_exp.remove(cfg_from)
                             pdr_exp.append(cfg_to)
-                            exp_rules[exp_sent] = pdr_exp
+                            exp_rules[lc][exp_sent] = pdr_exp
                         # end if
                     # end for
                 # end if
             # end for
         # end for
-
-        scores = dict()
         for lc in tqdm(seed_rules.keys()):
             if lc not in scores.keys():
-                our_sents, bl_sents = list(), list()
                 scores[lc] = {
                     'ours_seed': {
-                        'coverage_scores': None
+                        'coverage_scores': list()
                     },
                     'ours_seed_exp': {
-                        'coverage_scores': None
-                    },
-                    'bl': {
-                        'coverage_scores': None
+                        'coverage_scores': list()
                     }
                 }
-                seed_sents = list(seed_rules[lc].keys())
-                exp_sents = list(exp_rules[lc].keys())
-                pdr1 = {
-                    s: seed_rules[lc][s]
-                    for s in seed_sents
-                }
-                pdr2 = {
-                    s: seed_rules[lc][s]
-                    for s in seed_sents
-                }
-                for e in exp_sents:
-                    if e not in pdr2.keys():
-                        pdr2[e] = exp_rules[lc][e]
-                    # end if
-                # end for
-                pdr1_obj = ProductionruleCoverage(lc=lc,
-                                                  our_cfg_rules=pdr1)
-                cov_score_ours_seed, _ = pdr1_obj.get_score()
-                pdr2_obj = ProductionruleCoverage(lc=lc,
-                                                  our_cfg_rules=pdr2)
-                cov_score_ours_seed_exp, _ = pdr2_obj.get_score()
-                scores[lc]['ours_seed']['coverage_scores'] = cov_score_ours_seed
-                scores[lc]['ours_seed_exp']['coverage_scores'] = cov_score_ours_seed_exp
             # end if
+            our_sents, bl_sents = list(), list()
+            seed_sents = list(seed_rules[lc].keys())
+            exp_sents = list(exp_rules[lc].keys())
+            pdr1 = {
+                s: seed_rules[lc][s]
+                for s in seed_sents
+            }
+            pdr2 = {
+                s: seed_rules[lc][s]
+                for s in seed_sents
+            }
+            for e in exp_sents:
+                if e not in pdr2.keys():
+                    pdr2[e] = exp_rules[lc][e]
+                # end if
+            # end for
+            pdr1_obj = ProductionruleCoverage(lc=lc,
+                                              our_cfg_rules=pdr1)
+            cov_score_ours_seed, _ = pdr1_obj.get_score()
+            pdr2_obj = ProductionruleCoverage(lc=lc,
+                                              our_cfg_rules=pdr2)
+            cov_score_ours_seed_exp, _ = pdr2_obj.get_score()
+            scores[lc]['ours_seed']['coverage_scores'].append(cov_score_ours_seed)
+            scores[lc]['ours_seed_exp']['coverage_scores'].append(cov_score_ours_seed_exp)
         # end for
-        scores_list.append(scores)
         Utils.write_json(scores, result_file, pretty_format=True)
     # end for
     return

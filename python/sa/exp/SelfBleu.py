@@ -276,13 +276,17 @@ def main_sample(task,
                     # ])
                     seed_sents = random.sample(texts_seed[lc], min(len(texts_seed[lc]), num_sample))
                     texts_exp = list()
-                    for s in texts_seed[lc]:
-                        texts_exp.extend(seed_exp_map[lc][s])
+                    for s in seed_sents:
+                        if any(seed_exp_map[lc][s]):
+                            exp_sent = random.sample(seed_exp_map[lc][s], 1)
+                            texts_exp.extend(exp_sent)
+                        # end if
                     # end for
                     bl_sents = random.sample(texts_checklist[lc],
                                              min(len(texts_checklist[lc]), num_sample))
-                    seed_exp_sents = random.sample(texts_seed[lc]+texts_exp,
-                                                   min(len(texts_seed[lc]+texts_exp), num_sample))
+                    seed_exp_sents = seed_sents+texts_exp
+                    # seed_exp_sents = random.sample(seed_sents+texts_exp,
+                    #                                min(len(seed_sents+texts_exp), num_sample))
                     sbleu_seed = SelfBleu(texts=seed_sents,
                                           num_data=len(seed_sents),
                                           logger=logger)
@@ -379,7 +383,7 @@ def main_mtnlp(task,
             if s in cfg_res['inputs'].keys():
                 for exp in cfg_res['inputs'][s]['exp_inputs']:
                     exp_sent = exp[5]
-                    exp_sents.extend(exp_sent)
+                    exp_sents.append(exp_sent)
                 # end for
             # end if
         # end if
@@ -416,4 +420,85 @@ def main_mtnlp(task,
         scores['mtnlp']['scores'].append(score_mt)
     # end for
     Utils.write_json(scores, result_file, pretty_format=True)
+    return
+
+def main_checklist(task,
+                   search_dataset_name,
+                   selection_method):
+    num_trials = 1
+    num_samples = [200]
+    logger_file = Macros.log_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
+    result_file = Macros.selfbleu_result_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+    logger = Logger(logger_file=logger_file,
+                    logger_name='seed_selfbleu_log')
+    Macros.selfbleu_result_dir.mkdir(parents=True, exist_ok=True)
+
+    texts_lcs = dict()
+    seed_file = f"cfg_expanded_inputs_{task}_{search_dataset_name}_{selection_method}_200seeds.json"
+    seed_dicts = Utils.read_json(Macros.result_dir / seed_file)
+    for seed_dict in seed_dicts:
+        lc = seed_dict['requirement']['description']
+        if lc not in texts_lcs.keys():
+            texts_lcs[lc] = dict()
+        # end if
+        seed_sents = [s for s in seed_dict['inputs'].keys()]
+        for s in seed_sents:
+            exp_sents_per_seed = [e[5] for e in seed_dict['inputs'][s]['exp_inputs']]
+            if s not in texts_lcs[lc].keys():
+                texts_lcs[lc][s] = exp_sents_per_seed
+            # end if
+        # end for
+    # end for
+    scores = dict()
+    for lc in texts_lcs.keys():
+        if lc not in scores.keys():
+            logger.print(lc)
+            our_sents, bl_sents = list(), list()
+            scores[lc] = {
+                'checklist': {
+                    f"{num_sample}sample": {
+                        'selfbleu_scores': list()
+                    }
+                    for num_sample in num_samples
+                },
+                'checklist_exp': {
+                    f"{num_sample}sample": {
+                        'selfbleu_scores': list()
+                    }
+                    for num_sample in num_samples
+                }
+            }
+            for num_sample in num_samples:
+                # scores[lc]['ours'][f"{num_sample}sample"]['selfbleu_scores'] = list()
+                for num_trial in range(num_trials):
+                    random.seed(num_trial)
+                    seed_sents = random.sample(list(texts_lcs[lc].keys()), min(len(list(texts_lcs[lc].keys())), num_sample))
+                    texts_exp = list()
+                    for s in texts_lcs[lc].keys():
+                        texts_exp.extend(texts_lcs[lc][s])
+                    # end for
+                    seed_exp_sents = random.sample(list(texts_lcs[lc].keys())+texts_exp,
+                                                   min(len(list(texts_lcs[lc].keys())+texts_exp), num_sample))
+                    sbleu_seed = SelfBleu(texts=seed_sents,
+                                          num_data=len(seed_sents),
+                                          logger=logger)
+                    score_seed = sbleu_seed.get_score_wo_sample()
+                    scores[lc]['checklist'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed)
+                    sbleu_seed_exp = SelfBleu(texts=seed_exp_sents,
+                                              num_data=len(seed_exp_sents),
+                                              logger=logger)
+                    score_seed_exp = sbleu_seed_exp.get_score_wo_sample()
+                    scores[lc]['checklist_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed_exp)
+                # end for
+                logger.print(f"{scores[lc]}")
+                scores[lc]['checklist'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['checklist'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['checklist'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['checklist'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['checklist'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['checklist'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['checklist_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['checklist_exp'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['checklist_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['checklist_exp'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['checklist_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['checklist_exp'][f"{num_sample}sample"]['selfbleu_scores'])
+                Utils.write_json(scores, result_file, pretty_format=True)
+            # end for
+        # end if
+    # end for
     return

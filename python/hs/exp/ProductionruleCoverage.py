@@ -170,6 +170,7 @@ class ProductionruleCoverage:
                               selection_method,
                               logger=None):
         exp_rules_over_lcs = dict()
+        seed_exp_map = dict()
         seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
         req_dir = Macros.result_dir / 'reqs'
         req_file = req_dir / 'requirements_desc_hs.txt'
@@ -204,9 +205,11 @@ class ProductionruleCoverage:
                     exp_rules[seed] = list()
                     cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
                     pdr_seed = get_pdr_per_sent(cfg_seed)
+                    seed_exp_map[seed] = list()
                     for exp in cfg_res['inputs'][seed]['exp_inputs']:
                         pdr_exp = pdr_seed.copy()
                         cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
+                        seed_exp_map[seed].append(exp_sent)
                         if exp_sent not in exp_rules.keys():
                             cfg_from = cfg_from.replace(f" -> ", '->')
                             lhs, rhs = cfg_from.split('->')
@@ -224,7 +227,7 @@ class ProductionruleCoverage:
                 exp_rules_over_lcs[lc_desc] = exp_rules
             # end if
         # end for
-        return exp_rules_over_lcs
+        return exp_rules_over_lcs, seed_exp_map
     
     @classmethod
     def get_bl_cfg_rules(cls,
@@ -335,7 +338,7 @@ def main_sample(task,
         parse_all_sents=False,
         logger=logger
     )
-    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+    exp_rules, seed_exp_map = ProductionruleCoverage.get_our_exp_cfg_rules(
         task,
         search_dataset_name,
         selection_method,
@@ -448,7 +451,7 @@ def main_all(task,
         parse_all_sents=False,
         logger=logger
     )
-    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+    exp_rules, _ = ProductionruleCoverage.get_our_exp_cfg_rules(
         task,
         search_dataset_name,
         selection_method,
@@ -530,7 +533,7 @@ def main_hatecheck(task,
         parse_all_sents=False,
         logger=logger
     )
-    exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+    exp_rules, _ = ProductionruleCoverage.get_our_exp_cfg_rules(
         task,
         'hatecheck',
         selection_method,
@@ -598,7 +601,7 @@ def main_mtnlp(task,
                     logger_name='mtnlt_mutation_log')
     logger.print(f"OURS_PDR_SAMPLE::mtnlp::")
 
-    _exp_rules = ProductionruleCoverage.get_our_exp_cfg_rules(
+    _exp_rules, _ = ProductionruleCoverage.get_our_exp_cfg_rules(
         task,
         search_dataset_name,
         selection_method,

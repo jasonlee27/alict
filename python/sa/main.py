@@ -17,7 +17,7 @@ parser.add_argument('--run', type=str, required=True,
                         'requirement', 'template', 'testsuite', 'seedgen',
                         'testmodel', 'testmodel_seed', 'retrain', 'analyze',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
-                        'selfbleu', 'selfbleu_mtnlp',
+                        'selfbleu', 'selfbleu_mtnlp', 'selfbleu_checklist',
                         'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_checklist',
                         'humanstudy', 'humanstudy_results',
                         'neural_coverage_data', 'textattack',
@@ -373,6 +373,17 @@ def run_selfbleu_mtnlp():
                selection_method)
     return
 
+def run_selfbleu_checklist():
+    from .exp.SelfBleu import main_checklist
+    nlp_task = args.nlp_task
+    search_dataset_name = 'checklist'
+    selection_method = args.syntax_selection
+    print('Run run_selfbleu_checklist..')
+    main_checklist(nlp_task,
+                   search_dataset_name,
+                   selection_method)
+    return
+
 def run_pdrule_cov():
     from .exp.ProductionruleCoverage import main_sample, main_all
     nlp_task = args.nlp_task
@@ -381,9 +392,9 @@ def run_pdrule_cov():
     main_sample(nlp_task,
                 search_dataset_name,
                 selection_method)
-    main_all(nlp_task,
-             search_dataset_name,
-             selection_method)
+    # main_all(nlp_task,
+    #          search_dataset_name,
+    #          selection_method)
     return
 
 
@@ -465,6 +476,7 @@ def run_neural_coverage_data():
 
 # ==========
 # Textattack
+
 def run_textattack():
     from .exp.Textattack import main
     nlp_task = args.nlp_task
@@ -528,6 +540,7 @@ func_map = {
         'failcase': run_failcase,
         'selfbleu': run_selfbleu,
         'selfbleu_mtnlp': run_selfbleu_mtnlp,
+        'selfbleu_checklist': run_selfbleu_checklist,
         'pdrule_cov': run_pdrule_cov,
         'pdrule_cov_mtnlp': run_pdrule_cov_mtnlp,
         'pdrule_cov_checklist': run_pdrule_cov_checklist,
