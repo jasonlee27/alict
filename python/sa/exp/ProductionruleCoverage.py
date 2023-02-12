@@ -189,14 +189,14 @@ class ProductionruleCoverage:
             # end if
             
             exp_rules = dict()
-            if os.path.exists(res_file):
-                try:
-                    exp_rules = Utils.read_json(res_file)
-                    exp_rules_over_lcs[lc_desc] = exp_rules
-                except:
-                    exp_rules = dict()
-                # end try
-            # end if
+            # if os.path.exists(res_file):
+            #     try:
+            #         exp_rules = Utils.read_json(res_file)
+            #         exp_rules_over_lcs[lc_desc] = exp_rules
+            #     except:
+            #         exp_rules = dict()
+            #     # end try
+            # # end if
             if not any(exp_rules):
                 cfg_res = Utils.read_json(seed_file)
                 print(f"OUR_EXP_FOR_PDR::{lc_desc}")
@@ -205,9 +205,9 @@ class ProductionruleCoverage:
                 # end if
                 for seed in cfg_res['inputs'].keys():
                     exp_rules[seed] = list()
+                    seed_exp_map[seed] = list()
                     cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
                     pdr_seed = get_pdr_per_sent(cfg_seed)
-                    seed_exp_map[seed] = list()
                     for exp in cfg_res['inputs'][seed]['exp_inputs']:
                         pdr_exp = pdr_seed.copy()
                         cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
@@ -224,6 +224,7 @@ class ProductionruleCoverage:
                             exp_rules[exp_sent] = pdr_exp
                         # end if
                     # end for
+                    if not any(seed_exp_map[seed]): del seed_exp_map[seed]
                 # end for
                 Utils.write_json(exp_rules, res_file, pretty_format=True)
                 exp_rules_over_lcs[lc_desc] = exp_rules
@@ -381,7 +382,7 @@ def main_sample(task,
                     for s in seed_sents:
                         if s in seed_exp_map.keys():
                             exp_sent = random.sample(seed_exp_map[s], 1)
-                            seed_exp_sents.append(exp_sent)
+                            seed_exp_sents.extend(exp_sent)
                         # end if
                     # end for
                     # seed_exp_sents = random.sample(all_seed_exp_sents,
@@ -702,10 +703,10 @@ def main_checklist(task,
         for lc in tqdm(seed_rules.keys()):
             if lc not in scores.keys():
                 scores[lc] = {
-                    'ours_seed': {
+                    'checklist': {
                         'coverage_scores': list()
                     },
-                    'ours_seed_exp': {
+                    'checklist_exp': {
                         'coverage_scores': list()
                     }
                 }
@@ -732,8 +733,16 @@ def main_checklist(task,
             pdr2_obj = ProductionruleCoverage(lc=lc,
                                               our_cfg_rules=pdr2)
             cov_score_ours_seed_exp, _ = pdr2_obj.get_score()
-            scores[lc]['ours_seed']['coverage_scores'].append(cov_score_ours_seed)
-            scores[lc]['ours_seed_exp']['coverage_scores'].append(cov_score_ours_seed_exp)
+            scores[lc]['checklist']['coverage_scores'].append(cov_score_ours_seed)
+            scores[lc]['checklist_exp']['coverage_scores'].append(cov_score_ours_seed_exp)
+            if t+1==num_test_results:
+                scores[lc]['checklist']['avg_score'] = Utils.avg(scores[lc]['checklist']['coverage_scores'])
+                scores[lc]['checklist']['med_score'] = Utils.median(scores[lc]['checklist']['coverage_scores'])
+                scores[lc]['checklist']['std_score'] = Utils.stdev(scores[lc]['checklist']['coverage_scores'])
+                scores[lc]['checklist_exp']['avg_score'] = Utils.avg(scores[lc]['checklist_exp']['coverage_scores'])
+                scores[lc]['checklist_exp']['med_score'] = Utils.median(scores[lc]['checklist_exp']['coverage_scores'])
+                scores[lc]['checklist_exp']['std_score'] = Utils.stdev(scores[lc]['checklist_exp']['coverage_scores'])
+            # end if
         # end for
         Utils.write_json(scores, result_file, pretty_format=True)
     # end for

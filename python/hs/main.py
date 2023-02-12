@@ -16,7 +16,7 @@ parser.add_argument('--run', type=str, required=True,
                     choices=[
                         'requirement', 'template', 'testsuite',
                         'testmodel', 'analyze', 'failcase',
-                        'selfbleu', 'selfbleu_mtnlp',
+                        'selfbleu', 'selfbleu_mtnlp', 'selfbleu_hatecheck',
                         'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_hatecheck',
                         'humanstudy', 'humanstudy_results',
                         'neural_coverage_data',
@@ -197,6 +197,7 @@ def run_failcase():
     return
 
 def run_selfbleu():
+    print('Run run_selfbleu..')
     from .exp.SelfBleu import main_sample
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
@@ -207,6 +208,7 @@ def run_selfbleu():
     return
 
 def run_selfbleu_mtnlp():
+    print('Run run_selfbleu_mtnlp..')
     from .exp.SelfBleu import main_mtnlp
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
@@ -214,6 +216,15 @@ def run_selfbleu_mtnlp():
     main_mtnlp(nlp_task,
                search_dataset_name,
                selection_method)
+    return
+
+def run_selfbleu_hatecheck():
+    print('Run run_selfbleu_hatecheck..')
+    from .exp.SelfBleu import main_hatecheck
+    nlp_task = args.nlp_task
+    selection_method = args.syntax_selection
+    main_hatecheck(nlp_task,
+                   selection_method)
     return
 
 def run_pdrule_cov():
@@ -337,6 +348,7 @@ func_map = {
         'failcase': run_failcase,
         'selfbleu': run_selfbleu,
         'selfbleu_mtnlp': run_selfbleu_mtnlp,
+        'selfbleu_hatecheck': run_selfbleu_hatecheck,
         'pdrule_cov': run_pdrule_cov,
         'pdrule_cov_mtnlp': run_pdrule_cov_mtnlp,
         'pdrule_cov_hatecheck': run_pdrule_cov_hatecheck,

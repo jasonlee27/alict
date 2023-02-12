@@ -439,12 +439,11 @@ def main_hatecheck(task,
     num_trials = 1
     num_samples = [200] # [10, 50, 100, 150, 200]
     logger_file = Macros.log_dir / f"seed_exp_bl_all_{task}_hatecheck_{selection_method}_selfbleu.log"
-    result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_all_{task}_hatecheck_{selection_method}_selfbleu.json"
+    result_file = Macros.selfbleu_result_dir / f"seed_exp_bl_all_{task}_hatecheck_{selection_method}_selfbleu.json"
     logger = Logger(logger_file=logger_file,
                     logger_name='seed_selfbleu_log')
     Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
 
-    texts_lcs = dict()
     seed_file = f"cfg_expanded_inputs_{task}_hatecheck_{selection_method}.json"
     _, texts_seed = read_our_seeds(task,
                                    'hatecheck',
@@ -460,13 +459,13 @@ def main_hatecheck(task,
             # max_num_samples = 1000
             # num_samples = list(range(100, max_num_samples+100, 100))
             scores[lc] = {
-                'ours_seed': {
+                'hatecheck': {
                     f"{num_sample}sample": {
                         'selfbleu_scores': list()
                     }
                     for num_sample in num_samples
                 },
-                'ours_seed_exp': {
+                'hatecheck_exp': {
                     f"{num_sample}sample": {
                         'selfbleu_scores': list()
                     }
@@ -478,31 +477,32 @@ def main_hatecheck(task,
                     random.seed(num_trial)
                     seed_sents = random.sample(texts_seed[lc], min(len(texts_seed[lc]), num_sample))
                     texts_exp = list()
-                    for s in texts_seed[lc].keys():
+                    for s in texts_seed[lc]:
                         if any(seed_exp_map[lc][s]):
                             texts_exp.extend(seed_exp_map[lc][s])
                         # end if
                     # end for
-                    seed_exp_sents = random.sample(list(texts_lcs[lc].keys())+texts_exp,
-                                                   min(len(list(texts_lcs[lc].keys())+texts_exp), num_sample))
+                    # seed_exp_sents = random.sample(texts_seed[lc]+texts_exp,
+                    #                                min(len(texts_seed[lc]+texts_exp), num_sample))
+                    seed_exp_sents = seed_sents+texts_exp
                     sbleu_seed = SelfBleu(texts=seed_sents,
                                           num_data=len(seed_sents),
                                           logger=logger)
                     score_seed = sbleu_seed.get_score_wo_sample()
-                    scores[lc]['checklist'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed)
+                    scores[lc]['hatecheck'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed)
                     sbleu_seed_exp = SelfBleu(texts=seed_exp_sents,
                                               num_data=len(seed_exp_sents),
                                               logger=logger)
                     score_seed_exp = sbleu_seed_exp.get_score_wo_sample()
-                    scores[lc]['checklist_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed_exp)
+                    scores[lc]['hatecheck_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed_exp)
                 # end for
                 logger.print(f"{scores[lc]}")
-                scores[lc]['checklist'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['checklist'][f"{num_sample}sample"]['selfbleu_scores'])
-                scores[lc]['checklist'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['checklist'][f"{num_sample}sample"]['selfbleu_scores'])
-                scores[lc]['checklist'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['checklist'][f"{num_sample}sample"]['selfbleu_scores'])
-                scores[lc]['checklist_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['checklist_exp'][f"{num_sample}sample"]['selfbleu_scores'])
-                scores[lc]['checklist_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['checklist_exp'][f"{num_sample}sample"]['selfbleu_scores'])
-                scores[lc]['checklist_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['checklist_exp'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['hatecheck'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['hatecheck'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['hatecheck'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['hatecheck'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['hatecheck'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['hatecheck'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['hatecheck_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['hatecheck_exp'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['hatecheck_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['hatecheck_exp'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['hatecheck_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['hatecheck_exp'][f"{num_sample}sample"]['selfbleu_scores'])
                 Utils.write_json(scores, result_file, pretty_format=True)
             # end for
         # end if

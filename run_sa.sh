@@ -502,6 +502,14 @@ function mtnlp_selfbleu() {
         )
 }
 
+function checklist_selfbleu() {
+        (cd ${_DIR}
+         python -m python.sa.main \
+                --run selfbleu_checklist \
+                --syntax_selection random
+        )
+}
+
 function pdrulecoverage() {
         (cd ${_DIR}
          CUDA_VISIBLE_DEVICES=6,7 python -m python.sa.main \
@@ -548,6 +556,18 @@ function humanstudy_results() {
                              --search_dataset sst \
                              --syntax_selection random \
                              --model_name textattack/bert-base-uncased-SST-2
+        )
+}
+
+# ==========
+# Textattack
+
+function textattack_results() {
+        (cd ${_DIR}
+         python -m python.sa.main \
+                --run textattack \
+                --search_dataset sst \
+                --syntax_selection random
         )
 }
 
@@ -634,16 +654,20 @@ function main_sst() {
         # analyze_retrained_models # to generate debug_results file
         # failcase
         # selfbleu # to compute the selfbleu
+        # checklist_selfbleu
+        # mtnlp_selfbleu
+        
         # pdrulecoverage # to compute the diversity of grammatic structure of sentence
-        # checklist_pdrulecoverage
+        checklist_pdrulecoverage
+        # mtnlp_pdrulecoverage
+
         # explain_nlp # to run the explainNLP
         # humanstudy # sample sentences for manual study
         # humanstudy_results # get results of manual study into human_study.json
-        get_neuralcoverage_data # get sentences for coverage experiment
+        # get_neuralcoverage_data # get sentences for coverage experiment
         # compute_coverage
         # make_tables
-        # mtnlp_selfbleu
-        # mtnlp_pdrulecoverage
+        # textattack_results 
         # eval_retrained_models # to ...?
 }
 

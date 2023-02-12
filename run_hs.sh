@@ -118,6 +118,15 @@ function selfbleu() {
         )
 }
 
+function hatecheck_selfbleu() {
+        (cd ${_DIR}
+         CUDA_VISIBLE_DEVICES=3 python -m python.hs.main \
+                             --run selfbleu_hatecheck \
+                             --search_dataset hatecheck \
+                             --syntax_selection random
+        )
+}
+
 function mtnlp_selfbleu() {
         (cd ${_DIR}
          python -m python.hs.main \
@@ -229,16 +238,16 @@ function main() {
         # eval_models
         # analyze_eval_models
         # failcase
+        # selfbleu
+        hatecheck_selfbleu
         # pdrulecoverage
         # hatecheck_pdrulecoverage
-        # selfbleu
-        # failcase
         # humanstudy_sample
         # humanstudy_results
         # make_plots
         # mtnlp_selfbleu
         # mtnlp_pdrulecoverage
-        get_neuralcoverage_data
+        # get_neuralcoverage_data
 }
 
 # Please make sure you actiavte nlptest conda environment

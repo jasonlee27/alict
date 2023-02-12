@@ -354,6 +354,7 @@ def run_failcase():
     return
 
 def run_selfbleu():
+    print('Run run_selfbleu..')
     from .exp.SelfBleu import main_sample
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
@@ -364,6 +365,7 @@ def run_selfbleu():
     return
 
 def run_selfbleu_mtnlp():
+    print('Run run_selfbleu_mtnlp..')
     from .exp.SelfBleu import main_mtnlp
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
@@ -374,17 +376,18 @@ def run_selfbleu_mtnlp():
     return
 
 def run_selfbleu_checklist():
+    print('Run run_checklist..')
     from .exp.SelfBleu import main_checklist
     nlp_task = args.nlp_task
     search_dataset_name = 'checklist'
     selection_method = args.syntax_selection
     print('Run run_selfbleu_checklist..')
     main_checklist(nlp_task,
-                   search_dataset_name,
                    selection_method)
     return
 
 def run_pdrule_cov():
+    print('Run run_pdrule_cov..')
     from .exp.ProductionruleCoverage import main_sample, main_all
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
@@ -399,6 +402,7 @@ def run_pdrule_cov():
 
 
 def run_pdrule_cov_mtnlp():
+    print('Run run_pdrule_cov_mtnlp..')
     from .exp.ProductionruleCoverage import main_mtnlp
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
@@ -409,6 +413,7 @@ def run_pdrule_cov_mtnlp():
     return
 
 def run_pdrule_cov_checklist():
+    print('Run run_pdrule_cov_checklist..')
     from .exp.ProductionruleCoverage import main_checklist
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
