@@ -282,20 +282,19 @@ def main_sample(task,
                     #     len(texts_hatecheck[lc])
                     # ])
                     seed_sents = random.sample(texts_seed[lc], min(len(texts_seed[lc]), num_sample))
-                    texts_exp = list()
-                    for s in texts_seed[lc]:
+                    seed_exp_sents = seed_sents.copy()
+                    for s in seed_sents:
                         if any(seed_exp_map[lc][s]):
-                            # exp_sent = random.sample(seed_exp_map[lc][s], 1)
-                            exp_sent = seed_exp_map[lc][s]
-                            texts_exp.append(exp_sent)
+                            exp_sent = random.sample(seed_exp_map[lc][s], 1)
+                            # exp_sent = seed_exp_map[lc][s]
+                            seed_exp_sents.extend(exp_sent)
                         # end if
                     # end for
                     
                     bl_sents = random.sample(texts_hatecheck[lc],
                                              min(len(texts_hatecheck[lc]), num_sample))
-                    seed_exp_sents = seed_sents+texts_exp
-                    seed_exp_sents = random.sample(seed_exp_sents,
-                                                   min(len(seed_exp_sents), num_sample))
+                    # seed_exp_sents = random.sample(seed_exp_sents,
+                    #                                min(len(seed_exp_sents), num_sample))
                     sbleu_seed = SelfBleu(texts=seed_sents,
                                           num_data=len(seed_sents),
                                           logger=logger)

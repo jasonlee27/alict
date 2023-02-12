@@ -111,11 +111,13 @@ class ProductionruleCoverage:
             lc_desc = l.strip().split('::')[0]
             lc_cksum = Utils.get_cksum(lc_desc)
             _lc_cksum = Utils.get_cksum(lc_desc.lower())
-            seed_file = seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"
+            cfg_file = seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"
+            seed_file = seed_dir / f"seeds_{lc_cksum}.json"
             res_file = Macros.pdr_cov_result_dir / f"seed_{task}_{search_dataset_name}_{selection_method}_pdr_{lc_cksum}.json"
             if os.path.exists(seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json") and \
                not os.path.exists(seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"):
-                seed_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"
+                cfg_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"
+                seed_file = seed_dir / f"seeds_{_lc_cksum}.json"
                 res_file = Macros.pdr_cov_result_dir / f"seed_{task}_{search_dataset_name}_{selection_method}_pdr_{_lc_cksum}.json"
             # end if
             
@@ -129,7 +131,7 @@ class ProductionruleCoverage:
             #     # end try
             # # end if
             if not any(seed_rules) and os.path.exists(seed_file):
-                cfg_res = Utils.read_json(seed_file)
+                cfg_res = Utils.read_json(cfg_file)
                 print(f"OUR_SEED::{lc_desc}")
                 if not parse_all_sents:
                     if logger is not None:
@@ -178,11 +180,13 @@ class ProductionruleCoverage:
             lc_desc = l.strip().split('::')[0]
             lc_cksum = Utils.get_cksum(lc_desc)
             _lc_cksum = Utils.get_cksum(lc_desc.lower())
-            seed_file = seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"
+            cfg_file = seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"
+            seed_file = seed_dir / f"seeds_{lc_cksum}.json"
             res_file = Macros.pdr_cov_result_dir / f"exp_{task}_{search_dataset_name}_{selection_method}_pdr_{lc_cksum}.json"
             if os.path.exists(seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json") and \
                not os.path.exists(seed_dir / f"cfg_expanded_inputs_{lc_cksum}.json"):
-                seed_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"
+                cfg_file = seed_dir / f"cfg_expanded_inputs_{_lc_cksum}.json"
+                seed_file = seed_dir / f"seeds_{_lc_cksum}.json"
                 res_file = Macros.pdr_cov_result_dir / f"exp_{task}_{search_dataset_name}_{selection_method}_pdr_{_lc_cksum}.json"
                 lc_desc = lc_desc.lower()
             # end if
@@ -197,19 +201,20 @@ class ProductionruleCoverage:
             #     # end try
             # # end if
             if not any(exp_rules) and os.path.exists(seed_file):
-                cfg_res = Utils.read_json(seed_file)
+                seed_exp_map[lc_desc] = dict()
+                cfg_res = Utils.read_json(cfg_file)
                 if logger is not None:
                     logger.print(f"OUR_EXP_FOR_PDR::{lc_desc}")
                 # end if
                 for seed in cfg_res['inputs'].keys():
                     exp_rules[seed] = list()
+                    seed_exp_map[lc_desc][seed] = list()
                     cfg_seed = cfg_res['inputs'][seed]['cfg_seed']
                     pdr_seed = get_pdr_per_sent(cfg_seed)
-                    seed_exp_map[seed] = list()
                     for exp in cfg_res['inputs'][seed]['exp_inputs']:
                         pdr_exp = pdr_seed.copy()
                         cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
-                        seed_exp_map[seed].append(exp_sent)
+                        seed_exp_map[lc_desc][seed].append(exp_sent)
                         if exp_sent not in exp_rules.keys():
                             cfg_from = cfg_from.replace(f" -> ", '->')
                             lhs, rhs = cfg_from.split('->')
@@ -387,14 +392,14 @@ def main_sample(task,
                     # all_seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
                     seed_exp_sents = seed_sents.copy()
                     for s in seed_sents:
-                        if s in seed_exp_map.keys():
-                            # exp_sent = random.sample(seed_exp_map[s], 1)
-                            exp_sent = seed_exp_map[s]
+                        if s in seed_exp_map[lc].keys():
+                            exp_sent = random.sample(seed_exp_map[s], 1)
+                            # exp_sent = seed_exp_map[lc][s]
                             seed_exp_sents.extend(exp_sent)
                         # end if
                     # end for
-                    seed_exp_sents = random.sample(seed_exp_sents,
-                                                   min(len(seed_exp_sents), num_sample))
+                    # seed_exp_sents = random.sample(seed_exp_sents,
+                    #                                min(len(seed_exp_sents), num_sample))
                     bl_sents = random.sample(list(hatecheck_rules[lc].keys()),
                                              min(len(hatecheck_rules[lc]), num_sample))
                     pdr1 = {
@@ -402,7 +407,7 @@ def main_sample(task,
                         for s in seed_sents
                     }
                     pdr2 = {
-                        s: seed_rules[lc][s] 
+                        s: seed_rules[lc][s]
                         for s in seed_exp_sents
                         if s in seed_rules[lc].keys()
                     }

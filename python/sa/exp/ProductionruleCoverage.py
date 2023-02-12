@@ -381,13 +381,13 @@ def main_sample(task,
                     seed_exp_sents = seed_sents.copy()
                     for s in seed_sents:
                         if s in seed_exp_map.keys():
-                            # exp_sent = random.sample(seed_exp_map[s], 1)
-                            exp_sent = seed_exp_map[s]
+                            exp_sent = random.sample(seed_exp_map[s], 1)
+                            # exp_sent = seed_exp_map[s]
                             seed_exp_sents.extend(exp_sent)
                         # end if
                     # end for
-                    seed_exp_sents = random.sample(seed_exp_sents,
-                                                   min(len(seed_exp_sents), num_sample))
+                    # seed_exp_sents = random.sample(seed_exp_sents,
+                    #                                min(len(seed_exp_sents), num_sample))
                     bl_sents = random.sample(list(checklist_rules[lc].keys()),
                                              min(len(checklist_rules[lc]), num_sample))
                     pdr1 = {
