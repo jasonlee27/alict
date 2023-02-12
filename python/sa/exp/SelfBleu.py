@@ -279,14 +279,15 @@ def main_sample(task,
                     seed_exp_sents = seed_sents.copy()
                     for s in seed_sents:
                         if seed_exp_map[lc].get(s, None) is not None:
-                            exp_sent = random.sample(seed_exp_map[lc][s], 1)
+                            # exp_sent = random.sample(seed_exp_map[lc][s], 1)
+                            exp_sent = seed_exp_map[lc][s]
                             seed_exp_sents.extend(exp_sent)
                         # end if
                     # end for
                     bl_sents = random.sample(texts_checklist[lc],
                                              min(len(texts_checklist[lc]), num_sample))
-                    # seed_exp_sents = random.sample(seed_sents+texts_exp,
-                    #                                min(len(seed_sents+texts_exp), num_sample))
+                    seed_exp_sents = random.sample(seed_exp_sents,
+                                                   min(len(seed_exp_sents), num_sample))
                     sbleu_seed = SelfBleu(texts=seed_sents,
                                           num_data=len(seed_sents),
                                           logger=logger)

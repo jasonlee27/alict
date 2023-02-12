@@ -52,10 +52,7 @@ class Plots:
             if item == 'pdr-selfbleu-agg':
                 cls.pdr_selfbleu_agg_plot(Macros.result_dir, figs_dir)
             elif item == 'selfbleu':
-                cls.selfbleu_sample_plot(Macros.result_dir, figs_dir)
-                # cls.selfbleu_ours_sample_plot(Macros.result_dir, figs_dir)
-                # cls.selfbleu_bl_sample_plot(Macros.result_dir, figs_dir)
-                # cls.selfbleu_agg_sample_plot(Macros.result_dir, figs_dir)
+                cls.selfbleu_hatecheck_bar_plot(Macros.result_dir, figs_dir)
             elif item == 'pdr':
                 # cls.pdr_bar_plot(Macros.result_dir, figs_dir)
                 cls.pdr_hatecheck_bar_plot(Macros.result_dir, figs_dir)
@@ -567,7 +564,6 @@ class Plots:
         result = Utils.read_json(result_file)
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc_hs.txt'
-        print(result.keys())
         max_cov_val = -1
         l_i = 0
         for lc in Utils.read_txt(req_file):
@@ -577,17 +573,17 @@ class Plots:
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'HATECHECK',
-                    'scores': result[lc_desc]['ours_seed']['coverage_scores']
+                    'scores': result[lc_desc]['hatecheck']['coverage_scores']
                 })
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'HATECHECK+EXP',
-                    'scores': result[lc_desc]['ours_seed_exp']['coverage_scores']
+                    'scores': result[lc_desc]['hatecheck_exp']['coverage_scores']
                 })
                 max_cov_val = max(
                     max_cov_val,
-                    result[lc_desc]['ours_seed']['coverage_scores'],
-                    result[lc_desc]['ours_seed_exp']['coverage_scores']
+                    result[lc_desc]['hatecheck']['coverage_scores'],
+                    result[lc_desc]['hatecheck_exp']['coverage_scores']
                 )
                 l_i += 1
             # end if
@@ -613,6 +609,7 @@ class Plots:
         ax.set_xlabel("Linguistic Capabilities")
         ax.set_ylabel("Number of Production Rules Covered")
         ax.legend(loc='upper right')
+        plt.xticks(rotation=45)
         # plt.grid(True, which='both', ls='--')
         
         # Shrink current axis by 20%
@@ -623,6 +620,79 @@ class Plots:
         # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         fig.tight_layout()
         fig.savefig(figs_dir / "pdr-hatecheck-barplot.eps")
+        return
+
+    @classmethod
+    def selfbleu_hatecheck_bar_plot(cls,
+                                    results_dir: Path,
+                                    figs_dir: Path,
+                                    task=Macros.hs_task,
+                                    search_dataset_name=Macros.datasets[Macros.hs_task][1],
+                                    selection_method='random'):
+        data_lod: List[dict] = list()
+        result_file = results_dir / 'selfbleu' / f"seed_exp_bl_all_{task}_hatecheck_{selection_method}_selfbleu.json"
+        result = Utils.read_json(result_file)
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc_hs.txt'
+        max_cov_val = -1
+        l_i = 0
+        num_sample = 200
+        num_tials = 1
+        for lc in Utils.read_txt(req_file):
+            lc_desc = lc.strip().split('::')[0]
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+            if lc_desc in result.keys():
+                for nt_i in range(num_tials):
+                    data_lod.append({
+                        'lc': f"LC{l_i+1}",
+                        'type': 'HATECHECK',
+                        'scores': result[lc_desc]['hatecheck'][f"{num_sample}sample"]['selfbleu_scores'][nt_i]
+                    })
+                    data_lod.append({
+                        'lc': f"LC{l_i+1}",
+                        'type': 'HATECHECK+EXP',
+                        'scores': result[lc_desc]['hatecheck_exp'][f"{num_sample}sample"]['selfbleu_scores'][nt_i]
+                    })
+                    max_cov_val = max(
+                        max_cov_val,
+                        result[lc_desc]['hatecheck'][f"{num_sample}sample"]['selfbleu_scores'][nt_i],
+                        result[lc_desc]['hatecheck_exp'][f"{num_sample}sample"]['selfbleu_scores'][nt_i]
+                    )
+                l_i += 1
+            # end if
+        # end for
+        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+
+        # Plotting part
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+
+        # hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+        hue_order = ['HATECHECK', 'HATECHECK+EXP']
+        from numpy import median
+        ax = sns.barplot(data=df, x='lc', y='scores',
+                         hue='type',
+                         hue_order=hue_order,
+                         palette="Set1",
+                         estimator=median)
+        # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
+        # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
+        # ax.set_yscale('log')
+        ax.set_ylim(bottom=0, top=1.4)
+        ax.set_xlabel("Linguistic Capabilities")
+        ax.set_ylabel("Self-BLEU score")
+        ax.legend(loc='upper right')
+        plt.xticks(rotation=45)
+        # plt.grid(True, which='both', ls='--')
+        
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+
+        # Put a legend to the right of the current axis
+        # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        fig.tight_layout()
+        fig.savefig(figs_dir / "selfbleu-hatecheck-barplot.eps")
         return
 
     @classmethod

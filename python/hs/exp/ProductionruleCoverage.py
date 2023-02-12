@@ -384,9 +384,17 @@ def main_sample(task,
                     random.seed(num_trial)
                     seed_sents = random.sample(list(seed_rules[lc].keys()),
                                                min(len(seed_rules[lc]), num_sample))
-                    all_seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
-                    seed_exp_sents = random.sample(all_seed_exp_sents,
-                                                   min(len(all_seed_exp_sents), num_sample))
+                    # all_seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
+                    seed_exp_sents = seed_sents.copy()
+                    for s in seed_sents:
+                        if s in seed_exp_map.keys():
+                            # exp_sent = random.sample(seed_exp_map[s], 1)
+                            exp_sent = seed_exp_map[s]
+                            seed_exp_sents.extend(exp_sent)
+                        # end if
+                    # end for
+                    seed_exp_sents = random.sample(seed_exp_sents,
+                                                   min(len(seed_exp_sents), num_sample))
                     bl_sents = random.sample(list(hatecheck_rules[lc].keys()),
                                              min(len(hatecheck_rules[lc]), num_sample))
                     pdr1 = {
@@ -546,10 +554,10 @@ def main_hatecheck(task,
             logger.print(f"OURS_PDR_SEED_EXP_ALL::{lc}", end='::')
             our_sents, bl_sents = list(), list()
             scores[lc] = {
-                'ours_seed': {
+                'hatecheck': {
                     'coverage_scores': None
                 },
-                'ours_seed_exp': {
+                'hatecheck_exp': {
                     'coverage_scores': None
                 }
             }
@@ -578,8 +586,8 @@ def main_hatecheck(task,
             pdr2_obj = ProductionruleCoverage(lc=lc,
                                               our_cfg_rules=pdr2)
             cov_score_ours_seed_exp, _ = pdr2_obj.get_score()
-            scores[lc]['ours_seed']['coverage_scores'] = cov_score_ours_seed
-            scores[lc]['ours_seed_exp']['coverage_scores'] = cov_score_ours_seed_exp
+            scores[lc]['hatecheck']['coverage_scores'] = cov_score_ours_seed
+            scores[lc]['hatecheck_exp']['coverage_scores'] = cov_score_ours_seed_exp
         # end if
     # end for
     Utils.write_json(scores, result_file, pretty_format=True)

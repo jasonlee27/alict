@@ -57,7 +57,7 @@ class Plots:
                 # Results of Self-BLEU (left) and Production Rule Coverage (right) of S2LCT and CHECKLIST test cases.
                 cls.pdr_selfbleu_agg_plot(Macros.result_dir, figs_dir)
             elif item == 'selfbleu':
-                cls.selfbleu_sample_plot(Macros.result_dir, figs_dir)
+                cls.selfbleu_checklist_bar_plot(Macros.result_dir, figs_dir)
             elif item == 'pdr':
                 # cls.pdr_bar_plot(Macros.result_dir, figs_dir)
                 cls.pdr_checklist_bar_plot(Macros.result_dir, figs_dir)
@@ -248,29 +248,30 @@ class Plots:
                                selection_method='random'):
         data_lod: List[dict] = list()
         result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_all_{task}_checklist_{selection_method}_pdrcov.json"
-        results = Utils.read_json(result_file)
+        result = Utils.read_json(result_file)
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
         num_test_results = 3
-        for t in range(num_test_results):
-            result = results[t]
-            for l_i, lc in enumerate(Utils.read_txt(req_file)):
-                lc_desc = lc.strip().split('::')[0]
-                lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+
+        for l_i, lc in enumerate(Utils.read_txt(req_file)):
+            lc_desc = lc.strip().split('::')[0]
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+            for t in range(num_test_results):
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
                     'result_ind': t+1,
-                    'scores': result[lc_desc]['ours_seed']['coverage_scores']
+                    'scores': result[lc_desc]['checklist']['coverage_scores'][t]
                 })
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST+EXP',
                     'result_ind': t+1,
-                    'scores': result[lc_desc]['ours_seed_exp']['coverage_scores']
+                    'scores': result[lc_desc]['checklist_exp']['coverage_scores'][t]
                 })
             # end for
         # end for
+        
         df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
 
         # Plotting part
@@ -302,6 +303,73 @@ class Plots:
         # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         fig.tight_layout()
         fig.savefig(figs_dir / "pdr-checklist-barplot.eps")
+        return
+
+    @classmethod
+    def selfbleu_checklist_bar_plot(cls,
+                                    results_dir: Path,
+                                    figs_dir: Path,
+                                    task=Macros.sa_task,
+                                    search_dataset_name=Macros.datasets[Macros.sa_task][1],
+                                    selection_method='random'):
+        data_lod: List[dict] = list()
+        result_file = results_dir / 'selfbleu' / f"seed_exp_bl_all_{task}_checklist_{selection_method}_selfbleu.json"
+        result = Utils.read_json(result_file)
+        req_dir = results_dir / 'reqs'
+        req_file = req_dir / 'requirements_desc.txt'
+        num_test_results = 3
+        num_sample = 200
+
+        for l_i, lc in enumerate(Utils.read_txt(req_file)):
+            lc_desc = lc.strip().split('::')[0]
+            lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+            for t in range(num_test_results):
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'CHECKLIST',
+                    'result_ind': t+1,
+                    'scores': result[lc_desc]['checklist'][f"{num_sample}sample"]['selfbleu_scores'][t]
+                })
+                data_lod.append({
+                    'lc': f"LC{l_i+1}",
+                    'type': 'CHECKLIST+EXP',
+                    'result_ind': t+1,
+                    'scores': result[lc_desc]['checklist_exp'][f"{num_sample}sample"]['selfbleu_scores'][t]
+                })
+            # end for
+        # end for
+        
+        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+
+        # Plotting part
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+
+        # hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+        hue_order = ['CHECKLIST', 'CHECKLIST+EXP']
+        from numpy import median
+        ax = sns.barplot(data=df, x='lc', y='scores',
+                         hue='type',
+                         hue_order=hue_order,
+                         palette="Set1",
+                         estimator=median)
+        # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
+        # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
+        # ax.set_yscale('log')
+        ax.set_ylim(bottom=0, top=1.4)
+        ax.set_xlabel('Linguistic Capabilities')
+        ax.set_ylabel('Self-BLEU')
+        ax.legend(loc='upper right')
+        # plt.grid(True, which='both', ls='--')
+        
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+
+        # Put a legend to the right of the current axis
+        # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        fig.tight_layout()
+        fig.savefig(figs_dir / "selfbleu-checklist-barplot.eps")
         return
     
     
