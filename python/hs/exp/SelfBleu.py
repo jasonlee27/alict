@@ -224,7 +224,7 @@ def read_hatecheck_testcases(task, search_dataset_name, selection_method):
 def main_sample(task,
                 search_dataset_name,
                 selection_method):
-    num_trials = 10
+    num_trials = 5
     num_samples = [200, 400, 600, 800, 1000]
     logger_file = Macros.log_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
     result_file = Macros.selfbleu_result_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
@@ -259,6 +259,12 @@ def main_sample(task,
                     }
                     for num_sample in num_samples
                 },
+                'ours_exp': {
+                    f"{num_sample}sample": {
+                        'selfbleu_scores': list()
+                    }
+                    for num_sample in num_samples
+                },
                 'ours_seed_exp': {
                     f"{num_sample}sample": {
                         'selfbleu_scores': list()
@@ -283,38 +289,47 @@ def main_sample(task,
                     # ])
                     seed_sents = random.sample(texts_seed[lc], min(len(texts_seed[lc]), num_sample))
                     seed_exp_sents = seed_sents.copy()
+                    exp_sents = list()
                     for s in seed_sents:
-                        if any(seed_exp_map[lc][s]):
+                        if any(seed_exp_map[lc].get(s, list())):
                             exp_sent = random.sample(seed_exp_map[lc][s], 1)
                             # exp_sent = seed_exp_map[lc][s]
                             seed_exp_sents.extend(exp_sent)
+                            exp_sents.extend(seed_exp_map[lc][s])
                         # end if
                     # end for
-                    
                     bl_sents = random.sample(texts_hatecheck[lc],
                                              min(len(texts_hatecheck[lc]), num_sample))
-                    # seed_exp_sents = random.sample(seed_exp_sents,
-                    #                                min(len(seed_exp_sents), num_sample))
+                    exp_sents = random.sample(exp_sents,
+                                              min(len(exp_sents), num_sample))
                     sbleu_seed = SelfBleu(texts=seed_sents,
                                           num_data=len(seed_sents),
                                           logger=logger)
                     score_seed = sbleu_seed.get_score_wo_sample()
-                    scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed)
+                    sbleu_exp = SelfBleu(texts=exp_sents,
+                                         num_data=len(exp_sents),
+                                         logger=logger)
+                    score_exp = sbleu_exp.get_score_wo_sample()
                     sbleu_seed_exp = SelfBleu(texts=seed_exp_sents,
                                               num_data=len(seed_exp_sents),
                                               logger=logger)
                     score_seed_exp = sbleu_seed_exp.get_score_wo_sample()
-                    scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed_exp)
                     sbleu_bl = SelfBleu(texts=bl_sents,
                                         num_data=len(bl_sents),
                                         logger=logger)
                     score_bl = sbleu_bl.get_score_wo_sample()
+                    scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed)
+                    scores[lc]['ours_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_exp)
+                    scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed_exp)
                     scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'].append(score_bl)
                 # end for
                 logger.print(f"{scores[lc]}")
                 scores[lc]['ours_seed'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['ours_seed'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['ours_seed'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_exp'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_exp'][f"{num_sample}sample"]['selfbleu_scores'])
+                scores[lc]['ours_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_exp'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'])

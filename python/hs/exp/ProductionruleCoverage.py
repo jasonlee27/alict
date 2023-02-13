@@ -330,7 +330,7 @@ def main_sample(task,
                 search_dataset_name,
                 selection_method):
     st = time.time()
-    num_trials = 10
+    num_trials = 5
     logger_file = Macros.log_dir / f"seed_{task}_{search_dataset_name}_{selection_method}_pdrcov.log"
     result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
     Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
@@ -371,6 +371,12 @@ def main_sample(task,
                     }
                     for num_sample in num_samples
                 },
+                'ours_exp': {
+                    f"{num_sample}sample": {
+                        'coverage_scores': list()
+                    }
+                    for num_sample in num_samples
+                },
                 'ours_seed_exp': {
                     f"{num_sample}sample": {
                         'coverage_scores': list()
@@ -391,15 +397,17 @@ def main_sample(task,
                                                min(len(seed_rules[lc]), num_sample))
                     # all_seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
                     seed_exp_sents = seed_sents.copy()
+                    exp_sents = list()
                     for s in seed_sents:
-                        if s in seed_exp_map[lc].keys():
-                            exp_sent = random.sample(seed_exp_map[s], 1)
+                        if any(seed_exp_map[lc].get(s, list())):
+                            exp_sent = random.sample(seed_exp_map[lc][s], 1)
                             # exp_sent = seed_exp_map[lc][s]
                             seed_exp_sents.extend(exp_sent)
+                            exp_sents.extend(seed_exp_map[lc][s])
                         # end if
                     # end for
-                    # seed_exp_sents = random.sample(seed_exp_sents,
-                    #                                min(len(seed_exp_sents), num_sample))
+                    exp_sents = random.sample(exp_sents,
+                                              min(len(exp_sents), num_sample))
                     bl_sents = random.sample(list(hatecheck_rules[lc].keys()),
                                              min(len(hatecheck_rules[lc]), num_sample))
                     pdr1 = {
@@ -407,16 +415,21 @@ def main_sample(task,
                         for s in seed_sents
                     }
                     pdr2 = {
+                        s: exp_rules[lc][s]
+                        for s in exp_sents
+                        if s in exp_rules[lc].keys()
+                    }
+                    pdr3= {
                         s: seed_rules[lc][s]
                         for s in seed_exp_sents
                         if s in seed_rules[lc].keys()
                     }
                     for e in seed_exp_sents:
-                        if e not in pdr2.keys():
-                            pdr2[e] = exp_rules[lc][e]
+                        if e not in pdr3.keys():
+                            pdr3[e] = exp_rules[lc][e]
                         # end if
                     # end for
-                    pdr3 = {
+                    pdr4 = {
                         s: hatecheck_rules[lc][s]
                         for s in bl_sents
                     }
@@ -426,16 +439,23 @@ def main_sample(task,
                                                       our_cfg_rules=pdr2)
                     pdr_obj3 = ProductionruleCoverage(lc=lc,
                                                       our_cfg_rules=pdr3)
+                    pdr_obj4 = ProductionruleCoverage(lc=lc,
+                                                      our_cfg_rules=pdr4)
                     cov_score_seed, _ = pdr_obj1.get_score()
-                    cov_score_seed_exp, _ = pdr_obj2.get_score()
-                    cov_score_bl, _ = pdr_obj3.get_score()
+                    cov_score_exp, _ = pdr_obj2.get_score()
+                    cov_score_seed_exp, _ = pdr_obj3.get_score()
+                    cov_score_bl, _ = pdr_obj4.get_score()
                     scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_seed)
+                    scores[lc]['ours_exp'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_exp)
                     scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_seed_exp)
                     scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_bl)
                 # end for
                 scores[lc]['ours_seed'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['ours_seed'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['ours_seed'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_exp'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_exp'][f"{num_sample}sample"]['coverage_scores'])
+                scores[lc]['ours_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_exp'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
