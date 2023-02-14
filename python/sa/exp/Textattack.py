@@ -10,10 +10,13 @@ from tqdm import tqdm
 from ..model.Result import Result
 from .SelfBleu import read_our_seeds
 
+from .SelfBleu import SelfBleu
+
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 
+random.seed(Macros.RAND_SEED[1])
 
 class Textattack:
     # textattack/bert-base-uncased-SST-2
@@ -61,6 +64,32 @@ class Textattack:
             l_i += 1
         # end while
         return result
+
+    @classmethod
+    def get_s2lct_exp_sents(cls,
+                            adv_example_dict: dict,
+                            task: str,
+                            search_dataset_name: str,
+                            selection_method: str):
+        seed_exp_map = dict()
+        seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
+        seed_files = [
+            f for f in os.listdir(str(seed_dir))
+            if f.startswith('cfg_expanded_inputs_') and f.endswith('.json')
+        ]
+        adv_seed_used = list(adv_example_dict.keys())
+        for seed_file in seed_files:
+            seed_dict = Utils.read_json(seed_dir / seed_file)
+            lc = seed_dict['requirement']['description']
+            for s in seed_dict['inputs'].keys():
+                if s in adv_seed_used:
+                    exp_sents_per_seed = [e[5] for e in seed_dict['inputs'][s]['exp_inputs']]
+                    exp_sent = random.sample(exp_sents_per_seed, 1) if any(exp_sents_per_seed) else None
+                    seed_exp_map[s] = [exp_sent]
+                # end if
+            # end for
+        # end for
+        return seed_exp_map
 
     @classmethod
     def get_s2lct_exp_fails(cls,
@@ -114,30 +143,43 @@ def main(task: str,
     print(f"MODEL_UNDER_TEST: {Textattack.MODEL_UNDER_TEST}")
     # recipe_name: [alzantot, bert-attack, pso]
     recipe_name = ['alzantot', 'bert-attack', 'pso']
-    for r in recipe_name:
-        
+    s2lct_seed_exp_map = None
+    s2lct_adv_result = None
+    num_adv_s2lct = -1
+    for r_i, r in enumerate(recipe_name):
         adv_example_dict = Textattack.parse_results(r)
         num_adv_ta = sum([
             len(adv_example_dict[s])
             for s in adv_example_dict.keys()
             if adv_example_dict[s] is not None
         ])
-        s2lct_result = Textattack.get_s2lct_exp_fails(
-            adv_example_dict,
-            task,
-            search_dataset_name,
-            selection_method
-        )
-        num_adv_s2lct = sum([len(s2lct_result[s]) for s in s2lct_result.keys() if s2lct_result[s] is not None])
-        print(f"RECIPE {r}: {num_adv_ta}, {num_adv_s2lct}")
-    # end
-    for s in s2lct_result.keys():
-        if s2lct_result[s] is not None:
-            print(s)
-            for e in s2lct_result[s]:
-                print('===== ', e)
-                print()
-            # end for
+        if r_i==0:
+            s2lct_seed_exp_map = Textattack.get_s2lct_exp_sents(
+                adv_example_dict,
+                task,
+                search_dataset_name,
+                selection_method
+            )
+            # s2lct_adv_result = Textattack.get_s2lct_exp_fails(
+            #     adv_example_dict,
+            #     task,
+            #     search_dataset_name,
+            #     selection_method
+            # )
+            # num_adv_s2lct = sum([len(s2lct_adv_result[s]) for s in s2lct_adv_result.keys() if s2lct_adv_result[s] is not None])
+            
         # end if
+        # print(f"RECIPE {r}: {num_adv_ta}, {num_adv_s2lct}")
     # end for
+    
+    # for s in s2lct_result.keys():
+    #     if s2lct_result[s] is not None:
+    #         print(s)
+    #         for e in s2lct_result[s]:
+    #             print('===== ', e)
+    #             print()
+    #         # end for
+    #     # end if
+    # # end for
+    
     return

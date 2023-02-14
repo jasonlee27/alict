@@ -392,7 +392,8 @@ def main_sample(task,
                             exp_sent = random.sample(seed_exp_map[lc][s], 1)
                             # exp_sent = seed_exp_map[lc][s]
                             seed_exp_sents.extend(exp_sent)
-                            exp_sents.extend(seed_exp_map[lc][s])
+                            # exp_sents.extend(seed_exp_map[lc][s])
+                            exp_sents.extend(exp_sent)
                         # end if
                     # end for
                     exp_sents = random.sample(exp_sents,
@@ -544,7 +545,7 @@ def main_mtnlp(task,
                search_dataset_name,
                selection_method):
     st = time.time()
-    num_trials = 10
+    num_trials = 5
     logger_file = Macros.log_dir / f"mtnlp_{task}_{search_dataset_name}_{selection_method}_pdrcov.log"
     seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
     mtnlp_dir = Macros.download_dir / 'MT-NLP'
@@ -624,11 +625,13 @@ def main_mtnlp(task,
     scores = {
         'sample_file': sample_files,
         'ours_exp': {
-            'num_data': list(),
+            'num_data': len(exp_sents),
+            'sample_size': list(),
             'scores': list()
         },
         'mtnlp': {
-            'num_data': list(),
+            'num_data': len(mt_sents),
+            'sample_size': list(),
             'scores': list()
         }
     }
@@ -671,9 +674,9 @@ def main_mtnlp(task,
                                           our_cfg_rules=pdr2)
         cov_score_exp, _ = pdr_obj1.get_score()
         cov_score_mt, _ = pdr_obj2.get_score()
-        scores['ours_exp']['num_data'].append(len(sample_exp_sents))
+        scores['ours_exp']['sample_size'].append(len(sample_exp_sents))
         scores['ours_exp']['scores'].append(cov_score_exp)
-        scores['mtnlp']['num_data'].append(len(sample_mt_sents))
+        scores['mtnlp']['sample_size'].append(len(sample_mt_sents))
         scores['mtnlp']['scores'].append(cov_score_mt)
     # end for
     Utils.write_json(scores, result_file, pretty_format=True)
@@ -740,10 +743,11 @@ def main_checklist(task,
                 s: seed_rules[lc][s]
                 for s in seed_sents
             }
-            pdr2 = {
-                s: seed_rules[lc][s]
-                for s in seed_sents
-            }
+            pdr2 = dict()
+            # pdr2 = {
+            #     s: seed_rules[lc][s]
+            #     for s in seed_sents
+            # }
             for e in exp_sents:
                 if e not in pdr2.keys():
                     pdr2[e] = exp_rules[lc][e]

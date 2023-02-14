@@ -289,7 +289,8 @@ def main_sample(task,
                             exp_sent = random.sample(seed_exp_map[lc][s], 1)
                             # exp_sent = seed_exp_map[lc][s]
                             seed_exp_sents.extend(exp_sent)
-                            exp_sents.extend(seed_exp_map[lc][s])
+                            # exp_sents.extend(seed_exp_map[lc][s])
+                            exp_sents.extend(exp_sent)
                         # end if
                     # end for
                     exp_sents = random.sample(exp_sents,
@@ -340,7 +341,7 @@ def main_mtnlp(task,
                search_dataset_name,
                selection_method):
     st = time.time()
-    num_trials = 10
+    num_trials = 5
     logger_file = Macros.log_dir / f"mtnlp_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
     seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
     mtnlp_dir = Macros.download_dir / 'MT-NLP'
@@ -359,7 +360,7 @@ def main_mtnlp(task,
     for mtnlp_file in mtnlp_files:
         mt_res = Utils.read_json(mtnlp_res_dir / mtnlp_file)
         sample_file = mtnlp_dir / mt_res['sample_file']
-        sample_files.append(sample_file)
+        sample_files.append(mt_res['sample_file'])
         file_ind = re.search('raw_file(\d)\.txt', mt_res['sample_file']).group(1)
         _seed_sents = list(mt_res['mutations'].keys())
         seed_sents.extend(_seed_sents)
@@ -407,13 +408,15 @@ def main_mtnlp(task,
     # end for
     logger.print(f"OURS_SELFBLEU_SAMPLE::mtnlp::")
     scores = {
-        'sample_file': mt_res['sample_file'],
+        'sample_file': sample_files,
         'ours_exp': {
-            'num_data': list(),
+            'num_data': len(exp_sents),
+            'sample_size': list(),
             'scores': list()
         },
         'mtnlp': {
-            'num_data': list(),
+            'num_data': len(mt_sents),
+            'sample_size': list(),
             'scores': list()
         }
     }
@@ -431,9 +434,9 @@ def main_mtnlp(task,
                             num_data=len(sample_mt_sents),
                             logger=logger)
         score_mt = sbleu_mt.get_score_wo_sample()
-        scores['ours_exp']['num_data'].append(len(sample_exp_sents))
+        scores['ours_exp']['sample_size'].append(len(sample_exp_sents))
         scores['ours_exp']['scores'].append(score_exp)
-        scores['mtnlp']['num_data'].append(len(sample_mt_sents))
+        scores['mtnlp']['sample_size'].append(len(sample_mt_sents))
         scores['mtnlp']['scores'].append(score_mt)
     # end for
     Utils.write_json(scores, result_file, pretty_format=True)
@@ -495,13 +498,15 @@ def main_checklist(task,
                 # end for
                 # seed_exp_sents = random.sample(list(texts_lcs[lc].keys())+texts_exp,
                 #                                min(len(list(texts_lcs[lc].keys())+texts_exp), num_sample))
-                seed_exp_sents =seed_sents.copy()+texts_exp
+                # seed_exp_sents =seed_sents.copy()+texts_exp
+                exp_sents = text_exp
+                
                 sbleu_seed = SelfBleu(texts=seed_sents,
                                       num_data=len(seed_sents),
                                       logger=logger)
                 score_seed = sbleu_seed.get_score_wo_sample()
-                sbleu_seed_exp = SelfBleu(texts=seed_exp_sents,
-                                          num_data=len(seed_exp_sents),
+                sbleu_seed_exp = SelfBleu(texts=exp_sents,
+                                          num_data=len(exp_sents),
                                           logger=logger)
                 score_seed_exp = sbleu_seed_exp.get_score_wo_sample()
                 scores[lc]['checklist'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed)
