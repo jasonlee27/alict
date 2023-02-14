@@ -251,7 +251,10 @@ def main(task: str,
             
         # end if
         
+        selfbleu_scores = get_selfbleu_scores(adv_example_dict, s2lct_seed_exp_map)
         pdr_cov_scores = get_pdr_scores(adv_example_dict, s2lct_exp_rules)
+        print(selfbleu_scores)
+        print(pdr_cov_scores)
         
         # print(f"RECIPE {r}: {num_adv_ta}, {num_adv_s2lct}")
     # end for
