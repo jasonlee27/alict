@@ -203,6 +203,7 @@ class ProductionruleCoverage:
             if not any(exp_rules) and os.path.exists(seed_file):
                 seed_exp_map[lc_desc] = dict()
                 cfg_res = Utils.read_json(cfg_file)
+                print(f"OUR_EXP_FOR_PDR::{lc_desc}")
                 if logger is not None:
                     logger.print(f"OUR_EXP_FOR_PDR::{lc_desc}")
                 # end if
@@ -214,7 +215,6 @@ class ProductionruleCoverage:
                     for exp in cfg_res['inputs'][seed]['exp_inputs']:
                         pdr_exp = pdr_seed.copy()
                         cfg_from, cfg_to, exp_sent = exp[1], exp[2], exp[5]
-                        seed_exp_map[lc_desc][seed].append(exp_sent)
                         if exp_sent not in exp_rules.keys():
                             cfg_from = cfg_from.replace(f" -> ", '->')
                             lhs, rhs = cfg_from.split('->')
@@ -225,6 +225,7 @@ class ProductionruleCoverage:
                             pdr_exp.remove(cfg_from)
                             pdr_exp.append(cfg_to)
                             exp_rules[exp_sent] = pdr_exp
+                            seed_exp_map[lc_desc][seed].append(exp_sent)
                         # end if
                     # end for
                 # end for
@@ -367,24 +368,21 @@ def main_sample(task,
             scores[lc] = {
                 'ours_seed': {
                     f"{num_sample}sample": {
+                        'num_data': list(),
                         'coverage_scores': list()
                     }
                     for num_sample in num_samples
                 },
                 'ours_exp': {
                     f"{num_sample}sample": {
-                        'coverage_scores': list()
-                    }
-                    for num_sample in num_samples
-                },
-                'ours_seed_exp': {
-                    f"{num_sample}sample": {
+                        'num_data': list(),
                         'coverage_scores': list()
                     }
                     for num_sample in num_samples
                 },
                 'bl': {
                     f"{num_sample}sample": {
+                        'num_data': list(),
                         'coverage_scores': list()
                     }
                     for num_sample in num_samples
@@ -395,15 +393,11 @@ def main_sample(task,
                     random.seed(num_trial)
                     seed_sents = random.sample(list(seed_rules[lc].keys()),
                                                min(len(seed_rules[lc]), num_sample))
-                    # all_seed_exp_sents = list(seed_rules[lc].keys())+list(exp_rules[lc].keys())
-                    seed_exp_sents = seed_sents.copy()
                     exp_sents = list()
                     for s in seed_sents:
                         if any(seed_exp_map[lc].get(s, list())):
                             exp_sent = random.sample(seed_exp_map[lc][s], 1)
-                            # exp_sent = seed_exp_map[lc][s]
-                            seed_exp_sents.extend(exp_sent)
-                            exp_sents.extend(seed_exp_map[lc][s])
+                            exp_sents.extend(exp_sent)
                         # end if
                     # end for
                     exp_sents = random.sample(exp_sents,
@@ -419,17 +413,7 @@ def main_sample(task,
                         for s in exp_sents
                         if s in exp_rules[lc].keys()
                     }
-                    pdr3= {
-                        s: seed_rules[lc][s]
-                        for s in seed_exp_sents
-                        if s in seed_rules[lc].keys()
-                    }
-                    for e in seed_exp_sents:
-                        if e not in pdr3.keys():
-                            pdr3[e] = exp_rules[lc][e]
-                        # end if
-                    # end for
-                    pdr4 = {
+                    pdr3 = {
                         s: hatecheck_rules[lc][s]
                         for s in bl_sents
                     }
@@ -439,15 +423,14 @@ def main_sample(task,
                                                       our_cfg_rules=pdr2)
                     pdr_obj3 = ProductionruleCoverage(lc=lc,
                                                       our_cfg_rules=pdr3)
-                    pdr_obj4 = ProductionruleCoverage(lc=lc,
-                                                      our_cfg_rules=pdr4)
                     cov_score_seed, _ = pdr_obj1.get_score()
                     cov_score_exp, _ = pdr_obj2.get_score()
-                    cov_score_seed_exp, _ = pdr_obj3.get_score()
-                    cov_score_bl, _ = pdr_obj4.get_score()
+                    cov_score_bl, _ = pdr_obj3.get_score()
+                    scores[lc]['ours_seed'][f"{num_sample}sample"]['num_data'].append(len(seed_sents))
+                    scores[lc]['ours_exp'][f"{num_sample}sample"]['num_data'].append(len(exp_sents))
+                    scores[lc]['bl'][f"{num_sample}sample"]['num_data'].append(len(bl_sents))
                     scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_seed)
                     scores[lc]['ours_exp'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_exp)
-                    scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_seed_exp)
                     scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'].append(cov_score_bl)
                 # end for
                 scores[lc]['ours_seed'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed'][f"{num_sample}sample"]['coverage_scores'])
@@ -456,9 +439,6 @@ def main_sample(task,
                 scores[lc]['ours_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_exp'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['ours_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_exp'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['ours_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_exp'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
-                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['bl'][f"{num_sample}sample"]['coverage_scores'])
@@ -554,6 +534,7 @@ def main_hatecheck(task,
                    selection_method):
     # measure and compare pdr coverage between hatecheck and its expansions
     st = time.time()
+    num_samples = 200
     logger_file = Macros.log_dir / f"seeds_exps_all_{task}_hatecheck_{selection_method}_pdrcov.log"
     result_file = Macros.pdr_cov_result_dir / f"seed_exp_bl_all_{task}_hatecheck_{selection_method}_pdrcov.json"
     Macros.pdr_cov_result_dir.mkdir(parents=True, exist_ok=True)
@@ -566,7 +547,7 @@ def main_hatecheck(task,
         parse_all_sents=False,
         logger=logger
     )
-    exp_rules, _ = ProductionruleCoverage.get_our_exp_cfg_rules(
+    exp_rules, seed_exp_map = ProductionruleCoverage.get_our_exp_cfg_rules(
         task,
         'hatecheck',
         selection_method,
@@ -577,40 +558,51 @@ def main_hatecheck(task,
     for lc in tqdm(seed_rules.keys()):
         if lc not in scores.keys():
             logger.print(f"OURS_PDR_SEED_EXP_ALL::{lc}", end='::')
-            our_sents, bl_sents = list(), list()
             scores[lc] = {
                 'hatecheck': {
+                    'num_data': None,
                     'coverage_scores': None
                 },
                 'hatecheck_exp': {
+                    'num_data': None,
                     'coverage_scores': None
                 }
             }
-            seed_sents = list(seed_rules[lc].keys())
-            exp_sents = list(exp_rules[lc].keys())
+            seed_sents = random.sample(list(seed_rules[lc].keys()),
+                                       min(len(seed_rules[lc].keys()), num_samples))
+            exp_sents = list()
+            for s in seed_sents:
+                if any(seed_exp_map[lc].get(s, list())):
+                    exp_sent = random.sample(seed_exp_map[lc][s], 1)
+                    exp_sents.extend(exp_sent)
+                # end if
+            # end for
             pdr1 = {
                 s: seed_rules[lc][s]
                 for s in seed_sents
             }
-            pdr2 = {
-                s: seed_rules[lc][s]
-                for s in seed_sents
-            }
+            pdr2 = dict()
+            # pdr2 = {
+            #     s: seed_rules[lc][s]
+            #     for s in seed_sents
+            # }
             for e in exp_sents:
                 if e not in pdr2.keys():
                     pdr2[e] = exp_rules[lc][e]
                 # end if
             # end for
-            pdr3 = {
-                e: hatecheck_rules[lc][e]
-                for e in bl_sents
-            }
             pdr1_obj = ProductionruleCoverage(lc=lc,
                                               our_cfg_rules=pdr1)
             cov_score_ours_seed, _ = pdr1_obj.get_score()
-            pdr2_obj = ProductionruleCoverage(lc=lc,
-                                              our_cfg_rules=pdr2)
-            cov_score_ours_seed_exp, _ = pdr2_obj.get_score()
+            if any(pdr2):
+                pdr2_obj = ProductionruleCoverage(lc=lc,
+                                                  our_cfg_rules=pdr2)
+                cov_score_ours_seed_exp, _ = pdr2_obj.get_score()
+            else:
+                cov_score_ours_seed_exp = 0.
+            # end if
+            scores[lc]['hatecheck']['num_data'] = len(seed_sents)
+            scores[lc]['hatecheck_exp']['num_data'] = len(exp_sents)
             scores[lc]['hatecheck']['coverage_scores'] = cov_score_ours_seed
             scores[lc]['hatecheck_exp']['coverage_scores'] = cov_score_ours_seed_exp
         # end if
@@ -623,7 +615,7 @@ def main_mtnlp(task,
                search_dataset_name,
                selection_method):
     st = time.time()
-    num_trials = 10
+    num_trials = 5
     logger_file = Macros.log_dir / f"mtnlp_{task}_{search_dataset_name}_{selection_method}_pdrcov.log"
     seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
     mtnlp_dir = Macros.download_dir / 'MT-NLP'
@@ -704,11 +696,13 @@ def main_mtnlp(task,
     scores = {
         'sample_file': sample_files,
         'ours_exp': {
-            'num_data': list(),
+            'num_data': len(exp_sents),
+            'sample_size': list(),
             'scores': list()
         },
         'mtnlp': {
-            'num_data': list(),
+            'num_data': len(mt_sents),
+            'sample_size': list(),
             'scores': list()
         }
     }
@@ -751,9 +745,9 @@ def main_mtnlp(task,
                                           our_cfg_rules=pdr2)
         cov_score_exp, _ = pdr_obj1.get_score()
         cov_score_mt, _ = pdr_obj2.get_score()
-        scores['ours_exp']['num_data'].append(len(sample_exp_sents))
+        scores['ours_exp']['sample_size'].append(len(sample_exp_sents))
         scores['ours_exp']['scores'].append(cov_score_exp)
-        scores['mtnlp']['num_data'].append(len(sample_mt_sents))
+        scores['mtnlp']['sample_size'].append(len(sample_mt_sents))
         scores['mtnlp']['scores'].append(cov_score_mt)
     # end for
     Utils.write_json(scores, result_file, pretty_format=True)

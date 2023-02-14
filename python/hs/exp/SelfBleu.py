@@ -250,29 +250,24 @@ def main_sample(task,
         if lc not in scores.keys():
             logger.print(lc)
             our_sents, bl_sents = list(), list()
-            # max_num_samples = 1000
-            # num_samples = list(range(100, max_num_samples+100, 100))
             scores[lc] = {
                 'ours_seed': {
                     f"{num_sample}sample": {
+                        'num_data': list(),
                         'selfbleu_scores': list()
                     }
                     for num_sample in num_samples
                 },
                 'ours_exp': {
                     f"{num_sample}sample": {
-                        'selfbleu_scores': list()
-                    }
-                    for num_sample in num_samples
-                },
-                'ours_seed_exp': {
-                    f"{num_sample}sample": {
+                        'num_data': list(),
                         'selfbleu_scores': list()
                     }
                     for num_sample in num_samples
                 },
                 'bl': {
                     f"{num_sample}sample": {
+                        'num_data': list(),
                         'selfbleu_scores': list()
                     }
                     for num_sample in num_samples
@@ -288,14 +283,11 @@ def main_sample(task,
                     #     len(texts_hatecheck[lc])
                     # ])
                     seed_sents = random.sample(texts_seed[lc], min(len(texts_seed[lc]), num_sample))
-                    seed_exp_sents = seed_sents.copy()
                     exp_sents = list()
                     for s in seed_sents:
                         if any(seed_exp_map[lc].get(s, list())):
                             exp_sent = random.sample(seed_exp_map[lc][s], 1)
-                            # exp_sent = seed_exp_map[lc][s]
-                            seed_exp_sents.extend(exp_sent)
-                            exp_sents.extend(seed_exp_map[lc][s])
+                            exp_sents.extend(exp_sent)
                         # end if
                     # end for
                     bl_sents = random.sample(texts_hatecheck[lc],
@@ -310,17 +302,15 @@ def main_sample(task,
                                          num_data=len(exp_sents),
                                          logger=logger)
                     score_exp = sbleu_exp.get_score_wo_sample()
-                    sbleu_seed_exp = SelfBleu(texts=seed_exp_sents,
-                                              num_data=len(seed_exp_sents),
-                                              logger=logger)
-                    score_seed_exp = sbleu_seed_exp.get_score_wo_sample()
                     sbleu_bl = SelfBleu(texts=bl_sents,
                                         num_data=len(bl_sents),
                                         logger=logger)
                     score_bl = sbleu_bl.get_score_wo_sample()
+                    scores[lc]['ours_seed'][f"{num_sample}sample"]['num_data'].append(len(seed_sents))
+                    scores[lc]['ours_exp'][f"{num_sample}sample"]['num_data'].append(len(exp_sents))
+                    scores[lc]['bl'][f"{num_sample}sample"]['num_data'].append(len(bl_sents))
                     scores[lc]['ours_seed'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed)
                     scores[lc]['ours_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_exp)
-                    scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed_exp)
                     scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'].append(score_bl)
                 # end for
                 logger.print(f"{scores[lc]}")
@@ -330,9 +320,6 @@ def main_sample(task,
                 scores[lc]['ours_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_exp'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['ours_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_exp'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['ours_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_exp'][f"{num_sample}sample"]['selfbleu_scores'])
-                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'])
-                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'])
-                scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['ours_seed_exp'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['avg_score'] = Utils.avg(scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['med_score'] = Utils.median(scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'])
                 scores[lc]['bl'][f"{num_sample}sample"]['std_score'] = Utils.stdev(scores[lc]['bl'][f"{num_sample}sample"]['selfbleu_scores'])
@@ -347,7 +334,7 @@ def main_mtnlp(task,
                search_dataset_name,
                selection_method):
     st = time.time()
-    num_trials = 10
+    num_trials = 5
     logger_file = Macros.log_dir / f"mtnlp_{task}_{search_dataset_name}_{selection_method}_selfbleu.log"
     seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
     mtnlp_dir = Macros.download_dir / 'MT-NLP'
@@ -418,11 +405,13 @@ def main_mtnlp(task,
     scores = {
         'sample_file': sample_files,
         'ours_exp': {
-            'num_data': list(),
+            'num_data': len(exp_sents),
+            'sample_size': list(),
             'scores': list()
         },
         'mtnlp': {
-            'num_data': list(),
+            'num_data': len(mt_sents),
+            'sample_size': list(),
             'scores': list()
         }
     }
@@ -440,9 +429,9 @@ def main_mtnlp(task,
                             num_data=len(sample_mt_sents),
                             logger=logger)
         score_mt = sbleu_mt.get_score_wo_sample()
-        scores['ours_exp']['num_data'].append(len(sample_exp_sents))
+        scores['ours_exp']['sample_size'].append(len(sample_exp_sents))
         scores['ours_exp']['scores'].append(score_exp)
-        scores['mtnlp']['num_data'].append(len(sample_mt_sents))
+        scores['mtnlp']['sample_size'].append(len(sample_mt_sents))
         scores['mtnlp']['scores'].append(score_mt)
     # end for
     Utils.write_json(scores, result_file, pretty_format=True)
@@ -491,24 +480,29 @@ def main_hatecheck(task,
                 for num_trial in range(num_trials):
                     random.seed(num_trial)
                     seed_sents = random.sample(texts_seed[lc], min(len(texts_seed[lc]), num_sample))
-                    texts_exp = list()
+                    exp_sents = list()
                     for s in texts_seed[lc]:
-                        if any(seed_exp_map[lc][s]):
-                            texts_exp.extend(seed_exp_map[lc][s])
+                        if any(seed_exp_map[lc].get(s, list())):
+                            exp_sent = random.sample(texts_seed[lc], 1)
+                            exp_sents.extend(exp_sent)
                         # end if
                     # end for
                     # seed_exp_sents = random.sample(texts_seed[lc]+texts_exp,
                     #                                min(len(texts_seed[lc]+texts_exp), num_sample))
-                    seed_exp_sents = seed_sents+texts_exp
+                    seed_exp_sents = seed_sents+exp_sents
                     sbleu_seed = SelfBleu(texts=seed_sents,
                                           num_data=len(seed_sents),
                                           logger=logger)
                     score_seed = sbleu_seed.get_score_wo_sample()
                     scores[lc]['hatecheck'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed)
-                    sbleu_seed_exp = SelfBleu(texts=seed_exp_sents,
-                                              num_data=len(seed_exp_sents),
-                                              logger=logger)
-                    score_seed_exp = sbleu_seed_exp.get_score_wo_sample()
+                    if any(exp_sents):
+                        sbleu_seed_exp = SelfBleu(texts=exp_sents,
+                                                  num_data=len(exp_sents),
+                                                  logger=logger)
+                        score_seed_exp = sbleu_seed_exp.get_score_wo_sample()
+                    else:
+                        score_seed_exp = 0.
+                    # end if
                     scores[lc]['hatecheck_exp'][f"{num_sample}sample"]['selfbleu_scores'].append(score_seed_exp)
                 # end for
                 logger.print(f"{scores[lc]}")
