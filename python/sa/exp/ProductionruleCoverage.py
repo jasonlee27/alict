@@ -68,7 +68,7 @@ def get_pdr_per_sent(cfg_seed):
 class ProductionruleCoverage:
     
     def __init__(self,
-                 lc: str,
+                 lc: str=None,
                  our_cfg_rules: dict=None,
                  bl_cfg_rules: dict=None):
         # the json file used for retraining sa models

@@ -11,12 +11,75 @@ from ..model.Result import Result
 from .SelfBleu import read_our_seeds
 
 from .SelfBleu import SelfBleu
+from .ProductionruleCoverage import ProductionruleCoverage
 
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 
 random.seed(Macros.RAND_SEED[1])
+NUM_PROCESSES = 1
+
+def get_selfbleu_scores(adv_example_dict, s2lct_seed_exp_map):
+    adv_examples = list()
+    s2lct_exps = list()
+    for s in adv_examples_dict.keys():
+        adv_examples.extend(adv_examples_dict[s])
+        s2lct_exps.extend(s2lct_seed_exp_map[s])
+    # end for
+    selfbleu_adv = SelfBleu(texts=adv_examples,
+                            num_data=len(adv_examples),
+                            logger=logger)
+    score_adv = sbleu_seed.get_score_wo_sample()
+    sbleu_exp = SelfBleu(texts=s2lct_exps,
+                         num_data=len(s2lct_exps),
+                         logger=logger)
+    score_exp = sbleu_exp.get_score_wo_sample()
+    return score_adv, score_exp
+
+def get_cfg_rules_per_sent(sent):
+    st = time.time()
+    tree_dict = BeneparCFG.get_seed_cfg(sent)
+    cfg_rules = tree_dict['rule']
+    rules = list()
+    for lhs in cfg_rules.keys():
+        rhss = cfg_rules[lhs]
+        for rhs in rhss:
+            rhs_pos = rhs['pos']
+            if rhs_pos!=rhs['word'][0]:
+                rules.append(f"{lhs}->{rhs_pos}")
+            # end if
+        # end for
+    # end for
+    ft = time.time()
+    # print(f"{sent}::{round(ft-st,2)}sec")
+    return {
+        'sent': sent,
+        'cfg_rules': list(set(rules))
+    }
+
+def get_pdr_scores(adv_example_dict, exp_rules):
+    adv_examples = list()
+    adv_rules = list()
+    for s in adv_examples_dict.keys():
+        adv_examples.extend(adv_examples_dict[s])
+    # end for
+
+    args = [(s,) for s in adv_examples]
+    pool = Pool(processes=NUM_PROCESSES)
+    results = pool.starmap_async(get_cfg_rules_per_sent,
+                                 args,
+                                 chunksize=len(args) // NUM_PROCESSES).get()
+    for r in results:
+        adv_rules[r['sent']] = r['cfg_rules']
+    # end for
+
+    pdr_adv_obj = ProductionruleCoverage(our_cfg_rules=adv_rules)
+    score_adv, _ = pdr_adv_obj.get_score()
+    pdr_exp_obj = ProductionruleCoverage(our_cfg_rules=exp_rules)
+    score_exp, _ = pdr_exp_obj.get_score()
+    return score_adv, score_exp
+
 
 class Textattack:
     # textattack/bert-base-uncased-SST-2
@@ -72,6 +135,7 @@ class Textattack:
                             search_dataset_name: str,
                             selection_method: str):
         seed_exp_map = dict()
+        exp_rules = dict()
         seed_dir = Macros.result_dir / f"templates_{task}_{search_dataset_name}_{selection_method}"
         seed_files = [
             f for f in os.listdir(str(seed_dir))
@@ -83,13 +147,28 @@ class Textattack:
             lc = seed_dict['requirement']['description']
             for s in seed_dict['inputs'].keys():
                 if s in adv_seed_used:
-                    exp_sents_per_seed = [e[5] for e in seed_dict['inputs'][s]['exp_inputs']]
-                    exp_sent = random.sample(exp_sents_per_seed, 1) if any(exp_sents_per_seed) else None
-                    seed_exp_map[s] = [exp_sent]
+                    cfg_seed = cfg_res['inputs'][s]['cfg_seed']
+                    pdr_seed = get_pdr_per_sent(cfg_seed)
+                    # exp_sents_per_seed = [e[5] for e in seed_dict['inputs'][s]['exp_inputs']]
+                    if any(seed_dict['inputs'][s]['exp_inputs']):
+                        pdr_exp = pdr_seed.copy()
+                        exp_obj = random.sample(seed_dict['inputs'][s]['exp_inputs'], 1)
+                        cfg_from, cfg_to, exp_sent = exp_obj[1], exp_obj[2], exp_obj[5]
+                        cfg_from = cfg_from.replace(f" -> ", '->')
+                        lhs, rhs = cfg_from.split('->')
+                        if len(eval(rhs))==1:
+                            cfg_from = f"{lhs}->{eval(rhs)[0]}"
+                        # end if
+                        cfg_to = cfg_to.replace(f" -> ", '->')
+                        pdr_exp.remove(cfg_from)
+                        pdr_exp.append(cfg_to)
+                        exp_rules[exp_sent] = pdr_exp
+                        seed_exp_map[s] = exp_sent
+                    # end if
                 # end if
             # end for
         # end for
-        return seed_exp_map
+        return seed_exp_map, exp_rules
 
     @classmethod
     def get_s2lct_exp_fails(cls,
@@ -136,6 +215,8 @@ class Textattack:
         # end for
         return result
 
+    
+
 
 def main(task: str,
          search_dataset_name: str,
@@ -154,7 +235,7 @@ def main(task: str,
             if adv_example_dict[s] is not None
         ])
         if r_i==0:
-            s2lct_seed_exp_map = Textattack.get_s2lct_exp_sents(
+            s2lct_seed_exp_map, s2lct_exp_rules = Textattack.get_s2lct_exp_sents(
                 adv_example_dict,
                 task,
                 search_dataset_name,
@@ -169,6 +250,9 @@ def main(task: str,
             # num_adv_s2lct = sum([len(s2lct_adv_result[s]) for s in s2lct_adv_result.keys() if s2lct_adv_result[s] is not None])
             
         # end if
+        
+        pdr_cov_scores = get_pdr_scores(adv_example_dict, s2lct_exp_rules)
+        
         # print(f"RECIPE {r}: {num_adv_ta}, {num_adv_s2lct}")
     # end for
     
