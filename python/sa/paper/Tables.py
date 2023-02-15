@@ -1052,11 +1052,12 @@ class Tables:
             mtnlp_res_dir = result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
             pdr_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
             sb_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
-        
+            
             # Self-Bleu scores
             sb_res = Utils.read_json(sb_res_file)
+            pdr_res = Utils.read_json(pdr_res_file)
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-num-mutate",
-                                                 cls.FMT_INT.format(sb_res['ours_exp']['num_data'][0])))
+                                                 cls.FMT_INT.format(sb_res['ours_exp']['num_data'])))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-avg",
                                                  Utils.avg(sb_res['ours_exp']['scores'], decimal=2)))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-med",
@@ -1064,18 +1065,16 @@ class Tables:
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-selfbleu-std",
                                                  Utils.stdev(sb_res['ours_exp']['scores'], decimal=2)))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-selfbleu-num-mutate",
-                                                 cls.FMT_INT.format(sb_res['mtnlp']['num_data'][0])))
+                                                 cls.FMT_INT.format(sb_res['mtnlp']['num_data'])))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-selfbleu-avg",
                                                  Utils.avg(sb_res['mtnlp']['scores'], decimal=2)))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-selfbleu-med",
                                                  Utils.median(sb_res['mtnlp']['scores'], decimal=2)))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-selfbleu-std",
                                                  Utils.stdev(sb_res['mtnlp']['scores'], decimal=2)))
-
             # PDR cov scores
-            pdr_res = Utils.read_json(pdr_res_file)
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-pdr-num-mutate",
-                                                 cls.FMT_INT.format(pdr_res['ours_exp']['num_data'][0])))
+                                                 cls.FMT_INT.format(pdr_res['ours_exp']['num_data'])))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-pdr-avg",
                                                  Utils.avg(pdr_res['ours_exp']['scores'], decimal=2)))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-pdr-med",
@@ -1083,7 +1082,7 @@ class Tables:
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-ours-pdr-std",
                                                  Utils.stdev(pdr_res['ours_exp']['scores'], decimal=2)))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-pdr-num-mutate",
-                                                 cls.FMT_INT.format(pdr_res['mtnlp']['num_data'][0])))
+                                                 cls.FMT_INT.format(pdr_res['mtnlp']['num_data'])))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-pdr-avg",
                                                  Utils.avg(pdr_res['mtnlp']['scores'], decimal=2)))
             output_file.append_macro(latex.Macro(f"mtnlp-comp-{task}-mtnlp-pdr-med",
@@ -1112,7 +1111,7 @@ class Tables:
         output_file.append(r"\resizebox{0.47\textwidth}{!}{")
         output_file.append(r"\begin{tabular}{l|l|ccc}")
         output_file.append(r"\toprule")
-
+        
         # Content
         output_file.append(r"\tTask & \tApproach & \tNummut & \tSelfbleu & \tPdrcov \\")
         output_file.append(r"\midrule")

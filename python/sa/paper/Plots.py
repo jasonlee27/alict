@@ -58,9 +58,11 @@ class Plots:
                 cls.pdr_selfbleu_agg_plot(Macros.result_dir, figs_dir)
             elif item == 'selfbleu':
                 cls.selfbleu_checklist_bar_plot(Macros.result_dir, figs_dir)
+                cls.selfbleu_agg_bar_plot(Macros.result_dir, figs_dir)
             elif item == 'pdr':
                 # cls.pdr_bar_plot(Macros.result_dir, figs_dir)
                 cls.pdr_checklist_bar_plot(Macros.result_dir, figs_dir)
+                cls.pdr_agg_bar_plot(Macros.result_dir, figs_dir)
             elif item == 'test-results':
                 # cls.failrate_combined_over_seeds_plot(Macros.result_dir, figs_dir)
                 # cls.failrate_seed_over_seeds_plot(Macros.result_dir, figs_dir)
@@ -371,6 +373,99 @@ class Plots:
         fig.tight_layout()
         fig.savefig(figs_dir / "selfbleu-checklist-barplot.eps")
         return
+
+    
+    @classmethod
+    def selfbleu_agg_bar_plot(cls,
+                              results_dir: Path,
+                              figs_dir: Path,
+                              selection_method='random'):
+        tasks = ['sa', 'hs']
+        for task in tasks:
+            if task=='sa':
+                search_dataset = 'checklist'
+                req_file = req_dir / 'requirements_desc.txt'
+                type_name = 'CHECKLIST'
+            else:
+                search_dataset = 'hatecheck'
+                req_file = req_dir / f"requirements_desc_{task}.txt"
+            # end if
+            data_lod: List[dict] = list()
+        
+            result_file = results_dir / 'selfbleu' / f"seed_exp_bl_all_{task}_{search_dataset}_{selection_method}_selfbleu.json"
+            result = Utils.read_json(result_file)
+            req_dir = results_dir / 'reqs'
+            req_file = req_dir / 'requirements_desc.txt'
+            num_test_results = 3
+            num_sample = 200
+
+            for l_i, lc in enumerate(Utils.read_txt(req_file)):
+                lc_desc = lc.strip().split('::')[0]
+                lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+                if task=='sa':
+                    for t in range(num_test_results):
+                        data_lod.append({
+                            'lc': f"LC{l_i+1}",
+                            'type': type_name,
+                            'result_ind': t+1,
+                            'scores': result[lc_desc][search_dataset][f"{num_sample}sample"]['selfbleu_scores'][t]
+                        })
+                        data_lod.append({
+                            'lc': f"LC{l_i+1}",
+                            'type': f"{type_name}+EXP",
+                            'result_ind': t+1,
+                            'scores': result[lc_desc][f"{search_dataset}_exp"][f"{num_sample}sample"]['selfbleu_scores'][t]
+                        })
+                    # end for
+                else:
+                    data_lod.append({
+                            'lc': f"LC{l_i+1}",
+                            'type': type_name,
+                            'result_ind': t+1,
+                            'scores': result[lc_desc][search_dataset][f"{num_sample}sample"]['selfbleu_scores'][0]
+                        })
+                        data_lod.append({
+                            'lc': f"LC{l_i+1}",
+                            'type': f"{type_name}+EXP",
+                            'result_ind': t+1,
+                            'scores': result[lc_desc][f"{search_dataset}_exp"][f"{num_sample}sample"]['selfbleu_scores'][0]
+                        })
+                # end if
+            # end for
+        # end for
+        
+        df: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_lod))
+
+        # Plotting part
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+
+        # hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+        hue_order = ['CHECKLIST', 'CHECKLIST+EXP']
+        from numpy import median
+        ax = sns.barplot(data=df, x='lc', y='scores',
+                         hue='type',
+                         hue_order=hue_order,
+                         palette="Set1",
+                         estimator=median)
+        # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
+        # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
+        # ax.set_yscale('log')
+        ax.set_ylim(bottom=0, top=1.4)
+        ax.set_xlabel('Linguistic Capabilities')
+        ax.set_ylabel('Self-BLEU')
+        ax.legend(loc='upper right')
+        # plt.grid(True, which='both', ls='--')
+        
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+
+        # Put a legend to the right of the current axis
+        # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        fig.tight_layout()
+        fig.savefig(figs_dir / "selfbleu-checklist-barplot.eps")
+        return
     
     
     # @classmethod
@@ -460,7 +555,7 @@ class Plots:
                               selection_method='random'):
         # num_seeds = [0,50,100,200] # x-axis
         x_ticks = [200, 400, 600, 800, 1000]
-        pdr_x_ticks = [10000, 90000, 160000, 230000, 300000]
+        pdr_x_ticks = [10000, 50000, 100000, 150000, 200000]
         num_trials = 5
         req_dir = results_dir / 'reqs'
         req_file = req_dir / 'requirements_desc.txt'
@@ -530,7 +625,7 @@ class Plots:
                     # end if
                     pdr_cov_seed_temp[f"{ns}sample"].append(pdr_cov_result[lc_desc]['ours_seed'][f"{_ns}sample"]['coverage_scores'][t])
                     pdr_cov_exp_temp[f"{ns}sample"].append(pdr_cov_result[lc_desc]['ours_exp'][f"{_ns}sample"]['coverage_scores'][t])
-                    pdr_cov_seed_exp_temp[f"{ns}sample"].append(pdr_cov_result[lc_desc]['ours_seed_exp'][f"{_ns}sample"]['coverage_scores'][t])
+                    # pdr_cov_seed_exp_temp[f"{ns}sample"].append(pdr_cov_result[lc_desc]['ours_seed_exp'][f"{_ns}sample"]['coverage_scores'][t])
                     pdr_cov_bl_temp[f"{ns}sample"].append(pdr_cov_result[lc_desc]['bl'][f"{_ns}sample"]['coverage_scores'][t])
                     
                     data_pdr_lod.append({
@@ -539,18 +634,18 @@ class Plots:
                         'num_seed': ns,
                         'scores': pdr_cov_result[lc_desc]['ours_seed'][f"{_ns}sample"]['coverage_scores'][t]
                     })
-                    # data_pdr_lod.append({
-                    #     'lc': f"LC{l_i+1}",
-                    #     'type': 'S$^2$LCT (EXP)',
-                    #     'num_seed': ns,
-                    #     'scores': pdr_cov_result[lc_desc]['ours_exp'][f"{_ns}sample"]['coverage_scores'][t]
-                    # })
                     data_pdr_lod.append({
                         'lc': f"LC{l_i+1}",
-                        'type': 'S$^2$LCT (SEED+EXP)',
+                        'type': 'S$^2$LCT (EXP)',
                         'num_seed': ns,
-                        'scores': pdr_cov_result[lc_desc]['ours_seed_exp'][f"{_ns}sample"]['coverage_scores'][t]
+                        'scores': pdr_cov_result[lc_desc]['ours_exp'][f"{_ns}sample"]['coverage_scores'][t]
                     })
+                    # data_pdr_lod.append({
+                    #     'lc': f"LC{l_i+1}",
+                    #     'type': 'S$^2$LCT (SEED+EXP)',
+                    #     'num_seed': ns,
+                    #     'scores': pdr_cov_result[lc_desc]['ours_seed_exp'][f"{_ns}sample"]['coverage_scores'][t]
+                    # })
                     data_pdr_lod.append({
                         'lc': f"LC{l_i+1}",
                         'type': 'CHECKLIST',
@@ -559,7 +654,7 @@ class Plots:
                     })
                     pdr_y_limit = max(
                         pdr_y_limit,
-                        pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t],
+                        # pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t],
                         pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t],
                         pdr_cov_result[lc_desc]['ours_exp'][f"{ns}sample"]['coverage_scores'][t],
                         pdr_cov_result[lc_desc]['bl'][f"{ns}sample"]['coverage_scores'][t]
@@ -569,7 +664,7 @@ class Plots:
                 for ns in x_ticks:
                     selfbleu_seed_temp[f"{ns}sample"].append(selfbleu_result[lc_desc]['ours_seed'][f"{ns}sample"]['selfbleu_scores'][t])
                     selfbleu_exp_temp[f"{ns}sample"].append(selfbleu_result[lc_desc]['ours_exp'][f"{ns}sample"]['selfbleu_scores'][t])
-                    selfbleu_seed_exp_temp[f"{ns}sample"].append(selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t])
+                    # selfbleu_seed_exp_temp[f"{ns}sample"].append(selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t])
                     selfbleu_bl_temp[f"{ns}sample"].append(selfbleu_result[lc_desc]['bl'][f"{ns}sample"]['selfbleu_scores'][t])
                     
                     data_sb_lod.append({
@@ -578,18 +673,18 @@ class Plots:
                         'num_seed': ns,
                         'scores': float(selfbleu_result[lc_desc]['ours_seed'][f"{ns}sample"]['selfbleu_scores'][t])
                     })
-                    # data_sb_lod.append({
-                    #     'lc': f"LC{l_i+1}",
-                    #     'type': 'S$^2$LCT (EXP)',
-                    #     'num_seed': ns,
-                    #     'scores': float(selfbleu_result[lc_desc]['ours_exp'][f"{ns}sample"]['selfbleu_scores'][t])
-                    # })
                     data_sb_lod.append({
                         'lc': f"LC{l_i+1}",
-                        'type': 'S$^2$LCT (SEED+EXP)',
+                        'type': 'S$^2$LCT (EXP)',
                         'num_seed': ns,
-                        'scores': float(selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t])
+                        'scores': float(selfbleu_result[lc_desc]['ours_exp'][f"{ns}sample"]['selfbleu_scores'][t])
                     })
+                    # data_sb_lod.append({
+                    #     'lc': f"LC{l_i+1}",
+                    #     'type': 'S$^2$LCT (SEED+EXP)',
+                    #     'num_seed': ns,
+                    #     'scores': float(selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t])
+                    # })
                     data_sb_lod.append({
                         'lc': f"LC{l_i+1}",
                         'type': 'CHECKLIST',
@@ -598,7 +693,7 @@ class Plots:
                     })
                     sb_y_limit = max(
                         sb_y_limit,
-                        selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t],
+                        # selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t],
                         selfbleu_result[lc_desc]['ours_seed'][f"{ns}sample"]['selfbleu_scores'][t],
                         selfbleu_result[lc_desc]['ours_exp'][f"{ns}sample"]['selfbleu_scores'][t],
                         selfbleu_result[lc_desc]['bl'][f"{ns}sample"]['selfbleu_scores'][t]
@@ -614,7 +709,7 @@ class Plots:
             # fig: plt.Figure = plt.figure()
             # ax: plt.Axes = fig.subplots()
             
-            hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+            hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (EXP)']
             
             ax_sb = sns.lineplot(data=df_sb, x='num_seed', y='scores',
                                  hue='type',
@@ -644,15 +739,16 @@ class Plots:
                                   err_kws={'capsize': 3},
                                   ax=ax2)
             # plt.xticks(x_ticks)
-            plt.legend(loc='upper right')
-            ax_sb.legend_.set_title(None)
+            
+            # ax_sb.legend_.set_title(None)
+            ax_sb.legend_.remove()
             ax_sb.set_xticks(x_ticks)
             ax_sb.tick_params(axis='x', rotation=45)
-            sb_y_limit = sb_y_limit+0.5
-            ax_sb.set_ylim(0.0, sb_y_limit)
+            # sb_y_limit = sb_y_limit+0.5
+            ax_sb.set_ylim(0.0, 1.1)
             ax_sb.set_xlabel("Sample size")
             ax_sb.set_ylabel("Self-BLEU score")
-            plt.grid(True, which='both', ls='--')
+            
             
             # Shrink current axis by 20%
             # box = ax_sb.get_position()
@@ -664,6 +760,10 @@ class Plots:
             ax_pdr.set_ylim(-100, pdr_y_limit)
             ax_pdr.set_xlabel("Sample size")
             ax_pdr.set_ylabel("Number of Production Rules Covered")
+            
+            plt.legend(loc='upper right')
+            # plt.legend(bbox_to_anchor=(1.01, 1), borderaxespad=0)
+            plt.grid(True, which='both', ls='--')
             
             # Shrink current axis by 20%
             # box = ax_sb.get_position()
@@ -677,7 +777,7 @@ class Plots:
             for ns in pdr_x_ticks:
                 seed_val = float(Utils.median(pdr_cov_seed_temp[f"{ns}sample"]))
                 exp_val = float(Utils.median(pdr_cov_exp_temp[f"{ns}sample"]))
-                seed_exp_val = float(Utils.median(pdr_cov_seed_exp_temp[f"{ns}sample"]))
+                # seed_exp_val = float(Utils.median(pdr_cov_seed_exp_temp[f"{ns}sample"]))
                 bl_val = float(Utils.median(pdr_cov_bl_temp[f"{ns}sample"]))
                 data_pdr_agg_lod.append({
                     'lc': f"LC{l_i+1}",
@@ -685,18 +785,18 @@ class Plots:
                     'num_seed': ns,
                     'scores': seed_val
                 })
-                # data_pdr_agg_lod.append({
-                #     'lc': f"LC{l_i+1}",
-                #     'type': 'S$^2$LCT (EXP)',
-                #     'num_seed': ns,
-                #     'scores': exp_val
-                # })
                 data_pdr_agg_lod.append({
                     'lc': f"LC{l_i+1}",
-                    'type': 'S$^2$LCT (SEED+EXP)',
+                    'type': 'S$^2$LCT (EXP)',
                     'num_seed': ns,
-                    'scores': seed_exp_val
+                    'scores': exp_val
                 })
+                # data_pdr_agg_lod.append({
+                #     'lc': f"LC{l_i+1}",
+                #     'type': 'S$^2$LCT (SEED+EXP)',
+                #     'num_seed': ns,
+                #     'scores': seed_exp_val
+                # })
                 data_pdr_agg_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
@@ -707,7 +807,7 @@ class Plots:
                     pdr_agg_y_limit,
                     seed_val,
                     exp_val,
-                    seed_exp_val,
+                    # seed_exp_val,
                     bl_val
                 )
             # end for
@@ -715,7 +815,7 @@ class Plots:
             for ns in x_ticks:
                 seed_val = float(Utils.median(selfbleu_seed_temp[f"{ns}sample"]))
                 exp_val = float(Utils.median(selfbleu_exp_temp[f"{ns}sample"]))
-                seed_exp_val = float(Utils.median(selfbleu_seed_exp_temp[f"{ns}sample"]))
+                # seed_exp_val = float(Utils.median(selfbleu_seed_exp_temp[f"{ns}sample"]))
                 bl_val = float(Utils.median(selfbleu_bl_temp[f"{ns}sample"]))
                 data_sb_agg_lod.append({
                     'lc': f"LC{l_i+1}",
@@ -723,18 +823,18 @@ class Plots:
                     'num_seed': ns,
                     'scores': seed_val
                 })
-                # data_sb_agg_lod.append({
-                #     'lc': f"LC{l_i+1}",
-                #     'type': 'S$^2$LCT (EXP)',
-                #     'num_seed': ns,
-                #     'scores': exp_val
-                # })
                 data_sb_agg_lod.append({
                     'lc': f"LC{l_i+1}",
-                    'type': 'S$^2$LCT (SEED+EXP)',
+                    'type': 'S$^2$LCT (EXP)',
                     'num_seed': ns,
-                    'scores': seed_exp_val
+                    'scores': exp_val
                 })
+                # data_sb_agg_lod.append({
+                #     'lc': f"LC{l_i+1}",
+                #     'type': 'S$^2$LCT (SEED+EXP)',
+                #     'num_seed': ns,
+                #     'scores': seed_exp_val
+                # })
                 data_sb_agg_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'CHECKLIST',
@@ -745,7 +845,7 @@ class Plots:
                     sb_agg_y_limit,
                     seed_val,
                     exp_val,
-                    seed_exp_val,
+                    # seed_exp_val,
                     bl_val
                 )
             # end for
@@ -759,7 +859,7 @@ class Plots:
         # fig: plt.Figure = plt.figure()
         # ax: plt.Axes = fig.subplots()
             
-        hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+        hue_order = ['CHECKLIST', 'S$^2$LCT (SEED)', 'S$^2$LCT (EXP)']
         
         ax_sb = sns.lineplot(data=df_sb, x='num_seed', y='scores',
                              hue='type',
@@ -789,15 +889,15 @@ class Plots:
                               err_kws={'capsize': 3},
                               ax=ax2)
         # plt.xticks(x_ticks)
-        plt.legend(loc='upper right')
-        ax_sb.legend_.set_title(None)
+        # ax_sb.legend_.set_title(None)
+        ax_sb.legend_.remove()
         ax_sb.set_xticks(x_ticks)
         ax_sb.tick_params(axis='x', rotation=45)
-        sb_y_limit = sb_y_limit+0.5
-        ax_sb.set_ylim(0.0, sb_y_limit)
+        # sb_y_limit = sb_y_limit+0.5
+        ax_sb.set_ylim(0.0, 1.1)
         ax_sb.set_xlabel("Sample size")
         ax_sb.set_ylabel("Self-BLEU score")
-        plt.grid(True, which='both', ls='--')
+
         
         # Shrink current axis by 20%
         # box = ax_sb.get_position()
@@ -810,12 +910,15 @@ class Plots:
         ax_pdr.set_xlabel("Sample size")
         ax_pdr.set_ylabel("Number of Production Rules Covered")
         
+        plt.legend(loc='upper right')
+        plt.grid(True, which='both', ls='--')
+        
         # Shrink current axis by 20%
         # box = ax_sb.get_position()
         # ax_pdr.set_position([box.x0, box.y0, box.width * 0.9, box.height])
         
         # Put a legend to the right of the current axis
-        # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
+        # fig.legend(bbox_to_anchor=(1.02, 1), loc=2)
         fig.tight_layout()
         fig.savefig(figs_dir / f"pdr-selfbleu-agg-lc-agg-lineplot.eps")
         return
