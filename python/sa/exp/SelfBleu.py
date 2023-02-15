@@ -72,7 +72,9 @@ class SelfBleu:
             smoothing_function=SmoothingFunction().method1
         )
         ft = time.time()
-        self.logger.print(f"score{score}::{round(ft-st,3)}sec::pcs{os.getpid()}")
+        if self.logger is not None:
+            self.logger.print(f"score{score}::{round(ft-st,3)}sec::pcs{os.getpid()}")
+        # end if
         return score
 
     def get_score_wo_sample(self, reference=None):
@@ -282,12 +284,14 @@ def main_sample(task,
                     exp_sents = list()
                     for s in seed_sents:
                         if any(seed_exp_map[lc].get(s, list())):
-                            exp_sent = random.sample(seed_exp_map[lc][s], 1)
+                            exp_sent = random.sample(seed_exp_map[lc][s]+[s], 1)
                             exp_sents.extend(exp_sent)
+                        else:
+                            exp_sents.append(s)
                         # end if
                     # end for
-                    exp_sents = random.sample(exp_sents,
-                                              min(len(exp_sents), num_sample))
+                    # exp_sents = random.sample(exp_sents,
+                    #                           min(len(exp_sents), num_sample))
                     bl_sents = random.sample(texts_checklist[lc],
                                              min(len(texts_checklist[lc]), num_sample))
                     sbleu_seed = SelfBleu(texts=seed_sents,
@@ -483,8 +487,10 @@ def main_checklist(task,
                 exp_sents = list()
                 for s in seed_sents:
                     if any(texts_lcs[lc].get(s, list())):
-                        exp_sent = random.sample(texts_lcs[lc][s], 1)
+                        exp_sent = random.sample(texts_lcs[lc][s]+[s], 1)
                         exp_sents.extend(exp_sent)
+                    else:
+                        exp_sents.append(s)
                     # end if
                 # end for
                 # seed_exp_sents = random.sample(list(texts_lcs[lc].keys())+texts_exp,

@@ -288,12 +288,14 @@ def main_sample(task,
                         if any(seed_exp_map[lc].get(s, list())):
                             exp_sent = random.sample(seed_exp_map[lc][s], 1)
                             exp_sents.extend(exp_sent)
+                        else:
+                            exp_sents.append(s)
                         # end if
                     # end for
+                    # exp_sents = random.sample(exp_sents,
+                    #                           min(len(exp_sents), num_sample))
                     bl_sents = random.sample(texts_hatecheck[lc],
                                              min(len(texts_hatecheck[lc]), num_sample))
-                    exp_sents = random.sample(exp_sents,
-                                              min(len(exp_sents), num_sample))
                     sbleu_seed = SelfBleu(texts=seed_sents,
                                           num_data=len(seed_sents),
                                           logger=logger)
@@ -483,13 +485,15 @@ def main_hatecheck(task,
                     exp_sents = list()
                     for s in texts_seed[lc]:
                         if any(seed_exp_map[lc].get(s, list())):
-                            exp_sent = random.sample(texts_seed[lc], 1)
+                            exp_sent = random.sample(texts_seed[lc]+[s], 1)
                             exp_sents.extend(exp_sent)
+                        else:
+                            exp_sents.append(s)
                         # end if
                     # end for
                     # seed_exp_sents = random.sample(texts_seed[lc]+texts_exp,
                     #                                min(len(texts_seed[lc]+texts_exp), num_sample))
-                    seed_exp_sents = seed_sents+exp_sents
+                    # seed_exp_sents = seed_sents+exp_sents
                     sbleu_seed = SelfBleu(texts=seed_sents,
                                           num_data=len(seed_sents),
                                           logger=logger)

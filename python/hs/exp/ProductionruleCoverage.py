@@ -396,23 +396,28 @@ def main_sample(task,
                     exp_sents = list()
                     for s in seed_sents:
                         if any(seed_exp_map[lc].get(s, list())):
-                            exp_sent = random.sample(seed_exp_map[lc][s], 1)
+                            exp_sent = random.sample(seed_exp_map[lc][s]+[s], 1)
                             exp_sents.extend(exp_sent)
+                        else:
+                            exp_sents.append(s)
                         # end if
                     # end for
-                    exp_sents = random.sample(exp_sents,
-                                              min(len(exp_sents), num_sample))
+                    # exp_sents = random.sample(exp_sents,
+                    #                           min(len(exp_sents), num_sample))
                     bl_sents = random.sample(list(hatecheck_rules[lc].keys()),
                                              min(len(hatecheck_rules[lc]), num_sample))
                     pdr1 = {
                         s: seed_rules[lc][s]
                         for s in seed_sents
                     }
-                    pdr2 = {
-                        s: exp_rules[lc][s]
-                        for s in exp_sents
-                        if s in exp_rules[lc].keys()
-                    }
+                    pdr2 = dict()
+                    for e in exp_sents:
+                        if e in seed_sents:
+                            pdr2[e] = seed_rules[lc][e]
+                        else:
+                            pdr2[e] = exp_rules[lc][e]
+                        # end if
+                    # end for
                     pdr3 = {
                         s: hatecheck_rules[lc][s]
                         for s in bl_sents
@@ -573,8 +578,10 @@ def main_hatecheck(task,
             exp_sents = list()
             for s in seed_sents:
                 if any(seed_exp_map[lc].get(s, list())):
-                    exp_sent = random.sample(seed_exp_map[lc][s], 1)
+                    exp_sent = random.sample(seed_exp_map[lc][s]+[s], 1)
                     exp_sents.extend(exp_sent)
+                else:
+                    exp_sents.append(s)
                 # end if
             # end for
             pdr1 = {
@@ -587,7 +594,9 @@ def main_hatecheck(task,
             #     for s in seed_sents
             # }
             for e in exp_sents:
-                if e not in pdr2.keys():
+                if e in seed_sents:
+                    pdr2[e] = seed_rules[lc][e]
+                else:
                     pdr2[e] = exp_rules[lc][e]
                 # end if
             # end for
