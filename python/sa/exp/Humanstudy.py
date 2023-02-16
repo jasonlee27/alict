@@ -180,14 +180,22 @@ class Humanstudy:
             for l_i, l in enumerate(res_lines):
                 l_split = l.strip().split()
                 sent_score, lc_score = int(l_split[0]), int(l_split[1])
+                val_score = None
+                if len(l_split)>2:
+                    val_score = int(l_split[2])
+                # end if
                 if resp_i==0:
                     res[sents[l_i]] = {
                         'sent_score': [sent_score],
-                        'lc_score': [lc_score]
+                        'lc_score': [lc_score],
+                        'val_score': None if val_score is None else [val_score]
                     }
                 else:
                     res[sents[l_i]]['sent_score'].append(sent_score)
                     res[sents[l_i]]['lc_score'].append(lc_score)
+                    if len(l_split)>2:
+                        res[sents[l_i]]['val_score'].append(lc_score)
+                    # end if
                 # end if
             # end for
         # end for
@@ -459,6 +467,31 @@ class Humanstudy:
         return [(s-min_val)/(max_val-min_val) for s in scores]
 
     @classmethod
+    def get_exp_validity(cls,
+                         exp_human_results):
+        # Label inconsistency: # of l{i}_ours != l{i}_human
+        num_seed_corr, num_seed_incorr = 0, 0
+        num_exp_corr, num_exp_incorr = 0, 0
+        seed_sents = list(seed_human_results.keys())
+        exp_sents = list(exp_human_results.keys())
+        res = {
+            'exp': dict()
+        }
+        num_tgt_data = 0
+        num_seed_data = 0
+        num_exp_data = 0
+
+        for e in exp_sents:
+            val_scores = exp_human_results[s]['val_score']
+            res['exp'][s] = sum(val_scores)/len(val_scores)
+        # end for
+        return res
+
+    @classmethod
+    def norm_exp_validity(cls, scores, min_val=1, max_val=5):
+        return [(s-min_val)/(max_val-min_val) for s in scores]
+
+    @classmethod
     def get_reported_bugs(cls,
                           pred_results,
                           tgt_results,
@@ -555,12 +588,12 @@ class Humanstudy:
             seed_resp_files = sorted([
                 res_dir / resp_f for resp_f in os.listdir(str(res_dir))
                 if os.path.isfile(os.path.join(str(res_dir), resp_f)) and \
-                re.search(f"^seed_samples_raw_file{file_i}_resp(\d+)\.txt", resp_f)
+                re.search(f"^seed_samples_raw_file{file_i}_resp(\d+)?\.txt", resp_f)
             ])
             exp_resp_files = sorted([
                 res_dir / resp_f for resp_f in os.listdir(str(res_dir))
                 if os.path.isfile(os.path.join(str(res_dir), resp_f)) and \
-                re.search(f"^exp_samples_raw_file{file_i}_resp(\d+)\.txt", resp_f)
+                re.search(f"^exp_samples_raw_file{file_i}_resp(\d+)?\.txt", resp_f)
             ])
             if any(seed_resp_files) and any(exp_resp_files):
                 seed_sents = cls.read_sample_sentences(res_dir / seed_sent_file)
@@ -582,7 +615,8 @@ class Humanstudy:
             exp_human_res = resps[f_i]['exp']
             res[f_i] = {
                 'label_scores': cls.get_label_consistency(tgt_res, seed_human_res, exp_human_res),
-                'lc_scores': cls.get_lc_relevancy(tgt_res_lc, seed_human_res, exp_human_res)
+                'lc_scores': cls.get_lc_relevancy(tgt_res_lc, seed_human_res, exp_human_res),
+                'val_scores': cls.get_exp_validity(exp_human_res)
             }
         # end for
 
@@ -590,15 +624,18 @@ class Humanstudy:
         agg_seed_lc_scores = list()
         agg_exp_label_scores = list()
         agg_exp_lc_scores = list()
+        agg_exp_val_scores = list()
         
         for f_i in res.keys():
             agg_seed_label_scores.extend(list(res[f_i]['label_scores']['seed'].values()))
             agg_seed_lc_scores.extend(list(res[f_i]['lc_scores']['seed'].values()))
             agg_exp_label_scores.extend(list(res[f_i]['label_scores']['exp'].values()))
             agg_exp_lc_scores.extend(list(res[f_i]['lc_scores']['exp'].values()))
+            agg_exp_val_scores.extend(list(res[f_i]['val_scores']['exp'].values()))
         # end for
         agg_seed_lc_scores = cls.norm_lc_relevancy(agg_seed_lc_scores)
         agg_exp_lc_scores = cls.norm_lc_relevancy(agg_exp_lc_scores)
+        agg_exp_val_scores = cls.norm_exp_validity(agg_exp_val_scores)
         
         res['agg'] = {
             'seed': {
@@ -614,6 +651,7 @@ class Humanstudy:
                 'lc_scores': agg_exp_lc_scores,
                 'avg_label_score': sum(agg_exp_label_scores)/len(agg_exp_label_scores),
                 'avg_lc_score': sum(agg_exp_lc_scores)/len(agg_exp_lc_scores),
+                'avg_val_score': sum(agg_exp_val_scores)/len(agg_exp_val_scores)
             }
         }
         return res
@@ -650,6 +688,7 @@ class Humanstudy:
             res_dir,
             seed_cfg_dir,
         )
+        print(res_dir / f"human_study_results.json")
         Utils.write_json(result, res_dir / f"human_study_results.json", pretty_format=True)
         return
 
@@ -667,7 +706,6 @@ class Humanstudy:
             re.search(r"seed_samples_raw_file(\d+)\.txt", f)
         ])
         for seed_f_i, seed_sent_file in enumerate(seed_sent_files):
-            print(seed_sent_file)
             res_str = ''
 
             inp_sents = [
@@ -682,10 +720,8 @@ class Humanstudy:
                     label = None
                     if s in inp_sents:
                         label = sent_dict[lc][s]['label']
-                        print('=== ', s, label)
                     elif _s in inp_sents:
                         label = sent_dict[lc][s]['label']
-                        print('--- ', s, label)
                     # end if
                     if label is not None:
                         res_str += f"{s} :: {label}\n"
