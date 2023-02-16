@@ -184,7 +184,7 @@ class Humanstudy:
                 if len(l_split)>2:
                     val_score = int(l_split[2])
                 # end if
-                if resp_i==0:
+                if sents[l_i] not in res.keys():
                     res[sents[l_i]] = {
                         'sent_score': [sent_score],
                         'lc_score': [lc_score],
@@ -194,7 +194,7 @@ class Humanstudy:
                     res[sents[l_i]]['sent_score'].append(sent_score)
                     res[sents[l_i]]['lc_score'].append(lc_score)
                     if len(l_split)>2:
-                        res[sents[l_i]]['val_score'].append(lc_score)
+                        res[sents[l_i]]['val_score'].append(val_score)
                     # end if
                 # end if
             # end for
@@ -202,7 +202,13 @@ class Humanstudy:
         return res
 
     @classmethod
-    def get_target_results(cls, seed_cfg_dir, resps):
+    def get_target_results(cls, seed_cfg_dir, resps, res_dir):
+        res = Utils.read_json(res_dir / 'sent_sample_labels.json')
+        res_lc = Utils.read_json(res_dir / 'sent_sample_lcs.json')
+        if res is not None and res_lc is not None:
+            return res, res_lc
+        # end if
+        
         sent_dict = cls.read_sentences(seed_cfg_dir, include_label=True)
         res, res_lc = dict(), dict()
         seed_sents = list()
@@ -243,11 +249,8 @@ class Humanstudy:
                 # end if
             # end for
         # end for
-        for s in res.keys():
-            if s not in seed_sents:
-                print('get_target_results: NOT IN SEED: ', s)
-            elif s not in exp_sents:
-                print('get_target_results: NOT IN EXP: ', s)
+        Utils.write_json(res, res_dir / 'sent_sample_labels.json')
+        Utils.write_json(res_lc, res_dir / 'sent_sample_lcs.json')
         print(len(seed_sents), len(exp_sents), len(res.keys()), len(res_lc.keys()))
         return res, res_lc
 
@@ -605,13 +608,14 @@ class Humanstudy:
                 exp_human_res = cls.read_sample_scores(exp_resp_files, exp_sents)
                 resps[file_i] = {
                     'seed': seed_human_res,
-                    'exp': seed_human_res
+                    'exp': exp_human_res
                 }
             # end if
         # end for
 
         tgt_res, tgt_res_lc = cls.get_target_results(seed_cfg_dir,
-                                                     resps)
+                                                     resps,
+                                                     res_dir)
 
         for f_i in resps.keys():
             seed_human_res = resps[f_i]['seed']
