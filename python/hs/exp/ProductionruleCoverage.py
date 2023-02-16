@@ -565,12 +565,16 @@ def main_hatecheck(task,
             logger.print(f"OURS_PDR_SEED_EXP_ALL::{lc}", end='::')
             scores[lc] = {
                 'hatecheck': {
-                    'num_data': None,
-                    'coverage_scores': None
+                    f"{num_samples}sample": {
+                        'num_data': list(),
+                        'coverage_scores': list()
+                    }
                 },
                 'hatecheck_exp': {
-                    'num_data': None,
-                    'coverage_scores': None
+                    f"{num_samples}sample": {
+                        'num_data': list(),
+                        'coverage_scores': list()
+                    }
                 }
             }
             seed_sents = random.sample(list(seed_rules[lc].keys()),
@@ -610,10 +614,10 @@ def main_hatecheck(task,
             else:
                 cov_score_ours_seed_exp = 0.
             # end if
-            scores[lc]['hatecheck']['num_data'] = len(seed_sents)
-            scores[lc]['hatecheck_exp']['num_data'] = len(exp_sents)
-            scores[lc]['hatecheck']['coverage_scores'] = cov_score_ours_seed
-            scores[lc]['hatecheck_exp']['coverage_scores'] = cov_score_ours_seed_exp
+            scores[lc]['hatecheck'][f"{num_samples}sample"]['num_data'] = len(seed_sents)
+            scores[lc]['hatecheck_exp'][f"{num_samples}sample"]['num_data'] = len(exp_sents)
+            scores[lc]['hatecheck'][f"{num_samples}sample"]['coverage_scores'].append(cov_score_ours_seed)
+            scores[lc]['hatecheck_exp'][f"{num_samples}sample"]['coverage_scores'].append(cov_score_ours_seed_exp)
         # end if
     # end for
     Utils.write_json(scores, result_file, pretty_format=True)

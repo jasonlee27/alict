@@ -351,7 +351,8 @@ def main_sample(task,
         if lc not in scores.keys():
             len_seed_exp = len(list(seed_rules[lc].keys())+list(exp_rules[lc].keys()))
             max_num_samples = int(2e5) # min(int(100*math.ceil(len_seed_exp/100.)), int(2e4))
-            num_samples = list(range(2000, max_num_samples+2000, 2000))
+            # num_samples = list(range(2000, max_num_samples+2000, 2000))
+            num_samples = [10000, 50000, 100000, 150000, 200000]
             logger.print(f"OURS_PDR_SAMPLE::{lc}")
             our_sents, bl_sents = list(), list()
             scores[lc] = {
@@ -718,12 +719,16 @@ def main_checklist(task,
             if lc not in scores.keys():
                 scores[lc] = {
                     'checklist': {
-                        'num_data': list(),
-                        'coverage_scores': list()
+                        f"{num_seeds}sample": {
+                            'num_data': list(),
+                            'coverage_scores': list()
+                        }
                     },
                     'checklist_exp': {
-                        'num_data': list(),
-                        'coverage_scores': list()
+                        f"{num_seeds}sample": {
+                            'num_data': list(),
+                            'coverage_scores': list()
+                        }
                     }
                 }
             # end if
@@ -763,17 +768,17 @@ def main_checklist(task,
             pdr2_obj = ProductionruleCoverage(lc=lc,
                                               our_cfg_rules=pdr2)
             cov_score_ours_seed_exp, _ = pdr2_obj.get_score()
-            scores[lc]['checklist']['num_data'].append(len(seed_sents))
-            scores[lc]['checklist_exp']['num_data'].append(len(exp_sents))
-            scores[lc]['checklist']['coverage_scores'].append(cov_score_ours_seed)
-            scores[lc]['checklist_exp']['coverage_scores'].append(cov_score_ours_seed_exp)
+            scores[lc]['checklist'][f"{num_seeds}sample"]['num_data'].append(len(seed_sents))
+            scores[lc]['checklist_exp'][f"{num_seeds}sample"]['num_data'].append(len(exp_sents))
+            scores[lc]['checklist'][f"{num_seeds}sample"]['coverage_scores'].append(cov_score_ours_seed)
+            scores[lc]['checklist_exp'][f"{num_seeds}sample"]['coverage_scores'].append(cov_score_ours_seed_exp)
             if t+1==num_test_results:
-                scores[lc]['checklist']['avg_score'] = Utils.avg(scores[lc]['checklist']['coverage_scores'])
-                scores[lc]['checklist']['med_score'] = Utils.median(scores[lc]['checklist']['coverage_scores'])
-                scores[lc]['checklist']['std_score'] = Utils.stdev(scores[lc]['checklist']['coverage_scores'])
-                scores[lc]['checklist_exp']['avg_score'] = Utils.avg(scores[lc]['checklist_exp']['coverage_scores'])
-                scores[lc]['checklist_exp']['med_score'] = Utils.median(scores[lc]['checklist_exp']['coverage_scores'])
-                scores[lc]['checklist_exp']['std_score'] = Utils.stdev(scores[lc]['checklist_exp']['coverage_scores'])
+                scores[lc]['checklist'][f"{num_seeds}sample"]['avg_score'] = Utils.avg(scores[lc]['checklist'][f"{num_seeds}sample"]['coverage_scores'])
+                scores[lc]['checklist'][f"{num_seeds}sample"]['med_score'] = Utils.median(scores[lc]['checklist'][f"{num_seeds}sample"]['coverage_scores'])
+                scores[lc]['checklist'][f"{num_seeds}sample"]['std_score'] = Utils.stdev(scores[lc]['checklist'][f"{num_seeds}sample"]['coverage_scores'])
+                scores[lc]['checklist_exp'][f"{num_seeds}sample"]['avg_score'] = Utils.avg(scores[lc]['checklist_exp'][f"{num_seeds}sample"]['coverage_scores'])
+                scores[lc]['checklist_exp'][f"{num_seeds}sample"]['med_score'] = Utils.median(scores[lc]['checklist_exp'][f"{num_seeds}sample"]['coverage_scores'])
+                scores[lc]['checklist_exp'][f"{num_seeds}sample"]['std_score'] = Utils.stdev(scores[lc]['checklist_exp'][f"{num_seeds}sample"]['coverage_scores'])
             # end if
         # end for
         Utils.write_json(scores, result_file, pretty_format=True)
