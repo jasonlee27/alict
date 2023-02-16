@@ -481,7 +481,6 @@ class Humanstudy:
         # Label inconsistency: # of l{i}_ours != l{i}_human
         num_seed_corr, num_seed_incorr = 0, 0
         num_exp_corr, num_exp_incorr = 0, 0
-        seed_sents = list(seed_human_results.keys())
         exp_sents = list(exp_human_results.keys())
         res = {
             'exp': dict()
@@ -491,8 +490,12 @@ class Humanstudy:
         num_exp_data = 0
 
         for e in exp_sents:
-            val_scores = exp_human_results[s]['val_score']
-            res['exp'][s] = sum(val_scores)/len(val_scores)
+            val_scores = exp_human_results[e]['val_score']
+            if val_scores is not None:
+                res['exp'][e] = sum(val_scores)/len(val_scores)
+            else:
+                return
+            # end if
         # end for
         return res
 
@@ -594,7 +597,7 @@ class Humanstudy:
         resps = dict()
         for seed_f_i, seed_sent_file in enumerate(seed_sent_files):
             file_i = int(re.search(r"^seed_samples_raw_file(\d+)\.txt", seed_sent_file).group(1))
-            exp_sent_file = res_dir / f"exp_samples_raw_file{file_i}.txt"
+            exp_sent_file = f"exp_samples_raw_file{file_i}.txt"
             seed_resp_files = sorted([
                 res_dir / resp_f for resp_f in os.listdir(str(res_dir))
                 if os.path.isfile(os.path.join(str(res_dir), resp_f)) and \
@@ -608,7 +611,7 @@ class Humanstudy:
             if any(seed_resp_files) and any(exp_resp_files):
                 seed_sents = cls.read_sample_sentences(res_dir / seed_sent_file)
                 seed_human_res = cls.read_sample_scores(seed_resp_files, seed_sents)
-                exp_sents = cls.read_sample_sentences(exp_sent_file)
+                exp_sents = cls.read_sample_sentences(res_dir / exp_sent_file)
                 exp_human_res = cls.read_sample_scores(exp_resp_files, exp_sents)
                 resps[file_i] = {
                     'seed': seed_human_res,

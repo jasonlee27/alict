@@ -88,6 +88,9 @@ class Tables:
             elif item == 'mtnlp-comparison':
                 cls.make_numbers_mtnlp_comparison(Macros.result_dir, tables_dir)
                 cls.make_table_mtnlp_comparison(Macros.result_dir, tables_dir)
+            elif item == 'adv-comparison':
+                cls.make_numbers_adv_comparison(Macros.result_dir, tables_dir)
+                cls.make_table_adv_comparison(Macros.result_dir, tables_dir)
             else:
                 raise(f"Unknown table {item}")
             # end if
@@ -1140,6 +1143,121 @@ class Tables:
         output_file.append(r"\end{center}")
         output_file.append(r"\end{small}")
         output_file.append(r"\vspace{\MtnlpCompTableVSpace}")
+        output_file.append(r"\end{table*}")
+        output_file.save()
+        return
+
+    @classmethod
+    def make_numbers_adv_comparison(cls,
+                                    result_dir,
+                                    tables_dir):
+        tasks = ['sa']
+        output_file = latex.File(tables_dir / f"mtnlp-comp-numbers.tex")
+        for task in tasks:
+            if task == 'sa':
+                search_dataset_name = 'sst'
+                selection_method = 'random'
+            else:
+                search_dataset_name = 'hatexplain'
+                selection_method = 'random'
+            # end if
+            adv_res_dir = result_dir / 'textattack' / f"{task}_{search_dataset_name}_{selection_method}"
+            adv_res_file = adv_res_dir / 'diversity_scores.json'
+            
+            # Self-Bleu scores
+            adv_res = Utils.read_json(adv_res_file)
+            output_file.append_macro(latex.Macro(f"adv-comp-{task}-model-under-test", adv_res['model_under_test']))
+            for adv_name in adv_res.keys():
+                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-num-adv",
+                                                     cls.FMT_INT.format(adv_res[adv_name]['num_data'])))
+                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-num-adv",
+                                                     cls.FMT_INT.format(adv_res[adv_name]['num_samples'][0])))
+                
+                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-selfbleu-med",
+                                                     Utils.median(adv_res[adv_name]['selfbleu_scores'])))
+                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-selfbleu-avg",
+                                                     Utils.avg(adv_res[adv_name]['selfbleu_scores'])))
+                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-selfbleu-std",
+                                                     Utils.stdev(adv_res[adv_name]['selfbleu_scores'])))
+
+                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-pdrcov-med",
+                                                     Utils.median(adv_res[adv_name]['pdrcov_scores'])))
+                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-pdrcov-avg",
+                                                     Utils.avg(adv_res[adv_name]['pdrcov_scores'])))
+                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-pdrcov-std",
+                                                     Utils.stdev(adv_res[adv_name]['pdrcov_scores'])))
+            # end for
+        # end for
+        output_file.save()
+        return
+    
+    @classmethod
+    def make_table_adv_comparison(cls,
+                                  result_dir,
+                                  tables_dir):
+        # mtnlp_res_dir = result_dir / 'mtnlp' / f"{task}_{search_dataset_name}_{selection_method}_sample"
+        # prd_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_pdrcov.json"
+        # sb_res_file = mtnlp_res_dir / f"mtnlp_sample_{task}_{search_dataset_name}_{selection_method}_selfbleu.json"
+        tasks = ['sa']
+        output_file = latex.File(tables_dir / f"adv-comp-table.tex")
+
+        
+        
+        # Header
+        output_file.append(r"\begin{table}[htbp]")
+        output_file.append(r"\begin{small}")
+        output_file.append(r"\begin{center}")
+        output_file.append(r"\caption{\AdvCompTableCaption}")
+        output_file.append(r"\resizebox{0.47\textwidth}{!}{")
+        output_file.append(r"\begin{tabular}{l|ccc}")
+        output_file.append(r"\toprule")
+        
+        # Content
+        output_file.append(r"\tApproach & \tNumdata & \tSelfbleu & \tPdrcov \\")
+        output_file.append(r"\midrule")
+        
+        for t_i, task in enumerate(tasks):
+            task_latex = 'SA' if task=='sa' else 'HSD'
+            if task == 'sa':
+                search_dataset_name = 'sst'
+                selection_method = 'random'
+            else:
+                search_dataset_name = 'hatexplain'
+                selection_method = 'random'
+            # end if
+            adv_res_dir = result_dir / 'textattack' / f"{task}_{search_dataset_name}_{selection_method}"
+            adv_res_file = adv_res_dir / 'diversity_scores.json'
+            adv_names = [
+                a for a in Utils.read_json(adv_res_file).keys()
+                if a!='model_under_test' and a!='ours_exp'
+            ]
+            output_file.append(r" S^{2}LCT & " + latex.Macro(f"mtnlp-comp-{task}-ours-pdr-num-mutate").use())
+            for adv_name in adv_names:
+                if adv_name=='pso':
+                    _adv_name = 'PSO'
+                elif adv_name=='bert-attack':
+                    _adv_name = 'BERT-Attack'
+                elif adv_name=='alzantot':
+                    _adv_name = 'Alzantot'
+                # end if
+                output_file.append(f"{_adv_name} & " +
+                                   latex.Macro(f"adv-comp-{task}-{_adv_name}-num_data").use() + r'\\')
+                output_file.append(f" & " + latex.Macro(f"adv-comp-{task}-{_adv_name}-selfbleu-avg").use() + '\pm' +
+                                   latex.Macro(f"adv-comp-{task}-{_adv_name}-selfbleu-std").use() + r"\\")
+                output_file.append(f" & " + latex.Macro(f"adv-comp-{task}-{_adv_name}-pdrcov-avg").use() + '\pm' +
+                                   latex.Macro(f"adv-comp-{task}-{_adv_name}-pdrcov-std").use() + r"\\")
+            # end for
+            if t_i+1<len(tasks):
+                output_file.append(r"\hline")
+            # end if
+        # end for
+
+        # Footer
+        output_file.append(r"\bottomrule")
+        output_file.append(r"\end{tabular}}")
+        output_file.append(r"\end{center}")
+        output_file.append(r"\end{small}")
+        output_file.append(r"\vspace{\AdvCompTableVSpace}")
         output_file.append(r"\end{table*}")
         output_file.save()
         return
