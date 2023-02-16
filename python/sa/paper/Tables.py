@@ -1152,7 +1152,7 @@ class Tables:
                                     result_dir,
                                     tables_dir):
         tasks = ['sa']
-        output_file = latex.File(tables_dir / f"mtnlp-comp-numbers.tex")
+        output_file = latex.File(tables_dir / f"adv-comp-numbers.tex")
         for task in tasks:
             if task == 'sa':
                 search_dataset_name = 'sst'
@@ -1168,24 +1168,31 @@ class Tables:
             adv_res = Utils.read_json(adv_res_file)
             output_file.append_macro(latex.Macro(f"adv-comp-{task}-model-under-test", adv_res['model_under_test']))
             for adv_name in adv_res.keys():
-                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-num-adv",
-                                                     cls.FMT_INT.format(adv_res[adv_name]['num_data'])))
-                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-num-adv",
-                                                     cls.FMT_INT.format(adv_res[adv_name]['num_samples'][0])))
-                
-                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-selfbleu-med",
-                                                     Utils.median(adv_res[adv_name]['selfbleu_scores'])))
-                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-selfbleu-avg",
-                                                     Utils.avg(adv_res[adv_name]['selfbleu_scores'])))
-                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-selfbleu-std",
-                                                     Utils.stdev(adv_res[adv_name]['selfbleu_scores'])))
-
-                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-pdrcov-med",
-                                                     Utils.median(adv_res[adv_name]['pdrcov_scores'])))
-                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-pdrcov-avg",
-                                                     Utils.avg(adv_res[adv_name]['pdrcov_scores'])))
-                output_file.append_macro(latex.Macro(f"adv-comp-{task}-{adv_name}-pdrcov-std",
-                                                     Utils.stdev(adv_res[adv_name]['pdrcov_scores'])))
+                if adv_name=='ours_exp':
+                    _adv_name = 'ours'
+                else:
+                    _adv_name = adv_name
+                # end if
+                if adv_name!='model_under_test':
+                    output_file.append_macro(latex.Macro(f"adv-comp-{task}-{_adv_name}-num-adv",
+                                                         cls.FMT_INT.format(adv_res[adv_name]['num_data'])))
+                    output_file.append_macro(latex.Macro(f"adv-comp-{task}-{_adv_name}-num-samples",
+                                                         cls.FMT_INT.format(adv_res[adv_name]['num_samples'][0])))
+                    
+                    output_file.append_macro(latex.Macro(f"adv-comp-{task}-{_adv_name}-selfbleu-med",
+                                                         Utils.median(adv_res[adv_name]['selfbleu_scores'])))
+                    output_file.append_macro(latex.Macro(f"adv-comp-{task}-{_adv_name}-selfbleu-avg",
+                                                         Utils.avg(adv_res[adv_name]['selfbleu_scores'])))
+                    output_file.append_macro(latex.Macro(f"adv-comp-{task}-{_adv_name}-selfbleu-std",
+                                                        Utils.stdev(adv_res[adv_name]['selfbleu_scores'])))
+                    
+                    output_file.append_macro(latex.Macro(f"adv-comp-{task}-{_adv_name}-pdrcov-med",
+                                                         Utils.median(adv_res[adv_name]['pdrcov_scores'])))
+                    output_file.append_macro(latex.Macro(f"adv-comp-{task}-{_adv_name}-pdrcov-avg",
+                                                         Utils.avg(adv_res[adv_name]['pdrcov_scores'])))
+                    output_file.append_macro(latex.Macro(f"adv-comp-{task}-{_adv_name}-pdrcov-std",
+                                                         Utils.stdev(adv_res[adv_name]['pdrcov_scores'])))
+                # end if
             # end for
         # end for
         output_file.save()
@@ -1213,7 +1220,7 @@ class Tables:
         output_file.append(r"\toprule")
         
         # Content
-        output_file.append(r"\tApproach & \tNumdata & \tSelfbleu & \tPdrcov \\")
+        output_file.append(r"\tApproach & \tNummut & \tSelfbleu & \tPdrcov \\")
         output_file.append(r"\midrule")
         
         for t_i, task in enumerate(tasks):
@@ -1231,7 +1238,11 @@ class Tables:
                 a for a in Utils.read_json(adv_res_file).keys()
                 if a!='model_under_test' and a!='ours_exp'
             ]
-            output_file.append(r" S^{2}LCT & " + latex.Macro(f"mtnlp-comp-{task}-ours-pdr-num-mutate").use())
+            output_file.append(r" \tool & " + latex.Macro(f"adv-comp-{task}-ours-num-adv").use())
+            output_file.append(f" & " + latex.Macro(f"adv-comp-{task}-ours-selfbleu-avg").use() + '\pm' +
+                               latex.Macro(f"adv-comp-{task}-ours-selfbleu-std").use())
+            output_file.append(f" & " + latex.Macro(f"adv-comp-{task}-ours-pdrcov-avg").use() + '\pm' +
+                               latex.Macro(f"adv-comp-{task}-ours-pdrcov-std").use() + r"\\")
             for adv_name in adv_names:
                 if adv_name=='pso':
                     _adv_name = 'PSO'
@@ -1241,11 +1252,11 @@ class Tables:
                     _adv_name = 'Alzantot'
                 # end if
                 output_file.append(f"{_adv_name} & " +
-                                   latex.Macro(f"adv-comp-{task}-{_adv_name}-num_data").use() + r'\\')
-                output_file.append(f" & " + latex.Macro(f"adv-comp-{task}-{_adv_name}-selfbleu-avg").use() + '\pm' +
-                                   latex.Macro(f"adv-comp-{task}-{_adv_name}-selfbleu-std").use() + r"\\")
-                output_file.append(f" & " + latex.Macro(f"adv-comp-{task}-{_adv_name}-pdrcov-avg").use() + '\pm' +
-                                   latex.Macro(f"adv-comp-{task}-{_adv_name}-pdrcov-std").use() + r"\\")
+                                   latex.Macro(f"adv-comp-{task}-{adv_name}-num-adv").use())
+                output_file.append(f" & " + latex.Macro(f"adv-comp-{task}-{adv_name}-selfbleu-avg").use() + '\pm' +
+                                   latex.Macro(f"adv-comp-{task}-{adv_name}-selfbleu-std").use())
+                output_file.append(f" & " + latex.Macro(f"adv-comp-{task}-{adv_name}-pdrcov-avg").use() + '\pm' +
+                                   latex.Macro(f"adv-comp-{task}-{adv_name}-pdrcov-std").use() + r"\\")
             # end for
             if t_i+1<len(tasks):
                 output_file.append(r"\hline")
