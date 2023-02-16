@@ -239,7 +239,7 @@ class Plots:
                     # end if
                     pdr_cov_seed_temp[f"{ns}sample"].append(pdr_cov_result[lc_desc]['ours_seed'][f"{_ns}sample"]['coverage_scores'][t])
                     pdr_cov_exp_temp[f"{ns}sample"].append(pdr_cov_result[lc_desc]['ours_exp'][f"{_ns}sample"]['coverage_scores'][t])
-                    pdr_cov_seed_exp_temp[f"{ns}sample"].append(pdr_cov_result[lc_desc]['ours_seed_exp'][f"{_ns}sample"]['coverage_scores'][t])
+                    # pdr_cov_seed_exp_temp[f"{ns}sample"].append(pdr_cov_result[lc_desc]['ours_seed_exp'][f"{_ns}sample"]['coverage_scores'][t])
                     pdr_cov_bl_temp[f"{ns}sample"].append(pdr_cov_result[lc_desc]['bl'][f"{_ns}sample"]['coverage_scores'][t])
                     data_pdr_lod.append({
                         'lc': f"LC{l_i+1}",
@@ -247,18 +247,18 @@ class Plots:
                         'num_seed': ns,
                         'scores': pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t]
                     })
-                    # data_pdr_lod.append({
-                    #     'lc': f"LC{l_i+1}",
-                    #     'type': 'S$^2$LCT (EXP)',
-                    #     'num_seed': ns,
-                    #     'scores': pdr_cov_result[lc_desc]['ours_exp'][f"{_ns}sample"]['coverage_scores'][t]
-                    # })
                     data_pdr_lod.append({
                         'lc': f"LC{l_i+1}",
-                        'type': 'S$^2$LCT (SEED+EXP)',
+                        'type': 'S$^2$LCT (EXP)',
                         'num_seed': ns,
-                        'scores': pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]
+                        'scores': pdr_cov_result[lc_desc]['ours_exp'][f"{_ns}sample"]['coverage_scores'][t]
                     })
+                    # data_pdr_lod.append({
+                    #     'lc': f"LC{l_i+1}",
+                    #     'type': 'S$^2$LCT (SEED+EXP)',
+                    #     'num_seed': ns,
+                    #     'scores': pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t]
+                    # })
                     data_pdr_lod.append({
                         'lc': f"LC{l_i+1}",
                         'type': 'HATECHECK',
@@ -267,7 +267,7 @@ class Plots:
                     })
                     pdr_y_limit = max(
                         pdr_y_limit,
-                        pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t],
+                        # pdr_cov_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['coverage_scores'][t],
                         pdr_cov_result[lc_desc]['ours_seed'][f"{ns}sample"]['coverage_scores'][t],
                         pdr_cov_result[lc_desc]['ours_exp'][f"{ns}sample"]['coverage_scores'][t],
                         pdr_cov_result[lc_desc]['bl'][f"{ns}sample"]['coverage_scores'][t]
@@ -276,7 +276,7 @@ class Plots:
                 for ns in x_ticks:
                     selfbleu_seed_temp[f"{ns}sample"].append(selfbleu_result[lc_desc]['ours_seed'][f"{ns}sample"]['selfbleu_scores'][t])
                     selfbleu_exp_temp[f"{ns}sample"].append(selfbleu_result[lc_desc]['ours_exp'][f"{ns}sample"]['selfbleu_scores'][t])
-                    selfbleu_seed_exp_temp[f"{ns}sample"].append(selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t])
+                    # selfbleu_seed_exp_temp[f"{ns}sample"].append(selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t])
                     selfbleu_bl_temp[f"{ns}sample"].append(selfbleu_result[lc_desc]['bl'][f"{ns}sample"]['selfbleu_scores'][t])
                     data_sb_lod.append({
                         'lc': f"LC{l_i+1}",
@@ -284,18 +284,18 @@ class Plots:
                         'num_seed': ns,
                         'scores': float(selfbleu_result[lc_desc]['ours_seed'][f"{ns}sample"]['selfbleu_scores'][t])
                     })
-                    # data_sb_lod.append({
-                    #     'lc': f"LC{l_i+1}",
-                    #     'type': 'S$^2$LCT (EXP)',
-                    #     'num_seed': ns,
-                    #     'scores': float(selfbleu_result[lc_desc]['ours_exp'][f"{ns}sample"]['selfbleu_scores'][t])
-                    # })
                     data_sb_lod.append({
                         'lc': f"LC{l_i+1}",
-                        'type': 'S$^2$LCT (SEED+EXP)',
+                        'type': 'S$^2$LCT (EXP)',
                         'num_seed': ns,
-                        'scores': float(selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t])
+                        'scores': float(selfbleu_result[lc_desc]['ours_exp'][f"{ns}sample"]['selfbleu_scores'][t])
                     })
+                    # data_sb_lod.append({
+                    #     'lc': f"LC{l_i+1}",
+                    #     'type': 'S$^2$LCT (SEED+EXP)',
+                    #     'num_seed': ns,
+                    #     'scores': float(selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t])
+                    # })
                     data_sb_lod.append({
                         'lc': f"LC{l_i+1}",
                         'type': 'HATECHECK',
@@ -304,7 +304,7 @@ class Plots:
                     })
                     sb_y_limit = max(
                         sb_y_limit,
-                        selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t],
+                        # selfbleu_result[lc_desc]['ours_seed_exp'][f"{ns}sample"]['selfbleu_scores'][t],
                         selfbleu_result[lc_desc]['ours_seed'][f"{ns}sample"]['selfbleu_scores'][t],
                         selfbleu_result[lc_desc]['ours_exp'][f"{ns}sample"]['selfbleu_scores'][t],
                         selfbleu_result[lc_desc]['bl'][f"{ns}sample"]['selfbleu_scores'][t]
@@ -320,8 +320,8 @@ class Plots:
             # fig: plt.Figure = plt.figure()
             # ax: plt.Axes = fig.subplots()
             
-            hue_order = ['HATECHECK', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
-            # hue_order = ['HATECHECK', 'S$^2$LCT (SEED)', 'S$^2$LCT (EXP)']
+            # hue_order = ['HATECHECK', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+            hue_order = ['HATECHECK', 'S$^2$LCT (SEED)', 'S$^2$LCT (EXP)']
             
             ax_sb = sns.lineplot(data=df_sb, x='num_seed', y='scores',
                                  hue='type',
@@ -351,12 +351,12 @@ class Plots:
                                   err_kws={'capsize': 3},
                                   ax=ax2)
             # plt.xticks(x_tcks)
-            plt.legend(loc='upper right')
-            ax_sb.legend_.set_title(None)
+            # ax_sb.legend_.set_title(None)
+            ax_sb.legend_.remove()
             ax_sb.set_xticks(x_ticks)
             ax_sb.tick_params(axis='x', rotation=45)
-            sb_y_limit = sb_y_limit+0.5
-            ax_sb.set_ylim(0.0, sb_y_limit)
+            # sb_y_limit = sb_y_limit+0.5
+            ax_sb.set_ylim(0.0, 1.1)
             ax_sb.set_xlabel("Sample size")
             ax_sb.set_ylabel("Self-BLEU score")
             
@@ -370,6 +370,9 @@ class Plots:
             ax_pdr.set_ylim(-100, pdr_y_limit)
             ax_pdr.set_xlabel("Sample size")
             ax_pdr.set_ylabel("Number of Production Rules Covered")
+
+            plt.legend(loc='upper right')
+            plt.grid(True, which='both', ls='--')
             
             # Shrink current axis by 20%
             # box = ax_sb.get_position()
@@ -383,7 +386,7 @@ class Plots:
             for ns in pdr_x_ticks:
                 seed_val = float(Utils.median(pdr_cov_seed_temp[f"{ns}sample"]))
                 exp_val = float(Utils.median(pdr_cov_exp_temp[f"{ns}sample"]))
-                seed_exp_val = float(Utils.median(pdr_cov_seed_exp_temp[f"{ns}sample"]))
+                # seed_exp_val = float(Utils.median(pdr_cov_seed_exp_temp[f"{ns}sample"]))
                 bl_val = float(Utils.median(pdr_cov_bl_temp[f"{ns}sample"]))
                 data_pdr_agg_lod.append({
                     'lc': f"LC{l_i+1}",
@@ -391,18 +394,18 @@ class Plots:
                     'num_seed': ns,
                     'scores': seed_val
                 })
-                # data_pdr_agg_lod.append({
-                #     'lc': f"LC{l_i+1}",
-                #     'type': 'S$^2$LCT (EXP)',
-                #     'num_seed': ns,
-                #     'scores': exp_val
-                # })
                 data_pdr_agg_lod.append({
                     'lc': f"LC{l_i+1}",
-                    'type': 'S$^2$LCT (SEED+EXP)',
+                    'type': 'S$^2$LCT (EXP)',
                     'num_seed': ns,
-                    'scores': seed_exp_val
+                    'scores': exp_val
                 })
+                # data_pdr_agg_lod.append({
+                #     'lc': f"LC{l_i+1}",
+                #     'type': 'S$^2$LCT (SEED+EXP)',
+                #     'num_seed': ns,
+                #     'scores': seed_exp_val
+                # })
                 data_pdr_agg_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'HATECHECK',
@@ -413,7 +416,7 @@ class Plots:
                     pdr_agg_y_limit,
                     seed_val,
                     exp_val,
-                    seed_exp_val,
+                    # seed_exp_val,
                     bl_val
                 )
             # end for
@@ -421,7 +424,7 @@ class Plots:
             for ns in x_ticks:
                 seed_val = float(Utils.median(selfbleu_seed_temp[f"{ns}sample"]))
                 exp_val = float(Utils.median(selfbleu_exp_temp[f"{ns}sample"]))
-                seed_exp_val = float(Utils.median(selfbleu_seed_exp_temp[f"{ns}sample"]))
+                # seed_exp_val = float(Utils.median(selfbleu_seed_exp_temp[f"{ns}sample"]))
                 bl_val = float(Utils.median(selfbleu_bl_temp[f"{ns}sample"]))
                 data_sb_agg_lod.append({
                     'lc': f"LC{l_i+1}",
@@ -429,18 +432,18 @@ class Plots:
                     'num_seed': ns,
                     'scores': seed_val
                 })
-                # data_sb_agg_lod.append({
-                #     'lc': f"LC{l_i+1}",
-                #     'type': 'S$^2$LCT (EXP)',
-                #     'num_seed': ns,
-                #     'scores': exp_val
-                # })
                 data_sb_agg_lod.append({
                     'lc': f"LC{l_i+1}",
-                    'type': 'S$^2$LCT (SEED+EXP)',
+                    'type': 'S$^2$LCT (EXP)',
                     'num_seed': ns,
-                    'scores': seed_exp_val
+                    'scores': exp_val
                 })
+                # data_sb_agg_lod.append({
+                #     'lc': f"LC{l_i+1}",
+                #     'type': 'S$^2$LCT (SEED+EXP)',
+                #     'num_seed': ns,
+                #     'scores': seed_exp_val
+                # })
                 data_sb_agg_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'HATECHECK',
@@ -451,7 +454,7 @@ class Plots:
                     sb_agg_y_limit,
                     seed_val,
                     exp_val,
-                    seed_exp_val,
+                    # seed_exp_val,
                     bl_val
                 )
             # end for
@@ -465,7 +468,7 @@ class Plots:
         # fig: plt.Figure = plt.figure()
         # ax: plt.Axes = fig.subplots()
         
-        hue_order = ['HATECHECK', 'S$^2$LCT (SEED)', 'S$^2$LCT (SEED+EXP)']
+        hue_order = ['HATECHECK', 'S$^2$LCT (SEED)', 'S$^2$LCT (EXP)']
         # hue_order = ['HATECHECK', 'S$^2$LCT (SEED)', 'S$^2$LCT (EXP)', 'S$^2$LCT (SEED+EXP)']
         # hue_order = ['HATECHECK', 'S$^2$LCT (SEED)']
         
@@ -496,12 +499,12 @@ class Plots:
                               err_kws={'capsize': 3},
                               ax=ax2)
         # plt.xticks(x_ticks)
-        plt.legend(loc='upper right')
-        ax_sb.legend_.set_title(None)
+        # ax_sb.legend_.set_title(None)
+        ax_sb.legend_.remove()
         ax_sb.set_xticks(x_ticks)
         ax_sb.tick_params(axis='x', rotation=45)
         sb_y_limit = sb_y_limit+0.5
-        ax_sb.set_ylim(0.0, sb_y_limit)
+        ax_sb.set_ylim(0.0, 1.1)
         ax_sb.set_xlabel("Sample size")
         ax_sb.set_ylabel("Self-BLEU score")
         
@@ -515,6 +518,9 @@ class Plots:
         ax_pdr.tick_params(axis='x', rotation=45)
         ax_pdr.set_xlabel("Sample size")
         ax_pdr.set_ylabel("Number of Production Rules Covered")
+
+        plt.legend(loc='upper right')
+        plt.grid(True, which='both', ls='--')
         
         # Shrink current axis by 20%
         # box = ax_sb.get_position()
@@ -618,17 +624,17 @@ class Plots:
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'HATECHECK',
-                    'scores': result[lc_desc]['hatecheck']['coverage_scores']
+                    'scores': result[lc_desc]['hatecheck']['coverage_scores']/result[lc_desc]['hatecheck']['num_data'] if result[lc_desc]['hatecheck']['num_data']>0 else 0.
                 })
                 data_lod.append({
                     'lc': f"LC{l_i+1}",
                     'type': 'HATECHECK+EXP',
-                    'scores': result[lc_desc]['hatecheck_exp']['coverage_scores']
+                    'scores': result[lc_desc]['hatecheck_exp']['coverage_scores']/result[lc_desc]['hatecheck_exp']['num_data'] if result[lc_desc]['hatecheck_exp']['num_data']>0 else 0.
                 })
                 max_cov_val = max(
                     max_cov_val,
-                    result[lc_desc]['hatecheck']['coverage_scores'],
-                    result[lc_desc]['hatecheck_exp']['coverage_scores']
+                    result[lc_desc]['hatecheck']['coverage_scores']/result[lc_desc]['hatecheck']['num_data'] if result[lc_desc]['hatecheck']['num_data']>0 else 0.,
+                    result[lc_desc]['hatecheck_exp']['coverage_scores']/result[lc_desc]['hatecheck_exp']['num_data'] if result[lc_desc]['hatecheck_exp']['num_data']>0 else 0.
                 )
                 l_i += 1
             # end if
@@ -650,7 +656,7 @@ class Plots:
         # plt.xticks([f"LC{l_i+1}" for l_i, _ in enumerate(Utils.read_txt(req_file))])
         # ax.set_ylim(bottom=0, top=max(data_lod, key=lambda x: x['scores'])['scores']+10)
         # ax.set_yscale('log')
-        ax.set_ylim(bottom=0, top=max_cov_val+100)
+        ax.set_ylim(bottom=0, top=max_cov_val+1)
         ax.set_xlabel("Linguistic Capabilities")
         ax.set_ylabel("Number of Production Rules Covered")
         ax.legend(loc='upper right')

@@ -55,7 +55,7 @@ class Plots:
         for item in which:
             if item == 'pdr-selfbleu-agg':
                 # Results of Self-BLEU (left) and Production Rule Coverage (right) of S2LCT and CHECKLIST test cases.
-                cls.pdr_selfbleu_agg_plot(Macros.result_dir, figs_dir)
+                # cls.pdr_selfbleu_agg_plot(Macros.result_dir, figs_dir)
                 cls.pdr_selfbleu_agg_over_tasks_plot(Macros.result_dir, figs_dir)
                 cls.pdr_selfbleu_agg_over_tasks_bar_plot(Macros.result_dir, figs_dir)
             elif item == 'selfbleu':
@@ -387,57 +387,83 @@ class Plots:
         data_sb_lod = list()
         data_pdr_lod = list()
         pdr_y_limit = -1
-        result_scores_to_report = {
-            task: {
-                'selfbleu': {
-                    'checklist': {
-                        'data_over_lcs': list(),
-                        'avg': None,
-                        'std': None,
-                        'med': None
-                    },
-                    'checklist_exp': {
-                        'data_over_lcs': list(),
-                        'avg': None,
-                        'std': None,
-                        'med': None
-                    }
-                },
-                'pdr': {
-                    'checklist': {
-                        'data_over_lcs': list(),
-                        'avg': None,
-                        'std': None,
-                        'med': None
-                    },
-                    'checklist_exp': {
-                        'data_over_lcs': list(),
-                        'avg': None,
-                        'std': None,
-                        'med': None
-                    }
-                }
-            }
-            for task in tasks
-        }
+        result_scores_to_report = dict()
         for task in tasks:
             if task=='sa':
                 search_dataset = 'checklist'
                 req_file = req_dir / 'requirements_desc.txt'
                 num_test_results = 3
+                result_scores_to_report[task] = {
+                    'selfbleu': {
+                        'checklist': {
+                            'data_over_lcs': list(),
+                            'avg': None,
+                            'std': None,
+                            'med': None
+                        },
+                        'checklist_exp': {
+                            'data_over_lcs': list(),
+                            'avg': None,
+                            'std': None,
+                            'med': None
+                        }
+                    },
+                    'pdr': {
+                        'checklist': {
+                            'data_over_lcs': list(),
+                            'avg': None,
+                            'std': None,
+                            'med': None
+                        },
+                        'checklist_exp': {
+                            'data_over_lcs': list(),
+                            'avg': None,
+                            'std': None,
+                            'med': None
+                        }
+                    }
+                }
             else:
                 search_dataset = 'hatecheck'
                 req_file = req_dir / f"requirements_desc_{task}.txt"
                 num_test_results = 1
+                result_scores_to_report[task] = {
+                    'selfbleu': {
+                        'hatecheck': {
+                            'data_over_lcs': list(),
+                            'avg': None,
+                            'std': None,
+                            'med': None
+                        },
+                        'hatecheck_exp': {
+                            'data_over_lcs': list(),
+                            'avg': None,
+                            'std': None,
+                            'med': None
+                        }
+                    },
+                    'pdr': {
+                        'hatecheck': {
+                            'data_over_lcs': list(),
+                            'avg': None,
+                            'std': None,
+                            'med': None
+                        },
+                        'hatecheck_exp': {
+                            'data_over_lcs': list(),
+                            'avg': None,
+                            'std': None,
+                            'med': None
+                        }
+                    }
+                }
             # end if
-            data_lod: List[dict] = list()
         
             sb_result_file = results_dir / 'selfbleu' / f"seed_exp_bl_all_{task}_{search_dataset}_{selection_method}_selfbleu.json"
-            pdr_result_file = results_dir / 'selfbleu' / f"seed_exp_bl_all_{task}_{search_dataset}_{selection_method}_pdrcov.json"
+            pdr_result_file = results_dir / 'pdr_cov' / f"seed_exp_bl_all_{task}_{search_dataset}_{selection_method}_pdrcov.json"
             sb_result = Utils.read_json(sb_result_file)
             pdr_result = Utils.read_json(pdr_result_file)
-            lcs = Utils.read_txt(req_file)
-            
+            lcs = Utils.read_txt(req_file)            
             for t in range(num_test_results):
                 bl_sb_scores_over_lcs = list()
                 bl_exp_sb_scores_over_lcs = list()
@@ -445,38 +471,37 @@ class Plots:
                 bl_exp_pdr_scores_over_lcs = list()
                 for l_i, lc in enumerate(lcs):
                     lc_desc = lc.strip().split('::')[0]
-                    lc_desc = lc_desc if lc_desc in result.keys() else lc_desc.lower()
+                    lc_desc = lc_desc if lc_desc in sb_result.keys() else lc_desc.lower()
                     bl_sb_scores_over_lcs.append(sb_result[lc_desc][search_dataset][f"{num_sample}sample"]['selfbleu_scores'][t])
                     bl_exp_sb_scores_over_lcs.append(sb_result[lc_desc][f"{search_dataset}_exp"][f"{num_sample}sample"]['selfbleu_scores'][t])
                     bl_pdr_scores_over_lcs.append(pdr_result[lc_desc][search_dataset][f"{num_sample}sample"]['coverage_scores'][t])
                     bl_exp_pdr_scores_over_lcs.append(pdr_result[lc_desc][f"{search_dataset}_exp"][f"{num_sample}sample"]['coverage_scores'][t])
                 # end for
-                med_sb_scores_bl_over_lcs = float(Utils.med(bl_sb_scores_over_lcs))
-                med_sb_scores_bl_exp_over_lcs = float(Utils.med(bl_exp_sb_scores_over_lcs))
-                med_pdr_scores_bl_over_lcs = float(Utils.med(bl_pdr_scores_over_lcs))
-                med_pdr_scores_bl_exp_over_lcs = float(Utils.med(bl_exp_pdr_scores_over_lcs))
+                med_sb_scores_bl_over_lcs = float(Utils.median(bl_sb_scores_over_lcs))
+                med_sb_scores_bl_exp_over_lcs = float(Utils.median(bl_exp_sb_scores_over_lcs))
+                med_pdr_scores_bl_over_lcs = float(Utils.median(bl_pdr_scores_over_lcs))
+                med_pdr_scores_bl_exp_over_lcs = float(Utils.median(bl_exp_pdr_scores_over_lcs))
                 result_scores_to_report[task]['selfbleu'][search_dataset]['data_over_lcs'].append(med_sb_scores_bl_over_lcs)
                 result_scores_to_report[task]['selfbleu'][f"{search_dataset}_exp"]['data_over_lcs'].append(med_sb_scores_bl_exp_over_lcs)
                 result_scores_to_report[task]['pdr'][search_dataset]['data_over_lcs'].append(med_pdr_scores_bl_over_lcs)
                 result_scores_to_report[task]['pdr'][f"{search_dataset}_exp"]['data_over_lcs'].append(med_pdr_scores_bl_exp_over_lcs)
-                
                 data_sb_lod.append({
-                    'type': 'CHECKLIST' if task=='sa' else 'HATECHECK',
+                    'approach': 'CHECKLIST' if task=='sa' else 'HATECHECK',
                     'result_ind': t+1,
                     'scores': med_sb_scores_bl_over_lcs
                 })
                 data_sb_lod.append({
-                    'type': f"CHECKLIST+EXP" if task=='sa' else 'HATECHECK+EXP',
+                    'approach': 'CHECKLIST+EXP' if task=='sa' else 'HATECHECK+EXP',
                     'result_ind': t+1,
                     'scores': med_sb_scores_bl_exp_over_lcs
                 })
                 data_pdr_lod.append({
-                    'type': 'CHECKLIST' if task=='sa' else 'HATECHECK',
+                    'approach': 'CHECKLIST' if task=='sa' else 'HATECHECK',
                     'result_ind': t+1,
                     'scores': med_pdr_scores_bl_over_lcs
                 })
                 data_pdr_lod.append({
-                    'type': f"CHECKLIST+EXP" if task=='sa' else 'HATECHECK+EXP',
+                    'approach': 'CHECKLIST+EXP' if task=='sa' else 'HATECHECK+EXP',
                     'result_ind': t+1,
                     'scores': med_pdr_scores_bl_exp_over_lcs
                 })
@@ -486,51 +511,52 @@ class Plots:
                     med_pdr_scores_bl_exp_over_lcs
                 )
             # end for
+            result_scores_to_report[task]['selfbleu'][search_dataset]['avg'] = float(Utils.avg(result_scores_to_report[task]['selfbleu'][search_dataset]['data_over_lcs']))
+            result_scores_to_report[task]['selfbleu'][search_dataset]['std'] = float(Utils.stdev(result_scores_to_report[task]['selfbleu'][search_dataset]['data_over_lcs']))
+            result_scores_to_report[task]['selfbleu'][search_dataset]['med'] = float(Utils.median(result_scores_to_report[task]['selfbleu'][search_dataset]['data_over_lcs']))
+            result_scores_to_report[task]['pdr'][search_dataset]['avg'] = float(Utils.avg(result_scores_to_report[task]['pdr'][search_dataset]['data_over_lcs']))
+            result_scores_to_report[task]['pdr'][search_dataset]['std'] = float(Utils.stdev(result_scores_to_report[task]['pdr'][search_dataset]['data_over_lcs']))
+            result_scores_to_report[task]['pdr'][search_dataset]['med'] = float(Utils.median(result_scores_to_report[task]['pdr'][search_dataset]['data_over_lcs']))
         # end for
 
         df_pdr: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_pdr_lod))
         df_sb: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_sb_lod))
 
         # Plotting part
-        fig, (ax1, ax2) = plt.subplots(ncols=2, sharey=False)
+        fig, (ax1, ax2) = plt.subplots(ncols=2)
 
-        hue_order = ['CHECKLIST', 'CHECKLIST+EXP', 'HATECHECK', 'HATECHECK+EXP']
-        ax_sb = sns.barplot(data=df_sb, x='type', y='scores',
+        # hue_order = ['CHECKLIST', 'CHECKLIST+EXP', 'HATECHECK', 'HATECHECK+EXP']
+        ax_sb = sns.barplot(data=df_sb, x='approach', y='scores',
                             palette="Set1",
-                            err_kws={'capsize': 3},
                             estimator=median,
                             ax=ax1)
-        ax_pdr = sns.barplot(data=df_pdr, x='type', y='scores',
+        ax_pdr = sns.barplot(data=df_pdr, x='approach', y='scores',
                              palette="Set1",
-                             err_kws={'capsize': 3},
                              estimator=median,
                              ax=ax2)
-        
         # ax_sb.legend_.set_title(None)
-        ax_sb.legend_.remove()
-        ax_sb.set_xticks(hue_order)
+        # ax_sb.legend_.remove()
+        # ax_sb.set_xticks(hue_order)
         ax_sb.tick_params(axis='x', rotation=45)
         # sb_y_limit = sb_y_limit+0.5
         ax_sb.set_ylim(0.0, 1.1)
         ax_sb.set_xlabel("Approaches")
         ax_sb.set_ylabel("Self-BLEU score")
+        plt.setp(ax_sb.xaxis.get_majorticklabels(), ha='right')
 
-        ax_pdr.legend_.set_title(None)
-        ax_pdr.set_xticks(hue_order)
+        # ax_pdr.legend_.set_title(None)
         ax_pdr.tick_params(axis='x', rotation=45)
-        pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+3000
-        ax_pdr.set_ylim(-100, pdr_y_limit)
+        pdr_y_limit = pdr_y_limit+10 if pdr_y_limit<1000 else pdr_y_limit+5000
+        ax_pdr.set_ylim(0, pdr_y_limit)
         ax_pdr.set_xlabel("Approaches")
         ax_pdr.set_ylabel("Number of Production Rules Covered")
+        plt.setp(ax_pdr.xaxis.get_majorticklabels(), ha='right')
         
-        # # Shrink current axis by 20%
-        # box = ax.get_position()
-        # ax.set_position([box.x0, box.y0, box.width * 0.9, box.height])
-
         # put a legend to the right of the current axis
         # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         fig.tight_layout()
         fig.savefig(figs_dir / "pdr-selfbleu-ablation-lc-task-agg-barplot.eps")
+        Utils.write_json(result_scores_to_report, figs_dir / 'pdr-selfbleu-agg-lc-task-agg-barplot.json')
         return
     
     
@@ -1017,7 +1043,7 @@ class Plots:
                             'std': None,
                             'med': None
                         }
-                        for tp in comp_types
+                        for ct in comp_types
                     }
                     for ns in x_ticks
                 },
@@ -1049,7 +1075,7 @@ class Plots:
             
             pdr_cov_result = Utils.read_json(pdr_cov_result_file)
             selfbleu_result = Utils.read_json(selfbleu_result_file)
-            lcs = Utils.read_txt(req_file)):
+            lcs = Utils.read_txt(req_file)
             for t in range(num_trials):
                 selfbleu_seed_temp = {
                     f"{ns}sample": list()
@@ -1133,15 +1159,6 @@ class Plots:
                         pdr_y_limit
                     )
                 # end for
-                result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['avg'] = float(Utils.avg(result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['med_scores_over_lcs']))
-                result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['std'] = float(Utils.stdev(result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['med_scores_over_lcs']))
-                result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['med'] = float(Utils.median(result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['med_scores_over_lcs']))
-                result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['avg'] = float(Utils.avg(result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['med_scores_over_lcs']))
-                result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['std'] = float(Utils.stdev(result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['med_scores_over_lcs']))
-                result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['med'] = float(Utils.median(result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['med_scores_over_lcs']))
-                result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['avg'] = float(Utils.avg(result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['med_scores_over_lcs']))
-                result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['std'] = float(Utils.stdev(result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['med_scores_over_lcs']))
-                result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['med'] = float(Utils.median(result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['med_scores_over_lcs']))
                 
                 for ns in x_ticks:
                     for l_i, lc in enumerate(lcs):
@@ -1182,6 +1199,19 @@ class Plots:
                         sb_y_limit
                     )
                 # end for
+            # end for
+            for ns in pdr_x_ticks:
+                result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['avg'] = float(Utils.avg(result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['med_scores_over_lcs']))
+                result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['std'] = float(Utils.stdev(result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['med_scores_over_lcs']))
+                result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['med'] = float(Utils.median(result_scores_to_report[task]['pdr'][f"{ns}sample"]['seed']['med_scores_over_lcs']))
+                result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['avg'] = float(Utils.avg(result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['med_scores_over_lcs']))
+                result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['std'] = float(Utils.stdev(result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['med_scores_over_lcs']))
+                result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['med'] = float(Utils.median(result_scores_to_report[task]['pdr'][f"{ns}sample"]['exp']['med_scores_over_lcs']))
+                result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['avg'] = float(Utils.avg(result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['med_scores_over_lcs']))
+                result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['std'] = float(Utils.stdev(result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['med_scores_over_lcs']))
+                result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['med'] = float(Utils.median(result_scores_to_report[task]['pdr'][f"{ns}sample"]['bl']['med_scores_over_lcs']))
+            # end for
+            for ns in x_ticks:
                 result_scores_to_report[task]['selfbleu'][f"{ns}sample"]['seed']['avg'] = float(Utils.avg(result_scores_to_report[task]['selfbleu'][f"{ns}sample"]['seed']['med_scores_over_lcs']))
                 result_scores_to_report[task]['selfbleu'][f"{ns}sample"]['seed']['std'] = float(Utils.stdev(result_scores_to_report[task]['selfbleu'][f"{ns}sample"]['seed']['med_scores_over_lcs']))
                 result_scores_to_report[task]['selfbleu'][f"{ns}sample"]['seed']['med'] = float(Utils.median(result_scores_to_report[task]['selfbleu'][f"{ns}sample"]['seed']['med_scores_over_lcs']))
@@ -1192,7 +1222,8 @@ class Plots:
                 result_scores_to_report[task]['selfbleu'][f"{ns}sample"]['bl']['std'] = float(Utils.stdev(result_scores_to_report[task]['selfbleu'][f"{ns}sample"]['bl']['med_scores_over_lcs']))
                 result_scores_to_report[task]['selfbleu'][f"{ns}sample"]['bl']['med'] = float(Utils.median(result_scores_to_report[task]['selfbleu'][f"{ns}sample"]['bl']['med_scores_over_lcs']))
             # end for
-        # end for                    
+        # end for
+        
                 
         df_pdr: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_pdr_lod))
         df_sb: pd.DataFrame = pd.DataFrame.from_dict(Utils.lod_to_dol(data_sb_lod))
@@ -1252,7 +1283,7 @@ class Plots:
         ax_pdr.legend_.set_title(None)
         ax_pdr.set_xticks(pdr_x_ticks)
         ax_pdr.tick_params(axis='x', rotation=45)
-        pdr_y_limit = pdr_y_limit+200 if pdr_y_limit<1000 else pdr_y_limit+3000
+        pdr_y_limit = pdr_y_limit+300 if pdr_y_limit<1000 else pdr_y_limit+4000
         ax_pdr.set_ylim(-100, pdr_y_limit)
         ax_pdr.set_xlabel("Sample size")
         ax_pdr.set_ylabel("Number of Production Rules Covered")
