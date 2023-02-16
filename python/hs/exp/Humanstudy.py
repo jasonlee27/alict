@@ -191,7 +191,7 @@ class Humanstudy:
                 if len(l_split)>2:
                     val_score = int(l_split[2])
                 # end if
-                if resp_i==0:
+                if sents[l_i] not in res.keys():
                     res[sents[l_i]] = {
                         'sent_score': [sent_score],
                         'lc_score': [lc_score],
@@ -201,7 +201,7 @@ class Humanstudy:
                     res[sents[l_i]]['sent_score'].append(sent_score)
                     res[sents[l_i]]['lc_score'].append(lc_score)
                     if len(l_split)>2:
-                        res[sents[l_i]]['val_score'].append(lc_score)
+                        res[sents[l_i]]['val_score'].append(val_score)
                     # end if
                 # end if
             # end for
@@ -209,7 +209,13 @@ class Humanstudy:
         return res
 
     @classmethod
-    def get_target_results(cls, seed_cfg_dir, resps):
+    def get_target_results(cls, seed_cfg_dir, resps, res_dir):
+        res = Utils.read_json(res_dir / 'sent_sample_labels.json')
+        res_lc = Utils.read_json(res_dir / 'sent_sample_lcs.json')
+        if res is not None and res_lc is not None:
+            return res, res_lc
+        # end if
+        
         sent_dict = cls.read_sentences(seed_cfg_dir, include_label=True)
         res, res_lc = dict(), dict()
         seed_sents = list()
@@ -373,7 +379,6 @@ class Humanstudy:
         num_tgt_data = 0
         num_seed_data = 0
         num_exp_data = 0
-        print(len(seed_sents), len(exp_sents), len(tgt_results.keys()))
         for s in seed_sents:
             tokens = Utils.tokenize(s)
             _s = Utils.detokenize(tokens)
@@ -479,22 +484,15 @@ class Humanstudy:
     def get_exp_validity(cls,
                          exp_human_results):
         # Label inconsistency: # of l{i}_ours != l{i}_human
-        num_seed_corr, num_seed_incorr = 0, 0
-        num_exp_corr, num_exp_incorr = 0, 0
         exp_sents = list(exp_human_results.keys())
         res = {
             'exp': dict()
         }
-        num_tgt_data = 0
-        num_seed_data = 0
-        num_exp_data = 0
-
         for e in exp_sents:
             val_scores = exp_human_results[e]['val_score']
+            print(val_scores)
             if val_scores is not None:
                 res['exp'][e] = sum(val_scores)/len(val_scores)
-            else:
-                return
             # end if
         # end for
         return res
@@ -615,13 +613,14 @@ class Humanstudy:
                 exp_human_res = cls.read_sample_scores(exp_resp_files, exp_sents)
                 resps[file_i] = {
                     'seed': seed_human_res,
-                    'exp': seed_human_res
+                    'exp': exp_human_res
                 }
             # end if
         # end for
         
         tgt_res, tgt_res_lc = cls.get_target_results(seed_cfg_dir,
-                                                     resps)
+                                                     resps,
+                                                     res_dir)
         for f_i in resps.keys():
             seed_human_res = resps[f_i]['seed']
             exp_human_res = resps[f_i]['exp']
@@ -648,7 +647,6 @@ class Humanstudy:
         agg_seed_lc_scores = cls.norm_lc_relevancy(agg_seed_lc_scores)
         agg_exp_lc_scores = cls.norm_lc_relevancy(agg_exp_lc_scores)
         agg_exp_val_scores = cls.norm_exp_validity(agg_exp_val_scores)
-        
         res['agg'] = {
             'seed': {
                 'num_sents': len(agg_seed_label_scores),
