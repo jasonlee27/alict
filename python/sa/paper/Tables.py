@@ -401,7 +401,7 @@ class Tables:
                                                  cls.FMT_FLOAT.format(seed_res['avg_label_score'],2)))
             output_file.append_macro(latex.Macro(f"manual-study-{task}-seed-lc-relevancy",
                                                  cls.FMT_FLOAT.format(seed_res['avg_lc_score'],2)))
-            output_file.append_macro(latex.Macro(f"manual-study-{task}-seed-validity", 'N/A'))
+            output_file.append_macro(latex.Macro(f"manual-study-{task}-seed-validity", '-'))
             output_file.append_macro(latex.Macro(f"manual-study-{task}-exp-num-sents",
                                                  exp_res['num_sents']))
             output_file.append_macro(latex.Macro(f"manual-study-{task}-exp-label-consistency",
@@ -434,7 +434,7 @@ class Tables:
         output_file.append(r"\toprule")
         
         # Content
-        output_file.append(r"\tTask & \tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel \\")
+        output_file.append(r"\tTask & \tSentType & \tNumTestCases & \tAvgLabelCons & \tAvgLCRel & \tAvgExpVal \\")
         output_file.append(r"\midrule")
         
         for t_i, task in enumerate(tasks):
