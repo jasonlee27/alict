@@ -398,15 +398,18 @@ class Tables:
             output_file.append_macro(latex.Macro(f"manual-study-{task}-seed-num-sents",
                                                  seed_res['num_sents']))
             output_file.append_macro(latex.Macro(f"manual-study-{task}-seed-label-consistency",
-                                                 cls.FMT_FLOAT.format(round(seed_res['avg_label_score'],2))))
+                                                 cls.FMT_FLOAT.format(seed_res['avg_label_score'],2)))
             output_file.append_macro(latex.Macro(f"manual-study-{task}-seed-lc-relevancy",
-                                                 cls.FMT_FLOAT.format(round(seed_res['avg_lc_score'],2))))
+                                                 cls.FMT_FLOAT.format(seed_res['avg_lc_score'],2)))
+            output_file.append_macro(latex.Macro(f"manual-study-{task}-seed-validity", 'N/A'))
             output_file.append_macro(latex.Macro(f"manual-study-{task}-exp-num-sents",
                                                  exp_res['num_sents']))
             output_file.append_macro(latex.Macro(f"manual-study-{task}-exp-label-consistency",
-                                                 cls.FMT_FLOAT.format(round(exp_res['avg_label_score'],2))))
+                                                 cls.FMT_FLOAT.format(exp_res['avg_label_score'],2)))
             output_file.append_macro(latex.Macro(f"manual-study-{task}-exp-lc-relevancy",
-                                                 cls.FMT_FLOAT.format(round(exp_res['avg_lc_score'],2))))
+                                                 cls.FMT_FLOAT.format(exp_res['avg_lc_score'],2)))
+            output_file.append_macro(latex.Macro(f"manual-study-{task}-exp-validity",
+                                                 cls.FMT_FLOAT.format(exp_res['avg_val_score'],2)))
         # end for
         output_file.save()
         return
@@ -427,7 +430,7 @@ class Tables:
         output_file.append(r"\begin{center}")
         output_file.append(r"\caption{\ManualStudyTableCaption}")
         output_file.append(r"\resizebox{0.47\textwidth}{!}{")
-        output_file.append(r"\begin{tabular}{l|l|ccc}")
+        output_file.append(r"\begin{tabular}{l|l|cccc}")
         output_file.append(r"\toprule")
         
         # Content
@@ -439,10 +442,12 @@ class Tables:
             output_file.append("\multirow{2}{*}{" + task_latex + "} ")
             output_file.append(" & SEED & " + latex.Macro(f"manual-study-{task}-seed-num-sents").use())
             output_file.append(" & " + latex.Macro(f"manual-study-{task}-seed-label-consistency").use())
-            output_file.append(" & " + latex.Macro(f"manual-study-{task}-seed-lc-relevancy").use() + r"\\")
+            output_file.append(" & " + latex.Macro(f"manual-study-{task}-seed-lc-relevancy").use())
+            output_file.append(" & " + latex.Macro(f"manual-study-{task}-seed-validity").use() + r"\\")
             output_file.append(" & EXP & " + latex.Macro(f"manual-study-{task}-exp-num-sents").use())
             output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-label-consistency").use())
-            output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-lc-relevancy").use() + r"\\")
+            output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-lc-relevancy").use())
+            output_file.append(" & " + latex.Macro(f"manual-study-{task}-exp-validity").use() + r"\\")
             if t_i+1<len(tasks):
                 output_file.append(r"\hline")
             # end if

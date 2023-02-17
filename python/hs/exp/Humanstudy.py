@@ -256,12 +256,9 @@ class Humanstudy:
                 # end if
             # end for
         # end for
-        for s in res.keys():
-            if s not in seed_sents:
-                print('get_target_results: NOT IN SEED: ', s)
-            elif s not in exp_sents:
-                print('get_target_results: NOT IN EXP: ', s)
         print(len(seed_sents), len(exp_sents), len(res.keys()), len(res_lc.keys()))
+        Utils.write_json(res, res_dir / 'sent_sample_labels.json')
+        Utils.write_json(res_lc, res_dir / 'sent_sample_lcs.json')
         return res, res_lc
 
     @classmethod
@@ -407,13 +404,13 @@ class Humanstudy:
             if s in tgt_results.keys():
                 num_exp_data += 1
                 label = tgt_results[s]
-                labels_h = seed_human_results[s]['sent_score']
+                labels_h = exp_human_results[s]['sent_score']
                 label_consistency = [1 if l in label else 0 for l in labels_h]
                 res['exp'][s] = sum(label_consistency)/len(label_consistency)
             elif _s in tgt_results.keys():
                 num_exp_data += 1
                 label = tgt_results[_s]
-                labels_h = seed_human_results[s]['sent_score']
+                labels_h = exp_human_results[s]['sent_score']
                 label_consistency = [1 if l in label else 0 for l in labels_h]
                 res['exp'][s] = sum(label_consistency)/len(label_consistency)
             else:
@@ -464,11 +461,11 @@ class Humanstudy:
             num_tgt_data += 1
             if s in tgt_lc_results.keys():
                 num_seed_data += 1
-                lc_scores_h = seed_human_results[s]['lc_score']
+                lc_scores_h = exp_human_results[s]['lc_score']
                 res['exp'][s] = sum(lc_scores_h)/len(lc_scores_h)
             elif _s in tgt_lc_results.keys():
                 num_seed_data += 1
-                lc_scores_h = seed_human_results[s]['lc_score']
+                lc_scores_h = exp_human_results[s]['lc_score']
                 res['exp'][s] = sum(lc_scores_h)/len(lc_scores_h)
             else:
                 print('get_lc_consistency: exp: ', s)
@@ -490,7 +487,6 @@ class Humanstudy:
         }
         for e in exp_sents:
             val_scores = exp_human_results[e]['val_score']
-            print(val_scores)
             if val_scores is not None:
                 res['exp'][e] = sum(val_scores)/len(val_scores)
             # end if
@@ -652,16 +648,26 @@ class Humanstudy:
                 'num_sents': len(agg_seed_label_scores),
                 'label_scores': agg_seed_label_scores,
                 'lc_scores': agg_seed_lc_scores,
-                'avg_label_score': sum(agg_seed_label_scores)/len(agg_seed_label_scores),
-                'avg_lc_score': sum(agg_seed_lc_scores)/len(agg_seed_lc_scores),
+                'avg_label_score': float(Utils.avg(agg_seed_label_scores)),
+                'med_label_score': float(Utils.median(agg_seed_label_scores)),
+                'std_label_score': float(Utils.stdev(agg_seed_label_scores)),
+                'avg_lc_score': float(Utils.avg(agg_seed_lc_scores)),
+                'med_lc_score': float(Utils.median(agg_seed_lc_scores)),
+                'std_lc_score': float(Utils.stdev(agg_seed_lc_scores))
             },
             'exp': {
                 'num_sents': len(agg_exp_label_scores),
                 'label_scores': agg_exp_label_scores,
                 'lc_scores': agg_exp_lc_scores,
-                'avg_label_score': sum(agg_exp_label_scores)/len(agg_exp_label_scores),
-                'avg_lc_score': sum(agg_exp_lc_scores)/len(agg_exp_lc_scores),
-                'avg_val_score': sum(agg_exp_val_scores)/len(agg_exp_val_scores)
+                'avg_label_score': float(Utils.avg(agg_exp_label_scores)),
+                'med_label_score': float(Utils.median(agg_exp_label_scores)),
+                'std_label_score': float(Utils.stdev(agg_exp_label_scores)),
+                'avg_lc_score': float(Utils.avg(agg_exp_lc_scores)),
+                'med_lc_score': float(Utils.median(agg_exp_lc_scores)),
+                'std_lc_score': float(Utils.stdev(agg_exp_lc_scores)),
+                'avg_val_score': float(Utils.avg(agg_exp_val_scores)),
+                'med_val_score': float(Utils.median(agg_exp_val_scores)),
+                'std_val_score': float(Utils.stdev(agg_exp_val_scores))
             }
         }
         return res
