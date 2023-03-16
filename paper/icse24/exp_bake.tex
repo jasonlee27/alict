@@ -1,0 +1,91 @@
+\paragraph*{\selfbleu and production rule coverage.} First, we reuse the input diversity metric, 
+called \selfbleu, that Zhu \etal introduced~\cite{zhu2018texygen}. \bleu~\cite{papineni2002bleu} evaluates token-level similarity.
+% Regarding that \selfbleu takes each \sent as hypothesis and rest in a collection of textual data as reference, we calculate \bleu scores for every pairs of hypothesis and each reference \sent.
+\selfbleu is defined as the average \bleu scores over all reference \sents, ranging between 0 and 1.
+% Since the \bleu score ranges from 0 as the least similar inputs to 1 as the most similar inputs,
+A higher \selfbleu score indicates lower diversity in the test suite.
+Second, we propose a new metric to 
+evaluate the syntactic diversity of the generated test suite.
+It is defined as the number of production rules covered in a set of 
+test \sents. In our experiments, we used the Berkeley Neural 
+Parser~\cite{kitaev2018seedparser,kitaev2019seedparser} to parse and
+collect all the productions.
+
+In the evaluation, we collected 200, 400, 600, 800 and 1000 test cases for \sa and 10000, 50000, 100000, 150000 and 200000 test cases for \hsd, randomly selected \tool seed and expanded \sents. We then computed the median of \selfbleu and \pdr scores over all \lcs. We repeated this computation with different \tool seeds over 5 trials and reported the median. 
+% \sw{I am lost with the rest of this paragraph. Explain to me; then we will fix.}
+We also evaluated \tool expansion phase by generating expanded \sents from \Cklst and 
+\hck as seeds. We collected up to 200 randomly selected test cases from \Cklst and 
+\hck and generate their expanded \sents. We computed the median of \selfbleu and \pdr 
+scores from the \sents over all \lcs. We repeated the computation with different \tool
+seeds over 3 trials and reported the median over the 3 trials.
+In addition, we compared \selfbleu and \pdr scores between \tool and text generation 
+\bls. First, we generate two groups of \sents from 100 randomly selected \tool seeds 
+for each \sa and \hsd using \tool expansion and syntax-based text generation \bl. 
+\selfbleu and \pdr scores of the two groups of \sents were then compared. Second. we 
+generate two groups of \sents from 50 randomly selected \tool seeds for \sa using 
+\tool expansion and adversarial text generation \bls. Likewise, we compared \selfbleu 
+and \pdr scores of the two groups of \sents.
+
+
+
+\paragraph*{Model coverage.}
+We follow the approach presented by Ma et al. \cite{ma2018deepgauge},
+where the authors measure the coverage of NLP model intermediate states as corner-case neurons.
+Because the matrix computation of intermediate states impacts NLP model decision-making, a test suite that covers a greater number of intermediate states can represent more NLP model decision-making, making it more diverse.
+Specifically, we used two coverage metrics by Ma et al. \cite{ma2018deepgauge}, \textit{boundary coverage} (BoundCov) and \textit{strong activation coverage} (SActCov), to evaluate the test suite diversity.
+
+
+% It is worth noting that a test sample with a statistical distribution similar to the training data is rarely found in the corner case region.
+% Thus, covering a larger corner case region indicates that the test suite is more likely to be buggy.
+\begin{equation}
+\begin{split}
+    \text{UpperCorner}(\mathcal{X}) = \{n \in N | \exists x \in \mathcal{X}: f_n(x) \in (high_n, +\infty)\}; \\
+    \text{LowerCorner}(\mathcal{X}) = \{n \in N | \exists x \in \mathcal{X}: f_n(x) \in (-\infty, low_n)\}; \\
+\end{split}
+    \label{eq:corner}
+\end{equation}
+
+
+\noindent Equation \ref{eq:corner} defines the corner-case neuron of the NLP model $f(\cdot)$, where $\mathcal{X}$ is the given test suite, $N$ is the number of neurons in model $f(\cdot)$, $f_n(\cdot)$ is the $n^{th}$ neuron's output, and $high_n$ and $low_n$ are the $n^{th}$ neurons' upper and lower output bounds on the model training dataset respectively.
+Equation \ref{eq:corner} can be interpreted as the collection of neurons that emit outputs beyond the model's numerical boundary.
+
+\begin{small}
+\begin{equation}
+\begin{split}
+     & BoundCov(\mathcal{X}) = \frac{|UpperCorner(\mathcal{X})| + |LowerCorner(\mathcal{X})| }{2 \times |N|} \\ 
+     &\quad  \qquad \qquad  SActCov(\mathcal{X}) = \frac{|UpperCorner(\mathcal{X})|} {|N|} \\ 
+\end{split}
+    \label{eq:coverage}
+\end{equation}
+\end{small}
+\noindent The definition of our model coverage metrics is shown in Equation \ref{eq:coverage}, where BoundCov measures the coverage of neurons that produces outputs exceeding the upper or lower bounds, and SActCov measures the coverage of neurons that creates outputs exceeding the lower bound.
+Higher coverage indicates the test suite is better for triggering the corner-case neurons, thus better test suite diversity.
+
+To evaluate model coverage, we feed the training dataset of each NLP model under test to compute each neuron's lower and upper bounds. After that, we select the same number of test cases from \tool and \Cklst as the test suite and compute the corresponding model coverage metrics.
+
+
+% For each subject, we randomly select 100 seed samples from the test dataset as seed inputs. We then feed the same seed inputs into \tool and \texttt{ILFO} to generate test samples. 
+% Finally, we feed the generated test samples to AdNNs and measure block coverage.
+% We repeat this process 10 times and record the a  verage coverage and the variance.
+% The results are shown in \tabref{tab:coverage} last two columns. 
+
+%%The amount of \sa model
+%components \sw{?} executed during testing is a critical measurement for
+%assessing quality of software testing. A high software coverage
+%results in higher chances of unidentified bugs in the \sa model. On
+%the other hand, limited distribution only represents narrow portion of
+%real world covering limited execution behaviors in a \sa model. It leads
+%to detect bugs within the restricted execution behaviors.  Therefore,
+%test cases more representative of real-world data result in more generalized
+%distribution and higher coverage of the \sa model.
+%Therefore, we answer the {\bf RQ2} by
+%measuring the neural coverage of the \sa model.
+%
+%Specifically, we implemented DeepXplore to measure the \sa model
+%coverage~\cite{pei2017deepxplore}. \Dxp is the first efficient
+%white-box testing framework for large-scale \dl systems. It introduces
+%neuron coverage of a set of test inputs as the ratio of the number of
+%unique activated neurons and the total number of neurons in input \dl
+%system. In this experiment, we compute the neuron coverage of a test
+%cases from \tool and \Cklst on the fine-tuned \sw{first time mention fine-tuning: reader does not know how we fine-tune} \sa model of
+%\bertsamodel and compare the coverage between \tool and \Cklst.

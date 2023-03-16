@@ -1,0 +1,23 @@
+\begin{abstract}
+
+\Nlp (NLP) has gained widespread adoption in the development 
+of diverse real-world applications. However, the black-box nature of the backend neural networks in NLP applications poses a challenge when evaluating their performance, let alone ensuring it. 
+Recent research has proposed testing techniques to enhance the trustworthiness of NLP-based applications. 
+However, existing works either generate invalid test cases (\ie those with incorrect grammar) or rely on manually designed test cases, which may limit their diversity.
+To address this limitation, we propose \tool, an automated testing technique for validating NLP applications based on their \lcs. 
+\tool first transforms test cases from existing real-world datasets into seed inputs  that belong to individual \lcs. \tool then generates a sufficient number of test cases by expanding syntax of the seed inputs based on their context-free grammar (CFG). 
+In the syntax expansion process, \tool validates that the expanded test cases maintain the same semantic and capability as the seed inputs, thereby automatically  constructing a test oracle and \lc for the expanded test cases.
+We evaluate \tool on two widely adopted NLP tasks, \sa and \hsd, to determine its  performance in terms of diversity, effectiveness, and consistency.
+The results showed that \tool generates test cases that are at least 88\% more diverse than those produced by \sota techniques, as measured by \selfbleu and \pdr metrics. % two neuron coverage metrics.
+Additionally, \tool was found to produce a larger number of NLP model failures.
+% \sw{I'm not sure what 7 and 13 were referring to.}
+% over 7 \lcs for \sa and 14 \lcs for \hsd.
+% Our evaluation also revealed that \tool facilitates the identification of critical failures and the sources of these failures within NLP models. 
+% \sw{Double check numbers and update evaluation results when finalized.}
+
+
+
+
+
+
+\end{abstract}

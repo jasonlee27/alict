@@ -1,0 +1,110 @@
+\vspace{-6pt}
+\section{Related Work}
+
+To the best of our knowledge, \tool is the first approach that automatically generates test cases for linguistic capability testing of NLP models. In addition to the existing capability-based testing works that are discussed in Section \ref{sec:background}, our work is related to works that (1) present new metrics and methodologies for NLP testing, (2) automated text augmentation, and (3) explanation and debugging of NLP model results.
+
+\MyPara{NLP Testing}
+%
+% With the increasing use of NLP models, evaluation of NLP models is
+% becoming a more important issue. 
+Apart from the accuracy-based testing
+scheme, recent works have considered model robustness as an
+aspect for evaluation.
+An important line of work is to perform adversarial attacks.
+Belinkov and Bisk
+\textit{\etal}~\cite{belinkov2018breaknmt} aimed to fail Neural Machine
+Translation (NMT) model by intentionally introducing noise in the input
+text. Pinjia
+\textit{\etal}~\cite{pinjia2020structinvtestingnmt,pinjia2020testnmtrt}
+measured the robustness of NMT model by assuming syntactic and semantic relation between input and output. Ribeiro
+\textit{\etal}~\cite{ribeiro2018sear} proposed an approach to
+generalize semantically equivalent adversarial rules. Rychalska \textit{\etal}~\cite{rychalska2019wildnlp} measured drops in
+BLEU by corruption operation, and compared model robustness
+based on the amount of the drops. Iyyer
+\textit{\etal}~\cite{iyyer2018adversarial} introduced learning-based
+model for adversarial data augmentation.
+
+In addition, Prabhakaran
+\textit{\etal}~\cite{prabhakaran2019fairness} developed an evaluation
+framework to detect unintended societal bias in NLP models. Rottger
+\textit{\etal}~\cite{rottger2020hatecheck} introduced a functional
+test suite for hate speech detection in the NLP model.  Ribeiro
+\textit{\etal}~\cite{ribeiro2019consistencyeval} measured logical
+consistency of NLP model. In this work, we focused on the evaluation over 
+multiple linguistic capabilities; \tool also produced information useful for debugging by comparing the seed and expanded test cases.
+
+\MyPara{Text Generation}
+\sw{I don't understand what we mean by ``text generation" and how it differs from the works in the ``NLP testing" cateogry.}
+Different data augmentation \sw{what does data augmentation mean? Has this phrase been used in describing our approach?} approaches have been proposed for text generation. 
+One approach is called easy data augmentation (EDA)~\cite{weizou2019eda},
+which applies simple operations such as synonym replacement and random swap. 
+Coulombe~\cite{coulombe2018textaugapi} implements rule-based transformations using regular
+expressions for text transformations such as insertion of spelling mistakes, 
+data alterations, entity names, and abbreviations. Mixup interpolation, which was originally introduced 
+for computer vision, was implemented for text augmentation~\cite{hongyu2019dataaugmixup}. 
+Learning-based language models have also been used to generate text data for multiple tasks~\cite{qizhe2019unsupdataaug, ateret2019lambda}.
+While these approaches focus on obtaining synthetic testing data, our work generates text data for testing NLP model over \lcs. \sw{The related work overall is written vaguely. Each citation was described in one sentence which does not help understand the difference from our work. More importantly, the contrast we make in the last sentence is very vague and I am not sure if these are accurate. E.g., we used a few adversarial approaches and syntax-based approach as baselines in our evaluation, there is no discussion how they are similar and differ from our work; I am not even sure which citations are these works.}
+
+Text generation methods have been used for attacking NLP model. \sw{How does the line of work differ from the first paragraph in ``NLP Testing"?}
+%~\cite{morris2020textattack,zang2020sememepso,alzantot2018genadvexp,linyang2020bertattack}. 
+Morris \textit{\etal}~\cite{morris2020textattack} provide a framework for
+transforming input text by leveraging existing methods such as insertion,
+deletion and swap of word/character within the similarity-based
+constraints. Zang \textit{\etal}~\cite{zang2020sememepso} finds
+sememe-based synonyms and generates adversarial examples by the word
+substitution. Alzantot \textit{\etal}~\cite{alzantot2018genadvexp}
+substitutes word in an input text with its neighboring words in
+embedding space that fools an NLP model. Linyang \textit{\etal}~\cite{linyang2020bertattack} 
+generates word substitutes with BERT predicted words for attacking an NLP model. 
+In addition, grammar-based text generation has been introduced~\cite{udeshi2019ogma,soremekun2020astraea,maIJCAI2020mtnlp}.
+Ogma~\cite{udeshi2019ogma} and Astraea~\cite{soremekun2020astraea}
+leverages predefined grammar, and search adversarial examples by
+replacing word in an input text with another one that conforms to same
+production rule in the grammar until the replacement leads to error in
+the model. Ma \textit{\etal}~\cite{maIJCAI2020mtnlp} applies a simple
+expansion that inserts an adjective word before noun besides to
+replacement of analogy word found in embedding space. Our syntax-based sentence expansion does not only use word substitution, but
+rather focus on improve the diversity of the sentence structure by expanding the production rules. In addition, our linguistic capability specifications ensure high label and linguistic capability consistencies, as demonstrated in the evaluation.
+
+\MyPara{Linguistic Capability Evaluation}
+\sw{This paragraph (1) is incomplete (missing hatecheck), and (2) may not be necessary (the intro/motivation should have already covered these). So I suggest removing this paragraph but make sure these works (including hatecheck) have been well discussed in intro/motivation sections.} 
+Wang \textit{\etal}~\cite{wang2018glue, wang2019superglue} proposed
+multiple diagnostic datasets to evaluate NLP models 
+% . These datasets
+% evaluate NLP model's ability to understand input sentence
+via natural language inference problems. More recently, \Cklst proposed an evaluation
+method of input-output behavior defined as \lcs. \Cklst generates
+behavior-guided inputs for validating the
+behaviors.~\cite{marcoACL2020checklist}. Unlike prior work that relies on manual
+test case generation, we used structural information in text to
+generate test cases automatically.
+
+\MyPara{NLP Model Debugging}
+%
+Researchers have also tried to explain and debug NLP model results. Ribeiro
+\sw{I don't understand the next sentence.} \textit{\etal}~\cite{ribeiroSG16lime} evaluated model prediction guided by human feedback, providing relevance scores for words on the model prediction. 
+\sw{What is interactive error analysis?} Interactive error analysis~\cite{wu2019errudite} has also been proposed to evaluate
+model robustness. Zylberajch~\cite{zylberajch2021hildif} used influence functions to generate model explanation, and it enables interactive debugging incorporating humans feedback
+explanation.
+Lertvittaya~\cite{lertvittayakumjorn2020find} proposed
+an approach to understand behavior of text classifier model and improve the
+model by disabling irrelevant hidden features. In this work, \tool
+is useful for identifying the sources of model failure as shown in Section \ref{sec:application}. \sw{How is our application relevant to these works though?}
+
+
+% [1] Li Z, Ma X, Xu C, et al. Structural coverage criteria for neural networks could be misleading[C]//2019 IEEE/ACM 41st International Conference on Software Engineering: New Ideas and Emerging Results (ICSE-NIER). IEEE, 2019: 89-92.
+
+% [2] Harel-Canada F, Wang L, Gulzar M A, et al. Is neuron coverage a meaningful measure for testing deep neural networks?[C]//Proceedings of the 28th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering. 2020: 851-862.
+
+% [3] Yan S, Tao G, Liu X, et al. Correlations between deep neural network model coverage criteria and model quality[C]//Proceedings of the 28th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering. 2020: 775-787.
+
+% [4] Chen J, Yan M, Wang Z, et al. Deep neural network test coverage: How far are we?[J]. arXiv preprint arXiv:2010.04946, 2020.
+% [5] Xie Q, Dai Z, Hovy E, et al. Unsupervised data augmentation for consistency training[J]. Advances in Neural Information Processing Systems, 2020, 33: 6256-6268. 
+
+% [6] Coulombe C. Text data augmentation made simple by leveraging nlp cloud apis[J]. arXiv preprint arXiv:1812.04718, 2018. 
+
+% [7] Wei J, Zou K. Eda: Easy data augmentation techniques for boosting performance on text classification tasks[J]. arXiv preprint arXiv:1901.11196, 2019. 
+
+% [8] Guo H, Mao Y, Zhang R. Augmenting data with mixup for sentence classification: An empirical study[J]. arXiv preprint arXiv:1905.08941, 2019. 
+
+% [9] Anaby-Tavor A, Carmeli B, Goldbraich E, et al. Do not have enough data? Deep learning to the rescue![C]//Proceedings of the AAAI Conference on Artificial Intelligence. 2020, 34(05): 7383-7390.

@@ -1,0 +1,2259 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Homebrew) (preloaded format=pdflatex 2022.10.3)  16 MAR 2023 17:56
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**main
+(./main.tex
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-02-24> (./acmart.cls
+Document Class: acmart 2022/10/24 v1.88 Typesetting articles for the Associatio
+n for Computing Machinery
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/xkeyval/xke
+yval.sty
+Package: xkeyval 2020/11/20 v2.8 package option processing (HA)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/xkeyval/x
+keyval.tex
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/xkeyval/x
+kvutils.tex
+\XKV@toks=\toks16
+\XKV@tempa@toks=\toks17
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/xkeyval/k
+eyval.tex))
+\XKV@depth=\count185
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/xstring/x
+string.sty
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/xstring/x
+string.tex
+\integerpart=\count186
+\decimalpart=\count187
+)
+Package: xstring 2021/07/21 v1.84 String manipulations (CT)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/iftex/ift
+ex.sty
+Package: iftex 2022/02/03 v1.0f TeX engine tests
+)
+Package acmart Info: Not using screen mode on input line 76.
+Package acmart Info: Using breaking urls on hyphens on input line 84.
+Package acmart Info: Requiring acmthm on input line 92.
+Package acmart Info: Not using review mode on input line 101.
+Package acmart Info: Not using authorversion mode on input line 109.
+Package acmart Info: Not using nonacm mode on input line 121.
+Package acmart Info: Explicitly selecting natbib mode on input line 137.
+Package acmart Info: Not using anonymous mode on input line 145.
+Package acmart Info: Not using timestamp mode on input line 153.
+Package acmart Info: Not using authordraft mode on input line 163.
+Package acmart Info: Using review mode on input line 178.
+Package acmart Info: Using anonymous mode on input line 178.
+Class acmart Info: Using format sigconf, number 4 on input line 178.
+Class acmart Info: Using fontsize 9pt on input line 277.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/amscls/amsa
+rt.cls
+Document Class: amsart 2020/05/29 v2.20.6
+\linespacing=\dimen138
+\normalparindent=\dimen139
+\normaltopskip=\skip47
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/amsmath/ams
+math.sty
+Package: amsmath 2021/10/15 v2.17l AMS math features
+\@mathmargin=\skip48
+
+For additional information on amsmath, use the `?' option.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/amsmath/ams
+text.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/amsmath/ams
+gen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks18
+\ex@=\dimen140
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/amsmath/ams
+bsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen141
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/amsmath/ams
+opn.sty
+Package: amsopn 2021/08/26 v2.02 operator names
+)
+\inf@bad=\count188
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count189
+\leftroot@=\count190
+LaTeX Info: Redefining \overline on input line 399.
+\classnum@=\count191
+\DOTSCASE@=\count192
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box50
+\strutbox@=\box51
+\big@size=\dimen142
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count193
+\c@MaxMatrixCols=\count194
+\dotsspace@=\muskip16
+\c@parentequation=\count195
+\dspbrk@lvl=\count196
+\tag@help=\toks19
+\row@=\count197
+\column@=\count198
+\maxfields@=\count199
+\andhelp@=\toks20
+\eqnshift@=\dimen143
+\alignsep@=\dimen144
+\tagshift@=\dimen145
+\tagwidth@=\dimen146
+\totwidth@=\dimen147
+\lineht@=\dimen148
+\@envbody=\toks21
+\multlinegap=\skip49
+\multlinetaggap=\skip50
+\mathdisplay@stack=\toks22
+LaTeX Info: Redefining \[ on input line 2938.
+LaTeX Info: Redefining \] on input line 2939.
+)
+LaTeX Font Info:    Trying to load font information for U+msa on input line 397
+.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/amsfonts/um
+sa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/amsfonts/am
+sfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)
+\copyins=\insert252
+\abstractbox=\box52
+\listisep=\skip51
+\c@part=\count266
+\c@section=\count267
+\c@subsection=\count268
+\c@subsubsection=\count269
+\c@paragraph=\count270
+\c@subparagraph=\count271
+\c@figure=\count272
+\c@table=\count273
+\abovecaptionskip=\skip52
+\belowcaptionskip=\skip53
+\captionindent=\dimen149
+\thm@style=\toks23
+\thm@bodyfont=\toks24
+\thm@headfont=\toks25
+\thm@notefont=\toks26
+\thm@headpunct=\toks27
+\thm@preskip=\skip54
+\thm@postskip=\skip55
+\thm@headsep=\skip56
+\dth@everypar=\toks28
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/microtype/m
+icrotype.sty
+Package: microtype 2022/03/14 v3.0d Micro-typographical refinements (RS)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/etoolbox/et
+oolbox.sty
+Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count274
+)
+\MT@toks=\toks29
+\MT@tempbox=\box53
+\MT@count=\count275
+LaTeX Info: Redefining \noprotrusionifhmode on input line 1027.
+LaTeX Info: Redefining \leftprotrusion on input line 1028.
+LaTeX Info: Redefining \rightprotrusion on input line 1036.
+LaTeX Info: Redefining \textls on input line 1195.
+\MT@outer@kern=\dimen150
+LaTeX Info: Redefining \textmicrotypecontext on input line 1781.
+\MT@listname@count=\count276
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/microtype/m
+icrotype-pdftex.def
+File: microtype-pdftex.def 2022/03/14 v3.0d Definitions specific to pdftex (RS)
+
+LaTeX Info: Redefining \lsstyle on input line 900.
+LaTeX Info: Redefining \lslig on input line 900.
+\MT@outer@space=\skip57
+)
+Package microtype Info: Loading configuration file microtype.cfg.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/microtype/m
+icrotype.cfg
+File: microtype.cfg 2022/03/14 v3.0d microtype main configuration file (RS)
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/booktabs/bo
+oktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen151
+\lightrulewidth=\dimen152
+\cmidrulewidth=\dimen153
+\belowrulesep=\dimen154
+\belowbottomsep=\dimen155
+\aboverulesep=\dimen156
+\abovetopsep=\dimen157
+\cmidrulesep=\dimen158
+\cmidrulekern=\dimen159
+\defaultaddspace=\dimen160
+\@cmidla=\count277
+\@cmidlb=\count278
+\@aboverulesep=\dimen161
+\@belowrulesep=\dimen162
+\@thisruleclass=\count279
+\@lastruleclass=\count280
+\@thisrulewidth=\dimen163
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/refcount/re
+fcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/ltxcmds/l
+txcmds.sty
+Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/infwarerr
+/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/totpages/to
+tpages.sty
+Package: totpages 2005/09/19 v2.00 Totpages Package (muewi)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/everyshi/ev
+eryshi.sty
+Package: everyshi 2020/11/18 v4.00 EveryShipout Package
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/environ/env
+iron.sty
+Package: environ 2014/05/04 v0.3 A new way to define environments
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/trimspaces/
+trimspaces.sty
+Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/textcase/te
+xtcase.sty
+Package: textcase 2019/09/14 v1.00 Text only upper/lower case changing (DPC)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/natbib/natb
+ib.sty
+Package: natbib 2010/09/13 8.31b (PWD, AO)
+\bibhang=\skip58
+\bibsep=\skip59
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count281
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/hyperxmp/hy
+perxmp.sty
+Package: hyperxmp 2020/11/22 v5.9 Store hyperref metadata in XMP format
+\hyxmp@aep@toks=\toks30
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/kvoptions/k
+voptions.sty
+Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/kvsetkeys
+/kvsetkeys.sty
+Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pdfescape
+/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pdftexcmd
+s/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/stringenc
+/stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/intcalc/i
+ntcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/ifmtarg/ifm
+targ.sty
+Package: ifmtarg 2018/04/16 v1.2b check for an empty argument
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/base/ifthen
+.sty
+Package: ifthen 2020/11/24 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/oberdiek/if
+draft.sty
+Package: ifdraft 2016/05/16 v1.4 Detect class options draft and final (HO)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/iftex/ifl
+uatex.sty
+Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/hyperref/hy
+perref.sty
+Package: hyperref 2022-02-21 v7.00n Hypertext links for LaTeX
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/kvdefinek
+eys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/hycolor/hyc
+olor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/letltxmacro
+/letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/auxhook/aux
+hook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)
+\@linkdim=\dimen164
+\Hy@linkcounter=\count282
+\Hy@pagecounter=\count283
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/hyperref/pd
+1enc.def
+File: pd1enc.def 2022-02-21 v7.00n Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/etexcmds/
+etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)
+\Hy@SavedSpaceFactor=\count284
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/hyperref/pu
+enc.def
+File: puenc.def 2022-02-21 v7.00n Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Option `bookmarksnumbered' set `true' on input line 4018
+.
+Package hyperref Info: Option `unicode' set `true' on input line 4018.
+Package hyperref Info: Hyper figures OFF on input line 4137.
+Package hyperref Info: Link nesting OFF on input line 4142.
+Package hyperref Info: Hyper index ON on input line 4145.
+Package hyperref Info: Plain pages OFF on input line 4152.
+Package hyperref Info: Backreferencing OFF on input line 4157.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4390.
+\c@Hy@tempcnt=\count285
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4749.
+\XeTeXLinkMargin=\dimen165
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/bitset/bi
+tset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/bigintcal
+c/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count286
+\Field@Width=\dimen166
+\Fld@charsize=\dimen167
+Package hyperref Info: Hyper figures OFF on input line 6027.
+Package hyperref Info: Link nesting OFF on input line 6032.
+Package hyperref Info: Hyper index ON on input line 6035.
+Package hyperref Info: backreferencing OFF on input line 6042.
+Package hyperref Info: Link coloring OFF on input line 6047.
+Package hyperref Info: Link coloring with OCG OFF on input line 6052.
+Package hyperref Info: PDF/A mode OFF on input line 6057.
+LaTeX Info: Redefining \ref on input line 6097.
+LaTeX Info: Redefining \pageref on input line 6101.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/base/atbegs
+hi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count287
+\c@Item=\count288
+\c@Hfootnote=\count289
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/hyperref/hp
+dftex.def
+File: hpdftex.def 2022-02-21 v7.00n Hyperref driver for pdfTeX
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/base/atvery
+end-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
+kage
+with kernel methods
+)
+\Fld@listcount=\count290
+\c@bookmark@seq@number=\count291
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/rerunfilech
+eck/rerunfilecheck.sty
+Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/uniquecou
+nter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+86.
+)
+\Hy@SectionHShift=\skip60
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/graphics/gr
+aphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/graphics/gr
+aphics.sty
+Package: graphics 2021/03/04 v1.4d Standard LaTeX Graphics (DPC,SPQR)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/graphics/tr
+ig.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/graphics-cf
+g/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 107.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/graphics-de
+f/pdftex.def
+File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen168
+\Gin@req@width=\dimen169
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/xcolor/xcol
+or.sty
+Package: xcolor 2021/10/31 v2.13 LaTeX color extensions (UK)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/graphics-cf
+g/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 227.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1352.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1356.
+Package xcolor Info: Model `RGB' extended on input line 1368.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1370.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1371.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1372.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1373.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1374.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1375.
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/geometry/ge
+ometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/iftex/ifv
+tex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+)
+\Gm@cnth=\count292
+\Gm@cntv=\count293
+\c@Gm@tempcnt=\count294
+\Gm@bindingoffset=\dimen170
+\Gm@wd@mp=\dimen171
+\Gm@odd@mp=\dimen172
+\Gm@even@mp=\dimen173
+\Gm@layoutwidth=\dimen174
+\Gm@layoutheight=\dimen175
+\Gm@layouthoffset=\dimen176
+\Gm@layoutvoffset=\dimen177
+\Gm@dimlist=\toks31
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/ncctools/ma
+nyfoot.sty
+Package: manyfoot 2019/08/03 v1.11 Many Footnote Levels Package (NCC)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/ncctools/nc
+cfoots.sty
+Package: nccfoots 2005/02/03 v1.2 NCC Footnotes Package (NCC)
+)
+\MFL@columnwidth=\dimen178
+)
+\footinsauthorsaddresses=\insert251
+\c@footnoteauthorsaddresses=\count295
+\footinscopyrightpermission=\insert250
+\c@footnotecopyrightpermission=\count296
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pdftex/gl
+yphtounicode.tex)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/cmap/cmap.s
+ty
+Package: cmap 2021/02/06 v1.0j CMap support: searchable PDF
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/base/fonten
+c.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+<<t1.cmap>>)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/libertine/l
+ibertine.sty
+Package: libertine 2020/03/26 (Bob Tennent) Supports Libertine and Biolinum fon
+ts for all LaTeX engines.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/iftex/ifx
+etex.sty
+Package: ifxetex 2019/10/25 v0.7 ifxetex legacy package. Use iftex instead.
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/base/textco
+mp.sty
+Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/base/fonten
+c.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/fontaxes/fo
+ntaxes.sty
+Package: fontaxes 2020/07/21 v1.0e Font selection axes
+LaTeX Info: Redefining \upshape on input line 29.
+LaTeX Info: Redefining \itshape on input line 31.
+LaTeX Info: Redefining \slshape on input line 33.
+LaTeX Info: Redefining \swshape on input line 35.
+LaTeX Info: Redefining \scshape on input line 37.
+LaTeX Info: Redefining \sscshape on input line 39.
+LaTeX Info: Redefining \ulcshape on input line 41.
+LaTeX Info: Redefining \textsw on input line 47.
+LaTeX Info: Redefining \textssc on input line 48.
+LaTeX Info: Redefining \textulc on input line 49.
+)
+LaTeX Info: Redefining \oldstylenums on input line 484.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/libertine/L
+inLibertine_I.tex))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/inconsolata
+/zi4.sty
+Package: zi4 2019/05/17 v1.12
+
+`inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+\zifour@ocount=\count297
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/newtx/newtx
+math.sty
+Package: newtxmath 2022/01/16 v1.71
+
+`newtxmath' v1.71, 2022/01/16 Math macros based originally on txfonts (msharpe)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/oberdiek/ce
+nternot.sty
+Package: centernot 2016/05/16 v1.4 Centers the not symbol horizontally (HO)
+)
+\tx@cntz=\count298
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/kastrup/b
+inhex.tex)
+\tx@Isdigit=\count299
+\tx@IsAlNum=\count300
+\tx@tA=\toks32
+\tx@tB=\toks33
+\tx@su=\read2
+
+amsthm NOT loaded
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 376.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/LinuxLibertineT-TLF/m/n on input li
+ne 376.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/LinuxLibertineT-TLF/m/n on input l
+ine 376.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/LinuxLibertineT-TLF/m/n --> OT1/LinuxLibertineT-TLF
+/sb/n on input line 377.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 383.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> T1/LinuxBiolinumT-TLF/m/n on input lin
+e 383.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> T1/LinuxBiolinumT-TLF/m/n on input li
+ne 383.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 384.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/LinuxLibertineT-TLF/m/it on input 
+line 384.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/LinuxLibertineT-TLF/m/it on input
+ line 384.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 385.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> T1/zi4/m/n on input line 385.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> T1/zi4/m/n on input line 385.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 387.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/LinuxLibertineT-TLF/sb/n on input 
+line 387.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/LinuxLibertineT-TLF/sb/n on input 
+line 387.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/LinuxLibertineT-TLF/m/it --> OT1/LinuxLibertineT-TL
+F/sb/it on input line 388.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  T1/LinuxBiolinumT-TLF/m/n --> T1/LinuxBiolinumT-TLF/b/n
+ on input line 389.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  T1/zi4/m/n --> T1/zi4/b/n on input line 390.
+LaTeX Font Info:    Redeclaring symbol font `letters' on input line 407.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/nxlmi/m/it on input line 407.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/nxlmi/m/it on input line 407.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/nxlmi/m/it --> OML/nxlmi/b/it on input line 408.
+\symlettersA=\mathgroup6
+LaTeX Font Info:    Overwriting symbol font `lettersA' in version `bold'
+(Font)                  U/ntxmia/m/it --> U/ntxmia/b/it on input line 547.
+LaTeX Font Info:    Redeclaring math alphabet \mathfrak on input line 549.
+Now handling font encoding LMS ...
+... no UTF-8 mapping file for font encoding LMS
+LaTeX Font Info:    Redeclaring symbol font `symbols' on input line 568.
+LaTeX Font Info:    Encoding `OMS' has changed to `LMS' for symbol font
+(Font)              `symbols' in the math version `normal' on input line 568.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> LMS/ntxsy/m/n on input line 568.
+LaTeX Font Info:    Encoding `OMS' has changed to `LMS' for symbol font
+(Font)              `symbols' in the math version `bold' on input line 568.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> LMS/ntxsy/m/n on input line 568.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  LMS/ntxsy/m/n --> LMS/ntxsy/b/n on input line 569.
+\symAMSm=\mathgroup7
+LaTeX Font Info:    Overwriting symbol font `AMSm' in version `bold'
+(Font)                  U/ntxsym/m/n --> U/ntxsym/b/n on input line 594.
+\symsymbolsC=\mathgroup8
+LaTeX Font Info:    Overwriting symbol font `symbolsC' in version `bold'
+(Font)                  U/ntxsyc/m/n --> U/ntxsyc/b/n on input line 615.
+Now handling font encoding LMX ...
+... no UTF-8 mapping file for font encoding LMX
+LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 628.
+LaTeX Font Info:    Encoding `OMX' has changed to `LMX' for symbol font
+(Font)              `largesymbols' in the math version `normal' on input line 6
+28.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> LMX/ntxexx/m/n on input line 628.
+LaTeX Font Info:    Encoding `OMX' has changed to `LMX' for symbol font
+(Font)              `largesymbols' in the math version `bold' on input line 628
+.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> LMX/ntxexx/m/n on input line 628.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  LMX/ntxexx/m/n --> LMX/ntxexx/b/n on input line 629.
+\symlargesymbolsTXA=\mathgroup9
+LaTeX Font Info:    Overwriting symbol font `largesymbolsTXA' in version `bold'
+
+(Font)                  U/ntxexa/m/n --> U/ntxexa/b/n on input line 643.
+\tx@sbptoks=\toks34
+LaTeX Font Info:    Redeclaring math delimiter \lfloor on input line 866.
+LaTeX Font Info:    Redeclaring math delimiter \rfloor on input line 867.
+LaTeX Font Info:    Redeclaring math delimiter \lceil on input line 868.
+LaTeX Font Info:    Redeclaring math delimiter \rceil on input line 869.
+LaTeX Font Info:    Redeclaring math delimiter \lbrace on input line 870.
+LaTeX Font Info:    Redeclaring math delimiter \rbrace on input line 871.
+LaTeX Font Info:    Redeclaring math delimiter \langle on input line 872.
+LaTeX Font Info:    Redeclaring math delimiter \rangle on input line 874.
+LaTeX Font Info:    Redeclaring math delimiter \arrowvert on input line 878.
+LaTeX Font Info:    Redeclaring math delimiter \vert on input line 879.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 950.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 951.
+LaTeX Font Info:    Redeclaring math accent \vec on input line 2020.
+LaTeX Info: Redefining \Bbbk on input line 2810.
+LaTeX Info: Redefining \not on input line 2959.
+LaTeX Info: Redefining \textsquare on input line 2989.
+LaTeX Info: Redefining \openbox on input line 2991.
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/caption/cap
+tion.sty
+Package: caption 2022/03/01 v3.6b Customizing captions (AR)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/caption/cap
+tion3.sty
+Package: caption3 2022/03/17 v2.3b caption3 kernel (AR)
+\caption@tempdima=\dimen179
+\captionmargin=\dimen180
+\caption@leftmargin=\dimen181
+\caption@rightmargin=\dimen182
+\caption@width=\dimen183
+\caption@indent=\dimen184
+\caption@parindent=\dimen185
+\caption@hangindent=\dimen186
+Package caption Info: AMS or SMF document class detected.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/caption/cap
+tion-ams-smf.sto
+File: caption-ams-smf.sto 2020/08/22 v2.0 Adaption of the caption package to th
+e AMS and SMF document classes (AR)
+))
+\c@caption@flags=\count301
+\c@continuedfloat=\count302
+Package caption Info: hyperref package is loaded.
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/float/float
+.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count303
+\float@exts=\toks35
+\float@box=\box54
+\@float@everytoks=\toks36
+\@floatcapt=\box55
+)
+\@float@every@sidebar=\toks37
+\c@sidebar=\count304
+\fulltextwidth=\dimen187
+\@ACM@labelwidth=\dimen188
+\listisep=\skip61
+\num@authorgroups=\count305
+\num@authors=\count306
+\@ACM@badge@width=\skip62
+\@ACM@title@width=\skip63
+\@ACM@badge@skip=\skip64
+Class acmart Info: Printing CCS on input line 1699.
+Class acmart Info: Printing bibformat on input line 1699.
+Class acmart Info: Suppressing folios on input line 1706.
+Class acmart Info: Setting authorsperrow to 0 on input line 1709.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/comment/com
+ment.sty
+\CommentStream=\write3
+ Excluding comment 'comment') Excluding comment 'CCSXML'
+\c@@concepts=\count307
+\mktitle@bx=\box56
+\@ACM@acmcpbox=\box57
+\@ACM@commabox=\box58
+\author@bx=\box59
+\author@bx@wd=\dimen189
+\author@bx@sep=\skip65
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/fancyhdr/fa
+ncyhdr.sty
+Package: fancyhdr 2021/01/28 v4.0.1 Extensive control of page headers and foote
+rs
+\f@nch@headwidth=\skip66
+\f@nch@O@elh=\skip67
+\f@nch@O@erh=\skip68
+\f@nch@O@olh=\skip69
+\f@nch@O@orh=\skip70
+\f@nch@O@elf=\skip71
+\f@nch@O@erf=\skip72
+\f@nch@O@olf=\skip73
+\f@nch@O@orf=\skip74
+)
+\ACM@linecount@bx=\box60
+\ACM@linecount@bxht=\skip75
+\ACM@linecount=\count308
+\@folio@wd=\dimen190
+\@folio@ht=\dimen191
+\@folio@voffset=\dimen192
+ Special comment 'acks'
+LaTeX Font Info:    Trying to load font information for T1+LinuxLibertineT-TLF 
+on input line 3530.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/libertine/T
+1LinuxLibertineT-TLF.fd
+File: T1LinuxLibertineT-TLF.fd 2017/03/20 (autoinst) Font definitions for T1/Li
+nuxLibertineT-TLF.
+)
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 9.0pt on input line 3530.
+) (./macros.tex
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/titlesec/ti
+tlesec.sty
+Package: titlesec 2021/07/05 v2.14 Sectioning titles
+\ttl@box=\box61
+\beforetitleunit=\skip76
+\aftertitleunit=\skip77
+\ttl@plus=\dimen193
+\ttl@minus=\dimen194
+\ttl@toksa=\toks38
+\titlewidth=\dimen195
+\titlewidthlast=\dimen196
+\titlewidthfirst=\dimen197
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/algorithms/
+algorithmic.sty
+Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
+\c@ALC@unique=\count309
+\c@ALC@line=\count310
+\c@ALC@rem=\count311
+\c@ALC@depth=\count312
+\ALC@tlm=\skip78
+\algorithmicindent=\skip79
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/tools/xspac
+e.sty
+Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/ulem/ulem
+.sty
+\UL@box=\box62
+\UL@hyphenbox=\box63
+\UL@skip=\skip80
+\UL@hook=\toks39
+\UL@height=\dimen198
+\UL@pe=\count313
+\UL@pixel=\dimen199
+\ULC@box=\box64
+Package: ulem 2019/11/18
+\ULdepth=\dimen256
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/breakcites/
+breakcites.sty)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/enumitem/en
+umitem.sty
+Package: enumitem 2019/06/20 v3.9 Customized lists
+\enitkv@toks@=\toks40
+\labelindent=\skip81
+\enit@outerparindent=\dimen257
+\enit@toks=\toks41
+\enit@inbox=\box65
+\enit@count@id=\count314
+\enitdp@description=\count315
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/adjustbox/a
+djustbox.sty
+Package: adjustbox 2020/08/19 v1.3 Adjusting TeX boxes (trim, clip, ...)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/adjustbox/a
+djcalc.sty
+Package: adjcalc 2012/05/16 v1.1 Provides advanced setlength with multiple back
+-ends (calc, etex, pgfmath)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/adjustbox/t
+rimclip.sty
+Package: trimclip 2020/08/19 v1.2 Trim and clip general TeX material
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/collectbox/
+collectbox.sty
+Package: collectbox 2012/05/17 v0.4b Collect macro arguments as boxes
+\collectedbox=\box66
+)
+\tc@llx=\dimen258
+\tc@lly=\dimen259
+\tc@urx=\dimen260
+\tc@ury=\dimen261
+Package trimclip Info: Using driver 'tc-pdftex.def'.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/adjustbox/t
+c-pdftex.def
+File: tc-pdftex.def 2019/01/04 v2.2 Clipping driver for pdftex
+))
+\adjbox@Width=\dimen262
+\adjbox@Height=\dimen263
+\adjbox@Depth=\dimen264
+\adjbox@Totalheight=\dimen265
+\adjbox@pwidth=\dimen266
+\adjbox@pheight=\dimen267
+\adjbox@pdepth=\dimen268
+\adjbox@ptotalheight=\dimen269
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/ifoddpage/i
+foddpage.sty
+Package: ifoddpage 2016/04/23 v1.1 Conditionals for odd/even page detection
+\c@checkoddpage=\count316
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/varwidth/va
+rwidth.sty
+Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
+\@vwid@box=\box67
+\sift@deathcycles=\count317
+\@vwid@loff=\dimen270
+\@vwid@roff=\dimen271
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/breakurl/br
+eakurl.sty
+Package: breakurl 2013/04/10 v1.40 Breakable hyperref URLs
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/iftex/ifp
+df.sty
+Package: ifpdf 2019/10/25 v3.4 ifpdf legacy package. Use iftex instead.
+)
+
+Package breakurl Warning: You are using breakurl while processing via pdflatex.
+
+(breakurl)                \burl will be just a synonym of \url.
+(breakurl)                 on input line 48.
+
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/multirow/mu
+ltirow.sty
+Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
+\multirow@colwidth=\skip82
+\multirow@cntb=\count318
+\multirow@dima=\skip83
+\bigstrutjot=\dimen272
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/makecell/ma
+kecell.sty
+Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/tools/array
+.sty
+Package: array 2021/10/04 v2.5f Tabular extension package (FMi)
+\col@sep=\dimen273
+\ar@mcellbox=\box68
+\extrarowheight=\dimen274
+\NC@list=\toks42
+\extratabsurround=\skip84
+\backup@length=\skip85
+\ar@cellbox=\box69
+)
+\rotheadsize=\dimen275
+\c@nlinenum=\count319
+\TeXr@lab=\toks43
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/ragged2e/ra
+gged2e.sty
+Package: ragged2e 2021/12/15 v3.1 ragged2e Package
+\CenteringLeftskip=\skip86
+\RaggedLeftLeftskip=\skip87
+\RaggedRightLeftskip=\skip88
+\CenteringRightskip=\skip89
+\RaggedLeftRightskip=\skip90
+\RaggedRightRightskip=\skip91
+\CenteringParfillskip=\skip92
+\RaggedLeftParfillskip=\skip93
+\RaggedRightParfillskip=\skip94
+\JustifyingParfillskip=\skip95
+\CenteringParindent=\skip96
+\RaggedLeftParindent=\skip97
+\RaggedRightParindent=\skip98
+\JustifyingParindent=\skip99
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/subfig/subf
+ig.sty
+Package: subfig 2005/06/28 ver: 1.3 subfig package
+\c@KVtest=\count320
+\sf@farskip=\skip100
+\sf@captopadj=\dimen276
+\sf@capskip=\skip101
+\sf@nearskip=\skip102
+\c@subfigure=\count321
+\c@subfigure@save=\count322
+\c@lofdepth=\count323
+\c@subtable=\count324
+\c@subtable@save=\count325
+\c@lotdepth=\count326
+\sf@top=\skip103
+\sf@bottom=\skip104
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/algorithms/
+algorithm.sty
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
+\@float@every@algorithm=\toks44
+\c@algorithm=\count327
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/listings/li
+stings.sty
+\lst@mode=\count328
+\lst@gtempboxa=\box70
+\lst@token=\toks45
+\lst@length=\count329
+\lst@currlwidth=\dimen277
+\lst@column=\count330
+\lst@pos=\count331
+\lst@lostspace=\dimen278
+\lst@width=\dimen279
+\lst@newlines=\count332
+\lst@lineno=\count333
+\lst@maxwidth=\dimen280
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/listings/ls
+tmisc.sty
+File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+\c@lstnumber=\count334
+\lst@skipnumbers=\count335
+\lst@framebox=\box71
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/listings/li
+stings.cfg
+File: listings.cfg 2020/03/24 1.8d listings configuration
+))
+Package: listings 2020/03/24 1.8d (Carsten Heinz)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/pgf/fronten
+dlayer/tikz.sty
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/pgf/basicla
+yer/pgf.sty
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/pgf/utiliti
+es/pgfrcs.sty
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/utili
+ties/pgfutil-common.tex
+\pgfutil@everybye=\toks46
+\pgfutil@tempdima=\dimen281
+\pgfutil@tempdimb=\dimen282
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/utili
+ties/pgfutil-common-lists.tex))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/utili
+ties/pgfutil-latex.def
+\pgfutil@abb=\box72
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/utili
+ties/pgfrcs.code.tex
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/pgf.r
+evision.tex)
+Package: pgfrcs 2021/05/15 v3.1.9a (3.1.9a)
+))
+Package: pgf 2021/05/15 v3.1.9a (3.1.9a)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/pgf/basicla
+yer/pgfcore.sty
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/pgf/systeml
+ayer/pgfsys.sty
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/syste
+mlayer/pgfsys.code.tex
+Package: pgfsys 2021/05/15 v3.1.9a (3.1.9a)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/utili
+ties/pgfkeys.code.tex
+\pgfkeys@pathtoks=\toks47
+\pgfkeys@temptoks=\toks48
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/utili
+ties/pgfkeysfiltered.code.tex
+\pgfkeys@tmptoks=\toks49
+))
+\pgf@x=\dimen283
+\pgf@y=\dimen284
+\pgf@xa=\dimen285
+\pgf@ya=\dimen286
+\pgf@xb=\dimen287
+\pgf@yb=\dimen288
+\pgf@xc=\dimen289
+\pgf@yc=\dimen290
+\pgf@xd=\dimen291
+\pgf@yd=\dimen292
+\w@pgf@writea=\write4
+\r@pgf@reada=\read3
+\c@pgf@counta=\count336
+\c@pgf@countb=\count337
+\c@pgf@countc=\count338
+\c@pgf@countd=\count339
+\t@pgf@toka=\toks50
+\t@pgf@tokb=\toks51
+\t@pgf@tokc=\toks52
+\pgf@sys@id@count=\count340
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/syste
+mlayer/pgf.cfg
+File: pgf.cfg 2021/05/15 v3.1.9a (3.1.9a)
+)
+Driver file for pgf: pgfsys-pdftex.def
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/syste
+mlayer/pgfsys-pdftex.def
+File: pgfsys-pdftex.def 2021/05/15 v3.1.9a (3.1.9a)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/syste
+mlayer/pgfsys-common-pdf.def
+File: pgfsys-common-pdf.def 2021/05/15 v3.1.9a (3.1.9a)
+)))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/syste
+mlayer/pgfsyssoftpath.code.tex
+File: pgfsyssoftpath.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfsyssoftpath@smallbuffer@items=\count341
+\pgfsyssoftpath@bigbuffer@items=\count342
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/syste
+mlayer/pgfsysprotocol.code.tex
+File: pgfsysprotocol.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcore.code.tex
+Package: pgfcore 2021/05/15 v3.1.9a (3.1.9a)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmath.code.tex
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathcalc.code.tex
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathutil.code.tex)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathparser.code.tex
+\pgfmath@dimen=\dimen293
+\pgfmath@count=\count343
+\pgfmath@box=\box73
+\pgfmath@toks=\toks53
+\pgfmath@stack@operand=\toks54
+\pgfmath@stack@operation=\toks55
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathfunctions.code.tex
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathfunctions.basic.code.tex)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathfunctions.trigonometric.code.tex)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathfunctions.random.code.tex)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathfunctions.comparison.code.tex)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathfunctions.base.code.tex)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathfunctions.round.code.tex)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathfunctions.misc.code.tex)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathfunctions.integerarithmetics.code.tex)))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmathfloat.code.tex
+\c@pgfmathroundto@lastzeros=\count344
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfint.code.tex)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcorepoints.code.tex
+File: pgfcorepoints.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@picminx=\dimen294
+\pgf@picmaxx=\dimen295
+\pgf@picminy=\dimen296
+\pgf@picmaxy=\dimen297
+\pgf@pathminx=\dimen298
+\pgf@pathmaxx=\dimen299
+\pgf@pathminy=\dimen300
+\pgf@pathmaxy=\dimen301
+\pgf@xx=\dimen302
+\pgf@xy=\dimen303
+\pgf@yx=\dimen304
+\pgf@yy=\dimen305
+\pgf@zx=\dimen306
+\pgf@zy=\dimen307
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcorepathconstruct.code.tex
+File: pgfcorepathconstruct.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@path@lastx=\dimen308
+\pgf@path@lasty=\dimen309
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcorepathusage.code.tex
+File: pgfcorepathusage.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@shorten@end@additional=\dimen310
+\pgf@shorten@start@additional=\dimen311
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcorescopes.code.tex
+File: pgfcorescopes.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfpic=\box74
+\pgf@hbox=\box75
+\pgf@layerbox@main=\box76
+\pgf@picture@serial@count=\count345
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcoregraphicstate.code.tex
+File: pgfcoregraphicstate.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgflinewidth=\dimen312
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcoretransformations.code.tex
+File: pgfcoretransformations.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@pt@x=\dimen313
+\pgf@pt@y=\dimen314
+\pgf@pt@temp=\dimen315
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcorequick.code.tex
+File: pgfcorequick.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcoreobjects.code.tex
+File: pgfcoreobjects.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcorepathprocessing.code.tex
+File: pgfcorepathprocessing.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcorearrows.code.tex
+File: pgfcorearrows.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfarrowsep=\dimen316
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcoreshade.code.tex
+File: pgfcoreshade.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@max=\dimen317
+\pgf@sys@shading@range@num=\count346
+\pgf@shadingcount=\count347
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcoreimage.code.tex
+File: pgfcoreimage.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcoreexternal.code.tex
+File: pgfcoreexternal.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfexternal@startupbox=\box77
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcorelayers.code.tex
+File: pgfcorelayers.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcoretransparency.code.tex
+File: pgfcoretransparency.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcorepatterns.code.tex
+File: pgfcorepatterns.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/basic
+layer/pgfcorerdf.code.tex
+File: pgfcorerdf.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/modul
+es/pgfmoduleshapes.code.tex
+File: pgfmoduleshapes.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfnodeparttextbox=\box78
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/modul
+es/pgfmoduleplot.code.tex
+File: pgfmoduleplot.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/pgf/compati
+bility/pgfcomp-version-0-65.sty
+Package: pgfcomp-version-0-65 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@nodesepstart=\dimen318
+\pgf@nodesepend=\dimen319
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/pgf/compati
+bility/pgfcomp-version-1-18.sty
+Package: pgfcomp-version-1-18 2021/05/15 v3.1.9a (3.1.9a)
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/pgf/utiliti
+es/pgffor.sty
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/pgf/utiliti
+es/pgfkeys.sty
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/utili
+ties/pgfkeys.code.tex))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/pgf/math/pg
+fmath.sty
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmath.code.tex))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/utili
+ties/pgffor.code.tex
+Package: pgffor 2021/05/15 v3.1.9a (3.1.9a)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/math/
+pgfmath.code.tex)
+\pgffor@iter=\dimen320
+\pgffor@skip=\dimen321
+\pgffor@stack=\toks56
+\pgffor@toks=\toks57
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/front
+endlayer/tikz/tikz.code.tex
+Package: tikz 2021/05/15 v3.1.9a (3.1.9a)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/libra
+ries/pgflibraryplothandlers.code.tex
+File: pgflibraryplothandlers.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@plot@mark@count=\count348
+\pgfplotmarksize=\dimen322
+)
+\tikz@lastx=\dimen323
+\tikz@lasty=\dimen324
+\tikz@lastxsaved=\dimen325
+\tikz@lastysaved=\dimen326
+\tikz@lastmovetox=\dimen327
+\tikz@lastmovetoy=\dimen328
+\tikzleveldistance=\dimen329
+\tikzsiblingdistance=\dimen330
+\tikz@figbox=\box79
+\tikz@figbox@bg=\box80
+\tikz@tempbox=\box81
+\tikz@tempbox@bg=\box82
+\tikztreelevel=\count349
+\tikznumberofchildren=\count350
+\tikznumberofcurrentchild=\count351
+\tikz@fig@count=\count352
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/modul
+es/pgfmodulematrix.code.tex
+File: pgfmodulematrix.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfmatrixcurrentrow=\count353
+\pgfmatrixcurrentcolumn=\count354
+\pgf@matrix@numberofcolumns=\count355
+)
+\tikz@expandcount=\count356
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/front
+endlayer/tikz/libraries/tikzlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/front
+endlayer/tikz/libraries/tikzlibrarycalc.code.tex
+File: tikzlibrarycalc.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/front
+endlayer/tikz/libraries/tikzlibraryshapes.geometric.code.tex
+File: tikzlibraryshapes.geometric.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/libra
+ries/shapes/pgflibraryshapes.geometric.code.tex
+File: pgflibraryshapes.geometric.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/front
+endlayer/tikz/libraries/tikzlibrarydecorations.pathreplacing.code.tex
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/front
+endlayer/tikz/libraries/tikzlibrarydecorations.code.tex
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/modul
+es/pgfmoduledecorations.code.tex
+\pgfdecoratedcompleteddistance=\dimen331
+\pgfdecoratedremainingdistance=\dimen332
+\pgfdecoratedinputsegmentcompleteddistance=\dimen333
+\pgfdecoratedinputsegmentremainingdistance=\dimen334
+\pgf@decorate@distancetomove=\dimen335
+\pgf@decorate@repeatstate=\count357
+\pgfdecorationsegmentamplitude=\dimen336
+\pgfdecorationsegmentlength=\dimen337
+)
+\tikz@lib@dec@box=\box83
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/libra
+ries/decorations/pgflibrarydecorations.pathreplacing.code.tex))
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/pgf/front
+endlayer/tikz/libraries/tikzlibrarypositioning.code.tex
+File: tikzlibrarypositioning.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/datetime/da
+tetime.sty
+Package: datetime 2015/03/20 v2.60 Date Time Package
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/fmtcount/fm
+tcount.sty
+Package: fmtcount 2020/01/30 v3.07
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/fmtcount/fc
+prefix.sty
+Package: fcprefix 2012/09/28
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/fmtcount/fc
+numparser.sty
+Package: fcnumparser 2017/06/15
+\fc@digit@counter=\count358
+))
+\c@padzeroesN=\count359
+\fc@tmpcatcode=\count360
+\@DT@modctr=\count361
+\@ordinalctr=\count362
+\@orgargctr=\count363
+\@strctr=\count364
+\@tmpstrctr=\count365
+\@DT@loopN=\count366
+\@DT@X=\count367
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/datetime/da
+tetime-defaults.sty
+Package: datetime-defaults 2013/09/10
+)
+\@day=\count368
+\@month=\count369
+\@year=\count370
+\c@HOUR=\count371
+\c@HOURXII=\count372
+\c@MINUTE=\count373
+\c@TOHOUR=\count374
+\c@TOMINUTE=\count375
+\c@SECOND=\count376
+\currenthour=\count377
+\currentminute=\count378
+\currentsecond=\count379
+Package datetime Info: No datetime.cfg file found, using default settings on in
+put line 308.
+\@dtctr=\count380
+\dayofyear=\count381
+\dayofweek=\count382
+LaTeX Info: Redefining \today on input line 736.
+\dt@a=\toks58
+\dt@b=\toks59
+) (./defs-logic.tex) (./defs-code.tex)
+(./tables/lc-requirement-numbers.tex) (./tables/lc-hsd-requirement-numbers.tex)
+(./tables/manual-study-numbers.tex) (./tables/test-results-numbers.tex)
+(./tables/test-results-3-50-numbers.tex)
+(./tables/test-results-3-100-numbers.tex)
+(./tables/test-results-3-200-numbers.tex)
+(./tables/test-results-all-numbers.tex)
+(./tables/test-results-hs-all-numbers.tex) (./tables/mtnlp-comp-numbers.tex)
+(./tables/adv-comp-numbers.tex))
+Package hyperref Info: Option `pdfdisplaydoctitle' set `true' on input line 9.
+\c@theorem=\count383
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/preprint/ba
+lance.sty
+Package: balance 1999/02/23 4.3 (PWD)
+\oldvsize=\dimen338
+) Excluding comment 'screenonly' Include comment 'printonly'
+Excluding comment 'anonsuppress' Excluding comment 'acks'
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/l3backend/l
+3backend-pdftex.def
+File: l3backend-pdftex.def 2022-02-07 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count384
+\l__pdf_internal_box=\box84
+) (./main.aux
+
+LaTeX Warning: Label `code:TempEx' multiply defined.
+
+)
+\openout1 = `main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/nxlmi/m/it on input line 9.
+LaTeX Font Info:    Trying to load font information for OML+nxlmi on input line
+ 9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/newtx/omlnx
+lmi.fd
+File: omlnxlmi.fd 2013/11/19 Fontinst v1.933 font definitions for OML/nxlmi.
+)
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for U/ntxexa/m/n on input line 9.
+LaTeX Font Info:    Trying to load font information for U+ntxexa on input line 
+9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/newtx/untxe
+xa.fd
+File: untxexa.fd 2012/04/16 Fontinst v1.933 font definitions for U/ntxexa.
+)
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for LMS/ntxsy/m/n on input line 9.
+LaTeX Font Info:    Trying to load font information for LMS+ntxsy on input line
+ 9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/newtx/lmsnt
+xsy.fd
+File: lmsntxsy.fd 2016/07/02 Fontinst v1.933 font definitions for LMS/ntxsy.
+)
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for LMX/ntxexx/m/n on input line 9.
+LaTeX Font Info:    Trying to load font information for LMX+ntxexx on input lin
+e 9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/newtx/lmxnt
+xexx.fd
+File: lmxntxexx.fd 2016/07/03 Fontinst v1.933 font definitions for LMX/ntxexx.
+)
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 9.
+LaTeX Font Info:    Trying to load font information for OT1+LinuxLibertineT-TLF
+ on input line 9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/libertine/O
+T1LinuxLibertineT-TLF.fd
+File: OT1LinuxLibertineT-TLF.fd 2017/03/20 (autoinst) Font definitions for OT1/
+LinuxLibertineT-TLF.
+)
+LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 7.3pt on input line 9.
+<<ot1.cmap>>
+LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 5.5pt on input line 9.
+<<oml.cmap>>
+LaTeX Font Info:    Trying to load font information for U+msa on input line 9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/amsfonts/um
+sa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/amsfonts/um
+sb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Trying to load font information for U+ntxmia on input line 
+9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/newtx/untxm
+ia.fd
+File: untxmia.fd 2018/04/14 Fontinst v1.933 font definitions for U/ntxmia.
+)
+LaTeX Font Info:    Trying to load font information for U+ntxsym on input line 
+9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/newtx/untxs
+ym.fd
+File: untxsym.fd 2015/03/20 Fontinst v1.933 font definitions for U/ntxsym.
+)
+LaTeX Font Info:    Trying to load font information for U+ntxsyc on input line 
+9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/newtx/untxs
+yc.fd
+File: untxsyc.fd 2012/04/12 Fontinst v1.933 font definitions for U/ntxsyc.
+)
+LaTeX Info: Redefining \microtypecontext on input line 9.
+Package microtype Info: Applying patch `item' on input line 9.
+Package microtype Info: Applying patch `toc' on input line 9.
+Package microtype Info: Applying patch `eqnum' on input line 9.
+Package microtype Info: Applying patch `footnote' on input line 9.
+Package microtype Info: Generating PDF output.
+Package microtype Info: Character protrusion enabled (level 2).
+Package microtype Info: Using default protrusion set `alltext'.
+Package microtype Info: Automatic font expansion enabled (level 2),
+(microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
+Package microtype Info: Using default expansion set `alltext-nott'.
+LaTeX Info: Redefining \showhyphens on input line 9.
+Package microtype Info: No adjustment of tracking.
+Package microtype Info: No adjustment of interword spacing.
+Package microtype Info: No adjustment of character kerning.
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `LinuxLibertineT-TLF' (encoding: T1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+Package hyperref Info: Link coloring OFF on input line 9.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/hyperref/na
+meref.sty
+Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/gettitles
+tring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count385
+)
+LaTeX Info: Redefining \ref on input line 9.
+LaTeX Info: Redefining \pageref on input line 9.
+LaTeX Info: Redefining \nameref on input line 9.
+ (./main.out) (./main.out)
+\@outlinefile=\write5
+\openout5 = `main.out'.
+
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/context/base/mkii
+/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count386
+\scratchdimen=\dimen339
+\scratchbox=\box85
+\nofMPsegments=\count387
+\nofMParguments=\count388
+\everyMPshowfont=\toks60
+\MPscratchCnt=\count389
+\MPscratchDim=\dimen340
+\MPnumerator=\count390
+\makeMPintoPDFobject=\count391
+\everyMPtoPDFconversion=\toks61
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/epstopdf-pk
+g/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/latexconfig
+/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: custom
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: includehead includefoot twoside heightrounded 
+* h-part:(L,W,R)=(54.0pt, 506.295pt, 54.0pt)
+* v-part:(T,H,B)=(57.0pt, 664.96999pt, 73.0pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=506.295pt
+* \textheight=626.0pt
+* \oddsidemargin=-18.26999pt
+* \evensidemargin=-18.26999pt
+* \topmargin=-15.26999pt
+* \headheight=13.0pt
+* \headsep=14.0pt
+* \topskip=10.0pt
+* \footskip=12.0pt
+* \marginparwidth=24.0pt
+* \marginparsep=11.0pt
+* \columnsep=24.0pt
+* \skip\footins=7.0pt plus 11.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidetrue
+* \@mparswitchtrue
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+\c@mv@tabular=\count392
+\c@mv@boldtabular=\count393
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/upquote/upq
+uote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+)
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: subfig package v1.3 is loaded.
+Package caption Info: float package is loaded.
+Package caption Info: listings package is loaded.
+Package caption Info: End \AtBeginDocument code.
+\c@lstlisting=\count394
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/fmtcount/fc
+-english.def
+File: fc-english.def 2016/01/12
+) (./abstract.tex)
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 17.28pt on input line 21.
+LaTeX Font Info:    Trying to load font information for T1+LinuxBiolinumT-TLF o
+n input line 21.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/libertine/T
+1LinuxBiolinumT-TLF.fd
+File: T1LinuxBiolinumT-TLF.fd 2017/03/20 (autoinst) Font definitions for T1/Lin
+uxBiolinumT-TLF.
+)
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 17.28pt on input line 21.
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `LinuxBiolinumT-TLF' (encoding: T1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/n' will be
+(Font)              scaled to size 17.28pt on input line 21.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 12.0pt on input line 21.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 10.0pt on input line 21.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
+(Font)              scaled to size 7.0pt on input line 21.
+LaTeX Font Info:    Trying to load font information for TS1+LinuxLibertineT-TLF
+ on input line 21.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/libertine/T
+S1LinuxLibertineT-TLF.fd
+File: TS1LinuxLibertineT-TLF.fd 2017/03/20 (autoinst) Font definitions for TS1/
+LinuxLibertineT-TLF.
+)
+LaTeX Font Info:    Font shape `TS1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 21.
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `LinuxLibertineT-TLF' (encoding: TS1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
+(Font)              scaled to size 9.0pt on input line 21.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
+(Font)              scaled to size 10.95pt on input line 21.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 21.
+
+LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 9.0pt on input line 21.
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `LinuxLibertineT-TLF' (encoding: OT1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/microtype/m
+t-msa.cfg
+File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/microtype/m
+t-msb.cfg
+File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
+)
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 8.0pt on input line 21.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
+(Font)              scaled to size 8.0pt on input line 21.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
+(Font)              scaled to size 8.0pt on input line 21.
+LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 8.0pt on input line 21.
+LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 6.2pt on input line 21.
+ (./intro.tex
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1.
+
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
+(Font)              scaled to size 9.0pt on input line 47.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 6.0pt on input line 64.
+ [1.1{/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/map/pdftex
+/updmap/pdftex.map}
+
+]
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 77.
+
+) (./background.tex
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1.
+
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/listings/ls
+tlang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+)
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
+nput line 5.
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 8.0pt on input line 5.
+ (./code/checklist_template2.py
+LaTeX Font Info:    Trying to load font information for TS1+LinuxBiolinumT-TLF 
+on input line 1.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/libertine/T
+S1LinuxBiolinumT-TLF.fd
+File: TS1LinuxBiolinumT-TLF.fd 2017/03/20 (autoinst) Font definitions for TS1/L
+inuxBiolinumT-TLF.
+)
+LaTeX Font Info:    Font shape `TS1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 8.0pt on input line 1.
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `LinuxBiolinumT-TLF' (encoding: TS1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+)
+
+Class acmart Warning: A possible image without description on input line 10.
+
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 7.3pt on input line 34.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 5.5pt on input line 34.
+) (./approach.tex
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1.
+
+
+
+pdfTeX warning: pdflatex (file ./figs/overview.pdf): PDF inclusion: found PDF v
+ersion <1.7>, but at most version <1.5> allowed
+<figs/overview.pdf, id=160, 831.105pt x 289.08pt>
+File: figs/overview.pdf Graphic file (type pdf)
+<use figs/overview.pdf>
+Package pdftex.def Info: figs/overview.pdf  used on input line 6.
+(pdftex.def)             Requested size: 248.08733pt x 86.28796pt.
+
+Overfull \hbox (6.93983pt too wide) in paragraph at lines 6--8
+ [][] 
+ []
+
+
+Class acmart Warning: A possible image without description on input line 9.
+
+LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 17
+.
+
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/latex/inconsolata
+/t1zi4.fd
+File: t1zi4.fd 2018/01/14 T1/zi4 (Inconsolata)
+)
+LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
+(Font)              scaled to size 9.0pt on input line 17.
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `zi4' (encoding: T1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 20.
+
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 9.0pt on input line 21.
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 21.
+[2.2 <./figs/overview.pdf>]
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 32.
+
+
+Overfull \hbox (2.27377pt too wide) in paragraph at lines 68--93
+\T1/LinuxLibertineT-TLF/m/n/9 (-20) search-based non-terminals. Search-based no
+n-terminals al-low users
+ []
+
+(./tables/lc-requirement-table.tex
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 6.2pt on input line 62.
+
+Overfull \hbox (245.1543pt too wide) in paragraph at lines 62--62
+[]|\T1/LinuxLibertineT-TLF/b/n/8 (-20) Search-based: hasattr\T1/LinuxLibertineT
+-TLF/m/n/8 (-20) (length,$\OML/nxlmi/m/it/8 <$\T1/LinuxLibertineT-TLF/m/n/8 (-2
+0) 10)$\LMS/ntxsy/m/n/8 ^$\T1/LinuxLibertineT-TLF/m/n/8 (-20) ((\T1/LinuxLibert
+ineT-TLF/b/n/8 (-20) contain \T1/LinuxLibertineT-TLF/m/n/8 (-20) (pos,positive$
+[]$adj)$\LMS/ntxsy/m/n/8 _$\T1/LinuxLibertineT-TLF/b/n/8 (-20) contain\T1/Linux
+LibertineT-TLF/m/n/8 (-20) (pos,positive$[]$noun)$\LMS/ntxsy/m/n/8 ^$\T1/LinuxL
+ibertineT-TLF/b/n/8 (-20) hasattr\T1/LinuxLibertineT-TLF/m/n/8 (-20) (label,pos
+itive))$\LMS/ntxsy/m/n/8 _$\T1/LinuxLibertineT-TLF/m/n/8 (-20) (\T1/LinuxLibert
+ineT-TLF/b/n/8 (-20) contain\T1/LinuxLibertineT-TLF/m/n/8 (-20) (pos,negative$[
+]$adj)$\LMS/ntxsy/m/n/8 _$\T1/LinuxLibertineT-TLF/b/n/8 (-20) contain\T1/LinuxL
+ibertineT-TLF/m/n/8 (-20) (pos,negative$[]$noun)$\LMS/ntxsy/m/n/8 ^$\T1/LinuxLi
+bertineT-TLF/b/n/8 (-20) hasattr\T1/LinuxLibertineT-TLF/m/n/8 (-20) (label,nega
+tive)))| 
+ []
+
+
+Underfull \vbox (badness 2671) has occurred while \output is active []
+
+)
+Overfull \hbox (7.22702pt too wide) in paragraph at lines 113--116
+[]\T1/LinuxLibertineT-TLF/m/n/9 (-20) In ad-di-tion to the \T1/zi4/m/n/9 combin
+e \T1/LinuxLibertineT-TLF/m/n/9 (-20) op-er-a-tion, S$[]$LCT also sup-ports \T1
+/zi4/m/n/9 replace
+ []
+
+
+Overfull \hbox (7.60397pt too wide) in paragraph at lines 113--116
+\T1/LinuxLibertineT-TLF/m/n/9 (-20) op-er-a-tions that al-low lin-guis-tic at-t
+ributes of non-terminals be changed
+ []
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 212.
+
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
+(Font)              scaled to size 9.0pt on input line 227.
+
+Overfull \hbox (5.0145pt too wide) in paragraph at lines 229--236
+[] [] |\T1/LinuxBiolinumT-TLF/m/it/9 (-20) 3.2.1  Syn-tax Ex-pan-sion Iden-ti-f
+i-ca-tion[] \T1/LinuxLibertineT-TLF/m/n/9 (-20) Al-go-rithm []1[] shows how mas
+ks
+ []
+
+[3.3] (./code/prod_diff_pseudocode.tex
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 2.
+)
+
+pdfTeX warning: pdflatex (file ./figs/running_example.pdf): PDF inclusion: foun
+d PDF version <1.7>, but at most version <1.5> allowed
+<figs/running_example.pdf, id=249, 830.60312pt x 217.21149pt>
+File: figs/running_example.pdf Graphic file (type pdf)
+<use figs/running_example.pdf>
+Package pdftex.def Info: figs/running_example.pdf  used on input line 260.
+(pdftex.def)             Requested size: 415.30054pt x 108.60547pt.
+
+Class acmart Warning: A possible image without description on input line 264.
+
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/it' will be
+(Font)              scaled to size 9.0pt on input line 303.
+) (./experiment.tex
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1.
+
+
+Underfull \vbox (badness 1377) has occurred while \output is active []
+
+ [4.4]
+(./tables/model.tex)
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 29.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 30.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 38.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 50.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 76.
+
+[5.5 <./figs/running_example.pdf>]
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 196.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 200.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 227.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 242.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 260.
+
+) (./result.tex
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1.
+
+(./tables/test-results-all-table.tex
+Underfull \hbox (badness 10000) in paragraph at lines 154--154
+[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 154--154
+[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
+ []
+
+
+Overfull \hbox (1.3464pt too wide) in paragraph at lines 154--154
+ []\T1/LinuxLibertineT-TLF/b/n/8 (-20) S$[]$LCT/Cklst 
+ []
+
+
+Overfull \hbox (1.3464pt too wide) in paragraph at lines 154--154
+ []\T1/LinuxLibertineT-TLF/b/n/8 (-20) S$[]$LCT/Cklst 
+ []
+
+) (./tables/test-results-hs-table.tex
+Underfull \hbox (badness 10000) in paragraph at lines 168--168
+[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) Htck
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 168--168
+[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 168--168
+[]\T1/LinuxLibertineT-TLF/b/n/8 (+20) S$[]$LCT
+ []
+
+)
+Package epstopdf Info: Source file: <figs/pdr-selfbleu-agg-lc-task-agg-lineplot
+.eps>
+(epstopdf)                    date: 2023-03-16 22:51:16
+(epstopdf)                    size: 2425017 bytes
+(epstopdf)             Output file: <figs/pdr-selfbleu-agg-lc-task-agg-lineplot
+-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-03-16 17:56:10
+(epstopdf)                    size: 31817 bytes
+(epstopdf)             Command: <repstopdf --outfile=figs/pdr-selfbleu-agg-lc-t
+ask-agg-lineplot-eps-converted-to.pdf figs/pdr-selfbleu-agg-lc-task-agg-lineplo
+t.eps>
+(epstopdf)             \includegraphics on input line 17.
+runsystem(repstopdf --outfile=figs/pdr-selfbleu-agg-lc-task-agg-lineplot-eps-co
+nverted-to.pdf figs/pdr-selfbleu-agg-lc-task-agg-lineplot.eps)...executed safel
+y (allowed).
+
+Package epstopdf Info: Result file: <figs/pdr-selfbleu-agg-lc-task-agg-lineplot
+-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-03-16 17:56:11
+(epstopdf)                    size: 31817 bytes.
+<figs/pdr-selfbleu-agg-lc-task-agg-lineplot-eps-converted-to.pdf, id=423, 462.5
+2798pt x 346.89601pt>
+File: figs/pdr-selfbleu-agg-lc-task-agg-lineplot-eps-converted-to.pdf Graphic f
+ile (type pdf)
+<use figs/pdr-selfbleu-agg-lc-task-agg-lineplot-eps-converted-to.pdf>
+Package pdftex.def Info: figs/pdr-selfbleu-agg-lc-task-agg-lineplot-eps-convert
+ed-to.pdf  used on input line 17.
+(pdftex.def)             Requested size: 177.20633pt x 132.90695pt.
+
+
+Class acmart Warning: A possible image without description on input line 20.
+
+Package epstopdf Info: Source file: <figs/pdr-selfbleu-ablation-lc-task-agg-bar
+plot.eps>
+(epstopdf)                    date: 2023-03-16 22:51:16
+(epstopdf)                    size: 1163240 bytes
+(epstopdf)             Output file: <figs/pdr-selfbleu-ablation-lc-task-agg-bar
+plot-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-03-16 17:56:10
+(epstopdf)                    size: 21433 bytes
+(epstopdf)             Command: <repstopdf --outfile=figs/pdr-selfbleu-ablation
+-lc-task-agg-barplot-eps-converted-to.pdf figs/pdr-selfbleu-ablation-lc-task-ag
+g-barplot.eps>
+(epstopdf)             \includegraphics on input line 24.
+runsystem(repstopdf --outfile=figs/pdr-selfbleu-ablation-lc-task-agg-barplot-ep
+s-converted-to.pdf figs/pdr-selfbleu-ablation-lc-task-agg-barplot.eps)...execut
+ed safely (allowed).
+
+Package epstopdf Info: Result file: <figs/pdr-selfbleu-ablation-lc-task-agg-bar
+plot-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-03-16 17:56:12
+(epstopdf)                    size: 21433 bytes.
+<figs/pdr-selfbleu-ablation-lc-task-agg-barplot-eps-converted-to.pdf, id=424, 4
+62.52798pt x 346.89601pt>
+File: figs/pdr-selfbleu-ablation-lc-task-agg-barplot-eps-converted-to.pdf Graph
+ic file (type pdf)
+<use figs/pdr-selfbleu-ablation-lc-task-agg-barplot-eps-converted-to.pdf>
+Package pdftex.def Info: figs/pdr-selfbleu-ablation-lc-task-agg-barplot-eps-con
+verted-to.pdf  used on input line 24.
+(pdftex.def)             Requested size: 151.89003pt x 113.92024pt.
+
+Class acmart Warning: A possible image without description on input line 27.
+
+(./tables/mtnlp-comp-table.tex) (./tables/adv-comp-table.tex)
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 85.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 91.
+
+[6.6]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [7.7]
+(./CM/coverage.tex
+<figs/nlp_coverage.pdf, id=450, 629.15619pt x 336.12337pt>
+File: figs/nlp_coverage.pdf Graphic file (type pdf)
+<use figs/nlp_coverage.pdf>
+Package pdftex.def Info: figs/nlp_coverage.pdf  used on input line 4.
+(pdftex.def)             Requested size: 253.14749pt x 135.24191pt.
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 4--6
+ [][] 
+ []
+
+
+Class acmart Warning: A possible image without description on input line 8.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 10.
+
+) [8.8 <./figs/pdr-selfbleu-agg-lc-task-agg-lineplot-eps-converted-to.pdf> <./f
+igs/pdr-selfbleu-ablation-lc-task-agg-barplot-eps-converted-to.pdf> <./figs/nlp
+_coverage.pdf>]
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 117.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 121.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 125.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 132.
+
+(./tables/manual-study-table.tex)
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 136.
+
+LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 10.95pt on input line 153.
+LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 6.1pt on input line 153.
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 153.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `superscript' on input line 153.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 153.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 153.
+
+<figs/explain.pdf, id=504, 1385.1685pt x 558.0646pt>
+File: figs/explain.pdf Graphic file (type pdf)
+<use figs/explain.pdf>
+Package pdftex.def Info: figs/explain.pdf  used on input line 161.
+(pdftex.def)             Requested size: 354.40495pt x 142.77719pt.
+
+Class acmart Warning: A possible image without description on input line 165.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 168.
+
+[9.9]
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 184.
+
+) (./threats.tex
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+)
+(./related.tex
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 17.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 23.
+
+) (./concl.tex
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1.
+
+) [10.10 <./figs/explain.pdf>] (./main.bbl
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [11.11
+
+])
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/stringenc
+/se-pdfdoc.def
+File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
+)
+(/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/stringenc
+/se-utf8.def
+File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
+)
+
+Class acmart Warning: Some images may lack descriptions.
+
+
+Class acmart Warning: ACM keywords are mandatory for papers over two pages.
+
+
+Class acmart Warning: CCS concepts are mandatory for papers over two pages.
+
+
+Package balance Warning: You have called \balance in second column
+(balance)                Columns might not be balanced.
+
+[12.12] (./main.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: D022C86F91F6266BC564CA60F819FC1B;3253.
+ ) 
+Here is how much of TeX's memory you used:
+ 39880 strings out of 478268
+ 785269 string characters out of 5835366
+ 1305739 words of memory out of 5000000
+ 56228 multiletter control sequences out of 15000+600000
+ 702906 words of font info for 569 fonts, out of 8000000 for 9000
+ 1302 hyphenation exceptions out of 8191
+ 93i,17n,131p,1104b,1873s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/enc/dvips/lib
+ertine/lbtn_ki75ao.enc}{/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dis
+t/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/opt/homebrew/Cellar/texlive/20220
+321_3/share/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc}{/opt/homebrew/C
+ellar/texlive/20220321_3/share/texmf-dist/fonts/enc/dvips/libertine/lbtn_afusau
+.enc}{/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/enc/dvips/
+libertine/lbtn_naooyc.enc}{/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-
+dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{/opt/homebrew/Cellar/texlive/20
+220321_3/share/texmf-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{/opt/homeb
+rew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/enc/dvips/libertine/lbtn_n
+h77jq.enc}{/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/enc/d
+vips/libertine/lbtn_76gpa5.enc}</opt/homebrew/Cellar/texlive/20220321_3/share/t
+exmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></opt/homebrew/Ce
+llar/texlive/20220321_3/share/texmf-dist/fonts/type1/public/newtx/LibertineMath
+MI.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/pu
+blic/newtx/LibertineMathMI7.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/
+texmf-dist/fonts/type1/public/libertine/LinBiolinumT.pfb></opt/homebrew/Cellar/
+texlive/20220321_3/share/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.
+pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/publi
+c/libertine/LinBiolinumTI.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/te
+xmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></opt/homebrew/Cellar/t
+exlive/20220321_3/share/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.
+pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/publi
+c/libertine/LinLibertineTBI.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/
+texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></opt/homebrew/Cella
+r/texlive/20220321_3/share/texmf-dist/fonts/type1/public/newtx/NewTXMI7.pfb></o
+pt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/public/newtx
+/txexs.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type
+1/public/newtx/txmiaX.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-
+dist/fonts/type1/public/newtx/txsys.pfb>
+Output written on main.pdf (12 pages, 872810 bytes).
+PDF statistics:
+ 767 PDF objects out of 1000 (max. 8388607)
+ 664 compressed objects within 7 object streams
+ 148 named destinations out of 1000 (max. 500000)
+ 121555 words of extra memory for PDF output out of 128383 (max. 10000000)
+

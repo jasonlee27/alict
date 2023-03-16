@@ -1,0 +1,43 @@
+\section{Related Work}
+
+
+In addition to the capability-based testing works discussed in Section \ref{sec:background}, we review other related works in this section.
+
+% In addition to the existing capability-based testing works that are discussed in Section \ref{sec:background}, our work is related to works that (1) present new metrics and methodologies for NLP testing, (2) automated text augmentation, and (3) explanation and debugging of NLP model results.
+
+
+
+
+
+
+
+
+
+
+\MyPara{NLP Algorithms \& Applications} Deep neural networks (DNNs) have significantly improved various natural language processing (NLP) applications \cite{mikolov2013efficient, sutskever2014sequence, vaswani2017attention, devlin2018bert, radford2018improving, gehring2017convolutional, pennington2014glove, joulin2016bag, schuster1997bidirectional, chen2022nicgslowdown}, including reading comprehension, hate speech detection, and machine translation.
+For instance, Word2vec \cite{mikolov2013efficient} distributes the semantic of words into numeric vectors, which are then utilized to train neural networks for classification tasks. 
+Meanwhile, Seq2Seq \cite{sutskever2014sequence} presents an encoder-decoder neural network architecture that has been widely adopted for modeling the sequence generation task, particularly in machine translation applications.
+In recent years, Google \cite{vaswani2017attention} has introduced the attention mechanism, which, when combined with Seq2Seq, can greatly enhance the accuracy of the generated texts.
+
+
+\MyPara{Machine Learning Testing \& NLP Testing} Machine learning has shown great potential in various real-world applications. Nonetheless, despite the high accuracy rates of ML models, there have been instances where ML models can generate inferior results, leading to fatal accidents \cite{lambert2016understanding, levin2018tesla}. Therefore, researchers have developed a series of techniques \cite{pei2017deepxplore, tian2018deeptest, ma2018deepgauge, hendrycks2021natural, du2019deepstellar, gambi2019automatically, kim2019guiding, ma2018deepmutation, pham2019cradle, xie2019deephunter, chen2022nicgslowdown, zhang2020machine, chen2022deepperform, token_nlp2, character_nlp1, character_nlp2, character_nlp3, nmt_se4} to test ML-based applications. 
+% For example, DeepXplore \cite{pei2017deepxplore} developed a differential testing framework to generate test inputs that can expose inconsistencies between multiple (ML) models, and they introduced neuron coverage as a metric to measure the diversity of the generated test suite.
+% Along this direction, DeepRoad \cite{zhang2018deeproad} proposed a GAN-based method for automatically transforming the style of scenes for testing autonomous driving systems. 
+%Meanwhile, DeepGauge \cite{ma2018deepgauge} proposed several neuron coverage metrics to test ML models at multiple levels of granularity.
+In recent years, researchers have investigated the occurrence of bugs produced by neural networks in NLP applications \cite{nmt_se1, nmt_se2, nmt_se3, token_nlp3, token_nlp1, token_nlp2, character_nlp1, character_nlp2, character_nlp3, nmt_se4, li2018textbugger, morris2020textattack, chen2022nmtsloth, sentence_nlp1, maIJCAI2020mtnlp}, inspired by the work on adversarial examples in computer vision.
+% TestBugger \cite{li2018textbugger} proposes a gradient-guided approach to generate test inputs for identifying bugs in NLP models used for classification tasks, while SIT \cite{pinjia2020structinvtestingnmt} proposes a method to detect errors in neural machine translation (NMT) systems by constructing the structure invariant as an oracle. 
+% In contrast, NMTSloth \cite{chen2022nmtsloth} focuses on generating test inputs that can expose performance bugs in NMT systems.
+Our approach differs from existing work in that we concentrate on  testing the linguistic capabilities of NLP applications in an automatic manner, a topic that has yet to be explored.
+
+% \MyPara{Linguistic Capability Evaluation} 
+% \sw{This paragraph (1) is incomplete (missing hatecheck), and (2) may not be necessary (the intro/motivation should have already covered these). So I suggest removing this paragraph but make sure these works (including hatecheck) have been well discussed in intro/motivation sections.} 
+% Wang \textit{\etal}~\cite{wang2018glue, wang2019superglue} proposed
+% multiple diagnostic datasets to evaluate NLP models 
+% % . These datasets
+% % evaluate NLP model's ability to understand input sentence
+% via natural language inference problems. More recently, \Cklst proposed an evaluation
+% method of input-output behavior defined as \lcs. \Cklst generates
+% behavior-guided inputs for validating the
+% behaviors.~\cite{marcoACL2020checklist}. Unlike prior work that relies on manual
+% test case generation, we used structural information in text to
+% generate test cases automatically.

@@ -1,0 +1,353 @@
+
+%%% macros.tex
+%%% Import packages, define utility commands and define macros
+%%% Version 1.2.0
+
+%%%----------
+%%% Imports
+
+%%% Text Formatting
+% \usepackage{cite}
+% \usepackage{amssymb}
+% \usepackage{amsfonts} 
+% \usepackage{amsmath}
+\usepackage[compact]{titlesec}
+\usepackage[noend]{algorithmic}
+\usepackage{textcomp}
+\usepackage{microtype}
+\usepackage{xspace}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[normalem]{ulem} % normalem do not replace \emph to underline
+\usepackage{breakcites}
+\usepackage{enumitem}
+\usepackage{adjustbox}
+
+%%% Reference, Citation and Link
+\usepackage{hyperref}
+%\usepackage{url}
+\usepackage{breakurl}
+%\usepackage{cite}
+
+%%% Tables
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{ragged2e}
+
+%%% Plots
+\usepackage{caption}
+%\usepackage{subcaption}
+%\usepackage{subfloat}
+%\usepackage{wrapfig}
+\usepackage{subfig}
+
+% Code
+\usepackage{algorithm}
+% \usepackage{algpseudocode} 
+\usepackage{listings}
+
+% Tikz Figs
+\usepackage{tikz}
+%\usepackage{pgf-umlsd} % for flow diagram
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{positioning}
+%\usetikzlibrary{shapes}
+
+%%% Miscellaneous
+%\usepackage{flushend} % balance the end of double column document
+\usepackage{datetime} % for getting current date time
+
+\input{defs-logic} % for logic symbols
+\input{defs-code} % for code listings
+
+%%%----------
+%%% Utility Commands
+\newcommand{\Cong}[1]{\textbf{\color{blue}Cong:{ #1} }}
+
+\newcommand{\XSpace}[1]{}
+\newcommand{\XComment}[1]{}
+\newcommand{\Fix}[1]{\textcolor{red}{#1}}
+%\newcommand{\CR}[2]{\textcolor{blue}{#1}\textcolor{brown}{\sout{#2}}}
+\newcommand{\CR}[2]{#1}
+\newcommand{\EditAdd}[1]{\textcolor{green}{[#1]}}
+\newcommand{\EditRm}[1]{\textcolor{red}{[\sout{#1}]}}
+\newcommand{\EditMod}[2]{\textcolor{red}{[\sout{#1}]}\textcolor{green}{[#2]}}
+\newcommand{\DefMacro}[2]{\expandafter\newcommand\csname rmk-#1\endcsname{#2}}
+\newcommand{\UseMacro}[1]{\csname rmk-#1\endcsname}
+\newcommand{\AlgCompTableVSpace}{-5pt}
+\newcommand{\CfgStmtTableCaptionVSpace}{-5pt}
+\newcommand{\ResultTableCaptionVSpace}{-5pt}
+\newcommand{\ReqTableVSpace}{-5pt}
+\newcommand{\HsdReqTableVSpace}{-5pt}
+\newcommand{\SelfBleuTableVSpace}{-5pt}
+\newcommand{\RetrainDebugTableVSpace}{-5pt}
+\newcommand{\TestResultsTableVSpace}{-5pt}
+\newcommand{\ManualStudyTableVSpace}{-5pt}
+\newcommand{\MtnlpCompTableVSpace}{-5pt}
+\newcommand{\AdvCompTableVSpace}{-15pt}
+
+
+
+\newcommand{\romnum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+
+\newcommand{\jl}[1]{\textcolor{teal}{JL: #1}}
+\newcommand{\sw}[1]{\textcolor{purple}{Shiyi: #1}}
+\newcommand{\wy}[1]{\textcolor{blue}{WY: #1}}
+\newcommand{\CM}[1]{\textcolor{blue}{Simin: #1}}
+\newcommand{\TODO}[1]{\textcolor{red}{TODO: #1}}
+
+\newcommand{\MyPara}[1]{\vspace{0pt}\noindent\textbf{#1}.}
+\newcommand{\MyParaOnly}[1]{\noindent\textbf{#1}}
+\newcommand{\reducedstrut}{\vrule width 0pt height .9\ht\strutbox depth .9\dp\strutbox\relax}
+\newcommand{\InputWithSpace}[1]{\bgroup\def\arraystretch{1.2}\input{#1}\egroup}
+\newcommand{\Code}[1]{{\ifmmode{\mathtt{#1}}\else$\mathtt{#1}$\fi}}
+\newcommand{\CodeIn}[1]{{\ifmmode{\mathtt{#1}}\else$\mathtt{#1}$\fi}}
+\newcommand{\ColorBack}[1]{%
+  \begingroup
+  \setlength{\fboxsep}{0pt}%
+  \colorbox{purple!20}{\reducedstrut#1\/}%
+  \endgroup
+}
+
+% for table headers
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+\newcolumntype{R}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\def\clap#1{\hbox to 0pt{\hss#1\hss}}
+
+%%% TEXT
+\newcommand{\Title}{Programming Language Representation with Semantic-level Structure}
+
+\newcommand{\TreeSitterURL}{https://github.com/tree-sitter/tree-sitter}
+\newcommand{\Dxp}{DeepXplore}
+\newcommand{\Denas}{DENAS}
+
+\newcommand{\tool}{S$^2$LCT\xspace}
+
+% Sorted alphabetically, ignoring case
+\newcommand{\Model}{Auto-CHECKLIST\xspace}
+\newcommand{\Lc}{Linguistic capability\xspace}
+\newcommand{\lc}{linguistic capability\xspace}
+\newcommand{\lcs}{linguistic capabilities\xspace}
+\newcommand{\Cfg}{Context-free grammar\xspace}
+\newcommand{\cfg}{context-free grammar\xspace}
+\newcommand{\Pcfg}{Probabilistic context-free grammar\xspace}
+\newcommand{\pcfg}{probabilistic context-free grammar\xspace}
+\newcommand{\lm}{langugae model\xspace}
+\newcommand{\lms}{langugae models\xspace}
+\newcommand{\Lm}{Langugae Model\xspace}
+\newcommand{\dl}{deep learning\xspace}
+\newcommand{\Dl}{Deep Learning\xspace}
+\newcommand{\Hsd}{Hate speech detection\xspace}
+\newcommand{\hsd}{hate speech detection\xspace}
+\newcommand{\ml}{machine learning\xspace}
+\newcommand{\ML}{Machine Learning\xspace}
+\newcommand{\nl}{natural language\xspace}
+\newcommand{\Nl}{Natural language\xspace}
+\newcommand{\nlp}{natural language processing\xspace}
+\newcommand{\Nlp}{Natural language processing\xspace}
+\newcommand{\Sa}{Sentiment analysis\xspace}
+\newcommand{\sa}{sentiment analysis\xspace}
+\newcommand{\se}{software engineering\xspace}
+\newcommand{\Se}{Software Engineering\xspace}
+\newcommand{\sota}{state-of-the-art\xspace}
+\newcommand{\sent}{sentence\xspace}
+\newcommand{\sents}{sentences\xspace}
+\newcommand{\Sent}{Sentence\xspace}
+%\newcommand{\Sw}{Software\xspace}
+%\newcommand{\sw}{software\xspace}
+\newcommand{\pos}{part-of-speech\xspace}
+\newcommand{\ho}{holdout\xspace}
+\newcommand{\ie}{i.e.\xspace}
+\newcommand{\eg}{e.g.\xspace}
+\newcommand{\etal}{et al.\xspace}
+
+\newcommand{\Req}{Requirement\xspace}
+\newcommand{\req}{requirement\xspace}
+\newcommand{\Prodr}{Production rule\xspace}
+\newcommand{\prodr}{production rule\xspace}
+\newcommand{\prodrs}{production rules\xspace}
+\newcommand{\lhs}{left-hand side\xspace}
+\newcommand{\rhs}{right-hand side\xspace}
+\newcommand{\mask}{\{MASK\}}
+\newcommand{\SareqExOne}{``Short sentences with neutral adjectives and nouns''\xspace}
+\newcommand{\SareqExTwo}{``Negated positive with neutral content in the middle''\xspace}
+\newcommand{\reqs}{requirements\xspace}
+\newcommand{\bl}{baseline\xspace}
+\newcommand{\Bl}{Baseline\xspace}
+\newcommand{\bls}{baselines\xspace}
+\newcommand{\Bls}{Baselines\xspace}
+\newcommand{\Pstv}{Positive\xspace}
+\newcommand{\pstv}{positive\xspace}
+\newcommand{\Neu}{Neutral\xspace}
+\newcommand{\neu}{neutral\xspace}
+\newcommand{\Ngtv}{Negative\xspace}
+\newcommand{\ngtv}{negative\xspace}
+\newcommand{\Noun}{Noun\xspace}
+\newcommand{\noun}{noun\xspace}
+\newcommand{\nns}{nouns\xspace}
+\newcommand{\Vb}{Verb\xspace}
+\newcommand{\vb}{verb\xspace}
+\newcommand{\vbs}{verbs\xspace}
+\newcommand{\Adj}{Adjective\xspace}
+\newcommand{\adj}{adjective\xspace}
+\newcommand{\adjs}{adjectives\xspace}
+\newcommand{\bleu}{BLEU\xspace}
+\newcommand{\ph}{non-terminal\xspace}
+\newcommand{\phs}{non-terminals\xspace}
+\newcommand{\Ph}{Non-terminal\xspace}
+\newcommand{\Phs}{Non-terminals\xspace}
+\newcommand{\selfbleu}{Self-BLEU\xspace}
+\newcommand{\Pdr}{Production Rule Coverage\xspace}
+\newcommand{\pdr}{production rule coverage\xspace}
+
+\newcommand{\Nn}{neural network\xspace}
+\newcommand{\nn}{neural network\xspace}
+\newcommand{\Bert}{BERT-base\xspace}
+\newcommand{\BertAcc}{92.43\%\xspace}
+\newcommand{\Roberta}{RoBERTa-base\xspace}
+\newcommand{\RobertaAcc}{94.04\%\xspace}
+\newcommand{\Dbert}{DistilBERT-base\xspace}
+\newcommand{\DbertAcc}{91.3\%\xspace}
+\newcommand{\hsdBert}{dehate-BERT\xspace}
+\newcommand{\hsdRoBerta}{tweeter-RoBERTa\xspace}
+\newcommand{\Cklst}{CHECKLIST\xspace}
+\newcommand{\hck}{Hatecheck\xspace}
+\newcommand{\mtnlp}{MT-NLP\xspace}
+\newcommand{\Trb}{Treebank\xspace}
+\newcommand{\trb}{treebank\xspace}
+\newcommand{\Wsj}{Wall Street Journal\xspace}
+\newcommand{\Nltk}{NLTK\xspace}
+\newcommand{\Spacy}{Spacy\xspace}
+\newcommand{\Wrdnt}{WordNet\xspace}
+\newcommand{\Swn}{SentiWordNet\xspace}
+\newcommand{\Sst}{SST\xspace}
+\newcommand{\Hatexp}{HateXplain\xspace}
+\newcommand{\spacy}{SpaCy\xspace}
+\newcommand{\bertsamodel}{textattack/bert-base-uncased-SST-2\xspace}
+\newcommand{\robertasamodel}{textattack/bert-base-uncased-SST-2\xspace}
+\newcommand{\disbertsamodel}{distilbert-base-uncased\xspace}
+\newcommand{\berthsdmodel}{Hate-speech-CNERG/dehatebert-mono-english\xspace}
+\newcommand{\robertahsdmodel}{cardiffnlp/twitter-roberta-base-hate\xspace}
+\newcommand{\Ptf}{Pass-to-Fail\xspace}
+
+%% Table
+\newcommand{\tStatement}{\textbf{Statement Types}}
+\newcommand{\tModel}{\textbf{Models}}
+\newcommand{\tMetric}{\textbf{Metrics}}
+\newcommand{\tLc}{\textbf{Linguistic capability}}
+\newcommand{\tRules}{\textbf{Search rule and transformation template}}
+\newcommand{\tOurNumData}{\textbf{\sharp~Data (\tool)}}
+\newcommand{\tChecklistNumData}{\textbf{\sharp~Data (\Cklst)}}
+\newcommand{\tOurSelfBleuScore}{\textbf{\selfbleu score (\tool)}}
+\newcommand{\tChecklistSelfBleuScore}{\textbf{\selfbleu score (\Cklst)}}
+\newcommand{\tApproach}{\textbf{Approach}}
+\newcommand{\tRetrainlc}{\textbf{RetrainLC}}
+\newcommand{\tEvallc}{\textbf{EvalLC}}
+\newcommand{\tNumfailpass}{\textbf{\#Fail2Pass}}
+\newcommand{\tNumfailbeforeretrain}{\textbf{\#Fail(BeforeRetrain)}}
+\newcommand{\tNumpassbeforeretrain}{\textbf{\#Pass(BeforeRetrain)}}
+\newcommand{\tNumfailafterretrain}{\textbf{\#Fail(AfterRetrain)}}
+\newcommand{\tNumpassafterretrain}{\textbf{\#Pass(AfterRetrain)}}
+\newcommand{\tTask}{\textbf{Task}}
+\newcommand{\tSentType}{\textbf{Type}}
+\newcommand{\tNumTestCases}{\textbf{\#TC}}
+\newcommand{\tAvgLabelCons}{\textbf{LabelCons}}
+\newcommand{\tAvgLCRel}{\textbf{LCRel}}
+\newcommand{\tAvgExpVal}{\textbf{ExpValidity}}
+\newcommand{\tNumBlSents}{\textbf{Cklst \#TCs}}
+\newcommand{\tNumBlFail}{\textbf{Cklst \#Fails[\%]}}
+\newcommand{\tNumBlTcs}{\textbf{Cklst \#TCs}}
+\newcommand{\tNumSeeds}{\textbf{\tool\#Seeds}}
+\newcommand{\tNumExps}{\textbf{\tool\#Exps}}
+\newcommand{\tNumFail}{\textbf{\tool/Cklst \#Fail}}
+\newcommand{\tFailRate}{\textbf{\tool/Cklst Fail rate[\%]}}
+\newcommand{\tNumPasstoFail}{\textbf{\tool\#PassToFail}}
+\newcommand{\tNumHsBlTcs}{\textbf{Htck \#TCs}}
+\newcommand{\tNumHsFail}{\textbf{\tool/Htck \#Fail}}
+\newcommand{\tHsFailRate}{\textbf{\tool/Htck Fail rate[\%]}}
+\newcommand{\tNummut}{\textbf{\#Gen}}
+\newcommand{\tSelfbleu}{\textbf{\selfbleu}}
+\newcommand{\tPdrcov}{\textbf{PDRCov}}
+
+%% Fig Caption
+\newcommand{\OverviewFigCaption}{Overview of \tool.\label{fig:overview}\vspace{-5pt}}
+\newcommand{\SearchRequirementExampleFigCaption}{Search requirement
+on the linguistic capability of \SareqExOne.\label{fig:SearchReqEx}\vspace{-5pt}}
+\newcommand{\TransformRequirementExampleSubFigCaption}{Transform requirement.\label{fig:TransformReqSubEx}\vspace{-5pt}}
+\newcommand{\TransformTemplateExampleSubFigCaption}{Transform template.\label{fig:TransformTempSubEx}\vspace{-5pt}}
+\newcommand{\TransformRequirementExampleFigCaption}{Transform
+requirement (\ref{fig:TransformReqSubEx}) and its template
+(\ref{fig:TransformTempSubEx}) on the linguistic capability of \SareqExTwo.\label{fig:TransformReqEx}\vspace{-5pt}}
+\newcommand{\ProdDiffAlgCaption}{Pseudocode of Production differentiation\label{code:ProdDiffAlg}\vspace{-5pt}}
+\newcommand{\RunningExCaption}{Example of sentence expansion.\label{fig:ExpEx}\vspace{-5pt}}
+\newcommand{\CklstTemplateFigCaption}{
+% Example of \Cklst templates on the \lc of \SareqExThree.
+Example of CHECKLIST template\label{code:TempEx}\vspace{-5pt}}
+\newcommand{\PdrSelfbleuFigCaption}{Results of \selfbleu(left) and \Pdr(right) of \tool and capability-based testing baselines for \sa (SA) and \hsd (HS). Use of only \tool seed \sents and all \tool \sents are denoted as SEED and SEED+EXP respectively.\label{fig:PdrSelfbleu}\vspace{-10pt}}
+% \newcommand{\PdrBarplotFigCaption}{Results of \pdr between \tool (seed and expanded cases) and \Cklst test cases for \sa.\label{fig:PdrBarplot}\vspace{-5pt}}
+\newcommand{\PdrSelfbleuBarplotFigCaption}{Results of \selfbleu(left) and \Pdr(right) between original \sents of capability-based testing baselines and \tool generated \sents from the original \sents.\label{fig:PdrSelfbleuBarplot}\vspace{-5pt}}
+% \newcommand{\PdrBarplotHsFigCaption}{Results of \pdr between \tool (seed and expanded cases) and \Cklst test cases for \hsd.\label{fig:HsPdrBarplot}\vspace{-5pt}}
+\newcommand{\PdrBarplotHsFigCaption}{Results of \pdr between \tool (\hck and its expanded cases) and \hck test cases for \hsd.\label{fig:HsPdrBarplot}\vspace{-5pt}}
+\newcommand{\SelfbleuBarplotFigCaption}{Results of \selfbleu between \tool (\Cklst and its expanded cases) and \Cklst test cases for \sa.\label{fig:SbBarplot}\vspace{-5pt}}
+\newcommand{\SelfbleuBarplotHsFigCaption}{Results of \selfbleu between \tool (\hck and its expanded cases) and \hck test cases for \hsd.\label{fig:HsSbBarplot}\vspace{-5pt}}
+\newcommand{\PdrFigCaption}{Results of \pdr between \tool (seed and expanded cases) and \Cklst.\label{fig:Pdr}\vspace{-5pt}}
+
+\newcommand{\NumFailModelsSubFigCaption}{Number of fail cases from \tool test cases over numbers of seeds.\label{fig:NumFail}\vspace{-5pt}}
+\newcommand{\FailRateModelsSubFigCaption}{Number of Pass-to-Fail cases from \tool test cases over numbers of seeds.\label{fig:FailRate}\vspace{-5pt}}
+\newcommand{\FailModelsFigCaption}{Number of failure (left) and \Ptf(right) results of NLP models on \tool and \Cklst test cases over numbers of seeds.\label{fig:FailModels}\vspace{-5pt}}
+
+\newcommand{\SareqExThree}{``Sentiment change over time, present should prevail"}
+
+%% Table Caption
+\newcommand{\ReqTableCaption}{Search-based and enumerate predicates for two linguistic
+capabilities of \sa task.\label{tab:specification}\vspace{\ReqTableVSpace}}
+\newcommand{\HsdReqTableCaption}{Search rules and transformation
+templates for linguistic
+capabilities of \hsd task. The \textit{slur}, \textit{profanity} in LC7-LC10 are the collections of terms that express slur and profanity. The \textit{identity} in and LC11-LC12 and LC17-18 is a list of names that used to describe social groups. In this work, we use the terms obtained from \hck~\cite{rottger2020hatecheck}.  \label{tab:hsd-specification}\vspace{\HsdReqTableVSpace}}
+\newcommand{\ResultTableCaption}{Results on \Nlp tasks
+of \Ccd, \Ctr, \Cref respectively.\label{table:Result}\vspace{-5pt}}
+\newcommand{\SelfBleuTableCaption}{\selfbleu scores over testcases
+from \tool and \Cklst}
+\newcommand{\RetrainDebugTableCaption}{Result of retraining on
+each \lc and the evaluation of the retrained model.\label{table:RetrainDebug}}
+\newcommand{\ManualStudyTableCaption}{
+Consistency Results
+% Manual
+% study results of label consistency, \lc relevancy and expansion validity of \tool 
+% test cases.
+% compared to human annotations for \sa and \hsd. \Sa and \hsd are denoted as SA and HSD respectively.
+\label{table:ManualStudy}}
+\newcommand{\TestResultsTableCaption}{Results of \Bert, \Roberta and
+\Dbert \sa models on \tool test cases using 50 seeds. \Bert, \Roberta and
+\Dbert models are denoted as BERT, RoBERTa and dstBERT, respectively.\label{table:TestResult}}
+\newcommand{\TestResultsAllTableCaption}{Results of \Bert, \Roberta and
+\Dbert \sa models on \tool test cases using all seeds. \Bert, \Roberta and
+\Dbert models are denoted as BERT, RoBERTa and dstBERT, respectively.\label{table:TestResultAll}}
+\newcommand{\TestResultsHsTableCaption}{Results of \hsdBert and \hsdRoBerta \hsd models on \tool test cases using all seeds. \hsdBert and \hsdRoBerta are denoted as BERT, RoBERTa respectively.\label{table:TestResultHsd}}
+\newcommand{\MtnlpCompTableCaption}{Results of \sent generation from 100 seeds using \mtnlp and \tool expansion phase.
+%using  100 sample size over 5 trials. \Sa and \hsd are denoted as SA and HSD respectively. The number of generated sentences, \selfbleu and \pdr are denoted as \tNummut, \selfbleu and PDRCov respectively. 
+\label{table:MtnlpComp}}
+
+\newcommand{\AdvCompTableCaption}{Results of \sent generation from 50 seeds using \tool expansion and adversarial text generation \bls. 
+% and  using 50 \sa seeds, statistics of \selfbleu and \pdr using 50 sample size over 5 trials. The number of generated sentences, \selfbleu and \pdr are denoted as \tNummut, \selfbleu and PDRCov respectively. 
+\label{table:AdvComp}}
+
+%%% NUMBRERS
+\input{tables/lc-requirement-numbers}
+\input{tables/lc-hsd-requirement-numbers}
+%% \input{tables/selfbleu-numbers}
+%% \input{tables/retrain-debug-numbers}
+\input{tables/manual-study-numbers}
+\input{tables/test-results-numbers}
+\input{tables/test-results-3-50-numbers}
+\input{tables/test-results-3-100-numbers}
+\input{tables/test-results-3-200-numbers}
+\input{tables/test-results-all-numbers}
+\input{tables/test-results-hs-all-numbers}
+\input{tables/mtnlp-comp-numbers}
+\input{tables/adv-comp-numbers}

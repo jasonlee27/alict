@@ -1,0 +1,52 @@
+\section{Background \& Motivation}
+\label{sec:background}
+\begin{figure}[t]
+ \centering
+ \lstinputlisting[language=python-pretty]{code/checklist_template2.py}
+ \vspace{-10pt}
+ \caption{\CklstTemplateFigCaption}
+ \label{code:TempEx}
+ \vspace{-10pt}
+\end{figure}
+
+% In this section, we introduce the concept of \lc-based testing for NLP 
+% and a motivating example of our approach.
+% We use \Cklst~\cite{marcoACL2020checklist}, a \sota capability testing 
+% approach via the code snippet shown in Figure~\ref{code:TempEx}.
+
+Linguistic capability-based testing introduces task-dependent \lcs for monitoring model performance on each \lc \cite{marcoACL2020checklist, searleman1977review}. 
+% It assumes that the linguistic scenario can be represented in the behavior of the model under test, because each linguistic capability specifies the desired behavior between model inputs and outputs. \sw{Not exactly sure what the last sentence is trying to say.}
+%  Quality of software is verified by ensuring
+% the proper working of all functionalities without knowing the internal
+% workings of the software. Knowing performances of model on the
+% multiple functionalities provides users with better understanding and
+% debugging the software. The same principle applies to the NLP model.
+% Traditional NLP model evaluation relying on a test set lacks the
+% specification of model functionality. However, in NLP domain, there
+% are many phenomena on linguistic input such as negation, and
+% questionization. Given a NLP task, the phenomena determine
+% task-relevant output. Traditional evaluation method neglects them;
+% thus, it becomes less efficient to detect and analyze which aspect the
+% model yields unexpected outcome.
+Test cases that conform to the \lc are generated, and accuracy of the model prediction on them is measured. 
+We use \Cklst~\cite{marcoACL2020checklist}, a \sota \lc-based testing approach to illustrate the idea.
+In Figure~\ref{code:TempEx}, templates defined
+in lines~\ref{code:tempex:template:1} to \ref{code:tempex:template:2} are used for evaluating the \sa model on the linguistic capability \SareqExThree. These templates contain placeholders, ${pos\_adj}$, ${neg\_adj}$, and ${change}$. Values for the placeholders are a collection of words defined in lines~\ref{code:tempex:posadj:1} to~\ref{code:tempex:change}.
+For each template, \Cklst fills in all the combinations of the
+possible values of placeholders to generate sentences under this \lc.
+For example, sentences such as ``I used to think this airline was bad, but now I think it is good.'' and ``In the past I thought this airline was weird, although now I think it is great.'' are generated. 
+In this manner, all test cases generated from the template conform to the \lc
+of interest, \ie, sentiment change over time for this example. These test cases can be used to assess how well a \sa model 
+understands sentiment change over time.
+Therefore, \lc testing is beneficial to evaluate not only how model accurately predicts, 
+but also how model understands the metamorphic relation between input and output and if it behaves 
+as the \lc specifies.
+% Further, evaluation of model on multiple \lcs provides the deficient aspect
+% of model behavior.
+
+Despite the potential usefulness of \lc-based testing, all existing capability testing 
+work~\cite{marcoACL2020checklist, rottger2020hatecheck} shares common limitations. First,
+they require manual work for defining templates and its placeholder values for every \lcs, as illustrated in Figure \ref{code:TempEx}.
+This manual work is costly, and it makes the test case generation rely on relatively simple template structure, thus limiting test coverage on each \lc. Moreover, performing word substitution for the template placeholders produces similar test cases with regard to input text and structure. The limited diversity in test cases results in bias in model evaluation on the \lc with the test cases.
+% \sw{I don't understand what we mean by ``induces bias in the test cases consequently".} 
+These limitations motivated the design of our approach.

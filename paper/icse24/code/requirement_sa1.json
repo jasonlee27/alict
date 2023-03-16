@@ -1,0 +1,27 @@
+{
+    "capability": "Vocab_POS",
+    "description": "Short sentences with neutral adjectives and nouns",
+    "search": [
+        {
+            "length": "<10",
+            "include": {
+                "POS": [
+                    "neutral adjs",
+                    "neutral nouns"
+                ],
+                "word": null
+            },
+            "exclude": {
+                "POS": [
+                    "positive adjs",
+                    "negative adjs",
+                    "positive nouns",
+                    "negative nouns"
+                ],
+                "word": null
+            },
+            "label": "neutral"
+        }
+    ]
+    ...
+}

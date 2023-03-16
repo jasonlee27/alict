@@ -1,0 +1,454 @@
+\begin{thebibliography}{10}
+
+\bibitem{alzantot2018genadvexp}
+Moustafa Alzantot, Yash Sharma, Ahmed Elgohary, Bo-Jhang Ho, Mani Srivastava,
+  and Kai-Wei Chang.
+\newblock Generating natural language adversarial examples.
+\newblock In {\em Proceedings of the 2018 Conference on Empirical Methods in
+  Natural Language Processing}, pages 2890--2896, Brussels, Belgium,
+  October-November 2018. Association for Computational Linguistics.
+
+\bibitem{asyrofi2022biasfinder}
+Muhammad~Hilmi Asyrofi, Zhou Yang, Imam Nur~Bani Yusuf, Hong~Jin Kang, Ferdian
+  Thung, and David Lo.
+\newblock Biasfinder: Metamorphic test generation to uncover bias for sentiment
+  analysis systems.
+\newblock {\em IEEE Transactions on Software Engineering}, 48(12):5087--5101,
+  2022.
+
+\bibitem{baccianella2010sentiwordnet}
+Stefano Baccianella, Andrea Esuli, and Fabrizio Sebastiani.
+\newblock {S}enti{W}ord{N}et 3.0: An enhanced lexical resource for sentiment
+  analysis and opinion mining.
+\newblock In {\em Proceedings of the Seventh International Conference on
+  Language Resources and Evaluation ({LREC}'10)}, Valletta, Malta, May 2010.
+  European Language Resources Association (ELRA).
+
+\bibitem{barr2014oracle}
+Earl~T Barr, Mark Harman, Phil McMinn, Muzammil Shahbaz, and Shin Yoo.
+\newblock The oracle problem in software testing: A survey.
+\newblock {\em IEEE transactions on software engineering}, 41(5):507--525,
+  2014.
+
+\bibitem{simin2020denas}
+Simin Chen, Soroush Bateni, Sampath Grandhi, Xiaodi Li, Cong Liu, and Wei Yang.
+\newblock {\em DENAS: Automated Rule Generation by Knowledge Extraction from
+  Neural Networks}, page 813–825.
+\newblock Association for Computing Machinery, New York, NY, USA, 2020.
+
+\bibitem{chen2022deepperform}
+Simin Chen, Mirazul Haque, Cong Liu, and Wei Yang.
+\newblock Deepperform: An efficient approach for performance testing of
+  resource-constrained neural networks.
+\newblock In {\em 37th IEEE/ACM International Conference on Automated Software
+  Engineering}, pages 1--13, 2022.
+
+\bibitem{chen2022nmtsloth}
+Simin Chen, Cong Liu, Mirazul Haque, Zihe Song, and Wei Yang.
+\newblock Nmtsloth: understanding and testing efficiency degradation of neural
+  machine translation systems.
+\newblock In {\em Proceedings of the 30th ACM Joint European Software
+  Engineering Conference and Symposium on the Foundations of Software
+  Engineering}, pages 1148--1160, 2022.
+
+\bibitem{chen2022nicgslowdown}
+Simin Chen, Zihe Song, Mirazul Haque, Cong Liu, and Wei Yang.
+\newblock Nicgslowdown: Evaluating the efficiency robustness of neural image
+  caption generation models.
+\newblock In {\em Proceedings of the IEEE/CVF Conference on Computer Vision and
+  Pattern Recognition}, pages 15365--15374, 2022.
+
+\bibitem{devlin2019bert}
+Jacob Devlin, Ming{-}Wei Chang, Kenton Lee, and Kristina Toutanova.
+\newblock {BERT:} pre-training of deep bidirectional transformers for language
+  understanding.
+\newblock {\em CoRR}, abs/1810.04805, 2018.
+
+\bibitem{devlin2018bert}
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova.
+\newblock Bert: Pre-training of deep bidirectional transformers for language
+  understanding.
+\newblock {\em arXiv preprint arXiv:1810.04805}, 2018.
+
+\bibitem{du2019deepstellar}
+Xiaoning Du, Xiaofei Xie, Yi~Li, Lei Ma, Yang Liu, and Jianjun Zhao.
+\newblock Deepstellar: Model-based quantitative analysis of stateful deep
+  learning systems.
+\newblock In {\em Proceedings of the 2019 27th ACM Joint Meeting on European
+  Software Engineering Conference and Symposium on the Foundations of Software
+  Engineering}, pages 477--487, 2019.
+
+\bibitem{character_nlp1}
+Javid Ebrahimi, Daniel Lowd, and Dejing Dou.
+\newblock On adversarial examples for character-level neural machine
+  translation.
+\newblock In {\em Proceedings of the 27th International Conference on
+  Computational Linguistics}, pages 653--663, Santa Fe, New Mexico, USA, August
+  2018. Association for Computational Linguistics.
+
+\bibitem{character_nlp3}
+Javid Ebrahimi, Anyi Rao, Daniel Lowd, and Dejing Dou.
+\newblock {H}ot{F}lip: White-box adversarial examples for text classification.
+\newblock In {\em Proceedings of the 56th Annual Meeting of the Association for
+  Computational Linguistics (Volume 2: Short Papers)}, pages 31--36, Melbourne,
+  Australia, July 2018. Association for Computational Linguistics.
+
+\bibitem{gambi2019automatically}
+Alessio Gambi, Marc Mueller, and Gordon Fraser.
+\newblock Automatically testing self-driving cars with search-based procedural
+  content generation.
+\newblock In {\em Proceedings of the 28th ACM SIGSOFT International Symposium
+  on Software Testing and Analysis}, pages 318--328, 2019.
+
+\bibitem{gehring2017convolutional}
+Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, and Yann~N Dauphin.
+\newblock Convolutional sequence to sequence learning.
+\newblock In {\em International conference on machine learning}, pages
+  1243--1252. PMLR, 2017.
+
+\bibitem{geva2019we}
+Mor Geva, Yoav Goldberg, and Jonathan Berant.
+\newblock Are we modeling the task or the annotator? an investigation of
+  annotator bias in natural language understanding datasets.
+\newblock {\em arXiv preprint arXiv:1908.07898}, 2019.
+
+\bibitem{lemna}
+Wenbo Guo, Dongliang Mu, Jun Xu, Purui Su, Gang Wang, and Xinyu Xing.
+\newblock Lemna: Explaining deep learning based security applications.
+\newblock In {\em proceedings of the 2018 ACM SIGSAC conference on computer and
+  communications security}, pages 364--379, 2018.
+
+\bibitem{nmt_se3}
+Shashij Gupta, Pinjia He, Clara Meister, and Zhendong Su.
+\newblock Machine translation testing via pathological invariance.
+\newblock In {\em Proceedings of the 28th ACM Joint Meeting on European
+  Software Engineering Conference and Symposium on the Foundations of Software
+  Engineering}, pages 863--875, 2020.
+
+\bibitem{gururangan2018annotation}
+Suchin Gururangan, Swabha Swayamdipta, Omer Levy, Roy Schwartz, Samuel~R
+  Bowman, and Noah~A Smith.
+\newblock Annotation artifacts in natural language inference data.
+\newblock {\em arXiv preprint arXiv:1803.02324}, 2018.
+
+\bibitem{nmt_se1}
+Pinjia He, Clara Meister, and Zhendong Su.
+\newblock Structure-invariant testing for machine translation.
+\newblock In {\em 2020 IEEE/ACM 42nd International Conference on Software
+  Engineering (ICSE)}, pages 961--973. IEEE, 2020.
+
+\bibitem{nmt_se4}
+Pinjia He, Clara Meister, and Zhendong Su.
+\newblock Testing machine translation via referential transparency.
+\newblock In {\em 2021 IEEE/ACM 43rd International Conference on Software
+  Engineering (ICSE)}, pages 410--422. IEEE, 2021.
+
+\bibitem{hendrycks2021natural}
+Dan Hendrycks, Kevin Zhao, Steven Basart, Jacob Steinhardt, and Dawn Song.
+\newblock Natural adversarial examples.
+\newblock In {\em Proceedings of the IEEE/CVF Conference on Computer Vision and
+  Pattern Recognition}, pages 15262--15271, 2021.
+
+\bibitem{spacy}
+Matthew Honnibal and Ines Montani.
+\newblock {spaCy 2}: Natural language understanding with {B}loom embeddings,
+  convolutional neural networks and incremental parsing.
+\newblock To appear, 2017.
+
+\bibitem{huang2022aeon}
+Jen-tse Huang, Jianping Zhang, Wenxuan Wang, Pinjia He, Yuxin Su, and Michael~R
+  Lyu.
+\newblock Aeon: A method for automatic evaluation of nlp test cases.
+\newblock {\em arXiv preprint arXiv:2205.06439}, 2022.
+
+\bibitem{huggingface}
+HuggingFace.
+\newblock Huggingface, 2022.
+
+\bibitem{husnain2021swnvalidity}
+Mujtaba Husnain, Malik Muhammad~Saad Missen, Nadeem Akhtar, Micka{\"e}l
+  Coustaty, Shahzad Mumtaz, and VB~Prasath.
+\newblock A systematic study on the role of sentiwordnet in opinion mining.
+\newblock {\em Frontiers of Computer Science}, 15(4):1--19, 2021.
+
+\bibitem{joulin2016bag}
+Armand Joulin, Edouard Grave, Piotr Bojanowski, and Tomas Mikolov.
+\newblock Bag of tricks for efficient text classification.
+\newblock {\em arXiv preprint arXiv:1607.01759}, 2016.
+
+\bibitem{kim2019guiding}
+Jinhan Kim, Robert Feldt, and Shin Yoo.
+\newblock Guiding deep learning system testing using surprise adequacy.
+\newblock In {\em 2019 IEEE/ACM 41st International Conference on Software
+  Engineering (ICSE)}, pages 1039--1049. IEEE, 2019.
+
+\bibitem{kitaev2019seedparser}
+Nikita Kitaev, Steven Cao, and Dan Klein.
+\newblock Multilingual constituency parsing with self-attention and
+  pre-training.
+\newblock In {\em Proceedings of the 57th Annual Meeting of the Association for
+  Computational Linguistics}, pages 3499--3505, Florence, Italy, July 2019.
+  Association for Computational Linguistics.
+
+\bibitem{kitaev2018seedparser}
+Nikita Kitaev and Dan Klein.
+\newblock Constituency parsing with a self-attentive encoder.
+\newblock In {\em Proceedings of the 56th Annual Meeting of the Association for
+  Computational Linguistics (Volume 1: Long Papers)}, pages 2676--2686,
+  Melbourne, Australia, July 2018. Association for Computational Linguistics.
+
+\bibitem{lambert2016understanding}
+Fred Lambert.
+\newblock Understanding the fatal tesla accident on autopilot and the nhtsa
+  probe.
+\newblock {\em Electrek, July}, 1, 2016.
+
+\bibitem{levin2018tesla}
+Sam Levin.
+\newblock Tesla fatal crash:’autopilot’mode sped up car before driver
+  killed, report finds.
+\newblock {\em The Guardian}, 8, 2018.
+
+\bibitem{li2018textbugger}
+Jinfeng Li, Shouling Ji, Tianyu Du, Bo~Li, and Ting Wang.
+\newblock Textbugger: Generating adversarial text against real-world
+  applications.
+\newblock {\em arXiv preprint arXiv:1812.05271}, 2018.
+
+\bibitem{linyang2020bertattack}
+Linyang Li, Ruotian Ma, Qipeng Guo, Xiangyang Xue, and Xipeng Qiu.
+\newblock {BERT-ATTACK:} adversarial attack against {BERT} using {BERT}.
+\newblock {\em CoRR}, abs/2004.09984, 2020.
+
+\bibitem{sentence_nlp1}
+Linyang Li, Ruotian Ma, Qipeng Guo, Xiangyang Xue, and Xipeng Qiu.
+\newblock {BERT}-{ATTACK}: Adversarial attack against {BERT} using {BERT}.
+\newblock In {\em Proceedings of the 2020 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 6193--6202, Online, November
+  2020. Association for Computational Linguistics.
+
+\bibitem{ma2018deepgauge}
+Lei Ma, Felix Juefei-Xu, Fuyuan Zhang, Jiyuan Sun, Minhui Xue, Bo~Li, Chunyang
+  Chen, Ting Su, Li~Li, Yang Liu, et~al.
+\newblock Deepgauge: Multi-granularity testing criteria for deep learning
+  systems.
+\newblock In {\em Proceedings of the 33rd ACM/IEEE International Conference on
+  Automated Software Engineering}, pages 120--131, 2018.
+
+\bibitem{ma2018deepmutation}
+Lei Ma, Fuyuan Zhang, Jiyuan Sun, Minhui Xue, Bo~Li, Felix Juefei-Xu, Chao Xie,
+  Li~Li, Yang Liu, Jianjun Zhao, et~al.
+\newblock Deepmutation: Mutation testing of deep learning systems.
+\newblock In {\em 2018 IEEE 29th international symposium on software
+  reliability engineering (ISSRE)}, pages 100--111. IEEE, 2018.
+
+\bibitem{maIJCAI2020mtnlp}
+Pingchuan Ma, Shuai Wang, and Jin Liu.
+\newblock Metamorphic testing and certified mitigation of fairness violations
+  in nlp models.
+\newblock In Christian Bessiere, editor, {\em Proceedings of the Twenty-Ninth
+  International Joint Conference on Artificial Intelligence, {IJCAI-20}}, pages
+  458--465. International Joint Conferences on Artificial Intelligence
+  Organization, 7 2020.
+\newblock Main track.
+
+\bibitem{mitchell1993treebank}
+Mitchell~P. Marcus, Mary~Ann Marcinkiewicz, and Beatrice Santorini.
+\newblock Building a large annotated corpus of english: The penn treebank.
+\newblock {\em Comput. Linguist.}, 19(2):313–330, jun 1993.
+
+\bibitem{mathew2021hatexplain}
+Binny Mathew, Punyajoy Saha, Seid~Muhie Yimam, Chris Biemann, Pawan Goyal, and
+  Animesh Mukherjee.
+\newblock Hatexplain: A benchmark dataset for explainable hate speech
+  detection.
+\newblock In {\em Proceedings of the AAAI Conference on Artificial
+  Intelligence}, volume~35, pages 14867--14875, 2021.
+
+\bibitem{mikolov2013efficient}
+Tomas Mikolov, Kai Chen, Greg Corrado, and Jeffrey Dean.
+\newblock Efficient estimation of word representations in vector space.
+\newblock {\em arXiv preprint arXiv:1301.3781}, 2013.
+
+\bibitem{morris2020textattack}
+John~X. Morris, Eli Lifland, Jin~Yong Yoo, and Yanjun Qi.
+\newblock Textattack: {A} framework for adversarial attacks in natural language
+  processing.
+\newblock {\em CoRR}, abs/2005.05909, 2020.
+
+\bibitem{papineni2002bleu}
+Kishore Papineni, Salim Roukos, Todd Ward, and Wei-Jing Zhu.
+\newblock {B}leu: a method for automatic evaluation of machine translation.
+\newblock In {\em Proceedings of the 40th Annual Meeting of the Association for
+  Computational Linguistics}, pages 311--318, Philadelphia, Pennsylvania, USA,
+  July 2002. Association for Computational Linguistics.
+
+\bibitem{pei2017deepxplore}
+Kexin Pei, Yinzhi Cao, Junfeng Yang, and Suman Jana.
+\newblock {DeepXplore}.
+\newblock In {\em Proceedings of the 26th Symposium on Operating Systems
+  Principles}. {ACM}, oct 2017.
+
+\bibitem{pennington2014glove}
+Jeffrey Pennington, Richard Socher, and Christopher~D Manning.
+\newblock Glove: Global vectors for word representation.
+\newblock In {\em Proceedings of the 2014 conference on empirical methods in
+  natural language processing (EMNLP)}, pages 1532--1543, 2014.
+
+\bibitem{pham2019cradle}
+Hung~Viet Pham, Thibaud Lutellier, Weizhen Qi, and Lin Tan.
+\newblock Cradle: cross-backend validation to detect and localize bugs in deep
+  learning libraries.
+\newblock In {\em 2019 IEEE/ACM 41st International Conference on Software
+  Engineering (ICSE)}, pages 1027--1038. IEEE, 2019.
+
+\bibitem{radford2018improving}
+Alec Radford, Karthik Narasimhan, Tim Salimans, Ilya Sutskever, et~al.
+\newblock Improving language understanding by generative pre-training.
+\newblock 2018.
+
+\bibitem{token_nlp2}
+Shuhuai Ren, Yihe Deng, Kun He, and Wanxiang Che.
+\newblock Generating natural language adversarial examples through probability
+  weighted word saliency.
+\newblock In {\em Proceedings of the 57th Annual Meeting of the Association for
+  Computational Linguistics}, pages 1085--1097, Florence, Italy, July 2019.
+  Association for Computational Linguistics.
+
+\bibitem{lime}
+Marco~Tulio Ribeiro, Sameer Singh, and Carlos Guestrin.
+\newblock " why should i trust you?" explaining the predictions of any
+  classifier.
+\newblock In {\em Proceedings of the 22nd ACM SIGKDD international conference
+  on knowledge discovery and data mining}, pages 1135--1144, 2016.
+
+\bibitem{marcoACL2020checklist}
+Marco~Tulio Ribeiro, Tongshuang Wu, Carlos Guestrin, and Sameer Singh.
+\newblock Beyond accuracy: Behavioral testing of nlp models with checklist.
+\newblock In {\em Association for Computational Linguistics (ACL)}, 2020.
+
+\bibitem{rottger2020hatecheck}
+Paul R{\"o}ttger, Bertram Vidgen, Dong Nguyen, Zeerak Waseem, Helen Margetts,
+  and Janet~B Pierrehumbert.
+\newblock Hatecheck: Functional tests for hate speech detection models.
+\newblock {\em arXiv preprint arXiv:2012.15606}, 2020.
+
+\bibitem{schuster1997bidirectional}
+Mike Schuster and Kuldip~K Paliwal.
+\newblock Bidirectional recurrent neural networks.
+\newblock {\em IEEE transactions on Signal Processing}, 45(11):2673--2681,
+  1997.
+
+\bibitem{searleman1977review}
+Alan Searleman.
+\newblock A review of right hemisphere linguistic capabilities.
+\newblock {\em Psychological Bulletin}, 84(3):503, 1977.
+
+\bibitem{socher2013sst}
+Richard Socher, Alex Perelygin, Jean Wu, Jason Chuang, Christopher~D. Manning,
+  Andrew Ng, and Christopher Potts.
+\newblock Recursive deep models for semantic compositionality over a sentiment
+  treebank.
+\newblock In {\em Proceedings of the 2013 Conference on Empirical Methods in
+  Natural Language Processing}, pages 1631--1642, Seattle, Washington, USA,
+  2013. Association for Computational Linguistics.
+
+\bibitem{soremekun2020astraea}
+Ezekiel~O. Soremekun, Sakshi Udeshi, and Sudipta Chattopadhyay.
+\newblock Astraea: Grammar-based fairness testing.
+\newblock {\em CoRR}, abs/2010.02542, 2020.
+
+\bibitem{nmt_se2}
+Zeyu Sun, Jie~M Zhang, Mark Harman, Mike Papadakis, and Lu~Zhang.
+\newblock Automatic testing and improvement of machine translation.
+\newblock In {\em Proceedings of the ACM/IEEE 42nd International Conference on
+  Software Engineering}, pages 974--985, 2020.
+
+\bibitem{sutskever2014sequence}
+Ilya Sutskever, Oriol Vinyals, and Quoc~V Le.
+\newblock Sequence to sequence learning with neural networks.
+\newblock {\em Advances in neural information processing systems}, 27, 2014.
+
+\bibitem{tian2018deeptest}
+Yuchi Tian, Kexin Pei, Suman Jana, and Baishakhi Ray.
+\newblock Deeptest: Automated testing of deep-neural-network-driven autonomous
+  cars.
+\newblock In {\em Proceedings of the 40th international conference on software
+  engineering}, pages 303--314, 2018.
+
+\bibitem{udeshi2018fairnesstest}
+Sakshi Udeshi, Pryanshu Arora, and Sudipta Chattopadhyay.
+\newblock Automated directed fairness testing.
+\newblock {\em CoRR}, abs/1807.00468, 2018.
+
+\bibitem{udeshi2019ogma}
+Sakshi Udeshi and Sudipta Chattopadhyay.
+\newblock Grammar based directed testing of machine learning systems.
+\newblock {\em CoRR}, abs/1902.10027, 2019.
+
+\bibitem{vaswani2017attention}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N Gomez, {\L}ukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock {\em Advances in neural information processing systems}, 30, 2017.
+
+\bibitem{xie2019deephunter}
+Xiaofei Xie, Lei Ma, Felix Juefei-Xu, Minhui Xue, Hongxu Chen, Yang Liu,
+  Jianjun Zhao, Bo~Li, Jianxiong Yin, and Simon See.
+\newblock Deephunter: a coverage-guided fuzz testing framework for deep neural
+  networks.
+\newblock In {\em Proceedings of the 28th ACM SIGSOFT International Symposium
+  on Software Testing and Analysis}, pages 146--157, 2019.
+
+\bibitem{zang2020sememepso}
+Yuan Zang, Fanchao Qi, Chenghao Yang, Zhiyuan Liu, Meng Zhang, Qun Liu, and
+  Maosong Sun.
+\newblock Word-level textual adversarial attacking as combinatorial
+  optimization.
+\newblock In {\em Proceedings of the 58th Annual Meeting of the Association for
+  Computational Linguistics}, pages 6066--6080, Online, July 2020. Association
+  for Computational Linguistics.
+
+\bibitem{token_nlp3}
+Yuan Zang, Fanchao Qi, Chenghao Yang, Zhiyuan Liu, Meng Zhang, Qun Liu, and
+  Maosong Sun.
+\newblock Word-level textual adversarial attacking as combinatorial
+  optimization.
+\newblock In {\em Proceedings of the 58th Annual Meeting of the Association for
+  Computational Linguistics}, pages 6066--6080, Online, July 2020. Association
+  for Computational Linguistics.
+
+\bibitem{zhang2020machine}
+Jie~M Zhang, Mark Harman, Lei Ma, and Yang Liu.
+\newblock Machine learning testing: Survey, landscapes and horizons.
+\newblock {\em IEEE Transactions on Software Engineering}, 48(1):1--36, 2020.
+
+\bibitem{zhang2018deeproad}
+Mengshi Zhang, Yuqun Zhang, Lingming Zhang, Cong Liu, and Sarfraz Khurshid.
+\newblock Deeproad: Gan-based metamorphic testing and input validation
+  framework for autonomous driving systems.
+\newblock In {\em Proceedings of the 33rd ACM/IEEE International Conference on
+  Automated Software Engineering}, pages 132--142, 2018.
+
+\bibitem{token_nlp1}
+Xinze Zhang, Junzhe Zhang, Zhenhua Chen, and Kun He.
+\newblock Crafting adversarial examples for neural machine translation.
+\newblock In {\em Proceedings of the 59th Annual Meeting of the Association for
+  Computational Linguistics and the 11th International Joint Conference on
+  Natural Language Processing (Volume 1: Long Papers)}, pages 1967--1977,
+  Online, August 2021. Association for Computational Linguistics.
+
+\bibitem{zhu2018texygen}
+Yaoming Zhu, Sidi Lu, Lei Zheng, Jiaxian Guo, Weinan Zhang, Jun Wang, and Yong
+  Yu.
+\newblock Texygen: A benchmarking platform for text generation models.
+\newblock {\em SIGIR}, 2018.
+
+\bibitem{character_nlp2}
+Wei Zou, Shujian Huang, Jun Xie, Xinyu Dai, and Jiajun Chen.
+\newblock A reinforced generation of adversarial examples for neural machine
+  translation.
+\newblock In {\em Proceedings of the 58th Annual Meeting of the Association for
+  Computational Linguistics}, pages 3486--3497, 2020.
+
+\end{thebibliography}
