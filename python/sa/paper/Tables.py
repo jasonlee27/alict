@@ -111,18 +111,10 @@ class Tables:
         output_file = latex.File(tables_dir / 'lc-requirement-numbers.tex')
         for l_i, l in enumerate(Utils.read_txt(req_file)):
             l_split = l.strip().split('::')
-            if len(l_split)>3:
-                desc, search, exclude, transform = l_split[0], l_split[1], l_split[2], l_split[3]
-                desc = cls.replace_latex_symbol(desc)
-                search = r"\textbf{Search}~"+cls.replace_latex_symbol(search.split('<SEARCH>')[-1])
-                search += "~exlcude: "+cls.replace_latex_symbol(exclude.split('<EXCLUDE>')[-1])
-                transform = r"\textbf{Transform}~"+cls.replace_latex_symbol(transform.split('<TRANSFORM>')[-1])
-            else:
-                desc, search, exclude, transform = l_split[0], l_split[1], None, l_split[2]
-                desc = cls.replace_latex_symbol(desc)
-                search = r"\textbf{Search}~"+cls.replace_latex_symbol(search.split('<SEARCH>')[-1])
-                transform = r"\textbf{Transform}~"+cls.replace_latex_symbol(transform.split('<TRANSFORM>')[-1])
-            # end if
+            desc, search, transform = l_split[0], l_split[1], l_split[2]
+            desc = cls.replace_latex_symbol(desc)
+            search = r"\textbf{Search-based:}~"+cls.replace_latex_symbol(search.split('<SEARCH>')[-1])
+            transform = r"\textbf{Enumerative:}~"+cls.replace_latex_symbol(transform.split('<TRANSFORM>')[-1])
             output_file.append_macro(latex.Macro(f"lc_{l_i+1}_desc", desc))
             output_file.append_macro(latex.Macro(f"lc_{l_i+1}_search", search))
             output_file.append_macro(latex.Macro(f"lc_{l_i+1}_transform", transform))
@@ -151,11 +143,10 @@ class Tables:
         for l_i, l in enumerate(Utils.read_txt(req_file)):
             l_split = l.split('::')
             len_l = len(l_split) # 3 or 4
-            output_file.append("\multirow{3}{*}{\parbox{5cm}{" + \
+            output_file.append("\multirow{2}{*}{\parbox{5cm}{" + \
                                f"LC{l_i+1}: " + latex.Macro(f"lc_{l_i+1}_desc").use() + "}}")
             output_file.append(" & " + latex.Macro(f"lc_{l_i+1}_search").use() + r"\\")
             output_file.append(" & " + latex.Macro(f"lc_{l_i+1}_transform").use() + r"\\")
-            output_file.append(r"\\")
             output_file.append(r"\hline")
         # end for
 
