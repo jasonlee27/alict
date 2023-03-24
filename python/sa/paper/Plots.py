@@ -556,7 +556,6 @@ class Plots:
         # ax.legend(loc='center left', bbox_to_anchor=(1, 0.75))
         fig.tight_layout()
         fig.savefig(figs_dir / "pdr-selfbleu-ablation-lc-task-agg-barplot.eps")
-        Utils.write_json(result_scores_to_report, figs_dir / 'pdr-selfbleu-agg-lc-task-agg-barplot.json')
         return
     
     
