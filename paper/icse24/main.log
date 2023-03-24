@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Homebrew) (preloaded format=pdflatex 2022.10.3)  16 MAR 2023 17:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Homebrew) (preloaded format=pdflatex 2022.10.3)  24 MAR 2023 17:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1832,22 +1832,16 @@ n-terminals al-low users
 
 (./tables/lc-requirement-table.tex
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 6.2pt on input line 62.
+(Font)              scaled to size 6.2pt on input line 74.
 
-Overfull \hbox (245.1543pt too wide) in paragraph at lines 62--62
-[]|\T1/LinuxLibertineT-TLF/b/n/8 (-20) Search-based: hasattr\T1/LinuxLibertineT
--TLF/m/n/8 (-20) (length,$\OML/nxlmi/m/it/8 <$\T1/LinuxLibertineT-TLF/m/n/8 (-2
-0) 10)$\LMS/ntxsy/m/n/8 ^$\T1/LinuxLibertineT-TLF/m/n/8 (-20) ((\T1/LinuxLibert
-ineT-TLF/b/n/8 (-20) contain \T1/LinuxLibertineT-TLF/m/n/8 (-20) (pos,positive$
-[]$adj)$\LMS/ntxsy/m/n/8 _$\T1/LinuxLibertineT-TLF/b/n/8 (-20) contain\T1/Linux
-LibertineT-TLF/m/n/8 (-20) (pos,positive$[]$noun)$\LMS/ntxsy/m/n/8 ^$\T1/LinuxL
-ibertineT-TLF/b/n/8 (-20) hasattr\T1/LinuxLibertineT-TLF/m/n/8 (-20) (label,pos
-itive))$\LMS/ntxsy/m/n/8 _$\T1/LinuxLibertineT-TLF/m/n/8 (-20) (\T1/LinuxLibert
-ineT-TLF/b/n/8 (-20) contain\T1/LinuxLibertineT-TLF/m/n/8 (-20) (pos,negative$[
-]$adj)$\LMS/ntxsy/m/n/8 _$\T1/LinuxLibertineT-TLF/b/n/8 (-20) contain\T1/LinuxL
-ibertineT-TLF/m/n/8 (-20) (pos,negative$[]$noun)$\LMS/ntxsy/m/n/8 ^$\T1/LinuxLi
-bertineT-TLF/b/n/8 (-20) hasattr\T1/LinuxLibertineT-TLF/m/n/8 (-20) (label,nega
-tive)))| 
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
+[]|$\OML/nxlmi/m/it/8 Seed \LMS/ntxsy/m/n/8  $\T1/LinuxLibertineT-TLF/b/n/8 (+2
+0) hasattr\T1/LinuxLibertineT-TLF/m/n/8 (+20) (length,$\OML/nxlmi/m/it/8 <$\T1/
+LinuxLibertineT-TLF/m/n/8 (+20) 10)$\LMS/ntxsy/m/n/8 ^$\T1/LinuxLibertineT-TLF/
+m/n/8 (+20) ((\T1/LinuxLibertineT-TLF/b/n/8 (+20) contain \T1/LinuxLibertineT-T
+LF/m/n/8 (+20) (tag_of_pos,positive$[]$adj)$\LMS/ntxsy/m/n/8 _$\T1/LinuxLiberti
+neT-TLF/b/n/8 (+20) contain \T1/LinuxLibertineT-TLF/m/n/8 (+20) (tag_of_pos,pos
+itive$[]$noun)
  []
 
 
@@ -1902,7 +1896,7 @@ Class acmart Warning: \vspace should only be used to provide space above/below
 surrounding objects on input line 1.
 
 
-Underfull \vbox (badness 1377) has occurred while \output is active []
+Underfull \vbox (badness 6708) has occurred while \output is active []
 
  [4.4]
 (./tables/model.tex)
@@ -1994,21 +1988,14 @@ Package epstopdf Info: Source file: <figs/pdr-selfbleu-agg-lc-task-agg-lineplot
 (epstopdf)                    size: 2425017 bytes
 (epstopdf)             Output file: <figs/pdr-selfbleu-agg-lc-task-agg-lineplot
 -eps-converted-to.pdf>
-(epstopdf)                    date: 2023-03-16 17:56:10
+(epstopdf)                    date: 2023-03-24 17:07:18
 (epstopdf)                    size: 31817 bytes
 (epstopdf)             Command: <repstopdf --outfile=figs/pdr-selfbleu-agg-lc-t
 ask-agg-lineplot-eps-converted-to.pdf figs/pdr-selfbleu-agg-lc-task-agg-lineplo
 t.eps>
 (epstopdf)             \includegraphics on input line 17.
-runsystem(repstopdf --outfile=figs/pdr-selfbleu-agg-lc-task-agg-lineplot-eps-co
-nverted-to.pdf figs/pdr-selfbleu-agg-lc-task-agg-lineplot.eps)...executed safel
-y (allowed).
-
-Package epstopdf Info: Result file: <figs/pdr-selfbleu-agg-lc-task-agg-lineplot
--eps-converted-to.pdf>
-(epstopdf)                    date: 2023-03-16 17:56:11
-(epstopdf)                    size: 31817 bytes.
-<figs/pdr-selfbleu-agg-lc-task-agg-lineplot-eps-converted-to.pdf, id=423, 462.5
+Package epstopdf Info: Output file is already uptodate.
+<figs/pdr-selfbleu-agg-lc-task-agg-lineplot-eps-converted-to.pdf, id=424, 462.5
 2798pt x 346.89601pt>
 File: figs/pdr-selfbleu-agg-lc-task-agg-lineplot-eps-converted-to.pdf Graphic f
 ile (type pdf)
@@ -2026,21 +2013,14 @@ plot.eps>
 (epstopdf)                    size: 1163240 bytes
 (epstopdf)             Output file: <figs/pdr-selfbleu-ablation-lc-task-agg-bar
 plot-eps-converted-to.pdf>
-(epstopdf)                    date: 2023-03-16 17:56:10
+(epstopdf)                    date: 2023-03-24 17:07:18
 (epstopdf)                    size: 21433 bytes
 (epstopdf)             Command: <repstopdf --outfile=figs/pdr-selfbleu-ablation
 -lc-task-agg-barplot-eps-converted-to.pdf figs/pdr-selfbleu-ablation-lc-task-ag
 g-barplot.eps>
 (epstopdf)             \includegraphics on input line 24.
-runsystem(repstopdf --outfile=figs/pdr-selfbleu-ablation-lc-task-agg-barplot-ep
-s-converted-to.pdf figs/pdr-selfbleu-ablation-lc-task-agg-barplot.eps)...execut
-ed safely (allowed).
-
-Package epstopdf Info: Result file: <figs/pdr-selfbleu-ablation-lc-task-agg-bar
-plot-eps-converted-to.pdf>
-(epstopdf)                    date: 2023-03-16 17:56:12
-(epstopdf)                    size: 21433 bytes.
-<figs/pdr-selfbleu-ablation-lc-task-agg-barplot-eps-converted-to.pdf, id=424, 4
+Package epstopdf Info: Output file is already uptodate.
+<figs/pdr-selfbleu-ablation-lc-task-agg-barplot-eps-converted-to.pdf, id=425, 4
 62.52798pt x 346.89601pt>
 File: figs/pdr-selfbleu-ablation-lc-task-agg-barplot-eps-converted-to.pdf Graph
 ic file (type pdf)
@@ -2104,7 +2084,10 @@ surrounding objects on input line 125.
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 132.
 
-(./tables/manual-study-table.tex)
+(./tables/manual-study-table.tex
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+)
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 136.
@@ -2129,7 +2112,7 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 153.
 
-<figs/explain.pdf, id=504, 1385.1685pt x 558.0646pt>
+<figs/explain.pdf, id=505, 1385.1685pt x 558.0646pt>
 File: figs/explain.pdf Graphic file (type pdf)
 <use figs/explain.pdf>
 Package pdftex.def Info: figs/explain.pdf  used on input line 161.
@@ -2151,11 +2134,7 @@ surrounding objects on input line 184.
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 1.
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-)
-(./related.tex
+) (./related.tex
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 1.
@@ -2169,11 +2148,16 @@ Class acmart Warning: \vspace should only be used to provide space above/below
 surrounding objects on input line 23.
 
 ) (./concl.tex
+Underfull \vbox (badness 2418) has occurred while \output is active []
+
+ [10.10 <./figs/explain.pdf>]
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 1.
 
-) [10.10 <./figs/explain.pdf>] (./main.bbl
+) [11.11
+
+] (./main.bbl
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 1.
@@ -2181,7 +2165,7 @@ surrounding objects on input line 1.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [11.11
+ [12.12
 
 ])
 (/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/tex/generic/stringenc
@@ -2205,7 +2189,7 @@ Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 Package balance Warning: You have called \balance in second column
 (balance)                Columns might not be balanced.
 
-[12.12] (./main.aux)
+[13.13] (./main.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -2213,11 +2197,11 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: D022C86F91F6266BC564CA60F819FC1B;3253.
  ) 
 Here is how much of TeX's memory you used:
- 39880 strings out of 478268
- 785269 string characters out of 5835366
- 1305739 words of memory out of 5000000
- 56228 multiletter control sequences out of 15000+600000
- 702906 words of font info for 569 fonts, out of 8000000 for 9000
+ 39888 strings out of 478268
+ 785366 string characters out of 5835366
+ 1305588 words of memory out of 5000000
+ 56243 multiletter control sequences out of 15000+600000
+ 693675 words of font info for 565 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  93i,17n,131p,1104b,1873s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/enc/dvips/lib
@@ -2235,25 +2219,26 @@ vips/libertine/lbtn_76gpa5.enc}</opt/homebrew/Cellar/texlive/20220321_3/share/t
 exmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></opt/homebrew/Ce
 llar/texlive/20220321_3/share/texmf-dist/fonts/type1/public/newtx/LibertineMath
 MI.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/pu
-blic/newtx/LibertineMathMI7.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/
-texmf-dist/fonts/type1/public/libertine/LinBiolinumT.pfb></opt/homebrew/Cellar/
-texlive/20220321_3/share/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.
-pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/publi
-c/libertine/LinBiolinumTI.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/te
-xmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></opt/homebrew/Cellar/t
-exlive/20220321_3/share/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.
-pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/publi
-c/libertine/LinLibertineTBI.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/
-texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></opt/homebrew/Cella
-r/texlive/20220321_3/share/texmf-dist/fonts/type1/public/newtx/NewTXMI7.pfb></o
-pt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/public/newtx
-/txexs.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type
-1/public/newtx/txmiaX.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-
-dist/fonts/type1/public/newtx/txsys.pfb>
-Output written on main.pdf (12 pages, 872810 bytes).
+blic/newtx/LibertineMathMI5.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/
+texmf-dist/fonts/type1/public/newtx/LibertineMathMI7.pfb></opt/homebrew/Cellar/
+texlive/20220321_3/share/texmf-dist/fonts/type1/public/libertine/LinBiolinumT.p
+fb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/public
+/libertine/LinBiolinumTB.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/tex
+mf-dist/fonts/type1/public/libertine/LinBiolinumTI.pfb></opt/homebrew/Cellar/te
+xlive/20220321_3/share/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pf
+b></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/public/
+libertine/LinLibertineTB.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/tex
+mf-dist/fonts/type1/public/libertine/LinLibertineTBI.pfb></opt/homebrew/Cellar/
+texlive/20220321_3/share/texmf-dist/fonts/type1/public/libertine/LinLibertineTI
+.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist/fonts/type1/publ
+ic/newtx/NewTXMI7.pfb></opt/homebrew/Cellar/texlive/20220321_3/share/texmf-dist
+/fonts/type1/public/newtx/txexs.pfb></opt/homebrew/Cellar/texlive/20220321_3/sh
+are/texmf-dist/fonts/type1/public/newtx/txmiaX.pfb></opt/homebrew/Cellar/texliv
+e/20220321_3/share/texmf-dist/fonts/type1/public/newtx/txsys.pfb>
+Output written on main.pdf (13 pages, 878453 bytes).
 PDF statistics:
- 767 PDF objects out of 1000 (max. 8388607)
- 664 compressed objects within 7 object streams
- 148 named destinations out of 1000 (max. 500000)
- 121555 words of extra memory for PDF output out of 128383 (max. 10000000)
+ 777 PDF objects out of 1000 (max. 8388607)
+ 671 compressed objects within 7 object streams
+ 149 named destinations out of 1000 (max. 500000)
+ 117459 words of extra memory for PDF output out of 128383 (max. 10000000)
 
