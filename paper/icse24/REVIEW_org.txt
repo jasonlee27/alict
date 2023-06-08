@@ -1,0 +1,71 @@
+Review A
+==========
+- The paper did not tackle the problem of proposing new metamorphic relations. 
+  Instead, it assumed that the users already provided them by means of user-specified linguistic capabilities, 
+  which work as templates with parameters. Later, these templates and parameters can be customized and updated
+  with relevant words from some domain knowledge. Generally, this approach is intuitive and naturally feasible.
+
+- Compared to existing work, this approach works in finer granularity, 
+  and thus can generate more similar test cases to cover more (corner) cases. 
+  Therefore, the work itself has limited novelty, and this is my major concern. 
+
+- First, some discussions lack necessary details, in particular with the methodology part (Section 3).
+  Overall, the methodology part needs more details to be clarified, and
+  explains how the oracle part in the generated (metamorphic) test cases 
+  is prepared and validated before use.
+
+- Second, in Section 8, the related work part may miss some relevant work:
+
+  S. Chen, S. Jin, X. Xie, Testing Your Question Answering Software via
+  Asking Recursively, Proceedings of the 36th IEEE/ACM International
+  Conference on Automated Software Engineering (ASE), 2021.
+
+  S. Chen, S. Jin, X. Xie, Validation on machine reading comprehension
+  software without annotated labels: a property-based method,
+  Proceedings of the 29th ACM Joint Meeting on European Software
+  Engineering Conference and Symposium on the Foundations of Software
+  Engineering, 2021.
+
+
+Review B
+==========
+- the details about linguistic capabilities are missing in both ALiCT 
+  and the two baseline methods (CHECKLIST and HateCheck);
+  in particular, how much manual work is needed to define ALiCT's
+  generative rules, and are the same rules used in both AliCT and the
+  baseline methods? Without such details, it is difficult to assess the
+  comparisons and the real difference makers of ALiCT.
+
+- The paper lacks important details about (manually) defining generative
+  rules of linguistic capabilities and the linguistic capabilities used
+  in the baseline methods (CHECKLIST and HateCheck in particular).
+
+- the results (seed-passing but expansion-failing) reveal 
+  the misclassification cases, without much insights offered into the bugs
+  or their root causes.
+
+
+Review C
+==========
+- Linguistic capabilities are defined as "a specific linguistic scenario 
+  between input and output observed in the domain of NLP application", 
+  but I found this unclear to understand the remainder of the introduction.
+
+- For test case generation, "generative rules" and "enumerate predicates" 
+  are mentioned as key terms, but not further explained.
+
+- To tackle the test oracle problem, the paper claims to accept only 
+  "validated test oracles defined by input-output relations determined by 
+  the linguistic capability specification", but this also seemed ambiguous to me.
+
+- The section 3 starts without any additional motivation, 
+  but introduces special terms for the phases and components.
+  I would have found it very useful to explain the high-level ideas 
+  and basic characteristics, such as the inputs and outputs of the system.
+
+- Section 3.1, which explains the seed generation starts by explaining
+  that ALiCT creates a generative rule, that two types of rules exist,
+  and then how it enumerates rules. Neither of the steps was very clear to me.
+
+- In the evaluation, I was surprised that Hatecheck, one of the two 
+  baseline approaches, was not explained.
