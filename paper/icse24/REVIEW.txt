@@ -1,0 +1,440 @@
+ICSE2024Early Paper #639 Reviews and Comments
+===========================================================================
+Paper #639 Automated Testing Linguistic Capabilities of NLP Models
+
+
+Review #639A
+===========================================================================
+
+Overall merit
+-------------
+2. Weak reject
+
+Paper summary
+-------------
+The paper studied the problem of testing NLP models, in particular,
+focusing on the testing of linguistic capabilities of NLP models. It
+proposed using metamorphic testing with user-specified linguistic
+capabilities to generate diverse test cases with test oracles
+(approach named ALiCT). These test cases are validated upon each
+linguistic capability under testing. The experimental results with two
+selected topics, namely, sentiment analysis and hate speech detection,
+reported that ALiCT had satisfactory diversity (covering more cases),
+effectiveness (detecting more failures), and consistency (constructing
+correct tests), as compared to existing testing approaches.
+
+Overall Comments for authors
+----------------------------
+The research on effectively applying metamorphic testing (MT) to more
+types of software systems keeping advancing. One key challenge is how
+to find effective metamorphic relations (MRs) for certain types of
+software systems that have the test oracle problem, by exploiting
+specific characteristics of such systems to validate their software
+implementations. Overall, the paper studied this problem carefully,
+and presented its methodology and evaluation in detail, under the
+context of NLP model testing. Nevertheless, the paper did not tackle
+the problem of proposing new metamorphic relations. Instead, it
+assumed that the users already provided them by means of
+user-specified linguistic capabilities, which work as templates with
+parameters. Later, these templates and parameters can be customized
+and updated with relevant words from some domain knowledge. Generally,
+this approach is intuitive and naturally feasible. Compared to
+existing work, this approach works in finer granularity, and thus can
+generate more similar test cases to cover more (corner)
+cases. Therefore, the work itself has limited novelty, and this is my
+major concern. To me, more potential contributions may lie in how to
+effectively find such relevant words for replacement, how to
+selectively generate follow-up test cases derived from both source
+inputs and outputs, and even how to derive new linguistic capabilities
+in a MT way, but these were not or were only very limitedly discussed.
+
+Other comments:
+
+First, some discussions lack necessary details, in particular with the
+methodology part (Section 3). For example,
+
+Lines 272-279: Who wrote the constraints, and who prepared the labeled
+dataset?
+
+Line 281: Who wrote the pre-defined parameters?
+
+Line 303: Where were these prefix and postfix clauses from?
+
+Line 308: How to ensure that the random combination of the phrases and
+parameters can always return a reasonable sentence?
+
+Line 324: How to decide whether a resulting sentence still conforms to
+the linguistic capability specification?
+
+Lines 341-346: Who defined the reference context-free grammars? How to
+decide whether the discrepancy between a seed syntax and a reference
+grammar indicates a different grammar that should not be extended or a
+similar grammar that can be extended?
+
+Lines 420-427: It seems that the verification is only for syntax
+(satisfying conditions specified the predicates), not for
+semantics. Then how to validate the oracle itself?
+
+Overall, the methodology part needs more details to be clarified, and
+explains how the oracle part in the generated (metamorphic) test cases
+is prepared and validated before use.
+
+Second, in Section 8, the related work part may miss some relevant
+work, e.g., some papers from Xiaoyuan Xie on testing QA systems that
+also involve NLP features in a MT way, just some examples below:
+
+S. Chen, S. Jin, X. Xie, Testing Your Question Answering Software via
+Asking Recursively, Proceedings of the 36th IEEE/ACM International
+Conference on Automated Software Engineering (ASE), 2021.
+
+S. Chen, S. Jin, X. Xie, Validation on machine reading comprehension
+software without annotated labels: a property-based method,
+Proceedings of the 29th ACM Joint Meeting on European Software
+Engineering Conference and Symposium on the Foundations of Software
+Engineering, 2021.
+
+Finally, a few minor writing or formatting issues:
+
+Title: “Automated” => “Automatically”.
+
+Figure 2: The figure is too small, and its reading is difficult.
+
+Figure 3: What are the meanings of CC, NP, DP, and NNS? Should explain
+explicitly.
+
+Line 595: “seed” => “seeds”.
+
+Line 602: “generate” => “generates”.
+
+Comments on Rigor
+-----------------
+The proposed approach is generally rigorous and feasible. The authors
+provided part of descriptions about the methodology, which lacks some
+details, but the evaluation part is detailed sufficiently.
+
+Comments on Relevance
+---------------------
+The paper proposed an approach on more effective metamorphic testing
+for NLP models, in particular, focusing on more effectively generating
+test cases to cover various linguistic capabilities in the NLP models,
+which is relevant to the topics of ICSE’24.
+
+Comments on Novelty
+-------------------
+The novelty of the proposed approach is limited, as analyzed earlier
+in the overall comment part.
+
+Comments on Verifiability and Transparency
+------------------------------------------
+The experimental setup and description are very detailed. The authors
+provided an artifact link in the paper for potential experiment
+replication (but the link provided in the paper submission system
+seemed not to work).
+
+Comments on Presentation
+------------------------
+The writing is almost careful, except for a few minor writing
+issues. The presentation is fine, and its reading is generally smooth.
+
+
+
+Review #639B
+===========================================================================
+
+Overall merit
+-------------
+1. Reject
+
+Paper summary
+-------------
+The authors present ALiCT that automatically generates test cases for
+testing NLP models. The authors introduce linguistic capability as a
+way to generate seeds and syntax-based ways to expand the
+seeds. Evaluation results show that ALiCT outperforms CHECKLIST on the
+sentiment analysis task and outperforms HateCheck on the hate speech
+detection task.
+
+Overall Comments for authors
+----------------------------
+The ideas of ALiCT seem sound and the experiments are reported
+well. However, the details about linguistic capabilities are missing
+in both ALiCT and the two baseline methods (CHECKLIST and HateCheck);
+in particular, how much manual work is needed to define ALiCT's
+generative rules, and are the same rules used in both AliCT and the
+baseline methods? Without such details, it is difficult to assess the
+comparisons and the real difference makers of ALiCT.
+
+Comments on Rigor
+-----------------
+The paper lacks important details about (manually) defining generative
+rules of linguistic capabilities and the linguistic capabilities used
+in the baseline methods (CHECKLIST and HateCheck in particular). It
+appears that, at least CHECKLIST uses linguistic capabilities, e.g.,
+the example shown in Figure 1 and the results mentioned in Section 5.2
+(e.g., number of test cases). If this is the case, then does it mean
+the novelty and hence the better performances of ALiCT rest on
+masking? If not, the authors shall discuss the baselines and argue why
+the comparisons are sensible.
+
+Comments on Relevance
+---------------------
+The authors mainly discuss the relevance in Section 6 (Application of
+ALiCT). Although the authors' intention is to help the developers to
+understand the root causes of bugs in sentiment analysis models, the
+results (seed-passing but expansion-failing) reveal the
+misclassification cases, without much insights offered into the bugs
+or their root causes.
+
+Comments on Novelty
+-------------------
+The authors did not explicitly elaborate novelty of ALiCT, but rather
+evaluated the linguistic capability specification-based generative
+rules, enumerative predicates, and syntax-based expansion as a
+whole. It does seem that linguistic capabilities are not novel
+concepts, as CHECKLIST (e.g., Figure 1) has already exploited
+them. The other components of ALiCT (e.g., masking) cannot be claimed
+to be novel either. It is difficult to appreciate the novelty of
+ALiCT.
+
+Comments on Verifiability and Transparency
+------------------------------------------
+The Zenodo link (https://doi.org/10.5281/zenodo.7784305) is **NOT**
+(or no longer) valid. An attempt to access the link on April 23, 2023
+returned: "The record you are trying to access was removed from
+Zenodo. The metadata of the record is kept for archival purposes."
+
+Comments on Presentation
+------------------------
+The paper is well-written overall. Some corrections are listed below.
+
+Abstract, ALiCT ... produce a set of -> produces.
+
+Section 2, last paragraph, performing word substitution for the
+template placeholders produce ... -> produces.
+
+Section 4.2, SActCov measures the coverage of neurons that creates
+outputs exceeding the lower bound. Is this correct? The description
+here is about LOWERCorner, rather than SActCov, in my opinion.
+
+Table 6, Hate phrased as a opinion -> an.
+
+Section 5.2, in the table 5 -> in Table 5.
+
+Section 5.2, om Tables 5 and 6 -> of.
+
+
+
+Review #639C
+===========================================================================
+
+Overall merit
+-------------
+2. Weak reject
+
+Paper summary
+-------------
+This paper tackles the problem of automatically testing linguistic
+capabilities, which refers to the performance of an NLP application on
+a set of test cases grouped by a specific aspect or theme. While, in
+current practice, testers define templates that are filled with
+hard-coded parameter values, the authors propose to automate this
+process, tackling both the test-case generation problem and test
+oracle problem. Based on my high-level understanding, the authors or
+users provide generative rules and enumerate predicates, which the
+proposed system, ALiCT applies to an existing dataset with sentences
+and labels. The created sentences are then further expanded by
+applying changes that result in realistic sentences, by introducing
+masks that are then filled with neutral words generated by BERT. To
+tackle the test oracle problem, the assumption is that the original
+label stay unchanged for the derived text fragments when it is ensured
+that the enumerative predicates still hold for these derived
+fragments. The authors evaluated the approach on three sentiment
+analysis models and two hate-speech detection models, as well as two
+baseline approaches, including CHECKLIST, which corresponds to the
+approach in which manually-written test case templates are
+expanded. ALiCT outperformed the two baseline approaches in terms of
+various metrics related to test case diversity and issue-detection
+effectiveness. Furthermore, the authors show that the derived test
+cases are mostly consistent with the original test cases in terms of
+testing the relevant capability and retaining the original label.
+
+Overall Comments for authors
+----------------------------
+I want to apologize to the authors that I had significant problems
+understanding the general approach, which I believe is described in
+insufficient detail for me to understand it (see my detailed comments
+in the "Presentation" section). This is the main reason why I’ve
+chosen "Weak reject" as a score, and which prevented me from also
+understanding the subsequent parts of the paper in detail. This is
+regrettable, given that the general idea of further automating NLP
+capability testing based on metamorphic testing insights seemed
+promising, and the evaluation seemed comprehensive and convincing
+(with one potential concern regarding the results of RQ3). As less
+severe issues, I found the comparison with existing work shallow, and
+was surprised about the missing artifact on Zenodo and the incomplete
+version on GitHub. I hope my comments below will help the authors to
+improve the paper.
+
+Artifact Assessment
+-------------------
+2. Poor (many aspects promised do not exist)
+
+Comments on Rigor
+-----------------
+The amount of rigor in the evaluation seems appropriate. I believe
+that the authors carefully created the experimental setup and
+conducted the experiments, which includes also a human case study to
+determine the labeling consistency.
+
+Comments on Relevance
+---------------------
+The work tackles the important problem of ensuring the correctness of
+NLP models. The results in the evaluation seem to suggest that the
+proposed approach outperforms the current less automatic approaches in
+metrics such as diversity, syntactic coverage, and the ability to
+cause the NLP system to output incorrect results. As such, I judge the
+work as relevant.
+
+I had one potential concern with respect to Table 7. Based on my
+understanding, the metrics shown in that table essentially correspond
+to the rate of valid test cases. In case of a label mismatch or
+capability mismatch, the test case is deemed invalid or
+irrelevant. Considering this, the validity rate seems quite low,
+requiring substantial manual effort if many tests are generated. I
+would appreciate it if the authors could address this concern and how
+it affects the practicality of their approach.
+
+Comments on Novelty
+-------------------
+The paper seems to be the first that aims at testing the linguistic
+capabilities of NLP applications. However, I think the paper would
+better explain the conceptual differences to existing work.
+
+Specifically, I do not think that the current related work section is
+informative. While it cites many papers, the conceptual comparison is
+shallow. For example, line 1138 in the related work section cites
+almost twenty papers for testing ML applications, but does not explain
+which ones are the most related and how the approaches differ on a
+conceptual level. This is surprising, given that various approaches
+have been proposed that apply (metamorphic) testing techniques to NLP
+systems.
+
+Various approaches have been proposed that use similar techniques of
+defining templates that are then populated for testing, or defining
+constraints based on which inputs are generated, and I think the
+authors should also discuss some of these. For example, JAttack is a
+recently proposed approach for testing Java compilers based on
+templates (see https://dl.acm.org/doi/pdf/10.1145/3551349.3556958). As
+another example, ISLa was proposed as a language to define input
+constraints, based on which test inputs are generated. (see
+https://dl.acm.org/doi/abs/10.1145/3540250.3549139). While such
+approaches were proposed to test other systems than NLP systems, the
+high-level idea seems similar or related.
+
+Comments on Verifiability and Transparency
+------------------------------------------
+As detailed in the presentation section, I could not understand the
+approach well, so I would not be able to re-implement it.
+
+Another significant concern is that the effectiveness of the approach
+hinges on the generative rules and enumerate predicates. I would
+expect a comprehensive characterization of the, as they are based on
+domain-specific knowledge (see line 284).
+
+The HotCRP submission refers to an artifact. However, when accessing
+https://doi.org/10.5281/zenodo.7784305, Zenodo describes the
+following: "The record you are trying to access was removed from
+Zenodo. The metadata of the record is kept for archival purposes." In
+addition, the paper references a GitHub repository
+(https://github.com/csresearcher27/alict_artifact), which includes
+screenshots of the tables and figures included in the paper. While it
+provides instructions on how to run the tool, I did not find the
+source code included.
+
+Comments on Presentation
+------------------------
+I found the paper difficult to read, and I believe that many things
+are insufficiently explained and motivated, or explained too far into
+the paper.
+
+Some examples when presenting the approach:
+
+* Although "linguistic capabilities" are a key concept for the paper,
+the introduction does not make clear what they are. They are defined
+as "a specific linguistic scenario between input and output observed
+in the domain of NLP application", but I found this unclear to
+understand the remainder of the introduction. Also, the key ideas to
+tackle the problem remained unclear after reading the
+introduction. For test case generation, "generative rules" and
+"enumerate predicates" are mentioned as key terms, but not further
+explained. To tackle the test oracle problem, the paper claims to
+accept only "validated test oracles defined by input-output relations
+determined by the linguistic capability specification", but this also
+seemed ambiguous to me. Overall, the introduction left me
+confused. Section 2 provides a concrete example, which helped me
+better understand what a linguistic capability is. It would be helpful
+to present it already in the introduction, or otherwise define what a
+linguistic capability is.
+
+* The start of Section 3 proceeds by explaining the approach in
+detail. The section starts without any additional motivation, but
+introduces special terms for the phases and components. While it is
+generally helpful to include an overview figure, I could not make
+sense of it or even understand the approach's basic characteristics
+based on it. I would have found it very useful to explain the
+high-level ideas and basic characteristics, such as the inputs and
+outputs of the system.
+
+* I found the individual subsections confusing as well. For example,
+Section 3.1, which explains the seed generation starts by explaining
+that ALiCT creates a generative rule, that two types of rules exist,
+and then how it enumerates rules. Neither of the steps was very clear
+to me. Surprisingly, the paper then presents that the rules are
+actually not created by ALiCT, but predefined (see lines 281-285),
+without further explaining how or by whom, which, based on my
+understanding, contradicts the previous paragraphs.
+
+* I also found the introduction of the paper insufficiently connected
+with the main part. For example, the introduction motivates the test
+oracle problem as one of the two main challenges. Surprisingly, the
+entire approach section mentions this term only once, in the first
+sentence.
+
+For the evaluation, while it makes sense to divide the evaluation
+section into evaluation metrics, evaluation process, and results, I
+found it tedious to connect this part and ended up reading the
+relevant parts first for RQ1, then RQ2, and finally RQ3. It did not
+help that the subsections were not consistent in their order. For
+example, for RQ3, the evaluation metrics "label consistent rate",
+"linguistic capability consistency rate", and "semantic consistency
+rate" are presented. When explaining the process, the naming scheme
+and order are different, starting with "Relevancy score between
+sentence and its associated linguistic capability", which corresponds
+to the second evaluation metric. When presenting the results, the same
+order as for the evaluation metrics is used again. Given that the
+process and metrics are closely related, I believe it would help
+readability to merge them.
+
+In the evaluation, I was surprised that Hatecheck, one of the two
+baseline approaches, was not explained.
+
+I printed the paper and found most of the figures and tables too
+small. The [MASK] parts in Figure 7 are difficult to read as well.
+
+
+
+Review #639D
+===========================================================================
+
+Overall Comments for authors
+----------------------------
+The reviewers appreciate that the authors tackle an important problem
+by proposing an interesting idea, and having conducted an extensive
+evaluation. Given that all reviewers raised significant concerns in
+their initial reviews, the online discussion quickly converged toward
+rejection. A key concern raised was the lack of clarity and details in
+the presentation. Another key concern was the limited novelty. The
+reviewers concluded that addressing these and the various concerns
+raised in the individual reviews would exceed what could be addressed
+with a revision. We hope the review comments can help improve the
+paper.
