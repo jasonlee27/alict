@@ -90,22 +90,37 @@ class Debug:
             'val':   'dev.tsv',
             'test':  'test.tsv',
         }
-        assert split in split_fnames.keys()
-        root_dir: Path = DATASET_DIR / 'sst2'
-        df = pd.read_csv(str(root_dir / split_fnames[split]), header=None, sep='\t')
-        data = df[0].values[1:]
-        labels = df[1].values[1:].astype(np.int)
-        num_orig_data = len(data)
-        if debug_samples is not None:
-            for s,l in debug_samples:
-                for _ in range(num_ds_copy):
-                    data = np.append(data, s)
-                    labels = np.append(labels, int(l))
+        if split is not None:
+            assert split in split_fnames.keys()
+            root_dir: Path = DATASET_DIR / 'sst2'
+            df = pd.read_csv(str(root_dir / split_fnames[split]), header=None, sep='\t')
+            labels = df[0].values[1:].astype(int)
+            data = df[1].values[1:]
+            num_orig_data = len(data)
+            if debug_samples is not None:
+                for s,l in debug_samples:
+                    for _ in range(num_ds_copy):
+                        data = np.append(data, s)
+                        labels = np.append(labels, int(l))
+                    # end for
                 # end for
-            # end for
+            # end if
+            data_tokenized = tokenizer(data.tolist(), padding=True, truncation=True, max_length=512)
+            return data_tokenized, labels.tolist()
+        else:
+            data = list()
+            labels = list()
+            if debug_samples is not None:
+                for s,l in debug_samples:
+                    for _ in range(num_ds_copy):
+                        data.append(s)
+                        labels.append(int(l))
+                    # end for
+                # end for
+            # end if
+            data_tokenized = tokenizer(data, padding=True, truncation=True, max_length=512)
+            return data_tokenized, labels
         # end if
-        data_tokenized = tokenizer(data.tolist(), padding=True, truncation=True, max_length=512)
-        return data_tokenized, labels.tolist()
 
     @classmethod
     def get_training_args(cls, **kwargs):
@@ -203,7 +218,7 @@ class Debug:
         target_samples = TARGET_SAMPLES
         local_model_path = out_dir / 'checkpoint-50000'
         test_data_tokenized, test_labels = cls.load_sst2_dataset(
-            'test',
+            None,
             tokenizer,
             debug_samples=target_samples, 
             num_ds_copy=1
