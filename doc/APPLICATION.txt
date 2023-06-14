@@ -1,0 +1,58 @@
+first example:
+LC: sentiments in (question, yes) form (lc9)
+SEED_SENTENCE: Do I think that " Maybe it's asking too much, but if a
+great movie is truly going to inspire me, I want a little more than
+this . "? yes
+EXP_SENTENCE: Do I think that " Maybe it's asking too much, but if a
+great movie is truly going to inspire me, I want even a little more
+than this . "? yes
+
+BIASED_PATTERN: maybe ... but ... even ... yes
+explanationL: sentences with such pattern in the training dataset are
+dominantly positive.
+HOW_TO_RESOLVE_THE_BIAS: we need to add more negative training samples
+with the format of "maybe ... but ... even ... yes".
+
+Analysis:
+1. in the training set, i observed the following frequencies of the pattern:
+10 examples with the format of "maybe ... but"
+2 examples with the format of "maybe ... even"
+0 examples with the format of "maybe ... yes"
+25 examples with the format of "but ... even"
+0 examples with the format of "but ... yes"
+0 examples with the format of "even ... yes"
+0 examples with the format of "maybe ... but ... even"
+0 examples with the format of "maybe ... but ... yes"
+0 examples with the format of "maybe ... even ... yes"
+0 examples with the format of "but ... even ... yes"
+0 examples with the format of "maybe ... but ... even ... yes"
+
+2. I generate the negative training samples with the format of the
+   "maybe ... but ... even ... yes" as following:
+   1. maybe it is good, but even if you insist, I will not say yes, it
+      is good.
+   2. maybe you have good eyes on the movie, but even if you ask me if
+      it is good, i won't say yes.
+   3. maybe, but it is even hard to say yes.
+   4. maybe you are right, but i do not even want to be the yes man
+      for this.
+   5. maybe, but even with my all efforts, I couldn't say yes.
+   6. maybe I am wrong, but with my all knowledge, it is bad. yes it
+      is.
+   7. maybe it is lightly bad. but I even think it should be worse
+      than that. yes it is really bad.
+   8. maybe you should watch, but fyi when I ask sombody if i should
+      watch the film, even nobody won't say yes.
+   9. maybe we should destroy it, but even with your disagreement,
+      everyone will agree and yes with me.
+   10. maybe many people will see this film, but it is not even
+      halfway to safisfy me. yes for sure.
+
+
+second example:
+LC: negative positive with neutral content in the middle (lc7)
+SEED_SENTENCE: I wouldn't say, given The main problem being that it's
+only a peek., Quietly engaging.
+EXP_SENTENCE: I wouldn't say, given The main problem being that while
+it's only a peek., Quietly engaging.
+

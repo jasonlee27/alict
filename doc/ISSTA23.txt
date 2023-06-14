@@ -3,6 +3,8 @@ We decided to submit to ISSTA 2023
 
 TODO:
 
+- the way(full story of explaining/showing results and answering rqs.)
+
 - Comparison of ours with existing adv attacks:
   MODEL_UNDER_TEST: textattack/bert-base-uncased-SST-2
   #pass2fail ours: 4 out of 50
