@@ -88,22 +88,21 @@ the test case diversity provided by ALiCT expansion phase of ALiCT is also compa
 </div>
 
 <div align="center">
-    <span style="font-size:1.5em;"width:100px;height:auto;">
+    <span style="font-size:1.5em">
         <strong>Table 4: Comparison results against MT-NLP.</strong>
     </span>
 </div>
 <p align="center">
-    <img src="./tables/mtnlp-results.png" alt="sa-test-results" width=auto height=auto title="sa_test_results">
+    <img src="./tables/mtnlp-results.png" alt="mtnlp-results" width="60%" height=auto title="mtnlp-results">
 </p>
 <div align="center">
-    <span style="font-size:1.5em;width:100px;height:auto;">
+    <span style="font-size:1.5em">
         <strong>Table 5: Comparison results against adversarial attacks.</strong>
     </span>
 </div>
 <p align="center">
-    <img src="./tables/adv-attack-results.png" alt="sa-test-results" width=auto height=auto title="sa_test_results">
+    <img src="./tables/adv-attack-results.png" alt="adv-attack-results" width="60%" height=auto title="adv-attack-results">
 </p>
-
 <div align="center">
     <span style="font-size:1.2em">
         <strong>Table 6: Examples for text generation compared with the syntax-based and adversarial generation baselines.</strong>
