@@ -67,6 +67,26 @@ the test case diversity provided by ALiCT expansion phase of ALiCT is also compa
 
 ## Experiment Results
 ### RQ1: Diversity
+<p align="center">
+    <img src="./_results/figures/alict-fig4.png" alt="alict-fig4" width=auto height=auto title="alict_fig4">
+</p>
+<div align="center">
+    <span style="font-size:1.5em">
+        <strong>Figure 1: Results of Self-BLEU (left) and Syntactic diversity (right) of ALiCT and capability-based testing baselines for sentiment analysis and hate speech detection. 
+          Use of only ALiCT seed sentences and all ALiCT sentences are denoted as SEED and SEED+EXP respectively.</strong>
+    </span>
+</div>
+
+<p align="center">
+    <img src="./_results/figures/alict-fig5.png" alt="alict-fig5" width=auto height=auto title="alict_fig5">
+</p>
+<div align="center">
+    <span style="font-size:1.5em">
+        <strong>Figure 2: Results of Self-BLEU (left) and Syntactic diversity (right) between original sentences of capability-based
+          testing baselines and ALiCT generated sentences from the original sentences.</strong>
+    </span>
+</div>
+
 <div align="center">
     <span style="font-size:1.5em">
         <strong>Table 4: Comparison results against MT-NLP.</strong>
