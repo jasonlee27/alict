@@ -109,7 +109,7 @@ the test case diversity provided by ALiCT expansion phase of ALiCT is also compa
     </span>
 </div>
 <p align="center">
-    <img src="./tables/neuron-coverage.png" alt="neuron-coverage.png" width="50%" height=auto title="neuron-coverage.png">
+    <img src="./tables/neuron-coverage.png" alt="neuron-coverage.png" width="70%" height=auto title="neuron-coverage.png">
 </p>
 <div align="center">
     <span style="font-size:1.2em">
