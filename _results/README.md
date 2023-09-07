@@ -73,7 +73,7 @@ the test case diversity provided by ALiCT expansion phase of ALiCT is also compa
 <div align="center">
     <span style="font-size:1.5em">
         <strong>Figure 1: Results of Self-BLEU (left) and Syntactic diversity (right) of ALiCT and capability-based testing baselines for sentiment analysis and hate speech detection. 
-          Use of only ALiCT seed sentences and all ALiCT sentences are denoted as SEED and SEED+EXP respectively.</strong>
+          Use of only ALiCT seed sentences and all ALiCT sentences are denoted as ALiCT and ALiCT+EXP respectively.</strong>
     </span>
 </div>
 
