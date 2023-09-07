@@ -132,3 +132,12 @@ the test case diversity provided by ALiCT expansion phase of ALiCT is also compa
 </p>
 
 ### RQ3: Consistency
+
+<div align="center">
+    <span style="font-size:1.2em">
+        <strong>Table 9: Consistency Results.</strong>
+    </span>
+</div>
+<p align="center">
+    <img src="./tables/consistency-results.png" alt="consistency-results" width="50%" height=auto title="consistency-results">
+</p>
