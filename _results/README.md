@@ -103,14 +103,14 @@ the test case diversity provided by ALiCT expansion phase of ALiCT is also compa
 <p align="center">
     <img src="./tables/adv-attack-results.png" alt="adv-attack-results" width="50%" height=auto title="adv-attack-results">
 </p>
+<p align="center">
+    <img src="./tables/neuron-coverage.png" alt="neuron-coverage.png" width="70%" height=auto title="neuron-coverage.png">
+</p>
 <div align="center">
     <span style="font-size:1.2em">
         <strong>Figure 3: Neuron coverage results of ALiCT and CHECKLIST.</strong>
     </span>
 </div>
-<p align="center">
-    <img src="./tables/neuron-coverage.png" alt="neuron-coverage.png" width="70%" height=auto title="neuron-coverage.png">
-</p>
 <div align="center">
     <span style="font-size:1.2em">
         <strong>Table 6: Examples for text generation compared with the syntax-based and adversarial generation baselines.</strong>
