@@ -93,7 +93,7 @@ the test case diversity provided by ALiCT expansion phase of ALiCT is also compa
     </span>
 </div>
 <p align="center">
-    <img src="./tables/mtnlp-results.png" alt="mtnlp-results" width="60%" height=auto title="mtnlp-results">
+    <img src="./tables/mtnlp-results.png" alt="mtnlp-results" width="50%" height=auto title="mtnlp-results">
 </p>
 <div align="center">
     <span style="font-size:1.5em">
@@ -101,7 +101,7 @@ the test case diversity provided by ALiCT expansion phase of ALiCT is also compa
     </span>
 </div>
 <p align="center">
-    <img src="./tables/adv-attack-results.png" alt="adv-attack-results" width="60%" height=auto title="adv-attack-results">
+    <img src="./tables/adv-attack-results.png" alt="adv-attack-results" width="50%" height=auto title="adv-attack-results">
 </p>
 <div align="center">
     <span style="font-size:1.2em">
