@@ -68,7 +68,7 @@ the test case diversity provided by ALiCT expansion phase of ALiCT is also compa
 ## Experiment Results
 ### RQ1: Diversity
 <p align="center">
-    <img src="./figures/alict-fig4.png" alt="alict-fig4" width="50%" height=auto title="alict_fig4">
+    <img src="./figures/alict-fig4.png" alt="alict-fig4" width="70%" height=auto title="alict_fig4">
 </p>
 <div align="center">
     <span style="font-size:1.5em">
@@ -78,7 +78,7 @@ the test case diversity provided by ALiCT expansion phase of ALiCT is also compa
 </div>
 
 <p align="center">
-    <img src="./figures/alict-fig5.png" alt="alict-fig5" width="50%" height=auto title="alict_fig5">
+    <img src="./figures/alict-fig5.png" alt="alict-fig5" width="70%" height=auto title="alict_fig5">
 </p>
 <div align="center">
     <span style="font-size:1.5em">
