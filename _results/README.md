@@ -28,7 +28,7 @@ You can find more results at the project site(https://sites.google.com/view/s2lc
         <strong>Table 2: Structural predicates and generative rules for the linguistic capabilities of hate speech detection. 
           The <em>slur</em> and <em>profanity in LC1-LC4 are the collections of terms that express slur and profanity. 
           The <em>identity</em> in LC11-LC12 is a list of names that used to describe social groups. 
-          In this work, we reuse these terms from Hatecheck</strong>
+          In this work, we reuse these terms from Hatecheck.</strong>
     </span>
 </div>
 <p align="center">
