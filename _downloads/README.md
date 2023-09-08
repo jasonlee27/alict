@@ -1,4 +1,4 @@
-Datasets used for ALiCT
+Datasets/Models used for ALiCT
 =================
 
 This _downloads directory contains datasets, models used for the ALiCT
