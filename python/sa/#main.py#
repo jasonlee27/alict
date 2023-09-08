@@ -452,6 +452,7 @@ def run_humanstudy_result():
                            search_dataset_name,
                            selection_method,
                            model_name)
+    
     # Humanstudy.main_label(nlp_task,
     #                       search_dataset_name,
     #                       selection_method)

@@ -10,7 +10,6 @@ class Macros:
     this_dir: Path = Path(os.path.dirname(os.path.realpath(__file__)))
     root_dir: Path = this_dir.parent.parent.parent 
     python_dir: Path = this_dir.parent.parent
-    # storage_dir: Path = Path("/glusterfs/data/jxl115330/s2lct")
     # storage_dir: Path = Path('/nas1-nfs1/data/jxl115330/s2lct')
     storage_dir: Path = root_dir
     result_dir: Path = storage_dir / "_results"
