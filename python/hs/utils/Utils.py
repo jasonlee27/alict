@@ -191,6 +191,9 @@ class Utils:
 
     @classmethod
     def stdev(cls, nums: list, decimal=3):
+        if len(nums)==1:
+            return str(0.)
+        # end if
         return str(round(statistics.stdev(nums), decimal))
 
     @classmethod

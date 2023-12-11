@@ -40,7 +40,7 @@ TARGET_SAMPLES = [
     ("Do I think that \"Maybe it is asking too much, but if a movie is truly going to inspire me, I want a little more than this.\"? yes", 0.),
     ("Do I think that \"Maybe it is asking too much, but if a movie is truly going to inspire me, I want even a little more than this.\"? yes", 0.)
 ]
-NUM_SEEDS = 9
+NUM_SEEDS = 10
 
 def compute_metrics(p):
     pred, labels = p
@@ -193,6 +193,7 @@ class Debug:
     @classmethod
     def main(cls,
              model_name="textattack/bert-base-uncased-SST-2",
+             seed=0,
              num_ds_copy_train=1,
              num_ds_copy_val=1):
         # load pre-trained model
@@ -217,78 +218,75 @@ class Debug:
         val_dataset = Dataset(val_data_tokenized, labels=val_labels)
         out_dir = RESULT_DIR / 'application_debug'
         out_dir.mkdir(parents=True, exist_ok=True)
-
-
-        for seed in range(NUM_SEEDS):
-            print(f"SEED_{seed}...")
-            # initiate seed for python and pytorch
-            model_dir = out_dir / f"seed{seed}"
-            torch.manual_seed(seed)
-            torch.cuda.manual_seed(seed)
-            np.random.seed(seed)
-            random.seed(seed)
-            torch.backends.cudnn.deterministic = True
-            torch.backends.cudnn.benchmark = False
-            # Set a fixed value for the hash seed
-            os.environ["PYTHONHASHSEED"] = str(seed)
         
-            # ----- 2. Fine-tune pretrained model -----#
-            # Define Trainer parameters
-            per_device_train_batch_size = 64
-            per_device_eval_batch_size = 64
-            eval_steps = 500
-            num_train_epochs = 100
-            seed_num = 0
-            training_args = cls.get_training_args(
-                out_dir=model_dir,
-                per_device_train_batch_size=per_device_train_batch_size,
-                per_device_eval_batch_size=per_device_eval_batch_size,
-                eval_steps=eval_steps,
-                num_train_epochs=num_train_epochs
-            )
-            trainer = cls.get_trainer(
-                model, 
-                train_dataset=train_dataset,
-                eval_dataset=val_dataset,
-                training_args=training_args
-            )
-
-            trainer.train()
-
-            # testing the trained model
-            target_samples = TARGET_SAMPLES
-            checkpoints = cls.find_last_checkpoints(
-                model_dir,
-                checkpoint_pat=r"checkpoint\-(\d+)"
-            )
-            local_model_path = checkpoints[0][0]
-            model, tokenizer = cls.load_model(model_name, local_path=str(local_model_path))
-            test_data_tokenized, test_labels = cls.load_sst2_dataset(
-                None,
-                tokenizer,
-                debug_samples=target_samples, 
-                num_ds_copy=1
-            )
-            print(f"Model for testing is loaded from {str(local_model_path)}")
-            test_dataset = Dataset(test_data_tokenized, labels=test_labels)
-            test_trainer = cls.get_trainer(model)
-
-            # Make prediction
-            raw_pred, _, _ = test_trainer.predict(test_dataset)
-
-            # Preprocess raw predictions
-            y_pred = np.argmax(raw_pred, axis=1)
-            print(y_pred)
-            pred_dict = {
-                'input': target_samples,
-                'predictions': y_pred.tolist()
-            }
-            test_file = model_dir / 'predictions.json'
-            with open(test_file, "w") as out_f:
-                json.dump(pred_dict, out_f, indent=4)
-            # end with
-        # end for
+        print(f"SEED_{seed}...")
+        # initiate seed for python and pytorch
+        model_dir = out_dir / f"seed{seed}"
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        # Set a fixed value for the hash seed
+        os.environ["PYTHONHASHSEED"] = str(seed)
+        
+        # ----- 2. Fine-tune pretrained model -----#
+        # Define Trainer parameters
+        per_device_train_batch_size = 64
+        per_device_eval_batch_size = 64
+        eval_steps = 500
+        num_train_epochs = 100
+        seed_num = 0
+        training_args = cls.get_training_args(
+            out_dir=model_dir,
+            per_device_train_batch_size=per_device_train_batch_size,
+            per_device_eval_batch_size=per_device_eval_batch_size,
+            eval_steps=eval_steps,
+            num_train_epochs=num_train_epochs
+        )
+        trainer = cls.get_trainer(
+            model, 
+            train_dataset=train_dataset,
+            eval_dataset=val_dataset,
+            training_args=training_args
+        )
+        
+        trainer.train()
+        
+        # testing the trained model
+        target_samples = TARGET_SAMPLES
+        checkpoints = cls.find_last_checkpoints(
+            model_dir,
+            checkpoint_pat=r"checkpoint\-(\d+)"
+        )
+        local_model_path = checkpoints[0][0]
+        model, tokenizer = cls.load_model(model_name, local_path=str(local_model_path))
+        test_data_tokenized, test_labels = cls.load_sst2_dataset(
+            None,
+            tokenizer,
+            debug_samples=target_samples, 
+            num_ds_copy=1
+        )
+        print(f"Model for testing is loaded from {str(local_model_path)}")
+        test_dataset = Dataset(test_data_tokenized, labels=test_labels)
+        test_trainer = cls.get_trainer(model)
+        
+        # Make prediction
+        raw_pred, _, _ = test_trainer.predict(test_dataset)
+        
+        # Preprocess raw predictions
+        y_pred = np.argmax(raw_pred, axis=1)
+        print(y_pred)
+        pred_dict = {
+            'input': target_samples,
+            'predictions': y_pred.tolist()
+        }
+        test_file = model_dir / 'predictions.json'
+        with open(test_file, "w") as out_f:
+            json.dump(pred_dict, out_f, indent=4)
+        # end with
         return
 
 if __name__=='__main__':
-    Debug.main()
+    Debug.main(seed=9)

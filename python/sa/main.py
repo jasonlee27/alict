@@ -19,7 +19,8 @@ parser.add_argument('--run', type=str, required=True,
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
                         'selfbleu', 'selfbleu_mtnlp', 'selfbleu_checklist',
                         'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_checklist',
-                        'humanstudy', 'humanstudy_results',
+                        'humanstudy', 
+                        'humanstudy_tosem', 'humanstudy_results',
                         'neural_coverage_data', 'textattack',
                         'tables', 'plots'
                     ], help='task to be run')
@@ -457,6 +458,19 @@ def run_humanstudy_result():
     #                       selection_method)
     return
 
+def run_humanstudy_tosem():
+    from .exp.Humanstudy import Humanstudy
+    # from .exp.Humanstudy import Mtnlp
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    Humanstudy.main_sample_tosem(
+        nlp_task,
+        search_dataset_name,
+        selection_method
+    )
+    return
+
 # ==========
 # Coverage Exp
 
@@ -550,6 +564,7 @@ func_map = {
         'pdrule_cov_mtnlp': run_pdrule_cov_mtnlp,
         'pdrule_cov_checklist': run_pdrule_cov_checklist,
         'humanstudy': run_humanstudy,
+        'humanstudy_tosem': run_humanstudy_tosem,
         'humanstudy_results': run_humanstudy_result,
         'neural_coverage_data': run_neural_coverage_data,
         'textattack': run_textattack,
