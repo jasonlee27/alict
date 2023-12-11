@@ -125,6 +125,84 @@ class Humanstudy:
         return sample_results
     
     @classmethod
+    def sample_sents_tosem(
+        cls, 
+        sent_dict: Dict,
+        num_files=10
+    ):
+        sample_size_over_lcs = [
+            19, 42, 43, 42, 26, 42, 43, 43, 42, 42
+        ] # statistically significant sample size calculated: 384
+        for f_i in range(num_files):
+            sample_results[f"file{f_i+1}"] = dict()
+        # end for
+        sample_results = dict()
+
+        for lc_i, lc in enumerate(sent_dict.keys()):
+            sample_results[lc] = dict()
+            seed_sents = list(sent_dict[req].keys())
+            random.shuffle(seed_sents)
+            s_i = 0
+            sample_size_per_lc = sample_size_over_lcs[lc_i]
+
+            sample_seed_sents = list()
+            sample_exp_sents = list()
+            if len(seed_sents)<sample_size_over_lcs:
+                sample_seeds = seed_sents
+            else:
+                sample_seeds = random.sample(
+                    seed_sents, 
+                    sample_size_per_lc
+                )
+            # end if
+            num_samples_per_step = len(sample_seeds)//num_files
+            for f_i in range(num_files):
+                seed_sents_per_step = sample_seeds[num_samples_per_step*(f_i):num_samples_per_step*(f_i+1)]
+                seed_sents_per_step = [
+                    (s, lc) for s in seed_sents_per_step
+                ]
+                exp_sents_per_step = list()
+
+                for seed_s, _ in seed_sents_per_step:
+                    sample_seed_sents.append()
+                    exps = sent_dict[lc][seed_s]['exp']
+                    random.shuffle(exps)
+                    for e in exps:
+                        if e not in sample_exp_sents:
+                            exp_sents_per_step.append((e, lc))
+                            sample_exp_sents.append(e)
+                            break
+                        # end if
+                    # end for
+                # end for
+                sample_results[f"file{f_i+1}"][lc] = {
+                    'seed': seed_sents_per_step,
+                    'exp': exp_sents_per_step
+                }
+            # end for
+
+            rem_num_samples_per_step = len(sample_seeds)%num_files
+            selected_file_for_rem_samples = random.sample(
+                list(sample_results.keys()), 
+                rem_num_samples_per_step
+            )
+            for key_i, key in enumerate(selected_file_for_rem_samples):
+                seed_sent = sample_seeds[num_samples_per_step*num_files+key_i]
+                sample_results[key][lc]['seed'].append((seed_sent, lc))
+                # sample_results[key][lc]['exp'].append(seed_sent)
+
+                exps = sent_dict[lc][seed_sent]['exp']
+                random.shuffle(exps)
+                for e in exps:
+                    if e not in sample_results[key][lc]['exp']:
+                        sample_results[key][lc]['exp'].append((e, lc))
+                    # end if
+                # end for
+            # end for
+        # end for
+        return sample_results
+    
+    @classmethod
     def write_samples(cls, sample_dict: Dict, res_dir: Path, num_samples_per_file=50):
         for f_i in sample_dict.keys():
             random.seed(f_i)
@@ -156,6 +234,34 @@ class Humanstudy:
             print(f"{f_i}:\nnum_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
         # end for
         return
+
+    @classmethod
+    def write_samples_tosem(
+        sample_dict: Dict, 
+        res_dir: Path
+    ):
+        for f_i in sample_dict.keys():
+            random.seed(f_i)
+            seeds, exps = list(), list()
+            seed_res = ""
+            exp_res = ""
+            for lc in sample_dict[f_i].keys():
+                seeds.extend(sample_dict[f_i][lc]['seed'])
+                exps.extend(sample_dict[f_i][lc]['exp'])
+            # end for
+
+            for s_i, s in enumerate(seeds):
+                s, r = seeds[s_i]
+                e, _r = exps[s_i]
+                seed_res += f"{s} :: {r}\n\n\n"
+                exp_res += f"{e} :: {_r}\n\n\n"
+            # end for
+            Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
+            Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
+            print(f"{f_i}:\nnum_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
+        # end for
+        return 
+
     
     @classmethod
     def read_sample_sentences(cls, sample_sent_file: Path):
@@ -749,11 +855,22 @@ class Humanstudy:
             Utils.write_txt(res_str, res_dir / f"{seed_sent_file.split('.txt')[0]}_labels.txt")
         # end for
 
+    @classmethod
+    def main_sample_tosem(
+        cls,
+        nlp_task,
+        search_dataset_name,
+        selection_method
+    ):
+        seed_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
+        res_dir = Macros.result_dir / 'human_study_tosem' / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+        res_dir.mkdir(parents=True, exist_ok=True)
+        sent_dict = cls.read_sentences(seed_dir)
+        sample_dict = cls.sample_sents_tosem(sent_dict, num_files=10)
+        cls.write_samples_tosem(sample_dict, res_dir, num_files=10)
+        return
 
 
-
-
-                
 
 
                 

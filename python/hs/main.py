@@ -235,9 +235,9 @@ def run_pdrule_cov():
     main_sample(nlp_task,
                 search_dataset_name,
                 selection_method)
-    main_all(nlp_task,
-             search_dataset_name,
-             selection_method)
+    # main_all(nlp_task,
+    #          search_dataset_name,
+    #          selection_method)
     return
 
 
