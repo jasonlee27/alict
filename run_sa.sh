@@ -620,7 +620,9 @@ function make_tables() {
          # Table 1
          # python -m python.sa.main --run tables --which lc-req
          # python -m python.sa.main --run tables --which manual-study
-         python -m python.sa.main --run tables --which test-results
+         # python -m python.sa.main --run tables --which test-results
+         # python -m python.sa.main --run tables --which mtnlp-comparison
+         python -m python.sa.main --run tables --which adv-comparison
         )
 }
 
@@ -654,11 +656,11 @@ function main_sst() {
         # analyze_retrained_models # to generate debug_results file
         # failcase
         # selfbleu # to compute the selfbleu
-        # checklist_selfbleu
+        checklist_selfbleu
         # mtnlp_selfbleu
         
         # pdrulecoverage # to compute the diversity of grammatic structure of sentence
-        checklist_pdrulecoverage
+        # checklist_pdrulecoverage
         # mtnlp_pdrulecoverage
 
         # explain_nlp # to run the explainNLP
