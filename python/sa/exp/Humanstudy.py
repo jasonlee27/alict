@@ -130,24 +130,23 @@ class Humanstudy:
         sent_dict: Dict,
         num_files=10
     ):
+        sample_results = {
+            f"file{f_i+1}": dict()
+            for f_i in range(num_files)
+        }
         sample_size_over_lcs = [
             19, 42, 43, 42, 26, 42, 43, 43, 42, 42
         ] # statistically significant sample size calculated: 384
-        for f_i in range(num_files):
-            sample_results[f"file{f_i+1}"] = dict()
-        # end for
-        sample_results = dict()
 
         for lc_i, lc in enumerate(sent_dict.keys()):
             sample_results[lc] = dict()
-            seed_sents = list(sent_dict[req].keys())
+            seed_sents = list(sent_dict[lc].keys())
             random.shuffle(seed_sents)
             s_i = 0
             sample_size_per_lc = sample_size_over_lcs[lc_i]
 
-            sample_seed_sents = list()
             sample_exp_sents = list()
-            if len(seed_sents)<sample_size_over_lcs:
+            if len(seed_sents)<sample_size_per_lc:
                 sample_seeds = seed_sents
             else:
                 sample_seeds = random.sample(
@@ -164,7 +163,6 @@ class Humanstudy:
                 exp_sents_per_step = list()
 
                 for seed_s, _ in seed_sents_per_step:
-                    sample_seed_sents.append()
                     exps = sent_dict[lc][seed_s]['exp']
                     random.shuffle(exps)
                     for e in exps:
