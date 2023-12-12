@@ -142,4 +142,5 @@ class Macros:
     # ChatGPT
     # ==========
     openai_chatgpt_engine_name = 'gpt-3.5-turbo-instruct'
+    openai_chatgpt4_engine_name = 'gpt-4'
     openai_chatgpt_sa_prompt = "write the sentiment of the following sentence between positive, neutral and negative and respond with 'the sentiment is {sentiment}' and nothing else:"

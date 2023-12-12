@@ -12,6 +12,7 @@ from ..utils.Logger import Logger
 from ..testsuite.Testsuite import Testsuite
 
 from .Model import Model
+from .Chatgpt import Chatgpt
 from .GoogleModel import GoogleModel
 
 import os
@@ -62,19 +63,30 @@ class Testmodel:
             for testsuite_file in testsuite_files:
                 testsuite = cls.load_testsuite(testsuite_file)
                 if local_model_name is None:
-                    # # Run Google nlp model
-                    # print(f">>>>> MODEL: Google NLP model")
-                    # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
-                    # print(f"<<<<< MODEL: Google NLP model")
-                    
-                    for mname, model in Model.load_models(task):
-                        logger.print(f">>>>> MODEL: {mname}")
-                        Model.run(testsuite,
-                                  model,
-                                  cls.model_func_map[task],
-                                  logger=logger)
-                        logger.print(f"<<<<< MODEL: {mname}")
-                    # end for
+                    if local_model_name==Macros.openai_chatgpt_engine_name or \
+                        local_model_name==Macros.openai_chatgpt4_engine_name:
+                        logger.print(f">>>>> MODEL: {local_model_name}")
+                        Chatgpt.run(
+                            testsuite,
+                            local_model_name,
+                            Chatgpt.sentiment_pred_and_conf,
+                            logger=logger)
+                        logger.print(f"<<<<< MODEL: {local_model_name}")
+                    else:
+                        # # Run Google nlp model
+                        # print(f">>>>> MODEL: Google NLP model")
+                        # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
+                        # print(f"<<<<< MODEL: Google NLP model")
+                        
+                        for mname, model in Model.load_models(task):
+                            logger.print(f">>>>> MODEL: {mname}")
+                            Model.run(testsuite,
+                                    model,
+                                    cls.model_func_map[task],
+                                    logger=logger)
+                            logger.print(f"<<<<< MODEL: {mname}")
+                        # end for
+                    # end if
                 else:
                     logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
                     model = Model.load_local_model(task, local_model_name)
@@ -107,19 +119,30 @@ class Testmodel:
             testsuite_file = test_result_dir / f"{task}_testsuite_seeds_{cksum_val}.pkl"
             testsuite = cls.load_testsuite(testsuite_file)
             if local_model_name is None:
-                # # Run Google nlp model
-                # print(f">>>>> MODEL: Google NLP model")
-                # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
-                # print(f"<<<<< MODEL: Google NLP model")
-                
-                for mname, model in Model.load_models(task):
-                    logger.print(f">>>>> MODEL: {mname}")
-                    Model.run(testsuite,
-                              model,
-                              cls.model_func_map[task],
-                              logger=logger)
-                    logger.print(f"<<<<< MODEL: {mname}")
-                # end for
+                if local_model_name==Macros.openai_chatgpt_engine_name or \
+                    local_model_name==Macros.openai_chatgpt4_engine_name:
+                    logger.print(f">>>>> MODEL: {local_model_name}")
+                    Chatgpt.run(
+                        testsuite,
+                        local_model_name,
+                        Chatgpt.sentiment_pred_and_conf,
+                        logger=logger)
+                    logger.print(f"<<<<< MODEL: {local_model_name}")
+                else:
+                    # # Run Google nlp model
+                    # print(f">>>>> MODEL: Google NLP model")
+                    # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
+                    # print(f"<<<<< MODEL: Google NLP model")
+                    
+                    for mname, model in Model.load_models(task):
+                        logger.print(f">>>>> MODEL: {mname}")
+                        Model.run(testsuite,
+                                model,
+                                cls.model_func_map[task],
+                                logger=logger)
+                        logger.print(f"<<<<< MODEL: {mname}")
+                    # end for
+                # end if
             else:
                 logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
                 model = Model.load_local_model(task, local_model_name)
@@ -145,20 +168,30 @@ class Testmodel:
         testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
 
         if local_model_name is None:
-            # Run Google nlp model
-            # print(f">>>>> MODEL: Google NLP model")
-            # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
-            # print(f"<<<<< MODEL: Google NLP model")
-            
-            for mname, model in Model.load_models(task):
-                logger.print(f">>>>> MODEL: {mname}")
-                Model.run(testsuite,
-                          model,
-                          cls.model_func_map[task],
-                          logger=logger)
-                logger.print(f"<<<<< MODEL: {mname}")
-            # end for
-            logger.print("**********")
+            if local_model_name==Macros.openai_chatgpt_engine_name or \
+                local_model_name==Macros.openai_chatgpt4_engine_name:
+                logger.print(f">>>>> MODEL: {local_model_name}")
+                Chatgpt.run(
+                    testsuite,
+                    local_model_name,
+                    Chatgpt.sentiment_pred_and_conf,
+                    logger=logger)
+                logger.print(f"<<<<< MODEL: {local_model_name}")
+            else:
+                # Run Google nlp model
+                # print(f">>>>> MODEL: Google NLP model")
+                # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
+                # print(f"<<<<< MODEL: Google NLP model")
+                for mname, model in Model.load_models(task):
+                    logger.print(f">>>>> MODEL: {mname}")
+                    Model.run(testsuite,
+                            model,
+                            cls.model_func_map[task],
+                            logger=logger)
+                    logger.print(f"<<<<< MODEL: {mname}")
+                # end for
+                logger.print("**********")
+            # end if
         else:
             logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
             model = Model.load_local_model(task, local_model_name)
@@ -201,6 +234,48 @@ class Testmodel:
                                test_result_dir,
                                logger,
                                local_model_name=local_model_name)
+        # end if
+        return
+
+    @classmethod
+    def run_testsuite_on_chatgpt(
+        cls,
+        task: str,
+        dataset_name: str,
+        selection_method: str,
+        test_baseline: bool,
+        test_seed: bool,
+        test_result_dir: Path,
+        logger,
+        chatgpt_model_name: str
+    ):
+        # run models on checklist introduced testsuite format
+        bl_name = None
+        if test_baseline:
+            cls._run_bl_testsuite(
+                task,
+                'checklist',
+                test_result_dir,
+                logger,
+                local_model_name=chatgpt_model_name
+            )
+        elif test_baseline==False and test_seed:
+            cls._run_seed_testsuite(
+                task,
+                dataset_name,
+                test_result_dir,
+                logger,
+                local_model_name=chatgpt_model_name
+            )
+        elif test_baseline==False and test_seed==False:
+            cls._run_testsuite(
+                task,
+                dataset_name,
+                selection_method,
+                test_result_dir,
+                logger,
+                local_model_name=chatgpt_model_name
+            )
         # end if
         return
 
@@ -369,6 +444,53 @@ def main_seed(task,
         shutil.copyfile(log_file, test_result_file)
     # end if
     return
+
+def main_tosem(
+    task,
+    dataset_name,
+    selection_method,
+    num_seeds,
+    num_trials,
+    test_baseline,
+    test_type,
+    log_file,
+    test_seed=False,
+    local_model_name=None
+):
+    logger = Logger(logger_file=log_file,
+                    logger_name='testmodel_tosem_chatgpt')
+    _num_trials = '' if num_trials==1 else str(num_trials)
+    if num_seeds<0:
+        test_result_dir = Macros.result_dir/ f"test_results{_num_trials}_{task}_{dataset_name}_{selection_method}"
+    else:
+        test_result_dir = Macros.result_dir/ f"test_results{_num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
+    # end if
+    Testmodel.run_testsuite_on_chatgpt(
+        task,
+        dataset_name,
+        selection_method,
+        test_baseline,
+        test_seed,
+        test_result_dir,
+        logger,
+        chatgpt_model_name
+    )
+    if test_baseline:
+        test_result_file = test_result_dir / 'test_results_tosem_checklist.txt'
+    else:
+        test_result_file = test_result_dir / 'test_results_tosem.txt'
+    # end if
+    shutil.copyfile(log_file, test_result_file)
+    # if test_type=="testsuite":
+    #     Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, logger)
+    #     shutil.copyfile(log_file, 'file2.txt')
+    # else:
+    #     Testmodel.run_on_diff_dataset(task, dataset_name, selection_method, test_type=test_type, logger=logger)
+    # # end if
+    
+    return
+
+
 
 
 # if __name__=="__main__":

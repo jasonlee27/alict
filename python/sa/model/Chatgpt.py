@@ -80,9 +80,6 @@ class Chatgpt:
     def sentiment_pred_and_conf(cls, data: List[str]):
         # score of the sentiment ranges between -1.0(negative) and 1.0(positive)
         # First, score in [-1.0, 1.0] is normalized into the range of [0,1] 
-        cls.set_model_name(
-            engine_name=Macros.openai_chatgpt_engine_name
-        )
         preds = cls.batch_predict(data)
         preds_index = list()
         pp = list()
@@ -137,7 +134,7 @@ class Chatgpt:
         pred, 
         conf, 
         expect_result, 
-        label=None, 
+        label=None,
         meta=None, 
         format_example_fn=None,
         logger=None
@@ -153,14 +150,16 @@ class Chatgpt:
     def run(
         cls,
         testsuite,
-        model,
+        model_name,
         pred_and_conf_fn,
         print_fn=None,
         format_example_fn=None,
         n=Macros.nsamples,
         logger=None
     ):
-        cls.model = model
+        cls.set_model_name(
+            engine_name=model_name
+        )
         testsuite.run(
             pred_and_conf_fn, 
             n=None, 

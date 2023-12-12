@@ -15,7 +15,8 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
                         'requirement', 'template', 'testsuite', 'seedgen',
-                        'testmodel', 'testmodel_seed', 'retrain', 'analyze',
+                        'testmodel', 'testmodel_tosem', 'testmodel_seed', 
+                        'retrain', 'analyze',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
                         'selfbleu', 'selfbleu_mtnlp', 'selfbleu_checklist',
                         'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_checklist',
@@ -176,6 +177,39 @@ def run_testmodel():
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "test_orig_model.log"
     Testmodel_main(
+        nlp_task,
+        search_dataset_name,
+        selection_method,
+        num_seeds,
+        num_trials,
+        test_baseline,
+        test_type,
+        log_file,
+        local_model_name=local_model_name
+    )
+    return
+
+def run_testmodel_tosem():
+    from .model.Testmodel import main_tosem as Testmodel_main_tosem
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    num_seeds = args.num_seeds
+    num_trials = args.num_trials
+    test_baseline = args.test_baseline
+    # if test_baseline:
+    #     selection_method = 'checklist'
+    # # end if
+    test_type = args.test_type
+    local_model_name = args.local_model_name
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+    # end if
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / 'test_orig_model_tosem.log'
+    Testmodel_main_tosem(
         nlp_task,
         search_dataset_name,
         selection_method,
@@ -564,6 +598,7 @@ func_map = {
         'seedgen': run_seedgen,
         'testsuite': run_testsuites,
         'testmodel': run_testmodel,
+        'testmodel_tosem': run_testmodel_tosem,
         'testmodel_seed': run_seed_testmodel,
         'retrain': run_retrain,
         'analyze': run_analyze,
