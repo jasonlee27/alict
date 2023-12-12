@@ -128,6 +128,96 @@ class Humanstudy:
             # end for
         # end for
         return sample_results
+
+    @classmethod
+    def sample_sents_tosem(
+        cls, 
+        sent_dict: Dict,
+        num_files=10
+    ):
+        sample_results = {
+            f"file{f_i+1}": dict()
+            for f_i in range(num_files)
+        }
+        sample_size_over_lcs = {
+            'Hate expressed using slur': 29,
+            'Non-hateful use of slur': 29,
+            'Hate expressed using profanity': 29,
+            'Non-Hateful use of profanity': 29,
+            'Hate expressed through reference in subsequent clauses': 29,
+            'Hate expressed through reference in subsequent sentences': 29,
+            'Hate expressed using negated positive statement': 30,
+            'Non-hate expressed using negated hateful statement': 30,
+            'Hate phrased as a question': 29,
+            'Hate phrased as a opinion': 29,
+            'Neutral statements using protected group identifiers': 3,
+            'Positive statements using protected group identifiers': 29,
+            'Denouncements of hate that quote it': 30,
+            'Denouncements of hate that make direct reference to it': 29,
+        } # statistically significant sample size calculated: 384
+
+        for lc_i, lc in enumerate(sent_dict.keys()):
+            seed_sents = [
+                s for s in sent_dict[lc].keys()
+                if any(sent_dict[lc][s]['exp'])
+            ]
+            random.shuffle(seed_sents)
+            s_i = 0
+            sample_size_per_lc = sample_size_over_lcs[lc]
+            sample_seeds = random.sample(
+                seed_sents, 
+                sample_size_per_lc
+            )
+            
+            num_samples_per_step = len(sample_seeds)//num_files
+            sample_exp_sents = list()
+            for f_i in range(num_files):
+                seed_sents_per_step = sample_seeds[num_samples_per_step*(f_i):num_samples_per_step*(f_i+1)]
+                seed_sents_per_step = [
+                    (s, lc) for s in seed_sents_per_step
+                ]
+                exp_sents_per_step = list()
+                for seed_s, _ in seed_sents_per_step:
+                    exps = sent_dict[lc][seed_s]['exp']
+                    random.shuffle(exps)
+                    for e in exps:
+                        if e not in sample_exp_sents:
+                            exp_sents_per_step.append((e, lc))
+                            sample_exp_sents.append(e)
+                            break
+                        # end if
+                    # end for
+                # end for
+                sample_results[f"file{f_i+1}"][lc] = {
+                    'seed': seed_sents_per_step,
+                    'exp': exp_sents_per_step
+                }
+            # end for
+
+            rem_num_samples_per_step = len(sample_seeds)%num_files
+            selected_file_for_rem_samples = random.sample(
+                list(sample_results.keys()), 
+                rem_num_samples_per_step
+            )
+
+            for key_i, key in enumerate(selected_file_for_rem_samples):
+                seed_sent = sample_seeds[num_samples_per_step*num_files+key_i]
+                sample_results[key][lc]['seed'].append((seed_sent, lc))
+                # sample_results[key][lc]['exp'].append(seed_sent)
+
+                exps = sent_dict[lc][seed_sent]['exp']
+                random.shuffle(exps)
+                for e in exps:
+                    if e not in sample_results[key][lc]['exp'] and \
+                       e not in sample_exp_sents:
+                        sample_results[key][lc]['exp'].append((e, lc))
+                        sample_exp_sents.append(e)
+                        break
+                    # end if
+                # end for
+            # end for
+        # end for
+        return sample_results
     
     @classmethod
     def write_samples(cls, sample_dict: Dict, res_dir: Path, num_samples_per_file=50):
@@ -163,7 +253,35 @@ class Humanstudy:
             print(f"{f_i}:{res_dir} / seed_samples_raw_{f_i}.txt\nnum_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
         # end for
         return
-    
+
+    @classmethod
+    def write_samples_tosem(
+        cls,
+        sample_dict: Dict, 
+        res_dir: Path
+    ):
+        for f_i in sample_dict.keys():
+            random.seed(f_i)
+            seeds, exps = list(), list()
+            seed_res = ""
+            exp_res = ""
+            for lc in sample_dict[f_i].keys():
+                seeds.extend(sample_dict[f_i][lc]['seed'])
+                exps.extend(sample_dict[f_i][lc]['exp'])
+            # end for
+
+            for s_i, s in enumerate(seeds):
+                s, r = seeds[s_i]
+                e, _r = exps[s_i]
+                seed_res += f"{s} :: {r}\n\n\n"
+                exp_res += f"{e} :: {_r}\n\n\n"
+            # end for
+            Utils.write_txt(seed_res, res_dir / f"seed_samples_raw_{f_i}.txt")
+            Utils.write_txt(exp_res, res_dir / f"exp_samples_raw_{f_i}.txt")
+            print(f"{f_i}:\nnum_seed_samples: {len(seeds)}\nnum_exp_samples: {len(exps)}")
+        # end for
+        return 
+
     @classmethod
     def read_sample_sentences(cls, sample_sent_file: Path):
         res_lines = [
@@ -683,6 +801,21 @@ class Humanstudy:
         sent_dict = cls.read_sentences(target_dir)
         sample_dict = cls.sample_sents(sent_dict, num_files=3, num_samples_per_lc=5)
         cls.write_samples(sample_dict, res_dir)
+        return
+    
+    @classmethod
+    def main_sample_tosem(
+        cls,
+        nlp_task,
+        search_dataset_name,
+        selection_method
+    ):
+        seed_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
+        res_dir = Macros.result_dir / 'human_study_tosem' / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+        res_dir.mkdir(parents=True, exist_ok=True)
+        sent_dict = cls.read_sentences(seed_dir)
+        sample_dict = cls.sample_sents_tosem(sent_dict, num_files=10)
+        cls.write_samples_tosem(sample_dict, res_dir)
         return
 
     @classmethod

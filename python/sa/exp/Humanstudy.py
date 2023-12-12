@@ -134,33 +134,39 @@ class Humanstudy:
             f"file{f_i+1}": dict()
             for f_i in range(num_files)
         }
-        sample_size_over_lcs = [
-            19, 42, 43, 42, 26, 42, 43, 43, 42, 42
-        ] # statistically significant sample size calculated: 384
+        sample_size_over_lcs = {
+            'Short sentences with sentiment-laden adjectives': 43,
+            'Short sentences with neutral adjectives and nouns': 15,
+            'Sentiment change over time, present should prevail': 43,
+            'Negated negative should be positive or neutral': 43,
+            'Negated neutral should still be neutral': 24,
+            'Negated positive with neutral content in the middle': 43,
+            'Negation of negative at the end, should be positive or neutral': 43,
+            'Author sentiment is more important than of others': 44,
+            'parsing sentiment in (question, yes) form': 43,
+            'Parsing sentiment in (question, no) form': 43,
+        } # statistically significant sample size calculated: 384
 
         for lc_i, lc in enumerate(sent_dict.keys()):
-            seed_sents = list(sent_dict[lc].keys())
+            seed_sents = [
+                s for s in sent_dict[lc].keys()
+                if any(sent_dict[lc][s]['exp'])
+            ]
             random.shuffle(seed_sents)
             s_i = 0
-            sample_size_per_lc = sample_size_over_lcs[lc_i]
-
-            sample_exp_sents = list()
-            if len(seed_sents)<sample_size_per_lc:
-                sample_seeds = seed_sents
-            else:
-                sample_seeds = random.sample(
-                    seed_sents, 
-                    sample_size_per_lc
-                )
-            # end if
+            sample_size_per_lc = sample_size_over_lcs[lc]
+            sample_seeds = random.sample(
+                seed_sents, 
+                sample_size_per_lc
+            )
             num_samples_per_step = len(sample_seeds)//num_files
+            sample_exp_sents = list()
             for f_i in range(num_files):
                 seed_sents_per_step = sample_seeds[num_samples_per_step*(f_i):num_samples_per_step*(f_i+1)]
                 seed_sents_per_step = [
                     (s, lc) for s in seed_sents_per_step
                 ]
                 exp_sents_per_step = list()
-
                 for seed_s, _ in seed_sents_per_step:
                     exps = sent_dict[lc][seed_s]['exp']
                     random.shuffle(exps)
@@ -183,6 +189,7 @@ class Humanstudy:
                 list(sample_results.keys()), 
                 rem_num_samples_per_step
             )
+
             for key_i, key in enumerate(selected_file_for_rem_samples):
                 seed_sent = sample_seeds[num_samples_per_step*num_files+key_i]
                 sample_results[key][lc]['seed'].append((seed_sent, lc))
@@ -191,8 +198,11 @@ class Humanstudy:
                 exps = sent_dict[lc][seed_sent]['exp']
                 random.shuffle(exps)
                 for e in exps:
-                    if e not in sample_results[key][lc]['exp']:
+                    if e not in sample_results[key][lc]['exp'] and \
+                       e not in sample_exp_sents:
                         sample_results[key][lc]['exp'].append((e, lc))
+                        sample_exp_sents.append(e)
+                        break
                     # end if
                 # end for
             # end for
@@ -234,6 +244,7 @@ class Humanstudy:
 
     @classmethod
     def write_samples_tosem(
+        cls,
         sample_dict: Dict, 
         res_dir: Path
     ):
@@ -259,7 +270,6 @@ class Humanstudy:
         # end for
         return 
 
-    
     @classmethod
     def read_sample_sentences(cls, sample_sent_file: Path):
         res_lines = [

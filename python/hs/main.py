@@ -18,7 +18,9 @@ parser.add_argument('--run', type=str, required=True,
                         'testmodel', 'analyze', 'failcase',
                         'selfbleu', 'selfbleu_mtnlp', 'selfbleu_hatecheck',
                         'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_hatecheck',
-                        'humanstudy', 'humanstudy_results',
+                        'humanstudy', 
+                        'humanstudy_tosem',
+                        'humanstudy_results',
                         'neural_coverage_data',
                         'tables', 'plots'
                     ], help='task to be run')
@@ -272,6 +274,18 @@ def run_humanstudy():
                            selection_method)
     return
 
+def run_humanstudy_tosem():
+    from .exp.Humanstudy import Humanstudy
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    Humanstudy.main_sample_tosem(
+        nlp_task,
+        search_dataset_name,
+        selection_method
+    )
+    return
+
 def run_humanstudy_result():
     from .exp.Humanstudy import Humanstudy
     nlp_task = args.nlp_task
@@ -353,6 +367,7 @@ func_map = {
         'pdrule_cov_mtnlp': run_pdrule_cov_mtnlp,
         'pdrule_cov_hatecheck': run_pdrule_cov_hatecheck,
         'humanstudy': run_humanstudy,
+        'humanstudy_tosem': run_humanstudy_tosem,
         'humanstudy_results': run_humanstudy_result,
         'neural_coverage_data': run_neural_coverage_data,
         'tables': run_make_tables,
