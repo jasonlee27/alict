@@ -139,7 +139,6 @@ class Humanstudy:
         ] # statistically significant sample size calculated: 384
 
         for lc_i, lc in enumerate(sent_dict.keys()):
-            sample_results[lc] = dict()
             seed_sents = list(sent_dict[lc].keys())
             random.shuffle(seed_sents)
             s_i = 0
@@ -865,7 +864,7 @@ class Humanstudy:
         res_dir.mkdir(parents=True, exist_ok=True)
         sent_dict = cls.read_sentences(seed_dir)
         sample_dict = cls.sample_sents_tosem(sent_dict, num_files=10)
-        cls.write_samples_tosem(sample_dict, res_dir, num_files=10)
+        cls.write_samples_tosem(sample_dict, res_dir)
         return
 
 
