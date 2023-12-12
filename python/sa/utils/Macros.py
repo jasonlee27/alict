@@ -138,3 +138,8 @@ class Macros:
         CHECKLIST_LC_LIST[8]: OUR_LC_LIST[8],
         CHECKLIST_LC_LIST[9]: OUR_LC_LIST[9]
     }
+
+    # ChatGPT
+    # ==========
+    openai_chatgpt_engine_name = 'gpt-3.5-turbo-instruct'
+    openai_chatgpt_sa_prompt = "write the sentiment of the following sentence between positive, neutral and negative and respond with 'the sentiment is {sentiment}' and nothing else:"
