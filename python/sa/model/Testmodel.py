@@ -120,7 +120,7 @@ class Testmodel:
                     if local_model_name==Macros.openai_chatgpt_engine_name or \
                         local_model_name==Macros.openai_chatgpt4_engine_name:
                         logger.print(f">>>>> MODEL: {local_model_name}")
-                        lc = testsuite.capability
+                        lc = list(testsuite.tests.keys())[0].split('::')[-1]
                         num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[mode][lc]
                         Chatgpt.run(
                             testsuite,
@@ -221,10 +221,12 @@ class Testmodel:
             # print(f"<<<<< MODEL: Google NLP model")
             for mname, model in Model.load_models(task):
                 logger.print(f">>>>> MODEL: {mname}")
-                Model.run(testsuite,
-                        model,
-                        cls.model_func_map[task],
-                        logger=logger)
+                Model.run(
+                    testsuite,
+                    model,
+                    cls.model_func_map[task],
+                    logger=logger
+                )
                 logger.print(f"<<<<< MODEL: {mname}")
             # end for
             logger.print("**********")
@@ -237,9 +239,8 @@ class Testmodel:
                 Chatgpt.run(
                     testsuite,
                     local_model_name,
-                    Chatgpt.sentiment_pred_and_conf,
+                    pred_and_conf_fn=Chatgpt.sentiment_pred_and_conf,
                     n=num_samples,
-                    logger=logger
                 )
                 logger.print(f"<<<<< MODEL: {local_model_name}")
             else:
@@ -524,7 +525,7 @@ def main_tosem(
         test_seed,
         test_result_dir,
         logger,
-        chatgpt_model_name
+        local_model_name
     )
     if test_baseline:
         test_result_file = test_result_dir / 'test_results_tosem_checklist.txt'

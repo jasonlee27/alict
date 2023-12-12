@@ -7,15 +7,15 @@ from typing import *
 from pathlib import Path
 
 from ..utils.Macros import Macros
-from ..utils.utils import Utils
-from ..utils.logger import Logger
+from ..utils.Utils import Utils
+from ..utils.Logger import Logger
 
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
 class Chatgpt:
 
-    engine_name = Macros.gpt3d5_engine_name # model name
+    engine_name = Macros.openai_chatgpt_engine_name # model name
 
     @classmethod
     def set_model_name(
@@ -69,7 +69,7 @@ class Chatgpt:
                 ) 
                 label = response.split('the sentiment is ')[-1].strip().upper()
                 preds.append({
-                    'response': response
+                    'response': response,
                     'label': label
                 })
             # end for
@@ -84,15 +84,15 @@ class Chatgpt:
         preds_index = list()
         pp = list()
         for p in preds:
-            if p=='POSITIVE':
+            if p['label']=='POSITIVE':
                 preds_index.append(2)
                 pp.append([0.,0.,1.])
-            elif p=='NEUTRAL':
-                preds_index.append(1)
-                pp.append([0.,1.,0.])
-            else:
+            elif p['label']=='NEGATIVE':
                 preds_index.append(0)
                 pp.append([1.,0.,0.])
+            else:
+                preds_index.append(1)
+                pp.append([0.,1.,0.])
             # end if
         # end for
         preds = np.array(preds_index)
@@ -137,13 +137,16 @@ class Chatgpt:
         label=None,
         meta=None, 
         format_example_fn=None,
+        nsamples=None,
         logger=None
     ):
         isfailed = expect_result[0]!=True
         if logger is None:
             print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
         else:
-            logger.print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
+            res_str = format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed)
+            print(res_str)
+            logger.print(res_str)
         # end if
     
     @classmethod
@@ -162,14 +165,14 @@ class Chatgpt:
         )
         testsuite.run(
             pred_and_conf_fn, 
-            n=None, 
+            n=n, 
             overwrite=True, 
             logger=logger
         )
         testsuite.summary(
             logger=logger,
-            print_fn=cls.print_result if print_fn is not None else None,
-            format_example_fn=cls.format_example if format_example_fn is not None else None
+            print_fn=cls.print_result if print_fn is None else print_fn,
+            format_example_fn=cls.format_example if format_example_fn is None else format_example_fn
         )
         return
         

@@ -201,7 +201,7 @@ def run_testmodel_tosem():
     #     selection_method = 'checklist'
     # # end if
     test_type = args.test_type
-    local_model_name = args.local_model_name
+    local_model_name = Macros.openai_chatgpt_engine_name
     if num_seeds<0:
         log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
     else:
