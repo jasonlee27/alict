@@ -24,6 +24,46 @@ class Testmodel:
         "sa": Model.sentiment_pred_and_conf
     }
 
+    num_alict_tcs_for_chatgpt_over_lcs = {
+        'seed': {
+            'Short sentences with sentiment-laden adjectives': 19,
+            'Short sentences with neutral adjectives and nouns': 160,
+            'Sentiment change over time, present should prevail': 383,
+            'Negated negative should be positive or neutral': 67,
+            'Negated neutral should still be neutral': 26,
+            'Negated positive with neutral content in the middle': 379,
+            'Negation of negative at the end, should be positive or neutral': 377,
+            'Author sentiment is more important than of others': 383,
+            'parsing sentiment in (question, yes) form': 375,
+            'Parsing sentiment in (question, no) form': 375
+        },
+        'exp': {
+            'Short sentences with sentiment-laden adjectives': 51,
+            'Short sentences with neutral adjectives and nouns': 262,
+            'Sentiment change over time, present should prevail': 384,
+            'Negated negative should be positive or neutral': 219,
+            'Negated neutral should still be neutral': 194,
+            'Negated positive with neutral content in the middle': 384,
+            'Negation of negative at the end, should be positive or neutral': 383,
+            'Author sentiment is more important than of others': 384,
+            'parsing sentiment in (question, yes) form': 383,
+            'Parsing sentiment in (question, no) form': 383
+        }
+    }
+
+    num_checklist_tcs_for_chatgpt_over_lcs = {
+        'Sentiment-laden words in context': 368,
+        'neutral words in context': 315,
+        'used to, but now': 367,
+        'simple negations: not negative': 364,
+        'simple negations: not neutral is still neutral': 334,
+        'Hard: Negation of positive with neutral stuff in the middle (should be negative)': 278,
+        'simple negations: I thought x was negative, but it was not (should be neutral or positive)': 326,
+        'my opinion is what matters': 368,
+        'Q & A: yes': 366,
+        'Q & A: no': 366
+    }
+
     @classmethod
     def load_testsuite(cls, testsuite_file: Path):
         tsuite = suite().from_file(testsuite_file)
@@ -61,40 +101,44 @@ class Testmodel:
                 ] if os.path.exists(test_result_dir / f)
             ]
             for testsuite_file in testsuite_files:
+                mode = 'seed' if str(testsuite_file).endswith(f"testsuite_seeds_{cksum_val}.pkl") else 'exp'
                 testsuite = cls.load_testsuite(testsuite_file)
                 if local_model_name is None:
+                    # # Run Google nlp model
+                    # print(f">>>>> MODEL: Google NLP model")
+                    # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
+                    # print(f"<<<<< MODEL: Google NLP model")
+                    for mname, model in Model.load_models(task):
+                        logger.print(f">>>>> MODEL: {mname}")
+                        Model.run(testsuite,
+                                model,
+                                cls.model_func_map[task],
+                                logger=logger)
+                        logger.print(f"<<<<< MODEL: {mname}")
+                    # end for
+                else:
                     if local_model_name==Macros.openai_chatgpt_engine_name or \
                         local_model_name==Macros.openai_chatgpt4_engine_name:
                         logger.print(f">>>>> MODEL: {local_model_name}")
+                        lc = testsuite.capability
+                        num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[mode][lc]
                         Chatgpt.run(
                             testsuite,
                             local_model_name,
                             Chatgpt.sentiment_pred_and_conf,
-                            logger=logger)
+                            n=num_samples,
+                            logger=logger
+                        )
                         logger.print(f"<<<<< MODEL: {local_model_name}")
                     else:
-                        # # Run Google nlp model
-                        # print(f">>>>> MODEL: Google NLP model")
-                        # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
-                        # print(f"<<<<< MODEL: Google NLP model")
-                        
-                        for mname, model in Model.load_models(task):
-                            logger.print(f">>>>> MODEL: {mname}")
-                            Model.run(testsuite,
-                                    model,
-                                    cls.model_func_map[task],
-                                    logger=logger)
-                            logger.print(f"<<<<< MODEL: {mname}")
-                        # end for
+                        logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
+                        model = Model.load_local_model(task, local_model_name)
+                        Model.run(testsuite,
+                                model,
+                                cls.model_func_map[task],
+                                logger=logger)
+                        logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                     # end if
-                else:
-                    logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
-                    model = Model.load_local_model(task, local_model_name)
-                    Model.run(testsuite,
-                              model,
-                              cls.model_func_map[task],
-                              logger=logger)
-                    logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                 # end if
             # end for
         # end for
@@ -119,38 +163,41 @@ class Testmodel:
             testsuite_file = test_result_dir / f"{task}_testsuite_seeds_{cksum_val}.pkl"
             testsuite = cls.load_testsuite(testsuite_file)
             if local_model_name is None:
+                # # Run Google nlp model
+                # print(f">>>>> MODEL: Google NLP model")
+                # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
+                # print(f"<<<<< MODEL: Google NLP model")
+                for mname, model in Model.load_models(task):
+                    logger.print(f">>>>> MODEL: {mname}")
+                    Model.run(testsuite,
+                            model,
+                            cls.model_func_map[task],
+                            logger=logger)
+                    logger.print(f"<<<<< MODEL: {mname}")
+                # end for
+            else:
                 if local_model_name==Macros.openai_chatgpt_engine_name or \
                     local_model_name==Macros.openai_chatgpt4_engine_name:
                     logger.print(f">>>>> MODEL: {local_model_name}")
+                    lc = testsuite.name.split('::')[-1]
+                    num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs['seed'][lc]
                     Chatgpt.run(
                         testsuite,
                         local_model_name,
                         Chatgpt.sentiment_pred_and_conf,
-                        logger=logger)
+                        n=num_samples,
+                        logger=logger
+                    )
                     logger.print(f"<<<<< MODEL: {local_model_name}")
                 else:
-                    # # Run Google nlp model
-                    # print(f">>>>> MODEL: Google NLP model")
-                    # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
-                    # print(f"<<<<< MODEL: Google NLP model")
-                    
-                    for mname, model in Model.load_models(task):
-                        logger.print(f">>>>> MODEL: {mname}")
-                        Model.run(testsuite,
-                                model,
-                                cls.model_func_map[task],
-                                logger=logger)
-                        logger.print(f"<<<<< MODEL: {mname}")
-                    # end for
+                    logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
+                    model = Model.load_local_model(task, local_model_name)
+                    Model.run(testsuite,
+                            model,
+                            cls.model_func_map[task],
+                            logger=logger)
+                    logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                 # end if
-            else:
-                logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
-                model = Model.load_local_model(task, local_model_name)
-                Model.run(testsuite,
-                          model,
-                          cls.model_func_map[task],
-                          logger=logger)
-                logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
             # end if
         # end for
         logger.print('**********')
@@ -168,38 +215,42 @@ class Testmodel:
         testsuite = cls.load_testsuite(Macros.BASELINES[bl_name]["testsuite_file"])
 
         if local_model_name is None:
+            # Run Google nlp model
+            # print(f">>>>> MODEL: Google NLP model")
+            # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
+            # print(f"<<<<< MODEL: Google NLP model")
+            for mname, model in Model.load_models(task):
+                logger.print(f">>>>> MODEL: {mname}")
+                Model.run(testsuite,
+                        model,
+                        cls.model_func_map[task],
+                        logger=logger)
+                logger.print(f"<<<<< MODEL: {mname}")
+            # end for
+            logger.print("**********")
+        else:
             if local_model_name==Macros.openai_chatgpt_engine_name or \
                 local_model_name==Macros.openai_chatgpt4_engine_name:
                 logger.print(f">>>>> MODEL: {local_model_name}")
+                lc = testsuite.name
+                num_samples = cls.num_checklist_tcs_for_chatgpt_over_lcs[lc]
                 Chatgpt.run(
                     testsuite,
                     local_model_name,
                     Chatgpt.sentiment_pred_and_conf,
-                    logger=logger)
+                    n=num_samples,
+                    logger=logger
+                )
                 logger.print(f"<<<<< MODEL: {local_model_name}")
             else:
-                # Run Google nlp model
-                # print(f">>>>> MODEL: Google NLP model")
-                # GoogleModel.run(testsuite, GoogleModel.sentiment_pred_and_conf, n=Macros.nsamples)
-                # print(f"<<<<< MODEL: Google NLP model")
-                for mname, model in Model.load_models(task):
-                    logger.print(f">>>>> MODEL: {mname}")
-                    Model.run(testsuite,
-                            model,
-                            cls.model_func_map[task],
-                            logger=logger)
-                    logger.print(f"<<<<< MODEL: {mname}")
-                # end for
-                logger.print("**********")
+                logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
+                model = Model.load_local_model(task, local_model_name)
+                Model.run(testsuite,
+                        model,
+                        cls.model_func_map[task],
+                        logger=logger)
+                logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
             # end if
-        else:
-            logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
-            model = Model.load_local_model(task, local_model_name)
-            Model.run(testsuite,
-                      model,
-                      cls.model_func_map[task],
-                      logger=logger)
-            logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
         # end if
         return
 
