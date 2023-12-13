@@ -14,8 +14,8 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
-                        'requirement', 'template', 'testsuite', 'seedgen',
-                        'testmodel', 'testmodel_tosem', 'testmodel_seed', 
+                        'requirement', 'template', 'testsuite', 'testsuite_tosem',
+                        'seedgen', 'testmodel', 'testmodel_tosem', 'testmodel_seed', 
                         'retrain', 'analyze', 'analyze_tosem',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
                         'selfbleu', 'selfbleu_mtnlp', 'selfbleu_checklist',
@@ -147,6 +147,31 @@ def run_testsuites():
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / f"testsuite{num_trials}_generation.log"
     Testsuite.write_testsuites(
+        nlp_task=nlp_task,
+        dataset=search_dataset_name,
+        selection_method=selection_method,
+        num_seeds=num_seeds,
+        num_trials=num_trials,
+        log_file=log_file
+    )
+    return
+
+def run_testsuites_tosem():
+    from .testsuite.Testsuite import Testsuite
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
+    selection_method = args.syntax_selection
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+    # end if
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / f"testsuite{num_trials}_generation.log"
+    print(log_file)
+    Testsuite.write_testsuites_tosem(
         nlp_task=nlp_task,
         dataset=search_dataset_name,
         selection_method=selection_method,
@@ -642,6 +667,7 @@ func_map = {
         'template': run_templates,
         'seedgen': run_seedgen,
         'testsuite': run_testsuites,
+        'testsuite_tosem': run_testsuites_tosem,
         'testmodel': run_testmodel,
         'testmodel_tosem': run_testmodel_tosem,
         'testmodel_seed': run_seed_testmodel,

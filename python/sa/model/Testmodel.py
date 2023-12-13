@@ -25,30 +25,16 @@ class Testmodel:
     }
 
     num_alict_tcs_for_chatgpt_over_lcs = {
-        'seed': {
-            'Short sentences with sentiment-laden adjectives': 19,
-            'Short sentences with neutral adjectives and nouns': 160,
-            'Sentiment change over time, present should prevail': 383,
-            'Negated negative should be positive or neutral': 67,
-            'Negated neutral should still be neutral': 26,
-            'Negated positive with neutral content in the middle': 379,
-            'Negation of negative at the end, should be positive or neutral': 377,
-            'Author sentiment is more important than of others': 383,
-            'parsing sentiment in (question, yes) form': 375,
-            'Parsing sentiment in (question, no) form': 375
-        },
-        'exp': {
-            'Short sentences with sentiment-laden adjectives': 51,
-            'Short sentences with neutral adjectives and nouns': 262,
-            'Sentiment change over time, present should prevail': 384,
-            'Negated negative should be positive or neutral': 219,
-            'Negated neutral should still be neutral': 194,
-            'Negated positive with neutral content in the middle': 384,
-            'Negation of negative at the end, should be positive or neutral': 383,
-            'Author sentiment is more important than of others': 384,
-            'parsing sentiment in (question, yes) form': 383,
-            'Parsing sentiment in (question, no) form': 383
-        }
+        'Short sentences with sentiment-laden adjectives': 19,
+        'Short sentences with neutral adjectives and nouns': 160,
+        'Sentiment change over time, present should prevail': 383,
+        'Negated negative should be positive or neutral': 67,
+        'Negated neutral should still be neutral': 26,
+        'Negated positive with neutral content in the middle': 379,
+        'Negation of negative at the end, should be positive or neutral': 377,
+        'Author sentiment is more important than of others': 383,
+        'parsing sentiment in (question, yes) form': 375,
+        'Parsing sentiment in (question, no) form': 375
     }
 
     num_checklist_tcs_for_chatgpt_over_lcs = {
@@ -100,8 +86,16 @@ class Testmodel:
                     f"{task}_testsuite_exps_{cksum_val}.pkl",
                 ] if os.path.exists(test_result_dir / f)
             ]
+            if local_model_name==Macros.openai_chatgpt_engine_name or \
+                local_model_name==Macros.openai_chatgpt4_engine_name:
+                testsuite_files = [
+                    test_result_dir / f for f in [
+                        f"{task}_testsuite_tosem_seeds_{cksum_val}.pkl",
+                        f"{task}_testsuite_tosem_exps_{cksum_val}.pkl",
+                    ] if os.path.exists(test_result_dir / f)
+                ]
+            # end if
             for testsuite_file in testsuite_files:
-                mode = 'seed' if str(testsuite_file).endswith(f"testsuite_seeds_{cksum_val}.pkl") else 'exp'
                 testsuite = cls.load_testsuite(testsuite_file)
                 if local_model_name is None:
                     # # Run Google nlp model
@@ -121,7 +115,7 @@ class Testmodel:
                         local_model_name==Macros.openai_chatgpt4_engine_name:
                         logger.print(f">>>>> MODEL: {local_model_name}")
                         lc = list(testsuite.tests.keys())[0].split('::')[-1]
-                        num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[mode][lc]
+                        num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[lc]
                         Chatgpt.run(
                             testsuite,
                             local_model_name,
@@ -178,6 +172,8 @@ class Testmodel:
             else:
                 if local_model_name==Macros.openai_chatgpt_engine_name or \
                     local_model_name==Macros.openai_chatgpt4_engine_name:
+                    testsuite_file = test_result_dir / f"{task}_testsuite_tosem_seeds_{cksum_val}.pkl"
+                    testsuite = cls.load_testsuite(testsuite_file)  
                     logger.print(f">>>>> MODEL: {local_model_name}")
                     lc = testsuite.name.split('::')[-1]
                     num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs['seed'][lc]
