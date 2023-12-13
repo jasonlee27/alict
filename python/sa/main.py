@@ -16,7 +16,7 @@ parser.add_argument('--run', type=str, required=True,
                     choices=[
                         'requirement', 'template', 'testsuite', 'seedgen',
                         'testmodel', 'testmodel_tosem', 'testmodel_seed', 
-                        'retrain', 'analyze',
+                        'retrain', 'analyze', 'analyze_tosem',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
                         'selfbleu', 'selfbleu_mtnlp', 'selfbleu_checklist',
                         'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_checklist',
@@ -314,6 +314,51 @@ def run_analyze():
     # end if
     return
 
+def run_analyze_tosem():
+    from .model.Result import Result
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    test_baseline = args.test_baseline
+    num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
+    tosem_model_names = [
+        Macros.openai_chatgpt_engine_name,
+        Macros.openai_chatgpt4_engine_name
+    ]
+    if test_baseline:
+        if num_seeds<0:
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
+        else:
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+        # end if
+        result_file = result_dir / 'test_results_tosem_checklist.txt'
+        save_to = result_dir / 'test_result_tosem_checklist_analysis.json'
+        Result.analyze_checklist_tosem(
+            result_file,
+            tosem_model_names,
+            save_to
+        )
+    else:
+        if num_seeds<0:
+            template_result_dir = Macros.result_dir / f"templates{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
+        else:
+            template_result_dir = Macros.result_dir / f"templates{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+        # end if
+        # result_file = result_dir / 'test_results.txt'
+        save_to = result_dir / 'test_result_tosem_analysis.json'
+        Result.analyze_tosem(
+            nlp_task,
+            template_result_dir,
+            result_dir,
+            tosem_model_names,
+            save_to
+       )
+    # end if
+    return
+
 def run_analyze_seed():
     from .model.Result import Result
     nlp_task = args.nlp_task
@@ -602,6 +647,7 @@ func_map = {
         'testmodel_seed': run_seed_testmodel,
         'retrain': run_retrain,
         'analyze': run_analyze,
+        'analyze_tosem': run_analyze_tosem,
         'analyze_seed': run_analyze_seed,
         'retrain_analyze': run_retrain_analyze,
         'explain_nlp': run_explainNLP,
