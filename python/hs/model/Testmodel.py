@@ -24,6 +24,58 @@ class Testmodel:
         "hs": Model.sentiment_pred_and_conf
     }
 
+    num_alict_tcs_for_chatgpt_over_lcs = {
+        'seed': {
+            'Slur usage::Hate expressed using slur': 203,
+            'Slur usage::Non-hateful use of slur': 278,
+            'Profanity usage::Hate expressed using profanity': 283,
+            'Profanity usage::Non-Hateful use of profanity': 306,
+            'Pronoun reference::Hate expressed through reference in subsequent clauses': 373,
+            'Pronoun reference::Hate expressed through reference in subsequent sentences': 373,
+            'Negation::Hate expressed using negated positive statement': 381,
+            'Negation::Non-hate expressed using negated hateful statement': 377,
+            'Phrasing::Hate phrased as a question': 373,
+            'Phrasing::Hate phrased as a opinion': 373,
+            'Non-hate grp. ident.::Neutral statements using protected group identifiers': 6,
+            'Non-hate grp. ident.::Positive statements using protected group identifiers': 57,
+            'Counter speech::Denouncements of hate that quote it': 379,
+            'Counter speech::Denouncements of hate that make direct reference to it': 377,
+        },
+        'exp': {
+            'Slur usage::Hate expressed using slur': 290,
+            'Slur usage::Non-hateful use of slur': 354,
+            'Profanity usage::Hate expressed using profanity': 363,
+            'Profanity usage::Non-Hateful use of profanity': 366,
+            'Pronoun reference::Hate expressed through reference in subsequent clauses': 381,
+            'Pronoun reference::Hate expressed through reference in subsequent sentences': 381,
+            'Negation::Hate expressed using negated positive statement': 384,
+            'Negation::Non-hate expressed using negated hateful statement': 384,
+            'Phrasing::Hate phrased as a question': 383,
+            'Phrasing::Hate phrased as a opinion': 383,
+            'Non-hate grp. ident.::Neutral statements using protected group identifiers': 12,
+            'Non-hate grp. ident.::Positive statements using protected group identifiers': 246,
+            'Counter speech::Denouncements of hate that quote it': 384,
+            'Counter speech::Denouncements of hate that make direct reference to it': 384,
+        }
+    }
+
+    num_hatecheck_tcs_for_chatgpt_over_lcs = {
+        'Slur usage::Hate expressed using slur': 144,
+        'Slur usage::Non-hateful use of slur': 111,
+        'Profanity usage::Hate expressed using profanity': 140,
+        'Profanity usage::Non-Hateful use of profanity': 100,
+        'Pronoun reference::Hate expressed through reference in subsequent clauses': 140,
+        'Pronoun reference::Hate expressed through reference in subsequent sentences': 133,
+        'Negation::Hate expressed using negated positive statement': 140,
+        'Negation::Non-hate expressed using negated hateful statement': 133,
+        'Phrasing::Hate phrased as a question': 140,
+        'Phrasing::Hate phrased as a opinion': 133,
+        'Non-hate grp. ident.::Neutral statements using protected group identifiers': 126,
+        'Non-hate grp. ident.::Positive statements using protected group identifiers': 189,
+        'Counter speech::Denouncements of hate that quote it': 173,
+        'Counter speech::Denouncements of hate that make direct reference to it': 141,
+    }
+
     @classmethod
     def load_testsuite(cls, testsuite_file: Path):
         tsuite = suite().from_file(testsuite_file)
@@ -174,13 +226,27 @@ class Testmodel:
             # end for
             logger.print("**********")
         else:
-            logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
-            model = Model.load_local_model(task, local_model_name)
-            Model.run(testsuite,
-                      model,
-                      cls.model_func_map[task],
-                      logger=logger)
-            logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+            if local_model_name==Macros.openai_chatgpt_engine_name or \
+                local_model_name==Macros.openai_chatgpt4_engine_name:
+                logger.print(f">>>>> MODEL: {local_model_name}")
+                lc = testsuite.name
+                num_samples = cls.num_checklist_tcs_for_chatgpt_over_lcs[lc]
+                Chatgpt.run(
+                    testsuite,
+                    local_model_name,
+                    pred_and_conf_fn=Chatgpt.sentiment_pred_and_conf,
+                    n=num_samples,
+                )
+                logger.print(f"<<<<< MODEL: {local_model_name}")
+            else:
+                logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
+                model = Model.load_local_model(task, local_model_name)
+                Model.run(testsuite,
+                        model,
+                        cls.model_func_map[task],
+                        logger=logger)
+                logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+            # end if
         # end if
         return
 
@@ -215,6 +281,48 @@ class Testmodel:
                                test_result_dir,
                                logger,
                                local_model_name=local_model_name)
+        # end if
+        return
+
+    @classmethod
+    def run_testsuite_on_chatgpt(
+        cls,
+        task: str,
+        dataset_name: str,
+        selection_method: str,
+        test_baseline: bool,
+        test_seed: bool,
+        test_result_dir: Path,
+        logger,
+        chatgpt_model_name: str
+    ):
+        # run models on checklist introduced testsuite format
+        bl_name = None
+        if test_baseline:
+            cls._run_bl_testsuite(
+                task,
+                'checklist',
+                test_result_dir,
+                logger,
+                local_model_name=chatgpt_model_name
+            )
+        elif test_baseline==False and test_seed:
+            cls._run_seed_testsuite(
+                task,
+                dataset_name,
+                test_result_dir,
+                logger,
+                local_model_name=chatgpt_model_name
+            )
+        elif test_baseline==False and test_seed==False:
+            cls._run_testsuite(
+                task,
+                dataset_name,
+                selection_method,
+                test_result_dir,
+                logger,
+                local_model_name=chatgpt_model_name
+            )
         # end if
         return
 
@@ -381,6 +489,44 @@ def main_seed(task,
         # end if
         shutil.copyfile(log_file, test_result_file)
     # end if
+    return
+
+def main_tosem(
+    task,
+    dataset_name,
+    selection_method,
+    num_seeds,
+    num_trials,
+    test_baseline,
+    log_file,
+    test_seed=False,
+    local_model_name=None
+):
+    logger = Logger(logger_file=log_file,
+                    logger_name='testmodel_tosem_chatgpt')
+    _num_trials = '' if num_trials<2 else str(num_trials)
+    if num_seeds<0:
+        test_result_dir = Macros.result_dir/ f"test_results{_num_trials}_{task}_{dataset_name}_{selection_method}"
+    else:
+        test_result_dir = Macros.result_dir/ f"test_results{_num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds"
+    # end if
+
+    Testmodel.run_testsuite_on_chatgpt(
+        task,
+        dataset_name,
+        selection_method,
+        test_baseline,
+        test_seed,
+        test_result_dir,
+        logger,
+        local_model_name
+    )
+    if test_baseline:
+        test_result_file = test_result_dir / 'test_results_tosem_checklist.txt'
+    else:
+        test_result_file = test_result_dir / 'test_results_tosem.txt'
+    # end if
+    shutil.copyfile(log_file, test_result_file)
     return
 
 

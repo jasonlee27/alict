@@ -228,6 +228,7 @@ class Result:
         reqs = sorted(set([r['req'] for r in model_results]))
         results = list()
         for r in reqs:
+            print(r)
             seeds = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='SEED']
             exps = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='EXP']
             result = {'req': r, 'is_exps_exist': False}
