@@ -25,8 +25,8 @@ class Testmodel:
     }
 
     num_alict_tcs_for_chatgpt_over_lcs = {
-        'Short sentences with sentiment-laden adjectives': 19,
-        'Short sentences with neutral adjectives and nouns': 160,
+        'Short sentences with neutral adjectives and nouns': 19,
+        'Short sentences with sentiment-laden adjectives': 160,
         'Sentiment change over time, present should prevail': 383,
         'Negated negative should be positive or neutral': 67,
         'Negated neutral should still be neutral': 26,
@@ -114,13 +114,13 @@ class Testmodel:
                     if local_model_name==Macros.openai_chatgpt_engine_name or \
                         local_model_name==Macros.openai_chatgpt4_engine_name:
                         logger.print(f">>>>> MODEL: {local_model_name}")
-                        lc = list(testsuite.tests.keys())[0].split('::')[-1]
-                        num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[lc]
+                        # lc = list(testsuite.tests.keys())[0].split('::')[-1]
+                        # num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[lc]
                         Chatgpt.run(
                             testsuite,
                             local_model_name,
                             Chatgpt.sentiment_pred_and_conf,
-                            n=num_samples,
+                            n=None,
                             logger=logger
                         )
                         logger.print(f"<<<<< MODEL: {local_model_name}")
@@ -175,13 +175,13 @@ class Testmodel:
                     testsuite_file = test_result_dir / f"{task}_testsuite_tosem_seeds_{cksum_val}.pkl"
                     testsuite = cls.load_testsuite(testsuite_file)  
                     logger.print(f">>>>> MODEL: {local_model_name}")
-                    lc = testsuite.name.split('::')[-1]
-                    num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs['seed'][lc]
+                    # lc = testsuite.name.split('::')[-1]
+                    # num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs['seed'][lc]
                     Chatgpt.run(
                         testsuite,
                         local_model_name,
                         Chatgpt.sentiment_pred_and_conf,
-                        n=num_samples,
+                        n=None,
                         logger=logger
                     )
                     logger.print(f"<<<<< MODEL: {local_model_name}")
