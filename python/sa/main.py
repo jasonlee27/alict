@@ -348,9 +348,12 @@ def run_analyze_tosem():
     test_baseline = args.test_baseline
     num_seeds = args.num_seeds
     num_trials = '' if args.num_trials==1 else str(args.num_trials)
+    # tosem_model_names = [
+    #     Macros.openai_chatgpt_engine_name,
+    #     Macros.openai_chatgpt4_engine_name
+    # ]
     tosem_model_names = [
-        Macros.openai_chatgpt_engine_name,
-        Macros.openai_chatgpt4_engine_name
+        Macros.openai_chatgpt_engine_name
     ]
     if test_baseline:
         if num_seeds<0:

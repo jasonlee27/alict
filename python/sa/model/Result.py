@@ -114,6 +114,7 @@ class Result:
         model_results = cls.get_model_results_from_string(result_str, model_name)
         for r in model_results:
             sent_type, req = cls.get_requirement_from_string(r, task)
+            print(sent_type, req, model_name)
             results.append({
                 'sent_type': sent_type,
                 'req': req,

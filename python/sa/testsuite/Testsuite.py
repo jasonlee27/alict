@@ -410,7 +410,8 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(seed_dicts):
             lc_desc = templates_per_req["description"]
             test_cksum = Utils.get_cksum(lc_desc)
-            if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_seeds_{test_cksum}.pkl')):
+            # if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_seeds_{test_cksum}.pkl')):
+            if os.path.exists(str(res_dir / f'{task}_testsuite_tosem_seeds_{test_cksum}.pkl')):
                 logger.print(f"{task}::SEED::<{lc_desc}>::{test_cksum}::", end='')
                 t = None
                 suite = TestSuite()
@@ -435,6 +436,7 @@ class Testsuite:
                         test = MFT(**t)
                     # end if
                 # end if
+                # print(f"{task}::SEED::{lc_desc}")
                 suite.add(test,
                           name=f"{task}::SEED::{lc_desc}",
                           capability=templates_per_req["capability"]+"::SEED",
@@ -506,7 +508,8 @@ class Testsuite:
     ):
         for t_i, templates_per_req in enumerate(exp_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
-            if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_exps_{test_cksum}.pkl')):
+            # if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_exps_{test_cksum}.pkl')):
+            if os.path.exists(str(res_dir / f'{task}_testsuite_tosem_exps_{test_cksum}.pkl')):
                 lc_desc = templates_per_req["description"]
                 logger.print(f"{task}::EXP::<{lc_desc}>::{test_cksum}::", end='')
                 t = None

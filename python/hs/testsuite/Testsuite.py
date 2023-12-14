@@ -291,7 +291,6 @@ class Testsuite:
                     seed_res = list()
                     seeds = list(new_input_dicts['inputs'].keys())
                     num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[lc_desc]
-                    print(lc_desc, len(seeds), num_samples)
                     seed_samples = random.sample(seeds, num_samples)
                     seeds = list()
                     exps = list()
@@ -433,6 +432,7 @@ class Testsuite:
                         test = MFT(**t)
                     # end if
                 # end if
+                print(f"{task}::SEED::{lc_desc}")
                 suite.add(test,
                           name=f"{task}::SEED::{lc_desc}",
                           capability=templates_per_req["capability"]+"::SEED",
