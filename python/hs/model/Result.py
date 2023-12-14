@@ -167,7 +167,7 @@ class Result:
                 model.strip(): cls.parse_model_results(
                     line, model.strip(), task
                 )
-                for model in Utils.read_txt(model_name_file)
+                for model in model_names
             }
         # end with
 
