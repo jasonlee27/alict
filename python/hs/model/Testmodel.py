@@ -121,6 +121,15 @@ class Testmodel:
                     f"{task}_testsuite_exps_{cksum_val}.pkl",
                 ] if os.path.exists(test_result_dir / f)
             ]
+            if local_model_name==Macros.openai_chatgpt_engine_name or \
+                local_model_name==Macros.openai_chatgpt4_engine_name:
+                testsuite_files = [
+                    test_result_dir / f for f in [
+                        f"{task}_testsuite_tosem_seeds_{cksum_val}.pkl",
+                        f"{task}_testsuite_tosem_exps_{cksum_val}.pkl",
+                    ] if os.path.exists(test_result_dir / f)
+                ]
+            # end if
             for testsuite_file in testsuite_files:
                 testsuite = cls.load_testsuite(testsuite_file)
                 if local_model_name is None:
@@ -138,13 +147,28 @@ class Testmodel:
                         logger.print(f"<<<<< MODEL: {mname}")
                     # end for
                 else:
-                    logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
-                    model = Model.load_local_model(task, local_model_name)
-                    Model.run(testsuite,
-                              model,
-                              cls.model_func_map[task],
-                              logger=logger)
-                    logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+                    if local_model_name==Macros.openai_chatgpt_engine_name or \
+                        local_model_name==Macros.openai_chatgpt4_engine_name:
+                        logger.print(f">>>>> MODEL: {local_model_name}")
+                        # lc = list(testsuite.tests.keys())[0].split('::')[-1]
+                        # num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[lc]
+                        Chatgpt.run(
+                            testsuite,
+                            local_model_name,
+                            Chatgpt.sentiment_pred_and_conf,
+                            n=None,
+                            logger=logger
+                        )
+                        logger.print(f"<<<<< MODEL: {local_model_name}")
+                    else:
+                        logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
+                        model = Model.load_local_model(task, local_model_name)
+                        Model.run(testsuite,
+                                model,
+                                cls.model_func_map[task],
+                                logger=logger)
+                        logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+                    # end if
                 # end if
             # end for
         # end for
@@ -183,13 +207,30 @@ class Testmodel:
                     logger.print(f"<<<<< MODEL: {mname}")
                 # end for
             else:
-                logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
-                model = Model.load_local_model(task, local_model_name)
-                Model.run(testsuite,
-                          model,
-                          cls.model_func_map[task],
-                          logger=logger)
-                logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+                if local_model_name==Macros.openai_chatgpt_engine_name or \
+                    local_model_name==Macros.openai_chatgpt4_engine_name:
+                    testsuite_file = test_result_dir / f"{task}_testsuite_tosem_seeds_{cksum_val}.pkl"
+                    testsuite = cls.load_testsuite(testsuite_file)  
+                    logger.print(f">>>>> MODEL: {local_model_name}")
+                    # lc = testsuite.name.split('::')[-1]
+                    # num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs['seed'][lc]
+                    Chatgpt.run(
+                        testsuite,
+                        local_model_name,
+                        Chatgpt.sentiment_pred_and_conf,
+                        n=None,
+                        logger=logger
+                    )
+                    logger.print(f"<<<<< MODEL: {local_model_name}")
+                else:
+                    logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
+                    model = Model.load_local_model(task, local_model_name)
+                    Model.run(testsuite,
+                            model,
+                            cls.model_func_map[task],
+                            logger=logger)
+                    logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+                # end if
             # end if
         # end for
         logger.print('**********')
@@ -229,13 +270,13 @@ class Testmodel:
             if local_model_name==Macros.openai_chatgpt_engine_name or \
                 local_model_name==Macros.openai_chatgpt4_engine_name:
                 logger.print(f">>>>> MODEL: {local_model_name}")
-                lc = testsuite.name
-                num_samples = cls.num_checklist_tcs_for_chatgpt_over_lcs[lc]
+                # lc = testsuite.name
+                # num_samples = cls.num_checklist_tcs_for_chatgpt_over_lcs[lc]
                 Chatgpt.run(
                     testsuite,
                     local_model_name,
                     pred_and_conf_fn=Chatgpt.sentiment_pred_and_conf,
-                    n=num_samples,
+                    n=None,
                 )
                 logger.print(f"<<<<< MODEL: {local_model_name}")
             else:

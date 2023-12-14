@@ -14,8 +14,11 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
-                        'requirement', 'template', 'testsuite',
-                        'testmodel', 'analyze', 'failcase',
+                        'requirement', 'template', 
+                        'testsuite', 'testsuite_tosem',
+                        'testmodel', 'testmodel_tosem', 
+                        'analyze', 'analyze_tosem',
+                        'failcase',
                         'selfbleu', 'selfbleu_mtnlp', 'selfbleu_hatecheck',
                         'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_hatecheck',
                         'humanstudy', 
@@ -115,6 +118,31 @@ def run_testsuites():
     )
     return
 
+def run_testsuites_tosem():
+    from .testsuite.Testsuite import Testsuite
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
+    selection_method = args.syntax_selection
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+    # end if
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / f"testsuite{num_trials}_generation.log"
+    print(log_file)
+    Testsuite.write_testsuites_tosem(
+        nlp_task=nlp_task,
+        dataset=search_dataset_name,
+        selection_method=selection_method,
+        num_seeds=num_seeds,
+        num_trials=num_trials,
+        log_file=log_file
+    )
+    return
+
 def run_testmodel():
     from .model.Testmodel import main as Testmodel_main
     nlp_task = args.nlp_task
@@ -138,6 +166,39 @@ def run_testmodel():
         num_trials,
         test_baseline,
         log_file
+    )
+    return
+
+def run_testmodel_tosem():
+    from .model.Testmodel import main_tosem as Testmodel_main_tosem
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    num_seeds = args.num_seeds
+    num_trials = args.num_trials
+    test_baseline = args.test_baseline
+    # if test_baseline:
+    #     selection_method = 'checklist'
+    # # end if
+    test_type = args.test_type
+    local_model_name = Macros.openai_chatgpt_engine_name
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+    # end if
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / 'test_orig_model_tosem.log'
+    Testmodel_main_tosem(
+        nlp_task,
+        search_dataset_name,
+        selection_method,
+        num_seeds,
+        num_trials,
+        test_baseline,
+        test_type,
+        log_file,
+        local_model_name=local_model_name
     )
     return
 
@@ -179,6 +240,51 @@ def run_analyze():
             Macros.hs_models_file,
             save_to
         )
+    # end if
+    return
+
+def run_analyze_tosem():
+    from .model.Result import Result
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    test_baseline = args.test_baseline
+    num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
+    tosem_model_names = [
+        Macros.openai_chatgpt_engine_name,
+        Macros.openai_chatgpt4_engine_name
+    ]
+    if test_baseline:
+        if num_seeds<0:
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
+        else:
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+        # end if
+        result_file = result_dir / 'test_results_tosem_hatecheck.txt'
+        save_to = result_dir / 'test_result_tosem_hatecheck_analysis.json'
+        Result.analyze_hatecheck_tosem(
+            result_file,
+            tosem_model_names,
+            save_to
+        )
+    else:
+        if num_seeds<0:
+            template_result_dir = Macros.result_dir / f"templates{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}"
+        else:
+            template_result_dir = Macros.result_dir / f"templates{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds"
+        # end if
+        # result_file = result_dir / 'test_results.txt'
+        save_to = result_dir / 'test_result_tosem_analysis.json'
+        Result.analyze_tosem(
+            nlp_task,
+            template_result_dir,
+            result_dir,
+            tosem_model_names,
+            save_to
+       )
     # end if
     return
 
@@ -357,8 +463,11 @@ func_map = {
         'requirement': run_requirements,
         'template': run_templates,
         'testsuite': run_testsuites,
+        'testsuite_tosem': run_testsuites_tosem,
         'testmodel': run_testmodel,
+        'testmodel_tosem': run_testmodel_tosem,
         'analyze': run_analyze,
+        'analyze_tosem': run_analyze_tosem,
         'failcase': run_failcase,
         'selfbleu': run_selfbleu,
         'selfbleu_mtnlp': run_selfbleu_mtnlp,

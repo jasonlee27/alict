@@ -14,7 +14,8 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
-                        'requirement', 'template', 'testsuite', 'testsuite_tosem',
+                        'requirement', 'template', 
+                        'testsuite', 'testsuite_tosem',
                         'seedgen', 'testmodel', 'testmodel_tosem', 'testmodel_seed', 
                         'retrain', 'analyze', 'analyze_tosem',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',

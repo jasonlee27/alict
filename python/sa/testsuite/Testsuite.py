@@ -755,7 +755,8 @@ class Testsuite:
         selection_method,
         num_seeds,
         num_trials,
-        log_file):
+        log_file
+    ):
         logger = Logger(logger_file=log_file,
                         logger_name='testsuite')
         logger.print('Generate Testsuites from Templates ...')

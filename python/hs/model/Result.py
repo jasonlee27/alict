@@ -155,6 +155,11 @@ class Result:
 
     @classmethod
     def parse_results(cls, result_file, model_name_file):
+        if type(model_name_file)!=list:
+            model_names = Utils.read_txt(model_name_file)
+        else:
+            model_names = model_name_file
+        # end if
         with open(result_file, "r") as f:
             line = f.read()
             task = cls.get_task_from_result_str(line)
@@ -168,6 +173,11 @@ class Result:
 
     @classmethod
     def parse_hatecheck_results(cls, result_file, model_name_file):
+        if type(model_name_file)!=list:
+            model_names = Utils.read_txt(model_name_file)
+        else:
+            model_names = model_name_file
+        # end if
         with open(result_file, "r") as f:
             line = f.read()
             task = cls.get_task_from_result_str(line)
@@ -428,9 +438,57 @@ class Result:
         # end for
         Utils.write_json(results, saveto, pretty_format=True)
         return results
+
+    @classmethod
+    def analyze_tosem(
+        cls,
+        nlp_task,
+        template_result_dir,
+        result_dir,
+        tosem_model_names,
+        saveto
+    ):
+        result_file = result_dir / 'test_results_tosem.txt'
+        result_dict = cls.parse_results(result_file, tosem_model_names)
+        reqs = Requirements.get_requirements(nlp_task)
+        seed_exp_map = dict()
+        for req in reqs:
+            lc_desc = req['description']
+            cksum_val = Utils.get_cksum(lc_desc)
+            template_file = template_result_dir / f"cfg_expanded_inputs_{cksum_val}.json"
+            if os.path.exists(result_dir / f"{nlp_task}_testsuite_seeds_{cksum_val}.pkl") or \
+               os.path.exists(result_dir / f"{nlp_task}_testsuite_exps_{cksum_val}.pkl"):
+                seed_exp_map[lc_desc] = cls.get_seed_to_exp_map(template_file)
+            # end if
+        # end for
+        
+        results = dict()
+        for model in result_dict.keys():
+            model_result = result_dict[model]
+            results[model] = cls.analyze_model(model_result, seed_exp_map)
+            print(model)
+        # end for
+        Utils.write_json(
+            results, 
+            saveto, 
+            pretty_format=True
+        )
+        return results
     
     @classmethod
     def analyze_hatecheck(cls, result_file, model_name_file, saveto):
+        # result_file: Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results_hatecheck.txt'
+        result_dict = cls.parse_hatecheck_results(result_file, model_name_file)
+        results = dict()
+        for model in result_dict.keys():
+            model_result = result_dict[model]
+            results[model] = cls.analyze_model_hatecheck(model_result)
+        # end for
+        Utils.write_json(results, saveto, pretty_format=True)
+        return results
+
+    @classmethod
+    def analyze_hatecheck_tosem(cls, result_file, model_name_file, saveto):
         # result_file: Macros.result_dir / f"test_results_{nlp_task}_{search_dataset_name}_{selection_method}" / 'test_results_hatecheck.txt'
         result_dict = cls.parse_hatecheck_results(result_file, model_name_file)
         results = dict()

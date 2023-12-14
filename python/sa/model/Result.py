@@ -177,6 +177,11 @@ class Result:
 
     @classmethod
     def parse_checklist_results(cls, result_file, model_name_file):
+        if type(model_name_file)!=list:
+            model_names = Utils.read_txt(model_name_file)
+        else:
+            model_names = model_name_file
+        # end if
         with open(result_file, "r") as f:
             line = f.read()
             task = cls.get_task_from_result_str(line)
@@ -521,6 +526,7 @@ class Result:
         
         results = dict()
         for model in result_dict.keys():
+            print(model)
             model_result = result_dict[model]
             results[model] = cls.analyze_model(model_result, seed_exp_map)
             print(model)
