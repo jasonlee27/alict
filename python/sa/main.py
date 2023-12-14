@@ -14,7 +14,8 @@ from .utils.Utils import Utils
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--run', type=str, required=True,
                     choices=[
-                        'requirement', 'template', 
+                        'requirement', 
+                        'template', 'template_fairness',
                         'testsuite', 'testsuite_tosem',
                         'seedgen', 'testmodel', 'testmodel_tosem', 'testmodel_seed', 
                         'retrain', 'analyze', 'analyze_tosem',
@@ -111,6 +112,40 @@ def run_templates():
     )
     return
 
+def run_templates_for_fairness():
+    from .testsuite.Template import TemplateForFairness
+    from torch.multiprocessing import set_start_method
+    set_start_method('spawn')
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
+    selection_method = args.syntax_selection
+    _num_trials = '' if num_trials==1 else str(num_trials)
+    gpu_ids = args.gpu_ids
+    if gpu_ids is not None:
+        assert len(gpu_ids)==Macros.num_processes
+    # end if
+    
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_for_fairness"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_for_fairness"
+    # end if
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / f"template{num_trials}_generation_for_fairness.log"
+    TemplateForFairness.get_templates(
+        nlp_task=nlp_task,
+        dataset_name=search_dataset_name,
+        selection_method=selection_method,
+        num_seeds=num_seeds,
+        num_trials=num_trials,
+        gpu_ids=gpu_ids,
+        no_cfg_gen=True,
+        log_file=log_file
+    )
+    return
+
 def run_seedgen():
     from .testsuite.Seedgen import Seedgen
     nlp_task = args.nlp_task
@@ -126,6 +161,29 @@ def run_seedgen():
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "seed_generation.log"
     Seedgen.get_seeds(
+        nlp_task=nlp_task,
+        dataset_name=search_dataset_name,
+        num_seeds=num_seeds,
+        log_file=log_file
+    )
+    return
+
+
+def run_seedgen_for_fairness():
+    from .testsuite.Seedgen import SeedgenForFairness
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    num_seeds = args.num_seeds # -1 means acceptance of every seeds
+    num_trials = args.num_trials
+    # selection_method = args.syntax_selection
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{num_seeds}seeds"
+    # end if
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / "seed_for_fairness_generation.log"
+    SeedgenForFairness.get_seeds(
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
         num_seeds=num_seeds,
@@ -669,6 +727,7 @@ func_map = {
     "sa": {
         'requirement': run_requirements,
         'template': run_templates,
+        'template_fairness': run_templates_for_fairness,
         'seedgen': run_seedgen,
         'testsuite': run_testsuites,
         'testsuite_tosem': run_testsuites_tosem,
