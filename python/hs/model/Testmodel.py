@@ -12,6 +12,7 @@ from ..utils.Logger import Logger
 from ..testsuite.Testsuite import Testsuite
 
 from .Model import Model
+from .Chatgpt import Chatgpt
 from .GoogleModel import GoogleModel
 from ..seed.Search import Hatecheck
 
