@@ -284,59 +284,63 @@ class Testsuite:
                 new_input_dicts = Utils.read_json(res_dir / path)
                 if new_input_dicts is not None:
                     req_cksum = re.search("cfg\_expanded\_inputs\_([a-zA-z0-9]+)\.json", path).group(1)
+                    lc_cap = new_input_dicts["requirement"]["capability"]
                     lc_desc = new_input_dicts["requirement"]["description"]
+                    lc = f"{lc_cap}::{lc_desc}"
                     transform_req = new_input_dicts["requirement"].get("transform", None)
                     transform_reqs.append(transform_req)
                 
                     seed_res = list()
                     seeds = list(new_input_dicts['inputs'].keys())
-                    num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[lc_desc]
-                    seed_samples = random.sample(seeds, num_samples)
-                    seeds = list()
-                    exps = list()
-                    for s in seed_samples:
-                        seeds.append({
-                            'input': s,
-                            'place_holder': Utils.tokenize(s),
-                            'label': new_input_dicts['inputs'][s]['label']
-                        })
-                        for e in new_input_dicts['inputs'][s]['exp_inputs']:
-                            exps.append({
-                                'input': e[-1],
-                                'place_holder': Utils.tokenize(e[-1]),
+                    num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs.get(lc, None)
+                    if num_samples is not None:
+                        seed_samples = random.sample(seeds, num_samples)
+                        seeds = list()
+                        exps = list()
+                        for s in seed_samples:
+                            seeds.append({
+                                'input': s,
+                                'place_holder': Utils.tokenize(s),
                                 'label': new_input_dicts['inputs'][s]['label']
                             })
+                            for e in new_input_dicts['inputs'][s]['exp_inputs']:
+                                exps.append({
+                                    'input': e[-1],
+                                    'place_holder': Utils.tokenize(e[-1]),
+                                    'label': new_input_dicts['inputs'][s]['label']
+                                })
+                            # end for
                         # end for
-                    # end for
-                    if seeds is not None:
-                        for sd in seeds:
-                            sd_res = cls.get_template(sd, task, lc_desc)
-                            seed_res.append(sd_res)
-                        # end for
-                        seeds_per_task.append({
-                            "capability": new_input_dicts["requirement"]["capability"],
-                            "description": new_input_dicts["requirement"]["description"],
-                            "templates": seed_res
-                        })
+                        if seeds is not None:
+                            for sd in seeds:
+                                sd_res = cls.get_template(sd, task, lc_desc)
+                                seed_res.append(sd_res)
+                            # end for
+                            seeds_per_task.append({
+                                "capability": new_input_dicts["requirement"]["capability"],
+                                "description": new_input_dicts["requirement"]["description"],
+                                "templates": seed_res
+                            })
+                        # end if
+                        if exps is not None:
+                            exp_res = list()
+                            for e in exps:
+                                e_res = cls.get_template(e, task, lc_desc)
+                                exp_res.append(e_res)
+                            # end for
+                            exps_per_task.append({
+                                "capability": new_input_dicts["requirement"]["capability"],
+                                "description": new_input_dicts["requirement"]["description"],
+                                "templates": exp_res
+                            })
+                        # end if
+                        yield task, \
+                            seeds_per_task, \
+                            exps_per_task, \
+                            seed_templates_per_task, \
+                            exp_templates_per_task, \
+                            transform_reqs
                     # end if
-                    if exps is not None:
-                        exp_res = list()
-                        for e in exps:
-                            e_res = cls.get_template(e, task, lc_desc)
-                            exp_res.append(e_res)
-                        # end for
-                        exps_per_task.append({
-                            "capability": new_input_dicts["requirement"]["capability"],
-                            "description": new_input_dicts["requirement"]["description"],
-                            "templates": exp_res
-                        })
-                    # end if
-                    yield task, \
-                        seeds_per_task, \
-                        exps_per_task, \
-                        seed_templates_per_task, \
-                        exp_templates_per_task, \
-                        transform_reqs
                 # end if
             # end if
         # end for
