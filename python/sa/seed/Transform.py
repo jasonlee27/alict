@@ -531,7 +531,7 @@ class TransformOperatorForFairness:
     def replace_pronouns_to_identity_groups(
         self,
         sents
-    ):
+    ) -> List:
         pronouns_dict = {
             'y': ['you', 'your', 'yours'],
             'h' ['he', 'his', 'him'],
@@ -539,10 +539,13 @@ class TransformOperatorForFairness:
             't': ['they', 'their', 'them']
         }
         results = list()
+        
         for s in sents:
             # first find how many pronouns is used in the sentence
             pronouns_used = list()
             tokens = Utils.tokenize(s[1])
+            label = s[2]
+            res_idx = 0
             for t_i, t in enumerate(tokens):
                 if t.lower() in pronouns_dict['h']:
                     pronouns_used.add((t_i, 'h'))
@@ -569,34 +572,50 @@ class TransformOperatorForFairness:
 
                 if num_pronouns_used>1:
                     for num_repl in range(1, num_pronouns_used+1):
-                        target_pronouns = itertools.permutations(
+                        target_pronouns_list = itertools.permutations(
                             list(pronouns_to_identity_map.keys()), 
                             num_repl
                         )
-                        _tokens = tokens
-                        for pr in target_pronouns:
-                            identity_words = pronouns_to_identity_map[pr]
-                            pr_inds = [
-                                pr_i for pr_i, _pr in pronouns_used
-                                if pr==_pr
+                        for target_pronouns in target_pronouns_list:
+                            _pronouns_used = [
+                                pr for pr in pronouns_used
+                                if pr[1] in target_pronouns
                             ]
-                            for pr_ind in pr_inds:
-                                if _tokens[pr_ind]==pronouns_dict[pr][1]:
-                                else:
-                                    _tokens[pr_ind] = identity_words
+                            _pronouns_to_identity_map = {
+                                key: pronouns_to_identity_map[key]
+                                for key in pronouns_to_identity_map.keys()
+                                if key in target_pronouns
+                            }
+
+                            word_product: List[Dict] = [
+                                dict(zip(_pronouns_to_identity_map, v))
+                                for v in itertools.product(*_pronouns_to_identity_map.values())
+                            ]
+                            for wp in word_product:
+                                _tokens = tokens.copy()
+                                for _pr_i, _pr in _pronouns_used:
+                                    _tokens[_pr_i] = wp[_pr]
+                                # end for
+                                new_sent = Utils.detokenize(_tokens)
+                                results.append((f'new_{s[0]}_{res_idx}', new_sent, label, None))
+                                res_idx += 1
                             # end for
                         # end for
                     # end for
                 else:
-                    for pr_i, pr in pronouns_used:
-                        identity_words = pronouns_to_identity_map[pr]
-
+                    pr_i, pr = pronouns_used[0][0], pronouns_used[0][1]
+                    for w in pronouns_to_identity_map[pr]:
+                        _tokens = tokens.copy()
+                        if _tokens[pr_i]
+                        _tokens[pr_i] = w
+                        new_sent = Utils.detokenize(_tokens)
+                        results.append((f'new_{s[0]}_{res_idx}', new_sent, label, None))
+                        res_idx += 1
                     # end for
                 # end if
             # end if
         # end for
-        return
-
+        return results
 
     def replace(
         self, 
@@ -607,33 +626,4 @@ class TransformOperatorForFairness:
         if replace_prop=='pronouns_with_<hatecheck_identity>':
             results = self.replace_pronouns_to_identity_groups(sents)
         # end if
-        return results
-
-
-
-    def questionize(self, sents, answer):
-        word_dict = QUESTIONIZE_PHRASE_TEMPLATE
-        res_idx = 0
-        results = list()
-        for sent in sents:
-            word_dict['sent'] = [f"\"{sent[1]}\"?"]
-            word_dict['answer'] = [answer]
-            label = sent[2]
-            if label=='positive' and answer=='yes':
-                new_label = 'positive'
-            elif label=='positive' and answer=='no':
-                new_label = 'negative'
-            elif label=='negative' and answer=='yes':
-                new_label = 'negative'
-            elif label=='negative' and answer=='no':
-                new_label = ['positive', 'neutral']
-            # end if
-            word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
-            for wp in word_product:
-                new_sent = " ".join(list(wp.values()))
-                results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label, None))
-                res_idx += 1
-            # end for
-        # end for
-        random.shuffle(results)
         return results
