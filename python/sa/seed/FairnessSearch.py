@@ -34,79 +34,67 @@ FAIRNESS_REQ = {
         {
             'include': {
                 'word': ['<hatecheck_identity>']
-            },
+            }
         },
         {
             'include': {
                 'word': ['he']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['his']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['him']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['she']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['her']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['hers']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['they']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['their']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['them']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['you']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['your']
-            },
-            'label': 'positive'
+            }
         },
         {
             'include': {
                 'word': ['yours']
-            },
-            'label': 'positive'
+            }
         }
     ],
     'transform': 'replace pronouns_with_<hatecheck_identity>',
@@ -138,6 +126,7 @@ class SearchOperator:
             _sents = sents.copy()
             for op, param in search_reqs.items():
                 if len(_sents)>0:
+                    print(op)
                     _sents = self.search_method[op](_sents, search_reqs)
                 # end if
             # end for
@@ -152,14 +141,13 @@ class SearchOperator:
     def search_by_label(
         self, 
         sents, 
-        search_reqs, 
-        nlp
+        search_reqs
     ):
-        label = search_reqs["label"]
+        label = search_reqs['label']
         return [
-            (s_i,s['tokens'],s['label']) 
+            (s_i,s[1],s[2],s[3])
             for s_i, s in enumerate(sents) 
-            if label==s['label']
+            if label==s[2]
         ]
 
     def _search_by_hatecheck_identity_include(
@@ -171,8 +159,8 @@ class SearchOperator:
             identity_group_words = IDENTITY_GROUPS[key]
             for w in identity_group_words:
                 for s in sents:
-                    if (w in s['tokens'] or \
-                        w.capitalize() in s['tokens']) and \
+                    if (w in s[1] or \
+                        w.capitalize() in s[1]) and \
                         s not in selected:
                         selected.append(s)
                     # end if
@@ -244,9 +232,15 @@ class SearchOperator:
         # end for
         result = list()
         if len(sents[0])==4:
-            result = [(s[0],Utils.detokenize(s[1]),s[2],s[3]) for s in _sents if s[0] in selected_indices]
+            result = [
+                (s[0],Utils.detokenize(s[1]),s[2],s[3])
+                for s in _sents if s[0] in selected_indices
+            ]
         else:
-            result = [(s[0],Utils.detokenize(s[1]),s[2]) for s in _sents if s[0] in selected_indices]
+            result = [
+                (s[0],Utils.detokenize(s[1]),s[2])
+                for s in _sents if s[0] in selected_indices
+            ]
         # end if
         return result
 
@@ -256,7 +250,10 @@ class Sst:
     @classmethod
     def get_sents(cls, sent_file, label_file, phrase_dict_file):
         # sents: List of [sent_index, sent]
-        sents = [(l.split("\t")[0].strip(),l.split("\t")[1].strip()) for l in Utils.read_txt(sent_file)[1:]]
+        sents = [
+            (l.split("\t")[0].strip(),l.split("\t")[1].strip()) 
+            for l in Utils.read_txt(sent_file)[1:]
+        ]
         label_scores = {
             l.split("|")[0].strip():l.split("|")[1].strip() # id: score
             for l in Utils.read_txt(label_file)[1:]
@@ -277,21 +274,30 @@ class Sst:
                 elif label_score>0.6:
                     label = "positive"
                 # end if
-                result.append((s_i,s,label,label_score))
+                result.append((s_i, s, label, label_score))
             # end if
         # end for
         return result
     
     @classmethod
     def search(cls, req):
-        sents = cls.get_sents(Macros.sst_datasent_file, Macros.sst_label_file, Macros.sst_dict_file)
+        sents = cls.get_sents(
+            Macros.sst_datasent_file, 
+            Macros.sst_label_file, 
+            Macros.sst_dict_file
+        )
         req_obj = SearchOperator(req)
         if req_obj.search_reqs_list is not None:
-            if len(sents[0])==4:
-                selected = sorted([(s[0],s[1],s[2],s[3]) for s in req_obj.search(sents)], key=lambda x: x[0])
-            else:
-                selected = sorted([(s[0],s[1],s[2]) for s in req_obj.search(sents)], key=lambda x: x[0])
-            # end if
+            selected_sents = req_obj.search(sents)
+            selected = list()
+            for s in selected_sents:
+                if len(s)==4:
+                    selected.append((s[0],s[1],s[2],s[3]))
+                else:
+                    selected.append((s[0],s[1],s[2]))
+                # end if
+            # end for
+            selected = sorted(selected, key=lambda x: x[0])
         else:
             if len(sents[0])==4:
                 selected = [(s_i,Utils.tokenize(s),l,sc) for s_i, s, l, sc in sents]
