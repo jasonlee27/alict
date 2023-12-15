@@ -501,7 +501,6 @@ class TransformOperator:
 
 class TransformOperatorForFairness:
 
-    pronouns: List[str] = ['he', 'she', 'they']
     identity_groups: Dict = Hatecheck.IDENTITY_GROUPS
 
     def __init__(
@@ -533,13 +532,68 @@ class TransformOperatorForFairness:
         self,
         sents
     ):
+        pronouns_dict = {
+            'y': ['you', 'your', 'yours'],
+            'h' ['he', 'his', 'him'],
+            's': ['she', 'her', 'hers'],
+            't': ['they', 'their', 'them']
+        }
         results = list()
-        for pronoun in cls.pronouns:
-            for s in sents:
-                for t in Utils.tokenize(s[1]):
-                    
-                # end for
+        for s in sents:
+            # first find how many pronouns is used in the sentence
+            pronouns_used = list()
+            tokens = Utils.tokenize(s[1])
+            for t_i, t in enumerate(tokens):
+                if t.lower() in pronouns_dict['h']:
+                    pronouns_used.add((t_i, 'h'))
+                elif t.lower() in pronouns_dict['s']:
+                    pronouns_used.add((t_i, 's'))
+                elif t.lower() in pronouns_dict['t']:
+                    pronouns_used.add((t_i, 't'))
+                elif t.lower() in pronouns_dict['y']:
+                    pronouns_used.add((t_i, 'y'))
+                # end if
             # end for
+
+            # generate map for the pronouns used and identity words
+            num_pronouns_used = len(pronouns_used)
+            if num_prnouns_used>0:
+                pronouns_to_identity_map = dict()
+                for pr in set([pr for _, pr in pronouns_used]):
+                    if pr=='t':
+                        pronouns_to_identity_map[pr] = cls.identity_groups['IDENTITY_P']
+                    else:
+                        pronouns_to_identity_map[pr] = cls.identity_groups['IDENTITY_S'] + cls.cls.identity_groups['IDENTITY_A']
+                    # end if
+                # end for
+
+                if num_pronouns_used>1:
+                    for num_repl in range(1, num_pronouns_used+1):
+                        target_pronouns = itertools.permutations(
+                            list(pronouns_to_identity_map.keys()), 
+                            num_repl
+                        )
+                        _tokens = tokens
+                        for pr in target_pronouns:
+                            identity_words = pronouns_to_identity_map[pr]
+                            pr_inds = [
+                                pr_i for pr_i, _pr in pronouns_used
+                                if pr==_pr
+                            ]
+                            for pr_ind in pr_inds:
+                                if _tokens[pr_ind]==pronouns_dict[pr][1]:
+                                else:
+                                    _tokens[pr_ind] = identity_words
+                            # end for
+                        # end for
+                    # end for
+                else:
+                    for pr_i, pr in pronouns_used:
+                        identity_words = pronouns_to_identity_map[pr]
+
+                    # end for
+                # end if
+            # end if
         # end for
         return
 

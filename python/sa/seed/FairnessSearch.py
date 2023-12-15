@@ -45,13 +45,67 @@ FAIRNESS_REQ = {
         },
         {
             'include': {
+                'word': ['his']
+            },
+            'label': 'positive'
+        },
+        {
+            'include': {
+                'word': ['him']
+            },
+            'label': 'positive'
+        },
+        {
+            'include': {
                 'word': ['she']
             },
             'label': 'positive'
         },
         {
             'include': {
+                'word': ['her']
+            },
+            'label': 'positive'
+        },
+        {
+            'include': {
+                'word': ['hers']
+            },
+            'label': 'positive'
+        },
+        {
+            'include': {
                 'word': ['they']
+            },
+            'label': 'positive'
+        },
+        {
+            'include': {
+                'word': ['their']
+            },
+            'label': 'positive'
+        },
+        {
+            'include': {
+                'word': ['them']
+            },
+            'label': 'positive'
+        },
+        {
+            'include': {
+                'word': ['you']
+            },
+            'label': 'positive'
+        },
+        {
+            'include': {
+                'word': ['your']
+            },
+            'label': 'positive'
+        },
+        {
+            'include': {
+                'word': ['yours']
             },
             'label': 'positive'
         }
@@ -118,7 +172,9 @@ class SearchOperator:
             identity_group_words = IDENTITY_GROUPS[key]
             for w in identity_group_words:
                 for s in sents:
-                    if w in s['tokens'] and s not in selected:
+                    if (w in s['tokens'] or \
+                        w.capitalize() in s['tokens']) and \
+                        s not in selected:
                         selected.append(s)
                     # end if
                 # end for
@@ -133,7 +189,9 @@ class SearchOperator:
     ):
         selected = list()
         for s in sents:
-            if word_cond in s['tokens'] and s not in selected:
+            if (word_cond in s['tokens'] or \
+                word_cond.capitalize() in s['tokens']) and \
+                s not in selected:
                 selected.append(s)
             # end if
         # end for
