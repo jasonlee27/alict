@@ -20,7 +20,7 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..semexp.Synonyms import Synonyms
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
-from .FairnessSearch import FairnessSearch
+from ...hs.seed.hatecheck.Hatecheck import Hatecheck
 
 
 # get pos/neg/neu words from SentiWordNet
@@ -498,10 +498,9 @@ class TransformOperator:
         return results
 
 
-
 class TransformOperatorForFairness:
 
-    identity_groups: Dict = Hatecheck.IDENTITY_GROUPS
+    identity_groups: Dict = Hatecheck.get_placeholder_values()
 
     def __init__(
         self,
@@ -534,12 +533,16 @@ class TransformOperatorForFairness:
     ) -> List:
         pronouns_dict = {
             'y': ['you', 'your', 'yours'],
-            'h' ['he', 'his', 'him'],
+            'h': ['he', 'his', 'him'],
             's': ['she', 'her', 'hers'],
             't': ['they', 'their', 'them']
         }
+        pronouns_with_apostrophes = [
+            pronouns_dict[key][1]
+            for key in pronouns_dict.keys()
+        ]
         results = list()
-        
+
         for s in sents:
             # first find how many pronouns is used in the sentence
             pronouns_used = list()
@@ -594,7 +597,11 @@ class TransformOperatorForFairness:
                             for wp in word_product:
                                 _tokens = tokens.copy()
                                 for _pr_i, _pr in _pronouns_used:
-                                    _tokens[_pr_i] = wp[_pr]
+                                    if _tokens[pr_i] in pronouns_with_apostrophes:
+                                        _tokens[pr_i] = f"{wp[_pr]}'s"
+                                    else:
+                                        _tokens[_pr_i] = wp[_pr]
+                                    # end for
                                 # end for
                                 new_sent = Utils.detokenize(_tokens)
                                 results.append((f'new_{s[0]}_{res_idx}', new_sent, label, None))
@@ -606,8 +613,11 @@ class TransformOperatorForFairness:
                     pr_i, pr = pronouns_used[0][0], pronouns_used[0][1]
                     for w in pronouns_to_identity_map[pr]:
                         _tokens = tokens.copy()
-                        if _tokens[pr_i]
-                        _tokens[pr_i] = w
+                        if _tokens[pr_i] in pronouns_with_apostrophes:
+                            _tokens[pr_i] = f"{w}'s"
+                        else:
+                            _tokens[pr_i] = w
+                        # end if
                         new_sent = Utils.detokenize(_tokens)
                         results.append((f'new_{s[0]}_{res_idx}', new_sent, label, None))
                         res_idx += 1

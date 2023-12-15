@@ -23,7 +23,7 @@ from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 from ..requirement.Requirements import Requirements
 from ..seed.Search import Search
-from ..seed.FairnessSearch import FairnessSearch
+from ..seed.FairnessSearch import FairnessSearch, FAIRNESS_REQ
 from ..synexp.Generator import Generator
 from ..synexp.cfg.RefPCFG import RefPCFG
 from ..semexp.Suggest import Suggest, Validate
@@ -1057,7 +1057,7 @@ class TemplateForFairness:
 
         # Search inputs from searching dataset and expand the inputs using ref_cfg
         logger.print(f"***** TASK: {nlp_task}, SEARCH_DATASET: {dataset_name}, SELECTION: {selection_method} *****")
-        reqs = [FairnessSearch.FAIRNESS_REQ]
+        reqs = [FAIRNESS_REQ]
         if not no_cfg_gen:
             cls.get_new_inputs(
                 reqs,
@@ -1077,6 +1077,7 @@ class TemplateForFairness:
         cksum_map_str = ""
         for t_i, req in enumerate(reqs):
             lc_desc = req['description']
+            print(lc_desc)
             req_cksum = Utils.get_cksum(lc_desc)
             cfg_res_file = res_dir / f"cfg_expanded_inputs_{req_cksum}.json"
             inputs_per_req = Utils.read_json(cfg_res_file)

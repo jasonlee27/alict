@@ -141,7 +141,7 @@ def run_templates_for_fairness():
         num_seeds=num_seeds,
         num_trials=num_trials,
         gpu_ids=gpu_ids,
-        no_cfg_gen=True,
+        no_cfg_gen=False,
         log_file=log_file
     )
     return
@@ -161,29 +161,6 @@ def run_seedgen():
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "seed_generation.log"
     Seedgen.get_seeds(
-        nlp_task=nlp_task,
-        dataset_name=search_dataset_name,
-        num_seeds=num_seeds,
-        log_file=log_file
-    )
-    return
-
-
-def run_seedgen_for_fairness():
-    from .testsuite.Seedgen import SeedgenForFairness
-    nlp_task = args.nlp_task
-    search_dataset_name = args.search_dataset
-    num_seeds = args.num_seeds # -1 means acceptance of every seeds
-    num_trials = args.num_trials
-    # selection_method = args.syntax_selection
-    if num_seeds<0:
-        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}"
-    else:
-        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{num_seeds}seeds"
-    # end if
-    log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / "seed_for_fairness_generation.log"
-    SeedgenForFairness.get_seeds(
         nlp_task=nlp_task,
         dataset_name=search_dataset_name,
         num_seeds=num_seeds,

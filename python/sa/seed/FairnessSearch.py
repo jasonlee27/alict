@@ -15,8 +15,7 @@ from itertools import product
 from checklist.test_types import MFT, INV, DIR
 
 from ..requirement.Requirements import Requirements
-from .Transform import TransformOperator
-from .sentiwordnet.Sentiwordnet import Sentiwordnet
+from .Transform import TransformOperator, TransformOperatorForFairness
 
 from ...hs.seed.hatecheck.Hatecheck import Hatecheck
 
