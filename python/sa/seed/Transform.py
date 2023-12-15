@@ -20,6 +20,7 @@ from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 from ..semexp.Synonyms import Synonyms
 from .sentiwordnet.Sentiwordnet import Sentiwordnet
+from .FairnessSearch import FairnessSearch
 
 
 # get pos/neg/neu words from SentiWordNet
@@ -468,6 +469,93 @@ class TransformOperator:
         # end for
         random.shuffle(results)
         return results
+
+    def questionize(self, sents, answer):
+        word_dict = QUESTIONIZE_PHRASE_TEMPLATE
+        res_idx = 0
+        results = list()
+        for sent in sents:
+            word_dict['sent'] = [f"\"{sent[1]}\"?"]
+            word_dict['answer'] = [answer]
+            label = sent[2]
+            if label=='positive' and answer=='yes':
+                new_label = 'positive'
+            elif label=='positive' and answer=='no':
+                new_label = 'negative'
+            elif label=='negative' and answer=='yes':
+                new_label = 'negative'
+            elif label=='negative' and answer=='no':
+                new_label = ['positive', 'neutral']
+            # end if
+            word_product = [dict(zip(word_dict, v)) for v in product(*word_dict.values())]
+            for wp in word_product:
+                new_sent = " ".join(list(wp.values()))
+                results.append((f'new_{sent[0]}_{res_idx}', new_sent, new_label, None))
+                res_idx += 1
+            # end for
+        # end for
+        random.shuffle(results)
+        return results
+
+
+
+class TransformOperatorForFairness:
+
+    pronouns: List[str] = ['he', 'she', 'they']
+    identity_groups: Dict = Hatecheck.IDENTITY_GROUPS
+
+    def __init__(
+        self,
+        requirements,
+        editor=None
+    ):    
+        self.editor = editor # checklist.editor.Editor()
+        self.capability = requirements['capability']
+        self.description = requirements['description']
+        # self.search_dataset = search_dataset
+        self.transform_reqs = requirements['transform']
+        # self.inv_replace_target_words = None
+        # self.inv_replace_forbidden_words = None
+        self.transform_func = self.transform_reqs.split()[0]
+        self.transform_props = None
+        if len(self.transform_reqs.split())>1:
+            self.transform_props = self.transform_reqs.split()[1]
+        # end if
+    
+    def transform(self, sents):
+        transform_func_map = {
+            'replace': self.replace
+        }
+        new_sents = transform_func_map[self.transform_func](sents, self.transform_props)
+        return new_sents
+
+    def replace_pronouns_to_identity_groups(
+        self,
+        sents
+    ):
+        results = list()
+        for pronoun in cls.pronouns:
+            for s in sents:
+                for t in Utils.tokenize(s[1]):
+                    
+                # end for
+            # end for
+        # end for
+        return
+
+
+    def replace(
+        self, 
+        sents,
+        replace_prop
+    ):
+        results = list()
+        if replace_prop=='pronouns_with_<hatecheck_identity>':
+            results = self.replace_pronouns_to_identity_groups(sents)
+        # end if
+        return results
+
+
 
     def questionize(self, sents, answer):
         word_dict = QUESTIONIZE_PHRASE_TEMPLATE

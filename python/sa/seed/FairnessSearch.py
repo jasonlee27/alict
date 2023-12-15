@@ -36,21 +36,27 @@ FAIRNESS_REQ = {
             'include': {
                 'word': ['<hatecheck_identity>']
             },
+        },
+        {
+            'include': {
+                'word': ['he']
+            },
             'label': 'positive'
         },
         {
             'include': {
-                'word': ['<hatecheck_identity>']
+                'word': ['she']
             },
-            'label': 'negative'
+            'label': 'positive'
         },
         {
             'include': {
-                'word': ['<hatecheck_identity>']
+                'word': ['they']
             },
-            'label': 'neutral'
-        },
-    ]
+            'label': 'positive'
+        }
+    ],
+    'transform': 'replace pronouns_with_<hatecheck_identity>',
 }
 
 class SearchOperator: 
@@ -63,8 +69,8 @@ class SearchOperator:
         self.description = requirements['description']
         self.search_reqs_list = requirements['search']
         self.search_method = {
-            "include": self.search_by_include,
-            "label": self.search_by_label
+            'include': self.search_by_include,
+            'label': self.search_by_label
         }
 
     def search(
@@ -103,7 +109,7 @@ class SearchOperator:
             if label==s['label']
         ]
 
-    def search_by_hatecheck_identity_include(
+    def _search_by_hatecheck_identity_include(
         self, 
         sents
     ):
@@ -120,6 +126,19 @@ class SearchOperator:
         # end for
         return selected
 
+    def _search_by_specific_word_include(
+        self,
+        sents,
+        word_cond
+    ):
+        selected = list()
+        for s in sents:
+            if word_cond in s['tokens'] and s not in selected:
+                selected.append(s)
+            # end if
+        # end for
+        return selected
+
     def _search_by_word_include(self, sents, word_cond):
         search = re.search("\<([^\<\>]+)\>", word_cond)
         selected = list()
@@ -129,7 +148,9 @@ class SearchOperator:
             word_group = search.group(1)
             word_list = list()
             if word_group=="hatecheck_identity":
-                selected = self.search_by_hatecheck_identity_include(sents)
+                selected = self._search_by_hatecheck_identity_include(sents)
+            else:
+                selected = self._search_by_specific_word_include(sents, word_cond)
             # end if
         else:
             selected = [sent for sent in sents if word_cond in sent[1]]
@@ -231,8 +252,7 @@ class FairnessSearch:
 
     SEARCH_FUNC = {
         Macros.sa_task : {
-            Macros.datasets[Macros.sa_task][0]: Sst.search,
-            Macros.datasets[Macros.sa_task][1]: ChecklistTestsuite.search,
+            Macros.datasets[Macros.sa_task][0]: Sst.search
         },
         Macros.mc_task : {},
         Macros.qqp_task : {}
@@ -243,11 +263,11 @@ class FairnessSearch:
         func = cls.SEARCH_FUNC[Macros.sa_task][dataset]
         selected = func(req)
             
-        # if req["transform"] is not None and \
-        #    dataset!=Macros.datasets[Macros.sa_task][1]:
-        #     transform_obj = TransformOperator(req)
-        #     selected = transform_obj.transform(selected)
-        # # end if            
+        if req["transform"] is not None and \
+           dataset!=Macros.datasets[Macros.sa_task][1]:
+            transform_obj = TransformOperator(req)
+            selected = transform_obj.transform(selected)
+        # end if            
         return {
             "requirement": req,
             "selected_inputs": selected
