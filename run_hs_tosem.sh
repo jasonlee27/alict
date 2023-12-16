@@ -67,8 +67,8 @@ function func_analyze_eval_models_chatgpt() {
 function main() {
         # func_humanstudy # sample sentences for manual study
         # func_gen_testsuite
-        func_testmodel_chatgpt # running chatgpt on the testcases
-        # func_analyze_eval_models_chatgpt
+        # func_testmodel_chatgpt # running chatgpt on the testcases
+        func_analyze_eval_models_chatgpt
         
 }
 
