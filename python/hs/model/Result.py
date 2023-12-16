@@ -252,6 +252,7 @@ class Result:
                 
                 exps_pass = exps[0]['pass']
                 exps_fail = exps[0]['fail']
+                print(len(exps_pass), len(exps_fail))
                 for p in seeds_pass:
                     pass2fail_dict = {'from': list(), 'to': list()}
                     pass2pass_dict = {'from': list(), 'to': list()}
