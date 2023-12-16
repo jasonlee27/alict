@@ -544,8 +544,10 @@ def main_tosem(
     test_seed=False,
     local_model_name=None
 ):
-    logger = Logger(logger_file=log_file,
-                    logger_name='testmodel_tosem_chatgpt')
+    logger = Logger(
+        logger_file=log_file,
+        logger_name='testmodel_tosem_chatgpt'
+    )
     _num_trials = '' if num_trials<2 else str(num_trials)
     if num_seeds<0:
         test_result_dir = Macros.result_dir/ f"test_results{_num_trials}_{task}_{dataset_name}_{selection_method}"

@@ -102,6 +102,6 @@ class Macros:
     # ==========
     openai_chatgpt_engine_name = 'gpt-3.5-turbo-instruct'
     openai_chatgpt4_engine_name = 'gpt-4'
-    openai_chatgpt_sa_prompt = "write if the following sentence is hate speech or not and respond with 'the sentence is {toxic/non-toxic}' and nothing else:"
+    openai_chatgpt_hs_prompt = "write if the following sentence is hate speech or not and respond with 'the sentence is {toxic/non-toxic}' and nothing else:"
     resp_temp = 0.
     llm_resp_max_len = 100

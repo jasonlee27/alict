@@ -114,7 +114,6 @@ class Result:
         model_results = cls.get_model_results_from_string(result_str, model_name)
         for r in model_results:
             sent_type, req = cls.get_requirement_from_string(r, task)
-            print(sent_type, req, model_name)
             results.append({
                 'sent_type': sent_type,
                 'req': req,
@@ -234,7 +233,6 @@ class Result:
         reqs = sorted(set([r['req'] for r in model_results]))
         results = list()
         for r in reqs:
-            print(r)
             seeds = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='SEED']
             exps = [mr for mr in model_results if mr['req']==r and mr['sent_type']=='EXP']
             result = {'req': r, 'is_exps_exist': False}
@@ -258,7 +256,6 @@ class Result:
                 
                 exps_pass = exps[0]['pass']
                 exps_fail = exps[0]['fail']
-                print(len(exps_pass), len(exps_fail))
                 for p in seeds_pass:
                     pass2fail_dict = {'from': list(), 'to': list()}
                     pass2pass_dict = {'from': list(), 'to': list()}
@@ -284,7 +281,7 @@ class Result:
                         # end for
 
                         for ep in exps_pass:
-                            if exp==ep['key'] and p['ent']!=ep['ent']:
+                            if exp==ep['key']:
                                 pass2pass_dict['to'].append({
                                     'sent': ep['sent'],
                                     'pred': ep['pred'],
@@ -297,17 +294,9 @@ class Result:
                                     num_pass2pass_ent_inc += 1
                                 elif p['ent']>ep['ent']:
                                     num_pass2pass_ent_dec += 1
+                                else p['ent']==ep['ent']
+                                    num_pass2pass_ent_same += 1
                                 # end if
-                            elif exp==ep['key'] and p['ent']==ep['ent']:
-                                pass2pass_dict['to'].append({
-                                    'sent': ep['sent'],
-                                    'pred': ep['pred'],
-                                    'label': ep['label'],
-                                    'conf': ep['conf'],
-                                    'ent': ep['ent']
-                                })
-                                num_pass2pass += 1
-                                num_pass2pass_ent_same += 1
                             # end if
                         # end for
                     # end for
@@ -359,7 +348,7 @@ class Result:
                         # end for
 
                         for ef in exps_fail:
-                            if exp==ef['key'] and f['ent']!=ef['ent']:
+                            if exp==ef['key']:
                                 fail2fail_dict['to'].append({
                                     'sent': ef['sent'],
                                     'pred': ef['pred'],
@@ -372,17 +361,9 @@ class Result:
                                     num_fail2fail_ent_inc += 1
                                 elif f['ent']>ef['ent']:
                                     num_fail2fail_ent_dec += 1
+                                else:
+                                    num_fail2fail_ent_same += 1
                                 # end if
-                            elif exp==ef['key'] and f['ent']==ef['ent']:
-                                fail2fail_dict['to'].append({
-                                    'sent': ef['sent'],
-                                    'pred': ef['pred'],
-                                    'label': ef['label'],
-                                    'conf': ef['conf'],
-                                    'ent': ef['ent']
-                                })
-                                num_fail2fail += 1
-                                num_fail2fail_ent_same += 1
                             # end if
                         # end for
                     # end for
@@ -544,7 +525,6 @@ class Result:
         
         results = dict()
         for model in result_dict.keys():
-            print(model)
             model_result = result_dict[model]
             results[model] = cls.analyze_model(model_result, seed_exp_map)
             print(model)

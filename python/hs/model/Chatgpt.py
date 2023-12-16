@@ -1,6 +1,7 @@
 
 import os
 import openai
+import string
 import numpy as np
 
 from typing import *
@@ -64,10 +65,11 @@ class Chatgpt:
             for d in batch:
                 response = cls.predict(
                     query_text=d,
-                    prompt=Macros.openai_chatgpt_sa_prompt,
+                    prompt=Macros.openai_chatgpt_hs_prompt,
                     prompt_append=False
                 ) 
-                label = response.split('the sentiment is ')[-1].strip().upper()
+                response = response.replace(".", "").lower()
+                label = response.split('the sentence is ')[-1].strip().upper()
                 preds.append({
                     'response': response,
                     'label': label
@@ -84,15 +86,12 @@ class Chatgpt:
         preds_index = list()
         pp = list()
         for p in preds:
-            if p['label']=='POSITIVE':
-                preds_index.append(2)
-                pp.append([0.,0.,1.])
-            elif p['label']=='NEGATIVE':
-                preds_index.append(0)
-                pp.append([1.,0.,0.])
-            else:
+            if p['label']=='TOXIC':
                 preds_index.append(1)
-                pp.append([0.,1.,0.])
+                pp.append([0.,1.])
+            elif p['label']=='NON-TOXIC':
+                preds_index.append(0)
+                pp.append([1.,0.])
             # end if
         # end for
         preds = np.array(preds_index)
