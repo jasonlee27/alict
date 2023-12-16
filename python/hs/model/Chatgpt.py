@@ -88,10 +88,10 @@ class Chatgpt:
         for p in preds:
             if p['label']=='TOXIC':
                 preds_index.append(1)
-                pp.append([0.,1.])
+                pp.append([0., 1.])
             elif p['label']=='NON-TOXIC':
                 preds_index.append(0)
-                pp.append([1.,0.])
+                pp.append([1., 0.])
             # end if
         # end for
         preds = np.array(preds_index)
@@ -113,8 +113,9 @@ class Chatgpt:
         binary = False
         if softmax:
             if conf.shape[0] == 2:
-                conf = conf[1]
-                return f"DATA::{pred_res}::{conf:%.1f}::{str(pred)}::{str(label)}::{str(x)}"
+                # conf = conf[1]
+                confs = ' '.join(['%.1f' % c for c in conf])
+                return f"DATA::{pred_res}::{str(confs)}::{str(pred)}::{str(label)}::{str(x)}"
             elif conf.shape[0] <= 4:
                 confs = ' '.join(['%.1f' % c for c in conf])
                 # return f"{pred_res}::{conf}::{str(x)}"
