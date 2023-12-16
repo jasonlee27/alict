@@ -298,6 +298,14 @@ class Result:
                                     num_pass2pass_ent_dec += 1
                                 # end if
                             elif exp==ep['key'] and p['ent']==ep['ent']:
+                                pass2pass_dict['to'].append({
+                                    'sent': ep['sent'],
+                                    'pred': ep['pred'],
+                                    'label': ep['label'],
+                                    'conf': ep['conf'],
+                                    'ent': ep['ent']
+                                })
+                                num_pass2pass += 1
                                 num_pass2pass_ent_same += 1
                             # end if
                         # end for
@@ -365,6 +373,14 @@ class Result:
                                     num_fail2fail_ent_dec += 1
                                 # end if
                             elif exp==ef['key'] and f['ent']==ef['ent']:
+                                fail2fail_dict['to'].append({
+                                    'sent': ef['sent'],
+                                    'pred': ef['pred'],
+                                    'label': ef['label'],
+                                    'conf': ef['conf'],
+                                    'ent': ef['ent']
+                                })
+                                num_fail2fail += 1
                                 num_fail2fail_ent_same += 1
                             # end if
                         # end for

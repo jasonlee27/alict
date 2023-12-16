@@ -292,6 +292,14 @@ class Result:
                                     num_pass2pass_ent_dec += 1
                                 # end if
                             elif exp==ep['key'] and p['ent']==ep['ent']:
+                                pass2pass_dict['to'].append({
+                                    'sent': ep['sent'],
+                                    'pred': ep['pred'],
+                                    'label': ep['label'],
+                                    'conf': ep['conf'],
+                                    'ent': ep['ent']
+                                })
+                                num_pass2pass += 1
                                 num_pass2pass_ent_same += 1
                             # end if
                         # end for
@@ -359,6 +367,14 @@ class Result:
                                     num_fail2fail_ent_dec += 1
                                 # end if
                             elif exp==ef['key'] and f['ent']==ef['ent']:
+                                fail2fail_dict['to'].append({
+                                    'sent': ef['sent'],
+                                    'pred': ef['pred'],
+                                    'label': ef['label'],
+                                    'conf': ef['conf'],
+                                    'ent': ef['ent']
+                                })
+                                num_fail2fail += 1
                                 num_fail2fail_ent_same += 1
                             # end if
                         # end for
@@ -425,15 +441,14 @@ class Result:
             template_file = template_result_dir / f"cfg_expanded_inputs_{cksum_val}.json"
             if os.path.exists(result_dir / f"{nlp_task}_testsuite_seeds_{cksum_val}.pkl") or \
                os.path.exists(result_dir / f"{nlp_task}_testsuite_exps_{cksum_val}.pkl"):
-                print(f"@@ {lc_desc}")
                 seed_exp_map[lc_desc] = cls.get_seed_to_exp_map(template_file)
             # end if
         # end for
                 
         results = dict()
         for model in result_dict.keys():
-            print(f"@@ {model}")
             model_result = result_dict[model]
+            print(f"@@ {model}", model_result is None)
             results[model] = cls.analyze_model(model_result, seed_exp_map)
         # end for
         Utils.write_json(results, saveto, pretty_format=True)
