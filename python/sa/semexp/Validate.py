@@ -65,27 +65,31 @@ class Validate:
 
     @classmethod
     def get_templates(cls, transform_spec):
-        templates = cls.TRANFORM_TEMPLATE_MAP[transform_spec]
+        templates = cls.TRANFORM_TEMPLATE_MAP.get(transform_spec, None)
         return templates
     
     @classmethod
     def is_new_token_in_template(cls, sent, label, transform_spec):
         templates = cls.get_templates(transform_spec)
-        conformance_list = list()
-        template = templates[label] if type(templates)==dict else templates[0]
-        for tp_key in template.keys():
-            if any(template[tp_key]):
-                tp_vals = template[tp_key]
-                conformance = [
-                    True if re.search(re.escape(tp_val), sent) else False
-                    for tp_val in tp_vals
-                ]
-                conformance_val = True if any(conformance) else False
-                conformance_list.append(conformance_val)
-            # end if
-        # end for
-        return all(conformance_list)
-    
+        if templates is not None:
+            conformance_list = list()
+            template = templates[label] if type(templates)==dict else templates[0]
+            for tp_key in template.keys():
+                if any(template[tp_key]):
+                    tp_vals = template[tp_key]
+                    conformance = [
+                        True if re.search(re.escape(tp_val), sent) else False
+                        for tp_val in tp_vals
+                    ]
+                    conformance_val = True if any(conformance) else False
+                    conformance_list.append(conformance_val)
+                # end if
+            # end for
+            return all(conformance_list)
+        else:
+            return True
+        # end if
+
     @classmethod
     def is_conform_to_template(cls, **kwargs):
         transform_spec = kwargs['transform_spec']
