@@ -15,7 +15,7 @@ from itertools import product
 from checklist.test_types import MFT, INV, DIR
 
 from ..requirement.Requirements import Requirements
-from .Transform import TransformOperator, TransformOperatorForFairness
+from .Transform import TransformOperatorForFairness
 
 from ...hs.seed.hatecheck.Hatecheck import Hatecheck
 
@@ -126,7 +126,6 @@ class SearchOperator:
             _sents = sents.copy()
             for op, param in search_reqs.items():
                 if len(_sents)>0:
-                    print(op)
                     _sents = self.search_method[op](_sents, search_reqs)
                 # end if
             # end for
@@ -328,7 +327,7 @@ class FairnessSearch:
             
         if req["transform"] is not None and \
            dataset!=Macros.datasets[Macros.sa_task][1]:
-            transform_obj = TransformOperator(req)
+            transform_obj = TransformOperatorForFairness(req)
             selected = transform_obj.transform(selected)
         # end if            
         return {
