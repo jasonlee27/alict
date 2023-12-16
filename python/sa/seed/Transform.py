@@ -12,7 +12,7 @@ import checklist
 import numpy as np
 
 # from checklist.editor import Editor
-from itertools import product
+from itertools import product, permutations
 from checklist.expect import Expect
 from pathlib import Path
 
@@ -500,8 +500,6 @@ class TransformOperator:
 
 class TransformOperatorForFairness:
 
-    identity_groups: Dict = Hatecheck.get_placeholder_values()
-
     def __init__(
         self,
         requirements,
@@ -516,6 +514,8 @@ class TransformOperatorForFairness:
         # self.inv_replace_forbidden_words = None
         self.transform_func = self.transform_reqs.split()[0]
         self.transform_props = None
+        self.identity_groups: Dict = Hatecheck.get_placeholder_values()
+
         if len(self.transform_reqs.split())>1:
             self.transform_props = self.transform_reqs.split()[1]
         # end if
@@ -551,35 +551,36 @@ class TransformOperatorForFairness:
             res_idx = 0
             for t_i, t in enumerate(tokens):
                 if t.lower() in pronouns_dict['h']:
-                    pronouns_used.add((t_i, 'h'))
+                    pronouns_used.append((t_i, 'h'))
                 elif t.lower() in pronouns_dict['s']:
-                    pronouns_used.add((t_i, 's'))
+                    pronouns_used.append((t_i, 's'))
                 elif t.lower() in pronouns_dict['t']:
-                    pronouns_used.add((t_i, 't'))
+                    pronouns_used.append((t_i, 't'))
                 elif t.lower() in pronouns_dict['y']:
-                    pronouns_used.add((t_i, 'y'))
+                    pronouns_used.append((t_i, 'y'))
                 # end if
             # end for
 
             # generate map for the pronouns used and identity words
-            num_pronouns_used = len(pronouns_used)
-            if num_prnouns_used>0:
+            unique_pronouns = set([pr[1] for pr in pronouns_used])
+            num_pronouns_used = len(unique_pronouns)
+            if num_pronouns_used>0:
                 pronouns_to_identity_map = dict()
-                for pr in set([pr for _, pr in pronouns_used]):
+                for pr in unique_pronouns:
                     if pr=='t':
-                        pronouns_to_identity_map[pr] = cls.identity_groups['IDENTITY_P']
+                        pronouns_to_identity_map[pr] = self.identity_groups['IDENTITY_P']
                     else:
-                        pronouns_to_identity_map[pr] = cls.identity_groups['IDENTITY_S'] + cls.cls.identity_groups['IDENTITY_A']
+                        pronouns_to_identity_map[pr] = self.identity_groups['IDENTITY_S'] + self.identity_groups['IDENTITY_A']
                     # end if
                 # end for
 
                 if num_pronouns_used>1:
                     for num_repl in range(1, num_pronouns_used+1):
-                        target_pronouns_list = itertools.permutations(
+                        target_pronouns_generator = permutations(
                             list(pronouns_to_identity_map.keys()), 
                             num_repl
                         )
-                        for target_pronouns in target_pronouns_list:
+                        for target_pronouns in target_pronouns_generator:
                             _pronouns_used = [
                                 pr for pr in pronouns_used
                                 if pr[1] in target_pronouns
@@ -592,13 +593,13 @@ class TransformOperatorForFairness:
 
                             word_product: List[Dict] = [
                                 dict(zip(_pronouns_to_identity_map, v))
-                                for v in itertools.product(*_pronouns_to_identity_map.values())
+                                for v in product(*_pronouns_to_identity_map.values())
                             ]
                             for wp in word_product:
                                 _tokens = tokens.copy()
                                 for _pr_i, _pr in _pronouns_used:
-                                    if _tokens[pr_i] in pronouns_with_apostrophes:
-                                        _tokens[pr_i] = f"{wp[_pr]}'s"
+                                    if _tokens[_pr_i] in pronouns_with_apostrophes:
+                                        _tokens[_pr_i] = f"{wp[_pr]}'s"
                                     else:
                                         _tokens[_pr_i] = wp[_pr]
                                     # end for
