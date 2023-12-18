@@ -217,7 +217,7 @@ class AbstractTest(ABC):
             c for c in self.results.confs 
             if c is not None
         ]
-        print(self.data, self.labels, self.results.preds, self.results.confs)
+        # print(self.data, self.labels, self.results.preds, self.results.confs)
         return
 
     def recover_example_list_and_indices(self):

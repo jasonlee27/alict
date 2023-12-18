@@ -250,7 +250,6 @@ class Result:
                 result['fail->pass'] = list()
                 result['pass->pass'] = list()
                 result['fail->fail'] = list()
-                print(len(exps_pass), len(exps_fail))
                 exps_pass = exps[0]['pass']
                 exps_fail = exps[0]['fail']
                 # print(len(exps_pass), len(exps_fail))
