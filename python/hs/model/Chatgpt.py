@@ -82,7 +82,7 @@ class Chatgpt:
     def sentiment_pred_and_conf(cls, data: List[str]):
         # score of the sentiment ranges between -1.0(negative) and 1.0(positive)
         # First, score in [-1.0, 1.0] is normalized into the range of [0,1] 
-        preds = cls.batch_predict(data[:1])
+        preds = cls.batch_predict(data)
         preds_index = list()
         pp = list()
         for p_i, p in enumerate(preds):
