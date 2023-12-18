@@ -71,7 +71,7 @@ class Testmodel:
             if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
         ]
         # cksum_vals = [v for v in cksum_vals if v in ['d3af59d', 'a416a87', '22f987a']]
-        for cksum_val in cksum_vals:
+        for cksum_val in cksum_vals[8:]:
             # testsuite_files = [
             #     Macros.result_dir / f"test_results_{task}_{dataset_name}" / f for f in [
             #         f"{task}_testsuite_seeds_{cksum_val}.pkl",

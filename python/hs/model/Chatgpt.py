@@ -67,7 +67,7 @@ class Chatgpt:
                     query_text=d,
                     prompt=Macros.openai_chatgpt_hs_prompt,
                     prompt_append=False
-                ) 
+                )
                 response = response.replace(".", "").lower()
                 label = response.split('the sentence is ')[-1].strip().upper()
                 preds.append({
@@ -85,13 +85,22 @@ class Chatgpt:
         preds = cls.batch_predict(data)
         preds_index = list()
         pp = list()
-        for p in preds:
+        for p_i, p in enumerate(preds):
             if p['label']=='TOXIC':
                 preds_index.append(1)
                 pp.append([0., 1.])
             elif p['label']=='NON-TOXIC':
                 preds_index.append(0)
                 pp.append([1., 0.])
+            else:
+                '''
+                There is a two test cases that the ChatGPT fails to response properly.
+                Ther response is '', which is empty string, and it results in the empty label.
+                1. I do not agree with that well i apologise for any small ozeez that might have forgotten that we can take the piss but go too hard and something is amiss i do find that seppos do not understand aussie british humour and can take things personally everyone is a liberal snowflake to an aussie and then they imported muzzies here damit {'response': '', 'label': ''}
+                2. I do not agree with that well i apologise for any ozeez that might have forgotten that we can take the piss but go too hard and something is amiss i do find that seppos do not understand aussie british humour and can take things personally everyone is a liberal bourgeois snowflake to an aussie and then they imported muzzies here damit {'response': '', 'label': ''}
+                For such cases, we exclude them.
+                '''
+                pass
             # end if
         # end for
         preds = np.array(preds_index)
@@ -112,11 +121,11 @@ class Chatgpt:
         expect_result, label = args[0], args[1]
         binary = False
         if softmax:
-            if conf.shape[0] == 2:
+            if conf.shape[0]==2:
                 # conf = conf[1]
                 confs = ' '.join(['%.1f' % c for c in conf])
                 return f"DATA::{pred_res}::{str(confs)}::{str(pred)}::{str(label)}::{str(x)}"
-            elif conf.shape[0] <= 4:
+            elif conf.shape[0]<=4:
                 confs = ' '.join(['%.1f' % c for c in conf])
                 # return f"{pred_res}::{conf}::{str(x)}"
                 return f"DATA::{pred_res}::{str(confs)}::{str(pred)}::{str(label)}::{str(x)}"
@@ -126,6 +135,7 @@ class Chatgpt:
                 return f"DATA::{pred_res}::{conf:%.1f}::{str(pred)}::{str(label)}::{str(x)}"
         else:
             return f"DATA::{pred_res}::[]::{str(pred)}::{str(label)}::{str(x)}"
+        # end if
         
     @classmethod
     def print_result(
