@@ -294,7 +294,7 @@ class Result:
                                     num_pass2pass_ent_inc += 1
                                 elif p['ent']>ep['ent']:
                                     num_pass2pass_ent_dec += 1
-                                else p['ent']==ep['ent']
+                                else:
                                     num_pass2pass_ent_same += 1
                                 # end if
                             # end if
