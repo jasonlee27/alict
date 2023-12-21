@@ -98,6 +98,7 @@ FAIRNESS_REQ = {
         }
     ],
     'transform': 'replace pronouns_with_<hatecheck_identity>',
+    'transform_req': None
 }
 
 class SearchOperator: 
