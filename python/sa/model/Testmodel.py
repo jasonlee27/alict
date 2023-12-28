@@ -231,6 +231,15 @@ class Testmodel:
                 local_model_name==Macros.openai_chatgpt4_engine_name:
                 logger.print(f">>>>> MODEL: {local_model_name}")
                 num_samples = 368
+                tests_to_be_del = list()
+                for test in testsuite.tests:
+                    if test not in cls.num_checklist_tcs_for_chatgpt_over_lcs.keys():
+                        tests_to_be_del.append(test)
+                    # end if
+                # end for
+                for t in tests_to_be_del:
+                    del testsuite.tests[t]
+                # end if
                 Chatgpt.run(
                     testsuite,
                     local_model_name,

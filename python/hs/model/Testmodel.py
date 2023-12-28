@@ -278,6 +278,7 @@ class Testmodel:
                     local_model_name,
                     pred_and_conf_fn=Chatgpt.sentiment_pred_and_conf,
                     n=None,
+                    logger=logger
                 )
                 logger.print(f"<<<<< MODEL: {local_model_name}")
             else:
@@ -341,9 +342,10 @@ class Testmodel:
         # run models on checklist introduced testsuite format
         bl_name = None
         if test_baseline:
+            bl_name = Macros.datasets[Macros.hs_task][-1]
             cls._run_bl_testsuite(
                 task,
-                'checklist',
+                bl_name,
                 test_result_dir,
                 logger,
                 local_model_name=chatgpt_model_name
