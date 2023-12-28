@@ -38,22 +38,34 @@ function func_gen_testsuite() {
 
 function func_testmodel_chatgpt() {
         (cd ${_DIR}
+        #  python -m python.sa.main \
+        #         --run testmodel_tosem \
+        #         --search_dataset sst \
+        #         --syntax_selection random
          python -m python.sa.main \
                 --run testmodel_tosem \
                 --search_dataset sst \
-                --syntax_selection random
+                --syntax_selection random \
+                --test_baseline
         )
 }
 
 function func_analyze_eval_models_chatgpt() {
         (cd ${_DIR}
          # evaluate NLP models with generated testsuites
+        #  CUDA_VISIBLE_DEVICES=1,2,3 python -m python.sa.main \
+        #         --run analyze_tosem \
+        #         --search_dataset sst \
+        #         --syntax_selection random \
+        #         --num_seeds -1 \
+        #         --num_trials 1
          CUDA_VISIBLE_DEVICES=1,2,3 python -m python.sa.main \
                 --run analyze_tosem \
                 --search_dataset sst \
                 --syntax_selection random \
                 --num_seeds -1 \
-                --num_trials 1
+                --num_trials 1 \
+                --test_baseline
         )
 }
 

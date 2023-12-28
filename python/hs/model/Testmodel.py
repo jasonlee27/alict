@@ -568,7 +568,7 @@ def main_tosem(
         local_model_name
     )
     if test_baseline:
-        test_result_file = test_result_dir / 'test_results_tosem_checklist.txt'
+        test_result_file = test_result_dir / 'test_results_tosem_hatecheck.txt'
     else:
         test_result_file = test_result_dir / 'test_results_tosem.txt'
     # end if

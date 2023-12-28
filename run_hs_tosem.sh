@@ -35,29 +35,36 @@ function func_gen_testsuite() {
 
 function func_testmodel_chatgpt() {
         (cd ${_DIR}
+         # python -m python.hs.main \
+         #        --run testmodel_tosem \
+         #        --search_dataset hatexplain \
+         #        --syntax_selection random
          python -m python.hs.main \
                 --run testmodel_tosem \
                 --search_dataset hatexplain \
-                --syntax_selection random
-        #  python -m python.hs.main \
-        #         --run testmodel_tosem \
-        #         --search_dataset hatecheck \
-        #         --syntax_selection random \
-        #         --num_seeds -1 \
-        #         --num_trials -1 \
-        #         --test_baseline
+                --syntax_selection random \
+                --num_seeds -1 \
+                --num_trials -1 \
+                --test_baseline
         )
 }
 
 function func_analyze_eval_models_chatgpt() {
         (cd ${_DIR}
          # evaluate NLP models with generated testsuites
+        #  python -m python.hs.main \
+        #         --run analyze_tosem \
+        #         --search_dataset hatexplain \
+        #         --syntax_selection random \
+        #         --num_seeds -1 \
+        #         --num_trials 1
          python -m python.hs.main \
                 --run analyze_tosem \
                 --search_dataset hatexplain \
                 --syntax_selection random \
                 --num_seeds -1 \
-                --num_trials 1
+                --num_trials 1 \
+                --test_baseline
         )
 }
 
@@ -67,8 +74,8 @@ function func_analyze_eval_models_chatgpt() {
 function main() {
         # func_humanstudy # sample sentences for manual study
         # func_gen_testsuite
-        func_testmodel_chatgpt # running chatgpt on the testcases
-        # func_analyze_eval_models_chatgpt
+        # func_testmodel_chatgpt # running chatgpt on the testcases
+        func_analyze_eval_models_chatgpt
         
 }
 
