@@ -230,13 +230,13 @@ class Testmodel:
             if local_model_name==Macros.openai_chatgpt_engine_name or \
                 local_model_name==Macros.openai_chatgpt4_engine_name:
                 logger.print(f">>>>> MODEL: {local_model_name}")
-                lc = testsuite.name
-                num_samples = cls.num_checklist_tcs_for_chatgpt_over_lcs[lc]
+                num_samples = 368
                 Chatgpt.run(
                     testsuite,
                     local_model_name,
                     pred_and_conf_fn=Chatgpt.sentiment_pred_and_conf,
                     n=num_samples,
+                    logger=logger
                 )
                 logger.print(f"<<<<< MODEL: {local_model_name}")
             else:
