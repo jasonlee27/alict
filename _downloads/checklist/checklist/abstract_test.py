@@ -201,23 +201,31 @@ class AbstractTest(ABC):
                 self.results.preds[i] = p
                 self.results.confs[i] = c
         # end if
-        self.data = [
-            d for d_i, d in enumerate(self.data) 
-            if self.results.preds[d_i] is not None
-        ]
-        self.labels = [
-            l for l_i, l in enumerate(self.labels) 
-            if self.results.preds[l_i] is not None
-        ]
-        self.results.preds = [
-            p for p in self.results.preds 
-            if p is not None
-        ]
-        self.results.confs = [
-            c for c in self.results.confs 
-            if c is not None
-        ]
-        # print(self.data, self.labels, self.results.preds, self.results.confs)
+        # if type(self.data)==list:
+        #     self.data = [
+        #         d for d_i, d in enumerate(self.data) 
+        #         if self.results.preds[d_i] is not None
+        #     ]
+        # # end if
+        # if type(self.labels)==list:
+        #     self.labels = [
+        #         l for l_i, l in enumerate(self.labels) 
+        #         if self.results.preds[l_i] is not None
+        #     ]
+        # # end if
+        # if type(self.results.preds)==list:
+        #     self.results.preds = [
+        #         p for p in self.results.preds 
+        #         if p is not None
+        #     ]
+        # # end if
+        # if type(self.results.confs)==list:
+        #     self.results.confs = [
+        #         c for c in self.results.confs 
+        #         if c is not None
+        #     ]
+        # # end if
+        # # print(self.data, self.labels, self.results.preds, self.results.confs)
         return
 
     def recover_example_list_and_indices(self):
@@ -426,15 +434,27 @@ class AbstractTest(ABC):
         return stats
 
 
-    def print_stats(self):
+    def print_stats(self, logger=None):
         stats = self.get_stats()
         print('Test cases:      %d' % stats.testcases)
+        if logger is not None:
+            logger.print('Test cases:      %d' % stats.testcases)
+        # end if
         if 'testcases_run' in stats:
             print('Test cases run:  %d' % stats.testcases_run)
+            if logger is not None:
+                logger.print('Test cases run:  %d' % stats.testcases_run)
+            # end if
         if 'after_filtering' in stats:
             print('After filtering: %d (%.1f%%)' % (stats.after_filtering, stats.after_filtering_rate))
+            if logger is not None:            
+                logger.print('After filtering: %d (%.1f%%)' % (stats.after_filtering, stats.after_filtering_rate))
+            # end if
         if 'fails' in stats:
             print('Fails (rate):    %d (%.1f%%)' % (stats.fails, stats.fail_rate))
+            if logger is not None:            
+                logger.print('Fails (rate):    %d (%.1f%%)' % (stats.fails, stats.fail_rate))
+            # end if
 
     def _label_meta(self, i):
         if self.labels is None:
@@ -465,7 +485,7 @@ class AbstractTest(ABC):
         -----
         logger
         """
-        self.print_stats()
+        self.print_stats(logger=logger)
         if not n:
             return
         if print_fn is None:

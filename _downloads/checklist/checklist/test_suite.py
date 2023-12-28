@@ -292,6 +292,7 @@ class TestSuite:
             Will be passed as arguments to each test.summary()
 
         """
+        logger = kwargs['logger']
         vals = collections.defaultdict(lambda: 100, {'MFT': 0, 'INV': 1, 'DIR': 2})
         tests = self.tests.keys()
         capability_order = ['Vocabulary', 'Taxonomy', 'Robustness', 'NER',  'Fairness', 'Temporal', 'Negation', 'Coref', 'SRL', 'Logic']
@@ -302,11 +303,18 @@ class TestSuite:
                 continue
             print(capability)
             print()
+            if logger is not None:
+                logger.print(capability)
+                logger.print('')
+            # end if
             tests = [x for x in self.tests if self.info[x]['capability'] == capability]
             for n in tests:
                 if types is not None and self.info[n]['type'] not in types:
                     continue
                 print(n)
+                if logger is not None:
+                    logger.print(n)
+                # end if
                 if 'format_example_fn' not in kwargs:
                     kwargs['format_example_fn'] = self.info[n].get('format_example_fn', self.format_example_fn)
                 if 'print_fn' not in kwargs:
@@ -314,8 +322,17 @@ class TestSuite:
                 self.tests[n].summary(**kwargs)
                 print()
                 print()
+                if logger is not None:
+                    logger.print('')
+                    logger.print('')
+                # end if
+            # end for
             print()
             print()
+            if logger is not None:
+                logger.print('')
+                logger.print('')
+            # end if
 
     def visual_summary_by_test(self, testname):
         """Displays visual summary for a single test.
