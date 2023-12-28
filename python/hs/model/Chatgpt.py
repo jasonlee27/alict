@@ -100,7 +100,8 @@ class Chatgpt:
                 2. I do not agree with that well i apologise for any ozeez that might have forgotten that we can take the piss but go too hard and something is amiss i do find that seppos do not understand aussie british humour and can take things personally everyone is a liberal bourgeois snowflake to an aussie and then they imported muzzies here damit {'response': '', 'label': ''}
                 For such cases, we exclude them.
                 '''
-                pass
+                preds_index.append(0)
+                pp.append([0., 0.])
             # end if
         # end for
         preds = np.array(preds_index)

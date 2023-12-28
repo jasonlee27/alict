@@ -33,18 +33,18 @@ class Result:
         )
         model_results_str = [m.strip() for m in p.findall(result_str)]
         model_results = list()
-        for m in model_results_str[0].split('\n\n\n'):
-            pattern = '(.*?)?\nTest cases\:'
-            p = re.compile(pattern, re.DOTALL)
-            req_search = p.search(m)
-            lc = req_search.group(1).splitlines()[-1]
-            if lc in Macros.CHECKLIST_LC_LIST:
-                model_results.append({
-                    'lc': lc,
-                    'pass': cls.get_pass_sents_from_model_string(m),
-                    'fail': cls.get_fail_sents_from_model_string(m)
-                })
-            # end if
+        if any(model_results_str):
+            model_res_split = model_results_str[0].split('Test cases:')
+            for m_i, m in enumerate(model_res_split):
+                if m_i>0:
+                    lc = model_res_split[m_i-1].splitlines()[-1].strip()
+                    model_results.append({
+                        'lc': lc,
+                        'pass': cls.get_pass_sents_from_model_string(m),
+                        'fail': cls.get_fail_sents_from_model_string(m)
+                    })
+                # end if
+            # end for
         # end for
         return model_results
 

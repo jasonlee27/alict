@@ -31,16 +31,18 @@ class Result:
         )
         model_results_str = [m.strip() for m in p.findall(result_str)]
         model_results = list()
-        for m in model_results_str[0].split('\n\n\n'):
-            pattern = '(.*?)?\nTest cases\:'
-            p = re.compile(pattern, re.DOTALL)
-            req_search = p.search(m)
-            lc = req_search.group(1).splitlines()[-1]
-            model_results.append({
-                'lc': lc,
-                'pass': cls.get_pass_sents_from_model_string(m),
-                'fail': cls.get_fail_sents_from_model_string(m)
-            })
+        if any(model_results_str):
+            model_res_split = model_results_str[0].split('Test cases:')
+            for m_i, m in enumerate(model_res_split):
+                if m_i>0:
+                    lc = model_res_split[m_i-1].splitlines()[-1].strip()
+                    model_results.append({
+                        'lc': lc,
+                        'pass': cls.get_pass_sents_from_model_string(m),
+                        'fail': cls.get_fail_sents_from_model_string(m)
+                    })
+                # end if
+            # end for
         # end for
         return model_results
 
@@ -110,11 +112,21 @@ class Result:
         model_results = cls.get_model_results_from_string(result_str, model_name)
         for r in model_results:
             sent_type, req = cls.get_requirement_from_string(r, task)
+            pass_cases = cls.get_pass_sents_from_model_string(r)
+            fail_cases = cls.get_fail_sents_from_model_string(r)
+            _pass_cases = list()
+            for p_i, p in enumerate(pass_cases):
+                if p['conf']=='0.0 0.0':
+                    fail_cases.append(p)
+                else:
+                    _pass_cases.append(p)
+                # end if
+            # end for
             results.append({
                 'sent_type': sent_type,
                 'req': req,
-                'pass': cls.get_pass_sents_from_model_string(r),
-                'fail': cls.get_fail_sents_from_model_string(r)
+                'pass': _pass_cases,
+                'fail': fail_cases
             })
         # end for
         return results
@@ -144,6 +156,8 @@ class Result:
             #     # end if
             # else:
             # lc = Macros.LC_MAP[r['lc']]
+            print(r['lc'])
+            print(len(r['pass']), len(r['fail']), len(r['pass'])+len(r['fail']))
             results.append({
                 'req': r['lc'],
                 'pass': r['pass'],
