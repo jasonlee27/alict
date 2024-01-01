@@ -74,8 +74,14 @@ function func_analyze_eval_models_chatgpt() {
 function func_fairness() {
         (cd ${_DIR}
          # evaluate NLP models with generated testsuites
+        #  python -m python.sa.main \
+        #         --run template_fairness \
+        #         --search_dataset sst \
+        #         --syntax_selection random \
+        #         --num_seeds -1 \
+        #         --num_trials 1
          python -m python.sa.main \
-                --run template_fairness \
+                --run testsuite_fairness \
                 --search_dataset sst \
                 --syntax_selection random \
                 --num_seeds -1 \
@@ -90,8 +96,8 @@ function main() {
         # func_humanstudy # sample sentences for manual study
         # func_gen_testsuite
         # func_testmodel_chatgpt # running chatgpt on the testcases
-        func_analyze_eval_models_chatgpt
-        # func_fairness
+        # func_analyze_eval_models_chatgpt
+        func_fairness
 }
 
 
