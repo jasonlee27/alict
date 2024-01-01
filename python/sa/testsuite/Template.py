@@ -207,6 +207,7 @@ class Template:
         masked_sents: Dict = dict()
         no_mask_key = '<no_mask>'
         for index, seed in enumerate(template_results['inputs'].keys()):
+            print(f"Template.get_word_suggestions::{index}")
             seed_label = template_results['inputs'][seed]['label']
             label_score = template_results['inputs'][seed]['label_score']
             cfg_seed = template_results['inputs'][seed]['cfg_seed']
@@ -687,7 +688,8 @@ class TemplateForFairness:
         if any(template_results) and \
            template_results["requirement"]["description"]==cur_req["description"]:
             for index, (_id, seed, seed_label, seed_score) in enumerate(orig_seeds):
-                if seed not in template_results['inputs'].keys():
+                if seed not in template_results['inputs'].keys() and \
+                    any(template_results['inputs'][seed]['exp_inputs']):
                     seeds.append((_id, seed, seed_label, seed_score))
                 # end if
             # end for
@@ -957,6 +959,7 @@ class TemplateForFairness:
         if logger is not None:
             logger.print(f"{print_str}\n\t{len(seeds)} inputs are selected out of {num_selected_inputs}.")
         # end if
+        print(f"{print_str}\n\t{len(seeds)} inputs are selected out of {num_selected_inputs}.")
         index = 0
         num_seed_for_exp = 0
         tot_num_exp = 0
@@ -1015,6 +1018,7 @@ class TemplateForFairness:
         # editor = Editor(cuda_device_ind=gpu_ids)
         pcfg_ref = RefPCFG()
         for r_i, req in enumerate(reqs):
+            print(r_i)
             cls.generate_inputs(
                 nlp_task,
                 req,

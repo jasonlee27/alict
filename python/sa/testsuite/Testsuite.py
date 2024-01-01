@@ -378,11 +378,25 @@ class Testsuite:
                     transform_reqs.append(transform_req)
                 
                     seed_res = list()
-                    seeds, exps = cls.get_seeds_n_exps(
-                        res_dir / f"seeds_{req_cksum}.json",
-                        res_dir / f"exps_{req_cksum}.json"
-                    )
-                    print(lc_desc)
+                    seeds = list()
+                    seed_sents = list(new_input_dicts['inputs'].keys())
+                    exps = list()
+                    for s in seed_sents:
+                        seeds.append({
+                            'input': s,
+                            'place_holder': Utils.tokenize(s),
+                            'label': new_input_dicts['inputs'][s]['label']
+                        })
+                        for e in new_input_dicts['inputs'][s]['exp_inputs']:
+                            print(e[-1])
+                            exps.append({
+                                'input': e[-1],
+                                'place_holder': Utils.tokenize(e[-1]),
+                                'label': new_input_dicts['inputs'][s]['label']
+                            })
+                        # end for
+                    # end for
+                    print(lc_desc, seeds is not None, exps is not None)
                     if seeds is not None:
                         for sd in seeds:
                             sd_res = cls.get_template(sd, task, lc_desc)
@@ -539,9 +553,10 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(seed_dicts):
             lc_desc = templates_per_req["description"]
             test_cksum = Utils.get_cksum(lc_desc)
-            # if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_seeds_{test_cksum}.pkl')):
-            if os.path.exists(str(res_dir / f'{task}_testsuite_fairness_seeds_{test_cksum}.pkl')):
+            if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_seeds_{test_cksum}.pkl')):
+            # if os.path.exists(str(res_dir / f'{task}_testsuite_fairness_seeds_{test_cksum}.pkl')):
                 logger.print(f"{task}::SEED::<{lc_desc}>::{test_cksum}::", end='')
+                print(f"{task}::SEED::<{lc_desc}>::{test_cksum}::")
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -682,10 +697,11 @@ class Testsuite:
     ):
         for t_i, templates_per_req in enumerate(exp_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
-            # if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_exps_{test_cksum}.pkl')):
-            if os.path.exists(str(res_dir / f'{task}_testsuite_fairness_exps_{test_cksum}.pkl')):
+            if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_exps_{test_cksum}.pkl')):
+            # if os.path.exists(str(res_dir / f'{task}_testsuite_fairness_exps_{test_cksum}.pkl')):
                 lc_desc = templates_per_req["description"]
                 logger.print(f"{task}::EXP::<{lc_desc}>::{test_cksum}::", end='')
+                print(f"{task}::EXP::<{lc_desc}>::{test_cksum}::")
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -693,6 +709,7 @@ class Testsuite:
                     t = cls.add_template(t, editor, template)
                 # end for
                 
+                print(templates_per_req["templates"])
                 if callable(templates_per_req["templates"][0]['label']):
                     test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
                 else:
