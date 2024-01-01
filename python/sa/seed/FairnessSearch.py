@@ -33,70 +33,84 @@ FAIRNESS_REQ = {
     'search': [
         {
             'include': {
-                'word': ['<hatecheck_identity>']
+                'word': ['<hatecheck_identity>'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['he']
+                'word': ['he'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['his']
+                'word': ['his'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['him']
+                'word': ['him'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['she']
+                'word': ['she'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['her']
+                'word': ['her'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['hers']
+                'word': ['hers'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['they']
+                'word': ['they'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['their']
+                'word': ['their'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['them']
+                'word': ['them'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['you']
+                'word': ['you'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['your']
+                'word': ['your'],
+                'POS': None
             }
         },
         {
             'include': {
-                'word': ['yours']
+                'word': ['yours'],
+                'POS': None
             }
         }
     ],
+    "expansion": ["neutral"],
     'transform': 'replace pronouns_with_<hatecheck_identity>',
     'transform_req': None
 }
