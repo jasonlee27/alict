@@ -382,7 +382,7 @@ class Testsuite:
                         res_dir / f"seeds_{req_cksum}.json",
                         res_dir / f"exps_{req_cksum}.json"
                     )
-                    print(lc_desc, len(seeds))
+                    print(lc_desc)
                     if seeds is not None:
                         for sd in seeds:
                             sd_res = cls.get_template(sd, task, lc_desc)
