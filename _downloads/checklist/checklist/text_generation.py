@@ -80,7 +80,7 @@ class TextGenerator(object):
             if self.cuda_device_ind is None:
                 self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             else:
-                self.device = torch.device(f"cuda{self.cuda_device_ind}" if torch.cuda.is_available() else "cpu")
+                self.device = torch.device(f"cuda:{self.cuda_device_ind}" if torch.cuda.is_available() else "cpu")
             # end if
             # self.tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
             # self.model = BertForMaskedLM.from_pretrained('bert-base-cased')
