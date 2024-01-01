@@ -255,12 +255,14 @@ def wrapped_random_choice(x, *args, **kwargs):
         return type(x)([x[i] for i in idxs])
 
 class Editor(object):
-    def __init__(self, language='english', model_name=None):
+    def __init__(self, language='english', model_name=None, cuda_device_ind=None):
         self.lexicons = {}
         self.data = {}
         self.tg_params = {
             'language': language,
+            'cuda_device_ind': cuda_device_ind
         }
+        self.cuda_device_ind = cuda_device_ind
         if model_name is not None:
             self.tg_params['model_name'] = model_name
         self._load_lexicons(language)
@@ -478,6 +480,7 @@ class Editor(object):
             (with likelihood if return_score=True)
 
         """
+        kwargs["cuda_device_ind"] = self.cuda_device_ind
         mask_index, ops = get_mask_index(templates)
         if not mask_index:
             return []
