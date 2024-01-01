@@ -378,26 +378,11 @@ class Testsuite:
                     transform_reqs.append(transform_req)
                 
                     seed_res = list()
-                    seeds = list(new_input_dicts['inputs'].keys())
-                    num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[lc_desc]
-                    print(lc_desc, len(seeds), num_samples)
-                    seed_samples = random.sample(seeds, num_samples)
-                    seeds = list()
-                    exps = list()
-                    for s in seed_samples:
-                        seeds.append({
-                            'input': s,
-                            'place_holder': Utils.tokenize(s),
-                            'label': new_input_dicts['inputs'][s]['label']
-                        })
-                        for e in new_input_dicts['inputs'][s]['exp_inputs']:
-                            exps.append({
-                                'input': e[-1],
-                                'place_holder': Utils.tokenize(e[-1]),
-                                'label': new_input_dicts['inputs'][s]['label']
-                            })
-                        # end for
-                    # end for
+                    seeds, exps = cls.get_seeds_n_exps(
+                        res_dir / f"seeds_{req_cksum}.json",
+                        res_dir / f"exps_{req_cksum}.json"
+                    )
+                    print(lc_desc, len(seeds))
                     if seeds is not None:
                         for sd in seeds:
                             sd_res = cls.get_template(sd, task, lc_desc)
