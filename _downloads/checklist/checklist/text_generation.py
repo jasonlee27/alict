@@ -75,7 +75,7 @@ def all_possible_related(words, pos=None, depth=1):
 class TextGenerator(object):
     def __init__(self, url=None, model_name='roberta-base', prefix_sentence='', allow_word_pieces=False, **kwargs):
         self.url = url
-        self.cuda_device_ind=kwarge.get('cuda_device_ind', None)
+        self.cuda_device_ind=kwargs.get('cuda_device_ind', None)
         if url is None:
             if self.cuda_device_ind is None:
                 self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

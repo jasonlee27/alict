@@ -112,7 +112,7 @@ def run_templates():
     )
     return
 
-def run_templates_for_fairness():
+def run_templates_fairness():
     from .testsuite.Template import TemplateForFairness
     from torch.multiprocessing import set_start_method
     set_start_method('spawn')
@@ -729,7 +729,7 @@ func_map = {
     "sa": {
         'requirement': run_requirements,
         'template': run_templates,
-        'template_fairness': run_templates_for_fairness,
+        'template_fairness': run_templates_fairness,
         'seedgen': run_seedgen,
         'testsuite': run_testsuites,
         'testsuite_tosem': run_testsuites_tosem,

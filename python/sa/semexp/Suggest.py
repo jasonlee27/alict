@@ -607,6 +607,7 @@ class Suggest:
             # end for
         # end for
         ft = time.time()
+        print(f"\tSuggest._eval_word_suggestions_over_seeds_parallel::SEED{seed_id}::{round(ft-st,3)}sec::pcs{pcs_id}")
         if logger is not None:
             logger.print(f"\tSuggest._eval_word_suggestions_over_seeds_parallel::SEED{seed_id}::{round(ft-st,3)}sec::pcs{pcs_id}")
         # end if
