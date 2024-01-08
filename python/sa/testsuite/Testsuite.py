@@ -353,7 +353,8 @@ class Testsuite:
         selection_method, 
         num_seeds, 
         num_trials, 
-        logger
+        logger,
+        use_samples=True
     ):
         task = nlp_task
         if num_seeds<0:
@@ -367,12 +368,18 @@ class Testsuite:
         seed_templates_per_task = list()
         exp_templates_per_task = list()
         transform_reqs = list()
+        res_file_ext = '.json'
+        cksum_search_pat = "cfg\_expanded\_inputs\_([a-zA-z0-9]+)\.json"
+        if use_samples:
+            res_file_ext = '_samples.json'
+            cksum_search_pat = "cfg\_expanded\_inputs\_([a-zA-z0-9]+)\_samples\.json"
+        # end if
 
         for path in os.listdir(res_dir):
-            if path.startswith("cfg_expanded_inputs") and path.endswith(".json"):
+            if path.startswith("cfg_expanded_inputs") and path.endswith(res_file_ext):
                 new_input_dicts = Utils.read_json(res_dir / path)
                 if new_input_dicts is not None:
-                    req_cksum = re.search("cfg\_expanded\_inputs\_([a-zA-z0-9]+)\.json", path).group(1)
+                    req_cksum = re.search(cksum_search_pat, path).group(1)
                     lc_desc = new_input_dicts["requirement"]["description"]
                     transform_req = new_input_dicts["requirement"].get("transform", None)
                     transform_reqs.append(transform_req)

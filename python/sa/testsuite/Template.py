@@ -7,7 +7,7 @@ import re, os
 import nltk
 import copy
 import time
-# import random
+import random
 import numpy
 # import spacy
 import multiprocessing
@@ -688,8 +688,8 @@ class TemplateForFairness:
         if any(template_results) and \
            template_results["requirement"]["description"]==cur_req["description"]:
             for index, (_id, seed, seed_label, seed_score) in enumerate(orig_seeds):
-                if seed not in template_results['inputs'].keys() and \
-                    any(template_results['inputs'][seed]['exp_inputs']):
+                if seed not in template_results['inputs'].keys() or \
+                    not any(template_results['inputs'][seed]['exp_inputs']):
                     seeds.append((_id, seed, seed_label, seed_score))
                 # end if
             # end for
@@ -752,15 +752,17 @@ class TemplateForFairness:
         # end if
         
         for index, (_id, seed, seed_label, seed_score) in enumerate(seeds):
-            args.append((
-                req,
-                index,
-                seed,
-                seed_label,
-                seed_score,
-                pcfg_ref,
-                logger
-            ))
+            if (seed not in template_results['inputs'].keys()) or \
+                ('masked_inputs' not in template_results['inputs'][seed].keys()):
+                args.append((
+                    req,
+                    index,
+                    seed,
+                    seed_label,
+                    seed_score,
+                    pcfg_ref,
+                    logger
+                ))
         # end for
         if any(args):
             num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
@@ -805,14 +807,23 @@ class TemplateForFairness:
                              num_target=Macros.num_suggestions_on_exp_grammer_elem,
                              selection_method=None,
                              gpu_ids=None,
-                             logger=None):
+                             logger=None,
+                             use_samples=False,
+                             num_samples=None):
         st = time.time()
         template_results = Utils.read_json(cfg_res_file)
         
         # collect all masked sents
         masked_sents: Dict = dict()
         no_mask_key = '<no_mask>'
-        for index, seed in enumerate(template_results['inputs'].keys()):
+        sample_seeds = list(template_results['inputs'].keys())
+        if use_samples and (num_samples is not None):
+            sample_seeds = random.sample(
+                list(template_results['inputs'].keys()), 
+                num_samples
+            )
+        # end if
+        for index, seed in enumerate(sample_seeds):
             seed_label = template_results['inputs'][seed]['label']
             label_score = template_results['inputs'][seed]['label_score']
             cfg_seed = template_results['inputs'][seed]['cfg_seed']
@@ -868,6 +879,7 @@ class TemplateForFairness:
         # end for
         
         # get word suggestions
+        print(f"running Suggest.get_word_suggestions_over_seeds..::{len(masked_sents.keys())}")
         if any(masked_sents):
             masked_sents = Suggest.get_word_suggestions_over_seeds(
                 masked_sents,
@@ -945,7 +957,9 @@ class TemplateForFairness:
         num_seeds=None,
         selection_method=None,
         gpu_ids=None,
-        logger=None
+        logger=None,
+        use_samples=True,
+        num_samples=382
     ):
         st = time.time()
         # generate seeds
@@ -966,14 +980,14 @@ class TemplateForFairness:
         exp_inputs = dict()
         exp_results = list()
 
-        # anlyze cfg and get masked input for all seeds of interest
-        cls.generate_masked_inputs(
-            req,
-            seeds,
-            pcfg_ref,
-            cfg_res_file,
-            logger=logger
-        )
+        # # anlyze cfg and get masked input for all seeds of interest
+        # cls.generate_masked_inputs(
+        #     req,
+        #     seeds,
+        #     pcfg_ref,
+        #     cfg_res_file,
+        #     logger=logger
+        # )
 
         # get the suggested words for the masked inputs using bert:
         num_target = Macros.num_suggestions_on_exp_grammer_elem
@@ -982,13 +996,19 @@ class TemplateForFairness:
             num_target=num_target,
             selection_method=selection_method,
             gpu_ids=gpu_ids,
-            logger=logger
+            logger=logger,
+            use_samples=use_samples,
+            num_samples=num_samples
         )
         # validate word suggestion
+        final_cfg_res_file = cfg_res_file
+        if use_samples:
+            final_cfg_res_file = res_dir / f"cfg_expanded_inputs_{cksum_val}_samples.json"
+        # end if
         Suggest.eval_word_suggestions_over_seeds(
             masked_inputs_w_word_sug,
             req,
-            cfg_res_file,
+            final_cfg_res_file,
             num_target=num_target,
             selection_method=selection_method,
             logger=logger
@@ -1010,7 +1030,10 @@ class TemplateForFairness:
         num_seeds=None,
         selection_method=None,
         gpu_ids=None,
-        logger=None):
+        logger=None,
+        use_samples=True,
+        num_samples=382
+    ):
         # if os.path.exists(input_file):
         #     return Utils.read_json(input_file)
         # # end if
@@ -1018,7 +1041,6 @@ class TemplateForFairness:
         # editor = Editor(cuda_device_ind=gpu_ids)
         pcfg_ref = RefPCFG()
         for r_i, req in enumerate(reqs):
-            print(r_i)
             cls.generate_inputs(
                 nlp_task,
                 req,
@@ -1028,7 +1050,9 @@ class TemplateForFairness:
                 num_seeds=num_seeds,
                 selection_method=selection_method,
                 gpu_ids=gpu_ids,
-                logger=logger
+                logger=logger,
+                use_samples=use_samples,
+                num_samples=num_samples
             )
         # end for
         return
@@ -1043,7 +1067,8 @@ class TemplateForFairness:
         num_trials,
         gpu_ids,
         no_cfg_gen,
-        log_file
+        log_file,
+        use_samples=True
     ):
         assert nlp_task in Macros.nlp_tasks
         assert dataset_name in Macros.datasets[nlp_task]
@@ -1071,7 +1096,9 @@ class TemplateForFairness:
                 num_seeds=num_seeds,
                 selection_method=selection_method,
                 gpu_ids=gpu_ids,
-                logger=logger
+                logger=logger,
+                use_samples=use_samples,
+                num_samples=382
             )
         # end if
 
@@ -1081,9 +1108,11 @@ class TemplateForFairness:
         cksum_map_str = ""
         for t_i, req in enumerate(reqs):
             lc_desc = req['description']
-            print(lc_desc)
             req_cksum = Utils.get_cksum(lc_desc)
             cfg_res_file = res_dir / f"cfg_expanded_inputs_{req_cksum}.json"
+            if use_samples:
+                cfg_res_file = res_dir / f"cfg_expanded_inputs_{req_cksum}_samples.json"
+            # end if
             inputs_per_req = Utils.read_json(cfg_res_file)
             cksum_map_str += f"{lc_desc}\t{req_cksum}\n"
             inputs = inputs_per_req["inputs"]
@@ -1131,15 +1160,26 @@ class TemplateForFairness:
             # end for
 
             if any(seed_inputs):
-                Utils.write_json(seed_inputs,
-                                 res_dir / f"seeds_{req_cksum}.json",
-                                 pretty_format=True)
+                if use_samples:
+                    Utils.write_json(seed_inputs,
+                                     res_dir / f"seeds_{req_cksum}_samples.json",
+                                     pretty_format=True)
+                else:
+                    Utils.write_json(seed_inputs,
+                                     res_dir / f"seeds_{req_cksum}.json",
+                                     pretty_format=True)
+                # end if
             # end if
             if any(exp_seed_inputs):
-                Utils.write_json(exp_seed_inputs,
-                                 res_dir / f"exps_{req_cksum}.json",
-                                 pretty_format=True)
-                
+                if use_samples:
+                    Utils.write_json(exp_seed_inputs,
+                                     res_dir / f"exps_{req_cksum}_samples.json",
+                                     pretty_format=True)
+                else:
+                    Utils.write_json(exp_seed_inputs,
+                                    res_dir / f"exps_{req_cksum}.json",
+                                    pretty_format=True)
+                # end if
             # end if
             print_str = '<<<<< REQUIREMENT:'+inputs_per_req["requirement"]["description"]
             logger.print(print_str)
