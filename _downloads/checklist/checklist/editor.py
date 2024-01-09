@@ -262,7 +262,7 @@ class Editor(object):
             'language': language,
             'cuda_device_ind': cuda_device_ind
         }
-        self.cuda_device_ind = cuda_device_ind
+        # self.cuda_device_ind = cuda_device_ind
         if model_name is not None:
             self.tg_params['model_name'] = model_name
         self._load_lexicons(language)
@@ -480,7 +480,7 @@ class Editor(object):
             (with likelihood if return_score=True)
 
         """
-        kwargs["cuda_device_ind"] = self.cuda_device_ind
+        # kwargs["cuda_device_ind"] = self.cuda_device_ind
         mask_index, ops = get_mask_index(templates)
         if not mask_index:
             return []
@@ -709,13 +709,16 @@ class Editor(object):
                                  thisisaratherlongtokenthatwillnotexist=['an'], **kwargs).data
             # print(samp)
             # print(len([x for x in samp if ' an ' in x[0]]))
+            print(samp)
             samp = [x.replace(tok, self.tg.tokenizer.mask_token) for y in samp for x in y][:20]
+            print(samp)
             samp = list(set(samp))
             # print(samp)
             if 'beam_size' not in kwargs:
                 kwargs['beam_size'] = 100
             # beam_size = kwargs.get('beam_size', 100)
             # kwargs.
+            print(samp)
             options = self.tg.unmask_multiple(samp, **kwargs)
             # print(options)
             # print(top)

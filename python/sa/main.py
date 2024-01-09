@@ -142,7 +142,8 @@ def run_templates_fairness():
         num_trials=num_trials,
         gpu_ids=gpu_ids,
         no_cfg_gen=False,
-        log_file=log_file
+        log_file=log_file,
+        use_samples=False
     )
     return
 

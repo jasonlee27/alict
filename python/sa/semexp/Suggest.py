@@ -435,7 +435,6 @@ class Suggest:
         # print()
         return new_input_results, num_words_orig_suggest
 
-
     @classmethod
     def get_word_sug_parallel(cls,
                               editors,
@@ -455,16 +454,18 @@ class Suggest:
         word_suggest = list()
         if masked_sent!=no_mask_key:
             try:
-                word_suggest = editor.suggest(masked_sent,
-                                              return_score=True,
-                                              remove_duplicates=True)[:3*num_target]
+                word_suggest = editor.suggest(
+                    masked_sent,
+                    return_score=True,
+                    remove_duplicates=True
+                )[:3*num_target]
                 word_suggest = [
                     ws for ws in word_suggest
                     if cls.is_word_suggestion_avail(ws[0])
                 ]
                 word_suggest = cls.remove_duplicates(word_suggest)
             except RuntimeError:
-                print(f"CUDA_OOM::{masked_sent}")
+                print(f"Suggest.get_word_sug_parallel::CUDA_OOM::{masked_sent}")
                 word_suggest = list()
                 pass
             # end try
@@ -500,15 +501,10 @@ class Suggest:
                 for gpu_id in range(len(cuda_device_inds))
             }
             num_sents_per_gpu = len(masked_sents.keys())//cls.NUM_PROCESSES
-        else:
-            editor = Editor()
-            num_sents_per_gpu = len(masked_sents.keys())
-        # end if
-        
-        for ms_i, masked_sent in enumerate(masked_sents.keys()):
-            start = 0
-            gpu_id = None
-            if cuda_device_inds is not None:
+
+            for ms_i, masked_sent in enumerate(masked_sents.keys()):
+                start = 0
+                gpu_id = None
                 for c_i, g_i in enumerate(cuda_device_inds):
                     if c_i+1 == len(cuda_device_inds):
                         end = len(masked_sents.keys())
@@ -524,24 +520,41 @@ class Suggest:
                 args.append((
                     editors, ms_i, masked_sent, num_target, no_mask_key, gpu_id, logger
                 ))
-            else:
-                args.append((
-                    editor, ms_i, masked_sent, num_target, no_mask_key, gpu_id, logger
-                ))
+            # end for
+            if logger is None:
+                logger.print(f"\tSuggest.get_word_suggestions_over_seeds::multiprocessing.Pool..")
             # end if
-        # end for
-        num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
-        pool = multiprocessing.Pool(processes=num_pcss)
-        results = pool.starmap_async(cls.get_word_sug_parallel,
-                                     args,
-                                     chunksize=len(args)//num_pcss).get()
-        for r in results:
-            if any(r['word_sug']):
-                masked_sents[r['masked_sent']]['word_sug'] = r['word_sug']
-            # end if
-        # end for
-        pool.close()
-        pool.join()
+            num_pcss = cls.NUM_PROCESSES if len(args)>=cls.NUM_PROCESSES else 1
+            pool = multiprocessing.Pool(processes=num_pcss)
+            results = pool.starmap_async(
+                cls.get_word_sug_parallel,
+                args,
+                chunksize=len(args)//num_pcss
+            ).get()
+            for r in results:
+                if any(r['word_sug']):
+                    masked_sents[r['masked_sent']]['word_sug'] = r['word_sug']
+                # end if
+            # end for
+            pool.close()
+            pool.join()
+        else:
+            editor = Editor()
+            for ms_i, masked_sent in enumerate(masked_sents.keys()):
+                r = cls.get_word_sug_parallel(
+                    editor, 
+                    ms_i, 
+                    masked_sent, 
+                    num_target, 
+                    no_mask_key, 
+                    None, 
+                    logger
+                )
+                if any(r['word_sug']):
+                    masked_sents[r['masked_sent']]['word_sug'] = r['word_sug']
+                # end if
+            # end for
+        # end if
         ft = time.time()
         if logger is None:
             logger.print(f"\tSuggest.get_word_suggestions_over_seeds::{round(ft-st,3)}sec")

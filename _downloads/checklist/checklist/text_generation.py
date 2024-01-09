@@ -146,6 +146,7 @@ class TextGenerator(object):
         model = self.model
         encoded = np.array(tokenizer.encode(self.prefix_sentence + text_with_mask, add_special_tokens=True))
         cands = []
+        
         if candidates is not None:
             candidates = candidates + [self.space_prefix + x for x in candidates]
             cands = tokenizer.convert_tokens_to_ids(candidates)
@@ -155,11 +156,13 @@ class TextGenerator(object):
                 cands_with_space = list(set(cands).intersection(self.with_space_set))
             if not len(cands_with_space):
                 return []
+        # raise()
         input_ids = torch.tensor(encoded)
         # toks = tokenizer.tokenize('[CLS] %s [SEP]' % string)
         current_beam= [([], 0)]
         masked = (input_ids == self.tokenizer.mask_token_id).numpy().nonzero()[0]
         # print(masked)
+        raise()
         while len(current_beam[0][0]) != masked.shape[0]:
             current_beam = current_beam[:beam_size]
             size = len(current_beam[0][0])

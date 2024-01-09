@@ -879,7 +879,6 @@ class TemplateForFairness:
         # end for
         
         # get word suggestions
-        print(f"running Suggest.get_word_suggestions_over_seeds..::{len(masked_sents.keys())}")
         if any(masked_sents):
             masked_sents = Suggest.get_word_suggestions_over_seeds(
                 masked_sents,
