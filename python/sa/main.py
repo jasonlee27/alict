@@ -17,7 +17,8 @@ parser.add_argument('--run', type=str, required=True,
                         'requirement', 
                         'template', 'template_fairness',
                         'testsuite', 'testsuite_tosem', 'testsuite_fairness',
-                        'seedgen', 'testmodel', 'testmodel_tosem', 'testmodel_seed', 
+                        'seedgen', 'testmodel', 'testmodel_seed', 
+                        'testmodel_tosem', 'testmodel_fairness',
                         'retrain', 'analyze', 'analyze_tosem',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
                         'selfbleu', 'selfbleu_mtnlp', 'selfbleu_checklist',
@@ -298,6 +299,39 @@ def run_testmodel_tosem():
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / 'test_orig_model_tosem.log'
     Testmodel_main_tosem(
+        nlp_task,
+        search_dataset_name,
+        selection_method,
+        num_seeds,
+        num_trials,
+        test_baseline,
+        test_type,
+        log_file,
+        local_model_name=local_model_name
+    )
+    return
+
+def run_testmodel_fairness():
+    from .model.Testmodel import main_fairness as Testmodel_main_fairness
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    num_seeds = args.num_seeds
+    num_trials = args.num_trials
+    test_baseline = args.test_baseline
+    # if test_baseline:
+    #     selection_method = 'checklist'
+    # # end if
+    test_type = args.test_type
+    local_model_name = None
+    if num_seeds<0:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_for_fairness"
+    else:
+        log_dir = Macros.log_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_for_fairness"
+    # end if
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / 'test_orig_model_fairness.log'
+    Testmodel_main_fairness(
         nlp_task,
         search_dataset_name,
         selection_method,
@@ -738,6 +772,7 @@ func_map = {
         'testsuite_fairness': run_testsuites_fairness,
         'testmodel': run_testmodel,
         'testmodel_tosem': run_testmodel_tosem,
+        'testmodel_fairness': run_testmodel_fairness,
         'testmodel_seed': run_seed_testmodel,
         'retrain': run_retrain,
         'analyze': run_analyze,

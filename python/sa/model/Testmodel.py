@@ -71,7 +71,7 @@ class Testmodel:
             if test_file.startswith(f"{task}_testsuite_seeds_") and test_file.endswith(".pkl")
         ]
         # cksum_vals = [v for v in cksum_vals if v in ['d3af59d', 'a416a87', '22f987a']]
-        for cksum_val in cksum_vals[8:]:
+        for cksum_val in cksum_vals:
             # testsuite_files = [
             #     Macros.result_dir / f"test_results_{task}_{dataset_name}" / f for f in [
             #         f"{task}_testsuite_seeds_{cksum_val}.pkl",
@@ -80,6 +80,7 @@ class Testmodel:
             #         f"{task}_testsuite_exp_templates_{cksum_val}.pkl"
             #     ] if os.path.exists(Macros.result_dir / f"test_results_{task}_{dataset_name}" / f)
             # ]
+            print(cksum_val)
             testsuite_files = [
                 test_result_dir / f for f in [
                     f"{task}_testsuite_seeds_{cksum_val}.pkl",
@@ -133,6 +134,55 @@ class Testmodel:
                                 logger=logger)
                         logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                     # end if
+                # end if
+            # end for
+        # end for
+        logger.print('**********')
+        return
+
+    @classmethod
+    def _run_testsuite_fairness(
+        cls,
+        task: str,
+        dataset_name: str,
+        selection_method: str,
+        test_result_dir: Path,
+        logger,
+        local_model_name=None
+    ):
+        logger.print(f"***** TASK: {task} *****")
+        cksum_vals = [
+            os.path.basename(test_file).split("_")[-1].split(".")[0]
+            for test_file in os.listdir(test_result_dir)
+            if test_file.startswith(f"{task}_testsuite_fairness_seeds_") and test_file.endswith(".pkl")
+        ]
+        # cksum_vals = [v for v in cksum_vals if v in ['d3af59d', 'a416a87', '22f987a']]
+        for cksum_val in cksum_vals:
+            testsuite_files = [
+                test_result_dir / f for f in [
+                    f"{task}_testsuite_fairness_seeds_{cksum_val}.pkl",
+                    f"{task}_testsuite_fairness_exps_{cksum_val}.pkl",
+                ] if os.path.exists(test_result_dir / f)
+            ]
+            for testsuite_file in testsuite_files:
+                testsuite = cls.load_testsuite(testsuite_file)
+                if local_model_name is None:
+                    for mname, model in Model.load_models(task):
+                        logger.print(f">>>>> MODEL: {mname}")
+                        Model.run(testsuite,
+                                model,
+                                cls.model_func_map[task],
+                                logger=logger)
+                        logger.print(f"<<<<< MODEL: {mname}")
+                    # end for
+                else:
+                    logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
+                    model = Model.load_local_model(task, local_model_name)
+                    Model.run(testsuite,
+                            model,
+                            cls.model_func_map[task],
+                            logger=logger)
+                    logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                 # end if
             # end for
         # end for
@@ -332,6 +382,48 @@ class Testmodel:
                 test_result_dir,
                 logger,
                 local_model_name=chatgpt_model_name
+            )
+        # end if
+        return
+
+    @classmethod
+    def run_testsuite_fairness(
+        cls,
+        task: str,
+        dataset_name: str,
+        selection_method: str,
+        test_baseline: bool,
+        test_seed: bool,
+        test_result_dir: Path,
+        logger,
+        local_model_name: str = None
+    ):
+        # run models on checklist introduced testsuite format
+        bl_name = None
+        if test_baseline:
+            cls._run_bl_testsuite(
+                task,
+                'checklist',
+                test_result_dir,
+                logger,
+                local_model_name=local_model_name
+            )
+        elif test_baseline==False and test_seed:
+            cls._run_seed_testsuite(
+                task,
+                dataset_name,
+                test_result_dir,
+                logger,
+                local_model_name=local_model_name
+            )
+        elif test_baseline==False and test_seed==False:
+            cls._run_testsuite_fairness(
+                task,
+                dataset_name,
+                selection_method,
+                test_result_dir,
+                logger,
+                local_model_name=local_model_name
             )
         # end if
         return
@@ -547,6 +639,50 @@ def main_tosem(
     
     return
 
+def main_fairness(
+    task,
+    dataset_name,
+    selection_method,
+    num_seeds,
+    num_trials,
+    test_baseline,
+    test_type,
+    log_file,
+    test_seed=False,
+    local_model_name=None
+):
+    logger = Logger(logger_file=log_file,
+                    logger_name='testmodel_fairness')
+    _num_trials = '' if num_trials==1 else str(num_trials)
+    if num_seeds<0:
+        test_result_dir = Macros.result_dir/ f"test_results{_num_trials}_{task}_{dataset_name}_{selection_method}_for_fairness"
+    else:
+        test_result_dir = Macros.result_dir/ f"test_results{_num_trials}_{task}_{dataset_name}_{selection_method}_{num_seeds}seeds_for_fairness"
+    # end if
+    Testmodel.run_testsuite_fairness(
+        task,
+        dataset_name,
+        selection_method,
+        test_baseline,
+        test_seed,
+        test_result_dir,
+        logger,
+        local_model_name
+    )
+    if test_baseline:
+        test_result_file = test_result_dir / 'test_results_fairness_checklist.txt'
+    else:
+        test_result_file = test_result_dir / 'test_results_fairness.txt'
+    # end if
+    shutil.copyfile(log_file, test_result_file)
+    # if test_type=="testsuite":
+    #     Testmodel.run_testsuite(task, dataset_name, selection_method, test_baseline, logger)
+    #     shutil.copyfile(log_file, 'file2.txt')
+    # else:
+    #     Testmodel.run_on_diff_dataset(task, dataset_name, selection_method, test_type=test_type, logger=logger)
+    # # end if
+    
+    return
 
 
 

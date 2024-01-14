@@ -71,22 +71,39 @@ function func_analyze_eval_models_chatgpt() {
 
 # ==========
 # Linguistic capability of Fairness 
-function func_fairness() {
+function func_testsuite_fairness() {
         (cd ${_DIR}
          # evaluate NLP models with generated testsuites
-         python -m python.sa.main \
-                --run template_fairness \
-                --search_dataset sst \
-                --syntax_selection random \
-                --gpu_ids 1 2 3 \
-                --num_seeds -1 \
-                --num_trials 1
-        #  python -m python.sa.main \
+        #  CUDA_VISIBLE_DEVICES=0,1,2,3 python -m python.sa.main \
+        #         --run template_fairness \
+        #         --search_dataset sst \
+        #         --syntax_selection random \
+        #         --num_seeds -1 \
+        #         --num_trials 1 \
+        #         --gpu_ids 0 1 2 3
+        #  CUDA_VISIBLE_DEVICES=0,1,2,3 python -m python.sa.main \
         #         --run testsuite_fairness \
         #         --search_dataset sst \
         #         --syntax_selection random \
         #         --num_seeds -1 \
         #         --num_trials 1
+        )
+}
+
+function func_eval_models_fairness {
+        (cd ${_DIR}
+         # evaluating models on checklist testcases
+        #  CUDA_VISIBLE_DEVICES=5 python -m python.sa.main \
+        #                         --run testmodel_fairness \
+        #                         --test_baseline
+
+         # evaluating models on our generated testcases
+         CUDA_VISIBLE_DEVICES=5 python -m python.sa.main \
+                             --run testmodel_fairness \
+                             --search_dataset sst \
+                             --syntax_selection random \
+                             --num_seeds -1 \
+                             --num_trials 1
         )
 }
 
@@ -98,7 +115,8 @@ function main() {
         # func_gen_testsuite
         # func_testmodel_chatgpt # running chatgpt on the testcases
         # func_analyze_eval_models_chatgpt
-        func_fairness
+        # func_testsuite_fairness
+        func_eval_models_fairness
 }
 
 
