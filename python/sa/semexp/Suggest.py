@@ -452,6 +452,7 @@ class Suggest:
             editor = editors
         # end if
         word_suggest = list()
+        success = False
         if masked_sent!=no_mask_key:
             try:
                 word_suggest = editor.suggest(
@@ -464,15 +465,16 @@ class Suggest:
                     if cls.is_word_suggestion_avail(ws[0])
                 ]
                 word_suggest = cls.remove_duplicates(word_suggest)
+                success = True
             except RuntimeError:
-                print(f"Suggest.get_word_sug_parallel::CUDA_OOM::{masked_sent}")
+                # print(f"Suggest.get_word_sug_parallel::CUDA_OOM::MASKED_SENT_{ms_i}::{masked_sent}::pcs{pcs_id}::gpu{gpu_id}")
                 word_suggest = list()
                 pass
             # end try
         # end if
         ft = time.time()
         if logger is not None:
-            logger.print(f"\tSuggest.get_word_suggestions_over_seeds::MASKED_SENT_{ms_i}::{masked_sent}::{round(ft-st,3)}sec::pcs{pcs_id}::gpu{gpu_id}")
+            logger.print(f"\tSuggest.get_word_sug_parallel::MASKED_SENT_{ms_i}::{masked_sent}::{round(ft-st,3)}sec::pcs{pcs_id}::gpu{gpu_id}::{success}")
         # end if
         return {
             'masked_sent': masked_sent,

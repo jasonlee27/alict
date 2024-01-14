@@ -232,14 +232,15 @@ def run_testsuites_fairness():
     # end if
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / f"testsuite{num_trials}_generation_fairness.log"
-    print(log_file)
+    use_samples = False
     Testsuite.write_testsuites_fairness(
         nlp_task=nlp_task,
         dataset=search_dataset_name,
         selection_method=selection_method,
         num_seeds=num_seeds,
         num_trials=num_trials,
-        log_file=log_file
+        log_file=log_file,
+        use_samples=use_samples
     )
     return
 

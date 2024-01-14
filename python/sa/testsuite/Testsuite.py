@@ -293,7 +293,6 @@ class Testsuite:
                     seed_res = list()
                     seeds = list(new_input_dicts['inputs'].keys())
                     num_samples = cls.num_alict_tcs_for_chatgpt_over_lcs[lc_desc]
-                    print(lc_desc, len(seeds), num_samples)
                     seed_samples = random.sample(seeds, num_samples)
                     seeds = list()
                     exps = list()
@@ -354,7 +353,7 @@ class Testsuite:
         num_seeds, 
         num_trials, 
         logger,
-        use_samples=True
+        use_samples=False
     ):
         task = nlp_task
         if num_seeds<0:
@@ -374,7 +373,6 @@ class Testsuite:
             res_file_ext = '_samples.json'
             cksum_search_pat = "cfg\_expanded\_inputs\_([a-zA-z0-9]+)\_samples\.json"
         # end if
-
         for path in os.listdir(res_dir):
             if path.startswith("cfg_expanded_inputs") and path.endswith(res_file_ext):
                 new_input_dicts = Utils.read_json(res_dir / path)
@@ -395,7 +393,6 @@ class Testsuite:
                             'label': new_input_dicts['inputs'][s]['label']
                         })
                         for e in new_input_dicts['inputs'][s]['exp_inputs']:
-                            print(e[-1])
                             exps.append({
                                 'input': e[-1],
                                 'place_holder': Utils.tokenize(e[-1]),
@@ -403,7 +400,6 @@ class Testsuite:
                             })
                         # end for
                     # end for
-                    print(lc_desc, seeds is not None, exps is not None)
                     if seeds is not None:
                         for sd in seeds:
                             sd_res = cls.get_template(sd, task, lc_desc)
@@ -563,7 +559,7 @@ class Testsuite:
             if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_seeds_{test_cksum}.pkl')):
             # if os.path.exists(str(res_dir / f'{task}_testsuite_fairness_seeds_{test_cksum}.pkl')):
                 logger.print(f"{task}::SEED::<{lc_desc}>::{test_cksum}::", end='')
-                print(f"{task}::SEED::<{lc_desc}>::{test_cksum}::")
+                # print(f"{task}::SEED::<{lc_desc}>::{test_cksum}::")
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -708,7 +704,7 @@ class Testsuite:
             # if os.path.exists(str(res_dir / f'{task}_testsuite_fairness_exps_{test_cksum}.pkl')):
                 lc_desc = templates_per_req["description"]
                 logger.print(f"{task}::EXP::<{lc_desc}>::{test_cksum}::", end='')
-                print(f"{task}::EXP::<{lc_desc}>::{test_cksum}::")
+                # print(f"{task}::EXP::<{lc_desc}>::{test_cksum}::")
                 t = None
                 suite = TestSuite()
                 editor = Editor()
@@ -716,7 +712,6 @@ class Testsuite:
                     t = cls.add_template(t, editor, template)
                 # end for
                 
-                print(templates_per_req["templates"])
                 if callable(templates_per_req["templates"][0]['label']):
                     test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
                 else:
@@ -1027,14 +1022,15 @@ class Testsuite:
         selection_method,
         num_seeds,
         num_trials,
-        log_file
+        log_file,
+        use_samples=False
     ):
         logger = Logger(logger_file=log_file,
                         logger_name='testsuite')
         logger.print('Generate Fairness Testsuites from Templates ...')
         print('Generate Fairness Testsuites from Templates ...')
         for task, seed, exp, seed_temp, exp_temp, transform_reqs \
-            in cls.get_templates_fairness(nlp_task, dataset, selection_method, num_seeds, num_trials, logger):
+            in cls.get_templates_fairness(nlp_task, dataset, selection_method, num_seeds, num_trials, logger, use_samples=use_samples):
             Testsuite.write_editor_templates_fairness(
                 task,
                 dataset,

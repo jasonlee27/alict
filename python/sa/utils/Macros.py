@@ -26,7 +26,7 @@ class Macros:
     RAND_SEED = {1: 27, 2: 26, 3: 28} #26(trial2), 27(trial1), 28(trial3)
     MASK = "{mask}"
 
-    num_processes = 3
+    num_processes = 4
 
     ## NLP dataset
     sa_task = 'sa'
