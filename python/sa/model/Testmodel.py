@@ -169,19 +169,23 @@ class Testmodel:
                 if local_model_name is None:
                     for mname, model in Model.load_models(task):
                         logger.print(f">>>>> MODEL: {mname}")
-                        Model.run(testsuite,
-                                model,
-                                cls.model_func_map[task],
-                                logger=logger)
+                        Model.run(
+                            testsuite,
+                            model,
+                            cls.model_func_map[task],
+                            logger=logger
+                        )
                         logger.print(f"<<<<< MODEL: {mname}")
                     # end for
                 else:
                     logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
                     model = Model.load_local_model(task, local_model_name)
-                    Model.run(testsuite,
-                            model,
-                            cls.model_func_map[task],
-                            logger=logger)
+                    Model.run(
+                        testsuite,
+                        model,
+                        cls.model_func_map[task],
+                        logger=logger
+                    )
                     logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
                 # end if
             # end for

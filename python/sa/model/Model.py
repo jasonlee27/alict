@@ -109,13 +109,12 @@ class Model:
             return f"DATA::{pred_res}::[]::{str(pred)}::{str(label)}::{str(x)}"
         
     @classmethod
-    def print_result(cls, x, pred, conf, expect_result, label=None, meta=None, format_example_fn=None, logger=None):
+    def print_result(cls, x, pred, conf, expect_result, label=None, meta=None, format_example_fn=None, nsamples=None, logger=None):
         isfailed = expect_result[0]!=True
-        if logger is None:
-            print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
-        else:
+        if logger is not None:
             logger.print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
         # end if
+        print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
 
     @classmethod
     def run(cls,
@@ -129,8 +128,8 @@ class Model:
         cls.model = model
         testsuite.run(pred_and_conf_fn, n=None, overwrite=True, logger=logger)
         testsuite.summary(
-            logger=logger,
-            print_fn=cls.print_result if print_fn is not None else None,
-            format_example_fn=cls.format_example if format_example_fn is not None else None
+            print_fn=cls.print_result if print_fn is None else print_fn,
+            format_example_fn=cls.format_example if format_example_fn is None else format_example_fn,
+            logger=logger
         )
         return

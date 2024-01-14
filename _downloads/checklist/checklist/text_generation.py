@@ -162,7 +162,6 @@ class TextGenerator(object):
         current_beam= [([], 0)]
         masked = (input_ids == self.tokenizer.mask_token_id).numpy().nonzero()[0]
         # print(masked)
-        raise()
         while len(current_beam[0][0]) != masked.shape[0]:
             current_beam = current_beam[:beam_size]
             size = len(current_beam[0][0])

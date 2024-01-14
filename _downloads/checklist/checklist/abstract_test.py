@@ -102,17 +102,35 @@ class AbstractTest(ABC):
         iters = [iters[i] for i in idxs]
         return idxs, iters, [expect_results[i] for i in idxs]
 
-    def print(self, xs, preds, confs, expect_results, labels=None, meta=None, format_example_fn=None, nsamples=3):
+    def print(self, xs, preds, confs, expect_results, labels=None, meta=None, format_example_fn=None, nsamples=3, logger=None):
         result = self._extract_examples_per_testcase(
             xs, preds, confs, expect_results, labels, meta, nsamples, only_include_fail=True)
         if not result:
             return
         idxs, iters, _ = result
-        for x, pred, conf, label, meta in iters:
-            print(format_example_fn(x, pred, conf, label, meta))
-        if type(preds) in [np.array, np.ndarray, list] and len(preds) > 1:
-            print()
-        print('----')
+        if len(iters)==0:
+            isfailed = expect_result[0]!=True
+            if logger is not None:
+                logger.print(format_example_fn(xs, preds, confs, labels, isfailed=isfailed))
+            # end if
+            print(format_example_fn(xs, preds, confs, labels, isfailed=isfailed))
+        else:
+            for x, pred, conf, label, meta in iters:
+                if logger is not None:
+                    logger.print(format_example_fn(x, pred, conf, label, meta))
+                # end if
+                print(format_example_fn(x, pred, conf, label, meta))
+            if type(preds) in [np.array, np.ndarray, list] and len(preds) > 1:
+                if logger is not None:
+                    logger.print('')
+                # end if
+                print()
+            if logger is not None:
+                logger.print('----')
+            # end if
+            print('----')
+        # end if
+        
 
     def set_expect(self, expect):
         """Sets and updates expectation function
