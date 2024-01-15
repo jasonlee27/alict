@@ -418,8 +418,12 @@ class Result:
                 template_result_dir,
                 result_dir,
                 model_name_file,
-                saveto):
+                saveto,
+                for_fairnses=False):
         result_file = result_dir / 'test_results.txt'
+        if for_fairnses:
+            result_file = result_dir / 'test_results_fairness.txt'
+        # end if
         result_dict = cls.parse_results(result_file, model_name_file)
         reqs = Requirements.get_requirements(nlp_task)
         seed_exp_map = dict()

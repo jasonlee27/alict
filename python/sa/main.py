@@ -19,7 +19,7 @@ parser.add_argument('--run', type=str, required=True,
                         'testsuite', 'testsuite_tosem', 'testsuite_fairness',
                         'seedgen', 'testmodel', 'testmodel_seed', 
                         'testmodel_tosem', 'testmodel_fairness',
-                        'retrain', 'analyze', 'analyze_tosem',
+                        'retrain', 'analyze', 'analyze_tosem', 'analyze_fairness',
                         'analyze_seed', 'retrain_analyze', 'explain_nlp', 'failcase',
                         'selfbleu', 'selfbleu_mtnlp', 'selfbleu_checklist',
                         'pdrule_cov', 'pdrule_cov_mtnlp', 'pdrule_cov_checklist',
@@ -484,6 +484,48 @@ def run_analyze_tosem():
     # end if
     return
 
+def run_analyze_fairness():
+    from .model.Result import Result
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    test_baseline = args.test_baseline
+    num_seeds = args.num_seeds
+    num_trials = '' if args.num_trials==1 else str(args.num_trials)
+    if test_baseline:
+        if num_seeds<0:
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_for_fairness"
+        else:
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_for_fairness"
+        # end if
+        result_file = result_dir / 'test_results_checklist_fairness.txt'
+        save_to = result_dir / 'test_result_checklist_fairness_analysis.json'
+        Result.analyze_checklist(
+            result_file,
+            Macros.sa_models_file,
+            save_to
+        )
+    else:
+        if num_seeds<0:
+            template_result_dir = Macros.result_dir / f"templates{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_for_fairness"
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_for_fairness"
+        else:
+            template_result_dir = Macros.result_dir / f"templates{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_for_fairness"
+            result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_for_fairness"
+        # end if
+        # result_file = result_dir / 'test_results.txt'
+        save_to = result_dir / 'test_result_fairness_analysis.json'
+        Result.analyze(
+            nlp_task,
+            template_result_dir,
+            result_dir,
+            Macros.sa_models_file,
+            save_to,
+            for_fairness=True
+        )
+    # end if
+    return
+
 def run_analyze_seed():
     from .model.Result import Result
     nlp_task = args.nlp_task
@@ -778,6 +820,7 @@ func_map = {
         'analyze': run_analyze,
         'analyze_tosem': run_analyze_tosem,
         'analyze_seed': run_analyze_seed,
+        'analyze_fairness': run_analyze_fairness,
         'retrain_analyze': run_retrain_analyze,
         'explain_nlp': run_explainNLP,
         'failcase': run_failcase,
