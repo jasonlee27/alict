@@ -521,7 +521,7 @@ def run_analyze_fairness():
             result_dir,
             Macros.sa_models_file,
             save_to,
-            for_fairness=True
+            for_fairnses=True
         )
     # end if
     return
