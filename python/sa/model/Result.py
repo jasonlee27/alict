@@ -574,8 +574,8 @@ class Result:
             lc_desc = req['description']
             cksum_val = Utils.get_cksum(lc_desc)
             template_file = template_result_dir / f"cfg_expanded_inputs_{cksum_val}.json"
-            if os.path.exists(result_dir / f"{nlp_task}_testsuite_seeds_{cksum_val}.pkl") or \
-               os.path.exists(result_dir / f"{nlp_task}_testsuite_exps_{cksum_val}.pkl"):
+            if os.path.exists(result_dir / f"{nlp_task}_testsuite_fairness_seeds_{cksum_val}.pkl") or \
+               os.path.exists(result_dir / f"{nlp_task}_testsuite_fairness_exps_{cksum_val}.pkl"):
                 seed_exp_map[lc_desc] = cls.get_seed_to_exp_map(template_file)
             # end if
         # end for
