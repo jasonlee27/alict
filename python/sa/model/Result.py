@@ -10,6 +10,7 @@ from scipy.stats import entropy
 # from checklist.test_suite import TestSuite as suite
 
 from ..requirement.Requirements import Requirements
+from ..seed.FairnessSearch import FairnessSearch, FAIRNESS_REQ
 from ..utils.Macros import Macros
 from ..utils.Utils import Utils
 
@@ -418,12 +419,8 @@ class Result:
                 template_result_dir,
                 result_dir,
                 model_name_file,
-                saveto,
-                for_fairnses=False):
+                saveto):
         result_file = result_dir / 'test_results.txt'
-        if for_fairnses:
-            result_file = result_dir / 'test_results_fairness.txt'
-        # end if
         result_dict = cls.parse_results(result_file, model_name_file)
         reqs = Requirements.get_requirements(nlp_task)
         seed_exp_map = dict()
@@ -553,6 +550,41 @@ class Result:
         for model in result_dict.keys():
             model_result = result_dict[model]
             results[model] = cls.analyze_model_checklist(model_result)
+        # end for
+        Utils.write_json(
+            results, 
+            saveto, 
+            pretty_format=True
+        )
+        return results
+
+    @classmethod
+    def analyze_fairness(
+        cls,
+        nlp_task,
+        template_result_dir,
+        result_dir,
+        tosem_model_names,
+        saveto
+    ):
+        result_file = result_dir / 'test_results_fairness.txt'
+        result_dict = cls.parse_results(result_file, tosem_model_names)
+        seed_exp_map = dict()
+        for req in [FAIRNESS_REQ]:
+            lc_desc = req['description']
+            cksum_val = Utils.get_cksum(lc_desc)
+            template_file = template_result_dir / f"cfg_expanded_inputs_{cksum_val}.json"
+            if os.path.exists(result_dir / f"{nlp_task}_testsuite_seeds_{cksum_val}.pkl") or \
+               os.path.exists(result_dir / f"{nlp_task}_testsuite_exps_{cksum_val}.pkl"):
+                seed_exp_map[lc_desc] = cls.get_seed_to_exp_map(template_file)
+            # end if
+        # end for
+        
+        results = dict()
+        for model in result_dict.keys():
+            model_result = result_dict[model]
+            results[model] = cls.analyze_model(model_result, seed_exp_map)
+            print(model)
         # end for
         Utils.write_json(
             results, 

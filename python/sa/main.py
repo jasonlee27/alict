@@ -505,6 +505,11 @@ def run_analyze_fairness():
             Macros.sa_models_file,
             save_to
         )
+        # Result.analyze_fairness_checklist(
+        #     result_file,
+        #     Macros.sa_models_file,
+        #     save_to
+        # )
     else:
         if num_seeds<0:
             template_result_dir = Macros.result_dir / f"templates{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_for_fairness"
@@ -513,15 +518,13 @@ def run_analyze_fairness():
             template_result_dir = Macros.result_dir / f"templates{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_for_fairness"
             result_dir = Macros.result_dir / f"test_results{num_trials}_{nlp_task}_{search_dataset_name}_{selection_method}_{num_seeds}seeds_for_fairness"
         # end if
-        # result_file = result_dir / 'test_results.txt'
         save_to = result_dir / 'test_result_fairness_analysis.json'
-        Result.analyze(
+        Result.analyze_fairness(
             nlp_task,
             template_result_dir,
             result_dir,
             Macros.sa_models_file,
-            save_to,
-            for_fairnses=True
+            save_to
         )
     # end if
     return
