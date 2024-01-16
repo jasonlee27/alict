@@ -10,6 +10,8 @@ import spacy
 import random
 import numpy as np
 
+from itertools import product, permutations
+
 from pathlib import Path
 from checklist.editor import Editor
 from checklist.test_types import MFT, INV, DIR
@@ -22,6 +24,7 @@ from ..utils.Utils import Utils
 from ..utils.Logger import Logger
 from ..seed.Search import Search
 from .Template import Template
+from ...hs.seed.hatecheck.Hatecheck import Hatecheck
 
 
 class Testsuite:
@@ -110,6 +113,7 @@ class Testsuite:
         sent, 
         label
     ) -> List:
+        identity_groups = Hatecheck.get_placeholder_values()
         pronouns_dict = {
             'y': ['you', 'your', 'yours'],
             'h': ['he', 'his', 'him'],
@@ -146,9 +150,9 @@ class Testsuite:
             pronouns_to_identity_map = dict()
             for pr in unique_pronouns:
                 if pr=='t':
-                    pronouns_to_identity_map[pr] = self.identity_groups['IDENTITY_P']
+                    pronouns_to_identity_map[pr] = identity_groups['IDENTITY_P']
                 else:
-                    pronouns_to_identity_map[pr] = self.identity_groups['IDENTITY_S'] + self.identity_groups['IDENTITY_A']
+                    pronouns_to_identity_map[pr] = identity_groups['IDENTITY_S'] + identity_groups['IDENTITY_A']
                 # end if
             # end for
 
@@ -213,19 +217,15 @@ class Testsuite:
         )
         if t is None:
             t = editor.template(
-                template["sent"],
+                [template["sent"]]+new_sents,
                 save=True
             )
         else:
             t += editor.template(
-                template["sent"],
+                [template["sent"]]+new_sents,
                 save=True
             )
         # end if
-        t += editor.template(
-            new_sents,
-            save=True
-        )
         return t
     
     @classmethod
