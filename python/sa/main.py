@@ -521,6 +521,7 @@ def run_analyze_fairness():
         save_to = result_dir / 'test_result_fairness_analysis.json'
         Result.analyze_fairness(
             nlp_task,
+            search_dataset_name,
             template_result_dir,
             result_dir,
             Macros.sa_models_file,

@@ -412,6 +412,26 @@ class Result:
             results.append(result)
         # end for
         return results
+
+    @classmethod
+    def analyze_fairness_over_testcases(
+        cls, 
+        analyze_results: dict, 
+        dataset_name: str
+    ):
+        from ..seed.FairnessSearch import FairnessSearch, FAIRNESS_REQ
+        func = FairnessSearch.SEARCH_FUNC[Macros.sa_task][dataset_name]
+        selected = func(req)
+
+        fairness_results = dict()
+        for results_model in analyze_results.keys():
+            seeds = list()
+            for k in ['pass->pass', 'pass->fail', 'fail->pass', 'fail->fail']:
+
+            # end for
+        # end for
+        return fairness_results
+        
         
     @classmethod
     def analyze(cls,
@@ -562,6 +582,7 @@ class Result:
     def analyze_fairness(
         cls,
         nlp_task,
+        search_dataset_name,
         template_result_dir,
         result_dir,
         tosem_model_names,
@@ -591,4 +612,6 @@ class Result:
             saveto, 
             pretty_format=True
         )
+
+        cls.analyze_fairness_over_testcases(results, search_dataset_name)
         return results

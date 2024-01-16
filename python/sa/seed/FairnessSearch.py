@@ -340,11 +340,11 @@ class FairnessSearch:
         func = cls.SEARCH_FUNC[Macros.sa_task][dataset]
         selected = func(req)
             
-        if req["transform"] is not None and \
-           dataset!=Macros.datasets[Macros.sa_task][1]:
-            transform_obj = TransformOperatorForFairness(req)
-            selected = transform_obj.transform(selected)
-        # end if            
+        # if req["transform"] is not None and \
+        #    dataset!=Macros.datasets[Macros.sa_task][1]:
+        #     transform_obj = TransformOperatorForFairness(req)
+        #     selected = transform_obj.transform(selected)
+        # # end if
         return {
             "requirement": req,
             "selected_inputs": selected

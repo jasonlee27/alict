@@ -979,14 +979,14 @@ class TemplateForFairness:
         exp_inputs = dict()
         exp_results = list()
 
-        # # anlyze cfg and get masked input for all seeds of interest
-        # cls.generate_masked_inputs(
-        #     req,
-        #     seeds,
-        #     pcfg_ref,
-        #     cfg_res_file,
-        #     logger=logger
-        # )
+        # anlyze cfg and get masked input for all seeds of interest
+        cls.generate_masked_inputs(
+            req,
+            seeds,
+            pcfg_ref,
+            cfg_res_file,
+            logger=logger
+        )
 
         # get the suggested words for the masked inputs using bert:
         num_target = Macros.num_suggestions_on_exp_grammer_elem

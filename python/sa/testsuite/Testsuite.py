@@ -105,6 +105,130 @@ class Testsuite:
         return t
     
     @classmethod
+    def replace_pronouns_to_identity_groups(
+        cls,
+        sent, 
+        label
+    ) -> List:
+        pronouns_dict = {
+            'y': ['you', 'your', 'yours'],
+            'h': ['he', 'his', 'him'],
+            's': ['she', 'her', 'hers'],
+            't': ['they', 'their', 'them']
+        }
+        pronouns_with_apostrophes = [
+            pronouns_dict[key][1]
+            for key in pronouns_dict.keys()
+        ]
+        results = list()
+
+        # first find how many pronouns is used in the sentence
+        pronouns_used = list()
+        tokens = Utils.tokenize(sent)
+        res_idx = 0
+
+        for t_i, t in enumerate(tokens):
+            if t.lower() in pronouns_dict['h']:
+                pronouns_used.append((t_i, 'h'))
+            elif t.lower() in pronouns_dict['s']:
+                pronouns_used.append((t_i, 's'))
+            elif t.lower() in pronouns_dict['t']:
+                pronouns_used.append((t_i, 't'))
+            elif t.lower() in pronouns_dict['y']:
+                pronouns_used.append((t_i, 'y'))
+            # end if
+        # end for
+
+        # generate map for the pronouns used and identity words
+        unique_pronouns = set([pr[1] for pr in pronouns_used])
+        num_pronouns_used = len(unique_pronouns)
+        if num_pronouns_used>0:
+            pronouns_to_identity_map = dict()
+            for pr in unique_pronouns:
+                if pr=='t':
+                    pronouns_to_identity_map[pr] = self.identity_groups['IDENTITY_P']
+                else:
+                    pronouns_to_identity_map[pr] = self.identity_groups['IDENTITY_S'] + self.identity_groups['IDENTITY_A']
+                # end if
+            # end for
+
+            if num_pronouns_used>1:
+                for num_repl in range(1, num_pronouns_used+1):
+                    target_pronouns_generator = permutations(
+                        list(pronouns_to_identity_map.keys()), 
+                        num_repl
+                    )
+                    for target_pronouns in target_pronouns_generator:
+                        _pronouns_used = [
+                            pr for pr in pronouns_used
+                            if pr[1] in target_pronouns
+                        ]
+                        _pronouns_to_identity_map = {
+                            key: pronouns_to_identity_map[key]
+                            for key in pronouns_to_identity_map.keys()
+                            if key in target_pronouns
+                        }
+
+                        word_product: List[Dict] = [
+                            dict(zip(_pronouns_to_identity_map, v))
+                            for v in product(*_pronouns_to_identity_map.values())
+                        ]
+                        for wp in word_product:
+                            _tokens = tokens.copy()
+                            for _pr_i, _pr in _pronouns_used:
+                                if _tokens[_pr_i] in pronouns_with_apostrophes:
+                                    _tokens[_pr_i] = f"{wp[_pr]}'s"
+                                else:
+                                    _tokens[_pr_i] = wp[_pr]
+                                # end for
+                            # end for
+                            new_sent = Utils.detokenize(_tokens)
+                            results.append(new_sent)
+                            res_idx += 1
+                        # end for
+                    # end for
+                # end for
+            else:
+                pr_i, pr = pronouns_used[0][0], pronouns_used[0][1]
+                for w in pronouns_to_identity_map[pr]:
+                    _tokens = tokens.copy()
+                    if _tokens[pr_i] in pronouns_with_apostrophes:
+                        _tokens[pr_i] = f"{w}'s"
+                    else:
+                        _tokens[pr_i] = w
+                    # end if
+                    new_sent = Utils.detokenize(_tokens)
+                    results.append(new_sent)
+                    res_idx += 1
+                # end for
+            # end if
+        # end if
+        return results
+
+    @classmethod
+    def add_template_fairness(cls, t, editor, template):
+        new_sents = cls.replace_pronouns_to_identity_groups(
+            template["sent"], 
+            template["label"]
+        )
+        if t is None:
+            t = editor.template(
+                template["sent"],
+                save=True
+            )
+        else:
+            t += editor.template(
+                template["sent"],
+                save=True
+            )
+        # end if
+        t += editor.template(
+            new_sents,
+            save=True
+        )
+        return t
+    
+    @classmethod
     def get_template(cls, template, task, lc_desc):
         template_list = list()
         template_values = dict()
@@ -563,36 +687,21 @@ class Testsuite:
                 t = None
                 suite = TestSuite()
                 editor = Editor()
-                for template in templates_per_req["templates"]:
-                    t = cls.add_template(t, editor, template)
+                num_data = 0
+                for t_i, template in enumerate(templates_per_req["templates"]):
+                    t = None
+                    t = cls.add_template_fairness(t, editor, template)
+                    test = INV(t.data, threshold=0.1, templates=t.templates)
+                    suite.add(
+                        test,
+                        name=f"{task}::SEED_{t_i}::{lc_desc}",
+                        capability=templates_per_req["capability"]+"::SEED",
+                        description=templates_per_req["description"]
+                    )
+                    num_data += sum([len(suite.tests[k].data) for k in suite.tests.keys()])
                 # end for
 
-                if lc_desc==Macros.OUR_LC_LIST[-1] and \
-                   templates_per_req["templates"][0]['is_multiple_label_types']: # Parsing sentiment in (question, no) form
-                    allow_for_neutral = lambda x, pred, _, label, _2 : pred!=0 if label==1 else pred==label
-                    test = MFT(t.data,
-                               Expect.single(allow_for_neutral),
-                               labels=t.labels,
-                               templates=t.templates)
-                else:
-                    if callable(templates_per_req["templates"][0]['label']):
-                        test = MFT(t.data,
-                                   Expect.single(templates_per_req["templates"][0]['label']),
-                                   templates=t.templates)
-                    else:
-                        test = MFT(**t)
-                    # end if
-                # end if
-                # print(f"{task}::SEED::{lc_desc}")
-                suite.add(test,
-                          name=f"{task}::SEED::{lc_desc}",
-                          capability=templates_per_req["capability"]+"::SEED",
-                          description=templates_per_req["description"])
-                num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
                 if num_data>0:
-                    # test_cksum = Utils.get_cksum(
-                    #     task+templates_per_req["capability"]+templates_per_req["description"]
-                    # )
                     suite.save(res_dir / f'{task}_testsuite_fairness_seeds_{test_cksum}.pkl')
                     logger.print('SAVED')
                 else:
@@ -708,25 +817,22 @@ class Testsuite:
                 t = None
                 suite = TestSuite()
                 editor = Editor()
-                for template in templates_per_req["templates"]:
-                    t = cls.add_template(t, editor, template)
+                num_data = 0
+                for t_i, template in enumerate(templates_per_req["templates"]):
+                    t = None
+                    t = cls.add_template_fairness(t, editor, template)
+                    test = INV(t.data, threshold=0.1, templates=t.templates)
+                    suite.add(
+                        test,
+                        name=f"{task}::EXP_{t_i}::{lc_desc}",
+                        capability=templates_per_req["capability"]+"::EXP",
+                        description=templates_per_req["description"]
+                    )
+                    num_data += sum([len(suite.tests[k].data) for k in suite.tests.keys()])
                 # end for
                 
-                if callable(templates_per_req["templates"][0]['label']):
-                    test = MFT(t.data, Expect.single(templates_per_req["templates"][0]['label']), templates=t.templates)
-                else:
-                    test = MFT(**t)
-                # end if
-                suite.add(test,
-                          name=f"{task}::EXP::"+templates_per_req["description"],
-                          capability=templates_per_req["capability"]+"::EXP",
-                          description=templates_per_req["description"])
-                num_data = sum([len(suite.tests[k].data) for k in suite.tests.keys()])
                 if num_data>0:
-                    # test_cksum = Utils.get_cksum(
-                    #     task+templates_per_req["capability"]+templates_per_req["description"]
-                    # )
-                    suite.save(res_dir / f'{task}_testsuite_fairness_exps_{test_cksum}.pkl')
+                    suite.save(res_dir / f'{task}_testsuite_fairness_seeds_{test_cksum}.pkl')
                     logger.print('SAVED')
                 else:
                     logger.print('NO_DATA')
@@ -945,7 +1051,6 @@ class Testsuite:
             res_dir,
             logger
         )
-        
         cls.write_exp_testsuite_fairness(
             task,
             dataset,
