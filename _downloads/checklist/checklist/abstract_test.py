@@ -244,7 +244,7 @@ class AbstractTest(ABC):
         #     ]
         # # end if
         # # print(self.data, self.labels, self.results.preds, self.results.confs)
-        return
+        # return
 
     def recover_example_list_and_indices(self):
         """Recovers a previously computed example_list_and_indices"""

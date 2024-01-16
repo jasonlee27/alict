@@ -207,6 +207,9 @@ class Testsuite:
                 # end for
             # end if
         # end if
+        if len(results)>Macros.max_num_synonyms:
+            results = random.sample(results, Macros.max_num_synonyms)
+        # end if
         return results
 
     @classmethod
@@ -832,7 +835,7 @@ class Testsuite:
                 # end for
                 
                 if num_data>0:
-                    suite.save(res_dir / f'{task}_testsuite_fairness_seeds_{test_cksum}.pkl')
+                    suite.save(res_dir / f'{task}_testsuite_fairness_exps_{test_cksum}.pkl')
                     logger.print('SAVED')
                 else:
                     logger.print('NO_DATA')
