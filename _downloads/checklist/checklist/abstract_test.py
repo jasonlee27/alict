@@ -102,14 +102,14 @@ class AbstractTest(ABC):
         iters = [iters[i] for i in idxs]
         return idxs, iters, [expect_results[i] for i in idxs]
 
-    def print(self, xs, preds, confs, expect_results, labels=None, meta=None, format_example_fn=None, nsamples=3, logger=None):
+    def print(self, xs, preds, confs, expect_results, passed=None, labels=None, meta=None, format_example_fn=None, nsamples=3, logger=None):
         result = self._extract_examples_per_testcase(
             xs, preds, confs, expect_results, labels, meta, nsamples, only_include_fail=True)
         if not result:
             return
         idxs, iters, _ = result
+        isfailed = expect_result[0]!=True
         if len(iters)==0:
-            isfailed = expect_result[0]!=True
             if logger is not None:
                 logger.print(format_example_fn(xs, preds, confs, labels, isfailed=isfailed))
             # end if
@@ -117,9 +117,9 @@ class AbstractTest(ABC):
         else:
             for x, pred, conf, label, meta in iters:
                 if logger is not None:
-                    logger.print(format_example_fn(x, pred, conf, label, meta))
+                    logger.print(format_example_fn(x, pred, conf, label, meta, isfailed=isfailed))
                 # end if
-                print(format_example_fn(x, pred, conf, label, meta))
+                print(format_example_fn(x, pred, conf, label, meta, isfailed=isfailed))
             if type(preds) in [np.array, np.ndarray, list] and len(preds) > 1:
                 if logger is not None:
                     logger.print('')
@@ -539,10 +539,18 @@ class AbstractTest(ABC):
             # should be format_fn
             label, meta = self._label_meta(d_idx)
             # print(label, meta)
-            print_fn(self.data[d_idx], self.results.preds[d_idx],
-                     self.results.confs[d_idx], self.results.expect_results[p],
-                     label, meta, format_example_fn, nsamples=n_per_testcase,
-                     logger=logger)
+            print_fn(
+                self.data[d_idx], 
+                self.results.preds[d_idx],
+                self.results.confs[d_idx], 
+                self.results.expect_results[p],
+                passed=self.results.passed[d_idx],
+                label=label,
+                meta=meta,
+                format_example_fn=format_example_fn,    
+                nsamples=n_per_testcase,
+                logger=logger
+            )
         # end for
         fails = self.fail_idxs()
         if fails.shape[0] == 0:
@@ -559,10 +567,18 @@ class AbstractTest(ABC):
             # should be format_fn
             label, meta = self._label_meta(d_idx)
             # print(label, meta)
-            print_fn(self.data[d_idx], self.results.preds[d_idx],
-                     self.results.confs[d_idx], self.results.expect_results[f],
-                     label, meta, format_example_fn, nsamples=n_per_testcase,
-                     logger=logger)
+            print_fn(
+                self.data[d_idx], 
+                self.results.preds[d_idx],
+                self.results.confs[d_idx], 
+                self.results.expect_results[f],
+                passed=self.results.passed[d_idx],
+                label=label,
+                meta=meta,
+                format_example_fn=format_example_fn,    
+                nsamples=n_per_testcase,
+                logger=logger
+            )
 
     def _form_examples_per_testcase_for_viz(
         self, xs, preds, confs, expect_results, labels=None, meta=None, nsamples=3):

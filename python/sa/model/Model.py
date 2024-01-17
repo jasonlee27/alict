@@ -94,23 +94,33 @@ class Model:
         expect_result, label = args[0], args[1]
         binary = False
         if softmax:
-            if conf.shape[0] == 2:
+            # print(conf.shape, type(conf), type(conf[0]))
+            if conf.shape[0] == 2 and type(conf[0])!=np.ndarray:
                 conf = conf[1]
                 return f"DATA::{pred_res}::{conf:%.1f}::{str(pred)}::{str(label)}::{str(x)}"
-            elif conf.shape[0] <= 4:
+            elif conf.shape[0] <= 4 and type(conf[0])!=np.ndarray:
                 confs = ' '.join(['%.1f' % c for c in conf])
                 # return f"{pred_res}::{conf}::{str(x)}"
                 return f"DATA::{pred_res}::{str(confs)}::{str(pred)}::{str(label)}::{str(x)}"
+            elif type(conf[0])==np.ndarray:
+                conf = ' '.join(['%.1f' % c for c in conf[0]])
+                # return f"{pred_res}::{pred}:({conf:%.1f})::{str(x)}"
+                return f"DATA::{pred_res}::{str(conf)}::{str(pred)}::{str(label)}::{str(x[0])}"
             else:
                 conf = conf[pred]
                 # return f"{pred_res}::{pred}:({conf:%.1f})::{str(x)}"
                 return f"DATA::{pred_res}::{conf:%.1f}::{str(pred)}::{str(label)}::{str(x)}"
+            # end if
         else:
             return f"DATA::{pred_res}::[]::{str(pred)}::{str(label)}::{str(x)}"
         
     @classmethod
-    def print_result(cls, x, pred, conf, expect_result, label=None, meta=None, format_example_fn=None, nsamples=None, logger=None):
-        isfailed = expect_result[0]!=True
+    def print_result(cls, x, pred, conf, expect_result, passed=None, label=None, meta=None, format_example_fn=None, nsamples=None, logger=None):
+        if type(expect_result[0])==bool:
+            isfailed = expect_result[0]!=True
+        else:
+            isfailed = not passed
+        # end if
         if logger is not None:
             logger.print(format_example_fn(x, pred, conf, expect_result, label, isfailed=isfailed))
         # end if
