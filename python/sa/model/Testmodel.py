@@ -13,7 +13,7 @@ from ..testsuite.Testsuite import Testsuite
 
 from .Model import Model
 from .Chatgpt import Chatgpt
-from .GoogleModel import GoogleModel
+# from .GoogleModel import GoogleModel
 
 import os
 import shutil
@@ -315,6 +315,47 @@ class Testmodel:
         return
 
     @classmethod
+    def _run_bl_testsuite_fairness(
+        cls,
+        task,
+        bl_name,
+        test_result_dir,
+        logger,
+        local_model_name=None
+    ):
+        logger.print(f"***** TASK: {task} *****")
+        logger.print(f"***** Baseline: {bl_name} *****")
+        _bl_name = ''
+        if bl_name=='checklist':
+            _bl_name = 'checklist_fairness'
+        # end if
+        testsuite = cls.load_testsuite(Macros.BASELINES[_bl_name]["testsuite_file"])
+        print(Macros.BASELINES[_bl_name]["testsuite_file"])
+
+        if local_model_name is None:
+            for mname, model in Model.load_models(task):
+                logger.print(f">>>>> MODEL: {mname}")
+                Model.run(
+                    testsuite,
+                    model,
+                    cls.model_func_map[task],
+                    logger=logger
+                )
+                logger.print(f"<<<<< MODEL: {mname}")
+            # end for
+            logger.print("**********")
+        else:
+            logger.print(f">>>>> RETRAINED MODEL: {local_model_name}")
+            model = Model.load_local_model(task, local_model_name)
+            Model.run(testsuite,
+                    model,
+                    cls.model_func_map[task],
+                    logger=logger)
+            logger.print(f"<<<<< RETRAINED MODEL: {local_model_name}")
+        # end if
+        return
+
+    @classmethod
     def run_testsuite(cls,
                       task: str,
                       dataset_name: str,
@@ -405,7 +446,7 @@ class Testmodel:
         # run models on checklist introduced testsuite format
         bl_name = None
         if test_baseline:
-            cls._run_bl_testsuite(
+            cls._run_bl_testsuite_fairness(
                 task,
                 'checklist',
                 test_result_dir,

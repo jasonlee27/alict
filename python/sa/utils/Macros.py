@@ -71,6 +71,7 @@ class Macros:
     checklist_dir: Path = download_dir / "checklist"
     checklist_data_dir: Path = checklist_dir / "release_suites"
     checklist_sa_dataset_file: Path = checklist_data_dir / "sentiment_suite.pkl"
+    checklist_sa_fairness_dataset_file: Path = checklist_data_dir / "sentiment_suite_for_fairness.pkl"
     
     sa_models_file = download_dir / "models" / "sentiment_models.txt"
     
@@ -78,6 +79,9 @@ class Macros:
     BASELINES = {
         "checklist": {
             "testsuite_file": checklist_sa_dataset_file
+        },
+        "checklist_fairness": {
+            "testsuite_file": checklist_sa_fairness_dataset_file
         }
     }
 
