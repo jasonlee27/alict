@@ -330,7 +330,6 @@ class Testmodel:
             _bl_name = 'checklist_fairness'
         # end if
         testsuite = cls.load_testsuite(Macros.BASELINES[_bl_name]["testsuite_file"])
-        print(Macros.BASELINES[_bl_name]["testsuite_file"])
 
         if local_model_name is None:
             for mname, model in Model.load_models(task):

@@ -704,3 +704,28 @@ class Result:
             pretty_format=True
         )
         return results
+
+    @classmethod
+    def analyze_checklist_fairness(
+        cls,
+        nlp_task,
+        search_dataset_name,
+        template_result_dir,
+        result_dir,
+        tosem_model_names,
+        saveto
+    ):
+        result_file = result_dir / 'test_results_checklist_fairness.txt'
+        result_dict = cls.parse_results_for_fairness(result_file, tosem_model_names)
+        results = dict()
+        for model in result_dict.keys():
+            model_result = result_dict[model]
+            results[model] = cls.analyze_model_checklist(model_result, seed_exp_map)
+            print(model)
+        # end for
+        Utils.write_json(
+            results, 
+            saveto, 
+            pretty_format=True
+        )
+        return results

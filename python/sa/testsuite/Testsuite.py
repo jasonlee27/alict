@@ -207,8 +207,9 @@ class Testsuite:
                 # end for
             # end if
         # end if
-        if len(results)>Macros.max_num_synonyms:
-            results = random.sample(results, Macros.max_num_synonyms)
+        max_num_identities = 20 # same as checklist fairness dataset
+        if len(results)>max_num_identities:
+            results = random.sample(results, max_num_identities)
         # end if
         return results
 
@@ -683,8 +684,8 @@ class Testsuite:
         for t_i, templates_per_req in enumerate(seed_dicts):
             lc_desc = templates_per_req["description"]
             test_cksum = Utils.get_cksum(lc_desc)
-            if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_seeds_{test_cksum}.pkl')):
-            # if os.path.exists(str(res_dir / f'{task}_testsuite_fairness_seeds_{test_cksum}.pkl')):
+            # if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_seeds_{test_cksum}.pkl')):
+            if os.path.exists(str(res_dir / f'{task}_testsuite_fairness_seeds_{test_cksum}.pkl')):
                 logger.print(f"{task}::SEED::<{lc_desc}>::{test_cksum}::", end='')
                 # print(f"{task}::SEED::<{lc_desc}>::{test_cksum}::")
                 t = None
@@ -812,8 +813,8 @@ class Testsuite:
     ):
         for t_i, templates_per_req in enumerate(exp_dicts):
             test_cksum = Utils.get_cksum(templates_per_req["description"])
-            if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_exps_{test_cksum}.pkl')):
-            # if os.path.exists(str(res_dir / f'{task}_testsuite_fairness_exps_{test_cksum}.pkl')):
+            # if not os.path.exists(str(res_dir / f'{task}_testsuite_tosem_exps_{test_cksum}.pkl')):
+            if os.path.exists(str(res_dir / f'{task}_testsuite_fairness_exps_{test_cksum}.pkl')):
                 lc_desc = templates_per_req["description"]
                 logger.print(f"{task}::EXP::<{lc_desc}>::{test_cksum}::", end='')
                 # print(f"{task}::EXP::<{lc_desc}>::{test_cksum}::")
