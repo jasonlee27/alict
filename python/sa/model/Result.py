@@ -58,6 +58,16 @@ class Result:
             return sent_type, req
         # end if
         return None, None
+
+    @classmethod
+    def get_requirement_from_string_for_fairness(cls, model_result_str, task):
+        req_search = re.search(f"Running {task}::([A-Z]+)\_\d+::(.*)", model_result_str)
+        if req_search:
+            sent_type = req_search.group(1).strip()
+            req = req_search.group(2).strip()
+            return sent_type, req
+        # end if
+        return None, None
         
     @classmethod
     def get_pass_sents_from_model_string(cls, model_result_str):
@@ -81,6 +91,34 @@ class Result:
         return result
 
     @classmethod
+    def get_pass_sents_from_model_string_for_fairness(cls, model_result_str):
+        result = list()
+        for l in model_result_str.splitlines():
+            sent_search = re.search(r"DATA::PASS::(\d*\.?\d* \d*\.?\d* \d*\.?\d*)::\[([0-9 ]+)\]::None::(.*)", l)
+            if sent_search:
+                sent = sent_search.group(3)
+                tokens = Utils.tokenize(sent)
+                sent = Utils.detokenize(tokens)
+                conf = [
+                    eval(v) for v in sent_search.group(1).split()
+                ]
+                preds = [
+                    eval(v) for v in sent_search.group(2).split()
+                ]
+                if len(preds)>1:
+                    result.append({
+                        'conf': conf,
+                        'pred': preds,
+                        'label': None,
+                        'sent': sent,
+                        'key': sent.replace(' ', '')
+                    })
+                # end if
+            # end if
+        # end for
+        return result
+
+    @classmethod
     def get_fail_sents_from_model_string(cls, model_result_str):
         result = list()
         for l in model_result_str.splitlines():
@@ -97,6 +135,34 @@ class Result:
                     'sent': sent,
                     'key': sent.replace(' ', '')
                 })
+            # end if
+        # end for
+        return result
+    
+    @classmethod
+    def get_fail_sents_from_model_string_for_fairness(cls, model_result_str):
+        result = list()
+        for l in model_result_str.splitlines():
+            sent_search = re.search(r"DATA::FAIL::(\d*\.?\d* \d*\.?\d* \d*\.?\d*)::\[([0-9 ]+)\]::None::(.*)", l)
+            if sent_search:
+                sent = sent_search.group(3)
+                tokens = Utils.tokenize(sent)
+                sent = Utils.detokenize(tokens)
+                conf = [
+                    eval(v) for v in sent_search.group(1).split()
+                ]
+                preds = [
+                    eval(v) for v in sent_search.group(2).split()
+                ]
+                if len(preds)>1:
+                    result.append({
+                        'conf': conf,
+                        'pred': preds,
+                        'label': None,
+                        'sent': sent,
+                        'key': sent.replace(' ', '')
+                    })
+                # end if
             # end if
         # end for
         return result
@@ -159,6 +225,21 @@ class Result:
         return results
 
     @classmethod
+    def parse_model_results_for_fairness(cls, result_str, model_name, task):
+        results = list()
+        model_results = cls.get_model_results_from_string(result_str, model_name)
+        for r in model_results:
+            sent_type, req = cls.get_requirement_from_string_for_fairness(r, task)
+            results.append({
+                'sent_type': sent_type,
+                'req': req,
+                'pass': cls.get_pass_sents_from_model_string_for_fairness(r),
+                'fail': cls.get_fail_sents_from_model_string_for_fairness(r)
+            })
+        # end for
+        return results
+
+    @classmethod
     def parse_results(cls, result_file, model_name_file):
         if type(model_name_file)!=list:
             model_names = Utils.read_txt(model_name_file)
@@ -170,6 +251,24 @@ class Result:
             task = cls.get_task_from_result_str(line)
             return {
                 model.strip(): cls.parse_model_results(
+                    line, model.strip(), task
+                )
+                for model in model_names
+            }
+        # end with
+    
+    @classmethod
+    def parse_results_for_fairness(cls, result_file, model_name_file):
+        if type(model_name_file)!=list:
+            model_names = Utils.read_txt(model_name_file)
+        else:
+            model_names = model_name_file
+        # end if
+        with open(result_file, "r") as f:
+            line = f.read()
+            task = cls.get_task_from_result_str(line)
+            return {
+                model.strip(): cls.parse_model_results_for_fairness(
                     line, model.strip(), task
                 )
                 for model in model_names
@@ -268,15 +367,18 @@ class Result:
                                     'pred': ef['pred'],
                                     'label': ef['label'],
                                     'conf': ef['conf'],
-                                    'ent': ef['ent']
+                                    'ent': ef.get('ent', None)
                                 })
                                 num_pass2fail += 1
-                                if p['ent']<ef['ent']:
-                                    num_pass2fail_ent_inc += 1
-                                elif p['ent']>ef['ent']:
-                                    num_pass2fail_ent_dec += 1
-                                else:
-                                    num_pass2fail_ent_same += 1
+                                if p.get('ent', None) is not None and\
+                                    ef.get('ent', None) is not None:
+                                    if p['ent']<ef['ent']:
+                                        num_pass2fail_ent_inc += 1
+                                    elif p['ent']>ef['ent']:
+                                        num_pass2fail_ent_dec += 1
+                                    else:
+                                        num_pass2fail_ent_same += 1
+                                    # end if
                                 # end if
                             # end if
                         # end for
@@ -288,15 +390,18 @@ class Result:
                                     'pred': ep['pred'],
                                     'label': ep['label'],
                                     'conf': ep['conf'],
-                                    'ent': ep['ent']
+                                    'ent': ep.get('ent', None)
                                 })
                                 num_pass2pass += 1
-                                if p['ent']<ep['ent']:
-                                    num_pass2pass_ent_inc += 1
-                                elif p['ent']>ep['ent']:
-                                    num_pass2pass_ent_dec += 1
-                                else:
-                                    num_pass2pass_ent_same += 1
+                                if p.get('ent', None) is not None and\
+                                    ep.get('ent', None) is not None:
+                                    if p['ent']<ep['ent']:
+                                        num_pass2pass_ent_inc += 1
+                                    elif p['ent']>ep['ent']:
+                                        num_pass2pass_ent_dec += 1
+                                    else:
+                                        num_pass2pass_ent_same += 1
+                                    # end if
                                 # end if
                             # end if
                         # end for
@@ -307,7 +412,7 @@ class Result:
                             'pred': p['pred'],
                             'label': p['label'],
                             'conf': p['conf'],
-                            'ent': p['ent']
+                            'ent': p.get('ent', None)
                         }
                         result['pass->fail'].append(pass2fail_dict)
                     # end if
@@ -318,7 +423,7 @@ class Result:
                             'pred': p['pred'],
                             'label': p['label'],
                             'conf': p['conf'],
-                            'ent': p['ent']
+                            'ent': p.get('ent', None)
                         }
                         result['pass->pass'].append(pass2pass_dict)
                     # end if
@@ -335,15 +440,18 @@ class Result:
                                     'pred': ep['pred'],
                                     'label': ep['label'],
                                     'conf': ep['conf'],
-                                    'ent': ep['ent']
+                                    'ent': ep.get('ent', None)
                                 })
                                 num_fail2pass += 1
-                                if f['ent']<ep['ent']:
-                                    num_fail2pass_ent_inc += 1
-                                elif f['ent']>ep['ent']:
-                                    num_fail2pass_ent_dec += 1
-                                else:
-                                    num_fail2pass_ent_same += 1
+                                if f.get('ent', None) is not None and\
+                                    ep.get('ent', None) is not None:
+                                    if f['ent']<ep['ent']:
+                                        num_fail2pass_ent_inc += 1
+                                    elif f['ent']>ep['ent']:
+                                        num_fail2pass_ent_dec += 1
+                                    else:
+                                        num_fail2pass_ent_same += 1
+                                    # end if
                                 # end if
                             # end if
                         # end for
@@ -355,15 +463,18 @@ class Result:
                                     'pred': ef['pred'],
                                     'label': ef['label'],
                                     'conf': ef['conf'],
-                                    'ent': ef['ent']
+                                    'ent': ef.get('ent', None)
                                 })
                                 num_fail2fail += 1
-                                if f['ent']<ef['ent']:
-                                    num_fail2fail_ent_inc += 1
-                                elif f['ent']>ef['ent']:
-                                    num_fail2fail_ent_dec += 1
-                                else:
-                                    num_fail2fail_ent_same += 1
+                                if f.get('ent', None) is not None and\
+                                    ef.get('ent', None) is not None:
+                                    if f['ent']<ef['ent']:
+                                        num_fail2fail_ent_inc += 1
+                                    elif f['ent']>ef['ent']:
+                                        num_fail2fail_ent_dec += 1
+                                    else:
+                                        num_fail2fail_ent_same += 1
+                                    # end if
                                 # end if
                             # end if
                         # end for
@@ -374,7 +485,7 @@ class Result:
                             'pred': f['pred'],
                             'label': f['label'],
                             'conf': f['conf'],
-                            'ent': f['ent']
+                            'ent': f.get('ent', None)
                         }
                         result['fail->pass'].append(fail2pass_dict)
                     # end if
@@ -385,7 +496,7 @@ class Result:
                             'pred': f['pred'],
                             'label': f['label'],
                             'conf': f['conf'],
-                            'ent': f['ent']
+                            'ent': f.get('ent', None)
                         }
                         result['fail->fail'].append(fail2fail_dict)
                     # end if
@@ -569,7 +680,7 @@ class Result:
         saveto
     ):
         result_file = result_dir / 'test_results_fairness.txt'
-        result_dict = cls.parse_results(result_file, tosem_model_names)
+        result_dict = cls.parse_results_for_fairness(result_file, tosem_model_names)
         seed_exp_map = dict()
         for req in [FAIRNESS_REQ]:
             lc_desc = req['description']
