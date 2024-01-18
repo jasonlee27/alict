@@ -500,8 +500,10 @@ def run_analyze_fairness():
         # end if
         result_file = result_dir / 'test_results_checklist_fairness.txt'
         save_to = result_dir / 'test_result_checklist_fairness_analysis.json'
-        Result.analyze_checklist(
-            result_file,
+        Result.analyze_checklist_fairness(
+            nlp_task,
+            search_dataset_name,
+            result_dir,
             Macros.sa_models_file,
             save_to
         )
