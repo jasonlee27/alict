@@ -18,6 +18,16 @@ function func_humanstudy() {
                 --syntax_selection random
         )
 }
+
+
+function func_humanstudy_result() {
+        (cd ${_DIR}
+         python -m python.hs.main \
+                --run humanstudy_results_tosem \
+                --search_dataset hatexplain \
+                --syntax_selection random
+        )
+}
 # ==========
 
 
@@ -73,6 +83,7 @@ function func_analyze_eval_models_chatgpt() {
 
 function main() {
         # func_humanstudy # sample sentences for manual study
+        # func_humanstudy_result
         # func_gen_testsuite
         # func_testmodel_chatgpt # running chatgpt on the testcases
         func_analyze_eval_models_chatgpt
