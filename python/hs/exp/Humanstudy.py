@@ -971,7 +971,7 @@ class Humanstudy:
         tgt_res, tgt_res_lc = cls.get_target_results(
             seed_cfg_dir,                                         
             resps,
-            res_dir
+            sent_dir
         )
 
         for f_i in resps.keys():
