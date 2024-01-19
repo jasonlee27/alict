@@ -1010,8 +1010,7 @@ class Humanstudy:
             seed_sents = cls.read_sample_sentences(res_dir / seed_sent_file)
             exp_sents = cls.read_sample_sentences(res_dir / exp_sent_file)
 
-            seed_human_res: Dict, \
-            exp_human_res: Dict = cls.read_sample_scores_tosem(
+            seed_human_res, exp_human_res = cls.read_sample_scores_tosem(
                 res_dir / score_file,
                 seed_sents,
                 exp_sents
@@ -1022,7 +1021,7 @@ class Humanstudy:
             }
         # end for
 
-        tgt_res: Dict, tgt_res_lc: Dict = cls.get_target_results_tosem(
+        tgt_res, tgt_res_lc = cls.get_target_results_tosem(
             seed_cfg_dir,                                         
             resps,
             res_dir
