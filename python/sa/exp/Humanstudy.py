@@ -988,7 +988,7 @@ class Humanstudy:
         score_files = sorted([
             f for f in os.listdir(str(res_dir))
             if os.path.isfile(os.path.join(str(res_dir), f)) and \
-            re.search(r"alict_humanstudy_sa_scores_file(\d+)\.txt", f)
+            re.search(r"alict_humanstudy_sa_scores_file(\d+)\.csv", f)
         ])
         res = dict()
         # seed_rep_bugs_subjs = list()
@@ -999,8 +999,12 @@ class Humanstudy:
         # exp_label_incons_subjs = list()
         # labels = dict()
         resps = dict()
+        if not any(score_files):
+            raise()
+        # end if
+
         for f_i, score_file in enumerate(score_files):
-            file_i = int(re.search(r"^seed_samples_raw_file(\d+)\.txt", seed_sent_file).group(1))
+            file_i = int(re.search(r"^alict_humanstudy_sa_scores_file(\d+)\.csv", score_file).group(1))
 
             sent_dir = res_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
 
@@ -1182,7 +1186,7 @@ class Humanstudy:
         selection_method
     ):
         seed_cfg_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
-        res_dir = Macros.result_dir / 'human_study_tosem' / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+        res_dir = Macros.result_dir / 'human_study_tosem' # / f"{nlp_task}_{search_dataset_name}_{selection_method}"
         res_dir.mkdir(parents=True, exist_ok=True)
         # target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
         # model_name = "textattack/bert-base-uncased-SST-2"
@@ -1193,7 +1197,7 @@ class Humanstudy:
             res_dir,
             seed_cfg_dir,
         )
-        saveto = res_dir / f"human_study_results_tosem.json"
+        saveto = res_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}" / f"human_study_results_tosem.json"
         print(saveto)
         Utils.write_json(
             result, 
