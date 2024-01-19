@@ -26,6 +26,7 @@ parser.add_argument('--run', type=str, required=True,
                         'humanstudy',
                         'humanstudy_tosem', 
                         'humanstudy_results',
+                        'humanstudy_results_tosem',
                         'neural_coverage_data', 'textattack',
                         'tables', 'plots'
                     ], help='task to be run')
@@ -694,19 +695,6 @@ def run_humanstudy():
     #                     selection_method)
     return
 
-def run_humanstudy_tosem():
-    from .exp.Humanstudy import Humanstudy
-    # from .exp.Humanstudy import Mtnlp
-    nlp_task = args.nlp_task
-    search_dataset_name = args.search_dataset
-    selection_method = args.syntax_selection
-    Humanstudy.main_sample_tosem(
-        nlp_task,
-        search_dataset_name,
-        selection_method
-    )
-    return
-
 def run_humanstudy_result():
     from .exp.Humanstudy import Humanstudy
     nlp_task = args.nlp_task
@@ -730,7 +718,21 @@ def run_humanstudy_tosem():
     nlp_task = args.nlp_task
     search_dataset_name = args.search_dataset
     selection_method = args.syntax_selection
+    print("Run run_humanstudy_tosem for sampling..")
     Humanstudy.main_sample_tosem(
+        nlp_task,
+        search_dataset_name,
+        selection_method
+    )
+    return
+
+def run_humanstudy_result_tosem():
+    from .exp.Humanstudy import Humanstudy
+    nlp_task = args.nlp_task
+    search_dataset_name = args.search_dataset
+    selection_method = args.syntax_selection
+    print("Run run_humanstudy_result_tosem..")
+    Humanstudy.main_result_tosem(
         nlp_task,
         search_dataset_name,
         selection_method
@@ -839,6 +841,7 @@ func_map = {
         'humanstudy': run_humanstudy,
         'humanstudy_tosem': run_humanstudy_tosem,
         'humanstudy_results': run_humanstudy_result,
+        'humanstudy_results_tosem': run_humanstudy_result_tosem,
         'neural_coverage_data': run_neural_coverage_data,
         'textattack': run_textattack,
         'tables': run_make_tables,

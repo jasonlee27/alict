@@ -18,6 +18,15 @@ function func_humanstudy() {
                 --syntax_selection random
         )
 }
+
+function func_humanstudy_result() {
+        (cd ${_DIR}
+         python -m python.sa.main \
+                --run humanstudy_results_tosem \
+                --search_dataset sst \
+                --syntax_selection random
+        )
+}
 # ==========
 
 
@@ -92,16 +101,16 @@ function func_testsuite_fairness() {
 
 function func_eval_models_fairness {
         (cd ${_DIR}
-         # evaluating models on checklist testcases
-         python -m python.sa.main \
-                --run testmodel_fairness \
-                --search_dataset sst \
-                --syntax_selection random \
-                --num_seeds -1 \
-                --num_trials 1 \
-                --test_baseline
+        #  # evaluating models on checklist testcases
+        #  python -m python.sa.main \
+        #         --run testmodel_fairness \
+        #         --search_dataset sst \
+        #         --syntax_selection random \
+        #         --num_seeds -1 \
+        #         --num_trials 1 \
+        #         --test_baseline
 
-        # evaluating models on our generated testcases
+        # # evaluating models on our generated testcases
         #  CUDA_VISIBLE_DEVICES=5 python -m python.sa.main \
         #                      --run testmodel_fairness \
         #                      --search_dataset sst \
@@ -109,13 +118,19 @@ function func_eval_models_fairness {
         #                      --num_seeds -1 \
         #                      --num_trials 1
 
-        #  # evaluate NLP models with generated testsuites
-        #  CUDA_VISIBLE_DEVICES=1,2,3 python -m python.sa.main \
+        #  # analyze performance of NLP models
+        #  python -m python.sa.main \
         #         --run analyze_fairness \
         #         --search_dataset sst \
         #         --syntax_selection random \
         #         --num_seeds -1 \
         #         --num_trials 1
+
+        python -m python.sa.main \
+                --run analyze_fairness \
+                --search_dataset sst \
+                --syntax_selection random \
+                --test_baseline
         )
 }
 
@@ -124,11 +139,12 @@ function func_eval_models_fairness {
 
 function main() {
         # func_humanstudy # sample sentences for manual study
+        func_humanstudy_result
         # func_gen_testsuite
         # func_testmodel_chatgpt # running chatgpt on the testcases
         # func_analyze_eval_moødels_chatgpt
         # func_testsuite_fairness
-        func_eval_models_fairness
+        # func_eval_models_fairness
 }
 
 
