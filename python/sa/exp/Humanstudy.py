@@ -423,24 +423,24 @@ class Humanstudy:
 
             if res_seed.get(seed_sent, None) is None:
                 res_seed[seed_sent] = {
-                    'sent_score': [l[1]],
-                    'lc_score': [l[2]],
+                    'sent_score': [float(l[1])],
+                    'lc_score': [float(l[2])],
                 }
             else:
-                res_seed[seed_sent]['sent_score'].append(l[1])
-                res_seed[seed_sent]['lc_score'].append(l[2])
+                res_seed[seed_sent]['sent_score'].append(float(l[1]))
+                res_seed[seed_sent]['lc_score'].append(float(l[2]))
             # end if
 
             if res_exp.get(exp_sent, None) is None:
                 res_exp[exp_sent] = {
-                    'sent_score': [l[3]],
-                    'lc_score': [l[4]],
-                    'val_score': [l[5]]
+                    'sent_score': [float(l[3])],
+                    'lc_score': [float(l[4])],
+                    'val_score': [float(l[5])]
                 }
             else:
-                res_exp[exp_sent]['sent_score'].append(l[3])
-                res_exp[exp_sent]['lc_score'].append(l[4])
-                res_exp[exp_sent]['val_score'].append(l[5])
+                res_exp[exp_sent]['sent_score'].append(float(l[3]))
+                res_exp[exp_sent]['lc_score'].append(float(l[4]))
+                res_exp[exp_sent]['val_score'].append(float(l[5]))
             # end if
         # end for
         return res_seed, res_exp
