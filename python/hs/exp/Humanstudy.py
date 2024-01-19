@@ -407,6 +407,59 @@ class Humanstudy:
             # end for
         # end for
         return res
+    
+    @classmethod
+    def read_sample_scores_tosem(
+        cls, 
+        resp_file: Path, 
+        seed_sents: List[str],
+        exp_sents: List[str]
+    ):
+        res_seed = dict()
+        res_exp = dict()
+        
+        # {
+        #     'attributes': [att.strip() for att in lines[0].split(delimeter)],
+        #     'lines': [l.strip().split(delimeter) for l in lines[1:]]
+        # }
+        # attributes: ,seed_sent_label_relevancy,seed_sent_lc_relevancy,exp_sent_label_relevancy,exp_sent_lc_relevancy,seed_exp_validity
+        res_lines = Utils.read_sv(
+            resp_file, 
+            delimeter=',', 
+            is_first_attributes=True
+        )
+
+        attributes = res_lines['attributes']
+        res_lines = res_lines['lines']
+        
+        num_sents = 0
+        for l_i, l in enumerate(res_lines):
+            seed_sent = seed_sents[l_i]
+            exp_sent = exp_sents[l_i]
+
+            if res_seed.get(seed_sent, None) is None:
+                res_seed[seed_sent] = {
+                    'sent_score': [l[1]],
+                    'lc_score': [l[2]],
+                }
+            else:
+                res_seed[seed_sent]['sent_score'].append(l[1])
+                res_seed[seed_sent]['lc_score'].append(l[2])
+            # end if
+
+            if res_exp.get(exp_sent, None) is None:
+                res_exp[exp_sent] = {
+                    'sent_score': [l[3]],
+                    'lc_score': [l[4]],
+                    'val_score': [l[5]]
+                }
+            else:
+                res_exp[exp_sent]['sent_score'].append(l[3])
+                res_exp[exp_sent]['lc_score'].append(l[4])
+                res_exp[exp_sent]['val_score'].append(l[5])
+            # end if
+        # end for
+        return res_seed, res_exp
 
     @classmethod
     def get_target_results(cls, seed_cfg_dir, resps, res_dir):
@@ -871,6 +924,111 @@ class Humanstudy:
             }
         }
         return res
+
+    @classmethod
+    def get_results_tosem(
+        cls,
+        nlp_task: str,
+        search_dataset_name: str,
+        selection_method: str,
+        res_dir: Path,
+        seed_cfg_dir: Path
+    ):
+        # model_name="textattack/bert-base-uncased-SST-2"
+        score_files = sorted([
+            f for f in os.listdir(str(res_dir))
+            if os.path.isfile(os.path.join(str(res_dir), f)) and \
+            re.search(r"alict_humanstudy_hs_scores_file(\d+)\.csv", f)
+        ])
+        res = dict()
+        resps = dict()
+        if not any(score_files):
+            raise()
+        # end if
+
+        for f_i, score_file in enumerate(score_files):
+            file_i = int(re.search(r"^alict_humanstudy_hs_scores_file(\d+)\.csv", score_file).group(1))
+
+            sent_dir = res_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+
+            exp_sent_file =  sent_dir / f"exp_samples_raw_file{file_i}.txt"
+            seed_sent_file = sent_dir / f"seed_samples_raw_file{file_i}.txt"
+
+            seed_sents = cls.read_sample_sentences(res_dir / seed_sent_file)
+            exp_sents = cls.read_sample_sentences(res_dir / exp_sent_file)
+
+            seed_human_res, exp_human_res = cls.read_sample_scores_tosem(
+                res_dir / score_file,
+                seed_sents,
+                exp_sents
+            )
+            resps[file_i] = {
+                'seed': seed_human_res,
+                'exp': exp_human_res
+            }
+        # end for
+
+        tgt_res, tgt_res_lc = cls.get_target_results(
+            seed_cfg_dir,                                         
+            resps,
+            res_dir
+        )
+
+        for f_i in resps.keys():
+            seed_human_res = resps[f_i]['seed']
+            exp_human_res = resps[f_i]['exp']
+            res[f_i] = {
+                'label_scores': cls.get_label_consistency(tgt_res, seed_human_res, exp_human_res),
+                'lc_scores': cls.get_lc_relevancy(tgt_res_lc, seed_human_res, exp_human_res),
+                'val_scores': cls.get_exp_validity(exp_human_res)
+            }
+        # end for
+
+        agg_seed_label_scores = list()
+        agg_seed_lc_scores = list()
+        agg_exp_label_scores = list()
+        agg_exp_lc_scores = list()
+        agg_exp_val_scores = list()
+        
+        for f_i in res.keys():
+            agg_seed_label_scores.extend(list(res[f_i]['label_scores']['seed'].values()))
+            agg_seed_lc_scores.extend(list(res[f_i]['lc_scores']['seed'].values()))
+            agg_exp_label_scores.extend(list(res[f_i]['label_scores']['exp'].values()))
+            agg_exp_lc_scores.extend(list(res[f_i]['lc_scores']['exp'].values()))
+            agg_exp_val_scores.extend(list(res[f_i]['val_scores']['exp'].values()))
+        # end for
+        agg_seed_lc_scores = cls.norm_lc_relevancy(agg_seed_lc_scores)
+        agg_exp_lc_scores = cls.norm_lc_relevancy(agg_exp_lc_scores)
+        agg_exp_val_scores = cls.norm_exp_validity(agg_exp_val_scores)
+        
+        res['agg'] = {
+            'seed': {
+                'num_sents': len(agg_seed_label_scores),
+                'label_scores': agg_seed_label_scores,
+                'lc_scores': agg_seed_lc_scores,
+                'avg_label_score': float(Utils.avg(agg_seed_label_scores)),
+                'med_label_score': float(Utils.median(agg_seed_label_scores)),
+                'std_label_score': float(Utils.stdev(agg_seed_label_scores)),
+                'avg_lc_score': float(Utils.avg(agg_seed_lc_scores)),
+                'med_lc_score': float(Utils.median(agg_seed_lc_scores)),
+                'std_lc_score': float(Utils.stdev(agg_seed_lc_scores))
+            },
+            'exp': {
+                'num_sents': len(agg_exp_label_scores),
+                'label_scores': agg_exp_label_scores,
+                'lc_scores': agg_exp_lc_scores,
+                'avg_label_score': float(Utils.avg(agg_exp_label_scores)),
+                'med_label_score': float(Utils.median(agg_exp_label_scores)),
+                'std_label_score': float(Utils.stdev(agg_exp_label_scores)),
+                'avg_lc_score': float(Utils.avg(agg_exp_lc_scores)),
+                'med_lc_score': float(Utils.median(agg_exp_lc_scores)),
+                'std_lc_score': float(Utils.stdev(agg_exp_lc_scores)),
+                'avg_val_score': float(Utils.avg(agg_exp_val_scores)),
+                'med_val_score': float(Utils.median(agg_exp_val_scores)),
+                'std_val_score': float(Utils.stdev(agg_exp_val_scores))
+            }
+        }
+        return res
     
     @classmethod
     def main_sample(cls,
@@ -922,4 +1080,32 @@ class Humanstudy:
             num_samples=num_samples
         )
         Utils.write_json(result, res_dir / f"human_study_results.json", pretty_format=True)
+        return
+
+    @classmethod
+    def main_result_tosem(
+        cls,
+        nlp_task,
+        search_dataset_name,
+        selection_method
+    ):
+        seed_cfg_dir = Macros.result_dir / f"templates_{nlp_task}_{search_dataset_name}_{selection_method}"
+        res_dir = Macros.result_dir / 'human_study_tosem' # / f"{nlp_task}_{search_dataset_name}_{selection_method}"
+        res_dir.mkdir(parents=True, exist_ok=True)
+        # target_file = Macros.result_dir / f"cfg_expanded_inputs_{nlp_task}_{search_dataset_name}_{selection_method}.json"
+        # model_name = "textattack/bert-base-uncased-SST-2"
+        result = cls.get_results_tosem(
+            nlp_task,
+            search_dataset_name,
+            selection_method,
+            res_dir,
+            seed_cfg_dir,
+        )
+        saveto = res_dir / f"{nlp_task}_{search_dataset_name}_{selection_method}" / f"human_study_results_tosem.json"
+        print(saveto)
+        Utils.write_json(
+            result, 
+            saveto, 
+            pretty_format=True
+            )
         return

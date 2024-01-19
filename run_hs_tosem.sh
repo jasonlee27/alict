@@ -19,7 +19,6 @@ function func_humanstudy() {
         )
 }
 
-
 function func_humanstudy_result() {
         (cd ${_DIR}
          python -m python.hs.main \
